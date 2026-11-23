@@ -38,16 +38,6 @@ type RoundSource interface {
 	Current(worldID string) (Round, error)
 }
 
-// Contribution is a validated player prompt bound to a world and round.
-type Contribution struct {
-	WorldID    string
-	RoundID    string
-	PlayerID   string
-	Prompt     string
-	PromptHash string
-	CreatedAt  time.Time
-}
-
 // Store persists contributions and answers the lookups used by validation.
 type Store interface {
 	Save(ctx context.Context, c Contribution) error

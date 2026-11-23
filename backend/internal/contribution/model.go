@@ -13,14 +13,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Contribution is one player prompt submitted during a Round.
+// Contribution is one player prompt submitted during a Round. ID is empty until the
+// store assigns one; PromptHash is set by the validation service.
 type Contribution struct {
-	ID        string
-	WorldID   string
-	RoundID   string
-	PlayerID  string
-	Prompt    string
-	CreatedAt time.Time
+	ID         string
+	WorldID    string
+	RoundID    string
+	PlayerID   string
+	Prompt     string
+	PromptHash string
+	CreatedAt  time.Time
 }
 
 // ErrMalformed is returned by parse when a contribution file lacks valid front matter.
@@ -29,7 +31,7 @@ var ErrMalformed = errors.New("contribution: malformed file")
 const (
 	fmOpen      = "---\n"
 	fmClose     = "\n---\n\n" // closing delimiter, as it follows the YAML body
-	fmEnd       = "---\n\n"    // closing delimiter, as written after the YAML body
+	fmEnd       = "---\n\n"   // closing delimiter, as written after the YAML body
 	timeLayout  = time.RFC3339
 	idPrefix    = "CON-"
 	idRandBytes = 16

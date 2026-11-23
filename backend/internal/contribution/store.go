@@ -23,8 +23,9 @@ var (
 	ErrNotFound = errors.New("contribution: not found")
 )
 
-// Store persists immutable contributions and answers per-player queries within a Round.
-type Store interface {
+// Repository persists immutable contributions and answers per-player queries within a Round.
+// It is distinct from the validation Store used by Service.
+type Repository interface {
 	Save(ctx context.Context, c Contribution) (Contribution, error)
 	Get(ctx context.Context, id string) (Contribution, error)
 	ListByPlayer(ctx context.Context, roundID, playerID string) ([]Contribution, error)
@@ -41,7 +42,7 @@ type FileStore struct {
 	mu sync.Mutex
 }
 
-var _ Store = (*FileStore)(nil)
+var _ Repository = (*FileStore)(nil)
 
 // Save writes c as a new immutable file and commits it. If c.ID is empty a new ID is
 // generated. World and round IDs, and any supplied ID, must be safe path segments.
