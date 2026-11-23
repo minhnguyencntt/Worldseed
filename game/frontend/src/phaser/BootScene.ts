@@ -9,7 +9,7 @@ import type { EffectHandle } from '@game/engine/renderContext';
 import { manifest, scene } from '../runtime/content';
 import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
 
-const FALLBACK_KEY = 'fallback:missing';
+export const FALLBACK_KEY = 'fallback:missing';
 
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
 export class BootScene extends Phaser.Scene {

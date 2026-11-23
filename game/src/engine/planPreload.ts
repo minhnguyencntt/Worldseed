@@ -1,5 +1,6 @@
 import type { SceneDef } from '../state/types';
 import type { AssetManifest } from '../assets/manifest';
+// Pure helpers: planPreload and resolveTextureKey must stay free of I/O and Phaser imports.
 export type PreloadPlan = { load: string[]; unknown: string[] };
 export function planPreload(scene: SceneDef, manifest: AssetManifest): PreloadPlan {
   const refs = new Set<string>();
