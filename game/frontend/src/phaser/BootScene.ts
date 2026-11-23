@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { GameState } from '@game/state/types';
+import type { AssetEntry } from '@game/assets/manifest';
 import { useGameStore } from '../store/gameStore';
 import { phaserToReact } from './events';
 import { createPhaserEffectContext } from './effectContext';
@@ -39,7 +40,7 @@ export class BootScene extends Phaser.Scene {
     const plan = planPreload(scene, manifest);
     plan.unknown.forEach((id) => console.warn(`unknown asset ref: ${id}`));
     for (const id of plan.load) {
-      const entry = manifest.assets.find((a) => a.id === id);
+      const entry = manifest.assets.find((a: AssetEntry) => a.id === id);
       if (entry && entry.type === 'image') this.load.image(entry.id, `assets/${entry.path}`);
     }
   }

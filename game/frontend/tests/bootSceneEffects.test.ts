@@ -4,7 +4,7 @@ import { buildEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
 import { useGameStore } from '../src/store/gameStore';
 import { BootScene } from '../src/phaser/BootScene';
-import { createPhaserEffectContext } from '../src/phaser/effectContext';
+import { createPhaserEffectContext, type ResolveKey } from '../src/phaser/effectContext';
 import { scene, world } from '../src/runtime/content';
 
 // Phaser is a browser canvas runtime; the scene only needs Scene.events and the SHUTDOWN constant.
@@ -91,6 +91,7 @@ describe('BootScene effects', () => {
 });
 
 describe('playTransition: fade-in and ambient layer on the Phaser scene', () => {
+  const resolveKey: ResolveKey = vi.fn((id: string) => id);
   const makeFakeScene = () => {
     const rectangle = vi.fn(() => {
       const rect = {
