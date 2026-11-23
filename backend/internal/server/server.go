@@ -103,14 +103,30 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 		ar.Get("/executions", eh.List)
 		ar.Post("/executions/{id}/retry", eh.Retry)
 		ar.Post("/executions/{id}/approve", eh.Approve)
-		ar.Post("/rounds", rh.Create)
-		ar.Post("/rounds/{id}/open", rh.Open)
-		ar.Post("/rounds/{id}/close", rh.Close)
-		ar.Get("/rounds/{id}", rh.Get)
-		ar.Get("/rounds/{id}/contributions", rh.Contributions)
+		for _, rt := range adminRoundRoutes(rh) {
+			ar.Method(rt.Method, rt.Pattern, rt.Handler)
+		}
 	})
 
 	return r
+}
+
+// adminRoute is one admin route registered under /api/v1/admin.
+type adminRoute struct {
+	Method  string
+	Pattern string
+	Handler http.HandlerFunc
+}
+
+// adminRoundRoutes lists the admin round routes so New and tests share one table.
+func adminRoundRoutes(rh *admin.RoundHandler) []adminRoute {
+	return []adminRoute{
+		{http.MethodPost, "/rounds", rh.Create},
+		{http.MethodPost, "/rounds/{id}/open", rh.Open},
+		{http.MethodPost, "/rounds/{id}/close", rh.Close},
+		{http.MethodGet, "/rounds/{id}", rh.Get},
+		{http.MethodGet, "/rounds/{id}/contributions", rh.Contributions},
+	}
 }
 
 // NewScheduler returns the round scheduler that opens and closes rounds on the
