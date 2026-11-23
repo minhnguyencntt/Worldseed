@@ -12,8 +12,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+
 	"github.com/worldseed/storyforge/backend/internal/admin"
 	"github.com/worldseed/storyforge/backend/internal/config"
+	"github.com/worldseed/storyforge/backend/internal/execution"
 )
 
 // Given a server built from a config with a token secret and a discarded logger,
@@ -361,6 +364,106 @@ func TestNew_AdminRoundRoutesRejectMissingAndWrongToken(t *testing.T) {
 					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
 				}
 			})
+		}
+	}
+}
+
+// Given a server built from a config with admin.token "tok" and a temporary repo_path,
+// when every route from adminRoutes (execution and round routes) is requested with no
+// Authorization header and with "Authorization: Bearer wrong", then every request responds 401,
+// and when POST /api/v1/admin/executions/ID-1/retry and POST /api/v1/admin/executions/ID-1/approve
+// are requested with "Authorization: Bearer tok", then neither responds 401.
+func TestNew_AllAdminRoutesRejectMissingAndWrongToken(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	cases := []struct {
+		name   string
+		header string
+	}{
+		{"without a token", ""},
+		{"with Bearer wrong", "Bearer wrong"},
+	}
+
+	for _, rt := range adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) {
+		path := "/api/v1/admin" + strings.ReplaceAll(rt.Pattern, "{id}", "ID-1")
+		for _, c := range cases {
+			t.Run(rt.Method+" "+path+" "+c.name+" is unauthorized", func(t *testing.T) {
+				rec := httptest.NewRecorder()
+				req := httptest.NewRequest(rt.Method, path, nil)
+				if c.header != "" {
+					req.Header.Set("Authorization", c.header)
+				}
+				h.ServeHTTP(rec, req)
+				if rec.Code != http.StatusUnauthorized {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+				}
+			})
+		}
+	}
+
+	for _, path := range []string{
+		"/api/v1/admin/executions/ID-1/retry",
+		"/api/v1/admin/executions/ID-1/approve",
+	} {
+		t.Run(http.MethodPost+" "+path+" with Bearer tok is not unauthorized", func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodPost, path, nil)
+			req.Header.Set("Authorization", "Bearer tok")
+			h.ServeHTTP(rec, req)
+			if rec.Code == http.StatusUnauthorized {
+				t.Fatalf("status = %d, want anything but %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+			}
+		})
+	}
+}
+
+// Given a server built from a config with admin.token "tok" and a temporary repo_path,
+// when the router built by New is walked with chi.Walk,
+// then the admin routes it serves under /api/v1/admin are exactly the method and pattern pairs
+// listed in adminRoutes, each prefixed with /api/v1/admin, with no extra admin route.
+func TestNew_AdminRoutesMatchTable(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	routes, ok := New(cfg, log).(chi.Routes)
+	if !ok {
+		t.Fatal("New did not return a chi.Routes handler")
+	}
+
+	const prefix = "/api/v1/admin"
+	walked := map[string]bool{}
+	err := chi.Walk(routes, func(method, route string, _ http.Handler, _ ...func(http.Handler) http.Handler) error {
+		if strings.HasPrefix(route, prefix) {
+			walked[method+" "+route] = true
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("chi.Walk: %v", err)
+	}
+
+	want := map[string]bool{}
+	for _, rt := range adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) {
+		want[rt.Method+" "+prefix+rt.Pattern] = true
+	}
+
+	for key := range want {
+		if !walked[key] {
+			t.Errorf("route %s is listed in adminRoutes but not served", key)
+		}
+	}
+	for key := range walked {
+		if !want[key] {
+			t.Errorf("route %s is served under %s but not listed in adminRoutes", key, prefix)
 		}
 	}
 }
