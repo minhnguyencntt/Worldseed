@@ -74,7 +74,7 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 		Now:        time.Now,
 	}
 	r.Post("/api/v1/contributions", ch.Create)
-	r.Get("/api/v1/contributions/mine", ch.Mine)
+	r.Get("/api/v1/player/me/contributions", ch.Mine)
 	r.Get("/api/v1/contributions/{id}", ch.Get)
 
 	return r
