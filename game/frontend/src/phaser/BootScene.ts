@@ -6,8 +6,11 @@ import { createPhaserEffectContext } from './effectContext';
 import { buildEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
-import { manifest, scene } from '../runtime/content';
+import { manifest, scene, sceneSpec } from '../runtime/content';
 import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
+import { buildScene } from '@game/engine/buildScene';
+import type { SceneObject } from '@game/entities/SceneObject';
+import { createPhaserRenderContext } from './renderContext';
 import type { SceneObject } from '@game/entities/SceneObject';
 
 export const FALLBACK_KEY = 'fallback:missing';
@@ -16,6 +19,7 @@ export const FALLBACK_KEY = 'fallback:missing';
 export class BootScene extends Phaser.Scene {
   private unsubscribe: (() => void) | null = null;
   private effects: EffectHandle[] = [];
+  private sceneObjects: SceneObject[] = [];
   private sceneObjects: SceneObject[] = [];
   private failed = new Set<string>();
 
@@ -51,6 +55,7 @@ export class BootScene extends Phaser.Scene {
     this.unsubscribe = useGameStore.subscribe(() => this.onStateChange());
     const ctx = createPhaserEffectContext(this, (id) => this.resolveKey(id));
     this.effects = buildEffects(ctx, scene);
+    this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
     this.onStateChange();
     playSceneTransition(ctx, scene);
@@ -59,6 +64,8 @@ export class BootScene extends Phaser.Scene {
       this.unsubscribe = null;
       this.effects.forEach((handle) => handle.destroy());
       this.effects = [];
+      this.sceneObjects.forEach((o) => o.destroy());
+      this.sceneObjects = [];
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }

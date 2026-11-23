@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { RenderContext, RenderHandle, RenderSpriteSpec } from '@game/engine/renderContext';
 
-// Phaser-backed implementation of the engine's RenderContext.
+// Phaser-backed implementation of the engine's RenderContext for scene objects.
 export function createPhaserRenderContext(
   scene: Phaser.Scene,
   resolveKey: (id: string) => string,
@@ -10,40 +10,38 @@ export function createPhaserRenderContext(
     createSprite(spec: RenderSpriteSpec): RenderHandle {
       const image = scene.add
         .image(spec.x, spec.y, resolveKey(spec.key))
-        .setOrigin(0, 0)
+        .setOrigin(0)
         .setScale(spec.scale)
         .setDepth(spec.depth);
       if (spec.bounds) {
-        const b = spec.bounds;
-        image.setInteractive(
-          new Phaser.Geom.Rectangle(b.x, b.y, b.width, b.height),
-          Phaser.Geom.Rectangle.Contains,
-        );
+        const { x, y, width, height } = spec.bounds;
+        image.setInteractive(new Phaser.Geom.Rectangle(x, y, width, height), Phaser.Geom.Rectangle.Contains);
+      } else {
+        image.setInteractive({ useHandCursor: true });
       }
+
       const label = scene.add
-        .text(spec.x, spec.y - 12, spec.label ?? '', { fontSize: '10px' })
-        .setDepth(spec.depth + 0.5)
+        .text(spec.x, spec.y - 12, spec.label ?? '', { fontSize: '10px', color: '#ffffff', backgroundColor: '#000000' })
+        .setDepth(spec.depth + 1)
         .setVisible(false);
+
+      let hoverCb: ((over: boolean) => void) | undefined;
+      let clickCb: (() => void) | undefined;
+      image.on(Phaser.Input.Events.POINTER_OVER, () => hoverCb?.(true));
+      image.on(Phaser.Input.Events.POINTER_OUT, () => hoverCb?.(false));
+      image.on(Phaser.Input.Events.POINTER_DOWN, () => clickCb?.());
+
       return {
-        setVisible(visible: boolean): void {
-          image.setVisible(visible);
-          if (!visible) label.setVisible(false);
+        setVisible: (visible) => image.setVisible(visible),
+        setHighlighted: (on) => (on ? image.setTint(0xffff66) : image.clearTint()),
+        setLabelVisible: (on) => label.setVisible(on),
+        onHover: (cb) => {
+          hoverCb = cb;
         },
-        setHighlighted(on: boolean): void {
-          if (on) image.setTint(0xfff2b0);
-          else image.clearTint();
+        onClick: (cb) => {
+          clickCb = cb;
         },
-        setLabelVisible(on: boolean): void {
-          label.setVisible(on);
-        },
-        onHover(cb: (over: boolean) => void): void {
-          image.on('pointerover', () => cb(true));
-          image.on('pointerout', () => cb(false));
-        },
-        onClick(cb: () => void): void {
-          image.on('pointerdown', cb);
-        },
-        destroy(): void {
+        destroy: () => {
           image.destroy();
           label.destroy();
         },

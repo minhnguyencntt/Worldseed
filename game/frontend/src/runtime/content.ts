@@ -1,5 +1,6 @@
 import { parse } from 'yaml';
 import type { SceneDef, WorldDef } from '@game/state/types';
+import { sceneSchema, type SceneSpec } from '@game/content/schema';
 import manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json';
 import { parseManifest } from '@game/assets/manifest';
 
@@ -34,6 +35,7 @@ export const world: WorldDef = {
 };
 
 export const scene: SceneDef = parseYaml<SceneDef>('scenes/bedroom.yaml');
+export const sceneSpec: SceneSpec = sceneSchema.parse(parseYaml<unknown>('scenes/bedroom.yaml'));
 
 const parsedManifest = parseManifest(manifestJson);
 if (!parsedManifest.ok) {
