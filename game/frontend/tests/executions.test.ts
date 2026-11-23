@@ -74,6 +74,21 @@ describe('rejectExecution', () => {
     expect(error).toBeInstanceOf(ApiError);
     expect((error as ApiError).status).toBe(401);
   });
+
+  it('encodes the id in the URL', async () => {
+    // Given a fetch stub that answers the reject request with the execution fixture
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify(executionFixture), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    // When rejectExecution is called with an id containing a slash and a space
+    await rejectExecution('tok', 'a/b c');
+
+    // Then the request path encodes the id as a single path segment
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe('/api/v1/admin/executions/a%2Fb%20c/reject');
+  });
 });
 
 describe('findExecutionForRound', () => {
