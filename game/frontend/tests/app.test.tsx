@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
 
 // The real App is rendered with its real components. localStorage is jsdom's
@@ -74,5 +74,42 @@ describe('App playing view', () => {
     expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
       'Look around the room',
     );
+  });
+});
+
+describe('App remount and saved state', () => {
+  afterEach(cleanup);
+
+  function begin() {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
+  }
+
+  it('Given a played game is unmounted, when the App remounts and Begin is clicked, then history, the opened hotspot and the Inventory region are restored', () => {
+    const first = render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
+
+    first.unmount();
+    begin();
+
+    expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
+      'A hidden door swings open behind the books.',
+    );
+    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
+    expect(screen.getByRole('region', { name: 'Inventory' })).toBeInTheDocument();
+  });
+
+  it('Given no saved state, when Begin is clicked, then the game starts fresh at the opening dialogue with the hotspot closed', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+
+    begin();
+
+    expect(screen.getByRole('region', { name: 'Dialogue' })).toHaveTextContent(
+      "I don't know what to do next. What should we do?",
+    );
+    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'false');
   });
 });
