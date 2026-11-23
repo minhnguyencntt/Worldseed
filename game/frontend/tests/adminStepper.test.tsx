@@ -1,15 +1,13 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminApp } from '../src/components/AdminApp';
-import { adminContributionFixture, executionFixture, roundFixture } from './fixtures/api';
+import { adminContributionFixture, roundFixture } from './fixtures/api';
 
 const CURRENT_ROUND_URL = '/api/v1/worlds/the-boys-room/round/current';
 const ADMIN_ROUND_URL = `/api/v1/admin/rounds/${roundFixture.id}?world=the-boys-room`;
 const CONTRIBUTIONS_URL = `/api/v1/admin/rounds/${roundFixture.id}/contributions?world=the-boys-room`;
 const EXECUTIONS_URL = '/api/v1/admin/executions';
-
-type Responder = () => Response;
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -21,14 +19,12 @@ function json(body: unknown, status = 200): Response {
 interface StubOptions {
   /** The admin round the stub returns for the round under test. */
   round?: typeof roundFixture;
-  /** Builds the response for the executions endpoint; a factory so each call gets a fresh Response. */
-  executions: Responder;
 }
 
 // Url-routing fetch stub. Answers the public current-round lookup and every admin
 // path, rejects admin calls whose bearer token is not 'secret' with 401, and answers
-// the executions endpoint with the response under test.
-function stubFetch({ round = roundFixture, executions }: StubOptions) {
+// anything else (including the removed executions endpoint) with 404.
+function stubFetch({ round = roundFixture }: StubOptions = {}) {
   const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     if (url === CURRENT_ROUND_URL) return json(roundFixture);
@@ -36,7 +32,6 @@ function stubFetch({ round = roundFixture, executions }: StubOptions) {
     if (auth !== 'Bearer secret') return json({ error: 'unauthorized' }, 401);
     if (url === ADMIN_ROUND_URL) return json(round);
     if (url === CONTRIBUTIONS_URL) return json([adminContributionFixture]);
-    if (url === EXECUTIONS_URL) return executions();
     return json({ error: 'not found' }, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -64,8 +59,8 @@ describe('AdminApp lifecycle stepper', () => {
     vi.unstubAllGlobals();
   });
 
-  it('Given an OPEN round with no executions, when the admin round loads, then the OPEN step is the single current step', async () => {
-    stubFetch({ executions: () => json([]) });
+  it('Given an OPEN round, when the admin round loads, then the OPEN step is the single current step', async () => {
+    stubFetch();
     render(<AdminApp />);
     enterToken('secret');
 
@@ -75,36 +70,14 @@ describe('AdminApp lifecycle stepper', () => {
     expect(currentStepText(stepper)).toEqual(['OPEN']);
   });
 
-  it('Given a CLOSED round with a RUNNING execution, when the admin round loads, then the DEVELOPING step is the current step', async () => {
-    stubFetch({
-      round: { ...roundFixture, status: 'CLOSED' },
-      executions: () => json([executionFixture]),
-    });
+  it('Given a CLOSED round, then CLOSED is the current step and no executions URL was fetched', async () => {
+    const fetchMock = stubFetch({ round: { ...roundFixture, status: 'CLOSED' } });
     render(<AdminApp />);
     enterToken('secret');
 
     const stepper = await screen.findByRole('list', { name: 'Round lifecycle' });
 
-    expect(currentStepText(stepper)).toEqual(['DEVELOPING']);
-  });
-
-  it('Given an OPEN round and an executions endpoint that returns 404, when the admin round loads, then the OPEN step is current and no alert is shown', async () => {
-    stubFetch({ executions: () => json({ error: 'not found' }, 404) });
-    render(<AdminApp />);
-    enterToken('secret');
-
-    const stepper = await screen.findByRole('list', { name: 'Round lifecycle' });
-
-    expect(currentStepText(stepper)).toEqual(['OPEN']);
-    expect(screen.queryByRole('alert')).toBeNull();
-  });
-
-  it('Given an executions endpoint that returns 401, when the admin round loads, then the gate shows Invalid token', async () => {
-    stubFetch({ executions: () => json({ error: 'unauthorized' }, 401) });
-    render(<AdminApp />);
-    enterToken('secret');
-
-    expect(await screen.findByRole('alert')).toHaveTextContent('Invalid token');
-    expect(screen.getByLabelText('Admin token')).toBeInTheDocument();
+    expect(currentStepText(stepper)).toEqual(['CLOSED']);
+    expect(fetchMock.mock.calls.some(([url]) => String(url) === EXECUTIONS_URL)).toBe(false);
   });
 });
