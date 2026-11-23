@@ -44,6 +44,11 @@ export const objectSchema = z.object({
 // A named animation on a manifest asset, e.g. { asset: 'character:boy', animation: 'idle' }.
 export const animRef = z.object({ asset: z.string(), animation: z.string() });
 
+export const characterInteractionSchema = z.object({
+  dialogue: z.string().optional(),
+  actions: z.array(actionSchema).optional(),
+});
+
 export const characterSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -51,6 +56,7 @@ export const characterSchema = z.object({
   scale: z.number().positive().default(1),
   layer: layerSchema.default('characters'),
   animations: z.object({ idle: animRef, walk: animRef.optional(), interact: animRef.optional() }),
+  interaction: characterInteractionSchema.optional(),
 });
 
 export const sceneSchema = z.object({
