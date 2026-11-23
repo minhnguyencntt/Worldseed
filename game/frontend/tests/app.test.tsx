@@ -24,3 +24,55 @@ describe('App intro gate', () => {
     expect(screen.queryByText('What should I do?')).toBeNull();
   });
 });
+
+describe('App playing view', () => {
+  afterEach(cleanup);
+
+  function begin() {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
+  }
+
+  it('Given Begin clicked, then scene, hotspots, Story toggle and opening dialogue render', () => {
+    begin();
+
+    expect(screen.getByRole('img', { name: 'Bedroom' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Story' })).toBeInTheDocument();
+    expect(
+      screen.getByText("I don't know what to do next. What should we do?"),
+    ).toBeInTheDocument();
+  });
+
+  it('Given the game view, when Bookshelf is clicked, then Inspect, Push, Search and Leave buttons appear', () => {
+    begin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+
+    expect(screen.getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Push' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+  });
+
+  it('Given Bookshelf menu, when Search is clicked, then history shows the hidden door text and the hotspot is open', () => {
+    begin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
+    expect(screen.getByText('A hidden door swings open behind the books.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
+  });
+
+  it('Given the opening dialogue, when Look around the room is clicked, then dialogue closes and history keeps the choice', () => {
+    begin();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Look around the room' }));
+
+    expect(screen.queryByRole('button', { name: 'Look around the room' })).toBeNull();
+    expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
+      'Look around the room',
+    );
+  });
+});
