@@ -85,6 +85,29 @@ describe('untrackNodeModules', () => {
       expect.arrayContaining([expect.arrayContaining(['node_modules/.vite/vitest/results.json'])]),
     );
   });
+
+  it('force-removes conflicted results.json from the index with a cached-only forced rm', () => {
+    // Given a fake git runner that returns empty output,
+    // when untrackNodeModules is called with it,
+    // then the second call is rm --cached -f --ignore-unmatch -q for node_modules/.vite/vitest/results.json,
+    // so a conflicted results.json is removed from the index even when git refuses a plain rm.
+    const run = vi.fn((_args: string[]) => '');
+
+    untrackNodeModules(run);
+
+    expect(run).toHaveBeenNthCalledWith(2, [
+      'rm',
+      '--cached',
+      '-f',
+      '--ignore-unmatch',
+      '-q',
+      '--',
+      'node_modules/.vite/vitest/results.json',
+    ]);
+    for (const [args] of run.mock.calls) {
+      expect(args).toContain('--cached');
+    }
+  });
 });
 
 describe('parseGitLsFiles', () => {
