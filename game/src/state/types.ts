@@ -22,6 +22,8 @@ export type ObjectDef = {
   description: string;
   actions: ActionDef[];
   openWhenFlag?: string;
+  visibleWhen?: Condition[];
+  persistentState?: { flag: string; initial?: boolean };
 };
 
 export type DialogueChoice = {

@@ -138,6 +138,12 @@ export function validateWorld(world: LoadedWorld): string[] {
       if (obj.openWhenFlag !== undefined && !flags.has(obj.openWhenFlag)) {
         errors.push(`unknown flag: ${obj.openWhenFlag}`);
       }
+      if (obj.persistentState && !flags.has(obj.persistentState.flag)) {
+        errors.push(`unknown flag: ${obj.persistentState.flag}`);
+      }
+      for (const cond of obj.visibleWhen ?? []) {
+        if ('flag' in cond && !flags.has(cond.flag)) errors.push(`unknown flag: ${cond.flag}`);
+      }
       for (const action of obj.actions) {
         for (const cond of action.conditions ?? []) {
           if ('flag' in cond && !flags.has(cond.flag)) errors.push(`unknown flag: ${cond.flag}`);
