@@ -11,11 +11,12 @@ import (
 )
 
 // fakeStore is an in-memory ExecutionStore. It records every Save call and can
-// be told to fail List.
+// be told to fail List or Save.
 type fakeStore struct {
 	list    []store.Execution
 	saved   []store.Execution
 	listErr error
+	saveErr error
 }
 
 func (f *fakeStore) List() ([]store.Execution, error) {
@@ -26,6 +27,9 @@ func (f *fakeStore) List() ([]store.Execution, error) {
 }
 
 func (f *fakeStore) Save(e store.Execution) error {
+	if f.saveErr != nil {
+		return f.saveErr
+	}
 	f.saved = append(f.saved, e)
 	return nil
 }
