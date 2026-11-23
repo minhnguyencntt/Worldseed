@@ -21,6 +21,11 @@ export type ObjectDef = {
   name: string;
   description: string;
   actions: ActionDef[];
+  asset?: string;
+  position?: { x: number; y: number };
+  scale?: number;
+  layer?: string;
+  interactionBounds?: { x: number; y: number; width: number; height: number };
   openWhenFlag?: string;
   visibleWhen?: Condition[];
   persistentState?: { flag: string; initial?: boolean };

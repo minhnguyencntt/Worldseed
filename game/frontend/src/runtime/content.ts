@@ -1,8 +1,8 @@
 import { parse } from 'yaml';
 import type { SceneDef, WorldDef } from '@game/state/types';
 
-// Content is bundled at build time from game/content (three levels up from src/runtime).
-const worldFiles = import.meta.glob('../../../content/worlds/the-boys-room/**/*.yaml', {
+// Content is bundled at build time from game/src/content (three levels up from src/runtime).
+const worldFiles = import.meta.glob('../../../src/content/worlds/the-boys-room/**/*.yaml', {
   query: '?raw',
   import: 'default',
   eager: true,

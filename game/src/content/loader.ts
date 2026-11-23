@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'yaml';
 import type { DialogueChoice, GameEvent, SceneDef, WorldDef } from '../state/types';
+import { parseWorldContent } from './schema';
 
 // A world as loaded from disk: scenes are resolved from scenes/<id>.yaml into full definitions.
 export type LoadedWorld = Omit<WorldDef, 'scenes'> & { scenes: SceneDef[] };
@@ -71,7 +72,11 @@ export function loadWorld(worldDir: string): LoadedWorld {
     if (id !== sceneId) {
       throw new Error(`${relPath} declares id ${id}, expected ${sceneId}`);
     }
-    scenes.push(sceneRaw as unknown as SceneDef);
+    const parsed = parseWorldContent('scene', sceneRaw);
+    if (!parsed.ok) {
+      throw new Error(`${relPath} invalid: ${parsed.errors.map((e) => e.path + ': ' + e.message).join('; ')}`);
+    }
+    scenes.push(parsed.data as unknown as SceneDef);
   }
 
   return { ...world, scenes };
