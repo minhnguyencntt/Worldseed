@@ -94,3 +94,36 @@ func TestServerHasNoExecutionWiring(t *testing.T) {
 		}
 	}
 }
+
+// Given the server package sources (../server) and the cmd/server entrypoint
+// (../../cmd/server), excluding this file,
+// when each *.go file is read,
+// then none of them references the removed worker config keys
+// "cfg.Worker", "WorkRoot", "MaxBudget" or "AutoPublish".
+func TestNoWorkerConfigReferences(t *testing.T) {
+	banned := []string{"cfg.Worker", "WorkRoot", "MaxBudget", "AutoPublish"}
+
+	for _, root := range []string{"../server", "../../cmd/server"} {
+		err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || filepath.Ext(path) != ".go" || filepath.Base(path) == "removed_code_test.go" {
+				return nil
+			}
+			data, readErr := os.ReadFile(path)
+			if readErr != nil {
+				return readErr
+			}
+			for _, b := range banned {
+				if strings.Contains(string(data), b) {
+					t.Errorf("%s still references %q", path, b)
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", root, err)
+		}
+	}
+}

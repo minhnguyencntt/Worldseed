@@ -255,3 +255,46 @@ func TestLoadFS_AdminAndRoundDefaults(t *testing.T) {
 		t.Errorf("Admin.Token = %q, want %q", cfg.Admin.Token, "tok")
 	}
 }
+
+// Given the checked-in backend/configs/config.example.yaml,
+// when Load reads it from disk,
+// then no error is returned, Server.Addr is ":8080", Round.Duration is 24h
+// and Contribution.MaxPromptLen is 500.
+func TestLoad_ExampleConfig(t *testing.T) {
+	cfg, err := Load("../../configs/config.example.yaml")
+	if err != nil {
+		t.Fatalf("Load returned error: %v", err)
+	}
+	if cfg.Server.Addr != ":8080" {
+		t.Errorf("Server.Addr = %q, want %q", cfg.Server.Addr, ":8080")
+	}
+	if cfg.Round.Duration != 24*time.Hour {
+		t.Errorf("Round.Duration = %v, want %v", cfg.Round.Duration, 24*time.Hour)
+	}
+	if cfg.Contribution.MaxPromptLen != 500 {
+		t.Errorf("Contribution.MaxPromptLen = %d, want 500", cfg.Contribution.MaxPromptLen)
+	}
+}
+
+// Given a minimal YAML file containing only auth.token_secret,
+// when LoadFS is called with a getenv that returns "" for every key,
+// then Round.SchedulerInterval is 30s, Storage.ContentDir is "game/content"
+// and Contribution.RateMax is 3.
+func TestLoadFS_MinimalDefaults(t *testing.T) {
+	fsys := fstest.MapFS{
+		"config.yaml": &fstest.MapFile{Data: []byte("auth:\n  token_secret: s\n")},
+	}
+	cfg, err := LoadFS(fsys, "config.yaml", func(string) string { return "" })
+	if err != nil {
+		t.Fatalf("LoadFS returned error: %v", err)
+	}
+	if cfg.Round.SchedulerInterval != 30*time.Second {
+		t.Errorf("Round.SchedulerInterval = %v, want %v", cfg.Round.SchedulerInterval, 30*time.Second)
+	}
+	if cfg.Storage.ContentDir != "game/content" {
+		t.Errorf("Storage.ContentDir = %q, want %q", cfg.Storage.ContentDir, "game/content")
+	}
+	if cfg.Contribution.RateMax != 3 {
+		t.Errorf("Contribution.RateMax = %d, want 3", cfg.Contribution.RateMax)
+	}
+}
