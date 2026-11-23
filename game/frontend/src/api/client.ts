@@ -22,6 +22,19 @@ export interface AdminContribution extends Contribution {
   prompt_hash: string;
 }
 
+/** An execution as the admin execution endpoints return it (backend/internal/execution/execution.go). */
+export interface ExecutionInfo {
+  id: string;
+  world_id: string;
+  round_id: string;
+  status: string;
+  error: string;
+  updated_at: string;
+  log?: string;
+  tests?: string;
+  release_version?: string;
+}
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -74,6 +87,20 @@ export function listRoundContributions(token: string, id: string): Promise<Admin
     token,
     `/api/v1/admin/rounds/${encodeURIComponent(id)}/contributions?world=${WORLD_ID}`,
   );
+}
+
+/** Approves an AWAITING_APPROVAL execution (POST /api/v1/admin/executions/{id}/approve). */
+export function approveExecution(token: string, id: string): Promise<ExecutionInfo> {
+  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/approve`, {
+    method: 'POST',
+  });
+}
+
+/** Retries a FAILED execution (POST /api/v1/admin/executions/{id}/retry). */
+export function retryExecution(token: string, id: string): Promise<ExecutionInfo> {
+  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/retry`, {
+    method: 'POST',
+  });
 }
 
 const BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '';

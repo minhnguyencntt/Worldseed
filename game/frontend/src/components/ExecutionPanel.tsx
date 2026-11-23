@@ -1,6 +1,8 @@
 // Structural shape of the execution fields this panel reads. Matches the
-// ExecutionInfo contract (api/client.ts) that the admin client will export.
+// ExecutionInfo contract (api/client.ts).
 export interface ExecutionPanelExecution {
+  id?: string;
+  status?: string;
   updated_at: string;
   error: string;
   log?: string;
@@ -11,6 +13,9 @@ export interface ExecutionPanelExecution {
 export interface ExecutionPanelProps {
   execution?: ExecutionPanelExecution;
   contributionCount: number;
+  onApprove?: (id: string) => void;
+  onRetry?: (id: string) => void;
+  actionError?: string;
 }
 
 function formatDuration(updatedAt: string): string {
@@ -33,7 +38,17 @@ function formatDuration(updatedAt: string): string {
   return `${Math.floor(hours / 24)}d ${hours % 24}h`;
 }
 
-export function ExecutionPanel({ execution, contributionCount }: ExecutionPanelProps) {
+export function ExecutionPanel({
+  execution,
+  contributionCount,
+  onApprove,
+  onRetry,
+  actionError,
+}: ExecutionPanelProps) {
+  const id = execution?.id;
+  const canApprove = execution?.status === 'AWAITING_APPROVAL' && onApprove !== undefined;
+  const canRetry = execution?.status === 'FAILED' && onRetry !== undefined;
+
   return (
     <section className="execution-panel" aria-label="Execution">
       <p>Contributions: {contributionCount}</p>
@@ -49,6 +64,23 @@ export function ExecutionPanel({ execution, contributionCount }: ExecutionPanelP
       <p>{execution?.release_version || 'Not available'}</p>
 
       {execution?.error && <p role="alert">Failure reason: {execution.error}</p>}
+
+      {(canApprove || canRetry) && (
+        <div className="execution-actions">
+          {canApprove && (
+            <button type="button" onClick={() => onApprove?.(id ?? '')}>
+              Approve
+            </button>
+          )}
+          {canRetry && (
+            <button type="button" onClick={() => onRetry?.(id ?? '')}>
+              Retry
+            </button>
+          )}
+        </div>
+      )}
+
+      {actionError && <p role="alert">{actionError}</p>}
     </section>
   );
 }
