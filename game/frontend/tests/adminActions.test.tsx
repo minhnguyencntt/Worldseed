@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AdminApp } from '../src/components/AdminApp';
@@ -141,6 +141,118 @@ describe('AdminApp execution handlers', () => {
     await waitFor(() => {
       const getsAfter = callsOf(fetchMock).filter((c) => c.url === EXECUTIONS_URL && c.method === 'GET').length;
       expect(getsAfter).toBeGreaterThan(getsBefore);
+    });
+  });
+});
+
+/** Fetch stub for the failure cases: admin reads succeed, and each execution action POST is answered by `respond`. */
+function stubActionFetch(executions: unknown[], respond: (url: string) => Response | Promise<Response>) {
+  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url === CURRENT_ROUND_URL) return json(roundFixture);
+    const auth = new Headers(init?.headers).get('Authorization');
+    if (auth !== 'Bearer secret') return json({ error: 'unauthorized' }, 401);
+    if (url === ADMIN_ROUND_URL) return json(roundFixture);
+    if (url === CONTRIBUTIONS_URL) return json([adminContributionFixture]);
+    if (url === EXECUTIONS_URL) return json(executions);
+    if (/^\/api\/v1\/admin\/executions\/[^/]+\/(approve|retry|reject)$/.test(url) && init?.method === 'POST') {
+      return respond(url);
+    }
+    return json({ error: 'not found' }, 404);
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock;
+}
+
+describe('AdminApp execution action errors', () => {
+  beforeEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  it('Given a FAILED execution, when the retry endpoint returns 500 with {error:"boom"}, then the Execution region shows "boom" in an alert', async () => {
+    // Given a FAILED execution whose retry endpoint answers 500 with a JSON error body
+    stubActionFetch([failedExecutionFixture], () => json({ error: 'boom' }, 500));
+    const user = userEvent.setup();
+    render(<AdminApp />);
+    enterToken('secret');
+    await user.click(await screen.findByRole('button', { name: 'Retry' }));
+
+    // Then the Execution region shows the server's error message in an alert
+    const region = await screen.findByRole('region', { name: 'Execution' });
+    await waitFor(() => {
+      const alerts = within(region).getAllByRole('alert').map((a) => a.textContent);
+      expect(alerts).toContain('boom');
+    });
+  });
+
+  it('Given an AWAITING_APPROVAL execution, when the approve endpoint returns 401, then the admin token field is shown again with "Invalid token"', async () => {
+    // Given an execution awaiting approval whose approve endpoint rejects the token
+    const awaiting = { ...executionFixture, status: 'AWAITING_APPROVAL' };
+    stubActionFetch([awaiting], () => json({ error: 'unauthorized' }, 401));
+    const user = userEvent.setup();
+    render(<AdminApp />);
+    enterToken('secret');
+    await user.click(await screen.findByRole('button', { name: 'Approve' }));
+
+    // Then the token gate is shown again with the Invalid token message
+    expect(await screen.findByRole('alert')).toHaveTextContent('Invalid token');
+    expect(screen.getByLabelText('Admin token')).toBeInTheDocument();
+  });
+
+  it('Given a failed action, when the next action succeeds, then the earlier error message is gone', async () => {
+    // Given a FAILED execution whose first retry returns 500 and whose second retry succeeds
+    let calls = 0;
+    const statusLine = '500 Internal Server Error';
+    stubActionFetch([failedExecutionFixture], () => {
+      calls += 1;
+      return calls === 1
+        ? new Response(JSON.stringify({ error: 'boom' }), {
+            status: 500,
+            statusText: 'Internal Server Error',
+            headers: { 'Content-Type': 'application/json' },
+          })
+        : json(failedExecutionFixture);
+    });
+    const user = userEvent.setup();
+    render(<AdminApp />);
+    enterToken('secret');
+    await user.click(await screen.findByRole('button', { name: 'Retry' }));
+    const region = await screen.findByRole('region', { name: 'Execution' });
+    await waitFor(() => {
+      expect(within(region).getAllByRole('alert').map((a) => a.textContent)).toContain(statusLine);
+    });
+
+    // When the user retries again and the second action succeeds
+    await user.click(screen.getByRole('button', { name: 'Retry' }));
+
+    // Then the earlier error message is no longer shown
+    await waitFor(() => {
+      expect(calls).toBe(2);
+    });
+    await waitFor(() => {
+      const alerts = within(region).queryAllByRole('alert').map((a) => a.textContent);
+      expect(alerts).not.toContain(statusLine);
+    });
+  });
+
+  it('Given a FAILED execution, when fetch rejects with a non-Error value, then the Execution region shows "Request failed"', async () => {
+    // Given a FAILED execution whose retry request rejects with a plain string
+    stubActionFetch([failedExecutionFixture], () => Promise.reject('network down'));
+    const user = userEvent.setup();
+    render(<AdminApp />);
+    enterToken('secret');
+    await user.click(await screen.findByRole('button', { name: 'Retry' }));
+
+    // Then the Execution region shows the generic failure message
+    const region = await screen.findByRole('region', { name: 'Execution' });
+    await waitFor(() => {
+      const alerts = within(region).getAllByRole('alert').map((a) => a.textContent);
+      expect(alerts).toContain('Request failed');
     });
   });
 });
