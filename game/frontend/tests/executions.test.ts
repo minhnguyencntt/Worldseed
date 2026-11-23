@@ -1,6 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, listExecutions } from '../src/api/client';
-import { executionFixture } from './fixtures/api';
+import {
+  ApiError,
+  findExecutionForRound,
+  getCurrentRoundExecution,
+  listExecutions,
+} from '../src/api/client';
+import type { ExecutionInfo } from '../src/api/client';
+import { executionFixture, roundFixture } from './fixtures/api';
 
 describe('listExecutions', () => {
   afterEach(() => {
