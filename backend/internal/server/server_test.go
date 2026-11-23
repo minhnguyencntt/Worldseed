@@ -117,6 +117,22 @@ func TestNew_RegistersRoutes(t *testing.T) {
 			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
 		}
 	})
+
+	t.Run("GET /api/v1/contributions/unknown is registered and answered by the handler", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/contributions/unknown", nil))
+		if rec.Code == http.StatusNotFound || rec.Code == http.StatusMethodNotAllowed {
+			t.Fatalf("status = %d, route is not registered (body=%q)", rec.Code, rec.Body.String())
+		}
+		// Without a session cookie the handler rejects before looking up the id.
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+		}
+		var body map[string]string
+		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+			t.Fatalf("body is not JSON: %v (body=%q)", err, rec.Body.String())
+		}
+	})
 }
 
 // Given a server built from a config whose storage.repo_path is a temporary directory,
