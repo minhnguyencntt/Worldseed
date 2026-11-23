@@ -17,6 +17,14 @@ vi.mock('phaser', () => ({
   },
 }));
 
+// Content is mocked so the test does not parse YAML or depend on authored scene data.
+vi.mock('../src/runtime/content', () => ({
+  world: { id: 'the-boys-room', title: 'The Boys Room', startScene: 'bedroom', scenes: [], characters: [], flags: [] },
+  scene: { id: 'bedroom', title: 'Bedroom', objects: [], layers: [], effects: [] },
+  sceneSpec: { id: 'bedroom', objects: [], layers: [], effects: [] },
+  manifest: { version: 1, assets: [] },
+}));
+
 // The effect builder is an engine module; BootScene only wires it, so it is replaced with fake handles.
 vi.mock('@game/engine/buildEffects', () => ({
   buildEffects: vi.fn(),

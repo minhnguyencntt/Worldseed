@@ -31,6 +31,54 @@ vi.mock('@game/engine/playSceneTransition', () => ({
   playSceneTransition: vi.fn(),
 }));
 
+// Bundled content is replaced with fixture data whose ids and assets never appear in BootScene.ts or renderContext.ts,
+// so the test proves BootScene passes through whatever spec it is given rather than hardcoding one.
+vi.mock('../src/runtime/content', () => {
+  const sceneSpec = {
+    id: 'fixture-scene',
+    title: 'Fixture Scene',
+    dialogue: [],
+    objects: [
+      {
+        id: 'fixture-object-alpha',
+        name: 'Alpha',
+        description: 'Fixture object alpha.',
+        asset: 'fixture/alpha-sprite',
+        position: { x: 1, y: 2 },
+        scale: 1,
+        layer: 'objects',
+        actions: [],
+      },
+      {
+        id: 'fixture-object-beta',
+        name: 'Beta',
+        description: 'Fixture object beta.',
+        asset: 'fixture/beta-sprite',
+        position: { x: 3, y: 4 },
+        scale: 1,
+        layer: 'objects',
+        actions: [],
+      },
+    ],
+  };
+  return {
+    world: {
+      id: 'fixture-world',
+      title: 'Fixture World',
+      startScene: 'fixture-scene',
+      scenes: ['fixture-scene'],
+      characters: [],
+      flags: [],
+    },
+    scene: sceneSpec,
+    manifest: {
+      version: 1,
+      assets: [{ id: 'fixture/alpha-sprite', path: 'fixtures/alpha-sprite.png', type: 'image' }],
+    },
+    sceneSpec,
+  };
+});
+
 // The Phaser render context is replaced with a marker so the test can check what buildScene receives.
 const fakeRenderContext = { createSprite: vi.fn() };
 vi.mock('../src/phaser/renderContext', () => ({
