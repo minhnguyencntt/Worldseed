@@ -8,14 +8,14 @@ import { IntroScreen } from './components/IntroScreen';
 import { RoundBadge } from './components/RoundBadge';
 import { SceneView } from './components/SceneView';
 import { StoryPanel } from './components/StoryPanel';
-import { getCurrentRound, type RoundInfo } from './api/client';
+import { getCurrentRound, type Round } from './api/client';
 import { useGame } from './runtime/useGame';
 
 export default function App() {
   const game = useGame();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [begun, setBegun] = useState(false);
-  const [round, setRound] = useState<RoundInfo | undefined>(undefined);
+  const [round, setRound] = useState<Round | undefined>(undefined);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
@@ -41,6 +41,14 @@ export default function App() {
             onSelect={setSelectedId}
           />
           <ActionMenu object={selected} onAction={game.act} />
+          <button type="button" onClick={() => setSheetOpen(true)}>
+            Suggest What Happens Next
+          </button>
+          <ContributionSheet
+            open={sheetOpen}
+            onClose={() => setSheetOpen(false)}
+            roundId={round?.id ?? ''}
+          />
         </>
       }
       story={
