@@ -1,3 +1,5 @@
+import type { EffectSpec } from '../content/schema';
+
 export interface RenderHandle {
   setVisible(visible: boolean): void;
   destroy(): void;

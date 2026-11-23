@@ -1,3 +1,5 @@
+import type { EffectSpec } from '../content/schema';
+
 export type Condition = { flag: string; equals?: boolean } | { hasItem: string };
 
 export type GameEvent =
@@ -50,6 +52,7 @@ export type SceneDef = {
   objects: ObjectDef[];
   openingDialogue?: string;
   dialogue: DialogueNode[];
+  effects?: EffectSpec[];
 };
 
 export type WorldDef = {
