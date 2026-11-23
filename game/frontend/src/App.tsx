@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getActiveNode } from '@game/systems/dialogue';
 import { ActionMenu } from './components/ActionMenu';
 import { ContributionSheet } from './components/ContributionSheet';
@@ -7,9 +7,19 @@ import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
 import { SceneView } from './components/SceneView';
 import { StoryPanel } from './components/StoryPanel';
-import { getCurrentRound, type Round } from './api/client';
+import { ApiError, getCurrentRound, type Round } from './api/client';
 import { world } from './runtime/content';
 import { useGame } from './runtime/useGame';
+
+export function describeRoundError(e: unknown): string {
+  if (e instanceof ApiError) {
+    return `Round service returned ${e.status}${e.detail ? `: ${e.detail}` : ''}`;
+  }
+  if (e instanceof TypeError) {
+    return 'Could not reach the server';
+  }
+  return 'Round request failed';
+}
 
 export default function App() {
   const game = useGame();
@@ -20,12 +30,24 @@ export default function App() {
   const [roundError, setRoundError] = useState<string | undefined>(undefined);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  useEffect(() => {
-    getCurrentRound()
+  const loadRound = useCallback(() => {
+    setLoading(true);
+    setRoundError(undefined);
+    return getCurrentRound()
       .then(setRound)
-      .catch((e: unknown) => setRoundError(e instanceof Error ? e.message : 'Round request failed'))
+      .catch((e: unknown) => {
+        if (e instanceof ApiError && e.status === 404) {
+          setRound(undefined);
+          return;
+        }
+        setRoundError(describeRoundError(e));
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    void loadRound();
+  }, [loadRound]);
 
   if (!begun) {
     return <IntroScreen onBegin={() => setBegun(true)} />;
@@ -34,7 +56,7 @@ export default function App() {
   const selected = game.view.find((o) => o.id === selectedId);
   return (
     <GameLayout
-      header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} />}
+      header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} onRetry={loadRound} />}
       scene={
         <>
           <SceneView
@@ -57,6 +79,7 @@ export default function App() {
       }
       story={
         <StoryPanel
+          sceneTitle={game.scene.title}
           node={getActiveNode(game.state, game.scene)}
           history={game.state.history}
           inventory={game.state.inventory}

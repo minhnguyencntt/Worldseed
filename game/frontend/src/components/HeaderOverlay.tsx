@@ -9,9 +9,10 @@ export interface HeaderOverlayProps {
   round?: Round;
   loading?: boolean;
   error?: string;
+  onRetry?: () => void;
 }
 
-export function HeaderOverlay({ worldTitle, round, loading, error }: HeaderOverlayProps) {
+export function HeaderOverlay({ worldTitle, round, loading, error, onRetry }: HeaderOverlayProps) {
   const soundEnabled = useUiStore((s) => s.soundEnabled);
   const toggleSound = useUiStore((s) => s.toggleSound);
   const toggleSettings = useUiStore((s) => s.toggleSettings);
@@ -21,7 +22,10 @@ export function HeaderOverlay({ worldTitle, round, loading, error }: HeaderOverl
       <span>StoryForge</span>
       <span>{worldTitle}</span>
       {error ? (
-        <span role="alert">Round unavailable: {error}</span>
+        <>
+          <span role="alert">Round unavailable: {error}</span>
+          {onRetry && <Button type="button" variant="ghost" onClick={onRetry}>Retry</Button>}
+        </>
       ) : loading ? (
         <span>Loading round…</span>
       ) : round ? (
