@@ -23,6 +23,8 @@ const STATE_LABEL: Record<EntryState, string> = {
   failed: 'Failed',
 };
 
+const BLANK_MESSAGE = 'Enter an idea first';
+
 export function errorMessage(err: unknown): string {
   if (err instanceof ApiError) {
     if (err.status === 429) return 'Slow down, try again shortly';
@@ -35,6 +37,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   const [text, setText] = useState('');
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [validation, setValidation] = useState<string | undefined>(undefined);
 
   // Load the player's existing suggestions for this round when the sheet opens.
   useEffect(() => {
@@ -66,11 +69,15 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const prompt = text.trim();
-    if (prompt === '') return;
+    if (prompt === '') {
+      setValidation(BLANK_MESSAGE);
+      return;
+    }
 
     const key = Date.now();
     setText('');
     setError(undefined);
+    setValidation(undefined);
     setEntries((prev) => [...prev, { key, prompt, state: 'sending' }]);
 
     try {
@@ -102,11 +109,17 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
           <textarea
             id="contribution-idea"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              setText(e.target.value);
+              setValidation(undefined);
+            }}
             rows={3}
+            aria-invalid={validation !== undefined}
+            aria-describedby={validation ? 'contribution-idea-error' : undefined}
           />
           <button type="submit">Send</button>
         </form>
+        {validation && <p id="contribution-idea-error" role="alert">{validation}</p>}
 
         {error && <p role="alert">{error}</p>}
 
