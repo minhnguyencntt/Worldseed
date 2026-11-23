@@ -27,7 +27,7 @@ export function readSaved(): GameState | null {
  */
 export function writeSaved(state: GameState): boolean {
   try {
-    window.localStorage.setItem(STORAGE_KEY, serializeState(state as unknown as Parameters<typeof serializeState>[0]));
+    window.localStorage.setItem(STORAGE_KEY, serializeState(state));
     return true;
   } catch {
     return false;
