@@ -129,6 +129,30 @@ func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, 
 		return e, err
 	}
 
+	if !r.cfg.AutoPublish {
+		// Approval gate: keep the work directory and wait for an explicit approval
+		// before anything is published.
+		e.Status = store.StatusAwaitingApproval
+		e.UpdatedAt = r.now()
+		if err := r.st.Save(e); err != nil {
+			return e, err
+		}
+		return e, nil
+	}
+
+	if perr := r.pub.Publish(ctx, dir); perr != nil {
+		e.Status = store.StatusFailed
+		e.Error = perr.Error()
+		e.UpdatedAt = r.now()
+		if serr := r.st.Save(e); serr != nil {
+			return e, serr
+		}
+		if rerr := r.trees.Remove(ctx, dir); rerr != nil {
+			return e, rerr
+		}
+		return e, fmt.Errorf("runner: publish: %w", perr)
+	}
+
 	e.Status = store.StatusCompleted
 	e.UpdatedAt = r.now()
 	if err := r.st.Save(e); err != nil {
