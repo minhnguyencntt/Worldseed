@@ -1,10 +1,12 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent, type RefObject } from 'react';
 import { ApiError, listMine, MAX_PER_PLAYER, submitContribution } from '../api/client';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog';
 
 export interface ContributionSheetProps {
   open: boolean;
   onClose: () => void;
   roundId: string;
+  returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
 type EntryState = 'sending' | 'sent' | 'failed';
@@ -29,7 +31,7 @@ export function errorMessage(err: unknown): string {
   return 'Could not send';
 }
 
-export function ContributionSheet({ open, onClose, roundId }: ContributionSheetProps) {
+export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: ContributionSheetProps) {
   const [text, setText] = useState('');
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -59,10 +61,6 @@ export function ContributionSheet({ open, onClose, roundId }: ContributionSheetP
     };
   }, [open, roundId]);
 
-  if (!open) {
-    return null;
-  }
-
   const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -85,35 +83,45 @@ export function ContributionSheet({ open, onClose, roundId }: ContributionSheetP
   }
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Suggest What Happens Next" className="contribution-sheet">
-      <h2>Suggest What Happens Next</h2>
-      <p>{`Contributions left: ${Math.max(remaining, 0)}`}</p>
-      <p>Ideas are considered when the Round closes.</p>
+    <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <DialogContent
+        className="contribution-sheet"
+        onCloseAutoFocus={(event) => {
+          if (returnFocusRef?.current) {
+            event.preventDefault();
+            returnFocusRef.current.focus();
+          }
+        }}
+      >
+        <DialogTitle>Suggest What Happens Next</DialogTitle>
+        <p>{`Contributions left: ${Math.max(remaining, 0)}`}</p>
+        <DialogDescription>Ideas are considered when the Round closes.</DialogDescription>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="contribution-idea">Your idea</label>
-        <textarea
-          id="contribution-idea"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={3}
-        />
-        <button type="submit">Send</button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="contribution-idea">Your idea</label>
+          <textarea
+            id="contribution-idea"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={3}
+          />
+          <button type="submit">Send</button>
+        </form>
 
-      {error && <p role="alert">{error}</p>}
+        {error && <p role="alert">{error}</p>}
 
-      <ul aria-label="Your suggestions">
-        {entries.map((entry) => (
-          <li key={entry.key}>
-            <span>{entry.prompt}</span> <span>{STATE_LABEL[entry.state]}</span>
-          </li>
-        ))}
-      </ul>
+        <ul aria-label="Your suggestions">
+          {entries.map((entry) => (
+            <li key={entry.key}>
+              <span>{entry.prompt}</span> <span>{STATE_LABEL[entry.state]}</span>
+            </li>
+          ))}
+        </ul>
 
-      <button type="button" onClick={onClose}>
-        Close
-      </button>
-    </div>
+        <button type="button" onClick={onClose}>
+          Close
+        </button>
+      </DialogContent>
+    </Dialog>
   );
 }

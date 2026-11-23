@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getActiveNode } from '@game/systems/dialogue';
 import { ActionMenu } from './components/ActionMenu';
 import { ContributionSheet } from './components/ContributionSheet';
@@ -29,6 +29,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [roundError, setRoundError] = useState<string | undefined>(undefined);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const loadRound = useCallback(() => {
     setLoading(true);
@@ -67,13 +68,14 @@ export default function App() {
             onSelect={setSelectedId}
           />
           <ActionMenu object={selected} onAction={game.act} />
-          <button type="button" onClick={() => setSheetOpen(true)}>
+          <button type="button" ref={triggerRef} onClick={() => setSheetOpen(true)}>
             Suggest What Happens Next
           </button>
           <ContributionSheet
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}
             roundId={round?.id ?? ''}
+            returnFocusRef={triggerRef}
           />
         </>
       }
