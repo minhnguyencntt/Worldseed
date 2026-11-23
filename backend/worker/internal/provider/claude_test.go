@@ -100,6 +100,62 @@ func TestNewClaudeNilExec(t *testing.T) {
 	}
 }
 
+// Given a Claude adapter backed by a fake Exec, when Run is called with a work
+// directory, then the Claude flags run in acceptEdits permission mode, Bash is
+// listed in --disallowedTools, and Bash is absent from --allowedTools.
+func TestClaudeRunRestrictsPermissions(t *testing.T) {
+	const workDir = "/tmp/w"
+	fake := &recordingExec{}
+
+	c, err := NewClaude(fake)
+	if err != nil {
+		t.Fatalf("NewClaude returned error: %v", err)
+	}
+
+	if _, err := c.Run(context.Background(), workDir); err != nil {
+		t.Fatalf("Run returned error: %v", err)
+	}
+
+	if !fake.called {
+		t.Fatal("Run did not call Exec")
+	}
+
+	// argAfter returns the argument that follows flag, or "" and false when
+	// flag is missing or is the last argument.
+	argAfter := func(flag string) (string, bool) {
+		for i, a := range fake.args {
+			if a == flag && i+1 < len(fake.args) {
+				return fake.args[i+1], true
+			}
+		}
+		return "", false
+	}
+
+	mode, ok := argAfter("--permission-mode")
+	if !ok {
+		t.Fatalf("Exec args = %v, want a --permission-mode flag with a value", fake.args)
+	}
+	if mode != "acceptEdits" {
+		t.Errorf("--permission-mode = %q, want %q", mode, "acceptEdits")
+	}
+
+	disallowed, ok := argAfter("--disallowedTools")
+	if !ok {
+		t.Fatalf("Exec args = %v, want a --disallowedTools flag with a value", fake.args)
+	}
+	if !strings.Contains(disallowed, "Bash") {
+		t.Errorf("--disallowedTools = %q, want it to contain %q", disallowed, "Bash")
+	}
+
+	allowed, ok := argAfter("--allowedTools")
+	if !ok {
+		t.Fatalf("Exec args = %v, want an --allowedTools flag with a value", fake.args)
+	}
+	if strings.Contains(allowed, "Bash") {
+		t.Errorf("--allowedTools = %q, want it to not contain %q", allowed, "Bash")
+	}
+}
+
 // Given a Claude adapter backed by a fake Exec, when Run is called with a blank
 // work directory, then Run returns an error naming the work dir, Exec is never
 // called, and the cost is 0.
