@@ -146,3 +146,36 @@ contribution:
 		}
 	})
 }
+
+// Given a YAML file that sets only auth.token_secret and an environment where
+// STORYFORGE_ADMIN_TOKEN is "tok",
+// when LoadFS is called, then round defaults (24h, 1.0.0, 30s) are applied and
+// Admin.Token takes the environment value.
+func TestLoadFS_AdminAndRoundDefaults(t *testing.T) {
+	fsys := fstest.MapFS{
+		"config.yaml": &fstest.MapFile{Data: []byte("auth:\n  token_secret: 'secret'\n")},
+	}
+	getenv := func(k string) string {
+		if k == "STORYFORGE_ADMIN_TOKEN" {
+			return "tok"
+		}
+		return ""
+	}
+
+	cfg, err := LoadFS(fsys, "config.yaml", getenv)
+	if err != nil {
+		t.Fatalf("LoadFS returned error: %v", err)
+	}
+	if cfg.Round.Duration != 24*time.Hour {
+		t.Errorf("Round.Duration = %v, want %v", cfg.Round.Duration, 24*time.Hour)
+	}
+	if cfg.Round.BaseRelease != "1.0.0" {
+		t.Errorf("Round.BaseRelease = %q, want %q", cfg.Round.BaseRelease, "1.0.0")
+	}
+	if cfg.Round.SchedulerInterval != 30*time.Second {
+		t.Errorf("Round.SchedulerInterval = %v, want %v", cfg.Round.SchedulerInterval, 30*time.Second)
+	}
+	if cfg.Admin.Token != "tok" {
+		t.Errorf("Admin.Token = %q, want %q", cfg.Admin.Token, "tok")
+	}
+}
