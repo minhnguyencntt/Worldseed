@@ -3,14 +3,17 @@ import type { EffectSpec } from '@game/content/schema';
 import type { EffectHandle, EffectRenderContext } from '@game/engine/renderContext';
 
 // Phaser-backed implementation of the engine's EffectRenderContext.
-export function createPhaserEffectContext(scene: Phaser.Scene): EffectRenderContext {
+export function createPhaserEffectContext(
+  scene: Phaser.Scene,
+  resolveKey: (id: string) => string,
+): EffectRenderContext {
   return {
     createEffect(spec: EffectSpec & { depth: number }): EffectHandle {
       switch (spec.type) {
         case 'dust': {
           const { area } = spec;
           const emitter = scene.add
-            .particles(area.x, area.y, spec.asset, {
+            .particles(area.x, area.y, resolveKey(spec.asset), {
               quantity: 1,
               frequency: 250,
               maxParticles: spec.count,

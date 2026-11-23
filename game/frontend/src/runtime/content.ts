@@ -1,5 +1,7 @@
 import { parse } from 'yaml';
 import type { SceneDef, WorldDef } from '@game/state/types';
+import manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json';
+import { parseManifest } from '@game/assets/manifest';
 
 // Content is bundled at build time from game/src/content (three levels up from src/runtime).
 const worldFiles = import.meta.glob('../../../src/content/worlds/the-boys-room/**/*.yaml', {
@@ -32,3 +34,9 @@ export const world: WorldDef = {
 };
 
 export const scene: SceneDef = parseYaml<SceneDef>('scenes/bedroom.yaml');
+
+const parsedManifest = parseManifest(manifestJson);
+if (!parsedManifest.ok) {
+  throw new Error('invalid manifest: ' + JSON.stringify(parsedManifest.errors));
+}
+export const manifest = parsedManifest.data;
