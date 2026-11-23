@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type Phaser from 'phaser';
 import { createGame } from '../phaser/createGame';
+import { computeZoom } from '../phaser/config';
 
 export interface PhaserHostProps {
   scenes?: Phaser.Types.Scenes.SceneType[];
@@ -11,18 +12,49 @@ export function PhaserHost({ scenes }: PhaserHostProps) {
   const gameRef = useRef<Phaser.Game | null>(null);
 
   useEffect(() => {
-    if (gameRef.current === null && containerRef.current) {
-      gameRef.current = createGame(containerRef.current, scenes ?? []);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const currentZoom = () =>
+      computeZoom(container.clientWidth, container.clientHeight, window.devicePixelRatio);
+
+    if (gameRef.current === null) {
+      gameRef.current = createGame(container, scenes ?? [], currentZoom());
     }
 
-    const container = containerRef.current;
-    const observer = new ResizeObserver(() => {
-      gameRef.current?.scale.refresh();
-    });
-    if (container) observer.observe(container);
+    const applyZoom = () => {
+      const game = gameRef.current;
+      if (!game) return;
+      game.scale.setZoom(currentZoom());
+      game.scale.refresh();
+    };
+
+    const observer = new ResizeObserver(applyZoom);
+    observer.observe(container);
+
+    // A resolution media query only fires for the dpr it was built with, so the
+    // listener is re-armed against the new ratio after every change.
+    const canWatchDpr = typeof window.matchMedia === 'function';
+    let dprQuery: MediaQueryList | null = null;
+    const watchDpr = () => {
+      if (!canWatchDpr) return;
+      dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+      dprQuery.addEventListener('change', onDprChange);
+    };
+    const unwatchDpr = () => {
+      dprQuery?.removeEventListener('change', onDprChange);
+      dprQuery = null;
+    };
+    const onDprChange = () => {
+      unwatchDpr();
+      applyZoom();
+      watchDpr();
+    };
+    watchDpr();
 
     return () => {
       observer.disconnect();
+      unwatchDpr();
       gameRef.current?.destroy(true);
       gameRef.current = null;
     };
