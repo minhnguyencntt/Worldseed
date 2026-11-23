@@ -111,6 +111,10 @@ func LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error
 		cfg.Worker.WorldID = defaultWorldID
 	}
 
+	if err := validate(&cfg); err != nil {
+		return nil, err
+	}
+
 	return &cfg, nil
 }
 
@@ -122,4 +126,21 @@ func applyEnv(cfg *Config, getenv func(string) string) {
 	}
 	override(&cfg.Worker.RepoPath, "STORYFORGE_WORKER_REPO_PATH")
 	override(&cfg.Worker.WorldID, "STORYFORGE_WORKER_WORLD_ID")
+}
+
+func validate(cfg *Config) error {
+	w := cfg.Worker
+	if w.ExecutionTimeout < 0 {
+		return errors.New("config: worker.execution_timeout must not be negative")
+	}
+	if w.MaxRetries < 0 {
+		return errors.New("config: worker.max_retries must not be negative")
+	}
+	if w.MaxBudget < 0 {
+		return errors.New("config: worker.max_budget must not be negative")
+	}
+	if w.ProviderKind != "mock" && w.ProviderKind != "claude" {
+		return fmt.Errorf("config: worker.provider_kind %q must be mock or claude", w.ProviderKind)
+	}
+	return nil
 }

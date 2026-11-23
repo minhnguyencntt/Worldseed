@@ -40,6 +40,69 @@ func TestLoadFS_Defaults(t *testing.T) {
 	}
 }
 
+// TestLoadFS_NewFieldDefaults verifies that when the YAML only sets
+// worker.repo_path, LoadFS fills the newly added worker fields (work_root,
+// max_budget, auto_publish, provider_kind) with their documented defaults.
+func TestLoadFS_NewFieldDefaults(t *testing.T) {
+	fsys := fstest.MapFS{
+		"config.yaml": {Data: []byte("worker:\n  repo_path: /r\n")},
+	}
+
+	cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+	if err != nil {
+		t.Fatalf("LoadFS returned error: %v", err)
+	}
+
+	if cfg.Worker.WorkRoot != ".storyforge/work" {
+		t.Errorf("WorkRoot = %q; want %q", cfg.Worker.WorkRoot, ".storyforge/work")
+	}
+	if cfg.Worker.MaxBudget != 5 {
+		t.Errorf("MaxBudget = %v; want 5", cfg.Worker.MaxBudget)
+	}
+	if cfg.Worker.AutoPublish {
+		t.Errorf("AutoPublish = true; want false")
+	}
+	if cfg.Worker.ProviderKind != "mock" {
+		t.Errorf("ProviderKind = %q; want %q", cfg.Worker.ProviderKind, "mock")
+	}
+}
+
+// TestLoadFS_NewFieldExplicit verifies that explicit values for the newly
+// added worker fields (work_root, max_budget, auto_publish, provider_kind)
+// are loaded verbatim from the YAML instead of being replaced by defaults.
+func TestLoadFS_NewFieldExplicit(t *testing.T) {
+	yamlData := "worker:\n" +
+		"  repo_path: /r\n" +
+		"  work_root: /w\n" +
+		"  max_budget: 12.5\n" +
+		"  auto_publish: true\n" +
+		"  provider_kind: claude\n"
+	fsys := fstest.MapFS{
+		"config.yaml": {Data: []byte(yamlData)},
+	}
+
+	cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+	if err != nil {
+		t.Fatalf("LoadFS returned error: %v", err)
+	}
+
+	if cfg.Worker.RepoPath != "/r" {
+		t.Errorf("RepoPath = %q; want %q", cfg.Worker.RepoPath, "/r")
+	}
+	if cfg.Worker.WorkRoot != "/w" {
+		t.Errorf("WorkRoot = %q; want %q", cfg.Worker.WorkRoot, "/w")
+	}
+	if cfg.Worker.MaxBudget != 12.5 {
+		t.Errorf("MaxBudget = %v; want 12.5", cfg.Worker.MaxBudget)
+	}
+	if !cfg.Worker.AutoPublish {
+		t.Errorf("AutoPublish = false; want true")
+	}
+	if cfg.Worker.ProviderKind != "claude" {
+		t.Errorf("ProviderKind = %q; want %q", cfg.Worker.ProviderKind, "claude")
+	}
+}
+
 // TestLoadFS_EnvOverride verifies that the STORYFORGE_WORKER_REPO_PATH
 // environment variable takes precedence over worker.repo_path from the YAML.
 func TestLoadFS_EnvOverride(t *testing.T) {
