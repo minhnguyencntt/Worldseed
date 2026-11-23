@@ -86,6 +86,10 @@ func (p *Poller) Poll(ctx context.Context) (Result, error) {
 		case r.Status == StatusClosed:
 			res.Closed = append(res.Closed, r.ID)
 		case r.Status == StatusOpen && !p.clock.Now().Before(r.EndsAt):
+			if p.closer == nil {
+				errs = append(errs, fmt.Errorf("poller: close %s: no closer configured", r.ID))
+				continue
+			}
 			if err := p.closer.Close(ctx, p.worldID, r.ID); err != nil {
 				errs = append(errs, fmt.Errorf("poller: close %s: %w", r.ID, err))
 				continue
