@@ -15,7 +15,7 @@ interface ManifestAsset {
 }
 
 const manifest = JSON.parse(
-  readFileSync(join(publicRoot, 'manifest.json'), 'utf8'),
+  readFileSync(join(publicRoot, 'worlds/the-boys-room/manifest.json'), 'utf8'),
 ) as { assets: ManifestAsset[] };
 
 const svgAssets = manifest.assets.filter(
