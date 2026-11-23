@@ -1,10 +1,12 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '../../lib/utils';
 
 export type ButtonVariant = 'default' | 'ghost';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  asChild?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -13,13 +15,14 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'default', className, type = 'button', ...props },
+  { variant = 'default', asChild = false, className, type = 'button', ...props },
   ref,
 ) {
+  const Comp = asChild ? Slot : 'button';
   return (
-    <button
+    <Comp
       ref={ref}
-      type={type}
+      {...(asChild ? {} : { type })}
       className={cn(variantClasses[variant], className)}
       {...props}
     />
