@@ -113,3 +113,72 @@ func TestNew_RegistersRoutes(t *testing.T) {
 		}
 	})
 }
+
+// Given a server built from a config whose storage.repo_path is a temporary directory,
+// and a player session created with POST /api/v1/player/session,
+// when GET /api/v1/player/me/contributions?round_id=ROUND-0000001 is requested with the session cookies,
+// then it responds 200 with an empty JSON array,
+// when the legacy GET /api/v1/contributions/mine?round_id=ROUND-0000001 is requested with the same cookies,
+// then it responds 404 because the path no longer serves Mine,
+// and when GET /api/v1/player/me/contributions?round_id=ROUND-0000001 is requested without cookies,
+// then it responds 401.
+func TestNew_PlayerContributionsRoute(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	sessRec := httptest.NewRecorder()
+	h.ServeHTTP(sessRec, httptest.NewRequest(http.MethodPost, "/api/v1/player/session", nil))
+	if sessRec.Code != http.StatusCreated {
+		t.Fatalf("session status = %d, want %d", sessRec.Code, http.StatusCreated)
+	}
+	cookies := sessRec.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("session response set no cookie")
+	}
+
+	const path = "/api/v1/player/me/contributions?round_id=ROUND-0000001"
+	withCookies := func(method, target string) *http.Request {
+		req := httptest.NewRequest(method, target, nil)
+		for _, c := range cookies {
+			req.AddCookie(c)
+		}
+		return req
+	}
+
+	t.Run("GET /api/v1/player/me/contributions with session is served as an empty list", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := withCookies(http.MethodGet, path)
+		h.ServeHTTP(rec, req)
+		const want = http.StatusOK
+		if rec.Code != want {
+			t.Fatalf("status = %d, want %d", rec.Code, want)
+		}
+		if got := strings.TrimSpace(rec.Body.String()); got != "[]" {
+			t.Fatalf("body = %q, want %q", got, "[]")
+		}
+	})
+
+	t.Run("GET /api/v1/contributions/mine with session is no longer served", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := withCookies(http.MethodGet, "/api/v1/contributions/mine?round_id=ROUND-0000001")
+		h.ServeHTTP(rec, req)
+		const want = http.StatusNotFound
+		if rec.Code != want {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, want, rec.Body.String())
+		}
+	})
+
+	t.Run("GET /api/v1/player/me/contributions without session is unauthorized", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, path, nil)
+		h.ServeHTTP(rec, req)
+		const want = http.StatusUnauthorized
+		if rec.Code != want {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, want, rec.Body.String())
+		}
+	})
+}
