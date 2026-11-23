@@ -33,7 +33,6 @@ export function Countdown({ endsAt, now = () => Date.now() }: CountdownProps) {
     }, 1000);
     return () => clearInterval(id);
     // `now` is intentionally excluded: a default arrow is recreated every render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target]);
 
   return <time role="timer">{formatRemaining(remaining)}</time>;

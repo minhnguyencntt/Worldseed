@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getActiveNode } from '@game/systems/dialogue';
 import { ActionMenu } from './components/ActionMenu';
+import { ContributionSheet } from './components/ContributionSheet';
 import { Countdown } from './components/Countdown';
 import { GameLayout } from './components/GameLayout';
 import { IntroScreen } from './components/IntroScreen';
@@ -15,6 +16,7 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [begun, setBegun] = useState(false);
   const [round, setRound] = useState<RoundInfo | undefined>(undefined);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     getCurrentRound().then(setRound).catch(() => setRound(undefined));
