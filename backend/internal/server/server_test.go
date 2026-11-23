@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -81,4 +82,34 @@ func TestSessionThenMe(t *testing.T) {
 	if me["id"] != sess["id"] {
 		t.Fatalf("me id = %q, want session id %q", me["id"], sess["id"])
 	}
+}
+
+// Given a server built from a config whose storage.repo_path is a temporary directory,
+// when GET /api/v1/worlds is requested, then it responds 200,
+// and when POST /api/v1/contributions is sent without a session cookie, then it responds 401.
+func TestNew_RegistersRoutes(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	t.Run("GET /api/v1/worlds is served", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/worlds", nil))
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusOK, rec.Body.String())
+		}
+	})
+
+	t.Run("POST /api/v1/contributions without cookie is unauthorized", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/contributions", strings.NewReader(`{"prompt":"hello there"}`))
+		req.Header.Set("Content-Type", "application/json")
+		h.ServeHTTP(rec, req)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+		}
+	})
 }
