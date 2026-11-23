@@ -58,17 +58,22 @@ func New(dir string) *Store {
 	return &Store{dir: dir}
 }
 
-// validateID rejects IDs that are not safe to use as a file name inside the store directory.
-func validateID(id string) error {
+// ValidateID rejects IDs that are not safe to use as a file name inside the store directory.
+func ValidateID(id string) error {
 	if !idPattern.MatchString(id) || strings.Contains(id, "..") {
 		return fmt.Errorf("%w: %q", ErrInvalidID, id)
 	}
 	return nil
 }
 
+// ValidateID reports ErrInvalidID when id is not safe to use as a record file name.
+func ValidateID(id string) error {
+	return validateID(id)
+}
+
 // Save atomically writes e to <dir>/<e.ID>.json, replacing any previous record.
 func (s *Store) Save(e Execution) error {
-	if err := validateID(e.ID); err != nil {
+	if err := ValidateID(e.ID); err != nil {
 		return err
 	}
 	if err := os.MkdirAll(s.dir, 0o755); err != nil {
@@ -107,7 +112,7 @@ func (s *Store) Save(e Execution) error {
 
 // Get returns the execution with the given ID.
 func (s *Store) Get(id string) (Execution, error) {
-	if err := validateID(id); err != nil {
+	if err := ValidateID(id); err != nil {
 		return Execution{}, err
 	}
 	data, err := os.ReadFile(s.path(id))
