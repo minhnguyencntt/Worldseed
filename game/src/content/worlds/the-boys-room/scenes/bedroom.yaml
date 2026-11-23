@@ -7,7 +7,27 @@ dialogue:
     text: "I don't know what to do next. What should we do?"
     choices:
       - text: Look around the room
+        next: look-around
+        events:
+          - type: set_flag
+            flag: looked_around
+            value: true
       - text: "Let's explore"
+        next: explore
+        events:
+          - type: set_flag
+            flag: exploring
+            value: true
+  - id: look-around
+    speaker: boy
+    text: There is a bookshelf, a computer, a bed, a window and a door.
+    choices:
+      - text: Okay
+  - id: explore
+    speaker: boy
+    text: Something in here must lead somewhere.
+    choices:
+      - text: Okay
 objects:
   - id: bed
     name: Bed
@@ -23,6 +43,13 @@ objects:
         events:
           - type: show_text
             text: The blanket is warm and smells faintly of cedar.
+      - id: search
+        label: Search
+        events:
+          - type: add_item
+            item: old-key
+          - type: show_text
+            text: Under the pillow you find an old key.
 
   - id: bookshelf
     name: Bookshelf
@@ -72,6 +99,23 @@ objects:
           - type: show_text
             text: Pencil sketches of dragons cover the desk.
 
+  - id: secret-door-open
+    name: Secret Door
+    description: A narrow passage hidden behind the bookshelf.
+    asset: objects/secret-door-open
+    position: { x: 118, y: 40 }
+    scale: 1
+    layer: objects
+    visibleWhen:
+      - flag: secret_door_open
+    interactionBounds: { x: 0, y: 0, width: 30, height: 60 }
+    actions:
+      - id: inspect
+        label: Inspect
+        events:
+          - type: show_text
+            text: A narrow passage lies behind the shelf.
+
   - id: old-computer
     name: Old Computer
     description: A beige desktop computer with a dusty monitor.
@@ -111,6 +155,9 @@ objects:
         events:
           - type: show_text
             text: Through the blinds you can see the street below.
+          - type: set_flag
+            flag: window_seen
+            value: true
 
   - id: door
     name: Door
@@ -128,7 +175,14 @@ objects:
             text: The door is solid oak with a brass handle.
       - id: leave
         label: Leave
-        events: []
+        conditions:
+          - hasItem: old-key
+        events:
+          - type: set_flag
+            flag: door_unlocked
+            value: true
+          - type: show_text
+            text: The old key turns in the lock.
 
 effects:
   - type: dust

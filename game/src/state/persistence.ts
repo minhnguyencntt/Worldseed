@@ -35,12 +35,23 @@ export function deserializeState(json: string): GameState {
     if (!Array.isArray(parsed[field])) {
       throw new Error(`Invalid game state: ${field}`);
     }
+    if (!(parsed[field] as unknown[]).every((v) => typeof v === 'string')) {
+      throw new Error(`Invalid game state: ${field}`);
+    }
   }
 
   for (const field of ['flags', 'relationships'] as const) {
     if (!isPlainObject(parsed[field])) {
       throw new Error(`Invalid game state: ${field}`);
     }
+  }
+
+  if (!Object.values(parsed.flags as Record<string, unknown>).every((v) => typeof v === 'boolean')) {
+    throw new Error('Invalid game state: flags');
+  }
+
+  if (!Object.values(parsed.relationships as Record<string, unknown>).every((v) => typeof v === 'number')) {
+    throw new Error('Invalid game state: relationships');
   }
 
   if (parsed.activeDialogue !== null && typeof parsed.activeDialogue !== 'string') {
