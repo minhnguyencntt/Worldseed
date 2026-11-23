@@ -103,6 +103,13 @@ export function retryExecution(token: string, id: string): Promise<ExecutionInfo
   });
 }
 
+/** Rejects an AWAITING_APPROVAL execution (POST /api/v1/admin/executions/{id}/reject). */
+export function rejectExecution(token: string, id: string): Promise<ExecutionInfo> {
+  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/reject`, {
+    method: 'POST',
+  });
+}
+
 /** Lists every execution (GET /api/v1/admin/executions). */
 export function listExecutions(token: string): Promise<ExecutionInfo[]> {
   return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
