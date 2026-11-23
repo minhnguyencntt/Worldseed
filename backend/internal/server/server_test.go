@@ -547,9 +547,45 @@ func TestAdminRoundRoutes_Table(t *testing.T) {
 	if len(got) != len(want) {
 		t.Fatalf("route count = %d, want %d", len(got), len(want))
 	}
+	if len(got) != 5 {
+		t.Fatalf("want 5 routes, got %d", len(got))
+	}
 	for i, w := range want {
 		if got[i].Method != w.method || got[i].Pattern != w.pattern {
 			t.Errorf("route[%d] = %s %s, want %s %s", i, got[i].Method, got[i].Pattern, w.method, w.pattern)
+		}
+	}
+	for _, rt := range got {
+		if strings.Contains(rt.Pattern, "execution") {
+			t.Errorf("route %s %s contains \"execution\", want the round-only table", rt.Method, rt.Pattern)
+		}
+	}
+}
+
+// Given a server built from a config with admin.token "tok" and a temporary repo_path,
+// when GET /api/v1/admin/executions, POST /api/v1/admin/executions/x/approve and
+// POST /api/v1/admin/executions/x/retry are each requested with "Authorization: Bearer tok",
+// then every request responds 404 or 405, because the execution routes are no longer mounted.
+func TestNew_ExecutionRoutesAbsent(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	for _, c := range []struct{ m, p string }{
+		{http.MethodGet, "/api/v1/admin/executions"},
+		{http.MethodPost, "/api/v1/admin/executions/x/approve"},
+		{http.MethodPost, "/api/v1/admin/executions/x/retry"},
+	} {
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(c.m, c.p, nil)
+		req.Header.Set("Authorization", "Bearer tok")
+		h.ServeHTTP(rec, req)
+		if rec.Code != http.StatusNotFound && rec.Code != http.StatusMethodNotAllowed {
+			t.Fatalf("%s %s status = %d, want 404 or 405 (body=%q)", c.m, c.p, rec.Code, rec.Body.String())
 		}
 	}
 }

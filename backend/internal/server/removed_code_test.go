@@ -74,3 +74,23 @@ func TestWorkerModuleRemoved(t *testing.T) {
 		t.Fatalf("walk: %v", err)
 	}
 }
+
+// Given the server package sources server.go and rounds_adapter.go,
+// when each file is read from the package directory,
+// then neither contains the removed execution identifiers
+// "execution.", "ExecutionHandler", or the retired "storyforge/worker" import path.
+func TestServerHasNoExecutionWiring(t *testing.T) {
+	banned := []string{"execution.", "ExecutionHandler", "storyforge/worker"}
+
+	for _, f := range []string{"server.go", "rounds_adapter.go"} {
+		data, err := os.ReadFile(f)
+		if err != nil {
+			t.Fatalf("read %s: %v", f, err)
+		}
+		for _, b := range banned {
+			if strings.Contains(string(data), b) {
+				t.Errorf("%s still references %q", f, b)
+			}
+		}
+	}
+}
