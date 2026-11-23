@@ -1,5 +1,5 @@
 import { parse } from 'yaml';
-import type { ObjectDef, SceneDef, WorldDef } from '@game/state/types';
+import type { SceneDef, WorldDef } from '@game/state/types';
 
 // Content is bundled at build time from game/content (three levels up from src/runtime).
 const worldFiles = import.meta.glob('../../../content/worlds/the-boys-room/**/*.yaml', {
@@ -32,6 +32,3 @@ export const world: WorldDef = {
 };
 
 export const scene: SceneDef = parseYaml<SceneDef>('scenes/bedroom.yaml');
-
-// Sanity: the bedroom scene must be the start scene of the world.
-export const sceneObjects: ObjectDef[] = scene.objects;
