@@ -43,7 +43,7 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	r.Get("/api/v1/worlds", wh.List)
 	r.Get("/api/v1/worlds/{id}", wh.Get)
 	r.Get("/api/v1/worlds/{id}/game", wh.Game)
-	r.Get("/api/v1/worlds/{id}/rounds/current", wh.CurrentRound)
+	r.Get("/api/v1/worlds/{id}/round/current", wh.CurrentRound)
 
 	store := &contribution.FileStore{
 		Root: cfg.Storage.RepoPath,
