@@ -134,3 +134,22 @@ func TestValidateID(t *testing.T) {
 		})
 	}
 }
+
+// TestStatusRecoveringRoundTrip verifies that an execution saved with the
+// RECOVERING status and an error message is read back with both preserved.
+func TestStatusRecoveringRoundTrip(t *testing.T) {
+	s := New(t.TempDir())
+	if err := s.Save(Execution{ID: "exec-1", RoundID: "ROUND-0000001", Status: StatusRecovering, Error: "boom"}); err != nil {
+		t.Fatalf("Save(%q) returned error: %v", "exec-1", err)
+	}
+	got, err := s.Get("exec-1")
+	if err != nil {
+		t.Fatalf("Get(%q) returned error: %v", "exec-1", err)
+	}
+	if got.Status != "RECOVERING" {
+		t.Fatalf("Status = %q; want %q", got.Status, "RECOVERING")
+	}
+	if got.Error != "boom" {
+		t.Fatalf("Error = %q; want %q", got.Error, "boom")
+	}
+}
