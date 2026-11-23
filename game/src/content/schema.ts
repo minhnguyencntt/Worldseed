@@ -8,6 +8,12 @@ export const conditionSchema = z.union([
   z.object({ hasItem: z.string() }),
 ]);
 
+export const effectSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('dust'), asset: z.string(), count: z.number().int().positive(), area: boundsSchema }),
+  z.object({ type: z.literal('ambientLight'), color: z.string(), alpha: z.number().min(0).max(1) }),
+  z.object({ type: z.literal('transition'), kind: z.literal('fade'), durationMs: z.number().int().nonnegative() }),
+]);
+
 // Events are authored as open records; each must carry a string `type` discriminator.
 export const eventSchema = z.object({ type: z.string() }).catchall(z.unknown());
 
@@ -41,6 +47,7 @@ export const sceneSchema = z.object({
   openingDialogue: z.string().optional(),
   dialogue: z.array(z.record(z.string(), z.unknown())),
   objects: z.array(objectSchema),
+  effects: z.array(effectSchema).optional(),
 });
 
 export const worldSchema = z.object({
@@ -57,6 +64,7 @@ export type ConditionSpec = z.infer<typeof conditionSchema>;
 export type EventSpec = z.infer<typeof eventSchema>;
 export type ActionSpec = z.infer<typeof actionSchema>;
 export type ObjectSpec = z.infer<typeof objectSchema>;
+export type EffectSpec = z.infer<typeof effectSchema>;
 export type SceneSpec = z.infer<typeof sceneSchema>;
 export type WorldSpec = z.infer<typeof worldSchema>;
 

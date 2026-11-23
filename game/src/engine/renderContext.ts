@@ -16,3 +16,8 @@ export interface RenderSpriteSpec {
   bounds?: { x: number; y: number; width: number; height: number };
 }
 export interface RenderContext { createSprite(spec: RenderSpriteSpec): RenderHandle }
+export interface EffectHandle { destroy(): void }
+export interface EffectRenderContext {
+  createEffect(spec: EffectSpec & { depth: number }): EffectHandle;
+  playTransition(durationMs: number): void;
+}
