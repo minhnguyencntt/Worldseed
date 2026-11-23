@@ -119,9 +119,9 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             rows={3}
             aria-invalid={validation !== undefined || overLimit}
             aria-describedby={
-              ['contribution-idea-count', validation ? 'contribution-idea-error' : undefined, overLimit ? 'contribution-idea-limit' : undefined]
-                .filter(Boolean)
-                .join(' ')
+              validation
+                ? 'contribution-idea-error'
+                : ['contribution-idea-count', overLimit ? 'contribution-idea-limit' : undefined].filter(Boolean).join(' ')
             }
           />
           <p id="contribution-idea-count">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>
