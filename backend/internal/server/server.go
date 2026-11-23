@@ -32,6 +32,7 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 		Now:        time.Now,
 	}
 	r.Post("/api/v1/player/session", ph.CreateSession)
+	r.Get("/api/v1/player/me", ph.Me)
 
 	return r
 }

@@ -61,3 +61,35 @@ func (h *Handler) CreateSession(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(map[string]string{"id": id})
 }
+
+// Me reports the player id carried by the session cookie. It responds 200 with
+// {"id": "..."} when the cookie verifies and is unexpired, and 401 when the
+// cookie is missing, tampered, wrongly signed, expired or malformed.
+func (h *Handler) Me(w http.ResponseWriter, r *http.Request) {
+	if len(h.Secret) == 0 {
+		slog.Error("player: token secret is empty")
+		http.Error(w, "server misconfigured", http.StatusInternalServerError)
+		return
+	}
+
+	cookie, err := r.Cookie(h.CookieName)
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	now := time.Now()
+	if h.Now != nil {
+		now = h.Now()
+	}
+
+	id, err := Verify(h.Secret, cookie.Value, now, h.TTL)
+	if err != nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(map[string]string{"id": id})
+}
