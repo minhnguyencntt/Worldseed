@@ -40,3 +40,8 @@ export const executionFixture = {
   error: '',
   updated_at: '2026-01-01T00:00:45.000Z',
 };
+
+// A FAILED execution as the backend returns it. The planned log, tests and release_version
+// overrides were dropped: execution.Execution (backend/internal/execution/execution.go) has no
+// such fields, so the admin executions endpoint never sends them.
+export const failedExecutionFixture = { ...executionFixture, status: 'FAILED', error: 'build failed' };
