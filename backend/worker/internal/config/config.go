@@ -20,6 +20,9 @@ const (
 	defaultStoreDir         = ".storyforge/executions"
 	defaultStoreLockPath    = ".storyforge/worker.lock"
 	defaultWorldID          = "the-boys-room"
+	defaultWorkRoot         = ".storyforge/work"
+	defaultMaxBudget        = 5.0
+	defaultProviderKind     = "mock"
 )
 
 // Config is the root worker configuration.
@@ -36,6 +39,10 @@ type WorkerConfig struct {
 	PollInterval     time.Duration `yaml:"poll_interval"`
 	ExecutionTimeout time.Duration `yaml:"execution_timeout"`
 	MaxRetries       int           `yaml:"max_retries"`
+	WorkRoot         string        `yaml:"work_root"`
+	MaxBudget        float64       `yaml:"max_budget"`
+	AutoPublish      bool          `yaml:"auto_publish"`
+	ProviderKind     string        `yaml:"provider_kind"`
 }
 
 // LogConfig controls worker logging.
@@ -81,6 +88,15 @@ func LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error
 	}
 	if cfg.Worker.MaxRetries == 0 {
 		cfg.Worker.MaxRetries = defaultMaxRetries
+	}
+	if cfg.Worker.WorkRoot == "" {
+		cfg.Worker.WorkRoot = defaultWorkRoot
+	}
+	if cfg.Worker.MaxBudget == 0 {
+		cfg.Worker.MaxBudget = defaultMaxBudget
+	}
+	if cfg.Worker.ProviderKind == "" {
+		cfg.Worker.ProviderKind = defaultProviderKind
 	}
 	if cfg.Log.Level == "" {
 		cfg.Log.Level = defaultLogLevel
