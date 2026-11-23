@@ -27,6 +27,7 @@ export default function App() {
   const selected = game.view.find((o) => o.id === selectedId);
   return (
     <GameLayout
+      header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} />}
       scene={
         <>
           <SceneView
