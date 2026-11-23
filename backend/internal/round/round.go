@@ -66,15 +66,15 @@ func CanTransition(from, to Status) bool {
 
 // Round is one round record stored in round.yaml.
 type Round struct {
-	ID          string     `yaml:"id"`
-	WorldID     string     `yaml:"world"`
-	Number      int        `yaml:"number"`
-	Status      Status     `yaml:"status"`
-	StartsAt    time.Time  `yaml:"starts_at"`
-	EndsAt      time.Time  `yaml:"ends_at"`
-	BaseRelease string     `yaml:"base_release"`
-	FreezeCommit string    `yaml:"freeze_commit,omitempty"`
-	ClosedAt    *time.Time `yaml:"closed_at,omitempty"`
+	ID           string     `yaml:"id"`
+	WorldID      string     `yaml:"world"`
+	Number       int        `yaml:"number"`
+	Status       Status     `yaml:"status"`
+	StartsAt     time.Time  `yaml:"starts_at"`
+	EndsAt       time.Time  `yaml:"ends_at"`
+	BaseRelease  string     `yaml:"base_release"`
+	FreezeCommit string     `yaml:"freeze_commit,omitempty"`
+	ClosedAt     *time.Time `yaml:"closed_at,omitempty"`
 }
 
 // Transition moves the round to status to. It changes Status only when the lifecycle
