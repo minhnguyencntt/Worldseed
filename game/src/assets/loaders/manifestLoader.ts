@@ -84,3 +84,9 @@ export function checkAssetRefs(manifest: AssetManifest, refs: readonly string[])
   const ids = new Set(manifest.assets.map((a) => a.id));
   return refs.flatMap((ref, index) => (ids.has(ref) ? [] : [{ path: `refs.${index}`, message: `unknown asset ref: ${ref}` }]));
 }
+
+// Returns the manifest asset paths that are not present in presentFiles.
+export function findMissingAssetPaths(manifest: AssetManifest, presentFiles: readonly string[]): string[] {
+  const present = new Set(presentFiles);
+  return manifest.assets.map((a) => a.path).filter((p) => !present.has(p));
+}
