@@ -9,7 +9,7 @@ export interface StoryPanelProps {
 
 export function StoryPanel({ node, history, inventory, onChoose }: StoryPanelProps) {
   return (
-    <div className="story-panel">
+    <div className="story-content">
       {node && (
         <section className="dialogue">
           <h2>{node.speaker}</h2>
