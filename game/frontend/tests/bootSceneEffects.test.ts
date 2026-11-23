@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createInitialState } from '@game/state/gameState';
 import { buildEffects } from '@game/engine/buildEffects';
+import { playSceneTransition } from '@game/engine/playSceneTransition';
 import { useGameStore } from '../src/store/gameStore';
 import { BootScene } from '../src/phaser/BootScene';
 import { createPhaserEffectContext } from '../src/phaser/effectContext';
@@ -21,12 +22,18 @@ vi.mock('@game/engine/buildEffects', () => ({
   buildEffects: vi.fn(),
 }));
 
+// The transition helper drives the camera; BootScene only calls it, so it is replaced with a fake.
+vi.mock('@game/engine/playSceneTransition', () => ({
+  playSceneTransition: vi.fn(),
+}));
+
 const makeState = () => createInitialState(world, scene);
 
 describe('BootScene effects', () => {
   beforeEach(() => {
     useGameStore.setState({ state: null });
     vi.mocked(buildEffects).mockReset();
+    vi.mocked(playSceneTransition).mockReset();
   });
 
   it('builds the scene effects from the bundled bedroom scene when create() runs', () => {
@@ -41,6 +48,19 @@ describe('BootScene effects', () => {
     expect(sceneArg).toBe(scene);
     expect(typeof ctx.createEffect).toBe('function');
     expect(typeof ctx.playTransition).toBe('function');
+  });
+
+  it('plays the authored transition when create() runs', () => {
+    useGameStore.setState({ state: makeState() });
+    vi.mocked(buildEffects).mockReturnValue([]);
+    const boot = new BootScene();
+
+    boot.create();
+
+    expect(playSceneTransition).toHaveBeenCalledTimes(1);
+    const [ctx, sceneArg] = vi.mocked(playSceneTransition).mock.calls[0];
+    expect(typeof ctx.playTransition).toBe('function');
+    expect(sceneArg).toBe(scene);
   });
 
   it('destroys every effect handle returned by buildEffects when the SHUTDOWN callback runs', () => {
