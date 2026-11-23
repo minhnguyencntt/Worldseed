@@ -12,6 +12,10 @@ import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
 import { buildScene } from '@game/engine/buildScene';
 import type { SceneObject } from '@game/entities/SceneObject';
 import { createPhaserRenderContext } from './renderContext';
+import { resolveCharacterAnimation } from '@game/engine/characterAnimation';
+import type { CharacterSpec } from '@game/content/schema';
+import { layerDepth } from '@game/engine/layers';
+import type { AnimationDef } from '@game/assets/manifest';
 
 export const FALLBACK_KEY = 'fallback:missing';
 
@@ -21,6 +25,7 @@ export class BootScene extends Phaser.Scene {
   private effects: EffectHandle[] = [];
   private sceneObjects: SceneObject[] = [];
   private failed = new Set<string>();
+  private characterSprites: Phaser.GameObjects.Sprite[] = [];
 
   constructor() {
     super('BootScene');
@@ -42,6 +47,11 @@ export class BootScene extends Phaser.Scene {
     for (const id of plan.load) {
       const entry = manifest.assets.find((a: AssetEntry) => a.id === id);
       if (entry && entry.type === 'image') this.load.image(entry.id, `assets/${entry.path}`);
+      else if (entry && entry.type === 'spritesheet' && entry.frames)
+        this.load.spritesheet(entry.id, `assets/${entry.path}`, {
+          frameWidth: entry.frames.frameWidth,
+          frameHeight: entry.frames.frameHeight,
+        });
     }
   }
 
@@ -56,6 +66,7 @@ export class BootScene extends Phaser.Scene {
     this.effects = buildEffects(ctx, scene);
     this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
+    this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
     this.onStateChange();
     playSceneTransition(ctx, scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -65,8 +76,52 @@ export class BootScene extends Phaser.Scene {
       this.effects = [];
       this.sceneObjects.forEach((o) => o.destroy());
       this.sceneObjects = [];
+      this.characterSprites.forEach((s) => s.destroy());
+      this.characterSprites = [];
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
+  }
+
+  // Registers the manifest animation as a Phaser animation once, keyed `${asset}:${animation}`.
+  private ensureAnim(assetId: string, animation: string): string | null {
+    const key = `${assetId}:${animation}`;
+    const asset = manifest.assets.find((a) => a.id === assetId);
+    const def: AnimationDef | undefined = asset?.animations?.[animation];
+    if (!asset || !def || !this.textures.exists(assetId)) return null;
+    if (!this.anims.exists(key)) {
+      this.anims.create({
+        key,
+        frames: this.anims.generateFrameNumbers(assetId, { frames: def.frames }),
+        frameRate: def.frameRate,
+        repeat: def.repeat,
+      });
+    }
+    return key;
+  }
+
+  // Places a character sprite, idles it, and plays interact then idle when it is clicked.
+  private createCharacter(spec: CharacterSpec): Phaser.GameObjects.Sprite {
+    const idle = resolveCharacterAnimation(spec, 'idle', manifest);
+    const interact = resolveCharacterAnimation(spec, 'interact', manifest);
+    const origin = manifest.assets.find((a) => a.id === idle.asset)?.origin ?? { x: 0, y: 0 };
+    const idleKey = this.ensureAnim(idle.asset, idle.animation);
+    const interactKey = this.ensureAnim(interact.asset, interact.animation);
+
+    const sprite = this.add
+      .sprite(spec.position.x, spec.position.y, idleKey ? idle.asset : this.resolveKey(idle.asset))
+      .setOrigin(origin.x, origin.y)
+      .setScale(spec.scale)
+      .setDepth(layerDepth(spec.layer));
+    if (idleKey) sprite.play(idleKey);
+
+    sprite.setInteractive({ useHandCursor: true });
+    sprite.on(Phaser.Input.Events.POINTER_DOWN, () => {
+      if (!idleKey) return;
+      if (!interactKey || interactKey === idleKey) return;
+      sprite.play(interactKey);
+      sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.play(idleKey));
+    });
+    return sprite;
   }
 
   onStateChange(): void {
