@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildScene } from '@game/engine/buildScene';
 import { buildEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
+import type { SceneSpec } from '@game/content/schema';
 import { BootScene } from '../src/phaser/BootScene';
 import { createPhaserRenderContext } from '../src/phaser/renderContext';
 import { sceneSpec } from '../src/runtime/content';
@@ -135,7 +136,7 @@ describe('BootScene source has no hardcoded scene content', () => {
     readFileSync(fileURLToPath(new NodeURL('../src/phaser/renderContext.ts', import.meta.url)), 'utf8'),
   ].join('\n');
 
-  const ids = sceneSpec.objects.flatMap((o) => [o.id, o.asset]);
+  const ids = sceneSpec.objects.flatMap((o: SceneSpec['objects'][number]) => [o.id, o.asset]);
 
   it('contains no quoted object or asset id from the bundled scene spec', () => {
     expect(ids.length).toBeGreaterThan(0);

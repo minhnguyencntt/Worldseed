@@ -112,7 +112,7 @@ describe('playTransition: fade-in and ambient layer on the Phaser scene', () => 
 
   it('playTransition(400) starts the main camera fade-in for 400 ms', () => {
     const { fakeScene } = makeFakeScene();
-    const ctx = createPhaserEffectContext(fakeScene as never);
+    const ctx = createPhaserEffectContext(fakeScene as never, resolveKey);
 
     ctx.playTransition(400);
 
@@ -121,7 +121,7 @@ describe('playTransition: fade-in and ambient layer on the Phaser scene', () => 
 
   it('createEffect for ambientLight adds a full-scene rectangle with the authored depth', () => {
     const { fakeScene, rectangle } = makeFakeScene();
-    const ctx = createPhaserEffectContext(fakeScene as never);
+    const ctx = createPhaserEffectContext(fakeScene as never, resolveKey);
 
     const handle = ctx.createEffect({ type: 'ambientLight', color: '#1a2b3c', alpha: 0.4, depth: 7 });
 

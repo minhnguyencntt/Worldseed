@@ -73,7 +73,7 @@ describe('createPhaserEffectContext fallback key usage', () => {
   it('passes the resolved fallback key as the dust particle texture', () => {
     const emitter = { setDepth: vi.fn(), destroy: vi.fn() };
     emitter.setDepth.mockReturnValue(emitter);
-    const particles = vi.fn(() => emitter);
+    const particles = vi.fn<(...args: unknown[]) => unknown>(() => emitter);
     const scene = { add: { particles } } as unknown as Phaser.Scene;
 
     const ctx = createPhaserEffectContext(scene, () => FALLBACK);
