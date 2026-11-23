@@ -97,3 +97,32 @@ describe('loadWorld and validateWorld with a valid world', () => {
     expect(validateWorld({ ...validWorld, scenes: [validScene] })).toEqual([]);
   });
 });
+
+describe('validateWorld scene characters', () => {
+  const characterFields = {
+    position: { x: 0, y: 0 },
+    scale: 1,
+    layer: 'characters',
+    animations: { idle: { asset: 'a', animation: 'idle' } },
+  };
+
+  it('reports unknown scene character id with a path tag', () => {
+    const scene = {
+      ...validScene,
+      characters: [{ id: 'ghost', name: 'Ghost', ...characterFields }],
+    };
+
+    const errors = validateWorld({ ...validWorld, scenes: [scene] });
+
+    expect(errors).toContain('scenes[bedroom].characters[0].id: unknown character ghost');
+  });
+
+  it('accepts scene characters all in the world list', () => {
+    const scene = {
+      ...validScene,
+      characters: [{ id: 'boy', name: 'The Boy', ...characterFields }],
+    };
+
+    expect(validateWorld({ ...validWorld, scenes: [scene] })).toEqual([]);
+  });
+});
