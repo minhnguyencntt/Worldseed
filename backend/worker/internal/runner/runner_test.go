@@ -125,13 +125,13 @@ func TestRunLocked(t *testing.T) {
 }
 
 // TestRunCleanup verifies that a successful run releases the lock and removes its worktree.
-// Given the agent succeeds,
+// Given the agent succeeds and AutoPublish is true so the approval gate does not hold the worktree,
 // When Run completes,
 // Then the lock file is gone, the worktree is created and removed exactly once under WorkRoot/EXEC-1,
 // and the agent worked inside that same directory.
 func TestRunCleanup(t *testing.T) {
 	agent := &fakeAgent{cost: 0.5}
-	h := newRunner(t, Config{}, agent)
+	h := newRunner(t, Config{AutoPublish: true}, agent)
 
 	if _, err := h.r.Run(context.Background(), "EXEC-1", "ROUND-0000001"); err != nil {
 		t.Fatalf("Run returned error: %v", err)
