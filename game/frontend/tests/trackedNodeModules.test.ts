@@ -172,4 +172,15 @@ describe('checkTrackedFiles', () => {
 
     expect(checkTrackedFiles(run)).toEqual([]);
   });
+
+  it('reports a conflicted path once', () => {
+    // Given a fake git runner that lists the vitest results cache file three times
+    // (a conflicted index entry) plus a source file,
+    // when checkTrackedFiles is called with it,
+    // then the conflicted path is reported exactly once.
+    const conflicted = 'node_modules/.vite/vitest/results.json';
+    const run = vi.fn((_a: string[]) => `${conflicted}\0${conflicted}\0${conflicted}\0src/a.ts\0`);
+
+    expect(checkTrackedFiles(run)).toEqual([conflicted]);
+  });
 });
