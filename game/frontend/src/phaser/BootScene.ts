@@ -4,6 +4,7 @@ import { useGameStore } from '../store/gameStore';
 import { phaserToReact } from './events';
 import { createPhaserEffectContext } from './effectContext';
 import { buildEffects } from '@game/engine/buildEffects';
+import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
 import { scene } from '../runtime/content';
 
@@ -22,7 +23,9 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     this.unsubscribe = useGameStore.subscribe(() => this.onStateChange());
-    this.effects = buildEffects(createPhaserEffectContext(this), scene);
+    const ctx = createPhaserEffectContext(this);
+    this.effects = buildEffects(ctx, scene);
+    playSceneTransition(ctx, scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.unsubscribe?.();
       this.unsubscribe = null;
