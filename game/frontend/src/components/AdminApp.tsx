@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
 import {
   ApiError,
-  approveExecution,
   closeRound,
   createRound,
   getAdminRound,
-  findExecutionForRound,
   getCurrentRound,
   getWorld,
-  listExecutions,
   listRoundContributions,
   openRound,
-  rejectExecution,
-  retryExecution,
   WORLD_ID,
   type AdminContribution,
-  type ExecutionInfo,
   type Round,
 } from '../api/client';
-import { LifecycleStepper, deriveStage } from './LifecycleStepper';
-import { ExecutionPanel } from './ExecutionPanel';
+import { LifecycleStepper } from './LifecycleStepper';
 import { TokenGate } from './TokenGate';
 
 type RoundAction = (token: string, id: string) => Promise<Round>;
@@ -31,13 +24,10 @@ export function AdminApp() {
   const [roundId, setRoundId] = useState<string | undefined>(undefined);
   const [round, setRound] = useState<Round | undefined>(undefined);
   const [contributions, setContributions] = useState<AdminContribution[]>([]);
-  const [execution, setExecution] = useState<ExecutionInfo | undefined>(undefined);
   const [durationHours, setDurationHours] = useState(24);
   const [maxContributions, setMaxContributions] = useState(5);
   const [worldTitle, setWorldTitle] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [actionError, setActionError] = useState<string | undefined>(undefined);
-  const [actionDetail, setActionDetail] = useState<string | undefined>(undefined);
   const [reloads, setReloads] = useState(0);
 
   useEffect(() => {
@@ -64,22 +54,11 @@ export function AdminApp() {
   useEffect(() => {
     if (!token || !roundId) return;
     let cancelled = false;
-    Promise.all([
-      getAdminRound(token, roundId),
-      listRoundContributions(token, roundId),
-      listExecutions(token).then(
-        (all) => findExecutionForRound(all, roundId),
-        (err: unknown) => {
-          if (err instanceof ApiError && err.status === 401) throw err;
-          return undefined;
-        },
-      ),
-    ]).then(
-      ([loaded, list, exec]) => {
+    Promise.all([getAdminRound(token, roundId), listRoundContributions(token, roundId)]).then(
+      ([loaded, list]) => {
         if (cancelled) return;
         setRound(loaded);
         setContributions(list);
-        setExecution(exec);
         setError(undefined);
       },
       (err: unknown) => {
@@ -120,22 +99,6 @@ export function AdminApp() {
     }
   }
 
-  async function runExecutionAction(action: (token: string, id: string) => Promise<ExecutionInfo>, id: string) {
-    setActionError(undefined);
-    setActionDetail(undefined);
-    try {
-      await action(token, id);
-      setReloads((n) => n + 1);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
-        handleError(err);
-        return;
-      }
-      setActionError(err instanceof Error ? err.message : 'Request failed');
-      setActionDetail(err instanceof ApiError ? err.detail : undefined);
-    }
-  }
-
   if (!token) {
     return (
       <TokenGate
@@ -159,18 +122,7 @@ export function AdminApp() {
       ) : (
         <p>Loading round…</p>
       )}
-      {round ? <LifecycleStepper status={deriveStage(round.status, execution?.status)} /> : null}
-      {round ? (
-        <ExecutionPanel
-          execution={execution}
-          contributionCount={contributions.length}
-          onApprove={(id) => runExecutionAction(approveExecution, id)}
-          onRetry={(id) => runExecutionAction(retryExecution, id)}
-          onReject={(id) => runExecutionAction(rejectExecution, id)}
-          actionError={actionError}
-          actionDetail={actionDetail}
-        />
-      ) : null}
+      {round ? <LifecycleStepper status={round.status} /> : null}
       <label>
         Duration (hours)
         <input

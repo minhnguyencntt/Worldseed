@@ -22,19 +22,6 @@ export interface AdminContribution extends Contribution {
   prompt_hash: string;
 }
 
-/** An execution as the admin execution endpoints return it (backend/internal/execution/execution.go). */
-export interface ExecutionInfo {
-  id: string;
-  world_id: string;
-  round_id: string;
-  status: string;
-  error: string;
-  updated_at: string;
-  log?: string;
-  tests?: string;
-  release_version?: string;
-}
-
 export class ApiError extends Error {
   readonly status: number;
   /** The server's `error` message from a JSON error body, when it sent one. */
@@ -123,45 +110,6 @@ export function listRoundContributions(token: string, id: string): Promise<Admin
     token,
     `/api/v1/admin/rounds/${encodeURIComponent(id)}/contributions?world=${WORLD_ID}`,
   );
-}
-
-/** Approves an AWAITING_APPROVAL execution (POST /api/v1/admin/executions/{id}/approve). */
-export function approveExecution(token: string, id: string): Promise<ExecutionInfo> {
-  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/approve`, {
-    method: 'POST',
-  });
-}
-
-/** Retries a FAILED execution (POST /api/v1/admin/executions/{id}/retry). */
-export function retryExecution(token: string, id: string): Promise<ExecutionInfo> {
-  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/retry`, {
-    method: 'POST',
-  });
-}
-
-/** Rejects an AWAITING_APPROVAL execution (POST /api/v1/admin/executions/{id}/reject). */
-export function rejectExecution(token: string, id: string): Promise<ExecutionInfo> {
-  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/reject`, {
-    method: 'POST',
-  });
-}
-
-/** Lists every execution (GET /api/v1/admin/executions). */
-export function listExecutions(token: string): Promise<ExecutionInfo[]> {
-  return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
-}
-
-/** Picks the newest execution (greatest updated_at) whose round_id matches, or undefined when none match. */
-export function findExecutionForRound(list: ExecutionInfo[], roundId: string): ExecutionInfo | undefined {
-  return list
-    .filter((e) => e.round_id === roundId)
-    .reduce<ExecutionInfo | undefined>((best, e) => (!best || e.updated_at > best.updated_at ? e : best), undefined);
-}
-
-/** Resolves the ExecutionInfo for the current Round of a world, or undefined when it has none. */
-export async function getCurrentRoundExecution(token: string, worldId: string = WORLD_ID): Promise<ExecutionInfo | undefined> {
-  const [round, list] = await Promise.all([getCurrentRound(worldId), listExecutions(token)]);
-  return findExecutionForRound(list, round.id);
 }
 
 const BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '';
