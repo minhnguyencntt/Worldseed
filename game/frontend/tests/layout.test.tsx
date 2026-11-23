@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { GameLayout } from '../src/components/GameLayout';
+import { StoryPanel } from '../src/components/StoryPanel';
 
 describe('GameLayout drawer toggle and styles', () => {
   afterEach(() => {
@@ -38,5 +39,33 @@ describe('GameLayout drawer toggle and styles', () => {
 
     expect(css).toContain('overflow-y: auto');
     expect(css).toContain('@media (max-width: 768px)');
+  });
+
+  it('Given GameLayout wrapping StoryPanel, when rendered, then exactly one .story-panel exists', () => {
+    const { container } = render(
+      <GameLayout
+        scene={<div />}
+        story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />}
+      />,
+    );
+
+    expect(container.querySelectorAll('.story-panel')).toHaveLength(1);
+  });
+
+  it('Given the Story button clicked, when open, then only the aside has drawer-open and StoryPanel root is story-content', () => {
+    const { container } = render(
+      <GameLayout
+        scene={<div />}
+        story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Story' }));
+    const panel = container.querySelector('.story-panel');
+    expect(panel).toHaveClass('drawer-open');
+    expect(container.querySelectorAll('.drawer-open')).toHaveLength(1);
+    const content = container.querySelector('.story-content');
+    expect(content).not.toBeNull();
+    expect(content).not.toHaveClass('story-panel');
   });
 });
