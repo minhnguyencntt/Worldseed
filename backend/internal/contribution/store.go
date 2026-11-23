@@ -14,6 +14,7 @@ import (
 
 	"github.com/worldseed/storyforge/backend/internal/gitrepo"
 	"github.com/worldseed/storyforge/backend/internal/safepath"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -162,6 +163,71 @@ func (s *FileStore) ListByRound(_ context.Context, worldID, roundID string) ([]C
 		return out[i].ID < out[j].ID
 	})
 	return out, nil
+}
+
+// FrozenIDs returns the contribution IDs listed in the round's snapshot.yaml, in the
+// order the snapshot lists them. It returns ErrNotFound when the round has no snapshot.
+func (s *FileStore) FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error) {
+	if err := safepath.Segment(worldID); err != nil {
+		return nil, fmt.Errorf("contribution: world id: %w", err)
+	}
+	if err := safepath.Segment(roundID); err != nil {
+		return nil, fmt.Errorf("contribution: round id: %w", err)
+	}
+	snapshotPath := filepath.Join(s.Root, "worlds", worldID, "rounds", strings.ToLower(roundID), "snapshot.yaml")
+	data, err := os.ReadFile(snapshotPath)
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("contribution: read snapshot: %w", err)
+	}
+
+	var snap struct {
+		Contributions []struct {
+			ID string `yaml:"id"`
+		} `yaml:"contributions"`
+	}
+	if err := yaml.Unmarshal(data, &snap); err != nil {
+		return nil, fmt.Errorf("contribution: parse snapshot: %w", err)
+	}
+	ids := make([]string, 0, len(snap.Contributions))
+	for _, c := range snap.Contributions {
+		ids = append(ids, c.ID)
+	}
+	return ids, nil
+}
+
+// FrozenIDs returns the contribution ids listed in the round's snapshot.yaml. It returns
+// ErrNotFound when the round has no snapshot.
+func (s *FileStore) FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error) {
+	if err := safepath.Segment(worldID); err != nil {
+		return nil, fmt.Errorf("contribution: world id: %w", err)
+	}
+	if err := safepath.Segment(roundID); err != nil {
+		return nil, fmt.Errorf("contribution: round id: %w", err)
+	}
+	path := filepath.Join(s.Root, "worlds", worldID, "rounds", strings.ToLower(roundID), "snapshot.yaml")
+	data, err := os.ReadFile(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil, ErrNotFound
+	}
+	if err != nil {
+		return nil, fmt.Errorf("contribution: read snapshot: %w", err)
+	}
+	var snap struct {
+		Contributions []struct {
+			ID string `yaml:"id"`
+		} `yaml:"contributions"`
+	}
+	if err := yaml.Unmarshal(data, &snap); err != nil {
+		return nil, fmt.Errorf("contribution: parse snapshot: %w", err)
+	}
+	ids := make([]string, 0, len(snap.Contributions))
+	for _, e := range snap.Contributions {
+		ids = append(ids, e.ID)
+	}
+	return ids, nil
 }
 
 // ListByPlayer returns the player's contributions in the given round, oldest first.
