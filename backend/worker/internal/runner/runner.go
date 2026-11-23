@@ -1,10 +1,11 @@
 // Package runner executes one worker Execution: it takes the per-World lock,
-// records the RUNNING state, prepares a work directory, runs the agent once
-// under a timeout and persists the final status.
+// records the RUNNING state, prepares a work directory, runs the agent under a
+// timeout with retries within the cost budget and persists the final status.
 package runner
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"time"
@@ -12,6 +13,10 @@ import (
 	"github.com/worldseed/storyforge/worker/internal/lock"
 	"github.com/worldseed/storyforge/worker/internal/store"
 )
+
+// ErrBudgetExceeded is returned (wrapped) when the accumulated agent cost of an
+// execution goes over Config.MaxBudget, which stops further retries.
+var ErrBudgetExceeded = errors.New("runner: budget exceeded")
 
 // Agent performs the work for one execution inside workDir and reports its cost.
 type Agent interface {
@@ -63,8 +68,12 @@ func New(cfg Config, st *store.Store, a Agent, t Worktrees, p Publisher, now fun
 }
 
 // Run executes the execution id for roundID. It returns lock.ErrLocked (wrapped)
-// if another run holds the lock. On agent failure, including timeout, the
-// stored record is FAILED with the error text and the error is returned.
+// if another run holds the lock. A failing agent run, including timeout, is
+// retried up to Config.MaxRetries times; each attempt gets its own Timeout.
+// Retries stop early with ErrBudgetExceeded (wrapped) once the accumulated
+// agent cost is over Config.MaxBudget (a zero or negative budget is unlimited).
+// When the agent gives up, the stored record is FAILED with the last error
+// text and that error is returned.
 func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, error) {
 	l, err := lock.Acquire(r.cfg.LockPath)
 	if err != nil {
@@ -88,11 +97,25 @@ func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, 
 		return e, fmt.Errorf("runner: create worktree: %w", err)
 	}
 
-	tctx, cancel := context.WithTimeout(ctx, r.cfg.Timeout)
-	defer cancel()
+	var spent float64
+	for attempt := 1; ; attempt++ {
+		e.Attempt = attempt
+		cost, runErr := r.runAttempt(ctx, dir)
+		spent += cost
+		err = runErr
+		if err == nil {
+			break
+		}
+		if attempt > r.cfg.MaxRetries {
+			break
+		}
+		if r.cfg.MaxBudget > 0 && spent > r.cfg.MaxBudget {
+			err = fmt.Errorf("%w: spent %.2f of %.2f after attempt %d: %w",
+				ErrBudgetExceeded, spent, r.cfg.MaxBudget, attempt, err)
+			break
+		}
+	}
 
-	e.Attempt = 1
-	_, err = r.agent.Run(tctx, dir)
 	if err != nil {
 		e.Status = store.StatusFailed
 		e.Error = err.Error()
@@ -115,4 +138,11 @@ func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, 
 		return e, fmt.Errorf("runner: remove worktree: %w", err)
 	}
 	return e, nil
+}
+
+// runAttempt runs the agent once in dir under a fresh Timeout and returns its cost.
+func (r *Runner) runAttempt(ctx context.Context, dir string) (float64, error) {
+	tctx, cancel := context.WithTimeout(ctx, r.cfg.Timeout)
+	defer cancel()
+	return r.agent.Run(tctx, dir)
 }
