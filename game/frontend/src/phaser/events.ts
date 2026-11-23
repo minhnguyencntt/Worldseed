@@ -3,6 +3,7 @@
 export interface PhaserToReactEvents {
   objectHover: { id: string | null };
   objectClick: { id: string };
+  characterClick: { id: string };
   sceneReady: { sceneId: string };
 }
 

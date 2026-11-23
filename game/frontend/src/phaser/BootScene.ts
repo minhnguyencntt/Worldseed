@@ -116,6 +116,7 @@ export class BootScene extends Phaser.Scene {
 
     sprite.setInteractive({ useHandCursor: true });
     sprite.on(Phaser.Input.Events.POINTER_DOWN, () => {
+      phaserToReact.emit('characterClick', { id: spec.id });
       if (!idleKey) return;
       if (!interactKey || interactKey === idleKey) return;
       sprite.play(interactKey);
