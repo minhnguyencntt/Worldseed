@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type RefObject } from 'react';
-import { ApiError, listMine, MAX_PER_PLAYER, submitContribution } from '../api/client';
+import { ApiError, listMine, MAX_PER_PLAYER, MAX_PROMPT_LENGTH, submitContribution } from '../api/client';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog';
 
 export interface ContributionSheetProps {
@@ -65,6 +65,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   }, [open, roundId]);
 
   const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
+  const length = Array.from(text.trim()).length;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -115,8 +116,9 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             }}
             rows={3}
             aria-invalid={validation !== undefined}
-            aria-describedby={validation ? 'contribution-idea-error' : undefined}
+            aria-describedby={validation ? 'contribution-idea-count contribution-idea-error' : 'contribution-idea-count'}
           />
+          <p id="contribution-idea-count">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>
           <button type="submit">Send</button>
         </form>
         {validation && <p id="contribution-idea-error" role="alert">{validation}</p>}

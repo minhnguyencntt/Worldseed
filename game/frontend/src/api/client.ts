@@ -1,5 +1,6 @@
 export const WORLD_ID = 'the-boys-room';
 export const MAX_PER_PLAYER = 5;
+export const MAX_PROMPT_LENGTH = 500;
 
 export interface Round {
   id: string;
