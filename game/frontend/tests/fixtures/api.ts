@@ -1,4 +1,4 @@
-import type { AdminContribution, Contribution, Round } from '../../src/api/client';
+import type { AdminContribution, Contribution, Round, World } from '../../src/api/client';
 
 // Mirrors contributionJSON in backend/internal/contribution/handler.go:
 // id, world_id, round_id, player_id, prompt, created_at (RFC 3339 time).
@@ -18,6 +18,12 @@ export const roundFixture: Round = {
   status: 'OPEN',
   starts_at: '2026-01-01T00:00:00.000Z',
   ends_at: '2026-01-01T00:01:30.000Z',
+};
+
+/** A world shaped like the backend world.World JSON (id, title; backend/internal/world/world.go). The title matches world.yaml in backend/internal/world/world_test.go. */
+export const worldFixture: World = {
+  id: 'the-boys-room',
+  title: 'The Boys Room',
 };
 
 /** A contribution as the admin contributions endpoint returns it (contributionJSON in backend/internal/admin/rounds.go, which adds prompt_hash). */
