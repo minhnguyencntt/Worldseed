@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
@@ -29,7 +29,8 @@ describe('App legacy header removal', () => {
   });
 
   it('Given App.tsx source, then it has no RoundBadge or Countdown references', () => {
-    const source = readFileSync(fileURLToPath(new URL('../src/App.tsx', import.meta.url)), 'utf8');
+    // Vitest runs from game/frontend (see the Run step), so the path is cwd-relative.
+    const source = readFileSync(resolve(process.cwd(), 'src/App.tsx'), 'utf8');
 
     expect(source).not.toMatch(/RoundBadge|Countdown/);
   });
