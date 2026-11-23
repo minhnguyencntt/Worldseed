@@ -3,13 +3,17 @@ import {
   ApiError,
   closeRound,
   getAdminRound,
+  findExecutionForRound,
   getCurrentRound,
+  listExecutions,
   listRoundContributions,
   openRound,
   WORLD_ID,
   type AdminContribution,
+  type ExecutionInfo,
   type Round,
 } from '../api/client';
+import { LifecycleStepper, deriveStage } from './LifecycleStepper';
 import { TokenGate } from './TokenGate';
 
 type RoundAction = (token: string, id: string) => Promise<Round>;
@@ -21,6 +25,7 @@ export function AdminApp() {
   const [roundId, setRoundId] = useState<string | undefined>(undefined);
   const [round, setRound] = useState<Round | undefined>(undefined);
   const [contributions, setContributions] = useState<AdminContribution[]>([]);
+  const [execution, setExecution] = useState<ExecutionInfo | undefined>(undefined);
   const [durationHours, setDurationHours] = useState(24);
   const [maxContributions, setMaxContributions] = useState(5);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -44,11 +49,22 @@ export function AdminApp() {
   useEffect(() => {
     if (!token || !roundId) return;
     let cancelled = false;
-    Promise.all([getAdminRound(token, roundId), listRoundContributions(token, roundId)]).then(
-      ([loaded, list]) => {
+    Promise.all([
+      getAdminRound(token, roundId),
+      listRoundContributions(token, roundId),
+      listExecutions(token).then(
+        (all) => findExecutionForRound(all, roundId),
+        (err: unknown) => {
+          if (err instanceof ApiError && err.status === 401) throw err;
+          return undefined;
+        },
+      ),
+    ]).then(
+      ([loaded, list, exec]) => {
         if (cancelled) return;
         setRound(loaded);
         setContributions(list);
+        setExecution(exec);
         setError(undefined);
       },
       (err: unknown) => {
@@ -102,6 +118,7 @@ export function AdminApp() {
       ) : (
         <p>Loading round…</p>
       )}
+      {round ? <LifecycleStepper status={deriveStage(round.status, execution?.status)} /> : null}
       <label>
         Duration (hours)
         <input
