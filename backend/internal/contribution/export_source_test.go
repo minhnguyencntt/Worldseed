@@ -2,6 +2,7 @@ package contribution
 
 import (
 	"context"
+	"errors"
 	"go/parser"
 	"go/token"
 	"strings"
@@ -12,10 +13,15 @@ import (
 // contract without touching the file-backed store.
 type fakeSource struct {
 	contributions []Contribution
+	frozen        []string
 }
 
 func (f *fakeSource) ListByRound(_ context.Context, _, _ string) ([]Contribution, error) {
 	return f.contributions, nil
+}
+
+func (f *fakeSource) FrozenIDs(_ context.Context, _, _ string) ([]string, error) {
+	return f.frozen, nil
 }
 
 // TestExportSource_Fake verifies that a fake source satisfies ExportSource and
@@ -36,6 +42,23 @@ func TestExportSource_Fake(t *testing.T) {
 	}
 	if len(list) != 2 {
 		t.Fatalf("ListByRound returned %d entries, want 2", len(list))
+	}
+}
+
+// TestFileStore_ImplementsExportSource verifies that FileStore satisfies
+// ExportSource and that FrozenIDs reports ErrNotFound when the round has no
+// snapshot.yaml.
+//
+// Given a FileStore rooted at an empty directory,
+// When FrozenIDs is called for world "w" and round "ROUND-0000001" through the
+// ExportSource interface,
+// Then the call returns an error matching ErrNotFound.
+func TestFileStore_ImplementsExportSource(t *testing.T) {
+	var src ExportSource = &FileStore{Root: t.TempDir()}
+
+	_, err := src.FrozenIDs(context.Background(), "w", "ROUND-0000001")
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatalf("FrozenIDs error = %v, want ErrNotFound", err)
 	}
 }
 

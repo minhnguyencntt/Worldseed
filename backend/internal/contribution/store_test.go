@@ -316,3 +316,80 @@ func TestFileStore_ListByRound(t *testing.T) {
 		t.Errorf("ListByRound order = [%s %s], want oldest first [c d]", list[0].ID, list[1].ID)
 	}
 }
+
+// Given a round whose snapshot.yaml lists contributions 'a' and 'b',
+// When FrozenIDs is called for that round,
+// Then it returns the listed IDs in snapshot order.
+// Given a round with no snapshot.yaml,
+// When FrozenIDs is called for that round,
+// Then it returns ErrNotFound.
+// Given a world or round ID that is not a safe path segment,
+// When FrozenIDs is called,
+// Then it returns an error that is not ErrNotFound.
+func TestFileStore_FrozenIDs(t *testing.T) {
+	const snapshotYAML = `round: ROUND-0000001
+world: w
+frozen_at: 2026-11-23T10:00:00Z
+contributions:
+  - id: a
+    player: player-a
+    created_at: 2026-11-23T09:00:00Z
+    prompt_sha256: 3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d
+  - id: b
+    player: player-b
+    created_at: 2026-11-23T09:05:00Z
+    prompt_sha256: 2e7d2c03a9507ae265ecf5b5356885a53393a2029d241394997265a1a25aefc6
+`
+
+	t.Run("snapshot lists IDs in order", func(t *testing.T) {
+		root := t.TempDir()
+		dir := filepath.Join(root, "worlds", "w", "rounds", "round-0000001")
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			t.Fatalf("MkdirAll: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(dir, "snapshot.yaml"), []byte(snapshotYAML), 0o444); err != nil {
+			t.Fatalf("WriteFile: %v", err)
+		}
+		store := &FileStore{Root: root, Git: &fakeCommitter{}}
+
+		got, err := store.FrozenIDs(context.Background(), "w", "ROUND-0000001")
+		if err != nil {
+			t.Fatalf("FrozenIDs: %v", err)
+		}
+		want := []string{"a", "b"}
+		if len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
+			t.Errorf("FrozenIDs = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("missing snapshot returns ErrNotFound", func(t *testing.T) {
+		store := &FileStore{Root: t.TempDir(), Git: &fakeCommitter{}}
+
+		_, err := store.FrozenIDs(context.Background(), "w", "ROUND-0000001")
+		if !errors.Is(err, ErrNotFound) {
+			t.Fatalf("FrozenIDs error = %v, want ErrNotFound", err)
+		}
+	})
+
+	unsafeCases := []struct {
+		name    string
+		worldID string
+		roundID string
+	}{
+		{name: "parent directory world ID", worldID: "../x", roundID: "ROUND-0000001"},
+		{name: "slash in round ID", worldID: "w", roundID: "a/b"},
+	}
+	for _, tc := range unsafeCases {
+		t.Run(tc.name, func(t *testing.T) {
+			store := &FileStore{Root: t.TempDir(), Git: &fakeCommitter{}}
+
+			_, err := store.FrozenIDs(context.Background(), tc.worldID, tc.roundID)
+			if err == nil {
+				t.Fatalf("FrozenIDs(%q, %q) error = nil, want non-nil", tc.worldID, tc.roundID)
+			}
+			if errors.Is(err, ErrNotFound) {
+				t.Errorf("FrozenIDs(%q, %q) error = %v, must not be ErrNotFound", tc.worldID, tc.roundID, err)
+			}
+		})
+	}
+}
