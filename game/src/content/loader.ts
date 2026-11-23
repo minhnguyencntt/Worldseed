@@ -139,6 +139,12 @@ export function validateWorld(world: LoadedWorld): string[] {
       for (const choice of node.choices) checkChoice(choice, dialogueIds, ctx, errors);
     }
 
+    (scene.characters ?? []).forEach((character, i) => {
+      if (!characters.has(character.id)) {
+        errors.push(`scenes[${scene.id}].characters[${i}].id: unknown character ${character.id}`);
+      }
+    });
+
     for (const obj of scene.objects) {
       if (obj.openWhenFlag !== undefined && !flags.has(obj.openWhenFlag)) {
         errors.push(`unknown flag: ${obj.openWhenFlag}`);
