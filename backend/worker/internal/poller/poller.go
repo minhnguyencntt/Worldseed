@@ -5,6 +5,7 @@ package poller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -77,14 +78,22 @@ func (p *Poller) Poll(ctx context.Context) (Result, error) {
 		return res, fmt.Errorf("poller: list rounds: %w", err)
 	}
 
+	var errs []error
 	for _, r := range rounds {
-		switch r.Status {
-		case StatusScheduled:
+		switch {
+		case r.Status == StatusScheduled:
 			res.Scheduled = append(res.Scheduled, r.ID)
-		case StatusClosed:
+		case r.Status == StatusClosed:
+			res.Closed = append(res.Closed, r.ID)
+		case r.Status == StatusOpen && !p.clock.Now().Before(r.EndsAt):
+			if err := p.closer.Close(ctx, p.worldID, r.ID); err != nil {
+				errs = append(errs, fmt.Errorf("poller: close %s: %w", r.ID, err))
+				continue
+			}
+			res.ClosedNow = append(res.ClosedNow, r.ID)
 			res.Closed = append(res.Closed, r.ID)
 		}
 	}
 
-	return res, nil
+	return res, errors.Join(errs...)
 }
