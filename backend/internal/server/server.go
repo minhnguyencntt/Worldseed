@@ -14,7 +14,6 @@ import (
 	"github.com/worldseed/storyforge/backend/internal/admin"
 	"github.com/worldseed/storyforge/backend/internal/config"
 	"github.com/worldseed/storyforge/backend/internal/contribution"
-	"github.com/worldseed/storyforge/backend/internal/execution"
 	"github.com/worldseed/storyforge/backend/internal/gitrepo"
 	"github.com/worldseed/storyforge/backend/internal/player"
 	"github.com/worldseed/storyforge/backend/internal/round"
@@ -82,13 +81,6 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	r.Get("/api/v1/player/me/contributions", ch.Mine)
 	r.Get("/api/v1/contributions/{id}", ch.Get)
 
-	exStore := &execution.FileStore{
-		Root: cfg.Storage.RepoPath,
-		Git:  gitCLI,
-		Now:  time.Now,
-	}
-	eh := &execution.Handler{Service: exStore}
-
 	rs := newRoundService(cfg)
 	rh := &admin.RoundHandler{
 		Rounds: roundDefaults{
@@ -100,7 +92,7 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	}
 	r.Route("/api/v1/admin", func(ar chi.Router) {
 		ar.Use(admin.Middleware(cfg.Admin.Token))
-		for _, rt := range adminRoutes(eh, rh) {
+		for _, rt := range adminRoundRoutes(rh) {
 			ar.Method(rt.Method, rt.Pattern, rt.Handler)
 		}
 	})
@@ -124,16 +116,6 @@ func adminRoundRoutes(rh *admin.RoundHandler) []adminRoute {
 		{http.MethodGet, "/rounds/{id}", rh.Get},
 		{http.MethodGet, "/rounds/{id}/contributions", rh.Contributions},
 	}
-}
-
-// adminRoutes returns every admin route: the execution routes followed by the
-// round routes. New mounts them all behind admin.Middleware.
-func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute {
-	return append([]adminRoute{
-		{http.MethodGet, "/executions", eh.List},
-		{http.MethodPost, "/executions/{id}/retry", eh.Retry},
-		{http.MethodPost, "/executions/{id}/approve", eh.Approve},
-	}, adminRoundRoutes(rh)...)
 }
 
 // NewScheduler returns the round scheduler that opens and closes rounds on the
