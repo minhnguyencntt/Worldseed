@@ -65,3 +65,66 @@ describe('ContributionSheet max length counter', () => {
     expect(MAX_PROMPT_LENGTH).toBe(500);
   });
 });
+
+describe('ContributionSheet over limit', () => {
+  beforeEach(() => {
+    submitMock.mockReset();
+    listMineMock.mockReset();
+    listMineMock.mockResolvedValue([contributionFixture]);
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('501 characters show "Too long: 501 / 500" and block submit', () => {
+    renderSheet();
+    const value = 'a'.repeat(501);
+
+    fireEvent.change(screen.getByLabelText('Your idea'), { target: { value } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(screen.getByRole('alert').textContent).toBe('Too long: 501 / 500');
+    expect(screen.getByLabelText('Your idea').getAttribute('aria-invalid')).toBe('true');
+    expect(submitMock).not.toHaveBeenCalled();
+    expect((screen.getByLabelText('Your idea') as HTMLTextAreaElement).value).toHaveLength(501);
+  });
+
+  it('500 characters show no limit message and submit the full string', async () => {
+    submitMock.mockResolvedValue(contributionFixture);
+    renderSheet();
+    const value = 'a'.repeat(500);
+
+    fireEvent.change(screen.getByLabelText('Your idea'), { target: { value } });
+    expect(screen.queryByText(/Too long/)).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+    expect(submitMock).toHaveBeenCalledWith(value);
+  });
+
+  it('changing from 501 to 500 characters removes the limit message', () => {
+    renderSheet();
+
+    fireEvent.change(screen.getByLabelText('Your idea'), { target: { value: 'a'.repeat(501) } });
+    expect(screen.getByText('Too long: 501 / 500')).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText('Your idea'), { target: { value: 'a'.repeat(500) } });
+    expect(screen.queryByText(/Too long/)).toBeNull();
+  });
+
+  it('500 characters plus surrounding spaces still submit the trimmed 500-character string', async () => {
+    submitMock.mockResolvedValue(contributionFixture);
+    renderSheet();
+    const core = 'a'.repeat(500);
+
+    fireEvent.change(screen.getByLabelText('Your idea'), { target: { value: `   ${core}   ` } });
+    expect(screen.queryByText(/Too long/)).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(submitMock).toHaveBeenCalledTimes(1);
+    expect(submitMock).toHaveBeenCalledWith(core);
+  });
+});
