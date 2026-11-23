@@ -11,7 +11,6 @@ import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
 import { buildScene } from '@game/engine/buildScene';
 import type { SceneObject } from '@game/entities/SceneObject';
 import { createPhaserRenderContext } from './renderContext';
-import type { SceneObject } from '@game/entities/SceneObject';
 
 export const FALLBACK_KEY = 'fallback:missing';
 
@@ -19,7 +18,6 @@ export const FALLBACK_KEY = 'fallback:missing';
 export class BootScene extends Phaser.Scene {
   private unsubscribe: (() => void) | null = null;
   private effects: EffectHandle[] = [];
-  private sceneObjects: SceneObject[] = [];
   private sceneObjects: SceneObject[] = [];
   private failed = new Set<string>();
 
