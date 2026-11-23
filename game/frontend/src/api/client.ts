@@ -37,17 +37,33 @@ export interface ExecutionInfo {
 
 export class ApiError extends Error {
   readonly status: number;
+  /** The server's `error` message from a JSON error body, when it sent one. */
+  readonly detail?: string;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, detail?: string) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.detail = detail;
   }
+}
+
+/** Reads the `error` string from a JSON error body; undefined when the body is missing or not that shape. */
+async function errorDetail(res: Response): Promise<string | undefined> {
+  try {
+    const body: unknown = await res.json();
+    if (body && typeof body === 'object' && typeof (body as { error?: unknown }).error === 'string') {
+      return (body as { error: string }).error;
+    }
+  } catch {
+    // Not a JSON body: the status line alone describes the failure.
+  }
+  return undefined;
 }
 
 async function readJSON<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    throw new ApiError(res.status, `${res.status} ${res.statusText}`);
+    throw new ApiError(res.status, `${res.status} ${res.statusText}`, await errorDetail(res));
   }
   return (await res.json()) as T;
 }

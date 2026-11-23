@@ -34,6 +34,7 @@ export function AdminApp() {
   const [maxContributions, setMaxContributions] = useState(5);
   const [error, setError] = useState<string | undefined>(undefined);
   const [actionError, setActionError] = useState<string | undefined>(undefined);
+  const [actionDetail, setActionDetail] = useState<string | undefined>(undefined);
   const [reloads, setReloads] = useState(0);
 
   useEffect(() => {
@@ -102,9 +103,9 @@ export function AdminApp() {
 
   async function runExecutionAction(action: (token: string, id: string) => Promise<ExecutionInfo>, id: string) {
     setActionError(undefined);
+    setActionDetail(undefined);
     try {
       await action(token, id);
-      setActionError(undefined);
       setReloads((n) => n + 1);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
@@ -112,6 +113,7 @@ export function AdminApp() {
         return;
       }
       setActionError(err instanceof Error ? err.message : 'Request failed');
+      setActionDetail(err instanceof ApiError ? err.detail : undefined);
     }
   }
 
@@ -147,6 +149,7 @@ export function AdminApp() {
           onRetry={(id) => runExecutionAction(retryExecution, id)}
           onReject={(id) => runExecutionAction(rejectExecution, id)}
           actionError={actionError}
+          actionDetail={actionDetail}
         />
       ) : null}
       <label>

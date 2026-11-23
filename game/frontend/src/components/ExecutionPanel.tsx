@@ -17,6 +17,8 @@ export interface ExecutionPanelProps {
   onRetry?: (id: string) => void;
   onReject?: (id: string) => void;
   actionError?: string;
+  /** The server's own message for the failed action, shown beneath actionError. */
+  actionDetail?: string;
 }
 
 function formatDuration(updatedAt: string): string {
@@ -46,6 +48,7 @@ export function ExecutionPanel({
   onRetry,
   onReject,
   actionError,
+  actionDetail,
 }: ExecutionPanelProps) {
   const id = execution?.id;
   const canApprove = execution?.status === 'AWAITING_APPROVAL' && onApprove !== undefined;
@@ -89,6 +92,7 @@ export function ExecutionPanel({
       )}
 
       {actionError && <p role="alert">{actionError}</p>}
+      {actionDetail && <p role="alert">{actionDetail}</p>}
     </section>
   );
 }
