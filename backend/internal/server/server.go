@@ -100,10 +100,7 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	}
 	r.Route("/api/v1/admin", func(ar chi.Router) {
 		ar.Use(admin.Middleware(cfg.Admin.Token))
-		ar.Get("/executions", eh.List)
-		ar.Post("/executions/{id}/retry", eh.Retry)
-		ar.Post("/executions/{id}/approve", eh.Approve)
-		for _, rt := range adminRoundRoutes(rh) {
+		for _, rt := range adminRoutes(eh, rh) {
 			ar.Method(rt.Method, rt.Pattern, rt.Handler)
 		}
 	})
@@ -127,6 +124,16 @@ func adminRoundRoutes(rh *admin.RoundHandler) []adminRoute {
 		{http.MethodGet, "/rounds/{id}", rh.Get},
 		{http.MethodGet, "/rounds/{id}/contributions", rh.Contributions},
 	}
+}
+
+// adminRoutes returns every admin route: the execution routes followed by the
+// round routes. New mounts them all behind admin.Middleware.
+func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute {
+	return append([]adminRoute{
+		{http.MethodGet, "/executions", eh.List},
+		{http.MethodPost, "/executions/{id}/retry", eh.Retry},
+		{http.MethodPost, "/executions/{id}/approve", eh.Approve},
+	}, adminRoundRoutes(rh)...)
 }
 
 // NewScheduler returns the round scheduler that opens and closes rounds on the

@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/worldseed/storyforge/backend/internal/admin"
 	"github.com/worldseed/storyforge/backend/internal/config"
 )
 
@@ -322,6 +323,73 @@ func TestNew_AdminRoundsAreMounted(t *testing.T) {
 				t.Fatalf("status = 404, want the route to be mounted (body=%q)", rec.Body.String())
 			}
 		})
+	}
+}
+
+// Given a server built from a config with admin.token "tok" and a temporary repo_path,
+// when each admin round route from adminRoundRoutes is requested with no Authorization header
+// and when the same route is requested with "Authorization: Bearer wrong",
+// then every request responds 401.
+func TestNew_AdminRoundRoutesRejectMissingAndWrongToken(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	cases := []struct {
+		name   string
+		header string
+	}{
+		{"without a token", ""},
+		{"with Bearer wrong", "Bearer wrong"},
+	}
+
+	for _, rt := range adminRoundRoutes(&admin.RoundHandler{}) {
+		path := "/api/v1/admin" + strings.ReplaceAll(rt.Pattern, "{id}", "ROUND-0000001")
+		for _, c := range cases {
+			t.Run(rt.Method+" "+path+" "+c.name+" is unauthorized", func(t *testing.T) {
+				rec := httptest.NewRecorder()
+				req := httptest.NewRequest(rt.Method, path, nil)
+				if c.header != "" {
+					req.Header.Set("Authorization", c.header)
+				}
+				h.ServeHTTP(rec, req)
+				if rec.Code != http.StatusUnauthorized {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+				}
+			})
+		}
+	}
+}
+
+// Given the admin round route table built by adminRoundRoutes,
+// when it is read,
+// then it lists exactly five method and pattern pairs in this order:
+// POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close,
+// GET /rounds/{id}, GET /rounds/{id}/contributions.
+func TestAdminRoundRoutes_Table(t *testing.T) {
+	want := []struct {
+		method  string
+		pattern string
+	}{
+		{http.MethodPost, "/rounds"},
+		{http.MethodPost, "/rounds/{id}/open"},
+		{http.MethodPost, "/rounds/{id}/close"},
+		{http.MethodGet, "/rounds/{id}"},
+		{http.MethodGet, "/rounds/{id}/contributions"},
+	}
+
+	got := adminRoundRoutes(&admin.RoundHandler{})
+	if len(got) != len(want) {
+		t.Fatalf("route count = %d, want %d", len(got), len(want))
+	}
+	for i, w := range want {
+		if got[i].Method != w.method || got[i].Pattern != w.pattern {
+			t.Errorf("route[%d] = %s %s, want %s %s", i, got[i].Method, got[i].Pattern, w.method, w.pattern)
+		}
 	}
 }
 
