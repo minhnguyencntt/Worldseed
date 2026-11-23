@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, URL as NodeURL } from 'node:url';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildScene } from '@game/engine/buildScene';
 import { buildEffects } from '@game/engine/buildEffects';
@@ -83,8 +83,8 @@ describe('BootScene build wiring', () => {
 
 describe('BootScene source has no hardcoded scene content', () => {
   const sources = [
-    readFileSync(fileURLToPath(new URL('../src/phaser/BootScene.ts', import.meta.url)), 'utf8'),
-    readFileSync(fileURLToPath(new URL('../src/phaser/renderContext.ts', import.meta.url)), 'utf8'),
+    readFileSync(fileURLToPath(new NodeURL('../src/phaser/BootScene.ts', import.meta.url)), 'utf8'),
+    readFileSync(fileURLToPath(new NodeURL('../src/phaser/renderContext.ts', import.meta.url)), 'utf8'),
   ].join('\n');
 
   const ids = sceneSpec.objects.flatMap((o) => [o.id, o.asset]);
