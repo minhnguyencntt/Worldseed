@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { getActiveNode } from '@game/systems/dialogue';
 import { ActionMenu } from './components/ActionMenu';
 import { ContributionSheet } from './components/ContributionSheet';
-import { Countdown } from './components/Countdown';
 import { GameLayout } from './components/GameLayout';
 import { IntroScreen } from './components/IntroScreen';
-import { RoundBadge } from './components/RoundBadge';
 import { SceneView } from './components/SceneView';
 import { StoryPanel } from './components/StoryPanel';
 import { getCurrentRound, type Round } from './api/client';
@@ -31,8 +29,6 @@ export default function App() {
     <GameLayout
       scene={
         <>
-          <RoundBadge status={round?.status} />
-          {round && <Countdown endsAt={round.ends_at} />}
           <SceneView
             sceneId={game.scene.id}
             title={game.scene.title}
