@@ -14,6 +14,7 @@ import {
   type Round,
 } from '../api/client';
 import { LifecycleStepper, deriveStage } from './LifecycleStepper';
+import { ExecutionPanel } from './ExecutionPanel';
 import { TokenGate } from './TokenGate';
 
 type RoundAction = (token: string, id: string) => Promise<Round>;
@@ -119,6 +120,7 @@ export function AdminApp() {
         <p>Loading round…</p>
       )}
       {round ? <LifecycleStepper status={deriveStage(round.status, execution?.status)} /> : null}
+      {round ? <ExecutionPanel execution={execution} contributionCount={contributions.length} /> : null}
       <label>
         Duration (hours)
         <input
