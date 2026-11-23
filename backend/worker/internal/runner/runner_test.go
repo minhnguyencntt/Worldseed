@@ -61,11 +61,12 @@ func (f *fakeTrees) Remove(_ context.Context, dir string) error {
 // fakePublisher is a test double for Publisher that records each publish call.
 type fakePublisher struct {
 	calls []string
+	err   error
 }
 
 func (f *fakePublisher) Publish(_ context.Context, workDir string) error {
 	f.calls = append(f.calls, workDir)
-	return nil
+	return f.err
 }
 
 // rig bundles a Runner with the fakes and store it was built from.
