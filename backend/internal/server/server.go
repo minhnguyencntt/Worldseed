@@ -2,6 +2,7 @@
 package server
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -16,6 +17,7 @@ import (
 	"github.com/worldseed/storyforge/backend/internal/execution"
 	"github.com/worldseed/storyforge/backend/internal/gitrepo"
 	"github.com/worldseed/storyforge/backend/internal/player"
+	"github.com/worldseed/storyforge/backend/internal/round"
 	"github.com/worldseed/storyforge/backend/internal/world"
 )
 
@@ -86,14 +88,84 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 		Now:  time.Now,
 	}
 	eh := &execution.Handler{Service: exStore}
+
+	rs := newRoundService(cfg)
+	rh := &admin.RoundHandler{
+		Rounds: roundDefaults{
+			RoundService: &roundAdmin{Svc: rs},
+			Duration:     cfg.Round.Duration,
+			BaseRelease:  cfg.Round.BaseRelease,
+		},
+		Lister: store,
+	}
 	r.Route("/api/v1/admin", func(ar chi.Router) {
 		ar.Use(admin.Middleware(cfg.Admin.Token))
 		ar.Get("/executions", eh.List)
 		ar.Post("/executions/{id}/retry", eh.Retry)
 		ar.Post("/executions/{id}/approve", eh.Approve)
+		ar.Post("/rounds", rh.Create)
+		ar.Post("/rounds/{id}/open", rh.Open)
+		ar.Post("/rounds/{id}/close", rh.Close)
+		ar.Get("/rounds/{id}", rh.Get)
+		ar.Get("/rounds/{id}/contributions", rh.Contributions)
 	})
 
 	return r
+}
+
+// NewScheduler returns the round scheduler that opens and closes rounds on the
+// configured interval. The caller runs it with Run.
+func NewScheduler(cfg *config.Config) *round.Scheduler {
+	repo := &world.Repo{Root: cfg.Storage.RepoPath, ContentDir: cfg.Storage.ContentDir}
+	return &round.Scheduler{
+		Controller: newRoundService(cfg),
+		Rounds:     &round.FileStore{Root: cfg.Storage.RepoPath},
+		Worlds: func() ([]string, error) {
+			worlds, err := repo.List()
+			if err != nil {
+				return nil, err
+			}
+			ids := make([]string, 0, len(worlds))
+			for _, w := range worlds {
+				ids = append(ids, w.ID)
+			}
+			return ids, nil
+		},
+		Interval: cfg.Round.SchedulerInterval,
+	}
+}
+
+// newRoundService builds the round lifecycle service backed by the repo's files and Git.
+func newRoundService(cfg *config.Config) *round.Service {
+	gitCLI := &gitrepo.CLI{
+		Dir:      cfg.Storage.RepoPath,
+		BotName:  cfg.Git.BotName,
+		BotEmail: cfg.Git.BotEmail,
+	}
+	return &round.Service{
+		Store:         &round.FileStore{Root: cfg.Storage.RepoPath},
+		Committer:     gitCLI,
+		Revisions:     gitCLI,
+		Contributions: &contribution.FileStore{Root: cfg.Storage.RepoPath, Git: gitCLI},
+	}
+}
+
+// roundDefaults fills the config round defaults that admin.CreateRoundInput
+// leaves to the service, so round.Service never sees a zero duration.
+type roundDefaults struct {
+	admin.RoundService
+	Duration    time.Duration
+	BaseRelease string
+}
+
+func (d roundDefaults) Create(ctx context.Context, in admin.CreateRoundInput) (world.Round, error) {
+	if in.Duration == 0 {
+		in.Duration = d.Duration
+	}
+	if in.BaseRelease == "" {
+		in.BaseRelease = d.BaseRelease
+	}
+	return d.RoundService.Create(ctx, in)
 }
 
 // roundSource resolves a world's current round for the contribution service.
