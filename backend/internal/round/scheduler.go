@@ -7,21 +7,10 @@ import (
 	"fmt"
 	"log/slog"
 	"time"
-
-	"github.com/worldseed/storyforge/backend/internal/world"
-)
-
-// Round statuses understood by the scheduler.
-const (
-	StatusScheduled = "SCHEDULED"
-	StatusOpen      = "OPEN"
 )
 
 // defaultInterval is the scheduler tick used when Interval is not set.
 const defaultInterval = 30 * time.Second
-
-// Round is one round record. It is the world package's round type.
-type Round = world.Round
 
 // Clock supplies the current time. Inject a fake in tests.
 type Clock interface {
