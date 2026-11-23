@@ -66,6 +66,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
 
   const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
   const length = Array.from(text.trim()).length;
+  const overLimit = length > MAX_PROMPT_LENGTH;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,6 +75,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
       setValidation(BLANK_MESSAGE);
       return;
     }
+    if (overLimit) return;
 
     const key = Date.now();
     setText('');
@@ -115,13 +117,18 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
               setValidation(undefined);
             }}
             rows={3}
-            aria-invalid={validation !== undefined}
-            aria-describedby={validation ? 'contribution-idea-count contribution-idea-error' : 'contribution-idea-count'}
+            aria-invalid={validation !== undefined || overLimit}
+            aria-describedby={
+              ['contribution-idea-count', validation ? 'contribution-idea-error' : undefined, overLimit ? 'contribution-idea-limit' : undefined]
+                .filter(Boolean)
+                .join(' ')
+            }
           />
           <p id="contribution-idea-count">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>
           <button type="submit">Send</button>
         </form>
         {validation && <p id="contribution-idea-error" role="alert">{validation}</p>}
+        {overLimit && <p id="contribution-idea-limit" role="alert">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}
 
         {error && <p role="alert">{error}</p>}
 
