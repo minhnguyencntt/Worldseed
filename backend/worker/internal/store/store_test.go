@@ -111,3 +111,26 @@ func TestInvalidIDAndNotFound(t *testing.T) {
 		t.Fatalf("Get(%q) error = %v; want errors.Is(err, ErrNotFound)", "EXEC-404", err)
 	}
 }
+
+// TestValidateID verifies that ValidateID accepts file-name-safe execution IDs
+// and rejects empty, path-like, or dot-prefixed IDs with ErrInvalidID.
+func TestValidateID(t *testing.T) {
+	invalid := []string{"", "../evil", "a/b", ".hidden"}
+	for _, id := range invalid {
+		t.Run("rejects "+id, func(t *testing.T) {
+			err := ValidateID(id)
+			if !errors.Is(err, ErrInvalidID) {
+				t.Fatalf("ValidateID(%q) error = %v; want errors.Is(err, ErrInvalidID)", id, err)
+			}
+		})
+	}
+
+	valid := []string{"exec-1.2", "EXEC_1"}
+	for _, id := range valid {
+		t.Run("accepts "+id, func(t *testing.T) {
+			if err := ValidateID(id); err != nil {
+				t.Fatalf("ValidateID(%q) returned error: %v; want nil", id, err)
+			}
+		})
+	}
+}

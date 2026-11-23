@@ -66,11 +66,6 @@ func ValidateID(id string) error {
 	return nil
 }
 
-// ValidateID reports ErrInvalidID when id is not safe to use as a record file name.
-func ValidateID(id string) error {
-	return validateID(id)
-}
-
 // Save atomically writes e to <dir>/<e.ID>.json, replacing any previous record.
 func (s *Store) Save(e Execution) error {
 	if err := ValidateID(e.ID); err != nil {

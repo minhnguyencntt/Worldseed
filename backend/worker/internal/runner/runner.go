@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/worldseed/storyforge/worker/internal/lock"
+	"github.com/worldseed/storyforge/worker/internal/report"
 	"github.com/worldseed/storyforge/worker/internal/store"
 )
 
@@ -44,15 +45,27 @@ type Config struct {
 	AutoPublish bool
 }
 
+// Reporter writes the report for one finished execution.
+type Reporter interface {
+	Write(report.Report) error
+}
+
 // Runner executes worker Executions using the configured lock, store, agent,
 // worktrees and publisher.
 type Runner struct {
-	cfg   Config
-	st    *store.Store
-	agent Agent
-	trees Worktrees
-	pub   Publisher
-	now   func() time.Time
+	cfg      Config
+	st       *store.Store
+	agent    Agent
+	trees    Worktrees
+	pub      Publisher
+	now      func() time.Time
+	reporter Reporter
+}
+
+// SetReporter sets the reporter that receives a report for every outcome of
+// Run. A nil reporter disables reports.
+func (r *Runner) SetReporter(rep Reporter) {
+	r.reporter = rep
 }
 
 // New returns a Runner that uses the given dependencies.
@@ -67,14 +80,48 @@ func New(cfg Config, st *store.Store, a Agent, t Worktrees, p Publisher, now fun
 	}
 }
 
-// Run executes the execution id for roundID. It returns lock.ErrLocked (wrapped)
+// Run executes the execution id for roundID and, once the lock was taken, writes
+// a report for the outcome through the reporter (if one is set). It returns
+// lock.ErrLocked (wrapped) if another run holds the lock; no report is written
+// in that case.
+func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, error) {
+	start := r.now()
+	e, err := r.run(ctx, id, roundID)
+	if e.ID == "" {
+		// Lock failure: nothing was run, so there is nothing to report.
+		return e, err
+	}
+	if r.reporter != nil {
+		errText := e.Error
+		if errText == "" && err != nil {
+			errText = err.Error()
+		}
+		finished := r.now()
+		rep := report.Report{
+			ExecutionID: e.ID,
+			RoundID:     e.RoundID,
+			Status:      e.Status,
+			Attempts:    e.Attempt,
+			Error:       errText,
+			StartedAt:   start,
+			FinishedAt:  finished,
+			DurationMS:  finished.Sub(start).Milliseconds(),
+		}
+		if werr := r.reporter.Write(rep); werr != nil && err == nil {
+			return e, fmt.Errorf("runner: write report: %w", werr)
+		}
+	}
+	return e, err
+}
+
+// run executes the execution id for roundID. It returns lock.ErrLocked (wrapped)
 // if another run holds the lock. A failing agent run, including timeout, is
 // retried up to Config.MaxRetries times; each attempt gets its own Timeout.
 // Retries stop early with ErrBudgetExceeded (wrapped) once the accumulated
 // agent cost is over Config.MaxBudget (a zero or negative budget is unlimited).
 // When the agent gives up, the stored record is FAILED with the last error
 // text and that error is returned.
-func (r *Runner) Run(ctx context.Context, id, roundID string) (store.Execution, error) {
+func (r *Runner) run(ctx context.Context, id, roundID string) (store.Execution, error) {
 	l, err := lock.Acquire(r.cfg.LockPath)
 	if err != nil {
 		return store.Execution{}, fmt.Errorf("runner: %w", err)
