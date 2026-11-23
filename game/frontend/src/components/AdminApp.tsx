@@ -101,11 +101,17 @@ export function AdminApp() {
   }
 
   async function runExecutionAction(action: (token: string, id: string) => Promise<ExecutionInfo>, id: string) {
+    setActionError(undefined);
     try {
       await action(token, id);
+      setActionError(undefined);
       setReloads((n) => n + 1);
     } catch (err) {
-      handleError(err);
+      if (err instanceof ApiError && err.status === 401) {
+        handleError(err);
+        return;
+      }
+      setActionError(err instanceof Error ? err.message : 'Request failed');
     }
   }
 
@@ -140,6 +146,7 @@ export function AdminApp() {
           onApprove={(id) => runExecutionAction(approveExecution, id)}
           onRetry={(id) => runExecutionAction(retryExecution, id)}
           onReject={(id) => runExecutionAction(rejectExecution, id)}
+          actionError={actionError}
         />
       ) : null}
       <label>
