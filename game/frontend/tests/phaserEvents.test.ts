@@ -36,6 +36,26 @@ describe('typed event bus delivery', () => {
     phaserToReact.clear();
   });
 
+  it('delivers characterClick payload once and not to objectClick handlers', () => {
+    // Given a characterClick handler and an objectClick handler on the phaser-to-react bus
+    const characterHandler = vi.fn();
+    const objectHandler = vi.fn();
+    const unsubscribeCharacter = phaserToReact.on('characterClick', characterHandler);
+    const unsubscribeObject = phaserToReact.on('objectClick', objectHandler);
+
+    // When characterClick is emitted with { id: 'boy' }
+    phaserToReact.emit('characterClick', { id: 'boy' });
+
+    // Then the characterClick handler is called once with that payload and the objectClick handler is not called
+    expect(characterHandler).toHaveBeenCalledTimes(1);
+    expect(characterHandler).toHaveBeenCalledWith({ id: 'boy' });
+    expect(objectHandler).not.toHaveBeenCalled();
+
+    unsubscribeCharacter();
+    unsubscribeObject();
+    phaserToReact.clear();
+  });
+
   it('delivers no events to react-to-phaser handlers after clear is called', () => {
     // Given a handler subscribed to transitionTo on the react-to-phaser bus
     const fn = vi.fn();

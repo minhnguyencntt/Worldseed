@@ -6,6 +6,7 @@ import type { SceneDef, WorldDef } from '@game/state/types';
 import type { AssetManifest } from '@game/assets/manifest';
 import type { SceneSpec } from '@game/content/schema';
 import { scene, world } from '../src/runtime/content';
+import { phaserToReact } from '../src/phaser/events';
 
 // Phaser is a browser canvas runtime, so it is replaced with a fake. The fake scene exposes
 // add.sprite, anims and textures spies so the character wiring in create() can be asserted directly.
@@ -170,5 +171,28 @@ describe('BootScene character wiring', () => {
     pointerDownOn(sprite)();
     // Then the boy-interact interact animation is played
     expect(play).toHaveBeenCalledWith('character:boy-interact:interact');
+  });
+
+  it('emits characterClick with the spec id and still plays interact on pointerdown', () => {
+    // Given BootScene has created the boy character sprite and the phaserToReact bus is spied on
+    const boot = new BootScene();
+    boot.create();
+    const sprite = (boot.add.sprite as unknown as ReturnType<typeof vi.fn>).mock.results[0]!.value as Record<
+      string,
+      unknown
+    >;
+    const play = sprite.play as unknown as ReturnType<typeof vi.fn>;
+    play.mockClear();
+    const emit = vi.spyOn(phaserToReact, 'emit');
+    try {
+      // When the sprite receives a pointer-down
+      pointerDownOn(sprite)();
+      // Then characterClick is emitted on the React bridge with the character spec id
+      expect(emit).toHaveBeenCalledWith('characterClick', { id: 'boy' });
+      // And the interact animation still plays
+      expect(play).toHaveBeenCalledWith('character:boy-interact:interact');
+    } finally {
+      emit.mockRestore();
+    }
   });
 });
