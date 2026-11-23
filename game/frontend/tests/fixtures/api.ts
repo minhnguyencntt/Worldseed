@@ -30,3 +30,13 @@ export const adminContributionFixture: AdminContribution = {
   prompt_hash: 'sha256:3f2a9c1e7b6d4a58',
   created_at: '2026-01-01T00:00:30.000Z',
 };
+
+/** An execution shaped like the backend execution.Execution JSON (id, world_id, round_id, status, error, updated_at; backend/internal/execution/execution.go). */
+export const executionFixture = {
+  id: 'exec-1',
+  world_id: 'the-boys-room',
+  round_id: 'round-1',
+  status: 'RUNNING',
+  error: '',
+  updated_at: '2026-01-01T00:00:45.000Z',
+};
