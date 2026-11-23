@@ -278,6 +278,44 @@ func TestNew_AdminRoundsRequireToken(t *testing.T) {
 	}
 }
 
+// Given a server built from a config with admin.token "tok",
+// when each admin round endpoint is requested with "Authorization: Bearer tok",
+// then the route is mounted, so the response is not 404.
+// (TestNew_AdminRoundsRequireToken alone cannot prove this: chi runs the admin
+// group middleware for unmatched paths too, so an unmounted route also returns 404 there.)
+func TestNew_AdminRoundsAreMounted(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	endpoints := []struct {
+		method string
+		path   string
+	}{
+		{http.MethodPost, "/api/v1/admin/rounds"},
+		{http.MethodPost, "/api/v1/admin/rounds/ROUND-0000001/open"},
+		{http.MethodPost, "/api/v1/admin/rounds/ROUND-0000001/close"},
+		{http.MethodGet, "/api/v1/admin/rounds/ROUND-0000001"},
+		{http.MethodGet, "/api/v1/admin/rounds/ROUND-0000001/contributions"},
+	}
+
+	for _, ep := range endpoints {
+		t.Run(ep.method+" "+ep.path+" with Bearer tok is mounted", func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(ep.method, ep.path+"?world=the-boys-room", nil)
+			req.Header.Set("Authorization", "Bearer tok")
+			h.ServeHTTP(rec, req)
+			if rec.Code == http.StatusNotFound {
+				t.Fatalf("status = 404, want the route to be mounted (body=%q)", rec.Body.String())
+			}
+		})
+	}
+}
+
 // writeTestFile creates parent directories and writes content to path, failing the test on error.
 func writeTestFile(t *testing.T, path, content string) {
 	t.Helper()
