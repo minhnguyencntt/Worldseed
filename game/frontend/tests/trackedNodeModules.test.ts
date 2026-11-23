@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   assertNoTrackedNodeModules,
+  checkTrackedFiles,
+  parseGitLsFiles,
   trackedNodeModulesPaths,
   untrackNodeModules,
 } from '../src/lib/trackedNodeModules';
@@ -46,11 +48,11 @@ describe('untrackNodeModules', () => {
     // Given a fake git runner that returns empty output,
     // when untrackNodeModules is called with it,
     // then one call removes the node_modules directory with rm -r --cached.
-    const run = vi.fn(() => '');
+    const run = vi.fn((_args: string[]) => '');
 
     untrackNodeModules(run);
 
-    const calls = run.mock.calls.map(([args]) => args as string[]);
+    const calls = run.mock.calls.map(([args]) => args);
     expect(calls).toEqual(
       expect.arrayContaining([expect.arrayContaining(['rm', '-r', '--cached', 'node_modules'])]),
     );
@@ -60,13 +62,13 @@ describe('untrackNodeModules', () => {
     // Given a fake git runner that returns empty output,
     // when untrackNodeModules is called with it,
     // then every git call carries --cached.
-    const run = vi.fn(() => '');
+    const run = vi.fn((_args: string[]) => '');
 
     untrackNodeModules(run);
 
     expect(run.mock.calls.length).toBeGreaterThan(0);
     for (const [args] of run.mock.calls) {
-      expect(args as string[]).toContain('--cached');
+      expect(args).toContain('--cached');
     }
   });
 
@@ -74,13 +76,56 @@ describe('untrackNodeModules', () => {
     // Given a fake git runner that returns empty output,
     // when untrackNodeModules is called with it,
     // then one call untracks node_modules/.vite/vitest/results.json.
-    const run = vi.fn(() => '');
+    const run = vi.fn((_args: string[]) => '');
 
     untrackNodeModules(run);
 
-    const calls = run.mock.calls.map(([args]) => args as string[]);
+    const calls = run.mock.calls.map(([args]) => args);
     expect(calls).toEqual(
       expect.arrayContaining([expect.arrayContaining(['node_modules/.vite/vitest/results.json'])]),
     );
+  });
+});
+
+describe('parseGitLsFiles', () => {
+  it('splits NUL-separated git output into individual paths', () => {
+    // Given NUL-terminated git ls-files output with two paths,
+    // when it is parsed,
+    // then the result is the two paths in order.
+    expect(parseGitLsFiles('a\0b\0')).toEqual(['a', 'b']);
+  });
+
+  it('returns an empty list when the git output is empty', () => {
+    // Given empty git ls-files output,
+    // when it is parsed,
+    // then the result is an empty list.
+    expect(parseGitLsFiles('')).toEqual([]);
+  });
+});
+
+describe('checkTrackedFiles', () => {
+  it('returns only the tracked dependency and vitest cache paths, reading with ls-files -z', () => {
+    // Given a fake git runner that lists a source file, a root node_modules file,
+    // and a nested vitest results cache file,
+    // when checkTrackedFiles is called with it,
+    // then only the last two paths are returned and git is queried with ls-files -z.
+    const run = vi.fn((_a: string[]) =>
+      'src/a.ts\0node_modules/x.js\0game/frontend/node_modules/.vite/vitest/results.json\0',
+    );
+
+    expect(checkTrackedFiles(run)).toEqual([
+      'node_modules/x.js',
+      'game/frontend/node_modules/.vite/vitest/results.json',
+    ]);
+    expect(run).toHaveBeenCalledWith(['ls-files', '-z']);
+  });
+
+  it('returns an empty list when no tracked path is a dependency or vitest cache file', () => {
+    // Given a fake git runner that lists only a source file,
+    // when checkTrackedFiles is called with it,
+    // then the result is an empty list.
+    const run = vi.fn((_a: string[]) => 'src/a.ts\0');
+
+    expect(checkTrackedFiles(run)).toEqual([]);
   });
 });
