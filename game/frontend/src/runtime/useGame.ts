@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getSceneView, performAction, type SceneObjectView } from '@game/engine/scene';
 import { createInitialState } from '@game/state/gameState';
 import type { GameState, SceneDef } from '@game/state/types';
@@ -16,10 +16,11 @@ export type UseGame = {
 };
 
 export function useGame(): UseGame {
-  // init is a no-op once the store holds a state; the null guard avoids re-reading storage each render.
-  if (useGameStore.getState().state === null) {
-    useGameStore.getState().init(readSaved() ?? createInitialState(world, scene));
-  }
+  // Rehydrate once per mount. A plain init() would keep a stale in-memory state from an earlier
+  // mount in the same page session, so a mount with no valid save would not start fresh.
+  useState(() => {
+    useGameStore.setState({ state: readSaved() ?? createInitialState(world, scene) });
+  });
   const state = useGameStore((s) => s.state) as GameState;
 
   useEffect(() => {
