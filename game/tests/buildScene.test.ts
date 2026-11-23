@@ -1,14 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
-import { buildScene } from '../src/engine/buildScene';
+import { buildScene, moveFocus } from '../src/engine/buildScene';
 import type { RenderContext, RenderSpriteSpec, RenderHandle } from '../src/engine/renderContext';
 import type { Layer, ObjectSpec, SceneSpec } from '../src/content/schema';
-import { validScene } from './fixtures/valid-world';
+import { createInitialState } from '../src/state/gameState';
+import { validScene, validWorld } from './fixtures/valid-world';
 
 // Fake render context: every createSprite call returns a fresh handle mock.
+// The handle implements the full RenderHandle contract, since SceneObject wires hover and click on construction.
 function fakeContext() {
   const createSprite = vi.fn((_spec: RenderSpriteSpec): RenderHandle => ({
     setVisible: vi.fn(),
     destroy: vi.fn(),
+    setHighlighted: vi.fn(),
+    setLabelVisible: vi.fn(),
+    onHover: vi.fn(),
+    onClick: vi.fn(),
   }));
   const ctx: RenderContext = { createSprite };
   return { ctx, createSprite };
@@ -73,5 +79,33 @@ describe('buildScene', () => {
 
     expect(result).toEqual([]);
     expect(createSprite).not.toHaveBeenCalled();
+  });
+
+  it('moveFocus skips hidden objects and wraps', () => {
+    const { ctx } = fakeContext();
+    const scene = sceneWith([
+      { ...objectOn('obj-a', 'objects'), visibleWhen: [] },
+      { ...objectOn('obj-b', 'objects'), visibleWhen: [{ flag: 'a' }] },
+      { ...objectOn('obj-c', 'objects'), visibleWhen: [] },
+    ]);
+    const objs = buildScene(ctx, scene);
+    // Flag 'a' is unset, so the second object is hidden.
+    const state = createInitialState(validWorld, validScene);
+    objs.forEach((o) => o.sync(state));
+
+    moveFocus(objs, 1);
+    expect(objs[0].isFocused).toBe(true);
+    expect(objs[1].isFocused).toBe(false);
+
+    moveFocus(objs, 1);
+    expect(objs[2].isFocused).toBe(true);
+
+    // Third step wraps past the end back to the first object.
+    moveFocus(objs, 1);
+    expect(objs[0].isFocused).toBe(true);
+
+    // Reverse from the first object wraps to the last visible object, skipping the hidden one.
+    moveFocus(objs, -1);
+    expect(objs[2].isFocused).toBe(true);
   });
 });

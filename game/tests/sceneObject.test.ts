@@ -156,4 +156,30 @@ describe('SceneObject', () => {
     fake.clickCb?.();
     expect(listener).not.toHaveBeenCalled();
   });
+
+  it('activates with Enter and Space only when focused', () => {
+    const fake = makeFakeContext();
+    const object = new SceneObject(makeSpec(), fake.ctx);
+    const listener = vi.fn();
+    object.onInteract(listener);
+    const initial = createInitialState(validWorld, validScene);
+    object.sync(setFlag(initial, 'a', true));
+
+    // Not focused yet: activation keys do nothing.
+    object.handleKey('Enter');
+    expect(listener).toHaveBeenCalledTimes(0);
+
+    // Focused: Enter and Space each activate once; other keys do not.
+    object.focus();
+    object.handleKey('Enter');
+    object.handleKey(' ');
+    expect(listener).toHaveBeenCalledTimes(2);
+    object.handleKey('a');
+    expect(listener).toHaveBeenCalledTimes(2);
+
+    // Blur clears the highlight and label.
+    object.blur();
+    expect(vi.mocked(fake.handle.setHighlighted).mock.calls.at(-1)).toEqual([false]);
+    expect(vi.mocked(fake.handle.setLabelVisible).mock.calls.at(-1)).toEqual([false]);
+  });
 });
