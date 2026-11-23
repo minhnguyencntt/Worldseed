@@ -16,9 +16,15 @@ export function createPhaserEffectContext(scene: Phaser.Scene): EffectRenderCont
               maxParticles: spec.count,
               lifespan: 6000,
               speed: { min: -4, max: 4 },
+              // Random points inside the authored area, relative to the emitter origin at (area.x, area.y).
               emitZone: {
-                type: 'random',
-                source: new Phaser.Geom.Rectangle(0, 0, area.width, area.height),
+                type: 'random' as const,
+                source: {
+                  getRandomPoint: (point: { x: number; y: number }) => {
+                    point.x = Math.random() * area.width;
+                    point.y = Math.random() * area.height;
+                  },
+                },
               },
             })
             .setDepth(spec.depth);
