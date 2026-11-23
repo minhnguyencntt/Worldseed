@@ -74,6 +74,17 @@ export async function getCurrentRound(worldId: string = WORLD_ID): Promise<Round
   return readJSON<Round>(res);
 }
 
+export interface World {
+  id: string;
+  title: string;
+}
+
+/** Public: a world by id (GET /api/v1/worlds/{id}). */
+export async function getWorld(worldId: string = WORLD_ID): Promise<World> {
+  const res = await fetch(`/api/v1/worlds/${encodeURIComponent(worldId)}`);
+  return readJSON<World>(res);
+}
+
 /** Sends a request to an /api/v1/admin path with the bearer token attached. */
 export async function adminRequest<T>(token: string, path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);

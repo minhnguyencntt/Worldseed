@@ -6,6 +6,7 @@ import {
   getAdminRound,
   findExecutionForRound,
   getCurrentRound,
+  getWorld,
   listExecutions,
   listRoundContributions,
   openRound,
@@ -32,6 +33,7 @@ export function AdminApp() {
   const [execution, setExecution] = useState<ExecutionInfo | undefined>(undefined);
   const [durationHours, setDurationHours] = useState(24);
   const [maxContributions, setMaxContributions] = useState(5);
+  const [worldTitle, setWorldTitle] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [actionError, setActionError] = useState<string | undefined>(undefined);
   const [actionDetail, setActionDetail] = useState<string | undefined>(undefined);
@@ -46,6 +48,12 @@ export function AdminApp() {
       () => {
         if (!cancelled) setError('Could not load the current round');
       },
+    );
+    getWorld(WORLD_ID).then(
+      (w) => {
+        if (!cancelled) setWorldTitle(w.title);
+      },
+      () => {},
     );
     return () => {
       cancelled = true;
@@ -131,7 +139,7 @@ export function AdminApp() {
 
   return (
     <main className="admin-app">
-      <h1>Admin · {WORLD_ID}</h1>
+      <h1>Admin · {worldTitle ?? WORLD_ID}</h1>
       {error ? <p role="alert">{error}</p> : null}
       {round ? (
         <p>
@@ -167,9 +175,11 @@ export function AdminApp() {
           type="number"
           min={1}
           value={maxContributions}
+          disabled
           onChange={(event) => setMaxContributions(Number(event.target.value))}
         />
       </label>
+      <small>Set in server configuration (contribution.max_per_player); not editable here.</small>
       <div>
         <button type="button" onClick={() => runRoundAction(openRound)}>
           Open round
