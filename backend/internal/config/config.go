@@ -19,10 +19,27 @@ const (
 
 // Config is the root backend configuration.
 type Config struct {
-	Server  ServerConfig  `yaml:"server"`
-	Auth    AuthConfig    `yaml:"auth"`
-	Git     GitConfig     `yaml:"git"`
-	Hosting HostingConfig `yaml:"hosting"`
+	Server       ServerConfig       `yaml:"server"`
+	Auth         AuthConfig         `yaml:"auth"`
+	Git          GitConfig          `yaml:"git"`
+	Hosting      HostingConfig      `yaml:"hosting"`
+	Storage      StorageConfig      `yaml:"storage"`
+	Contribution ContributionConfig `yaml:"contribution"`
+}
+
+// StorageConfig locates the content repository on disk.
+type StorageConfig struct {
+	RepoPath   string `yaml:"repo_path"`
+	ContentDir string `yaml:"content_dir"`
+}
+
+// ContributionConfig bounds player prompt submissions.
+type ContributionConfig struct {
+	MinPromptLen int           `yaml:"min_prompt_len"`
+	MaxPromptLen int           `yaml:"max_prompt_len"`
+	MaxPerPlayer int           `yaml:"max_per_player"`
+	RateMax      int           `yaml:"rate_max"`
+	RateWindow   time.Duration `yaml:"rate_window"`
 }
 
 // ServerConfig controls the HTTP listener.
@@ -81,6 +98,28 @@ func LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error
 	}
 	if cfg.Auth.TokenSecret == "" {
 		return nil, errors.New("config: auth.token_secret must not be empty")
+	}
+
+	if cfg.Storage.RepoPath == "" {
+		cfg.Storage.RepoPath = "."
+	}
+	if cfg.Storage.ContentDir == "" {
+		cfg.Storage.ContentDir = "game/content"
+	}
+	if cfg.Contribution.MinPromptLen == 0 {
+		cfg.Contribution.MinPromptLen = 3
+	}
+	if cfg.Contribution.MaxPromptLen == 0 {
+		cfg.Contribution.MaxPromptLen = 500
+	}
+	if cfg.Contribution.MaxPerPlayer == 0 {
+		cfg.Contribution.MaxPerPlayer = 5
+	}
+	if cfg.Contribution.RateMax == 0 {
+		cfg.Contribution.RateMax = 3
+	}
+	if cfg.Contribution.RateWindow == 0 {
+		cfg.Contribution.RateWindow = time.Minute
 	}
 
 	return &cfg, nil
