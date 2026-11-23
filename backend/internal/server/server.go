@@ -10,8 +10,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/worldseed/storyforge/backend/internal/admin"
 	"github.com/worldseed/storyforge/backend/internal/config"
 	"github.com/worldseed/storyforge/backend/internal/contribution"
+	"github.com/worldseed/storyforge/backend/internal/execution"
 	"github.com/worldseed/storyforge/backend/internal/gitrepo"
 	"github.com/worldseed/storyforge/backend/internal/player"
 	"github.com/worldseed/storyforge/backend/internal/world"
@@ -45,13 +47,14 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	r.Get("/api/v1/worlds/{id}/game", wh.Game)
 	r.Get("/api/v1/worlds/{id}/round/current", wh.CurrentRound)
 
+	gitCLI := &gitrepo.CLI{
+		Dir:      cfg.Storage.RepoPath,
+		BotName:  cfg.Git.BotName,
+		BotEmail: cfg.Git.BotEmail,
+	}
 	store := &contribution.FileStore{
 		Root: cfg.Storage.RepoPath,
-		Git: &gitrepo.CLI{
-			Dir:      cfg.Storage.RepoPath,
-			BotName:  cfg.Git.BotName,
-			BotEmail: cfg.Git.BotEmail,
-		},
+		Git:  gitCLI,
 	}
 	svc := &contribution.Service{
 		Rounds: roundSource{repo: repo},
@@ -76,6 +79,19 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	r.Post("/api/v1/contributions", ch.Create)
 	r.Get("/api/v1/player/me/contributions", ch.Mine)
 	r.Get("/api/v1/contributions/{id}", ch.Get)
+
+	exStore := &execution.FileStore{
+		Root: cfg.Storage.RepoPath,
+		Git:  gitCLI,
+		Now:  time.Now,
+	}
+	eh := &execution.Handler{Service: exStore}
+	r.Route("/api/v1/admin", func(ar chi.Router) {
+		ar.Use(admin.Middleware(cfg.Admin.Token))
+		ar.Get("/executions", eh.List)
+		ar.Post("/executions/{id}/retry", eh.Retry)
+		ar.Post("/executions/{id}/approve", eh.Approve)
+	})
 
 	return r
 }
