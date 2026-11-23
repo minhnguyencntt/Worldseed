@@ -82,7 +82,6 @@ describe('characterSchema rejects invalid base fields', () => {
     const input = baseCharacter({ animations: {} });
     // When the character is parsed
     // Then parsing throws
-    expect(() => characterSchema.parse(baseCharacter({ animations: {} }))).toThrow();
     expect(() => characterSchema.parse(input)).toThrow();
   });
 
