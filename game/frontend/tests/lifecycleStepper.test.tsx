@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import * as mod from '../src/components/LifecycleStepper';
@@ -27,10 +27,8 @@ describe('LifecycleStepper module', () => {
   });
 
   it('contains no execution wording in the component source', () => {
-    const source = readFileSync(
-      fileURLToPath(new URL('../src/components/LifecycleStepper.tsx', import.meta.url)),
-      'utf8',
-    );
+    // Run from game/frontend (see the verify command); jsdom's URL global is not a file: URL.
+    const source = readFileSync(resolve(process.cwd(), 'src/components/LifecycleStepper.tsx'), 'utf8');
 
     expect(source.toLowerCase()).not.toContain('execution');
   });
