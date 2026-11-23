@@ -8,7 +8,6 @@ const WORLD_URL = '/api/v1/worlds/the-boys-room';
 const CURRENT_ROUND_URL = '/api/v1/worlds/the-boys-room/round/current';
 const ADMIN_ROUND_URL = `/api/v1/admin/rounds/${roundFixture.id}?world=the-boys-room`;
 const ADMIN_CONTRIBUTIONS_URL = `/api/v1/admin/rounds/${roundFixture.id}/contributions?world=the-boys-room`;
-const ADMIN_EXECUTIONS_URL = '/api/v1/admin/executions';
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -18,7 +17,8 @@ function json(body: unknown, status = 200): Response {
 }
 
 // Url-routing fetch stub: answers the public world and current-round lookups and the
-// admin round with a Bearer 'secret' token; any other admin call gets 404. The world
+// admin round with a Bearer 'secret' token; any other admin call (including the removed
+// executions endpoint) gets 404. The world
 // response is injectable so a test can simulate a failed world lookup.
 function stubFetch(worldResponse: () => Response = () => json(worldFixture)) {
   const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -29,7 +29,6 @@ function stubFetch(worldResponse: () => Response = () => json(worldFixture)) {
     if (auth !== 'Bearer secret') return json({ error: 'unauthorized' }, 401);
     if (url === ADMIN_ROUND_URL) return json(roundFixture);
     if (url === ADMIN_CONTRIBUTIONS_URL) return json([]);
-    if (url === ADMIN_EXECUTIONS_URL) return json([]);
     return json({ error: 'not found' }, 404);
   });
   vi.stubGlobal('fetch', fetchMock);
@@ -61,6 +60,7 @@ describe('AdminApp world title', () => {
     const heading = await screen.findByRole('heading', { level: 1 });
     await waitFor(() => expect(heading).toHaveTextContent(worldFixture.title));
     expect(fetchMock).toHaveBeenCalledWith(WORLD_URL);
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/executions'))).toBe(false);
     expect(new Headers(fetchMock.mock.calls.find(([url]) => String(url) === ADMIN_ROUND_URL)![1]?.headers).get('Authorization')).toBe('Bearer secret');
   });
 

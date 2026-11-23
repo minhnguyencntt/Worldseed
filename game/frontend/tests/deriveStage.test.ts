@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { deriveStage } from '../src/components/LifecycleStepper';
-import { executionFixture } from './fixtures/api';
 
 describe('deriveStage', () => {
   it.each([
@@ -19,8 +18,4 @@ describe('deriveStage', () => {
       expect(deriveStage(roundStatus, executionStatus)).toBe(expected);
     },
   );
-
-  it('given the execution fixture status, a CLOSED round derives DEVELOPING', () => {
-    expect(deriveStage('CLOSED', executionFixture.status)).toBe('DEVELOPING');
-  });
 });
