@@ -135,7 +135,12 @@ func (s *Service) Submit(ctx context.Context, in Input) (Contribution, error) {
 		return Contribution{}, ErrDuplicate
 	}
 
+	id, err := NewID()
+	if err != nil {
+		return Contribution{}, err
+	}
 	c := Contribution{
+		ID:         id,
 		WorldID:    in.WorldID,
 		RoundID:    round.ID,
 		PlayerID:   in.PlayerID,

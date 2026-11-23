@@ -3,6 +3,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -10,7 +11,10 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/worldseed/storyforge/backend/internal/config"
+	"github.com/worldseed/storyforge/backend/internal/contribution"
+	"github.com/worldseed/storyforge/backend/internal/gitrepo"
 	"github.com/worldseed/storyforge/backend/internal/player"
+	"github.com/worldseed/storyforge/backend/internal/world"
 )
 
 // New returns the root HTTP handler with request logging and the health route.
@@ -34,7 +38,62 @@ func New(cfg *config.Config, log *slog.Logger) http.Handler {
 	r.Post("/api/v1/player/session", ph.CreateSession)
 	r.Get("/api/v1/player/me", ph.Me)
 
+	repo := &world.Repo{Root: cfg.Storage.RepoPath, ContentDir: cfg.Storage.ContentDir}
+	wh := &world.Handler{Repo: repo}
+	r.Get("/api/v1/worlds", wh.List)
+	r.Get("/api/v1/worlds/{id}", wh.Get)
+	r.Get("/api/v1/worlds/{id}/game", wh.Game)
+	r.Get("/api/v1/worlds/{id}/rounds/current", wh.CurrentRound)
+
+	store := &contribution.FileStore{
+		Root: cfg.Storage.RepoPath,
+		Git: &gitrepo.CLI{
+			Dir:      cfg.Storage.RepoPath,
+			BotName:  cfg.Git.BotName,
+			BotEmail: cfg.Git.BotEmail,
+		},
+	}
+	svc := &contribution.Service{
+		Rounds: roundSource{repo: repo},
+		Store:  contribution.NewValidationStore(store),
+		Limits: contribution.Limits{
+			MinPromptLen: cfg.Contribution.MinPromptLen,
+			MaxPromptLen: cfg.Contribution.MaxPromptLen,
+			MaxPerPlayer: cfg.Contribution.MaxPerPlayer,
+			RateMax:      cfg.Contribution.RateMax,
+			RateWindow:   cfg.Contribution.RateWindow,
+		},
+		Now: time.Now,
+	}
+	ch := &contribution.Handler{
+		Service:    svc,
+		Reader:     store,
+		Secret:     []byte(cfg.Auth.TokenSecret),
+		CookieName: cfg.Auth.CookieName,
+		TTL:        cfg.Auth.TokenTTL,
+		Now:        time.Now,
+	}
+	r.Post("/api/v1/contributions", ch.Create)
+	r.Get("/api/v1/contributions/mine", ch.Mine)
+	r.Get("/api/v1/contributions/{id}", ch.Get)
+
 	return r
+}
+
+// roundSource resolves a world's current round for the contribution service.
+type roundSource struct {
+	repo *world.Repo
+}
+
+func (s roundSource) Current(worldID string) (contribution.Round, error) {
+	rd, err := s.repo.CurrentRound(worldID)
+	if errors.Is(err, world.ErrNotFound) {
+		return contribution.Round{}, contribution.ErrWorldNotFound
+	}
+	if err != nil {
+		return contribution.Round{}, err
+	}
+	return contribution.Round{ID: rd.ID, Status: rd.Status}, nil
 }
 
 // statusRecorder captures the status code written by downstream handlers.
