@@ -195,4 +195,66 @@ describe('BootScene character wiring', () => {
       emit.mockRestore();
     }
   });
+
+  it('destroys character sprites on shutdown', () => {
+    // Given BootScene has created the boy character sprite
+    const boot = new BootScene();
+    boot.create();
+    const sprite = (boot.add.sprite as unknown as ReturnType<typeof vi.fn>).mock.results[0]!.value as Record<
+      string,
+      unknown
+    >;
+    const destroy = sprite.destroy as unknown as ReturnType<typeof vi.fn>;
+    // When the scene's SHUTDOWN callback runs
+    const once = boot.events.once as unknown as ReturnType<typeof vi.fn>;
+    const cb = once.mock.calls.find((c: unknown[]) => c[0] === 'shutdown')![1] as () => void;
+    cb();
+    // Then the character sprite is destroyed exactly once
+    expect(destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('creates no sprite when the scene has no characters', () => {
+    // Given the scene has an empty characters list
+    const sceneWithCharacters = scene as unknown as { characters: unknown[] };
+    const original = sceneWithCharacters.characters;
+    sceneWithCharacters.characters = [];
+    try {
+      // When create() runs
+      const boot = new BootScene();
+      boot.create();
+      // Then no character sprite is added
+      expect(boot.add.sprite).not.toHaveBeenCalled();
+    } finally {
+      sceneWithCharacters.characters = original;
+    }
+  });
+
+  it('only emits characterClick when the character has no interact animation', () => {
+    // Given the boy character has no interact animation, so idle is the fallback
+    const boyCharacter = (scene as unknown as { characters: Array<{ animations: Record<string, unknown> }> })
+      .characters[0]!;
+    const savedInteract = boyCharacter.animations.interact;
+    delete boyCharacter.animations.interact;
+    const emit = vi.spyOn(phaserToReact, 'emit');
+    try {
+      const boot = new BootScene();
+      boot.create();
+      const sprite = (boot.add.sprite as unknown as ReturnType<typeof vi.fn>).mock.results[0]!.value as Record<
+        string,
+        unknown
+      >;
+      const play = sprite.play as unknown as ReturnType<typeof vi.fn>;
+      play.mockClear();
+      emit.mockClear();
+      // When the sprite receives a pointer-down
+      pointerDownOn(sprite)();
+      // Then characterClick is still emitted with the spec id
+      expect(emit).toHaveBeenCalledWith('characterClick', { id: 'boy' });
+      // And no interact animation is played
+      expect(play).not.toHaveBeenCalled();
+    } finally {
+      emit.mockRestore();
+      boyCharacter.animations.interact = savedInteract;
+    }
+  });
 });

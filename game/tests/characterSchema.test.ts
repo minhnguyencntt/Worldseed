@@ -63,3 +63,34 @@ describe('characterSchema rejects invalid interaction', () => {
     expect(() => characterSchema.parse(input)).toThrow();
   });
 });
+
+describe('characterSchema defaults', () => {
+  it('applies default scale and layer', () => {
+    // Given a character that declares neither scale nor layer
+    const input = baseCharacter();
+    // When the character is parsed
+    const result = characterSchema.parse(input);
+    // Then scale defaults to 1 and layer defaults to 'characters'
+    expect(result.scale).toBe(1);
+    expect(result.layer).toBe('characters');
+  });
+});
+
+describe('characterSchema rejects invalid base fields', () => {
+  it('throws when animations.idle is missing', () => {
+    // Given a character whose animations block has no idle entry
+    const input = baseCharacter({ animations: {} });
+    // When the character is parsed
+    // Then parsing throws
+    expect(() => characterSchema.parse(baseCharacter({ animations: {} }))).toThrow();
+    expect(() => characterSchema.parse(input)).toThrow();
+  });
+
+  it('throws when scale is 0 and when scale is -1', () => {
+    // Given a character whose scale is zero, then negative
+    // When the character is parsed
+    // Then parsing throws for both values
+    expect(() => characterSchema.parse(baseCharacter({ scale: 0 }))).toThrow();
+    expect(() => characterSchema.parse(baseCharacter({ scale: -1 }))).toThrow();
+  });
+});

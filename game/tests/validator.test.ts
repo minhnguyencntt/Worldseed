@@ -125,4 +125,24 @@ describe('validateWorld scene characters', () => {
 
     expect(validateWorld({ ...validWorld, scenes: [scene] })).toEqual([]);
   });
+
+  it('tags the index of the second unknown character', () => {
+    const scene = {
+      ...validScene,
+      characters: [
+        { id: 'boy', name: 'The Boy', ...characterFields },
+        { id: 'ghost', name: 'Ghost', ...characterFields },
+      ],
+    };
+
+    const errors = validateWorld({ ...validWorld, scenes: [scene] });
+
+    expect(errors).toEqual(['scenes[bedroom].characters[1].id: unknown character ghost']);
+  });
+
+  it('reports no character error when scene.characters is undefined', () => {
+    const errors = validateWorld({ ...validWorld, scenes: [validScene] });
+
+    expect(errors.filter((e) => e.includes('characters['))).toEqual([]);
+  });
 });
