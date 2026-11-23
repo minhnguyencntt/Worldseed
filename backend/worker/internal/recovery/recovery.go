@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/worldseed/storyforge/worker/internal/lock"
 	"github.com/worldseed/storyforge/worker/internal/store"
 )
 
@@ -20,11 +19,6 @@ type ExecutionStore interface {
 // Resumer resumes one interrupted execution.
 type Resumer interface {
 	Resume(ctx context.Context, e store.Execution) error
-}
-
-// LockFS acquires the exclusive file lock at path. It mirrors lock.Acquire.
-type LockFS interface {
-	Acquire(path string) (*lock.Lock, error)
 }
 
 // Config holds the recovery settings.
