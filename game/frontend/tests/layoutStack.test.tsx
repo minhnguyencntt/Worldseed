@@ -3,20 +3,25 @@ import '@testing-library/jest-dom/vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { GameLayout } from '../src/components/GameLayout';
+import { useUiStore } from '../src/store/uiStore';
 
 describe('GameLayout UI stack usage', () => {
+  beforeEach(() => {
+    useUiStore.setState({ drawerOpen: false });
+  });
+
   afterEach(() => {
     cleanup();
   });
 
-  it('toggle renders Lucide icon and flips drawer-open', () => {
+  it('toggle renders Lucide icon and sets aside data-state to open', () => {
     // Given GameLayout with a scene and a story,
     // when the Story toggle is clicked,
-    // then the toggle shows an SVG icon and the aside gains drawer-open.
+    // then the toggle shows an SVG icon, the aside reports data-state open and the scene main has pb-12 while the scene stays in the document.
     const { container } = render(
-      <GameLayout scene={<div />} story={<div />} />,
+      <GameLayout scene={<div data-testid="scene-node">Scene</div>} story={<div />} />,
     );
 
     const toggle = screen.getByRole('button', { name: 'Story' });
@@ -26,8 +31,12 @@ describe('GameLayout UI stack usage', () => {
 
     const aside = container.querySelector('aside');
     expect(aside).not.toBeNull();
-    expect(aside).toHaveClass('drawer-open');
+    expect(aside).toHaveAttribute('data-state', 'open');
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    const main = container.querySelector('main');
+    expect(main).toHaveClass('pb-12');
+    expect(screen.getByTestId('scene-node')).toBeInTheDocument();
   });
 });
 
