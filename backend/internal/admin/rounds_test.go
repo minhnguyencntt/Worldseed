@@ -208,3 +208,51 @@ func TestRoundHandler_Statuses(t *testing.T) {
 		}
 	})
 }
+
+// Given a RoundHandler whose RoundService is a fake, when a round is fetched or
+// opened, then a found round responds 200 with its JSON and a not-found error
+// responds 404 on both routes.
+func TestRoundHandler_GetAndOpenStatuses(t *testing.T) {
+	t.Run("GET /rounds/{id} responds 200 with the round JSON when found", func(t *testing.T) {
+		svc := &fakeRounds{round: world.Round{ID: "ROUND-0000001"}}
+		h := newRoundRouter(&RoundHandler{Rounds: svc, Lister: &fakeLister{}})
+
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/rounds/ROUND-0000001?world=w", nil))
+
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusOK, rec.Body.String())
+		}
+		var got world.Round
+		if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+			t.Fatalf("body is not a round JSON: %v (body=%q)", err, rec.Body.String())
+		}
+		if got.ID != "ROUND-0000001" {
+			t.Errorf("round ID = %q, want ROUND-0000001", got.ID)
+		}
+	})
+
+	t.Run("GET /rounds/{id} maps ErrNotFound to 404", func(t *testing.T) {
+		svc := &fakeRounds{err: fmt.Errorf("get: %w", ErrNotFound)}
+		h := newRoundRouter(&RoundHandler{Rounds: svc, Lister: &fakeLister{}})
+
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/rounds/ROUND-0000001?world=w", nil))
+
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+	})
+
+	t.Run("POST /rounds/{id}/open maps ErrNotFound to 404", func(t *testing.T) {
+		svc := &fakeRounds{err: fmt.Errorf("open: %w", ErrNotFound)}
+		h := newRoundRouter(&RoundHandler{Rounds: svc, Lister: &fakeLister{}})
+
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/rounds/ROUND-0000001/open?world=w", nil))
+
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+	})
+}

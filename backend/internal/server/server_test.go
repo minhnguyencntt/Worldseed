@@ -329,6 +329,82 @@ func TestNew_AdminRoundsAreMounted(t *testing.T) {
 	}
 }
 
+// Given a server built from a config with admin.token "tok" and a temporary repo_path
+// that holds the world the-boys-room and round-0000001,
+// when GET /api/v1/admin/rounds/ROUND-0000001?world=the-boys-room, GET for the unknown
+// ROUND-9999999 and POST /api/v1/admin/rounds with the body {bad are each requested with
+// "Authorization: Bearer tok",
+// then the statuses are exactly 200 with the JSON id ROUND-0000001, 404 and 400.
+func TestNew_AdminRoundRoutesReturnHandlerStatuses(t *testing.T) {
+	root := t.TempDir()
+	writeTestFile(t, filepath.Join(root, "worlds", "the-boys-room", "world.yaml"),
+		"id: the-boys-room\ntitle: The Boys Room\n")
+	writeTestFile(t, filepath.Join(root, "worlds", "the-boys-room", "rounds", "round-0000001", "round.yaml"),
+		"id: ROUND-0000001\nworld: the-boys-room\nnumber: 1\nstatus: SCHEDULED\n"+
+			"starts_at: 2026-01-01T00:00:00Z\nends_at: 2026-01-02T00:00:00Z\nbase_release: 1.0.0\n")
+
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: root},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	cases := []struct {
+		name       string
+		method     string
+		target     string
+		body       string
+		wantStatus int
+		wantID     string
+	}{
+		{
+			name:       "GET an existing round responds 200 with its id",
+			method:     http.MethodGet,
+			target:     "/api/v1/admin/rounds/ROUND-0000001?world=the-boys-room",
+			wantStatus: http.StatusOK,
+			wantID:     "ROUND-0000001",
+		},
+		{
+			name:       "GET an unknown round responds 404",
+			method:     http.MethodGet,
+			target:     "/api/v1/admin/rounds/ROUND-9999999?world=the-boys-room",
+			wantStatus: http.StatusNotFound,
+		},
+		{
+			name:       "POST a malformed JSON body responds 400",
+			method:     http.MethodPost,
+			target:     "/api/v1/admin/rounds",
+			body:       "{bad",
+			wantStatus: http.StatusBadRequest,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(c.method, c.target, strings.NewReader(c.body))
+			req.Header.Set("Authorization", "Bearer tok")
+			h.ServeHTTP(rec, req)
+			if rec.Code != c.wantStatus {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, c.wantStatus, rec.Body.String())
+			}
+			if c.wantID != "" {
+				var body struct {
+					ID string `json:"id"`
+				}
+				if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
+					t.Fatalf("body is not JSON: %v (body=%q)", err, rec.Body.String())
+				}
+				if body.ID != c.wantID {
+					t.Errorf("id = %q, want %q", body.ID, c.wantID)
+				}
+			}
+		})
+	}
+}
+
 // Given a server built from a config with admin.token "tok" and a temporary repo_path,
 // when each admin round route from adminRoundRoutes is requested with no Authorization header
 // and when the same route is requested with "Authorization: Bearer wrong",
