@@ -108,11 +108,6 @@ export function listExecutions(token: string): Promise<ExecutionInfo[]> {
   return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
 }
 
-/** Lists the executions the admin endpoint returns (GET /api/v1/admin/executions). */
-export function listExecutions(token: string): Promise<ExecutionInfo[]> {
-  return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
-}
-
 /** Picks the newest execution (greatest updated_at) whose round_id matches, or undefined when none match. */
 export function findExecutionForRound(list: ExecutionInfo[], roundId: string): ExecutionInfo | undefined {
   return list
