@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -181,4 +183,63 @@ func TestNew_PlayerContributionsRoute(t *testing.T) {
 			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, want, rec.Body.String())
 		}
 	})
+}
+
+// Given a server built from a config whose storage.repo_path is a temporary directory
+// that holds the world the-boys-room and round-0000001 (status open),
+// when GET /api/v1/worlds/the-boys-room/round/current is requested, then it responds 200 with round-0000001 in the body,
+// when GET /api/v1/worlds/the-boys-room/rounds/current is requested, then it responds 404 because the plural path is not routed,
+// and when GET /api/v1/worlds/unknown/round/current is requested, then it responds 404.
+func TestNew_CurrentRoundRoute(t *testing.T) {
+	root := t.TempDir()
+	writeTestFile(t, filepath.Join(root, "worlds", "the-boys-room", "world.yaml"),
+		"id: the-boys-room\ntitle: The Boys Room\n")
+	writeTestFile(t, filepath.Join(root, "rounds", "round-0000001", "round.yaml"),
+		"id: round-0000001\nnumber: 1\nstatus: open\n"+
+			"starts_at: 2026-01-01T00:00:00Z\nends_at: 2026-01-02T00:00:00Z\n")
+
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: root},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	t.Run("GET /api/v1/worlds/the-boys-room/round/current is served with the current round", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/worlds/the-boys-room/round/current", nil))
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusOK, rec.Body.String())
+		}
+		if !strings.Contains(rec.Body.String(), "round-0000001") {
+			t.Fatalf("body = %q, want it to contain round-0000001", rec.Body.String())
+		}
+	})
+
+	t.Run("GET /api/v1/worlds/the-boys-room/rounds/current is not served", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/worlds/the-boys-room/rounds/current", nil))
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+	})
+
+	t.Run("GET /api/v1/worlds/unknown/round/current is not found", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/worlds/unknown/round/current", nil))
+		if rec.Code != http.StatusNotFound {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+		}
+	})
+}
+
+// writeTestFile creates parent directories and writes content to path, failing the test on error.
+func writeTestFile(t *testing.T, path, content string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+	}
+	if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
+		t.Fatalf("write %s: %v", path, err)
+	}
 }
