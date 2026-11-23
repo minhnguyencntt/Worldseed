@@ -28,7 +28,8 @@ var ErrMalformed = errors.New("contribution: malformed file")
 
 const (
 	fmOpen      = "---\n"
-	fmClose     = "\n---\n\n"
+	fmClose     = "\n---\n\n" // closing delimiter, as it follows the YAML body
+	fmEnd       = "---\n\n"    // closing delimiter, as written after the YAML body
 	timeLayout  = time.RFC3339
 	idPrefix    = "CON-"
 	idRandBytes = 16
