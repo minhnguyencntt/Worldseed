@@ -6,6 +6,7 @@ export function planPreload(scene: SceneDef, manifest: AssetManifest): PreloadPl
   const refs = new Set<string>();
   for (const o of scene.objects) if (o.asset) refs.add(o.asset);
   for (const e of scene.effects ?? []) if (e.type === 'dust') refs.add(e.asset);
+  for (const c of scene.characters ?? []) for (const a of Object.values(c.animations)) if (a) refs.add(a.asset);
   const known = new Set(manifest.assets.map((a) => a.id));
   const load: string[] = [];
   const unknown: string[] = [];

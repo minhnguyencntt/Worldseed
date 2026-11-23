@@ -1,4 +1,4 @@
-import type { EffectSpec } from '../content/schema';
+import type { CharacterSpec, EffectSpec } from '../content/schema';
 
 export type Condition = { flag: string; equals?: boolean } | { hasItem: string };
 
@@ -53,6 +53,7 @@ export type SceneDef = {
   openingDialogue?: string;
   dialogue: DialogueNode[];
   effects?: EffectSpec[];
+  characters?: CharacterSpec[];
 };
 
 export type WorldDef = {

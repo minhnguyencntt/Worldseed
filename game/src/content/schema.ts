@@ -41,6 +41,18 @@ export const objectSchema = z.object({
   openWhenFlag: z.string().optional(),
 });
 
+// A named animation on a manifest asset, e.g. { asset: 'character:boy', animation: 'idle' }.
+export const animRef = z.object({ asset: z.string(), animation: z.string() });
+
+export const characterSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  position: z.object({ x: z.number(), y: z.number() }),
+  scale: z.number().positive().default(1),
+  layer: layerSchema.default('characters'),
+  animations: z.object({ idle: animRef, walk: animRef.optional(), interact: animRef.optional() }),
+});
+
 export const sceneSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -48,6 +60,7 @@ export const sceneSchema = z.object({
   dialogue: z.array(z.record(z.string(), z.unknown())),
   objects: z.array(objectSchema),
   effects: z.array(effectSchema).optional(),
+  characters: z.array(characterSchema).optional(),
 });
 
 export const worldSchema = z.object({
@@ -64,6 +77,7 @@ export type ConditionSpec = z.infer<typeof conditionSchema>;
 export type EventSpec = z.infer<typeof eventSchema>;
 export type ActionSpec = z.infer<typeof actionSchema>;
 export type ObjectSpec = z.infer<typeof objectSchema>;
+export type CharacterSpec = z.infer<typeof characterSchema>;
 export type EffectSpec = z.infer<typeof effectSchema>;
 export type SceneSpec = z.infer<typeof sceneSchema>;
 export type WorldSpec = z.infer<typeof worldSchema>;
