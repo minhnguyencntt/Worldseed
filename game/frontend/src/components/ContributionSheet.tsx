@@ -41,7 +41,15 @@ export function ContributionSheet({ open, onClose, roundId }: ContributionSheetP
     listMine(roundId)
       .then((list) => {
         if (cancelled) return;
-        setEntries(list.map((c, i) => ({ key: -(i + 1), prompt: c.prompt, state: 'sent' })));
+        // Merge rather than overwrite: entries sent or still sending while the
+        // history request was in flight must survive the response.
+        setEntries((prev) => {
+          const known = new Set(prev.map((e) => e.prompt));
+          const history = list
+            .filter((c) => !known.has(c.prompt))
+            .map((c, i) => ({ key: -(i + 1), prompt: c.prompt, state: 'sent' as const }));
+          return [...history, ...prev];
+        });
       })
       .catch(() => {
         // History is best-effort; the sheet still works without it.
