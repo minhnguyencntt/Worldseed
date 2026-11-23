@@ -36,6 +36,26 @@ type CLI struct {
 
 var _ Committer = (*CLI)(nil)
 
+// Revisioner reports the commit the repository currently points at.
+type Revisioner interface {
+	Head(ctx context.Context) (string, error)
+}
+
+var _ Revisioner = (*CLI)(nil)
+
+// Head returns the full SHA of HEAD by running `git rev-parse HEAD` in c.Dir.
+func (c *CLI) Head(ctx context.Context) (string, error) {
+	run := c.Run
+	if run == nil {
+		run = defaultRunner
+	}
+	out, err := run(ctx, c.Dir, "rev-parse", "HEAD")
+	if err != nil {
+		return "", commandError("rev-parse", err, out)
+	}
+	return strings.TrimSpace(string(out)), nil
+}
+
 // ErrInvalidPath is returned when no paths are given or a path is absolute or contains "..".
 var ErrInvalidPath = errors.New("gitrepo: invalid path")
 

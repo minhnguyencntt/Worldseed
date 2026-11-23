@@ -21,6 +21,8 @@ var (
 	ErrExists = errors.New("contribution: already exists")
 	// ErrNotFound is returned by Get when no contribution file has the requested ID.
 	ErrNotFound = errors.New("contribution: not found")
+	// ErrFrozen is returned by Save when the round already has a snapshot.yaml.
+	ErrFrozen = errors.New("contribution: round is frozen")
 )
 
 // Repository persists immutable contributions and answers per-player queries within a Round.
@@ -78,6 +80,13 @@ func (s *FileStore) Save(ctx context.Context, c Contribution) (Contribution, err
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	snapshotPath := filepath.Join(s.Root, "worlds", c.WorldID, "rounds", strings.ToLower(c.RoundID), "snapshot.yaml")
+	if _, err := os.Stat(snapshotPath); err == nil {
+		return Contribution{}, ErrFrozen
+	} else if !errors.Is(err, fs.ErrNotExist) {
+		return Contribution{}, fmt.Errorf("contribution: check snapshot: %w", err)
+	}
+
 	relPath := filepath.Join(contributionsDir(c.WorldID, c.RoundID), c.ID+".md")
 	absPath := filepath.Join(s.Root, relPath)
 	if err := os.MkdirAll(filepath.Dir(absPath), 0o755); err != nil {
@@ -122,6 +131,37 @@ func (s *FileStore) Get(_ context.Context, id string) (Contribution, error) {
 		return Contribution{}, ErrNotFound
 	}
 	return readFile(matches[0])
+}
+
+// ListByRound returns every contribution in the given world's round, ordered by
+// CreatedAt and then ID.
+func (s *FileStore) ListByRound(_ context.Context, worldID, roundID string) ([]Contribution, error) {
+	if err := safepath.Segment(worldID); err != nil {
+		return nil, fmt.Errorf("contribution: world id: %w", err)
+	}
+	if err := safepath.Segment(roundID); err != nil {
+		return nil, fmt.Errorf("contribution: round id: %w", err)
+	}
+	matches, err := filepath.Glob(filepath.Join(s.Root, "worlds", worldID, "rounds", strings.ToLower(roundID), "contributions", "*.md"))
+	if err != nil {
+		return nil, fmt.Errorf("contribution: glob: %w", err)
+	}
+
+	out := make([]Contribution, 0, len(matches))
+	for _, m := range matches {
+		c, err := readFile(m)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, c)
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if !out[i].CreatedAt.Equal(out[j].CreatedAt) {
+			return out[i].CreatedAt.Before(out[j].CreatedAt)
+		}
+		return out[i].ID < out[j].ID
+	})
+	return out, nil
 }
 
 // ListByPlayer returns the player's contributions in the given round, oldest first.
