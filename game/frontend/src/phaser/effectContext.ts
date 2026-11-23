@@ -2,10 +2,12 @@ import Phaser from 'phaser';
 import type { EffectSpec } from '@game/content/schema';
 import type { EffectHandle, EffectRenderContext } from '@game/engine/renderContext';
 
+export type ResolveKey = (id: string) => string;
+
 // Phaser-backed implementation of the engine's EffectRenderContext.
 export function createPhaserEffectContext(
   scene: Phaser.Scene,
-  resolveKey: (id: string) => string,
+  resolveKey: ResolveKey,
 ): EffectRenderContext {
   return {
     createEffect(spec: EffectSpec & { depth: number }): EffectHandle {
