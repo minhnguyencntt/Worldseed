@@ -124,6 +124,27 @@ describe('parseGitLsFiles', () => {
     // then the result is an empty list.
     expect(parseGitLsFiles('')).toEqual([]);
   });
+
+  it('deduplicates conflict stage entries', () => {
+    // Given git ls-files --stage style output where one path appears at stages 1, 2 and 3,
+    // when it is parsed,
+    // then the path is returned once with the stage prefixes stripped.
+    const output =
+      '100644 aaa 1\tnode_modules/.vite/vitest/results.json\n' +
+      '100644 bbb 2\tnode_modules/.vite/vitest/results.json\n' +
+      '100644 ccc 3\tnode_modules/.vite/vitest/results.json\n';
+
+    expect(parseGitLsFiles(output)).toEqual(['node_modules/.vite/vitest/results.json']);
+  });
+
+  it('deduplicates a triplicated NUL-separated plain path to one entry', () => {
+    // Given NUL-separated output that lists the same plain path three times,
+    // when it is parsed,
+    // then the result contains that path exactly once.
+    const output = 'node_modules/.vite/vitest/results.json\0node_modules/.vite/vitest/results.json\0node_modules/.vite/vitest/results.json\0';
+
+    expect(parseGitLsFiles(output)).toEqual(['node_modules/.vite/vitest/results.json']);
+  });
 });
 
 describe('checkTrackedFiles', () => {
