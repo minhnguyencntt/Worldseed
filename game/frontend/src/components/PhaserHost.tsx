@@ -27,7 +27,6 @@ export function PhaserHost({ scenes }: PhaserHostProps) {
       gameRef.current = null;
     };
     // Mount-once: one game instance per host, destroyed on unmount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <div ref={containerRef} className="h-full w-full" data-testid="phaser-host" />;
