@@ -12,13 +12,14 @@ describe('game layout', () => {
     expect(existsSync(join(gameDir, 'src/state'))).toBe(true);
     expect(existsSync(join(gameDir, 'src/systems'))).toBe(true);
     expect(existsSync(join(gameDir, 'src/content'))).toBe(true);
-    expect(existsSync(join(gameDir, 'content/worlds/the-boys-room/world.yaml'))).toBe(true);
+    expect(existsSync(join(gameDir, 'src/content/worlds/the-boys-room/world.yaml'))).toBe(true);
     expect(existsSync(join(gameDir, 'tests'))).toBe(true);
+    expect(existsSync(join(gameDir, 'content'))).toBe(false);
     expect(existsSync(join(gameDir, '../backend/game'))).toBe(false);
   });
 
-  it('loads the-boys-room from game/content', () => {
-    const worldDir = join(gameDir, 'content/worlds/the-boys-room');
+  it('loads the-boys-room from src/content', () => {
+    const worldDir = join(gameDir, 'src/content/worlds/the-boys-room');
     let world: ReturnType<typeof loadWorld> | undefined;
     expect(() => {
       world = loadWorld(worldDir);

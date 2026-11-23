@@ -5,7 +5,7 @@ import { loadWorld, validateWorld } from '../src/content/loader';
 import { performAction } from '../src/engine/scene';
 import type { GameState } from '../src/state/types';
 
-const WORLD_DIR = resolve(__dirname, '../content/worlds/the-boys-room');
+const WORLD_DIR = resolve(__dirname, '../src/content/worlds/the-boys-room');
 
 function makeInitialState(): GameState {
   return {
@@ -40,6 +40,20 @@ describe('bedroom content validity', () => {
     // Then its text and speaker match the intro line
     expect(intro?.text).toBe("I don't know what to do next. What should we do?");
     expect(intro?.speaker).toBe('boy');
+  });
+
+  it('every bedroom object has a layer and position', () => {
+    // Given the real bedroom scene loaded from the content files
+    const world = loadWorld(WORLD_DIR);
+    const scene = world.scenes.find((s) => s.id === 'bedroom');
+    expect(scene).toBeDefined();
+    // Then the scene declares all six objects
+    expect(scene!.objects).toHaveLength(6);
+    // And each object has a layer and a position
+    for (const obj of scene!.objects) {
+      expect(obj.layer).toBeTruthy();
+      expect(obj.position).toBeDefined();
+    }
   });
 
   it('has required objects', () => {
