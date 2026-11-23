@@ -1,10 +1,86 @@
 package config
 
 import (
+	"os"
+	"reflect"
+	"sort"
 	"testing"
 	"testing/fstest"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
+
+// expectedTopLevelKeys is the exact set of top-level configuration sections
+// that the backend accepts. No worker or execution section may appear here.
+var expectedTopLevelKeys = []string{
+	"admin", "auth", "contribution", "git", "hosting", "round", "server", "storage",
+}
+
+func sortedCopy(in []string) []string {
+	out := append([]string(nil), in...)
+	sort.Strings(out)
+	return out
+}
+
+// Given the Config struct type,
+// when its exported fields are enumerated,
+// then the set of field names equals Server, Auth, Git, Hosting, Storage,
+// Contribution, Admin and Round, with no worker or execution field.
+func TestConfig_HasNoWorkerFields(t *testing.T) {
+	typ := reflect.TypeOf(Config{})
+	got := make([]string, 0, typ.NumField())
+	for i := 0; i < typ.NumField(); i++ {
+		got = append(got, typ.Field(i).Name)
+	}
+
+	want := []string{"Server", "Auth", "Git", "Hosting", "Storage", "Contribution", "Admin", "Round"}
+	if !reflect.DeepEqual(sortedCopy(got), sortedCopy(want)) {
+		t.Errorf("Config fields = %v, want exactly %v", sortedCopy(got), sortedCopy(want))
+	}
+}
+
+// Given the checked-in backend/configs/config.example.yaml,
+// when it is unmarshalled into a generic map,
+// then its top-level keys are exactly server, auth, git, hosting, storage,
+// contribution, admin and round.
+func TestExampleYAML_TopLevelKeys(t *testing.T) {
+	raw, err := os.ReadFile("../../configs/config.example.yaml")
+	if err != nil {
+		t.Fatalf("read example config: %v", err)
+	}
+
+	var doc map[string]any
+	if err := yaml.Unmarshal(raw, &doc); err != nil {
+		t.Fatalf("parse example config: %v", err)
+	}
+
+	got := make([]string, 0, len(doc))
+	for k := range doc {
+		got = append(got, k)
+	}
+	if !reflect.DeepEqual(sortedCopy(got), sortedCopy(expectedTopLevelKeys)) {
+		t.Errorf("example config top-level keys = %v, want exactly %v", sortedCopy(got), sortedCopy(expectedTopLevelKeys))
+	}
+}
+
+// Given a YAML file containing a legacy worker section alongside auth.token_secret,
+// when LoadFS is called,
+// then the worker section is ignored, no error is returned, and the auth secret is loaded.
+func TestLoadFS_IgnoresWorkerSection(t *testing.T) {
+	fsys := fstest.MapFS{
+		"config.yaml": &fstest.MapFile{Data: []byte("auth:\n  token_secret: s\nworker:\n  work_root: /tmp\n")},
+	}
+	noEnv := func(string) string { return "" }
+
+	cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+	if err != nil {
+		t.Fatalf("LoadFS returned error: %v", err)
+	}
+	if cfg.Auth.TokenSecret != "s" {
+		t.Errorf("Auth.TokenSecret = %q, want %q", cfg.Auth.TokenSecret, "s")
+	}
+}
 
 // Given a YAML file whose values are overridden by STORYFORGE_* variables,
 // when LoadFS is called, then the environment values win over the YAML values.
