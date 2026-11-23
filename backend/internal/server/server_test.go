@@ -125,12 +125,12 @@ func TestNew_RegistersRoutes(t *testing.T) {
 			t.Fatalf("status = %d, route is not registered (body=%q)", rec.Code, rec.Body.String())
 		}
 		// Without a session cookie the handler rejects before looking up the id.
+		// The contribution handler replies with http.Error, so the body is plain text.
 		if rec.Code != http.StatusUnauthorized {
 			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
 		}
-		var body map[string]string
-		if err := json.Unmarshal(rec.Body.Bytes(), &body); err != nil {
-			t.Fatalf("body is not JSON: %v (body=%q)", err, rec.Body.String())
+		if got := strings.TrimSpace(rec.Body.String()); got != "unauthorized" {
+			t.Fatalf("body = %q, want %q", got, "unauthorized")
 		}
 	})
 }
