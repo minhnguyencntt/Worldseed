@@ -11,7 +11,7 @@ export function StoryPanel({ node, history, inventory, onChoose }: StoryPanelPro
   return (
     <div className="story-content">
       {node && (
-        <section className="dialogue">
+        <section className="dialogue" aria-label="Dialogue">
           <h2>{node.speaker}</h2>
           <p>{node.text}</p>
           <div className="choices">
@@ -30,7 +30,7 @@ export function StoryPanel({ node, history, inventory, onChoose }: StoryPanelPro
         ))}
       </ol>
 
-      <section>
+      <section aria-label="Inventory">
         <h2>Inventory</h2>
         {inventory.length === 0 ? (
           <p>Empty</p>

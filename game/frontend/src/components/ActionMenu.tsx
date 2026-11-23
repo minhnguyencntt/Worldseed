@@ -12,7 +12,7 @@ export function ActionMenu({ object, onAction }: ActionMenuProps) {
   }
 
   return (
-    <section className="action-menu" aria-label={object.name}>
+    <section className="action-menu" aria-label={object.name} data-object-id={object.id}>
       <h2>{object.name}</h2>
       <p>{object.description}</p>
       <div className="actions">
