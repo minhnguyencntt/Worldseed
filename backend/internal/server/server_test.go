@@ -233,6 +233,51 @@ func TestNew_CurrentRoundRoute(t *testing.T) {
 	})
 }
 
+// Given a server built from a config with admin.token "tok" and a temporary repo_path,
+// when the admin round endpoints are requested without an Authorization header,
+// then each responds 401, and when the same requests carry "Authorization: Bearer tok",
+// then none of them responds 401.
+func TestNew_AdminRoundsRequireToken(t *testing.T) {
+	cfg := &config.Config{
+		Auth:    config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+		Storage: config.StorageConfig{RepoPath: t.TempDir()},
+		Admin:   config.AdminConfig{Token: "tok"},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	endpoints := []struct {
+		method string
+		path   string
+	}{
+		{http.MethodPost, "/api/v1/admin/rounds"},
+		{http.MethodPost, "/api/v1/admin/rounds/ROUND-0000001/open"},
+		{http.MethodPost, "/api/v1/admin/rounds/ROUND-0000001/close"},
+		{http.MethodGet, "/api/v1/admin/rounds/ROUND-0000001"},
+		{http.MethodGet, "/api/v1/admin/rounds/ROUND-0000001/contributions"},
+	}
+
+	for _, ep := range endpoints {
+		t.Run(ep.method+" "+ep.path+" without a token is unauthorized", func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			h.ServeHTTP(rec, httptest.NewRequest(ep.method, ep.path+"?world=the-boys-room", nil))
+			if rec.Code != http.StatusUnauthorized {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+			}
+		})
+
+		t.Run(ep.method+" "+ep.path+" with Bearer tok is not unauthorized", func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(ep.method, ep.path+"?world=the-boys-room", nil)
+			req.Header.Set("Authorization", "Bearer tok")
+			h.ServeHTTP(rec, req)
+			if rec.Code == http.StatusUnauthorized {
+				t.Fatalf("status = %d, want anything but %d (body=%q)", rec.Code, http.StatusUnauthorized, rec.Body.String())
+			}
+		})
+	}
+}
+
 // writeTestFile creates parent directories and writes content to path, failing the test on error.
 func writeTestFile(t *testing.T, path, content string) {
 	t.Helper()

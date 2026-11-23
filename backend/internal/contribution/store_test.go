@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sync"
@@ -224,5 +225,94 @@ func TestGetAndListByPlayer(t *testing.T) {
 	}
 	if list[0].ID != a.ID || list[0].PlayerID != "player-a" {
 		t.Errorf("ListByPlayer[0] = %+v, want player-a contribution %s", list[0], a.ID)
+	}
+}
+
+// Given a round that already has a snapshot.yaml,
+// When a contribution for that round is saved,
+// Then Save returns ErrFrozen, writes no Markdown file and makes no commit.
+func TestFileStore_SaveRejectsFrozenRound(t *testing.T) {
+	root := t.TempDir()
+	git := &fakeCommitter{}
+	store := &FileStore{Root: root, Git: git}
+
+	roundDir := filepath.Join(root, "worlds", "w", "rounds", "round-0000001")
+	if err := os.MkdirAll(roundDir, 0o755); err != nil {
+		t.Fatalf("MkdirAll: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(roundDir, "snapshot.yaml"), []byte("round: ROUND-0000001\n"), 0o444); err != nil {
+		t.Fatalf("WriteFile snapshot: %v", err)
+	}
+
+	_, err := store.Save(context.Background(), Contribution{
+		WorldID:  "w",
+		RoundID:  "round-0000001",
+		PlayerID: "player-1",
+		Prompt:   "too late",
+	})
+	if !errors.Is(err, ErrFrozen) {
+		t.Fatalf("Save error = %v, want ErrFrozen", err)
+	}
+
+	err = filepath.WalkDir(root, func(path string, d fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if !d.IsDir() && filepath.Ext(path) == ".md" {
+			t.Errorf("markdown file created in frozen round: %s", path)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("WalkDir: %v", err)
+	}
+	if n := git.count(); n != 0 {
+		t.Errorf("commits = %d, want 0", n)
+	}
+}
+
+// Given two contributions saved to the same round with different creation times,
+// When ListByRound is called,
+// Then both are returned oldest first.
+func TestFileStore_ListByRound(t *testing.T) {
+	root := t.TempDir()
+	git := &fakeCommitter{}
+	store := &FileStore{Root: root, Git: git}
+	ctx := context.Background()
+
+	older := time.Date(2026, 11, 23, 10, 0, 0, 0, time.UTC)
+	newer := older.Add(5 * time.Minute)
+
+	// Save the newer contribution first so the ordering cannot come from insertion order.
+	if _, err := store.Save(ctx, Contribution{
+		ID:        "CON-0000000000000000000000000000000d",
+		WorldID:   "w",
+		RoundID:   "round-0000001",
+		PlayerID:  "player-b",
+		Prompt:    "newer prompt",
+		CreatedAt: newer,
+	}); err != nil {
+		t.Fatalf("Save newer: %v", err)
+	}
+	if _, err := store.Save(ctx, Contribution{
+		ID:        "CON-0000000000000000000000000000000c",
+		WorldID:   "w",
+		RoundID:   "round-0000001",
+		PlayerID:  "player-a",
+		Prompt:    "older prompt",
+		CreatedAt: older,
+	}); err != nil {
+		t.Fatalf("Save older: %v", err)
+	}
+
+	list, err := store.ListByRound(ctx, "w", "round-0000001")
+	if err != nil {
+		t.Fatalf("ListByRound: %v", err)
+	}
+	if len(list) != 2 {
+		t.Fatalf("ListByRound returned %d entries, want 2", len(list))
+	}
+	if list[0].ID != "CON-0000000000000000000000000000000c" || list[1].ID != "CON-0000000000000000000000000000000d" {
+		t.Errorf("ListByRound order = [%s %s], want oldest first [c d]", list[0].ID, list[1].ID)
 	}
 }

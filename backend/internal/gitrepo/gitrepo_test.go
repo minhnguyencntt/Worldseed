@@ -95,3 +95,53 @@ func TestCommit_RejectsBadPaths(t *testing.T) {
 		})
 	}
 }
+
+// Given a runner whose rev-parse HEAD prints a SHA with a trailing newline,
+// when Head is called,
+// then it returns the trimmed SHA and runs exactly `git rev-parse HEAD` in the repository directory.
+func TestHead_ReturnsTrimmedSHA(t *testing.T) {
+	var gotDir string
+	var gotArgs []string
+	run := func(_ context.Context, dir string, args ...string) ([]byte, error) {
+		gotDir = dir
+		gotArgs = append([]string(nil), args...)
+		return []byte("deadbeef\n"), nil
+	}
+	c := &CLI{Dir: "/repo", Run: run}
+
+	got, err := c.Head(context.Background())
+	if err != nil {
+		t.Fatalf("Head returned error: %v", err)
+	}
+	if got != "deadbeef" {
+		t.Errorf("Head = %q, want %q", got, "deadbeef")
+	}
+	if strings.Join(gotArgs, " ") != "rev-parse HEAD" {
+		t.Errorf("git args = %v, want [rev-parse HEAD]", gotArgs)
+	}
+	if gotDir != "/repo" {
+		t.Errorf("git dir = %q, want /repo", gotDir)
+	}
+}
+
+// Given a runner whose rev-parse HEAD fails,
+// when Head is called,
+// then it returns an error wrapping the runner error and no SHA.
+func TestHead_ReturnsRunnerError(t *testing.T) {
+	failErr := errors.New("exit status 128")
+	run := func(_ context.Context, _ string, _ ...string) ([]byte, error) {
+		return []byte("fatal: not a git repository"), failErr
+	}
+	c := &CLI{Dir: "/repo", Run: run}
+
+	got, err := c.Head(context.Background())
+	if err == nil {
+		t.Fatalf("Head error = nil, want error (got sha %q)", got)
+	}
+	if !errors.Is(err, failErr) {
+		t.Errorf("Head error = %v, want it to wrap %v", err, failErr)
+	}
+	if got != "" {
+		t.Errorf("Head sha = %q on failure, want empty", got)
+	}
+}
