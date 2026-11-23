@@ -19,6 +19,9 @@ import (
 // execution goes over Config.MaxBudget, which stops further retries.
 var ErrBudgetExceeded = errors.New("runner: budget exceeded")
 
+// ErrTimeout is returned (wrapped) when one agent attempt exceeds Config.Timeout.
+var ErrTimeout = errors.New("runner: agent attempt timed out")
+
 // Agent performs the work for one execution inside workDir and reports its cost.
 type Agent interface {
 	Run(ctx context.Context, workDir string) (cost float64, err error)
@@ -215,5 +218,9 @@ func (r *Runner) run(ctx context.Context, id, roundID string) (store.Execution, 
 func (r *Runner) runAttempt(ctx context.Context, dir string) (float64, error) {
 	tctx, cancel := context.WithTimeout(ctx, r.cfg.Timeout)
 	defer cancel()
-	return r.agent.Run(tctx, dir)
+	cost, err := r.agent.Run(tctx, dir)
+	if err != nil && errors.Is(tctx.Err(), context.DeadlineExceeded) && ctx.Err() == nil {
+		return cost, fmt.Errorf("%w: %w", ErrTimeout, err)
+	}
+	return cost, err
 }
