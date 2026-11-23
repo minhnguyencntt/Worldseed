@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/worldseed/storyforge/backend/internal/config"
 )
@@ -36,5 +37,48 @@ func TestHealthz(t *testing.T) {
 	}
 	if body["status"] != "ok" {
 		t.Errorf("body status = %q, want %q", body["status"], "ok")
+	}
+}
+
+// Given a server built from a config with a token secret, cookie name and 1h TTL,
+// when a session is created with POST /api/v1/player/session and its Set-Cookie is sent
+// with GET /api/v1/player/me, then the me response is 200 with the same id as the session body.
+func TestSessionThenMe(t *testing.T) {
+	cfg := &config.Config{
+		Auth: config.AuthConfig{TokenSecret: "test-secret", CookieName: "sf_session", TokenTTL: time.Hour},
+	}
+	log := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := New(cfg, log)
+
+	sessRec := httptest.NewRecorder()
+	h.ServeHTTP(sessRec, httptest.NewRequest(http.MethodPost, "/api/v1/player/session", nil))
+	if sessRec.Code != http.StatusCreated {
+		t.Fatalf("session status = %d, want %d", sessRec.Code, http.StatusCreated)
+	}
+	var sess map[string]string
+	if err := json.Unmarshal(sessRec.Body.Bytes(), &sess); err != nil {
+		t.Fatalf("decode session body: %v", err)
+	}
+
+	cookies := sessRec.Result().Cookies()
+	if len(cookies) == 0 {
+		t.Fatal("session response set no cookie")
+	}
+	meReq := httptest.NewRequest(http.MethodGet, "/api/v1/player/me", nil)
+	for _, c := range cookies {
+		meReq.AddCookie(c)
+	}
+	meRec := httptest.NewRecorder()
+	h.ServeHTTP(meRec, meReq)
+
+	if meRec.Code != http.StatusOK {
+		t.Fatalf("me status = %d, want %d (body=%q)", meRec.Code, http.StatusOK, meRec.Body.String())
+	}
+	var me map[string]string
+	if err := json.Unmarshal(meRec.Body.Bytes(), &me); err != nil {
+		t.Fatalf("decode me body: %v", err)
+	}
+	if me["id"] != sess["id"] {
+		t.Fatalf("me id = %q, want session id %q", me["id"], sess["id"])
 	}
 }
