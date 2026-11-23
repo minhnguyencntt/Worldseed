@@ -58,6 +58,35 @@ export const assetSchema = z
         message: 'spritesheet assets require dimensions',
       });
     }
+    const frames = asset.frames;
+    if (frames && asset.dimensions) {
+      const { frameWidth, frameHeight, frameCount } = frames;
+      if (frameWidth * frameCount > asset.dimensions.width) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['frames', 'frameCount'],
+          message: 'frameCount exceeds sheet width',
+        });
+      }
+      if (frameHeight > asset.dimensions.height) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['frames', 'frameHeight'],
+          message: 'frameHeight exceeds sheet height',
+        });
+      }
+    }
+    if (frames) {
+      for (const [name, anim] of Object.entries(asset.animations ?? {})) {
+        if (anim.frames.some((index) => index >= frames.frameCount)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['animations', name, 'frames'],
+            message: 'animation frame out of range',
+          });
+        }
+      }
+    }
   });
 
 export const manifestSchema = z.object({
