@@ -75,3 +75,74 @@ func TestLoadFS_MissingSecretAndDefaults(t *testing.T) {
 		}
 	})
 }
+
+// Given a YAML file that sets only auth.token_secret,
+// when LoadFS is called, then storage.repo_path defaults to "." and the contribution
+// limits default to max_per_player 5 and max_prompt_len 500.
+// Given a YAML file with explicit storage and contribution blocks,
+// when LoadFS is called, then those values override the defaults.
+func TestLoadFS_ContributionDefaults(t *testing.T) {
+	noEnv := func(string) string { return "" }
+
+	t.Run("defaults apply when only auth is configured", func(t *testing.T) {
+		fsys := fstest.MapFS{
+			"config.yaml": &fstest.MapFile{Data: []byte("auth:\n  token_secret: 'secret'\n")},
+		}
+		cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+		if err != nil {
+			t.Fatalf("LoadFS returned error: %v", err)
+		}
+		if cfg.Storage.RepoPath != "." {
+			t.Errorf("Storage.RepoPath = %q, want %q", cfg.Storage.RepoPath, ".")
+		}
+		if cfg.Contribution.MaxPerPlayer != 5 {
+			t.Errorf("Contribution.MaxPerPlayer = %d, want 5", cfg.Contribution.MaxPerPlayer)
+		}
+		if cfg.Contribution.MaxPromptLen != 500 {
+			t.Errorf("Contribution.MaxPromptLen = %d, want 500", cfg.Contribution.MaxPromptLen)
+		}
+	})
+
+	t.Run("explicit storage and contribution blocks override defaults", func(t *testing.T) {
+		fsys := fstest.MapFS{
+			"config.yaml": &fstest.MapFile{Data: []byte(`
+auth:
+  token_secret: 'secret'
+storage:
+  repo_path: '/srv/content'
+  content_dir: 'game/custom'
+contribution:
+  min_prompt_len: 10
+  max_prompt_len: 120
+  max_per_player: 2
+  rate_max: 7
+  rate_window: 30s
+`)},
+		}
+		cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+		if err != nil {
+			t.Fatalf("LoadFS returned error: %v", err)
+		}
+		if cfg.Storage.RepoPath != "/srv/content" {
+			t.Errorf("Storage.RepoPath = %q, want %q", cfg.Storage.RepoPath, "/srv/content")
+		}
+		if cfg.Storage.ContentDir != "game/custom" {
+			t.Errorf("Storage.ContentDir = %q, want %q", cfg.Storage.ContentDir, "game/custom")
+		}
+		if cfg.Contribution.MinPromptLen != 10 {
+			t.Errorf("Contribution.MinPromptLen = %d, want 10", cfg.Contribution.MinPromptLen)
+		}
+		if cfg.Contribution.MaxPromptLen != 120 {
+			t.Errorf("Contribution.MaxPromptLen = %d, want 120", cfg.Contribution.MaxPromptLen)
+		}
+		if cfg.Contribution.MaxPerPlayer != 2 {
+			t.Errorf("Contribution.MaxPerPlayer = %d, want 2", cfg.Contribution.MaxPerPlayer)
+		}
+		if cfg.Contribution.RateMax != 7 {
+			t.Errorf("Contribution.RateMax = %d, want 7", cfg.Contribution.RateMax)
+		}
+		if cfg.Contribution.RateWindow != 30*time.Second {
+			t.Errorf("Contribution.RateWindow = %v, want %v", cfg.Contribution.RateWindow, 30*time.Second)
+		}
+	})
+}
