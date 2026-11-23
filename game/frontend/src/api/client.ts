@@ -103,6 +103,29 @@ export function retryExecution(token: string, id: string): Promise<ExecutionInfo
   });
 }
 
+/** Lists every execution (GET /api/v1/admin/executions). */
+export function listExecutions(token: string): Promise<ExecutionInfo[]> {
+  return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
+}
+
+/** Lists the executions the admin endpoint returns (GET /api/v1/admin/executions). */
+export function listExecutions(token: string): Promise<ExecutionInfo[]> {
+  return adminRequest<ExecutionInfo[]>(token, '/api/v1/admin/executions');
+}
+
+/** Picks the newest execution (greatest updated_at) whose round_id matches, or undefined when none match. */
+export function findExecutionForRound(list: ExecutionInfo[], roundId: string): ExecutionInfo | undefined {
+  return list
+    .filter((e) => e.round_id === roundId)
+    .reduce<ExecutionInfo | undefined>((best, e) => (!best || e.updated_at > best.updated_at ? e : best), undefined);
+}
+
+/** Resolves the ExecutionInfo for the current Round of a world, or undefined when it has none. */
+export async function getCurrentRoundExecution(token: string, worldId: string = WORLD_ID): Promise<ExecutionInfo | undefined> {
+  const [round, list] = await Promise.all([getCurrentRound(worldId), listExecutions(token)]);
+  return findExecutionForRound(list, round.id);
+}
+
 const BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '';
 
 /** Player request: prefixes the API base URL and always sends the session cookie. */
