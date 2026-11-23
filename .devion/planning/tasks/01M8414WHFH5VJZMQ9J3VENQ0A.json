@@ -1,0 +1,110 @@
+{
+  "id": "01M8414WHFH5VJZMQ9J3VENQ0A",
+  "intent_id": "01M8404T8DH3W6S7J0DFHYJCCF",
+  "title": "Act: Scaffold backend Go Chi module and YAML config",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create root go.mod, Chi /healthz router, LoadFS YAML config, and example YAML.",
+  "description": "Context: No Go backend exists at tip.\nDesired behavior: Add root Go module with config.LoadFS and NewRouter GET /healthz.\nExpected result: Root builds as a Go module with example YAML; config load uses fs.FS.\nWhy: Implements REQ-BE product code only.",
+  "acceptance_criteria": [
+    "Given Act complete, when inspecting root paths, then go.mod, main.go, config.go, router.go, and config.example.yaml exist.",
+    "Given LoadFS reading example-shaped YAML, when called, then Addr and RepoPath fields populate from YAML keys server.addr and git.repo_path."
+  ],
+  "scope": {
+    "in_scope": [
+      "Root Go module scaffold",
+      "YAML LoadFS",
+      "Chi healthz router",
+      "example YAML"
+    ],
+    "out_of_scope": [
+      "*_test.go files",
+      "Contribution/admin APIs",
+      "Real Git operations",
+      "Nested backend/ directory"
+    ],
+    "preserve": [
+      "No database dependencies in go.mod"
+    ]
+  },
+  "technical_constraints": [
+    "Use chi router and gopkg.in/yaml.v3",
+    "Config load API must accept fs.FS",
+    "Files at repository root only",
+    "New file: `go.mod`",
+    "New file: `main.go`",
+    "New file: `config.go`",
+    "New file: `router.go`",
+    "New file: `config.example.yaml`"
+  ],
+  "dependencies": [
+    "REQ-BE"
+  ],
+  "definition_of_done": [
+    "All code_paths created",
+    "No test files added by this Act",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-003.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8414WFV3FZGBGPJSNDTH21X",
+    "artifact:.ai-dlc/units/UNIT-003.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8414WHFHKJZE3FJSPPB8GZP"
+  ],
+  "sim_node_id": "01M8414WFVG7P2A2STZZHQ0JQJ",
+  "artifact_path": ".ai-dlc/units/UNIT-003.md",
+  "artifact_id": "UNIT-003",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "go.mod",
+      "symbol": "new: module github.com/storyforge/worldseed",
+      "lines": "new",
+      "action": "Create go.mod with module path github.com/storyforge/worldseed, go 1.22, requiring github.com/go-chi/chi/v5 and gopkg.in/yaml.v3.",
+      "code": "module github.com/storyforge/worldseed\n\ngo 1.22\n\nrequire (\n        github.com/go-chi/chi/v5 v5.1.0\n        gopkg.in/yaml.v3 v3.0.1\n)",
+      "expected": "go.mod declares Chi and YAML dependencies."
+    },
+    {
+      "file": "config.go",
+      "symbol": "new: LoadFS",
+      "lines": "new",
+      "action": "Create package main with structs Config, ServerConfig{Addr string `yaml:\"addr\"`}, GitConfig{RepoPath string `yaml:\"repo_path\"`}; Config has Server and Git fields with yaml tags server/git. Export LoadFS(fsys fs.FS, name string) (*Config, error) that opens name via fsys.Open, decodes YAML into Config, returns error if open/decode fails or Server.Addr is empty.",
+      "code": "package main\n\nimport (\n  \"fmt\"\n  \"io/fs\"\n\n  \"gopkg.in/yaml.v3\"\n)\n\ntype ServerConfig struct {\n  Addr string `yaml:\"addr\"`\n}\n\ntype GitConfig struct {\n  RepoPath string `yaml:\"repo_path\"`\n}\n\ntype Config struct {\n  Server ServerConfig `yaml:\"server\"`\n  Git    GitConfig    `yaml:\"git\"`\n}\n\nfunc LoadFS(fsys fs.FS, name string) (*Config, error) {\n  f, err := fsys.Open(name)\n  if err != nil {\n    return nil, err\n  }\n  defer f.Close()\n  var cfg Config\n  if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {\n    return nil, err\n  }\n  if cfg.Server.Addr == \"\" {\n    return nil, fmt.Errorf(\"server.addr is required\")\n  }\n  return &cfg, nil\n}",
+      "expected": "LoadFS decodes YAML from an fs.FS file and validates addr."
+    },
+    {
+      "file": "router.go",
+      "symbol": "new: NewRouter",
+      "lines": "new",
+      "action": "Create package main exporting NewRouter() http.Handler that returns chi.NewRouter with Get /healthz writing status 200 and body ok.",
+      "code": "package main\n\nimport (\n  \"net/http\"\n\n  \"github.com/go-chi/chi/v5\"\n)\n\nfunc NewRouter() http.Handler {\n  r := chi.NewRouter()\n  r.Get(\"/healthz\", func(w http.ResponseWriter, _ *http.Request) {\n    w.WriteHeader(http.StatusOK)\n    _, _ = w.Write([]byte(\"ok\"))\n  })\n  return r\n}",
+      "expected": "NewRouter serves GET /healthz → 200 ok."
+    },
+    {
+      "file": "main.go",
+      "symbol": "new: main",
+      "lines": "new",
+      "action": "Create main that reads optional -config flag default config.example.yaml, loads via LoadFS(os.DirFS(\".\"), path), prints Addr and RepoPath to stdout, and notes router wiring via _ = NewRouter() so the package is linked without listening (Phase-1 stub — do not call ListenAndServe).",
+      "code": "package main\n\nimport (\n  \"flag\"\n  \"fmt\"\n  \"os\"\n)\n\nfunc main() {\n  cfgPath := flag.String(\"config\", \"config.example.yaml\", \"path to YAML config\")\n  flag.Parse()\n  cfg, err := LoadFS(os.DirFS(\".\"), *cfgPath)\n  if err != nil {\n    fmt.Fprintf(os.Stderr, \"config: %v\\n\", err)\n    os.Exit(1)\n  }\n  _ = NewRouter()\n  fmt.Printf(\"storyforge backend config loaded addr=%s repo=%s\\n\", cfg.Server.Addr, cfg.Git.RepoPath)\n}",
+      "expected": "main loads YAML config and links Chi router without binding a live port."
+    },
+    {
+      "file": "config.example.yaml",
+      "symbol": "new: config.example.yaml",
+      "lines": "new",
+      "action": "Create example YAML with server.addr :8080 and git.repo_path .",
+      "code": "server:\n  addr: \":8080\"\ngit:\n  repo_path: \".\"",
+      "expected": "Example backend YAML documents addr and repo_path."
+    }
+  ],
+  "created_at": "2026-11-23T11:02:36.335144+00:00",
+  "updated_at": "2026-11-23T11:02:36.998444+00:00"
+}

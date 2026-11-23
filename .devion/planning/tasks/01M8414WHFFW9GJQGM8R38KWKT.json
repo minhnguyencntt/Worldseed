@@ -1,0 +1,87 @@
+{
+  "id": "01M8414WHFFW9GJQGM8R38KWKT",
+  "intent_id": "01M8404T8DH3W6S7J0DFHYJCCF",
+  "title": "Verify: Frontend config loader unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add Vitest and unit tests proving loadFrontendConfig defaults and overrides.",
+  "description": "Context: ACT-FE added loadFrontendConfig without tests.\nDesired behavior: Add Vitest wiring and config.test.ts that asserts defaults and env overrides with plain objects (no browser, no network).\nExpected result: Filtered vitest run for config tests passes.\nWhy: Maps REQ-FE acceptance on config defaults/example keys to unit evidence.",
+  "acceptance_criteria": [
+    "Given empty env object, when loadFrontendConfig runs in the unit test, then apiBaseUrl is http://localhost:8080 and appName is StoryForge.",
+    "Given env overrides VITE_API_BASE_URL and VITE_APP_NAME, when loadFrontendConfig runs, then returned fields equal the overrides."
+  ],
+  "scope": {
+    "in_scope": [
+      "Vitest dependency/scripts",
+      "config.test.ts",
+      "vitest.config.ts"
+    ],
+    "out_of_scope": [
+      "E2E browser tests",
+      "Building or serving Vite"
+    ],
+    "preserve": [
+      "Product config.ts behavior from ACT-FE"
+    ]
+  },
+  "technical_constraints": [
+    "VERIFY = unit tests only; mock env via plain objects; no Playwright/Cypress"
+  ],
+  "dependencies": [
+    "ACT-FE"
+  ],
+  "definition_of_done": [
+    "Vitest config and config.test.ts exist",
+    "Command for this unit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-001.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8414WFVTRR795PT2YKT8QEC",
+    "trace:UNIT-001",
+    "artifact:.ai-dlc/units/UNIT-001.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8414WHF5EWN3C3XW2HF0919"
+  ],
+  "sim_node_id": "01M8414WFVAVDF70J7E6SG94XM",
+  "feature_id": "UNIT-001",
+  "artifact_path": ".ai-dlc/units/UNIT-001.md",
+  "artifact_id": "UNIT-001",
+  "steps": [
+    {
+      "file": "package.json",
+      "symbol": "package.json scripts and vitest deps",
+      "lines": "L1-L40",
+      "action": "Add script test=vitest run and test:config=vitest run config.test.ts; add devDependencies vitest ^2.1.0. Do not change production dependencies.",
+      "code": "scripts.test -> \"vitest run\"; scripts[\"test:config\"] -> \"vitest run config.test.ts\"; devDependencies.vitest -> \"^2.1.0\"",
+      "command": "npm install && npm run test:config",
+      "expected": "package.json includes vitest scripts; install succeeds as prerequisite for the test command."
+    },
+    {
+      "file": "vitest.config.ts",
+      "symbol": "new: defineConfig",
+      "lines": "new",
+      "action": "Create vitest.config.ts using vitest/config defineConfig with test.environment node and include **/*.test.ts.",
+      "code": "import { defineConfig } from 'vitest/config'\n\nexport default defineConfig({\n  test: {\n    environment: 'node',\n    include: ['**/*.test.ts'],\n  },\n})",
+      "command": "npm run test:config",
+      "expected": "Vitest loads this config when running config tests."
+    },
+    {
+      "file": "config.test.ts",
+      "symbol": "new: loadFrontendConfig defaults and overrides",
+      "lines": "new",
+      "action": "Create tests: (1) loadFrontendConfig({}) expects apiBaseUrl http://localhost:8080 and appName StoryForge; (2) loadFrontendConfig({ VITE_API_BASE_URL: 'http://api.test', VITE_APP_NAME: 'SF-Test' }) expects those override values. Import from ./config.",
+      "code": "import { describe, expect, it } from 'vitest'\nimport { loadFrontendConfig } from './config'\n\ndescribe('loadFrontendConfig', () => {\n  it('applies defaults when env keys are missing', () => {\n    expect(loadFrontendConfig({})).toEqual({\n      apiBaseUrl: 'http://localhost:8080',\n      appName: 'StoryForge',\n    })\n  })\n\n  it('uses provided VITE overrides', () => {\n    expect(\n      loadFrontendConfig({\n        VITE_API_BASE_URL: 'http://api.test',\n        VITE_APP_NAME: 'SF-Test',\n      }),\n    ).toEqual({ apiBaseUrl: 'http://api.test', appName: 'SF-Test' })\n  })\n})",
+      "command": "npm run test:config",
+      "expected": "Both loadFrontendConfig unit tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T11:02:36.335144+00:00",
+  "updated_at": "2026-11-23T11:02:36.999522+00:00"
+}

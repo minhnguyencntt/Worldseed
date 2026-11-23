@@ -1,0 +1,160 @@
+{
+  "id": "01M8414WHF5EWN3C3XW2HF0919",
+  "intent_id": "01M8404T8DH3W6S7J0DFHYJCCF",
+  "title": "Act: Scaffold frontend Vite React TypeScript module",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create root package.json, Vite/TS config, App stub, env example, and loadFrontendConfig.",
+  "description": "Context: Root has only `README.md`; no frontend package.\nDesired behavior: Add the frontend module files listed in code_paths with `loadFrontendConfig` implementing defaults.\nExpected result: Repo root is a valid Vite React TS app with config helper and `.env.example`.\nWhy: Implements REQ-FE product code only (no tests).",
+  "acceptance_criteria": [
+    "Given the Act is applied, when listing the repo root, then `package.json`, `vite.config.ts`, `tsconfig.json`, `index.html`, `main.tsx`, `App.tsx`, `config.ts`, and `.env.example` exist.",
+    "Given `loadFrontendConfig({})`, when evaluated in source, then defaults are `http://localhost:8080` and `StoryForge` as specified in the step code."
+  ],
+  "scope": {
+    "in_scope": [
+      "All files in code_paths",
+      "Frontend config helper and stub UI text from config"
+    ],
+    "out_of_scope": [
+      "Vitest setup and test files",
+      "Gameplay UI"
+    ],
+    "preserve": [
+      "No secrets in committed env files"
+    ]
+  },
+  "technical_constraints": [
+    "React + TypeScript + Vite only for this module",
+    "Do not add Playwright/Cypress",
+    "Files at repository root only",
+    "New file: `package.json`",
+    "New file: `tsconfig.json`",
+    "New file: `tsconfig.app.json`",
+    "New file: `tsconfig.node.json`",
+    "New file: `vite.config.ts`",
+    "New file: `index.html`",
+    "New file: `main.tsx`",
+    "New file: `App.tsx`",
+    "New file: `config.ts`",
+    "New file: `vite-env.d.ts`",
+    "New file: `.env.example`"
+  ],
+  "dependencies": [
+    "REQ-FE"
+  ],
+  "definition_of_done": [
+    "All code_paths created with the specified symbols and behavior",
+    "No test files added by this Act",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-002.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8414WFVEQ8N2MZPH4RC78AX",
+    "artifact:.ai-dlc/units/UNIT-002.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8414WHFKK8NEJGEABT1E38S"
+  ],
+  "sim_node_id": "01M8414WFVTRR795PT2YKT8QEC",
+  "artifact_path": ".ai-dlc/units/UNIT-002.md",
+  "artifact_id": "UNIT-002",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "package.json",
+      "symbol": "new: package.json",
+      "lines": "new",
+      "action": "Create package.json name storyforge, private true, type module, scripts dev=vite, build=tsc -b && vite build, preview=vite preview; dependencies react and react-dom ^19; devDependencies typescript ^5.6, vite ^6, @vitejs/plugin-react ^4, @types/react, @types/react-dom.",
+      "code": "{\n  \"name\": \"storyforge\",\n  \"private\": true,\n  \"version\": \"0.1.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"tsc -b && vite build\",\n    \"preview\": \"vite preview\"\n  },\n  \"dependencies\": {\n    \"react\": \"^19.0.0\",\n    \"react-dom\": \"^19.0.0\"\n  },\n  \"devDependencies\": {\n    \"@types/react\": \"^19.0.0\",\n    \"@types/react-dom\": \"^19.0.0\",\n    \"@vitejs/plugin-react\": \"^4.3.4\",\n    \"typescript\": \"~5.6.3\",\n    \"vite\": \"^6.0.0\"\n  }\n}",
+      "expected": "package.json exists with Vite React scripts and dependencies."
+    },
+    {
+      "file": "tsconfig.json",
+      "symbol": "new: tsconfig.json",
+      "lines": "new",
+      "action": "Create solution-style tsconfig referencing tsconfig.app.json and tsconfig.node.json.",
+      "code": "{\n  \"files\": [],\n  \"references\": [{ \"path\": \"./tsconfig.app.json\" }, { \"path\": \"./tsconfig.node.json\" }]\n}",
+      "expected": "tsconfig.json references app and node configs."
+    },
+    {
+      "file": "tsconfig.app.json",
+      "symbol": "new: tsconfig.app.json",
+      "lines": "new",
+      "action": "Create app tsconfig with strict true, jsx react-jsx, module ESNext, moduleResolution bundler, include main.tsx App.tsx config.ts vite-env.d.ts.",
+      "code": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"useDefineForClassFields\": true,\n    \"lib\": [\"ES2022\", \"DOM\", \"DOM.Iterable\"],\n    \"module\": \"ESNext\",\n    \"skipLibCheck\": true,\n    \"moduleResolution\": \"bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"isolatedModules\": true,\n    \"moduleDetection\": \"force\",\n    \"noEmit\": true,\n    \"jsx\": \"react-jsx\",\n    \"strict\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noFallthroughCasesInSwitch\": true\n  },\n  \"include\": [\"main.tsx\", \"App.tsx\", \"config.ts\", \"vite-env.d.ts\"]\n}",
+      "expected": "tsconfig.app.json enables strict TypeScript for app entry files."
+    },
+    {
+      "file": "tsconfig.node.json",
+      "symbol": "new: tsconfig.node.json",
+      "lines": "new",
+      "action": "Create node tsconfig including vite.config.ts only.",
+      "code": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"lib\": [\"ES2023\"],\n    \"module\": \"ESNext\",\n    \"skipLibCheck\": true,\n    \"moduleResolution\": \"bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"isolatedModules\": true,\n    \"moduleDetection\": \"force\",\n    \"noEmit\": true,\n    \"strict\": true\n  },\n  \"include\": [\"vite.config.ts\"]\n}",
+      "expected": "tsconfig.node.json covers vite.config.ts."
+    },
+    {
+      "file": "vite.config.ts",
+      "symbol": "new: defineConfig",
+      "lines": "new",
+      "action": "Create Vite config exporting default defineConfig with plugins: [react()] from @vitejs/plugin-react.",
+      "code": "import { defineConfig } from 'vite'\nimport react from '@vitejs/plugin-react'\n\nexport default defineConfig({\n  plugins: [react()],\n})",
+      "expected": "vite.config.ts enables the React plugin."
+    },
+    {
+      "file": "index.html",
+      "symbol": "new: index.html",
+      "lines": "new",
+      "action": "Create index.html with root div#root and script type=module src=/main.tsx.",
+      "code": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>StoryForge</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/main.tsx\"></script>\n  </body>\n</html>",
+      "expected": "index.html mounts the React entry at /main.tsx."
+    },
+    {
+      "file": "vite-env.d.ts",
+      "symbol": "new: ImportMetaEnv",
+      "lines": "new",
+      "action": "Create vite-env.d.ts referencing vite/client and declaring ImportMetaEnv optional string fields VITE_API_BASE_URL and VITE_APP_NAME.",
+      "code": "/// <reference types=\"vite/client\" />\n\ninterface ImportMetaEnv {\n  readonly VITE_API_BASE_URL?: string\n  readonly VITE_APP_NAME?: string\n}\n\ninterface ImportMeta {\n  readonly env: ImportMetaEnv\n}",
+      "expected": "Env key types are declared for the frontend config loader."
+    },
+    {
+      "file": "config.ts",
+      "symbol": "new: loadFrontendConfig",
+      "lines": "new",
+      "action": "Create exported type FrontendConfig with apiBaseUrl:string and appName:string; export function loadFrontendConfig(env: { VITE_API_BASE_URL?: string; VITE_APP_NAME?: string }) that returns apiBaseUrl from env.VITE_API_BASE_URL or http://localhost:8080, and appName from env.VITE_APP_NAME or StoryForge.",
+      "code": "export type FrontendConfig = {\n  apiBaseUrl: string\n  appName: string\n}\n\nexport function loadFrontendConfig(\n  env: { VITE_API_BASE_URL?: string; VITE_APP_NAME?: string },\n): FrontendConfig {\n  return {\n    apiBaseUrl: env.VITE_API_BASE_URL ?? 'http://localhost:8080',\n    appName: env.VITE_APP_NAME ?? 'StoryForge',\n  }\n}",
+      "expected": "loadFrontendConfig applies documented defaults when keys are missing."
+    },
+    {
+      "file": "App.tsx",
+      "symbol": "new: App",
+      "lines": "new",
+      "action": "Create App component that calls loadFrontendConfig(import.meta.env) and renders an h1 with config.appName and a paragraph showing config.apiBaseUrl.",
+      "code": "import { loadFrontendConfig } from './config'\n\nexport function App() {\n  const config = loadFrontendConfig(import.meta.env)\n  return (\n    <main>\n      <h1>{config.appName}</h1>\n      <p>API: {config.apiBaseUrl}</p>\n    </main>\n  )\n}",
+      "expected": "App renders StoryForge name and API base from config."
+    },
+    {
+      "file": "main.tsx",
+      "symbol": "new: main",
+      "lines": "new",
+      "action": "Create main.tsx that createRoot on #root and renders <App /> under StrictMode.",
+      "code": "import { StrictMode } from 'react'\nimport { createRoot } from 'react-dom/client'\nimport { App } from './App'\n\ncreateRoot(document.getElementById('root')!).render(\n  <StrictMode>\n    <App />\n  </StrictMode>,\n)",
+      "expected": "React mounts App at #root."
+    },
+    {
+      "file": ".env.example",
+      "symbol": "new: .env.example",
+      "lines": "new",
+      "action": "Create .env.example with lines VITE_API_BASE_URL=http://localhost:8080 and VITE_APP_NAME=StoryForge.",
+      "code": "VITE_API_BASE_URL=http://localhost:8080\nVITE_APP_NAME=StoryForge",
+      "expected": ".env.example documents both VITE keys."
+    }
+  ],
+  "created_at": "2026-11-23T11:02:36.335144+00:00",
+  "updated_at": "2026-11-23T11:02:36.998008+00:00"
+}

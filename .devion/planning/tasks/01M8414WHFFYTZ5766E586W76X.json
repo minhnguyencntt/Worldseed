@@ -1,0 +1,100 @@
+{
+  "id": "01M8414WHFFYTZ5766E586W76X",
+  "intent_id": "01M8404T8DH3W6S7J0DFHYJCCF",
+  "title": "Act: Scaffold worker Go module and YAML config",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create worker LoadFS config for repo/worktree/agent/timeout, example YAML, stub entry in root Go module.",
+  "description": "Context: No worker sources exist; root go.mod exists after ACT-BE.\nDesired behavior: Add worker YAML config fields required by REQ-WORKER and a stub that only loads config.\nExpected result: Worker configures paths/commands without invoking Claude CLI.\nWhy: Implements REQ-WORKER product code only.",
+  "acceptance_criteria": [
+    "Given Act complete, when inspecting the root, then worker.go, worker_config.go, and worker.config.example.yaml exist.",
+    "Given example-shaped YAML, when LoadWorkerFS reads it, then RepoPath, WorktreeDir, Agent.Command, and Execution.TimeoutSeconds populate."
+  ],
+  "scope": {
+    "in_scope": [
+      "Worker YAML LoadWorkerFS",
+      "example config",
+      "stub worker mode in main"
+    ],
+    "out_of_scope": [
+      "Pipeline stages",
+      "CLI invocation",
+      "*_test.go",
+      "Nested worker/ directory"
+    ],
+    "preserve": [
+      "No secrets in example config"
+    ]
+  },
+  "technical_constraints": [
+    "Go + YAML in root module",
+    "LoadWorkerFS must use fs.FS",
+    "New file: `worker_config.go`",
+    "New file: `worker.go`",
+    "New file: `worker.config.example.yaml`",
+    "New file: `main.go`"
+  ],
+  "dependencies": [
+    "REQ-WORKER",
+    "ACT-BE"
+  ],
+  "definition_of_done": [
+    "All code_paths created",
+    "No test files added by this Act",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-005.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8414WFVETQH8G1EFB00EG71",
+    "artifact:.ai-dlc/units/UNIT-005.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8414WHFKAF92D148JMJ2C6Y"
+  ],
+  "sim_node_id": "01M8414WFVA4HYTYNYMEPRFJNN",
+  "artifact_path": ".ai-dlc/units/UNIT-005.md",
+  "artifact_id": "UNIT-005",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "worker_config.go",
+      "symbol": "new: LoadWorkerFS",
+      "lines": "new",
+      "action": "Create WorkerConfig with RepoPath string yaml:\"repo_path\", WorktreeDir string yaml:\"worktree_dir\", Agent struct{Command string yaml:\"command\"} yaml:\"agent\", Execution struct{TimeoutSeconds int yaml:\"timeout_seconds\"} yaml:\"execution\". Export LoadWorkerFS(fsys fs.FS, name string) (*WorkerConfig, error) decoding YAML and returning error if RepoPath empty, Agent.Command empty, or TimeoutSeconds <= 0. Package main.",
+      "code": "package main\n\nimport (\n  \"fmt\"\n  \"io/fs\"\n\n  \"gopkg.in/yaml.v3\"\n)\n\ntype WorkerAgentConfig struct {\n  Command string `yaml:\"command\"`\n}\n\ntype WorkerExecutionConfig struct {\n  TimeoutSeconds int `yaml:\"timeout_seconds\"`\n}\n\ntype WorkerConfig struct {\n  RepoPath    string                `yaml:\"repo_path\"`\n  WorktreeDir string                `yaml:\"worktree_dir\"`\n  Agent       WorkerAgentConfig     `yaml:\"agent\"`\n  Execution   WorkerExecutionConfig `yaml:\"execution\"`\n}\n\nfunc LoadWorkerFS(fsys fs.FS, name string) (*WorkerConfig, error) {\n  f, err := fsys.Open(name)\n  if err != nil {\n    return nil, err\n  }\n  defer f.Close()\n  var cfg WorkerConfig\n  if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {\n    return nil, err\n  }\n  if cfg.RepoPath == \"\" {\n    return nil, fmt.Errorf(\"repo_path is required\")\n  }\n  if cfg.Agent.Command == \"\" {\n    return nil, fmt.Errorf(\"agent.command is required\")\n  }\n  if cfg.Execution.TimeoutSeconds <= 0 {\n    return nil, fmt.Errorf(\"execution.timeout_seconds must be > 0\")\n  }\n  return &cfg, nil\n}",
+      "expected": "LoadWorkerFS validates required config fields via fs.FS."
+    },
+    {
+      "file": "worker.config.example.yaml",
+      "symbol": "new: worker.config.example.yaml",
+      "lines": "new",
+      "action": "Create example YAML with repo_path ., worktree_dir .worktrees, agent.command claude, execution.timeout_seconds 3600.",
+      "code": "repo_path: \".\"\nworktree_dir: \".worktrees\"\nagent:\n  command: claude\nexecution:\n  timeout_seconds: 3600",
+      "expected": "Example worker YAML documents required keys."
+    },
+    {
+      "file": "worker.go",
+      "symbol": "new: runWorker",
+      "lines": "new",
+      "action": "Create runWorker(cfgPath string) int that calls LoadWorkerFS(os.DirFS(\".\"), cfgPath), prints repo_path and agent.command, returns 0 on success / 1 on error. Do not exec the agent command. Package main.",
+      "code": "package main\n\nimport (\n  \"fmt\"\n  \"os\"\n)\n\nfunc runWorker(cfgPath string) int {\n  cfg, err := LoadWorkerFS(os.DirFS(\".\"), cfgPath)\n  if err != nil {\n    fmt.Fprintf(os.Stderr, \"worker config: %v\\n\", err)\n    return 1\n  }\n  fmt.Printf(\"storyforge worker config loaded repo=%s agent=%s timeout=%d\\n\", cfg.RepoPath, cfg.Agent.Command, cfg.Execution.TimeoutSeconds)\n  return 0\n}",
+      "expected": "Worker stub loads config without invoking external agents."
+    },
+    {
+      "file": "main.go",
+      "symbol": "main mode flag",
+      "lines": "L1-L30",
+      "action": "Update main to accept -mode flag default server; when mode is worker, call os.Exit(runWorker(*cfgPath)) before server path; keep existing server LoadFS path for mode server.",
+      "code": "before: only server LoadFS path\nafter: mode := flag.String(\"mode\", \"server\", \"server|worker\"); if *mode == \"worker\" { os.Exit(runWorker(*cfgPath)) } then existing server path",
+      "expected": "main supports -mode=worker without listening or invoking Claude CLI."
+    }
+  ],
+  "created_at": "2026-11-23T11:02:36.335144+00:00",
+  "updated_at": "2026-11-23T11:02:36.998989+00:00"
+}

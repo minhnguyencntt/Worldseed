@@ -1,0 +1,78 @@
+{
+  "id": "01M8414WHFZ1ZXSMRZFFA9GT85",
+  "intent_id": "01M8404T8DH3W6S7J0DFHYJCCF",
+  "title": "Verify: Backend config LoadFS and healthz unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add Go unit tests for LoadFS via fstest.MapFS and NewRouter healthz via httptest.",
+  "description": "Context: ACT-BE added LoadFS and NewRouter without tests.\nDesired behavior: Unit-test config decoding and /healthz with MapFS and httptest; no live server Listen.\nExpected result: go test filtered to LoadFS and NewRouter tests passes.\nWhy: Proves REQ-BE config and wiring ACs with mocked FS/HTTP.",
+  "acceptance_criteria": [
+    "Given MapFS containing valid YAML, when LoadFS reads config.yaml, then Addr is :8080 and RepoPath is .",
+    "Given MapFS missing server.addr, when LoadFS runs, then it returns a non-nil error.",
+    "Given NewRouter, when httptest GET /healthz, then status is 200 and body is ok."
+  ],
+  "scope": {
+    "in_scope": [
+      "config_test.go",
+      "router_test.go"
+    ],
+    "out_of_scope": [
+      "Starting the server process",
+      "Integration tests against real ports"
+    ],
+    "preserve": [
+      "Production LoadFS/NewRouter signatures from ACT-BE"
+    ]
+  },
+  "technical_constraints": [
+    "Use testing/fstest.MapFS and httptest only",
+    "No network, no real Git"
+  ],
+  "dependencies": [
+    "ACT-BE"
+  ],
+  "definition_of_done": [
+    "Unit tests exist and filtered go test commands pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-007.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8414WFVG7P2A2STZZHQ0JQJ",
+    "trace:UNIT-001",
+    "artifact:.ai-dlc/units/UNIT-007.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8414WHFH5VJZMQ9J3VENQ0A"
+  ],
+  "sim_node_id": "01M8414WFV839ADV21R2FBM314",
+  "feature_id": "UNIT-001",
+  "artifact_path": ".ai-dlc/units/UNIT-007.md",
+  "artifact_id": "UNIT-007",
+  "steps": [
+    {
+      "file": "config_test.go",
+      "symbol": "new: TestLoadFS_Success",
+      "lines": "new",
+      "action": "Create TestLoadFS_Success using fstest.MapFS with file config.yaml content matching example (server.addr :8080, git.repo_path .); assert LoadFS returns nil error and those field values. Create TestLoadFS_MissingAddr with YAML missing addr; assert error != nil. Package main.",
+      "code": "package main\n\nimport (\n  \"testing\"\n  \"testing/fstest\"\n)\n\nfunc TestLoadFS_Success(t *testing.T) {\n  fsys := fstest.MapFS{\n    \"config.yaml\": &fstest.MapFile{Data: []byte(\"server:\\n  addr: \\\":8080\\\"\\ngit:\\n  repo_path: \\\".\\\"\\n\")},\n  }\n  cfg, err := LoadFS(fsys, \"config.yaml\")\n  if err != nil {\n    t.Fatalf(\"LoadFS: %v\", err)\n  }\n  if cfg.Server.Addr != \":8080\" || cfg.Git.RepoPath != \".\" {\n    t.Fatalf(\"unexpected cfg: %+v\", cfg)\n  }\n}\n\nfunc TestLoadFS_MissingAddr(t *testing.T) {\n  fsys := fstest.MapFS{\n    \"config.yaml\": &fstest.MapFile{Data: []byte(\"server: {}\\ngit:\\n  repo_path: \\\".\\\"\\n\")},\n  }\n  if _, err := LoadFS(fsys, \"config.yaml\"); err == nil {\n    t.Fatal(\"expected error for missing server.addr\")\n  }\n}",
+      "command": "go test . -run 'TestLoadFS_' -count=1",
+      "expected": "TestLoadFS_Success and TestLoadFS_MissingAddr pass."
+    },
+    {
+      "file": "router_test.go",
+      "symbol": "new: TestNewRouter_Healthz",
+      "lines": "new",
+      "action": "Create TestNewRouter_Healthz that does httptest.NewRequest GET /healthz, serves via NewRouter, asserts status 200 and body ok. Package main.",
+      "code": "package main\n\nimport (\n  \"net/http\"\n  \"net/http/httptest\"\n  \"testing\"\n)\n\nfunc TestNewRouter_Healthz(t *testing.T) {\n  req := httptest.NewRequest(http.MethodGet, \"/healthz\", nil)\n  rec := httptest.NewRecorder()\n  NewRouter().ServeHTTP(rec, req)\n  if rec.Code != http.StatusOK {\n    t.Fatalf(\"status=%d\", rec.Code)\n  }\n  if rec.Body.String() != \"ok\" {\n    t.Fatalf(\"body=%q\", rec.Body.String())\n  }\n}",
+      "command": "go test . -run TestNewRouter_Healthz -count=1",
+      "expected": "TestNewRouter_Healthz passes without listening on a real port."
+    }
+  ],
+  "created_at": "2026-11-23T11:02:36.335144+00:00",
+  "updated_at": "2026-11-23T11:02:36.999736+00:00"
+}
