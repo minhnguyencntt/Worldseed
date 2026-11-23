@@ -3,6 +3,7 @@ import {
   ApiError,
   approveExecution,
   closeRound,
+  createRound,
   getAdminRound,
   findExecutionForRound,
   getCurrentRound,
@@ -109,6 +110,16 @@ export function AdminApp() {
     }
   }
 
+  async function handleCreateRound() {
+    try {
+      const created = await createRound(token, durationHours);
+      setRoundId(created.id);
+      setReloads((n) => n + 1);
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
   async function runExecutionAction(action: (token: string, id: string) => Promise<ExecutionInfo>, id: string) {
     setActionError(undefined);
     setActionDetail(undefined);
@@ -181,6 +192,9 @@ export function AdminApp() {
       </label>
       <small>Set in server configuration (contribution.max_per_player); not editable here.</small>
       <div>
+        <button type="button" onClick={handleCreateRound}>
+          Create round
+        </button>
         <button type="button" onClick={() => runRoundAction(openRound)}>
           Open round
         </button>

@@ -109,6 +109,15 @@ export function closeRound(token: string, id: string): Promise<Round> {
   });
 }
 
+/** Creates a round in the world with the given duration in hours (POST /api/v1/admin/rounds). */
+export function createRound(token: string, durationHours: number): Promise<Round> {
+  return adminRequest<Round>(token, '/api/v1/admin/rounds', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ world_id: WORLD_ID, duration: `${durationHours}h` }),
+  });
+}
+
 export function listRoundContributions(token: string, id: string): Promise<AdminContribution[]> {
   return adminRequest<AdminContribution[]>(
     token,
