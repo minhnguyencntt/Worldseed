@@ -15,6 +15,10 @@ import (
 const (
 	defaultCookieName = "sf_session"
 	defaultTokenTTL   = 720 * time.Hour
+
+	defaultRoundDuration          = 24 * time.Hour
+	defaultRoundBaseRelease       = "1.0.0"
+	defaultRoundSchedulerInterval = 30 * time.Second
 )
 
 // Config is the root backend configuration.
@@ -25,6 +29,20 @@ type Config struct {
 	Hosting      HostingConfig      `yaml:"hosting"`
 	Storage      StorageConfig      `yaml:"storage"`
 	Contribution ContributionConfig `yaml:"contribution"`
+	Admin        AdminConfig        `yaml:"admin"`
+	Round        RoundConfig        `yaml:"round"`
+}
+
+// AdminConfig guards admin endpoints with a bearer token.
+type AdminConfig struct {
+	Token string `yaml:"token"`
+}
+
+// RoundConfig controls round length, the base release and the scheduler tick.
+type RoundConfig struct {
+	Duration          time.Duration `yaml:"duration"`
+	BaseRelease       string        `yaml:"base_release"`
+	SchedulerInterval time.Duration `yaml:"scheduler_interval"`
 }
 
 // StorageConfig locates the content repository on disk.
@@ -121,6 +139,15 @@ func LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error
 	if cfg.Contribution.RateWindow == 0 {
 		cfg.Contribution.RateWindow = time.Minute
 	}
+	if cfg.Round.Duration == 0 {
+		cfg.Round.Duration = defaultRoundDuration
+	}
+	if cfg.Round.BaseRelease == "" {
+		cfg.Round.BaseRelease = defaultRoundBaseRelease
+	}
+	if cfg.Round.SchedulerInterval == 0 {
+		cfg.Round.SchedulerInterval = defaultRoundSchedulerInterval
+	}
 
 	return &cfg, nil
 }
@@ -137,4 +164,5 @@ func applyEnv(cfg *Config, getenv func(string) string) {
 	override(&cfg.Git.Token, "STORYFORGE_GIT_TOKEN")
 	override(&cfg.Hosting.Provider, "STORYFORGE_HOSTING_PROVIDER")
 	override(&cfg.Hosting.BaseURL, "STORYFORGE_HOSTING_BASE_URL")
+	override(&cfg.Admin.Token, "STORYFORGE_ADMIN_TOKEN")
 }
