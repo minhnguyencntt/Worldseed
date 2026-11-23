@@ -3,10 +3,12 @@ import { getActiveNode } from '@game/systems/dialogue';
 import { ActionMenu } from './components/ActionMenu';
 import { ContributionSheet } from './components/ContributionSheet';
 import { GameLayout } from './components/GameLayout';
+import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
 import { SceneView } from './components/SceneView';
 import { StoryPanel } from './components/StoryPanel';
 import { getCurrentRound, type Round } from './api/client';
+import { world } from './runtime/content';
 import { useGame } from './runtime/useGame';
 
 export default function App() {
@@ -14,10 +16,15 @@ export default function App() {
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [begun, setBegun] = useState(false);
   const [round, setRound] = useState<Round | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [roundError, setRoundError] = useState<string | undefined>(undefined);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
-    getCurrentRound().then(setRound).catch(() => setRound(undefined));
+    getCurrentRound()
+      .then(setRound)
+      .catch((e: unknown) => setRoundError(e instanceof Error ? e.message : 'Round request failed'))
+      .finally(() => setLoading(false));
   }, []);
 
   if (!begun) {
