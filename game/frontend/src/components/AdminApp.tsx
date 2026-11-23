@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   ApiError,
+  approveExecution,
   closeRound,
   getAdminRound,
   findExecutionForRound,
@@ -8,6 +9,8 @@ import {
   listExecutions,
   listRoundContributions,
   openRound,
+  rejectExecution,
+  retryExecution,
   WORLD_ID,
   type AdminContribution,
   type ExecutionInfo,
@@ -30,6 +33,7 @@ export function AdminApp() {
   const [durationHours, setDurationHours] = useState(24);
   const [maxContributions, setMaxContributions] = useState(5);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [actionError, setActionError] = useState<string | undefined>(undefined);
   const [reloads, setReloads] = useState(0);
 
   useEffect(() => {
@@ -96,6 +100,15 @@ export function AdminApp() {
     }
   }
 
+  async function runExecutionAction(action: (token: string, id: string) => Promise<ExecutionInfo>, id: string) {
+    try {
+      await action(token, id);
+      setReloads((n) => n + 1);
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
   if (!token) {
     return (
       <TokenGate
@@ -120,7 +133,15 @@ export function AdminApp() {
         <p>Loading round…</p>
       )}
       {round ? <LifecycleStepper status={deriveStage(round.status, execution?.status)} /> : null}
-      {round ? <ExecutionPanel execution={execution} contributionCount={contributions.length} /> : null}
+      {round ? (
+        <ExecutionPanel
+          execution={execution}
+          contributionCount={contributions.length}
+          onApprove={(id) => runExecutionAction(approveExecution, id)}
+          onRetry={(id) => runExecutionAction(retryExecution, id)}
+          onReject={(id) => runExecutionAction(rejectExecution, id)}
+        />
+      ) : null}
       <label>
         Duration (hours)
         <input
