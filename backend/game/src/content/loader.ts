@@ -7,19 +7,72 @@ import type { DialogueChoice, GameEvent, SceneDef, WorldDef } from '../state/typ
 export type LoadedWorld = Omit<WorldDef, 'scenes'> & { scenes: SceneDef[] };
 
 function readYaml(file: string): unknown {
-  return parse(fs.readFileSync(file, 'utf8'));
+  let source: string;
+  try {
+    source = fs.readFileSync(file, 'utf8');
+  } catch {
+    throw new Error(`missing content file: ${file}`);
+  }
+  return parse(source);
 }
 
-export function loadWorld(worldDir: string): LoadedWorld {
-  const world = readYaml(path.join(worldDir, 'world.yaml')) as WorldDef;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
-  const scenes = world.scenes.map((sceneId) => {
-    const file = path.join(worldDir, 'scenes', `${sceneId}.yaml`);
-    if (!fs.existsSync(file)) {
-      throw new Error(`Missing scene file for "${sceneId}": expected ${sceneId}.yaml in scenes/`);
+function requireString(data: Record<string, unknown>, key: string, file: string): string {
+  const value = data[key];
+  if (typeof value !== 'string' || value === '') {
+    throw new Error(`${file} missing string field: ${key}`);
+  }
+  return value;
+}
+
+function requireStringArray(data: Record<string, unknown>, key: string, file: string): string[] {
+  const value = data[key];
+  if (!Array.isArray(value) || !value.every((item) => typeof item === 'string')) {
+    throw new Error(`${file} field must be a list of strings: ${key}`);
+  }
+  return value as string[];
+}
+
+/**
+ * Loads a world directory: reads world.yaml and every scene it lists from scenes/<id>.yaml.
+ * Throws when world.yaml is malformed or a listed scene file is missing or mismatched.
+ */
+export function loadWorld(worldDir: string): LoadedWorld {
+  const worldFile = path.join(worldDir, 'world.yaml');
+  const raw = readYaml(worldFile);
+  if (!isRecord(raw)) {
+    throw new Error(`${worldFile} must be a YAML mapping`);
+  }
+
+  if (!Array.isArray(raw.characters)) {
+    throw new Error('world.yaml field must be a list: characters');
+  }
+
+  const world: WorldDef = {
+    id: requireString(raw, 'id', 'world.yaml'),
+    title: requireString(raw, 'title', 'world.yaml'),
+    startScene: requireString(raw, 'startScene', 'world.yaml'),
+    scenes: requireStringArray(raw, 'scenes', 'world.yaml'),
+    characters: raw.characters as WorldDef['characters'],
+    flags: requireStringArray(raw, 'flags', 'world.yaml'),
+  };
+
+  const scenes: SceneDef[] = [];
+  for (const sceneId of world.scenes) {
+    const relPath = path.join('scenes', `${sceneId}.yaml`);
+    const sceneRaw = readYaml(path.join(worldDir, relPath));
+    if (!isRecord(sceneRaw)) {
+      throw new Error(`${relPath} must be a YAML mapping`);
     }
-    return readYaml(file) as SceneDef;
-  });
+    const id = requireString(sceneRaw, 'id', relPath);
+    if (id !== sceneId) {
+      throw new Error(`${relPath} declares id ${id}, expected ${sceneId}`);
+    }
+    scenes.push(sceneRaw as unknown as SceneDef);
+  }
 
   return { ...world, scenes };
 }
