@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { trackedNodeModulesPaths } from '../src/lib/trackedNodeModules';
+import { assertNoTrackedNodeModules, trackedNodeModulesPaths } from '../src/lib/trackedNodeModules';
 
 describe('trackedNodeModulesPaths', () => {
   it('keeps only paths with a node_modules segment and ignores look-alike names', () => {
