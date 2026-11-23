@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { loadWorld, validateWorld } from '../src/content/world';
+import { loadWorld, validateWorld } from '../src/content/loader';
 import { invalidWorld, invalidScene } from './fixtures/invalid-world';
 import { validWorld, validScene } from './fixtures/valid-world';
 
@@ -18,12 +18,37 @@ function makeWorldDir(files: Record<string, string>): string {
 
 describe('validateWorld invalid reference detection', () => {
   it('reports unknown scene, character, flag and object references for an invalid world', () => {
-    const errors = validateWorld(invalidWorld, [invalidScene]);
+    const errors = validateWorld({ ...invalidWorld, scenes: [invalidScene] });
 
     expect(errors).toContain('unknown scene: nowhere');
     expect(errors).toContain('unknown character: ghost');
     expect(errors).toContain('unknown flag: zzz');
     expect(errors).toContain('unknown object: nope');
+  });
+
+  it('reports unknown start scene and unknown dialogue next', () => {
+    const world = {
+      ...validWorld,
+      startScene: 'missing',
+      scenes: [
+        {
+          ...validScene,
+          dialogue: [
+            {
+              id: 'd1',
+              speaker: 'boy',
+              text: 'Hi',
+              choices: [{ text: 'Go', next: 'nope' }],
+            },
+          ],
+        },
+      ],
+    };
+
+    const errors = validateWorld(world);
+
+    expect(errors).toContain('unknown scene: missing');
+    expect(errors).toContain('unknown dialogue: nope');
   });
 });
 
@@ -45,8 +70,8 @@ describe('loadWorld and validateWorld with a valid world', () => {
 
     const loaded = loadWorld(dir);
 
-    expect(loaded.scenes.s).toBeDefined();
-    expect(loaded.scenes.s.id).toBe('s');
+    expect(loaded.scenes).toHaveLength(1);
+    expect(loaded.scenes[0].id).toBe('s');
   });
 
   it('loadWorld throws an error naming s2.yaml when world.yaml lists a scene with no file', () => {
@@ -69,6 +94,6 @@ describe('loadWorld and validateWorld with a valid world', () => {
   });
 
   it('validateWorld returns no errors for the fully consistent valid fixture', () => {
-    expect(validateWorld(validWorld, [validScene])).toEqual([]);
+    expect(validateWorld({ ...validWorld, scenes: [validScene] })).toEqual([]);
   });
 });
