@@ -15,6 +15,7 @@ export interface ExecutionPanelProps {
   contributionCount: number;
   onApprove?: (id: string) => void;
   onRetry?: (id: string) => void;
+  onReject?: (id: string) => void;
   actionError?: string;
 }
 
@@ -43,10 +44,12 @@ export function ExecutionPanel({
   contributionCount,
   onApprove,
   onRetry,
+  onReject,
   actionError,
 }: ExecutionPanelProps) {
   const id = execution?.id;
   const canApprove = execution?.status === 'AWAITING_APPROVAL' && onApprove !== undefined;
+  const canReject = execution?.status === 'AWAITING_APPROVAL' && onReject !== undefined;
   const canRetry = execution?.status === 'FAILED' && onRetry !== undefined;
 
   return (
@@ -65,11 +68,16 @@ export function ExecutionPanel({
 
       {execution?.error && <p role="alert">Failure reason: {execution.error}</p>}
 
-      {(canApprove || canRetry) && (
+      {(canApprove || canRetry || canReject) && (
         <div className="execution-actions">
           {canApprove && (
             <button type="button" onClick={() => onApprove?.(id ?? '')}>
               Approve
+            </button>
+          )}
+          {canReject && (
+            <button type="button" onClick={() => onReject?.(id ?? '')}>
+              Reject
             </button>
           )}
           {canRetry && (
