@@ -5,6 +5,7 @@ import { buildGameConfig } from './config';
 export function createGame(
   parent: HTMLElement,
   scenes: Phaser.Types.Scenes.SceneType[],
+  zoom: number = 1,
 ): Phaser.Game {
-  return new Phaser.Game(buildGameConfig(parent, scenes));
+  return new Phaser.Game(buildGameConfig(parent, scenes, zoom));
 }

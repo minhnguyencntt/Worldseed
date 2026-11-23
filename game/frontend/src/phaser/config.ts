@@ -10,6 +10,7 @@ export function computeZoom(w: number, h: number, dpr: number): number {
 export function buildGameConfig(
   parent: HTMLElement,
   scenes: Phaser.Types.Scenes.SceneType[],
+  zoom: number = 1,
 ): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
@@ -24,6 +25,7 @@ export function buildGameConfig(
     scale: {
       mode: Phaser.Scale.FIT,
       autoCenter: Phaser.Scale.CENTER_BOTH,
+      zoom,
     },
     scene: scenes,
   };
