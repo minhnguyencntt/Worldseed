@@ -2,6 +2,7 @@ import type { ActionSpec, ObjectSpec } from '../content/schema';
 import { layerDepth } from '../engine/layers';
 import type { RenderContext, RenderHandle } from '../engine/renderContext';
 import { evaluateAll } from '../systems/conditions';
+import { isActivationKey } from '../systems/interaction';
 import type { GameState } from '../state/types';
 
 // Actions whose conditions currently hold for the given state.
@@ -15,6 +16,7 @@ export class SceneObject {
   readonly depth: number;
   private handle: RenderHandle;
   private visible = true;
+  private focused = false;
   private lastState?: GameState;
   private listener?: (e: { objectId: string; actions: ActionSpec[] }) => void;
 
@@ -43,9 +45,38 @@ export class SceneObject {
     this.visible = evaluateAll(state, this.spec.visibleWhen);
     this.handle.setVisible(this.visible);
     if (!this.visible) {
+      this.focused = false;
       this.handle.setHighlighted(false);
       this.handle.setLabelVisible(false);
     }
+  }
+
+  get isVisible(): boolean {
+    return this.visible;
+  }
+
+  get isFocused(): boolean {
+    return this.focused;
+  }
+
+  // Keyboard focus: only a visible object can take focus; it shows the same highlight and label as hover.
+  focus(): void {
+    if (!this.visible) return;
+    this.focused = true;
+    this.handle.setHighlighted(true);
+    this.handle.setLabelVisible(true);
+  }
+
+  blur(): void {
+    this.focused = false;
+    this.handle.setHighlighted(false);
+    this.handle.setLabelVisible(false);
+  }
+
+  // Enter or Space activates the object, but only while it holds keyboard focus.
+  handleKey(key: string): void {
+    if (!this.focused || !isActivationKey(key)) return;
+    this.activate();
   }
 
   onInteract(cb: (e: { objectId: string; actions: ActionSpec[] }) => void): void {
