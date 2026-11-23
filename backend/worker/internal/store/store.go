@@ -25,6 +25,7 @@ const (
 	StatusAwaitingApproval Status = "AWAITING_APPROVAL"
 	StatusCompleted        Status = "COMPLETED"
 	StatusFailed           Status = "FAILED"
+	StatusRecovering       Status = "RECOVERING"
 )
 
 var (
