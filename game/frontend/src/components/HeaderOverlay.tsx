@@ -1,4 +1,7 @@
+import { Volume2, VolumeX, Settings } from 'lucide-react';
 import type { Round } from '../api/client';
+import { useUiStore } from '../store/uiStore';
+import { Button } from './ui/button';
 import { Countdown } from './Countdown';
 
 export interface HeaderOverlayProps {
@@ -9,6 +12,10 @@ export interface HeaderOverlayProps {
 }
 
 export function HeaderOverlay({ worldTitle, round, loading, error }: HeaderOverlayProps) {
+  const soundEnabled = useUiStore((s) => s.soundEnabled);
+  const toggleSound = useUiStore((s) => s.toggleSound);
+  const toggleSettings = useUiStore((s) => s.toggleSettings);
+
   return (
     <header className="absolute inset-x-0 top-0 z-10 flex items-center gap-3 px-3 py-2">
       <span>StoryForge</span>
@@ -26,6 +33,12 @@ export function HeaderOverlay({ worldTitle, round, loading, error }: HeaderOverl
       ) : (
         <span>No active round</span>
       )}
+      <Button type="button" variant="ghost" aria-label="Toggle sound" aria-pressed={soundEnabled} onClick={toggleSound}>
+        {soundEnabled ? <Volume2 aria-hidden="true" className="h-4 w-4" /> : <VolumeX aria-hidden="true" className="h-4 w-4" />}
+      </Button>
+      <Button type="button" variant="ghost" aria-label="Settings" onClick={toggleSettings}>
+        <Settings aria-hidden="true" className="h-4 w-4" />
+      </Button>
     </header>
   );
 }
