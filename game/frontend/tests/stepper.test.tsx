@@ -16,7 +16,7 @@ const failedExecution = { ...executionFixture, status: 'FAILED', error: 'build f
 
 describe('LifecycleStepper and ExecutionPanel', () => {
   describe('LifecycleStepper', () => {
-    it.each(STAGES)('marks %s as the single current step when status is %s', (stage) => {
+    it.each(STAGES.map((stage) => [stage, stage]))('marks %s as the single current step when status is %s', (stage) => {
       const { container } = render(<LifecycleStepper status={stage} />);
 
       const current = container.querySelectorAll('li[aria-current="step"]');

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { approveExecution, retryExecution } from '../src/api/client';
@@ -22,6 +22,7 @@ function renderPanel(status: string, extra: Record<string, unknown> = {}) {
 
 describe('ExecutionPanel actions', () => {
   afterEach(() => {
+    cleanup();
     vi.unstubAllGlobals();
   });
 
