@@ -141,3 +141,75 @@ func TestLoadFS_EmptyRepoPath(t *testing.T) {
 		t.Errorf("error = %q; want it to mention repo_path", err.Error())
 	}
 }
+
+// TestLoadFS_Validation is a table-driven test asserting that each invalid
+// worker setting is rejected, and that the returned error names the offending
+// key. Every case uses an in-memory fstest.MapFS and a fake getenv.
+func TestLoadFS_Validation(t *testing.T) {
+	const prefix = "worker:\n  repo_path: /r\n"
+	tests := []struct {
+		name    string
+		yaml    string
+		wantKey string
+	}{
+		{
+			name:    "rejects a negative execution_timeout and names the key",
+			yaml:    prefix + "  execution_timeout: -1m\n",
+			wantKey: "execution_timeout",
+		},
+		{
+			name:    "rejects a negative max_retries and names the key",
+			yaml:    prefix + "  max_retries: -1\n",
+			wantKey: "max_retries",
+		},
+		{
+			name:    "rejects a negative max_budget and names the key",
+			yaml:    prefix + "  max_budget: -1\n",
+			wantKey: "max_budget",
+		},
+		{
+			name:    "rejects an unknown provider_kind and names the key",
+			yaml:    prefix + "  provider_kind: gpt\n",
+			wantKey: "provider_kind",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			fsys := fstest.MapFS{
+				"config.yaml": {Data: []byte(tc.yaml)},
+			}
+
+			cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+			if err == nil {
+				t.Fatalf("LoadFS returned config %+v and nil error; want error mentioning %q", cfg, tc.wantKey)
+			}
+			if cfg != nil {
+				t.Errorf("LoadFS returned non-nil config %+v alongside error", cfg)
+			}
+			if !strings.Contains(err.Error(), tc.wantKey) {
+				t.Errorf("error = %q; want it to mention %q", err.Error(), tc.wantKey)
+			}
+		})
+	}
+}
+
+// TestLoadFS_ValidProviders verifies that the two supported provider kinds,
+// mock and claude, are accepted and that ProviderKind keeps the input value.
+func TestLoadFS_ValidProviders(t *testing.T) {
+	for _, kind := range []string{"mock", "claude"} {
+		t.Run(kind, func(t *testing.T) {
+			fsys := fstest.MapFS{
+				"config.yaml": {Data: []byte("worker:\n  repo_path: /r\n  provider_kind: " + kind + "\n")},
+			}
+
+			cfg, err := LoadFS(fsys, "config.yaml", noEnv)
+			if err != nil {
+				t.Fatalf("LoadFS returned error for provider_kind %q: %v", kind, err)
+			}
+			if cfg.Worker.ProviderKind != kind {
+				t.Errorf("ProviderKind = %q; want %q", cfg.Worker.ProviderKind, kind)
+			}
+		})
+	}
+}
