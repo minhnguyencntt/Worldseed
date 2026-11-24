@@ -1,0 +1,15 @@
+export const ROOM_ART_SIZES = {
+  wall: { width: 480, height: 150 },
+  wainscot: { width: 480, height: 40 },
+  floor: { width: 480, height: 80 },
+  window: { width: 64, height: 56 },
+  desk: { width: 80, height: 32 },
+  computer: { width: 30, height: 34 },
+  lamp: { width: 16, height: 30 },
+  plant: { width: 20, height: 32 },
+  poster: { width: 28, height: 36 },
+  bookshelf: { width: 48, height: 96 },
+  bed: { width: 104, height: 40 },
+  door: { width: 40, height: 80 },
+  rug: { width: 80, height: 24 },
+} as const;
