@@ -46,9 +46,9 @@ function keyHandlerFrom(keyboard: { on: ReturnType<typeof vi.fn> }): KeyHandler 
   return handler;
 }
 
-function press(handler: KeyHandler, key: string, shiftKey = false) {
+function press(keyboard: { on: ReturnType<typeof vi.fn> }, key: string, shiftKey = false) {
   const event = { key, shiftKey, preventDefault: vi.fn() };
-  handler(event as unknown as KeyboardEvent);
+  keyHandlerFrom(keyboard)(event as unknown as KeyboardEvent);
   return event;
 }
 
@@ -56,7 +56,6 @@ describe('input layer keyboard', () => {
   let objects: FakeObject[];
   let keyboard: { on: ReturnType<typeof vi.fn>; off: ReturnType<typeof vi.fn> };
   let input: InputPlugin;
-  let handler: KeyHandler;
 
   beforeEach(() => {
     useGameStore.getState().setFocusedObject(null);
@@ -64,7 +63,6 @@ describe('input layer keyboard', () => {
     keyboard = { on: vi.fn(), off: vi.fn() };
     input = { keyboard };
     createInputLayer(input, objects as unknown as SceneObject[]);
-    handler = keyHandlerFrom(keyboard);
   });
 
   afterEach(() => {
@@ -72,7 +70,7 @@ describe('input layer keyboard', () => {
   });
 
   it('Tab with nothing focused focuses the first object and calls preventDefault', () => {
-    const event = press(handler, 'Tab');
+    const event = press(keyboard, 'Tab');
 
     expect(objects[0].isFocused).toBe(true);
     expect(objects[1].isFocused).toBe(false);
@@ -82,7 +80,7 @@ describe('input layer keyboard', () => {
   it('Shift+Tab moves focus back by one object', () => {
     objects[1].focus();
 
-    const event = press(handler, 'Tab', true);
+    const event = press(keyboard, 'Tab', true);
 
     expect(objects[0].isFocused).toBe(true);
     expect(objects[1].isFocused).toBe(false);
@@ -92,14 +90,14 @@ describe('input layer keyboard', () => {
   it('ArrowLeft and ArrowUp move focus back by one object', () => {
     objects[1].focus();
 
-    const left = press(handler, 'ArrowLeft');
+    const left = press(keyboard, 'ArrowLeft');
     expect(objects[0].isFocused).toBe(true);
     expect(left.preventDefault).toHaveBeenCalled();
 
     objects[0].blur();
     objects[1].focus();
 
-    const up = press(handler, 'ArrowUp');
+    const up = press(keyboard, 'ArrowUp');
     expect(objects[0].isFocused).toBe(true);
     expect(up.preventDefault).toHaveBeenCalled();
   });
@@ -107,7 +105,7 @@ describe('input layer keyboard', () => {
   it('ArrowRight and ArrowDown move focus forward by one object', () => {
     objects[0].focus();
 
-    const right = press(handler, 'ArrowRight');
+    const right = press(keyboard, 'ArrowRight');
     expect(objects[1].isFocused).toBe(true);
     expect(objects[0].isFocused).toBe(false);
     expect(right.preventDefault).toHaveBeenCalled();
@@ -115,21 +113,21 @@ describe('input layer keyboard', () => {
     objects[1].blur();
     objects[0].focus();
 
-    const down = press(handler, 'ArrowDown');
+    const down = press(keyboard, 'ArrowDown');
     expect(objects[1].isFocused).toBe(true);
     expect(objects[0].isFocused).toBe(false);
     expect(down.preventDefault).toHaveBeenCalled();
   });
 
   it('Enter calls handleKey with "Enter" on each object', () => {
-    press(handler, 'Enter');
+    press(keyboard, 'Enter');
 
     expect(objects[0].handleKey).toHaveBeenCalledWith('Enter');
     expect(objects[1].handleKey).toHaveBeenCalledWith('Enter');
   });
 
   it('Space calls handleKey with " " on each object', () => {
-    press(handler, ' ');
+    press(keyboard, ' ');
 
     expect(objects[0].handleKey).toHaveBeenCalledWith(' ');
     expect(objects[1].handleKey).toHaveBeenCalledWith(' ');
@@ -140,7 +138,7 @@ describe('input layer keyboard', () => {
     const unsubscribe = phaserToReact.on('menuClose', received);
 
     try {
-      press(handler, 'Escape');
+      press(keyboard, 'Escape');
     } finally {
       unsubscribe();
     }
