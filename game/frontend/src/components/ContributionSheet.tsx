@@ -1,6 +1,12 @@
-import { useEffect, useState, type FormEvent, type RefObject } from 'react';
-import { ApiError, listMine, MAX_PER_PLAYER, MAX_PROMPT_LENGTH, submitContribution } from '../api/client';
+import type { RefObject } from 'react';
+import { MAX_PER_PLAYER, MAX_PROMPT_LENGTH } from '../api/client';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog';
+import { HistoryList } from './contribution/HistoryList';
+import { useContributionHistory } from './contribution/useContributionHistory';
+import { useContributionSubmit } from './contribution/useContributionSubmit';
+
+export { errorMessage } from './contribution/messages';
+export type { HistoryStatus } from './contribution/messages';
 
 export interface ContributionSheetProps {
   open: boolean;
@@ -9,105 +15,20 @@ export interface ContributionSheetProps {
   returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
-type EntryState = 'sending' | 'sent' | 'failed';
-
-interface Entry {
-  key: number;
-  prompt: string;
-  state: EntryState;
-}
-
-export type HistoryStatus = 'loading' | 'ready' | 'error';
-const HISTORY_LOADING = 'Loading your suggestions…';
-const HISTORY_ERROR = 'Could not load your suggestions';
-const HISTORY_EMPTY = 'No suggestions yet this round';
-
-const STATE_LABEL: Record<EntryState, string> = {
-  sending: 'Sending…',
-  sent: 'Sent',
-  failed: 'Failed',
-};
-
-const BLANK_MESSAGE = 'Enter an idea first';
-
-export function errorMessage(err: unknown): string {
-  if (err instanceof ApiError) {
-    if (err.status === 429) return 'Slow down, try again shortly';
-    if (err.status === 409) return 'Limit reached or duplicate idea';
-  }
-  return 'Could not send';
-}
-
 export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: ContributionSheetProps) {
-  const [text, setText] = useState('');
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [validation, setValidation] = useState<string | undefined>(undefined);
-  const [success, setSuccess] = useState<string | undefined>(undefined);
-  const [reloadKey, setReloadKey] = useState(0);
-  const [historyStatus, setHistoryStatus] = useState<HistoryStatus>('loading');
-
-  // Load the player's existing suggestions for this round when the sheet opens.
-  useEffect(() => {
-    if (!open || roundId === '') return;
-    let cancelled = false;
-    setHistoryStatus('loading');
-    listMine(roundId)
-      .then((list) => {
-        if (cancelled) return;
-        // Merge rather than overwrite: entries sent or still sending while the
-        // history request was in flight must survive the response.
-        setEntries((prev) => {
-          const known = new Set(prev.map((e) => e.prompt));
-          const history = list
-            .filter((c) => !known.has(c.prompt))
-            .map((c, i) => ({ key: -(i + 1), prompt: c.prompt, state: 'sent' as const }));
-          return [...history, ...prev];
-        });
-        setHistoryStatus('ready');
-      })
-      .catch(() => {
-        if (cancelled) return;
-        // History is best-effort; the sheet still works without it.
-        setHistoryStatus('error');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open, roundId, reloadKey]);
-
-  const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
-  const length = Array.from(text.trim()).length;
-  const overLimit = length > MAX_PROMPT_LENGTH;
-  const submitting = entries.some((e) => e.state === 'sending');
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (submitting || remaining <= 0) return;
-    const prompt = text.trim();
-    if (prompt === '') {
-      setValidation(BLANK_MESSAGE);
-      return;
-    }
-    if (overLimit) return;
-
-    const key = Date.now();
-    setText('');
-    setError(undefined);
-    setSuccess(undefined);
-    setValidation(undefined);
-    setEntries((prev) => [...prev, { key, prompt, state: 'sending' }]);
-
-    try {
-      await submitContribution(prompt);
-      setEntries((prev) => prev.map((e) => (e.key === key ? { ...e, state: 'sent' } : e)));
-      setSuccess('Suggestion sent');
-    } catch (err) {
-      setEntries((prev) => prev.map((e) => (e.key === key ? { ...e, state: 'failed' } : e)));
-      setSuccess(undefined);
-      setError(errorMessage(err));
-    }
-  }
+  const { entries, setEntries, historyStatus, retry } = useContributionHistory(open, roundId);
+  const {
+    text,
+    error,
+    validation,
+    success,
+    remaining,
+    length,
+    overLimit,
+    submitting,
+    handleSubmit,
+    onTextChange,
+  } = useContributionSubmit(entries, setEntries);
 
   return (
     <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
@@ -129,11 +50,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
           <textarea
             id="contribution-idea"
             value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-              setValidation(undefined);
-              setSuccess(undefined);
-            }}
+            onChange={(e) => onTextChange(e.target.value)}
             rows={3}
             aria-invalid={validation !== undefined || overLimit}
             aria-describedby={
@@ -151,20 +68,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
 
         {error && <p role="alert">{error}</p>}
         {success && <p id="contribution-idea-success" role="status" data-testid="contribution-success">{success}</p>}
-        {historyStatus === 'loading' && <p role="status" data-testid="contribution-history-loading">{HISTORY_LOADING}</p>}
-        {historyStatus === 'error' && <p role="alert" data-testid="contribution-history-error">{HISTORY_ERROR}</p>}
-        {historyStatus === 'error' && (
-          <button type="button" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
-        )}
-        {historyStatus === 'ready' && entries.length === 0 && <p role="status" data-testid="contribution-history-empty">{HISTORY_EMPTY}</p>}
-
-        <ul aria-label="Your suggestions">
-          {entries.map((entry) => (
-            <li key={entry.key}>
-              <span>{entry.prompt}</span> <span>{STATE_LABEL[entry.state]}</span>
-            </li>
-          ))}
-        </ul>
+        <HistoryList historyStatus={historyStatus} entries={entries} onRetry={retry} />
 
         <button type="button" onClick={onClose}>
           Close

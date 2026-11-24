@@ -1,103 +1,24 @@
-import { useEffect, useState } from 'react';
-import {
-  ApiError,
-  closeRound,
-  createRound,
-  getAdminRound,
-  getCurrentRound,
-  getWorld,
-  listRoundContributions,
-  openRound,
-  WORLD_ID,
-  type AdminContribution,
-  type Round,
-} from '../api/client';
+import { closeRound, openRound, WORLD_ID } from '../api/client';
+import { AdminControls } from './admin/AdminControls';
+import { useAdminRound } from './admin/useAdminRound';
 import { LifecycleStepper } from './LifecycleStepper';
 import { TokenGate } from './TokenGate';
 
-type RoundAction = (token: string, id: string) => Promise<Round>;
-
 export function AdminApp() {
-  // The admin token lives in memory only: a reload asks for it again.
-  const [token, setToken] = useState('');
-  const [gateError, setGateError] = useState<string | undefined>(undefined);
-  const [roundId, setRoundId] = useState<string | undefined>(undefined);
-  const [round, setRound] = useState<Round | undefined>(undefined);
-  const [contributions, setContributions] = useState<AdminContribution[]>([]);
-  const [durationHours, setDurationHours] = useState(24);
-  const [maxContributions, setMaxContributions] = useState(5);
-  const [worldTitle, setWorldTitle] = useState<string | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [reloads, setReloads] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    getCurrentRound(WORLD_ID).then(
-      (current) => {
-        if (!cancelled) setRoundId(current.id);
-      },
-      () => {
-        if (!cancelled) setError('Could not load the current round');
-      },
-    );
-    getWorld(WORLD_ID).then(
-      (w) => {
-        if (!cancelled) setWorldTitle(w.title);
-      },
-      () => {},
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!token || !roundId) return;
-    let cancelled = false;
-    Promise.all([getAdminRound(token, roundId), listRoundContributions(token, roundId)]).then(
-      ([loaded, list]) => {
-        if (cancelled) return;
-        setRound(loaded);
-        setContributions(list);
-        setError(undefined);
-      },
-      (err: unknown) => {
-        if (!cancelled) handleError(err);
-      },
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, [token, roundId, reloads]);
-
-  function handleError(err: unknown) {
-    if (err instanceof ApiError && err.status === 401) {
-      setToken('');
-      setGateError('Invalid token');
-      return;
-    }
-    setError(err instanceof Error ? err.message : 'Request failed');
-  }
-
-  async function runRoundAction(action: RoundAction) {
-    if (!roundId) return;
-    try {
-      await action(token, roundId);
-      setReloads((n) => n + 1);
-    } catch (err) {
-      handleError(err);
-    }
-  }
-
-  async function handleCreateRound() {
-    try {
-      const created = await createRound(token, durationHours);
-      setRoundId(created.id);
-      setReloads((n) => n + 1);
-    } catch (err) {
-      handleError(err);
-    }
-  }
+  const {
+    token,
+    gateError,
+    round,
+    contributions,
+    durationHours,
+    worldTitle,
+    error,
+    setToken,
+    setGateError,
+    setDurationHours,
+    runRoundAction,
+    handleCreateRound,
+  } = useAdminRound();
 
   if (!token) {
     return (
@@ -123,37 +44,13 @@ export function AdminApp() {
         <p>Loading round…</p>
       )}
       {round ? <LifecycleStepper status={round.status} /> : null}
-      <label>
-        Duration (hours)
-        <input
-          type="number"
-          min={1}
-          value={durationHours}
-          onChange={(event) => setDurationHours(Number(event.target.value))}
-        />
-      </label>
-      <label>
-        Max contributions per player
-        <input
-          type="number"
-          min={1}
-          value={maxContributions}
-          disabled
-          onChange={(event) => setMaxContributions(Number(event.target.value))}
-        />
-      </label>
-      <small>Set in server configuration (contribution.max_per_player); not editable here.</small>
-      <div>
-        <button type="button" onClick={handleCreateRound}>
-          Create round
-        </button>
-        <button type="button" onClick={() => runRoundAction(openRound)}>
-          Open round
-        </button>
-        <button type="button" onClick={() => runRoundAction(closeRound)}>
-          Close round
-        </button>
-      </div>
+      <AdminControls
+        durationHours={durationHours}
+        onDurationChange={setDurationHours}
+        onCreate={handleCreateRound}
+        onOpen={() => runRoundAction(openRound)}
+        onClose={() => runRoundAction(closeRound)}
+      />
       <ul aria-label="Contributions">
         {contributions.map((c) => (
           <li key={c.id}>{c.prompt}</li>
