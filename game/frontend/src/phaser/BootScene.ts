@@ -19,6 +19,7 @@ import { layerDepth } from '@game/engine/layers';
 import type { AnimationDef } from '@game/assets/manifest';
 
 export const FALLBACK_KEY = 'fallback:missing';
+export const TRANSITION_FADE_MS = 300;
 
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
 export class BootScene extends Phaser.Scene {
@@ -29,6 +30,7 @@ export class BootScene extends Phaser.Scene {
   private characterSprites: Phaser.GameObjects.Sprite[] = [];
   private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
   private unsubscribeAnimation: (() => void) | null = null;
+  private unsubscribeTransition: (() => void) | null = null;
 
   constructor() {
     super('BootScene');
@@ -71,6 +73,11 @@ export class BootScene extends Phaser.Scene {
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
     this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
+    this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
+      const cam = this.cameras.main;
+      cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));
+      cam.fadeOut(TRANSITION_FADE_MS);
+    });
     this.input.keyboard?.on('keydown', this.onKeyDown);
     this.onStateChange();
     playSceneTransition(ctx, scene);
@@ -87,6 +94,8 @@ export class BootScene extends Phaser.Scene {
       this.characterAnims.clear();
       this.unsubscribeAnimation?.();
       this.unsubscribeAnimation = null;
+      this.unsubscribeTransition?.();
+      this.unsubscribeTransition = null;
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }
