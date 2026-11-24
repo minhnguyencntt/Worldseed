@@ -71,7 +71,8 @@ describe('ContributionSheet focus trap', () => {
       </>,
     );
 
-    const outside = screen.getByRole('button', { name: 'Outside' });
+    // Radix sets aria-hidden on everything outside the open modal, so include hidden nodes.
+    const outside = screen.getByRole('button', { name: 'Outside', hidden: true });
     outside.focus();
 
     await waitFor(() =>
