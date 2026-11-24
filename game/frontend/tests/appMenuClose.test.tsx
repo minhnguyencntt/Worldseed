@@ -62,16 +62,16 @@ describe('App menuClose', () => {
     act(() => {
       phaserToReact.emit('objectClick', { id: 'bookshelf' });
     });
-    expect(screen.getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Inspect Bookshelf' })).toBeInTheDocument();
 
     act(() => {
       phaserToReact.emit('menuClose', {});
     });
 
-    expect(screen.queryByRole('button', { name: 'Inspect' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Push' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Search' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Leave' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Inspect Bookshelf' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Push Bookshelf' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Search Bookshelf' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Leave Bookshelf' })).toBeNull();
   });
 
   it('Given App is unmounted, when it unsubscribes from menuClose, then the menuClose listener is released and no error is logged', () => {

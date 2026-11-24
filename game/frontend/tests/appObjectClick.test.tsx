@@ -59,13 +59,14 @@ describe('App objectClick bridge', () => {
     begin();
 
     act(() => {
+      phaserToReact.emit('objectHover', { id: 'bookshelf' });
       phaserToReact.emit('objectClick', { id: 'bookshelf' });
     });
 
-    expect(screen.getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Push' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Inspect Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Push Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Leave Bookshelf' })).toBeInTheDocument();
   });
 
   it('Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists', () => {
@@ -74,7 +75,9 @@ describe('App objectClick bridge', () => {
     const unsubscribes: Array<ReturnType<typeof vi.fn>> = [];
     vi.spyOn(phaserToReact, 'on').mockImplementation((event, handler) => {
       const unsubscribe = vi.fn(realOn(event, handler));
-      unsubscribes.push(unsubscribe);
+      if (event === 'objectClick') {
+        unsubscribes.push(unsubscribe);
+      }
       return unsubscribe;
     });
 
@@ -91,6 +94,6 @@ describe('App objectClick bridge', () => {
     });
 
     expect(consoleError).not.toHaveBeenCalled();
-    expect(screen.queryByRole('button', { name: 'Inspect' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Inspect Bookshelf' })).toBeNull();
   });
 });
