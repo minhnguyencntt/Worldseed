@@ -101,6 +101,10 @@ describe('App playing view', () => {
 });
 
 describe('App remount and saved state', () => {
+  beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
+    useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 });
+  });
   afterEach(cleanup);
 
   function begin() {
