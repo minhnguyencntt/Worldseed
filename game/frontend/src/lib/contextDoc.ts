@@ -6,6 +6,7 @@
  * - `game/frontend/src/`
  * - `game/docs/GDD.md`
  * - `backend/`
+ * Each returned path is checked with missingPaths against the repo root.
  */
 export function contextModulePaths(md: string): string[] {
   const out = new Set<string>();

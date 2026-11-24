@@ -2,7 +2,7 @@
  * Terms the repo-root context.md Stack section must contain (case-insensitive).
  * The Stack section also names TypeScript and lists the Go backend as out of scope.
  */
-export const STACK_TERMS = ['Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
+export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
 const PATH_RE = /`([^`\s]+\/[^`\s]+\.[a-z]+)`/g;
 
@@ -25,4 +25,9 @@ export function missingPaths(paths: string[], exists: (p: string) => boolean): s
 export function missingTerms(text: string, terms: string[]): string[] {
   const t = text.toLowerCase();
   return terms.filter((x) => !t.includes(x.toLowerCase()));
+}
+
+export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Executable / server / CLI `main` | UNKNOWN'];
+export function staleTextHits(md: string): string[] {
+  return STALE_TEXT.filter((s) => md.includes(s));
 }
