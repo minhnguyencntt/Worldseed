@@ -24,6 +24,7 @@ vi.mock('phaser', () => {
       'clearTint',
       'on',
       'once',
+      'removeAllListeners',
       'play',
     ]) {
       obj[method] = vi.fn(() => obj);
@@ -35,19 +36,21 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        tweens = { killAll: vi.fn() };
         // create() subscribes to keyboard input, so the fake scene provides a keyboard stub.
         input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
         // fadeOut and once are the camera calls transitionTo makes before starting the target scene.
-        cameras = { main: { fadeIn: vi.fn(), fadeOut: vi.fn(), once: vi.fn() } };
+        cameras = { main: { off: vi.fn(), fadeIn: vi.fn(), fadeOut: vi.fn(), once: vi.fn() } };
         constructor() {
           // scene.start is the Phaser scene manager call that changes to the requested scene. It is attached
           // with Object.assign because a class field named `scene` collides with the `scene` import in the content mock.
           // scene.get is the lookup transitionTo uses to confirm the target scene is registered before fading.
           Object.assign(this, { scene: { start: vi.fn(), get: vi.fn(() => ({})) } });
         }
-        textures = { exists: vi.fn(() => true) };
+        textures = { exists: vi.fn(() => true), remove: vi.fn() };
         anims = {
+          remove: vi.fn(),
           exists: vi.fn(() => false),
           create: vi.fn(),
           generateFrameNumbers: vi.fn(() => []),

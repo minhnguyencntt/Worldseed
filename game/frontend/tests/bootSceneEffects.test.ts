@@ -12,10 +12,13 @@ vi.mock('phaser', () => ({
   default: {
     Scene: class {
       events = { once: vi.fn() };
+      tweens = { killAll: vi.fn() };
+      cameras = { main: { off: vi.fn() } };
       // A real Phaser scene always has input; no keyboard plugin is needed for these tests.
       input = { keyboard: null };
     },
     Scenes: { Events: { SHUTDOWN: 'shutdown' } },
+    Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } },
   },
 }));
 

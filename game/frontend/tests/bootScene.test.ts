@@ -24,9 +24,10 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        tweens = { killAll: vi.fn() };
         input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
-        cameras = { main: { fadeIn: vi.fn() } };
+        cameras = { main: { off: vi.fn(), fadeIn: vi.fn() } };
         add = {
           rectangle: vi.fn(() => fakeGameObject()),
           image: vi.fn(() => fakeGameObject()),
@@ -35,6 +36,7 @@ vi.mock('phaser', () => {
         };
       },
       Scenes: { Events: { SHUTDOWN: 'shutdown' } },
+      Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } },
       Input: {
         Events: { POINTER_OVER: 'pointerover', POINTER_OUT: 'pointerout', POINTER_DOWN: 'pointerdown' },
       },

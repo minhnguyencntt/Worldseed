@@ -23,6 +23,7 @@ vi.mock('phaser', () => {
       'clearTint',
       'on',
       'once',
+      'removeAllListeners',
       'off',
       'play',
     ]) {
@@ -35,11 +36,13 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        tweens = { killAll: vi.fn() };
         input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
-        cameras = { main: { fadeIn: vi.fn() } };
-        textures = { exists: vi.fn(() => true) };
+        cameras = { main: { off: vi.fn(), fadeIn: vi.fn() } };
+        textures = { exists: vi.fn(() => true), remove: vi.fn() };
         anims = {
+          remove: vi.fn(),
           exists: vi.fn(() => false),
           create: vi.fn(),
           generateFrameNumbers: vi.fn(() => []),
@@ -53,6 +56,7 @@ vi.mock('phaser', () => {
         };
       },
       Scenes: { Events: { SHUTDOWN: 'shutdown' } },
+      Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } },
       Input: {
         Events: { POINTER_OVER: 'pointerover', POINTER_OUT: 'pointerout', POINTER_DOWN: 'pointerdown' },
       },

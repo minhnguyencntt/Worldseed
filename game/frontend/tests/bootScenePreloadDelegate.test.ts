@@ -15,8 +15,11 @@ vi.mock('phaser', () => ({
   default: {
     Scene: class {
       events = { once: vi.fn() };
+      tweens = { killAll: vi.fn() };
+      cameras = { main: { off: vi.fn() } };
     },
     Scenes: { Events: { SHUTDOWN: 'shutdown' } },
+    Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } },
   },
 }));
 

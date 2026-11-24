@@ -24,6 +24,7 @@ vi.mock('phaser', () => {
       'clearTint',
       'on',
       'once',
+      'removeAllListeners',
       'play',
     ]) {
       obj[method] = vi.fn(() => obj);
@@ -35,15 +36,17 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        tweens = { killAll: vi.fn() };
         input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
-        cameras = { main: { fadeIn: vi.fn(), fadeOut: vi.fn(), once: vi.fn() } };
+        cameras = { main: { off: vi.fn(), fadeIn: vi.fn(), fadeOut: vi.fn(), once: vi.fn() } };
         constructor() {
           // scene.get reports that no scene is registered under the requested key, so every id is unknown.
           Object.assign(this, { scene: { start: vi.fn(), get: vi.fn(() => null) } });
         }
-        textures = { exists: vi.fn(() => true) };
+        textures = { exists: vi.fn(() => true), remove: vi.fn() };
         anims = {
+          remove: vi.fn(),
           exists: vi.fn(() => false),
           create: vi.fn(),
           generateFrameNumbers: vi.fn(() => []),
