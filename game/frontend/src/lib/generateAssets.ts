@@ -1,6 +1,6 @@
 import type { AssetEntry } from '@game/assets/manifest';
 import type { ArtSource } from '../art/sources';
-import { encodePng } from './encodePng';
+import { encodePng } from './pngEncode';
 import { gridToRgba } from './gridToRgba';
 import { PALETTE } from './palette';
 import { buildSpriteSheet } from './spriteSheet';
