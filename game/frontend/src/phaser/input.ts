@@ -20,8 +20,6 @@ export interface InputLayer {
 }
 
 export function createInputLayer(input: InputPlugin, objects: SceneObject[]): InputLayer {
-  void input;
-
   const focusedId = (): string | null => objects.find((o) => o.isFocused)?.spec.id ?? null;
 
   // Publishes the current focus to the React store and the event bridge, then returns it.
@@ -30,6 +28,12 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     useGameStore.getState().setFocusedObject(id);
     phaserToReact.emit('focusChange', { id });
     return id;
+  };
+
+  // Moves focus one step, then publishes the result.
+  const step = (delta: 1 | -1): string | null => {
+    moveFocus(objects, delta);
+    return report();
   };
 
   let active = true;
@@ -42,10 +46,41 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     });
   }
 
+  // Keyboard navigation: Tab and arrows move focus, Enter and Space activate the focused
+  // object, Escape asks the React side to close its menu.
+  const onKeyDown = (e: KeyboardEvent): void => {
+    if (!active) return;
+    switch (e.key) {
+      case 'Tab':
+        e.preventDefault();
+        step(e.shiftKey ? -1 : 1);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        step(-1);
+        break;
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        step(1);
+        break;
+      case 'Enter':
+      case ' ':
+        for (const o of objects) o.handleKey(e.key);
+        break;
+      case 'Escape':
+        phaserToReact.emit('menuClose', {});
+        break;
+    }
+  };
+
+  const keyboard = input.keyboard ?? null;
+  keyboard?.on('keydown', onKeyDown);
+
   return {
     moveFocus(delta: 1 | -1): string | null {
-      moveFocus(objects, delta);
-      return report();
+      return step(delta);
     },
     focusObject(id: string | null): void {
       objects.forEach((o) => {
@@ -58,8 +93,7 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     destroy(): void {
       if (!active) return;
       active = false;
-      // The keydown listener is not registered yet (no onKeyDown in this file),
-      // so there is nothing to remove with input.keyboard?.off('keydown', ...).
+      keyboard?.off('keydown', onKeyDown);
     },
   };
 }
