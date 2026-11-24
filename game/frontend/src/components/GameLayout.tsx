@@ -17,7 +17,7 @@ export function GameLayout({
   const toggleDrawer = useUiStore((s) => s.toggleDrawer);
 
   return (
-    <div className="grid h-screen w-full grid-cols-1 overflow-hidden md:grid-cols-[4fr_1fr]">
+    <div className="grid h-screen w-full grid-cols-1 overflow-hidden md:grid-cols-[3fr_1fr]">
       <main className="relative min-w-0 overflow-hidden pb-12 md:pb-0">{header}{scene}</main>
       <motion.aside
         data-state={drawerOpen ? 'open' : 'closed'}

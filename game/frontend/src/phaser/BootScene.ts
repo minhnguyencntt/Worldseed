@@ -75,6 +75,7 @@ export class BootScene extends Phaser.Scene {
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
     this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
     this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
+      if (!sceneId || !this.scene.get(sceneId)) return;
       const cam = this.cameras.main;
       cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));
       cam.fadeOut(TRANSITION_FADE_MS);

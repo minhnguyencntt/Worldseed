@@ -112,7 +112,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   return (
     <Dialog open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
       <DialogContent
-        className="contribution-sheet"
+        className="sf-frame-parchment fixed inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto p-sf-4 text-sf-md"
         onCloseAutoFocus={(event) => {
           if (returnFocusRef?.current) {
             event.preventDefault();

@@ -12,7 +12,7 @@ import { useGameStore } from './store/gameStore';
 import { ApiError, getCurrentRound, type Round } from './api/client';
 import { sceneSpec, world } from './runtime/content';
 import { useGame } from './runtime/useGame';
-import { phaserToReact } from './phaser/events';
+import { phaserToReact, reactToPhaser } from './phaser/events';
 
 export function describeRoundError(e: unknown): string {
   if (e instanceof ApiError) {
@@ -71,6 +71,10 @@ export default function App() {
 
   // Hover previews the object under the pointer; keyboard focus and the last click keep its actions reachable.
   const activeId = hoverId ?? focusedObjectId ?? selectedId ?? null;
+  const handleAction = (objectId: string, actionId: string) => {
+    game.act(objectId, actionId);
+    reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' });
+  };
   return (
     <GameLayout
       header={
@@ -95,7 +99,7 @@ export default function App() {
             layout={layout}
             activeId={activeId}
             focusFirstAction={focusedObjectId !== null && activeId === focusedObjectId}
-            onAction={game.act}
+            onAction={handleAction}
           />
           <ContributionSheet
             open={sheetOpen}
