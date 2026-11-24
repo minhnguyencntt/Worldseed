@@ -13,7 +13,7 @@ export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: S
     <div className="story-content h-full overflow-y-auto p-3 font-mono text-sm border-l-4 border-amber-900 bg-stone-900 text-amber-100">
       <h1>{sceneTitle}</h1>
       {node && (
-        <section className="dialogue" aria-label="Dialogue">
+        <section className="dialogue sf-frame-parchment" aria-label="Dialogue">
           <h2>{node.speaker}</h2>
           <p>{node.text}</p>
           <div className="choices">
@@ -39,7 +39,7 @@ export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: S
         ) : (
           <ul>
             {inventory.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item} className="sf-frame-slot">{item}</li>
             ))}
           </ul>
         )}

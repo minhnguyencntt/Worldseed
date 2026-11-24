@@ -7,6 +7,7 @@ import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
 import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
+import { Button } from './components/ui/button';
 import { BootScene } from './phaser/BootScene';
 import { ApiError, getCurrentRound, type Round } from './api/client';
 import { world } from './runtime/content';
@@ -73,9 +74,9 @@ export default function App() {
             <PhaserHost scenes={[BootScene]} />
           </div>
           <ActionMenu object={selected} onAction={game.act} />
-          <button type="button" ref={triggerRef} onClick={() => setSheetOpen(true)}>
+          <Button type="button" variant="frame" ref={triggerRef} onClick={() => setSheetOpen(true)}>
             Suggest What Happens Next
-          </button>
+          </Button>
           <ContributionSheet
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}

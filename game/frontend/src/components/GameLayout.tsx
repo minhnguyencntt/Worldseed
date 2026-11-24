@@ -21,9 +21,9 @@ export function GameLayout({
       <main className="relative min-w-0 overflow-hidden pb-12 md:pb-0">{header}{scene}</main>
       <motion.aside
         data-state={drawerOpen ? 'open' : 'closed'}
-        className="overflow-y-auto transition-transform duration-300 ease-out max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[50vh] max-md:translate-y-[calc(100%-3rem)] data-[state=open]:max-md:translate-y-0 md:h-screen"
+        className="sf-frame-panel overflow-y-auto transition-transform duration-300 ease-out max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[50vh] max-md:translate-y-[calc(100%-3rem)] data-[state=open]:max-md:translate-y-0 md:h-screen"
       >
-        <Button type="button" variant="ghost" aria-expanded={drawerOpen} onClick={toggleDrawer}>
+        <Button type="button" variant="frame" aria-expanded={drawerOpen} onClick={toggleDrawer}>
           <ChevronUp aria-hidden="true" className="h-4 w-4" />
           Story
         </Button>
