@@ -86,4 +86,13 @@ describe('history empty state', () => {
     expect(await screen.findByText(contributionFixture.prompt)).toBeTruthy();
     expect(screen.queryByText(HISTORY_EMPTY)).toBeNull();
   });
+
+  it('shows the empty test id when history loads empty', async () => {
+    listMineMock.mockResolvedValue([]);
+
+    renderSheet();
+
+    expect(await screen.findByTestId('contribution-history-empty')).toBeTruthy();
+    expect(screen.queryByTestId('contribution-history-loading')).toBeNull();
+  });
 });

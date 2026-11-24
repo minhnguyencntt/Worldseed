@@ -59,4 +59,13 @@ describe('history status', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(HISTORY_ERROR);
     expect(screen.queryByText(HISTORY_LOADING)).toBeNull();
   });
+
+  it('shows the loading test id while history is pending', () => {
+    listMineMock.mockReturnValue(new Promise(() => {}));
+
+    renderSheet();
+
+    expect(screen.getByTestId('contribution-history-loading')).toHaveTextContent(HISTORY_LOADING);
+    expect(screen.queryByTestId('contribution-success')).toBeNull();
+  });
 });

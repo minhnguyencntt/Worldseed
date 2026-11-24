@@ -61,4 +61,20 @@ describe('history retry', () => {
     expect(screen.queryByText(HISTORY_ERROR)).toBeNull();
     expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
   });
+
+  it('error shows the error test id and Retry, and Retry returns to loading', async () => {
+    listMineMock.mockRejectedValueOnce(new Error('network down'));
+    // Second request never settles so the sheet stays in the loading state.
+    listMineMock.mockReturnValueOnce(new Promise<never>(() => {}));
+
+    render(<ContributionSheet open onClose={vi.fn()} roundId="round-1" />);
+
+    expect(await screen.findByTestId('contribution-history-error')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }));
+
+    expect(await screen.findByTestId('contribution-history-loading')).toBeInTheDocument();
+    expect(listMineMock).toHaveBeenCalledTimes(2);
+  });
 });

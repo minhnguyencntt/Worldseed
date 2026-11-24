@@ -51,7 +51,7 @@ describe('ContributionSheet inline feedback', () => {
 
     sendIdea('hello');
 
-    expect(await screen.findByRole('status')).toHaveTextContent(SUCCESS_MESSAGE);
+    expect(await screen.findByTestId('contribution-success')).toHaveTextContent(SUCCESS_MESSAGE);
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
@@ -62,7 +62,7 @@ describe('ContributionSheet inline feedback', () => {
     sendIdea('hello');
 
     expect(await screen.findByRole('alert')).toHaveTextContent(SLOW_DOWN_MESSAGE);
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByTestId('contribution-success')).toBeNull();
   });
 
   it('Given a successful send, when the player edits the idea, then the success status is cleared', async () => {
@@ -70,10 +70,10 @@ describe('ContributionSheet inline feedback', () => {
     renderSheet();
 
     sendIdea('hello');
-    await screen.findByRole('status');
+    await screen.findByTestId('contribution-success');
 
     typeIdea('more');
 
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByTestId('contribution-success')).toBeNull();
   });
 });
