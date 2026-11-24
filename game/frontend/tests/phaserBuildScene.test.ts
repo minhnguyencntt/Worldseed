@@ -127,13 +127,15 @@ describe('createSceneBuild dispose', () => {
       destroyedWith.push([...handles]);
     });
     const build = createSceneBuild(scene, resolveKey, content, spec);
+    // dispose empties build.effects in place, so keep a copy of the handles to compare against.
+    const handles = [...effects];
 
     build.dispose();
 
     expect(bed.destroy).toHaveBeenCalledTimes(1);
     expect(lamp.destroy).toHaveBeenCalledTimes(1);
     expect(destroyEffects).toHaveBeenCalledTimes(1);
-    expect(destroyedWith[0]).toEqual(effects);
+    expect(destroyedWith[0]).toEqual(handles);
     expect(build.objects).toHaveLength(0);
     expect(build.effects).toHaveLength(0);
   });
