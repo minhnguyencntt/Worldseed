@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { IntroScreen } from '../src/components/IntroScreen';
 import { StoryPanel } from '../src/components/StoryPanel';
@@ -45,20 +45,26 @@ describe('intro copy and choices', () => {
     expect(onChoose).toHaveBeenCalledWith(0);
   });
 
-  it('StoryPanel shows "Empty" when the inventory is empty', () => {
+  it('StoryPanel renders six empty inventory slots when the inventory is empty', () => {
     render(
       <StoryPanel node={introNode} history={[]} inventory={[]} onChoose={vi.fn()} />,
     );
 
-    expect(screen.getByText('Empty')).toBeInTheDocument();
+    const slots = within(screen.getByRole('region', { name: 'Inventory' })).getAllByRole('listitem');
+    expect(slots).toHaveLength(6);
+    for (const slot of slots) {
+      expect(slot).toHaveAttribute('data-empty', 'true');
+    }
   });
 
-  it('StoryPanel lists the item name when the inventory holds "key"', () => {
+  it('StoryPanel lists the humanised item name in the first slot when the inventory holds "old-key"', () => {
     render(
-      <StoryPanel node={introNode} history={[]} inventory={['key']} onChoose={vi.fn()} />,
+      <StoryPanel node={introNode} history={[]} inventory={['old-key']} onChoose={vi.fn()} />,
     );
 
-    expect(screen.getByText('key')).toBeInTheDocument();
-    expect(screen.queryByText('Empty')).not.toBeInTheDocument();
+    const slots = within(screen.getByRole('region', { name: 'Inventory' })).getAllByRole('listitem');
+    expect(slots).toHaveLength(6);
+    expect(slots[0]).toHaveTextContent('Old Key');
+    expect(slots[0]).not.toHaveTextContent('old-key');
   });
 });
