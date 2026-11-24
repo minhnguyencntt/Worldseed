@@ -34,9 +34,9 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     return null;
   };
 
-  // Payloads reused across emits so hover, focus and click paths allocate nothing per call.
+  // Payloads reused across emits so focus and click paths allocate nothing per call.
+  // Hover emits a fresh payload per call: listeners may keep the object they were given.
   const focusPayload = { id: null as string | null };
-  const hoverPayload = { id: null as string | null };
   const clickPayload = { id: '' };
 
   // Publishes the current focus to the React store and the event bridge, then returns it.
@@ -64,8 +64,7 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     });
     o.onHoverChange((e) => {
       if (!active) return;
-      hoverPayload.id = e.over ? e.objectId : null;
-      phaserToReact.emit('objectHover', hoverPayload);
+      phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null });
     });
   }
 
