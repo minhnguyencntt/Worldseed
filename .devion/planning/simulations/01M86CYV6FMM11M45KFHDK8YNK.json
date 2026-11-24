@@ -1,0 +1,667 @@
+{
+  "intent_id": "01M86CYV6FMM11M45KFHDK8YNK",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M86D44EHT5GSGFBZAW3EYW7H",
+      "kind": "intent",
+      "title": "SG-8.3 · Rewrite context.md and add the GDD",
+      "body": "Context: context.md still says the repo holds only a README with an unknown stack, while game/ holds a Phaser 3.90 + React + Zustand + Radix + Vitest game (game/src core, game/frontend client). No GDD exists. Desired behavior: context.md names the real stack and module layout; game/docs/GDD.md lists every feature with its implementing files and every named path exists. Expected result: docs match the code. Why: last step of SG-8 so the docs can be trusted.\n\n## Acceptance criteria\n- context.md names Phaser 3.90, React, Zustand, Radix and Vitest and the real modules\n- The GDD feature index lists every feature with code files and every path it names exists\n\n\n## Scope\n- In scope: context.md rewrite (written by Devion from these tickets)\n- In scope: game/docs/GDD.md\n- In scope: Unit-tested docs checks\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: backend/ (Go) and frontend/src/api/client.ts\n- Out of scope: Other SG-8 steps (8.1, 8.2)\n- Preserve: Boys-room gameplay behaviour\n- Preserve: Phaser ~3.90.0 pin and its guard test\n- Preserve: Existing sourceSize and importBoundary tests\n\n\n## Technical constraints\n- Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/\n- No test is deleted or skipped; no source file in game/src or game/frontend/src is over 200 lines\n- game/src never imports from game/frontend; Phaser stays pinned at ~3.90.0\n- No change to what the player sees or can do; backend/ (Go) and the contribution/round API are out of scope\n\n\n## Definition of done\n- Docs checks pass against the real context.md and GDD\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Docs describe the real Worldseed stack and modules and a GDD maps every feature to existing code files",
+      "description": "Context: context.md still says the repo holds only a README with an unknown stack, while game/ holds a Phaser 3.90 + React + Zustand + Radix + Vitest game (game/src core, game/frontend client). No GDD exists. Desired behavior: context.md names the real stack and module layout; game/docs/GDD.md lists every feature with its implementing files and every named path exists. Expected result: docs match the code. Why: last step of SG-8 so the docs can be trusted.",
+      "acceptance_criteria": [
+        "context.md names Phaser 3.90, React, Zustand, Radix and Vitest and the real modules",
+        "The GDD feature index lists every feature with code files and every path it names exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "context.md rewrite (written by Devion from these tickets)",
+          "game/docs/GDD.md",
+          "Unit-tested docs checks"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "backend/ (Go) and frontend/src/api/client.ts",
+          "Other SG-8 steps (8.1, 8.2)"
+        ],
+        "preserve": [
+          "Boys-room gameplay behaviour",
+          "Phaser ~3.90.0 pin and its guard test",
+          "Existing sourceSize and importBoundary tests"
+        ]
+      },
+      "technical_constraints": [
+        "Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/",
+        "No test is deleted or skipped; no source file in game/src or game/frontend/src is over 200 lines",
+        "game/src never imports from game/frontend; Phaser stays pinned at ~3.90.0",
+        "No change to what the player sees or can do; backend/ (Go) and the contribution/round API are out of scope"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Docs checks pass against the real context.md and GDD",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-196.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85EE0N9R3JXK44PFF7NJ3YB",
+      "links": [
+        "trace:01M85EE0N9R3JXK44PFF7NJ3YB",
+        "artifact:.ai-dlc/intent/INT-196.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-196.md",
+      "artifact_id": "INT-196"
+    },
+    {
+      "id": "01M86D44EHMRA8MV94AG20QF0B",
+      "kind": "requirement",
+      "title": "REQ · Docs checks report missing paths and missing stack terms",
+      "body": "Context: nothing verifies docs against code. Desired behavior: pure helpers in game/frontend/src/lib parse the GDD feature index table, report paths that do not exist, and report stack terms missing from a text. Expected result: wrong docs fail a unit test. Why: keeps the GDD matching the code.\n\n## Acceptance criteria\n- Given a markdown feature index table with backticked paths, when indexedPaths runs, then every backticked repo path is returned once\n- Given an exists predicate, when missingPaths runs, then only the paths it rejects are returned\n- Given a text lacking 'Vitest', when missingTerms runs with STACK_TERMS, then ['Vitest'] is returned\n\n\n## Scope\n- In scope: docsCheck.ts helpers\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: backend/ (Go) and api/client.ts\n- Out of scope: Other SG-8 steps (8.1, 8.2)\n- Preserve: Boys-room gameplay behaviour\n- Preserve: Phaser ~3.90.0 pin and its guard test\n- Preserve: Existing sourceSize and importBoundary tests\n\n\n## Technical constraints\n- Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/\n- No test is deleted or skipped; no source file in game/src or game/frontend/src is over 200 lines\n- game/src never imports from game/frontend; Phaser stays pinned at ~3.90.0\n\n\n## Definition of done\n- Helpers exported, file under 200 lines, typecheck green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pure helpers detect nonexistent indexed paths and absent stack terms",
+      "description": "Context: nothing verifies docs against code. Desired behavior: pure helpers in game/frontend/src/lib parse the GDD feature index table, report paths that do not exist, and report stack terms missing from a text. Expected result: wrong docs fail a unit test. Why: keeps the GDD matching the code.",
+      "acceptance_criteria": [
+        "Given a markdown feature index table with backticked paths, when indexedPaths runs, then every backticked repo path is returned once",
+        "Given an exists predicate, when missingPaths runs, then only the paths it rejects are returned",
+        "Given a text lacking 'Vitest', when missingTerms runs with STACK_TERMS, then ['Vitest'] is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "docsCheck.ts helpers"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "backend/ (Go) and api/client.ts",
+          "Other SG-8 steps (8.1, 8.2)"
+        ],
+        "preserve": [
+          "Boys-room gameplay behaviour",
+          "Phaser ~3.90.0 pin and its guard test",
+          "Existing sourceSize and importBoundary tests"
+        ]
+      },
+      "technical_constraints": [
+        "Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/",
+        "No test is deleted or skipped; no source file in game/src or game/frontend/src is over 200 lines",
+        "game/src never imports from game/frontend; Phaser stays pinned at ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helpers exported, file under 200 lines, typecheck green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-497.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86D44EHT5GSGFBZAW3EYW7H",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M86D44EHT5GSGFBZAW3EYW7H",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-497.md"
+      ],
+      "depends_on": [
+        "01M86D44EHT5GSGFBZAW3EYW7H"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-497.md",
+      "artifact_id": "REQ-497"
+    },
+    {
+      "id": "01M86D44EHKDJTA5PJ99Z4CQ61",
+      "kind": "requirement",
+      "title": "REQ · GDD page lists every feature with its code files",
+      "body": "Context: no GDD exists. Desired behavior: one-page GDD with premise, core loop and a Feature index table (Feature | Code files) covering world content, asset manifest, scene build, effects and transitions, preload, characters, input and focus, the dialogue/conditions/inventory runner, state and save, event bridge, overlays, contribution, admin, art pipeline and repo guards. Expected result: every backticked path exists. Why: one place to find where each feature lives.\n\n## Acceptance criteria\n- Given the GDD, when its feature index is parsed, then at least 14 features each list at least one path\n- Given every indexed path, when checked on disk, then none is missing\n\n\n## Scope\n- In scope: game/docs/GDD.md\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: backend/ (Go) and api/client.ts\n- Out of scope: Other SG-8 steps (8.1, 8.2)\n- Preserve: Boys-room gameplay behaviour\n- Preserve: Phaser ~3.90.0 pin and its guard test\n\n\n## Technical constraints\n- Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/\n- No test is deleted or skipped\n- Phaser stays pinned at ~3.90.0\n\n\n## Definition of done\n- GDD committed and matching the code\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "game/docs/GDD.md has a one-page feature index whose paths all exist",
+      "description": "Context: no GDD exists. Desired behavior: one-page GDD with premise, core loop and a Feature index table (Feature | Code files) covering world content, asset manifest, scene build, effects and transitions, preload, characters, input and focus, the dialogue/conditions/inventory runner, state and save, event bridge, overlays, contribution, admin, art pipeline and repo guards. Expected result: every backticked path exists. Why: one place to find where each feature lives.",
+      "acceptance_criteria": [
+        "Given the GDD, when its feature index is parsed, then at least 14 features each list at least one path",
+        "Given every indexed path, when checked on disk, then none is missing"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/docs/GDD.md"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "backend/ (Go) and api/client.ts",
+          "Other SG-8 steps (8.1, 8.2)"
+        ],
+        "preserve": [
+          "Boys-room gameplay behaviour",
+          "Phaser ~3.90.0 pin and its guard test"
+        ]
+      },
+      "technical_constraints": [
+        "Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/",
+        "No test is deleted or skipped",
+        "Phaser stays pinned at ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "GDD committed and matching the code",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-498.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86D44EHT5GSGFBZAW3EYW7H",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M86D44EHT5GSGFBZAW3EYW7H",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-498.md"
+      ],
+      "depends_on": [
+        "01M86D44EHT5GSGFBZAW3EYW7H"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-498.md",
+      "artifact_id": "REQ-498"
+    },
+    {
+      "id": "01M86D44EHQPQWNWE1BF4FKQX4",
+      "kind": "requirement",
+      "title": "REQ · context.md names the real stack and module layout",
+      "body": "Context: context.md claims no stack is known. Desired behavior: the context.md Devion rewrites lists the real stack and a Modules table whose backticked paths exist; a helper extracts the module paths so a unit test can check them. Expected result: no stack line says UNKNOWN and every module path exists. Why: agents rely on context.md.\n\n## Acceptance criteria\n- Given context.md, when missingTerms runs with STACK_TERMS, then nothing is missing\n- Given the context.md Modules table, when contextModulePaths and missingPaths run, then no path is missing\n- Given context.md, then it does not say the frameworks are UNKNOWN\n\n\n## Scope\n- In scope: contextDoc.ts helper and its test\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: backend/ (Go) and api/client.ts\n- Out of scope: Other SG-8 steps (8.1, 8.2)\n- Preserve: Boys-room gameplay behaviour\n- Preserve: Phaser ~3.90.0 pin and its guard test\n\n\n## Technical constraints\n- Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/\n- No test is deleted or skipped; no source file over 200 lines\n- Phaser stays pinned at ~3.90.0\n\n\n## Definition of done\n- Helper exported and context.md checked by a unit test\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "context.md states Phaser 3.90, React, Zustand, Radix, Vitest and real module paths",
+      "description": "Context: context.md claims no stack is known. Desired behavior: the context.md Devion rewrites lists the real stack and a Modules table whose backticked paths exist; a helper extracts the module paths so a unit test can check them. Expected result: no stack line says UNKNOWN and every module path exists. Why: agents rely on context.md.",
+      "acceptance_criteria": [
+        "Given context.md, when missingTerms runs with STACK_TERMS, then nothing is missing",
+        "Given the context.md Modules table, when contextModulePaths and missingPaths run, then no path is missing",
+        "Given context.md, then it does not say the frameworks are UNKNOWN"
+      ],
+      "scope": {
+        "in_scope": [
+          "contextDoc.ts helper and its test"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "backend/ (Go) and api/client.ts",
+          "Other SG-8 steps (8.1, 8.2)"
+        ],
+        "preserve": [
+          "Boys-room gameplay behaviour",
+          "Phaser ~3.90.0 pin and its guard test"
+        ]
+      },
+      "technical_constraints": [
+        "Every step lands green: npm test and npm run typecheck pass in both game/ and game/frontend/",
+        "No test is deleted or skipped; no source file over 200 lines",
+        "Phaser stays pinned at ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and context.md checked by a unit test",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-499.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86D44EHT5GSGFBZAW3EYW7H",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M86D44EHT5GSGFBZAW3EYW7H",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-499.md"
+      ],
+      "depends_on": [
+        "01M86D44EHT5GSGFBZAW3EYW7H"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-499.md",
+      "artifact_id": "REQ-499"
+    },
+    {
+      "id": "01M86D44EHWHFRF7T3RM11XQ84",
+      "kind": "unit",
+      "title": "Act: Add docsCheck helpers",
+      "body": "Add pure helpers in game/frontend/src/lib/docsCheck.ts in the style of importBoundary.ts and sourceSize.ts (single-purpose exported functions, no I/O).\n\n## Acceptance criteria\n- indexedPaths returns unique backticked tokens that contain '/' and a file extension, from table rows only\n- missingPaths returns the paths the exists predicate rejects\n- missingTerms returns the terms absent from the text, case-insensitive\n\n\n## Scope\n- In scope: new file docsCheck.ts\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: Tests\n- Preserve: Existing lib helpers\n\n\n## Technical constraints\n- Every step lands green: npm test and npm run typecheck pass in game/frontend\n- File stays under 200 lines; game/src never imports from game/frontend\n- New file: `game/frontend/src/lib/docsCheck.ts`\n\n\n## Definition of done\n- Helpers exported; typecheck green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create indexedPaths, missingPaths, missingTerms and STACK_TERMS",
+      "description": "Add pure helpers in game/frontend/src/lib/docsCheck.ts in the style of importBoundary.ts and sourceSize.ts (single-purpose exported functions, no I/O).",
+      "acceptance_criteria": [
+        "indexedPaths returns unique backticked tokens that contain '/' and a file extension, from table rows only",
+        "missingPaths returns the paths the exists predicate rejects",
+        "missingTerms returns the terms absent from the text, case-insensitive"
+      ],
+      "scope": {
+        "in_scope": [
+          "new file docsCheck.ts"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "Tests"
+        ],
+        "preserve": [
+          "Existing lib helpers"
+        ]
+      },
+      "technical_constraints": [
+        "Every step lands green: npm test and npm run typecheck pass in game/frontend",
+        "File stays under 200 lines; game/src never imports from game/frontend",
+        "New file: `game/frontend/src/lib/docsCheck.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helpers exported; typecheck green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-994.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86D44EHMRA8MV94AG20QF0B",
+      "matched_feature_id": "01M84K6YA89P4HMDHNY8H7SSJ9",
+      "links": [
+        "parent:01M86D44EHMRA8MV94AG20QF0B",
+        "trace:01M84K6YA89P4HMDHNY8H7SSJ9",
+        "artifact:.ai-dlc/units/UNIT-994.md"
+      ],
+      "depends_on": [
+        "01M86D44EHMRA8MV94AG20QF0B"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-994.md",
+      "artifact_id": "UNIT-994",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/docsCheck.ts",
+          "symbol": "new: docsCheck module",
+          "lines": "new",
+          "action": "Create the file exporting STACK_TERMS, indexedPaths(md), missingPaths(paths, exists) and missingTerms(text, terms). indexedPaths scans only lines that start with '|', matches /`([^`\\s]+\\/[^`\\s]+\\.[a-z]+)`/g and returns the captures de-duplicated in first-seen order. missingTerms lower-cases both sides and uses includes.",
+          "code": "export const STACK_TERMS = ['Phaser 3.90','React','Zustand','Radix','Vitest'];\nexport function missingPaths(paths: string[], exists: (p: string) => boolean): string[] { return paths.filter((p) => !exists(p)); }\nexport function missingTerms(text: string, terms: string[]): string[] { const t = text.toLowerCase(); return terms.filter((x) => !t.includes(x.toLowerCase())); }",
+          "expected": "All four exports resolve and npm run typecheck passes in game/frontend"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EH81D25RJE2H9WVBXP",
+      "kind": "unit",
+      "title": "Act: Write the GDD feature index",
+      "body": "Create a one-page GDD from the files read in game/src and game/frontend/src. Paths are repository-relative.\n\n## Acceptance criteria\n- GDD has Premise, Core loop and Feature index sections\n- Each feature row lists files that exist\n\n\n## Scope\n- In scope: new file game/docs/GDD.md\n- Out of scope: Any gameplay, UI, art or content change\n- Out of scope: Tests\n- Preserve: game/docs/temporary-assets.md\n\n\n## Technical constraints\n- Documentation only; no source change\n- Phaser stays pinned at ~3.90.0\n- New file: `game/docs/GDD.md`\n\n\n## Definition of done\n- GDD written and every path in it exists\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game/docs/GDD.md with premise, core loop and feature index",
+      "description": "Create a one-page GDD from the files read in game/src and game/frontend/src. Paths are repository-relative.",
+      "acceptance_criteria": [
+        "GDD has Premise, Core loop and Feature index sections",
+        "Each feature row lists files that exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "new file game/docs/GDD.md"
+        ],
+        "out_of_scope": [
+          "Any gameplay, UI, art or content change",
+          "Tests"
+        ],
+        "preserve": [
+          "game/docs/temporary-assets.md"
+        ]
+      },
+      "technical_constraints": [
+        "Documentation only; no source change",
+        "Phaser stays pinned at ~3.90.0",
+        "New file: `game/docs/GDD.md`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "GDD written and every path in it exists",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-995.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86D44EHKDJTA5PJ99Z4CQ61",
+      "matched_feature_id": "01M86CDZ716H2Z9K6TV6WXXG38",
+      "links": [
+        "parent:01M86D44EHKDJTA5PJ99Z4CQ61",
+        "trace:01M86CDZ716H2Z9K6TV6WXXG38",
+        "artifact:.ai-dlc/units/UNIT-995.md"
+      ],
+      "depends_on": [
+        "01M86D44EHKDJTA5PJ99Z4CQ61"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-995.md",
+      "artifact_id": "UNIT-995",
+      "steps": [
+        {
+          "file": "game/docs/GDD.md",
+          "symbol": "new: GDD page",
+          "lines": "new",
+          "action": "Create the file with '# Worldseed GDD', '## Premise' (a boy's room explored by pointing, focusing and acting; players suggest what happens next), '## Core loop' (intro, scene, focus an object, act, dialogue and inventory update, transitions, save and reload) and '## Feature index' with the header '| Feature | Code files |' followed by one row per feature below, every path in backticks.",
+          "code": "| World content and loader | `game/src/content/loader.ts`, `game/src/content/schema.ts`, `game/src/content/worlds/the-boys-room/world.yaml` |\n| Asset manifest | `game/src/assets/manifest/schema.ts`, `game/src/assets/loaders/manifestLoader.ts` |\n| Scene build and layers | `game/src/engine/buildScene.ts`, `game/src/engine/layers.ts`, `game/src/entities/SceneObject.ts`, `game/frontend/src/phaser/buildScene.ts` |\n| Effects and transitions | `game/src/engine/buildEffects.ts`, `game/src/engine/playSceneTransition.ts`, `game/frontend/src/phaser/effectContext.ts`, `game/frontend/src/phaser/transitions.ts` |\n| Asset preload | `game/src/engine/planPreload.ts`, `game/frontend/src/phaser/preload.ts` |\n| Characters and animation | `game/src/engine/characterAnimation.ts`, `game/frontend/src/phaser/characters.ts` |\n| Input and focus | `game/frontend/src/phaser/input.ts`, `game/frontend/src/phaser/menuKeys.ts`, `game/src/systems/interaction.ts` |\n| Dialogue, conditions, events, inventory | `game/src/systems/runner.ts`, `game/src/systems/dialogue.ts`, `game/src/systems/conditions.ts`, `game/src/systems/events.ts`, `game/src/systems/inventory.ts`, `game/frontend/src/runtime/useGame.ts` |\n| State and save | `game/src/state/gameState.ts`, `game/src/state/persistence.ts`, `game/frontend/src/store/gameStore.ts`, `game/frontend/src/runtime/storage.ts` |\n| Phaser-React event bridge | `game/frontend/src/phaser/events.ts`, `game/frontend/src/components/PhaserHost.tsx` |\n| Game overlays | `game/frontend/src/components/ObjectOverlay.tsx`, `game/frontend/src/components/StoryPanel.tsx`, `game/frontend/src/components/HeaderOverlay.tsx`, `game/frontend/src/components/IntroScreen.tsx`, `game/frontend/src/lib/anchor.ts` |\n| Suggest What Happens Next | `game/frontend/src/components/ContributionSheet.tsx`, `game/frontend/src/components/contribution/HistoryList.tsx`, `game/frontend/src/api/client.ts` |\n| Admin console | `game/frontend/src/components/AdminApp.tsx`, `game/frontend/src/components/admin/AdminControls.tsx` |\n| Art and asset generation | `game/frontend/src/lib/generateAssets.ts`, `game/frontend/scripts/generateArt.ts`, `game/frontend/src/art/sources.ts` |\n| Repo guards | `game/frontend/src/lib/importBoundary.ts`, `game/frontend/src/lib/sourceSize.ts`, `game/frontend/src/lib/trackedNodeModules.ts` |",
+          "expected": "File exists with 15 feature rows, each naming existing backticked paths"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EH7J33176TE03AT98X",
+      "kind": "unit",
+      "title": "Act: Add contextModulePaths helper",
+      "body": "Add a pure helper that reads backticked module paths from table rows of context.md text.\n\n## Acceptance criteria\n- contextModulePaths returns de-duplicated backticked paths starting with game/ or backend/ from table rows\n- contextModulePaths ignores backticked paths on lines that do not start with '|'\n\n\n## Scope\n- In scope: new file contextDoc.ts\n- Out of scope: Writing context.md\n- Out of scope: Tests\n- Preserve: docsCheck.ts helpers\n\n\n## Technical constraints\n- File under 200 lines; typecheck green\n- game/src never imports from game/frontend\n- New file: `game/frontend/src/lib/contextDoc.ts`\n\n\n## Definition of done\n- Helper exported; typecheck green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create a helper extracting module paths from the context.md Modules table",
+      "description": "Add a pure helper that reads backticked module paths from table rows of context.md text.",
+      "acceptance_criteria": [
+        "contextModulePaths returns de-duplicated backticked paths starting with game/ or backend/ from table rows",
+        "contextModulePaths ignores backticked paths on lines that do not start with '|'"
+      ],
+      "scope": {
+        "in_scope": [
+          "new file contextDoc.ts"
+        ],
+        "out_of_scope": [
+          "Writing context.md",
+          "Tests"
+        ],
+        "preserve": [
+          "docsCheck.ts helpers"
+        ]
+      },
+      "technical_constraints": [
+        "File under 200 lines; typecheck green",
+        "game/src never imports from game/frontend",
+        "New file: `game/frontend/src/lib/contextDoc.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported; typecheck green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-996.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86D44EHQPQWNWE1BF4FKQX4",
+      "matched_feature_id": "01M84T6537706VR5FGDE69V8GW",
+      "links": [
+        "parent:01M86D44EHQPQWNWE1BF4FKQX4",
+        "trace:01M84T6537706VR5FGDE69V8GW",
+        "artifact:.ai-dlc/units/UNIT-996.md"
+      ],
+      "depends_on": [
+        "01M86D44EHQPQWNWE1BF4FKQX4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-996.md",
+      "artifact_id": "UNIT-996",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/contextDoc.ts",
+          "symbol": "new: contextModulePaths",
+          "lines": "new",
+          "action": "Create contextModulePaths(md: string): string[]. For each line starting with '|', match /`((?:game|backend)\\/[^`\\s]*)`/g and return the captures de-duplicated in first-seen order.",
+          "code": "export function contextModulePaths(md: string): string[] { const out = new Set<string>(); for (const l of md.split('\\n')) { if (!l.startsWith('|')) continue; for (const m of l.matchAll(/`((?:game|backend)\\/[^`\\s]*)`/g)) out.add(m[1]); } return [...out]; }",
+          "expected": "Function exported and npm run typecheck passes in game/frontend"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EHG8KSKEKDAFABWEN8",
+      "kind": "unit",
+      "title": "Verify: docsCheck helper unit tests",
+      "body": "Write tests from the REQ-A acceptance criteria using inline markdown strings and a fake exists predicate; no disk access.\n\n## Acceptance criteria\n- indexedPaths returns each backticked table path once and ignores non-table lines\n- missingPaths returns only paths the fake exists predicate rejects, and missingTerms returns ['Vitest'] when it is absent from the text\n\n\n## Scope\n- In scope: game/frontend/tests/docsCheck.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No test is deleted or skipped\n- Tests mock all I/O\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for indexedPaths, missingPaths, missingTerms",
+      "description": "Write tests from the REQ-A acceptance criteria using inline markdown strings and a fake exists predicate; no disk access.",
+      "acceptance_criteria": [
+        "indexedPaths returns each backticked table path once and ignores non-table lines",
+        "missingPaths returns only paths the fake exists predicate rejects, and missingTerms returns ['Vitest'] when it is absent from the text"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/docsCheck.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test is deleted or skipped",
+        "Tests mock all I/O"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-997.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86D44EHWHFRF7T3RM11XQ84",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86D44EHWHFRF7T3RM11XQ84",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-997.md"
+      ],
+      "depends_on": [
+        "01M86D44EHWHFRF7T3RM11XQ84"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-997.md",
+      "artifact_id": "UNIT-997",
+      "steps": [
+        {
+          "file": "game/frontend/tests/docsCheck.test.ts",
+          "symbol": "describe('docsCheck')",
+          "lines": "new",
+          "action": "Add three tests: (1) indexedPaths on '| Input | `game/a/b.ts`, `game/a/b.ts` |' returns ['game/a/b.ts'] and on a non-table line containing a backticked path returns []; (2) missingPaths(['x/a.ts','x/b.ts'], (p) => p === 'x/a.ts') returns ['x/b.ts']; (3) missingTerms('phaser 3.90 react zustand radix', STACK_TERMS) returns ['Vitest'].",
+          "command": "cd game/frontend && npx vitest run tests/docsCheck.test.ts",
+          "expected": "3 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EH1CVXHCBFHVSPE269",
+      "kind": "unit",
+      "title": "Verify: GDD feature index paths exist",
+      "body": "Test reads game/docs/GDD.md and uses the ACT-A helpers to prove the feature index matches the code.\n\n## Acceptance criteria\n- Every indexed path exists on disk\n- The index has at least 14 feature rows\n\n\n## Scope\n- In scope: game/frontend/tests/gddIndex.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No test is deleted or skipped\n- Reads only the repo's own docs and files, no network or app start\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test checks every GDD path exists and the index is complete",
+      "description": "Test reads game/docs/GDD.md and uses the ACT-A helpers to prove the feature index matches the code.",
+      "acceptance_criteria": [
+        "Every indexed path exists on disk",
+        "The index has at least 14 feature rows"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/gddIndex.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test is deleted or skipped",
+        "Reads only the repo's own docs and files, no network or app start"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-998.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86D44EH81D25RJE2H9WVBXP",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86D44EH81D25RJE2H9WVBXP",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-998.md"
+      ],
+      "depends_on": [
+        "01M86D44EH81D25RJE2H9WVBXP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-998.md",
+      "artifact_id": "UNIT-998",
+      "steps": [
+        {
+          "file": "game/frontend/tests/gddIndex.test.ts",
+          "symbol": "describe('GDD feature index')",
+          "lines": "new",
+          "action": "Add two tests. Set root = fileURLToPath(new URL('../../../', import.meta.url)) and read join(root,'game/docs/GDD.md'). Test 1: count lines starting with '| ' after the '| Feature | Code files |' header, skipping the separator, and assert the count is >= 14. Test 2: assert missingPaths(indexedPaths(md), (p) => existsSync(join(root, p))) equals [].",
+          "command": "cd game/frontend && npx vitest run tests/gddIndex.test.ts",
+          "expected": "Both tests pass with no missing paths"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EH79G2DVX2T9VFJ6VW",
+      "kind": "unit",
+      "title": "Verify: context.md stack and module paths",
+      "body": "Tests from REQ-C: the helper works on inline text, and the repo-root context.md names the stack and only existing paths.\n\n## Acceptance criteria\n- context.md contains every STACK_TERMS entry\n- Every module path in context.md exists\n- context.md does not say Frameworks: UNKNOWN\n\n\n## Scope\n- In scope: game/frontend/tests/contextDoc.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No test is deleted or skipped\n- Reads only repo files, no network or app start\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for contextModulePaths and the real context.md content",
+      "description": "Tests from REQ-C: the helper works on inline text, and the repo-root context.md names the stack and only existing paths.",
+      "acceptance_criteria": [
+        "context.md contains every STACK_TERMS entry",
+        "Every module path in context.md exists",
+        "context.md does not say Frameworks: UNKNOWN"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contextDoc.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test is deleted or skipped",
+        "Reads only repo files, no network or app start"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-999.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86D44EH7J33176TE03AT98X",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86D44EH7J33176TE03AT98X",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-999.md"
+      ],
+      "depends_on": [
+        "01M86D44EH7J33176TE03AT98X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-999.md",
+      "artifact_id": "UNIT-999",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contextDoc.test.ts",
+          "symbol": "describe('context.md')",
+          "lines": "new",
+          "action": "Add two tests. Test 1: contextModulePaths('| a | `game/src/` and `backend/x` |\\n| b | `README.md` |') equals ['game/src/','backend/x']. Test 2: read join(root,'context.md') with root = fileURLToPath(new URL('../../../', import.meta.url)); assert missingTerms(text, STACK_TERMS) equals [], missingPaths(contextModulePaths(text), (p) => existsSync(join(root, p))) equals [], and text does not match /Frameworks: UNKNOWN/.",
+          "command": "cd game/frontend && npx vitest run tests/contextDoc.test.ts",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M86D44EHKS2NT81DPP1JT67D",
+      "kind": "evidence",
+      "title": "Evidence: Docs checks, GDD index and context.md unit tests",
+      "body": "Collect results of the docsCheck, gddIndex and contextDoc unit tests and the typecheck for game/frontend.\n\n## Acceptance criteria\n- docsCheck, gddIndex and contextDoc test files all pass\n- npm run typecheck passes in game/frontend\n\n\n## Scope\n- In scope: Recorded test output\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Unit tests only; no test deleted or skipped\n\n\n## Definition of done\n- Test outputs recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving SG-8.3",
+      "description": "Collect results of the docsCheck, gddIndex and contextDoc unit tests and the typecheck for game/frontend.",
+      "acceptance_criteria": [
+        "docsCheck, gddIndex and contextDoc test files all pass",
+        "npm run typecheck passes in game/frontend"
+      ],
+      "scope": {
+        "in_scope": [
+          "Recorded test output"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; no test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test outputs recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-196.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86D44EHG8KSKEKDAFABWEN8",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M86D44EHG8KSKEKDAFABWEN8",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-196.md"
+      ],
+      "depends_on": [
+        "01M86D44EHG8KSKEKDAFABWEN8",
+        "01M86D44EH1CVXHCBFHVSPE269",
+        "01M86D44EH79G2DVX2T9VFJ6VW"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-196.md",
+      "artifact_id": "EVD-196"
+    }
+  ],
+  "created_at": "2026-11-24T09:10:23.681810+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
