@@ -100,4 +100,14 @@ describe('App transitionTo emission', () => {
     expect(performActionMock).toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith('transitionTo', expect.anything());
   });
+
+  it('Given the bookshelf Inspect action does not change the scene, when Inspect is clicked, then playAnimation interact is emitted and no transitionTo is emitted', () => {
+    performActionMock.mockImplementation((prev: unknown) => prev);
+    begin();
+
+    clickInspectBookshelf();
+
+    expect(emitSpy).toHaveBeenCalledWith('playAnimation', { target: 'boy', name: 'interact' });
+    expect(emitSpy).not.toHaveBeenCalledWith('transitionTo', expect.anything());
+  });
 });

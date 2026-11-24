@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { evaluateCondition } from '../src/systems/conditions';
 import { addItem } from '../src/systems/inventory';
-import { performAction } from '../src/engine/scene';
-import { chooseOption } from '../src/systems/dialogue';
+import { runStep } from '../src/systems/runner';
 import type { GameState, SceneDef } from '../src/state/types';
 
 function makeState(overrides: Partial<GameState> = {}): GameState {
@@ -55,7 +54,7 @@ describe('runtime systems: conditions and inventory', () => {
   });
 });
 
-describe('runtime systems: performAction', () => {
+describe('runtime systems: runStep actions', () => {
   const scene: SceneDef = {
     id: 'bedroom',
     title: 'Bedroom',
@@ -80,13 +79,13 @@ describe('runtime systems: performAction', () => {
     dialogue: [],
   };
 
-  it('performAction applies set_flag, add_item and goto_scene events to a new state', () => {
+  it('runStep action applies set_flag, add_item and goto_scene events to a new state', () => {
     // Given a frozen initial state that must not be mutated
     const input = deepFreeze(makeState());
     const snapshot = structuredClone(input);
 
     // When the search action on the drawer is performed
-    const next = performAction(input, scene, 'drawer', 'search');
+    const next = runStep({ scene }, input, { type: 'action', objectId: 'drawer', actionId: 'search' }).state;
 
     // Then the flag is set, the key is added and the scene changes
     expect(next.flags.x).toBe(true);
@@ -96,7 +95,7 @@ describe('runtime systems: performAction', () => {
     expect(input).toEqual(snapshot);
   });
 
-  it('performAction returns the same state object when the action condition fails', () => {
+  it('runStep action returns the same state object when the action condition fails', () => {
     // Given an action that requires the "key" item, and a state without it
     const gatedScene: SceneDef = {
       ...scene,
@@ -117,7 +116,7 @@ describe('runtime systems: performAction', () => {
     const input = makeState();
 
     // When the gated action is performed
-    const next = performAction(input, gatedScene, 'drawer', 'search');
+    const next = runStep({ scene: gatedScene }, input, { type: 'action', objectId: 'drawer', actionId: 'search' }).state;
 
     // Then the very same state object is returned (no-op)
     expect(next).toBe(input);
@@ -152,12 +151,12 @@ describe('runtime systems: dialogue', () => {
     ],
   };
 
-  it('chooseOption applies choice events, advances to the next node and records the choice', () => {
+  it('runStep choose applies choice events, advances to the next node and records the choice', () => {
     // Given a state positioned at dialogue node n1
     const input = makeState({ activeDialogue: 'n1' });
 
     // When the first option (index 0) is chosen
-    const next = chooseOption(input, scene, 0);
+    const next = runStep({ scene }, input, { type: 'choose', index: 0 }).state;
 
     // Then the event flag is set, dialogue advances to n2, and history holds the choice text
     expect(next.flags.x).toBe(true);
@@ -165,12 +164,12 @@ describe('runtime systems: dialogue', () => {
     expect(next.history).toContain('Open the drawer');
   });
 
-  it('chooseOption returns the same state object for an invalid option index', () => {
+  it('runStep choose returns the same state object for an invalid option index', () => {
     // Given a state positioned at dialogue node n1
     const input = makeState({ activeDialogue: 'n1' });
 
     // When an out-of-range index is chosen
-    const next = chooseOption(input, scene, 5);
+    const next = runStep({ scene }, input, { type: 'choose', index: 5 }).state;
 
     // Then the same state object is returned
     expect(next).toBe(input);

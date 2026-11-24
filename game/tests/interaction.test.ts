@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import type { ObjectSpec } from '../src/content/schema';
 import { createInitialState, setFlag } from '../src/state/gameState';
 import {
@@ -93,5 +95,20 @@ describe('isActivationKey and nextFocusIndex', () => {
 
   it('returns -1 when there is nothing to focus', () => {
     expect(nextFocusIndex(0, 0, 1)).toBe(-1);
+  });
+});
+
+describe('SceneObject uses shared helper', () => {
+  const source = readFileSync(
+    fileURLToPath(new URL('../src/entities/SceneObject.ts', import.meta.url)),
+    'utf8',
+  );
+
+  it('does not define its own availableActions function', () => {
+    expect(source).not.toMatch(/function availableActions/);
+  });
+
+  it('imports availableActions from the shared interaction system', () => {
+    expect(source).toMatch(/import\s*\{[^}]*\bavailableActions\b[^}]*\}\s*from\s*'\.\.\/systems\/interaction'/);
   });
 });

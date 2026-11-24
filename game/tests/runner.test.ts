@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import { runStep } from '../src/systems/runner';
 import type { GameState, SceneDef } from '../src/state/types';
@@ -165,6 +166,65 @@ describe('runStep actions', () => {
   });
 });
 
+describe('runStep inventory', () => {
+  // The fixture has no remove_item action, so extend the drawer with a "use" action that
+  // consumes the key. The fixture itself stays unchanged for the other tests.
+  const inventoryScene: SceneDef = {
+    ...actionScene,
+    objects: actionScene.objects.map((obj) =>
+      obj.id === 'drawer'
+        ? {
+            ...obj,
+            actions: [
+              ...obj.actions,
+              {
+                id: 'use',
+                label: 'Use',
+                conditions: [{ hasItem: 'key' }],
+                events: [{ type: 'remove_item', item: 'key' }],
+              },
+            ],
+          }
+        : obj,
+    ),
+  };
+
+  it('picks up a key, unlocks the gated action, and empties the inventory after use', () => {
+    const start = makeActionState();
+
+    // Before pickup the gated action is unavailable.
+    const gatedBefore = runStep({ scene: inventoryScene }, start, {
+      type: 'action',
+      objectId: 'drawer',
+      actionId: 'push',
+    });
+    expect(gatedBefore.state).toBe(start);
+    expect(gatedBefore.events).toEqual([]);
+
+    const picked = runStep({ scene: inventoryScene }, start, {
+      type: 'action',
+      objectId: 'drawer',
+      actionId: 'search',
+    });
+    expect(picked.state.inventory).toEqual(['key']);
+
+    // After pickup the gated action runs.
+    const gatedAfter = runStep({ scene: inventoryScene }, picked.state, {
+      type: 'action',
+      objectId: 'drawer',
+      actionId: 'push',
+    });
+    expect(gatedAfter.events.length).toBeGreaterThan(0);
+
+    const used = runStep({ scene: inventoryScene }, picked.state, {
+      type: 'action',
+      objectId: 'drawer',
+      actionId: 'use',
+    });
+    expect(used.state.inventory).toEqual([]);
+  });
+});
+
 describe('runner source', () => {
   const source = readFileSync(
     fileURLToPath(new URL('../src/systems/runner.ts', import.meta.url)),
@@ -181,6 +241,26 @@ describe('runner source', () => {
     expect(specifiers.length).toBeGreaterThan(0);
     for (const specifier of specifiers) {
       expect(specifier).not.toMatch(/phaser|react|frontend/);
+    }
+  });
+});
+
+describe('old direct paths removed', () => {
+  const srcRoot = fileURLToPath(new URL('../src', import.meta.url));
+
+  function listTsFiles(dir: string): string[] {
+    return readdirSync(dir, { recursive: true, withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith('.ts'))
+      .map((entry) => join(entry.parentPath ?? entry.path, entry.name));
+  }
+
+  it('no source file under game/src still references performAction or chooseOption', () => {
+    const files = listTsFiles(srcRoot);
+    expect(files.length).toBeGreaterThan(0);
+    for (const file of files) {
+      const text = readFileSync(file, 'utf8');
+      expect(text, file).not.toContain('performAction');
+      expect(text, file).not.toContain('chooseOption');
     }
   });
 });

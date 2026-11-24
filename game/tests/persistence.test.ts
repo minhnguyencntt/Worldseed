@@ -4,12 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { serializeState, deserializeState } from '../src/state/persistence';
 import { createInitialState } from '../src/state/gameState';
-import { getSceneView, performAction } from '../src/engine/scene';
+import { getSceneView } from '../src/engine/scene';
+import { runStep } from '../src/systems/runner';
 import type { GameState, SceneDef, WorldDef } from '../src/state/types';
 
 // The loader in src does not exist yet, so the test reads the real the-boys-room
 // content from disk and parses it with the same `yaml` package the project depends on.
-const worldDir = fileURLToPath(new URL('../content/worlds/the-boys-room/', import.meta.url));
+const worldDir = fileURLToPath(new URL('../src/content/worlds/the-boys-room/', import.meta.url));
 
 function loadWorldFromDisk(): { world: WorldDef; scene: SceneDef } {
   const world = parse(readFileSync(`${worldDir}world.yaml`, 'utf8')) as WorldDef;
@@ -54,7 +55,7 @@ describe('state persistence: bookshelf secret door', () => {
     const initial = createInitialState(world, scene);
 
     // When the bookshelf is searched, which opens the secret door
-    const searched = performAction(initial, scene, 'bookshelf', 'search');
+    const searched = runStep({ scene }, initial, { type: 'action', objectId: 'bookshelf', actionId: 'search' }).state;
 
     // And the state is saved and restored
     const restored = deserializeState(serializeState(searched));

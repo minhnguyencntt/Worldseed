@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 // Loader/validator location is not implemented yet in the worktree; this import is the planned module.
 import { loadWorld, validateWorld } from '../src/content/loader';
-import { performAction } from '../src/engine/scene';
+import { runStep } from '../src/systems/runner';
 import type { GameState } from '../src/state/types';
 
 const WORLD_DIR = resolve(__dirname, '../src/content/worlds/the-boys-room');
@@ -75,7 +75,7 @@ describe('bedroom content validity', () => {
     const scene = world.scenes.find((s) => s.id === 'bedroom');
     expect(scene).toBeDefined();
     // When the player searches the bookshelf
-    const next = performAction(makeInitialState(), scene!, 'bookshelf', 'search');
+    const next = runStep({ scene: scene! }, makeInitialState(), { type: 'action', objectId: 'bookshelf', actionId: 'search' }).state;
     // Then the secret_door_open flag is set
     expect(next.flags.secret_door_open).toBe(true);
   });
