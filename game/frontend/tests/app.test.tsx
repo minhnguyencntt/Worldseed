@@ -107,7 +107,7 @@ describe('App remount and saved state', () => {
     const first = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Search Bookshelf' }));
 
     first.unmount();
     begin();

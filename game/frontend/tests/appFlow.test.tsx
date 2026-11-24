@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
 import { phaserToReact } from '../src/phaser/events';
+import { useUiStore } from '../src/store/uiStore';
 
 // In-memory stand-in for runtime/storage so the flow never touches localStorage.
 let saved: unknown = null;
@@ -16,19 +17,16 @@ vi.mock('../src/runtime/storage', () => ({
 
 // The Phaser canvas host and the round API are replaced: the panel must render from real store state
 // without a canvas or a network request. Only getCurrentRound is overridden; ApiError stays real.
-// The real host reports its canvas rect through onLayout; ObjectOverlay renders nothing without it,
-// so the stand-in reports a fixed layout once, as the canvas would.
+// The real host publishes its canvas rect to the uiStore; ObjectOverlay renders nothing without it,
+// so the stand-in publishes a fixed layout on mount, as the canvas would (see appObjectClick.test.tsx).
 vi.mock('../src/components/PhaserHost', async () => {
   const { useEffect } = await import('react');
+  const { useUiStore } = await import('../src/store/uiStore');
   return {
-    PhaserHost: ({
-      onLayout,
-    }: {
-      onLayout?: (l: { left: number; top: number; zoom: number; dpr: number }) => void;
-    }) => {
+    PhaserHost: () => {
       useEffect(() => {
-        onLayout?.({ left: 0, top: 0, zoom: 1, dpr: 1 });
-      }, [onLayout]);
+        useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 });
+      }, []);
       return null;
     },
   };
@@ -68,6 +66,8 @@ vi.stubGlobal(
 describe('App flow: action menu', () => {
   beforeEach(() => {
     saved = null;
+    // Keep the canvas layout from leaking between tests; the PhaserHost stand-in sets it again on mount.
+    useUiStore.setState(useUiStore.getInitialState(), true);
   });
 
   afterEach(cleanup);
@@ -109,6 +109,7 @@ describe('App flow: action menu', () => {
 describe('App flow: story actions and choices', () => {
   beforeEach(() => {
     saved = null;
+    useUiStore.setState(useUiStore.getInitialState(), true);
   });
 
   afterEach(cleanup);
