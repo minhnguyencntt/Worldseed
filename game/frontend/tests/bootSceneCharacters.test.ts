@@ -23,6 +23,7 @@ vi.mock('phaser', () => {
       'setTint',
       'clearTint',
       'on',
+      'off',
       'once',
       'play',
     ]) {
@@ -37,6 +38,7 @@ vi.mock('phaser', () => {
         events = { once: vi.fn() };
         scale = { width: 320, height: 240 };
         cameras = { main: { fadeIn: vi.fn() } };
+        input = { keyboard: null };
         textures = { exists: vi.fn(() => true) };
         anims = {
           exists: vi.fn(() => false),
@@ -211,6 +213,29 @@ describe('BootScene character wiring', () => {
     cb();
     // Then the character sprite is destroyed exactly once
     expect(destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('emits nothing when the character sprite is pressed after SHUTDOWN', () => {
+    // Given BootScene has created the boy character sprite and its SHUTDOWN callback has run
+    const boot = new BootScene();
+    boot.create();
+    const sprite = (boot.add.sprite as unknown as ReturnType<typeof vi.fn>).mock.results[0]!.value as Record<
+      string,
+      unknown
+    >;
+    const once = boot.events.once as unknown as ReturnType<typeof vi.fn>;
+    const shutdown = once.mock.calls.find((c: unknown[]) => c[0] === 'shutdown')![1] as () => void;
+    const pointerDown = pointerDownOn(sprite);
+    shutdown();
+    const emit = vi.spyOn(phaserToReact, 'emit');
+    try {
+      // When the stale pointer-down listener is invoked after shutdown
+      pointerDown();
+      // Then characterClick is not emitted
+      expect(emit).not.toHaveBeenCalledWith('characterClick', expect.anything());
+    } finally {
+      emit.mockRestore();
+    }
   });
 
   it('creates no sprite when the scene has no characters', () => {
