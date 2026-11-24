@@ -9,6 +9,7 @@ const readRealGitignore = (): string =>
   readFileSync(fileURLToPath(new NodeURL('../../../.gitignore', import.meta.url)), 'utf8');
 
 const PHASER_PACKAGE_JSON = 'game/frontend/node_modules/phaser/package.json';
+const DIST_FILE = 'game/frontend/dist/index.html';
 
 describe('gitignore coverage of game/frontend/node_modules', () => {
   it('ignores game/frontend/node_modules/phaser/package.json using the real .gitignore', () => {
@@ -23,5 +24,19 @@ describe('gitignore coverage of game/frontend/node_modules', () => {
     // when the helper checks game/frontend/node_modules/phaser/package.json,
     // then the path is not ignored because the rule only covers one depth.
     expect(isIgnoredByDirRule('game/node_modules/\n', PHASER_PACKAGE_JSON)).toBe(false);
+  });
+
+  it('ignores game/frontend/dist/index.html using the real .gitignore', () => {
+    // Given the repository-root .gitignore read from disk,
+    // when the helper checks game/frontend/dist/index.html,
+    // then the depth-independent dist/ rule ignores it.
+    expect(isIgnoredByDirRule(readRealGitignore(), DIST_FILE)).toBe(true);
+  });
+
+  it('does not ignore game/frontend/dist/index.html when only node_modules/ is listed', () => {
+    // Given an ignore file containing only the node_modules/ rule,
+    // when the helper checks game/frontend/dist/index.html,
+    // then the path is not ignored because no dist rule exists.
+    expect(isIgnoredByDirRule('node_modules/\n', DIST_FILE)).toBe(false);
   });
 });

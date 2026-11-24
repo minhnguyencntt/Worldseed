@@ -86,6 +86,22 @@ describe('untrackNodeModules', () => {
     );
   });
 
+  it('also untracks the dist build output with a cached-only recursive rm', () => {
+    // Given a fake git runner that returns empty output,
+    // when untrackNodeModules is called with it,
+    // then one call removes the dist directory with rm -r --cached,
+    // and every git call still carries --cached.
+    const run = vi.fn((_args: string[]) => '');
+
+    untrackNodeModules(run);
+
+    const calls = run.mock.calls.map(([args]) => args);
+    expect(calls).toEqual(expect.arrayContaining([expect.arrayContaining(['rm', '-r', '--cached', 'dist'])]));
+    for (const [args] of run.mock.calls) {
+      expect(args).toContain('--cached');
+    }
+  });
+
   it('force-removes conflicted results.json from the index with a cached-only forced rm', () => {
     // Given a fake git runner that returns empty output,
     // when untrackNodeModules is called with it,
