@@ -8,6 +8,7 @@ import { IntroScreen } from './components/IntroScreen';
 import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
 import { BootScene } from './phaser/BootScene';
+import { useGameStore } from './store/gameStore';
 import { ApiError, getCurrentRound, type Round } from './api/client';
 import { world } from './runtime/content';
 import { useGame } from './runtime/useGame';
@@ -29,6 +30,7 @@ export function describeRoundError(e: unknown): string {
 export default function App() {
   const game = useGame();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const focusedObjectId = useGameStore((s) => s.focusedObjectId);
   const [begun, setBegun] = useState(false);
   const [round, setRound] = useState<Round | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -82,7 +84,11 @@ export default function App() {
           <div className="absolute inset-0">
             <PhaserHost scenes={[BootScene]} />
           </div>
-          <ActionMenu object={selected} onAction={game.act} />
+          <ActionMenu
+            object={selected}
+            onAction={game.act}
+            focusFirstAction={selectedId !== undefined && selectedId === focusedObjectId}
+          />
           <ContributionSheet
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}

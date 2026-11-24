@@ -16,6 +16,7 @@ export function createPhaserRenderContext(
       if (spec.bounds) {
         const { x, y, width, height } = spec.bounds;
         image.setInteractive(new Phaser.Geom.Rectangle(x, y, width, height), Phaser.Geom.Rectangle.Contains);
+        if (image.input) image.input.cursor = 'pointer';
       } else {
         image.setInteractive({ useHandCursor: true });
       }

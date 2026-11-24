@@ -19,6 +19,7 @@ export class SceneObject {
   private focused = false;
   private lastState?: GameState;
   private listener?: (e: { objectId: string; actions: ActionSpec[] }) => void;
+  private hoverListener?: (e: { objectId: string; over: boolean }) => void;
 
   constructor(spec: ObjectSpec, ctx: RenderContext) {
     this.spec = spec;
@@ -36,6 +37,7 @@ export class SceneObject {
       if (!this.visible) return;
       this.handle.setHighlighted(over);
       this.handle.setLabelVisible(over);
+      this.hoverListener?.({ objectId: this.spec.id, over });
     });
     this.handle.onClick(() => this.activate());
   }
@@ -81,6 +83,10 @@ export class SceneObject {
 
   onInteract(cb: (e: { objectId: string; actions: ActionSpec[] }) => void): void {
     this.listener = cb;
+  }
+
+  onHoverChange(cb: (e: { objectId: string; over: boolean }) => void): void {
+    this.hoverListener = cb;
   }
 
   private activate(): void {

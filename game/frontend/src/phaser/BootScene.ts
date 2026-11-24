@@ -71,6 +71,7 @@ export class BootScene extends Phaser.Scene {
     this.effects = buildEffects(ctx, scene);
     this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
+    this.sceneObjects.forEach((o) => o.onHoverChange((e) => phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null })));
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
     this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
     this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
