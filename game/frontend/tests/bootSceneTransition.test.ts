@@ -43,7 +43,8 @@ vi.mock('phaser', () => {
         constructor() {
           // scene.start is the Phaser scene manager call that changes to the requested scene. It is attached
           // with Object.assign because a class field named `scene` collides with the `scene` import in the content mock.
-          Object.assign(this, { scene: { start: vi.fn() } });
+          // scene.get is the lookup transitionTo uses to confirm the target scene is registered before fading.
+          Object.assign(this, { scene: { start: vi.fn(), get: vi.fn(() => ({})) } });
         }
         textures = { exists: vi.fn(() => true) };
         anims = {
