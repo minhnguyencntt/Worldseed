@@ -1,0 +1,773 @@
+{
+  "intent_id": "01M869YXV8JPVJJZS1XYTAC3XJ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M86A1HYRD8EE7SFB63D8R0B1",
+      "kind": "intent",
+      "title": "SG-5.2 · Inventory and interaction through the runner",
+      "body": "Context: game/src/systems/runner.ts (runStep) already runs object actions and dialogue choices over scene content, and inventory.ts and interaction.ts are used by events.ts and the entities. The frontend still bypasses the runner. useGame.act calls performAction in engine/scene.ts and useGame.choose calls chooseOption in systems/dialogue.ts. SceneObject.ts keeps its own copy of availableActions. Desired behavior: every action and choice in the running game goes through runStep and the Zustand store, and the old direct paths are removed. Expected result: the boys-room plays the same. Why: SG-5 requires one content-driven runner.\n\n## Acceptance criteria\n- Given the boys-room is running, when an object action or a dialogue choice is applied, then useGame calls runStep and writes the result through useGameStore.setState\n- Given the codebase after the change, when searching game/src and game/frontend/src, then performAction and chooseOption no longer exist\n- Given the change, when npm test and npm run typecheck run in game/ and game/frontend/, then both pass with no test deleted or skipped\n\n\n## Scope\n- In scope: useGame routed through runStep\n- In scope: App transition emitted from runner events\n- In scope: SceneObject uses interaction.ts availableActions\n- In scope: delete performAction and chooseOption and rewrite their tests against runStep\n- Out of scope: backend/\n- Out of scope: frontend/src/api/client.ts\n- Out of scope: new features, content or art\n- Out of scope: SG-5.1 runner internals\n- Preserve: boys-room gameplay, story panel, inventory, transitions, save and reload\n- Preserve: Phaser ~3.90.0 pin and its guard test\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0 and the phaser-pin guard test keeps passing\n- No source file in game/src or game/frontend/src is over 200 lines\n- game/src never imports from game/frontend\n- The Zustand store is the only owner of GameState\n- No test is deleted or skipped; tests that pinned internals are rewritten against behaviour\n- Tests mock only what is external\n- backend/ (Go) and the contribution/round API are out of scope\n\n\n## Definition of done\n- Requirements REQ1 to REQ3 are done and verified\n- npm test and npm run typecheck pass in game/ and game/frontend/\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Frontend interaction and inventory run through runStep and the store, and the old direct logic is deleted",
+      "description": "Context: game/src/systems/runner.ts (runStep) already runs object actions and dialogue choices over scene content, and inventory.ts and interaction.ts are used by events.ts and the entities. The frontend still bypasses the runner. useGame.act calls performAction in engine/scene.ts and useGame.choose calls chooseOption in systems/dialogue.ts. SceneObject.ts keeps its own copy of availableActions. Desired behavior: every action and choice in the running game goes through runStep and the Zustand store, and the old direct paths are removed. Expected result: the boys-room plays the same. Why: SG-5 requires one content-driven runner.",
+      "acceptance_criteria": [
+        "Given the boys-room is running, when an object action or a dialogue choice is applied, then useGame calls runStep and writes the result through useGameStore.setState",
+        "Given the codebase after the change, when searching game/src and game/frontend/src, then performAction and chooseOption no longer exist",
+        "Given the change, when npm test and npm run typecheck run in game/ and game/frontend/, then both pass with no test deleted or skipped"
+      ],
+      "scope": {
+        "in_scope": [
+          "useGame routed through runStep",
+          "App transition emitted from runner events",
+          "SceneObject uses interaction.ts availableActions",
+          "delete performAction and chooseOption and rewrite their tests against runStep"
+        ],
+        "out_of_scope": [
+          "backend/",
+          "frontend/src/api/client.ts",
+          "new features, content or art",
+          "SG-5.1 runner internals"
+        ],
+        "preserve": [
+          "boys-room gameplay, story panel, inventory, transitions, save and reload",
+          "Phaser ~3.90.0 pin and its guard test"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0 and the phaser-pin guard test keeps passing",
+        "No source file in game/src or game/frontend/src is over 200 lines",
+        "game/src never imports from game/frontend",
+        "The Zustand store is the only owner of GameState",
+        "No test is deleted or skipped; tests that pinned internals are rewritten against behaviour",
+        "Tests mock only what is external",
+        "backend/ (Go) and the contribution/round API are out of scope"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Requirements REQ1 to REQ3 are done and verified",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-186.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-186.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-186.md",
+      "artifact_id": "INT-186"
+    },
+    {
+      "id": "01M86A1HYRWHFMWJR32GMQT5ZQ",
+      "kind": "requirement",
+      "title": "REQ · useGame applies actions and choices through runStep and the store",
+      "body": "Context: frontend/src/runtime/useGame.ts imports performAction and chooseOption and applies them inside useGameStore.setState. Desired behavior: both call runStep({ scene }, prev, input) inside setState, and act returns the GameEvent[] that the runner emitted. Expected result: items are picked up and used and dialogue advances exactly as before. Why: the frontend interaction path must use the runner.\n\n## Acceptance criteria\n- Given a bookshelf search action, when useGame.act runs, then the store state equals runStep applied to the previous state and the emitted events are returned\n- Given an active dialogue node, when useGame.choose(i) runs, then the store state equals runStep with a choose input\n- Given an action whose conditions fail, when useGame.act runs, then the state is unchanged and the returned events are []\n\n\n## Scope\n- In scope: frontend/src/runtime/useGame.ts\n- Out of scope: runner.ts logic changes\n- Preserve: save after every state change via the store\n- Preserve: UseGame field names state, scene, view, choose\n\n\n## Technical constraints\n- Zustand store is the only owner of GameState\n- game/src never imports from game/frontend\n- File stays under 200 lines\n\n\n## Dependencies\n- game/src/systems/runner.ts runStep\n\n\n## Definition of done\n- useGame has no import of performAction or chooseOption\n- Typecheck passes in game/frontend/\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "useGame.act and useGame.choose call runStep and return its emitted events",
+      "description": "Context: frontend/src/runtime/useGame.ts imports performAction and chooseOption and applies them inside useGameStore.setState. Desired behavior: both call runStep({ scene }, prev, input) inside setState, and act returns the GameEvent[] that the runner emitted. Expected result: items are picked up and used and dialogue advances exactly as before. Why: the frontend interaction path must use the runner.",
+      "acceptance_criteria": [
+        "Given a bookshelf search action, when useGame.act runs, then the store state equals runStep applied to the previous state and the emitted events are returned",
+        "Given an active dialogue node, when useGame.choose(i) runs, then the store state equals runStep with a choose input",
+        "Given an action whose conditions fail, when useGame.act runs, then the state is unchanged and the returned events are []"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/runtime/useGame.ts"
+        ],
+        "out_of_scope": [
+          "runner.ts logic changes"
+        ],
+        "preserve": [
+          "save after every state change via the store",
+          "UseGame field names state, scene, view, choose"
+        ]
+      },
+      "technical_constraints": [
+        "Zustand store is the only owner of GameState",
+        "game/src never imports from game/frontend",
+        "File stays under 200 lines"
+      ],
+      "dependencies": [
+        "game/src/systems/runner.ts runStep"
+      ],
+      "definition_of_done": [
+        "useGame has no import of performAction or chooseOption",
+        "Typecheck passes in game/frontend/",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-470.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86A1HYRD8EE7SFB63D8R0B1",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M86A1HYRD8EE7SFB63D8R0B1",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-470.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRD8EE7SFB63D8R0B1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-470.md",
+      "artifact_id": "REQ-470"
+    },
+    {
+      "id": "01M86A1HYRNQW0E0JYPDFVTVB7",
+      "kind": "requirement",
+      "title": "REQ · The old direct action and choice logic is deleted and its tests rewritten",
+      "body": "Context: performAction (src/engine/scene.ts) and chooseOption (src/systems/dialogue.ts) duplicate runStep. tests/systems.test.ts, tests/persistence.test.ts and tests/content.test.ts call them. Desired behavior: both functions and their now-unused imports are deleted; the tests that used them are rewritten to call runStep with the same scenarios and assertions. Expected result: one code path for action and choice. Why: the old direct paths must be removed.\n\n## Acceptance criteria\n- Given the repo, when grepping game/src and game/frontend/src for performAction and chooseOption, then there are no matches\n- Given the rewritten tests, when they run, then they assert the same state results (flags, inventory, scene change, unchanged state on failed condition) using runStep\n- Given getSceneView and getActiveNode, when they are used, then they still work unchanged\n\n\n## Scope\n- In scope: game/src/engine/scene.ts\n- In scope: game/src/systems/dialogue.ts\n- Out of scope: getSceneView behaviour\n- Out of scope: getActiveNode behaviour\n- Preserve: getSceneView and getActiveNode exports\n\n\n## Technical constraints\n- No test is deleted or skipped\n- Tests mock only what is external\n- Files stay under 200 lines\n\n\n## Dependencies\n- REQ1 so that nothing in the frontend imports the old functions\n\n\n## Definition of done\n- Both functions are deleted and no import of them remains\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "performAction and chooseOption are removed and their tests assert behaviour through runStep",
+      "description": "Context: performAction (src/engine/scene.ts) and chooseOption (src/systems/dialogue.ts) duplicate runStep. tests/systems.test.ts, tests/persistence.test.ts and tests/content.test.ts call them. Desired behavior: both functions and their now-unused imports are deleted; the tests that used them are rewritten to call runStep with the same scenarios and assertions. Expected result: one code path for action and choice. Why: the old direct paths must be removed.",
+      "acceptance_criteria": [
+        "Given the repo, when grepping game/src and game/frontend/src for performAction and chooseOption, then there are no matches",
+        "Given the rewritten tests, when they run, then they assert the same state results (flags, inventory, scene change, unchanged state on failed condition) using runStep",
+        "Given getSceneView and getActiveNode, when they are used, then they still work unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/scene.ts",
+          "game/src/systems/dialogue.ts"
+        ],
+        "out_of_scope": [
+          "getSceneView behaviour",
+          "getActiveNode behaviour"
+        ],
+        "preserve": [
+          "getSceneView and getActiveNode exports"
+        ]
+      },
+      "technical_constraints": [
+        "No test is deleted or skipped",
+        "Tests mock only what is external",
+        "Files stay under 200 lines"
+      ],
+      "dependencies": [
+        "REQ1 so that nothing in the frontend imports the old functions"
+      ],
+      "definition_of_done": [
+        "Both functions are deleted and no import of them remains",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-471.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86A1HYRD8EE7SFB63D8R0B1",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M86A1HYRD8EE7SFB63D8R0B1",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-471.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRD8EE7SFB63D8R0B1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-471.md",
+      "artifact_id": "REQ-471"
+    },
+    {
+      "id": "01M86A1HYRRH8BEJ2CMCD39AMB",
+      "kind": "requirement",
+      "title": "REQ · Interaction path uses runner events and the shared interaction helper",
+      "body": "Context: App.handleAction compares currentScene before and after game.act to decide on transitionTo. SceneObject.ts defines its own availableActions identical to systems/interaction.ts. Desired behavior: App emits transitionTo for a goto_scene event returned by game.act, and SceneObject imports availableActions from systems/interaction. Expected result: the same transitions and the same action lists, with no duplicate helper. Why: interaction is driven by the runner and content data.\n\n## Acceptance criteria\n- Given an action whose events include goto_scene, when App handles it, then reactToPhaser emits transitionTo with that scene id and playAnimation interact\n- Given an action with no goto_scene event, when App handles it, then transitionTo is not emitted but playAnimation interact is\n- Given SceneObject.ts, when read, then it defines no local availableActions\n\n\n## Scope\n- In scope: game/frontend/src/App.tsx handleAction\n- In scope: game/src/entities/SceneObject.ts\n- Out of scope: Phaser scene code\n- Out of scope: StoryPanel layout\n- Preserve: interact animation on every action\n- Preserve: the keyboard activation and hover behaviour of SceneObject\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- game/src never imports from game/frontend\n- Files stay under 200 lines\n\n\n## Dependencies\n- REQ1 act returns events\n\n\n## Definition of done\n- No scene comparison before/after in App.handleAction\n- One availableActions definition\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App emits transitionTo from runner goto_scene events and SceneObject reuses interaction.ts availableActions",
+      "description": "Context: App.handleAction compares currentScene before and after game.act to decide on transitionTo. SceneObject.ts defines its own availableActions identical to systems/interaction.ts. Desired behavior: App emits transitionTo for a goto_scene event returned by game.act, and SceneObject imports availableActions from systems/interaction. Expected result: the same transitions and the same action lists, with no duplicate helper. Why: interaction is driven by the runner and content data.",
+      "acceptance_criteria": [
+        "Given an action whose events include goto_scene, when App handles it, then reactToPhaser emits transitionTo with that scene id and playAnimation interact",
+        "Given an action with no goto_scene event, when App handles it, then transitionTo is not emitted but playAnimation interact is",
+        "Given SceneObject.ts, when read, then it defines no local availableActions"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/App.tsx handleAction",
+          "game/src/entities/SceneObject.ts"
+        ],
+        "out_of_scope": [
+          "Phaser scene code",
+          "StoryPanel layout"
+        ],
+        "preserve": [
+          "interact animation on every action",
+          "the keyboard activation and hover behaviour of SceneObject"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "game/src never imports from game/frontend",
+        "Files stay under 200 lines"
+      ],
+      "dependencies": [
+        "REQ1 act returns events"
+      ],
+      "definition_of_done": [
+        "No scene comparison before/after in App.handleAction",
+        "One availableActions definition",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-472.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86A1HYRD8EE7SFB63D8R0B1",
+      "matched_feature_id": "01M84T6537GC5YKDGR64QW90RD",
+      "links": [
+        "parent:01M86A1HYRD8EE7SFB63D8R0B1",
+        "trace:01M84T6537GC5YKDGR64QW90RD",
+        "artifact:.ai-dlc/requirements/REQ-472.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRD8EE7SFB63D8R0B1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-472.md",
+      "artifact_id": "REQ-472"
+    },
+    {
+      "id": "01M86A1HYR7BR229Q9NTNF1PTX",
+      "kind": "unit",
+      "title": "Act: Route useGame act and choose through runStep",
+      "body": "Replace performAction and chooseOption calls in useGame with runStep, capturing the emitted events from the updater.\n\n## Acceptance criteria\n- act and choose call runStep through useGameStore.setState\n- act returns the events emitted by runStep\n\n\n## Scope\n- In scope: frontend/src/runtime/useGame.ts\n- Out of scope: tests\n- Preserve: state, scene, view, choose members\n\n\n## Technical constraints\n- Store is the only GameState owner\n- Phaser ~3.90.0 pin\n- Code path: `game/frontend/src/runtime/useGame.ts`\n\n\n## Dependencies\n- game/src/systems/runner.ts\n\n\n## Definition of done\n- useGame imports runStep and not performAction or chooseOption\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "useGame calls runStep inside the store and act returns events",
+      "description": "Replace performAction and chooseOption calls in useGame with runStep, capturing the emitted events from the updater.",
+      "acceptance_criteria": [
+        "act and choose call runStep through useGameStore.setState",
+        "act returns the events emitted by runStep"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/runtime/useGame.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "state, scene, view, choose members"
+        ]
+      },
+      "technical_constraints": [
+        "Store is the only GameState owner",
+        "Phaser ~3.90.0 pin",
+        "Code path: `game/frontend/src/runtime/useGame.ts`"
+      ],
+      "dependencies": [
+        "game/src/systems/runner.ts"
+      ],
+      "definition_of_done": [
+        "useGame imports runStep and not performAction or chooseOption",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-940.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86A1HYRWHFMWJR32GMQT5ZQ",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M86A1HYRWHFMWJR32GMQT5ZQ",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-940.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRWHFMWJR32GMQT5ZQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-940.md",
+      "artifact_id": "UNIT-940",
+      "steps": [
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "imports",
+          "lines": "L1-L7",
+          "action": "Remove the performAction import (keep getSceneView and SceneObjectView) and the chooseOption import; add import of runStep and type GameEvent from the game state types.",
+          "code": "import { runStep } from '@game/systems/runner';\nimport type { GameEvent, GameState, SceneDef } from '@game/state/types';",
+          "expected": "No reference to performAction or chooseOption remains in the file."
+        },
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "UseGame.act",
+          "lines": "L8-L15",
+          "action": "Change the act member type so it returns GameEvent[] instead of void.",
+          "code": "act: (objectId: string, actionId: string) => GameEvent[];",
+          "expected": "Type allows callers to read the emitted events."
+        },
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "useGame act and choose",
+          "lines": "L29-L35",
+          "action": "Rewrite act to run runStep with { type: 'action', objectId, actionId } inside setState, store result.events in a local array and return it; rewrite choose to run runStep with { type: 'choose', index } and keep only result.state.",
+          "code": "act: (objectId, actionId) => {\n  let events: GameEvent[] = [];\n  useGameStore.getState().setState((prev) => {\n    const r = runStep({ scene }, prev, { type: 'action', objectId, actionId });\n    events = r.events;\n    return r.state;\n  });\n  return events;\n},\nchoose: (index) =>\n  useGameStore.getState().setState((prev) => runStep({ scene }, prev, { type: 'choose', index }).state),",
+          "expected": "act returns the runner events and the store holds the runner state; typecheck passes."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYRZ2ETX97DJV4KCGYQ",
+      "kind": "unit",
+      "title": "Act: Delete performAction and chooseOption",
+      "body": "Delete performAction from engine/scene.ts and chooseOption from systems/dialogue.ts with unused imports.\n\n## Acceptance criteria\n- performAction and chooseOption no longer exist\n- getSceneView and getActiveNode still exported\n\n\n## Scope\n- In scope: game/src/engine/scene.ts\n- In scope: game/src/systems/dialogue.ts\n- Out of scope: tests\n- Preserve: getSceneView\n- Preserve: getActiveNode\n\n\n## Technical constraints\n- game/src never imports from game/frontend\n- Files under 200 lines\n- Code path: `game/src/engine/scene.ts`\n- Code path: `game/src/systems/dialogue.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- No unused imports remain; typecheck of src passes once tests are rewritten\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Remove the old direct action and choice logic",
+      "description": "Delete performAction from engine/scene.ts and chooseOption from systems/dialogue.ts with unused imports.",
+      "acceptance_criteria": [
+        "performAction and chooseOption no longer exist",
+        "getSceneView and getActiveNode still exported"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/scene.ts",
+          "game/src/systems/dialogue.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "getSceneView",
+          "getActiveNode"
+        ]
+      },
+      "technical_constraints": [
+        "game/src never imports from game/frontend",
+        "Files under 200 lines",
+        "Code path: `game/src/engine/scene.ts`",
+        "Code path: `game/src/systems/dialogue.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "No unused imports remain; typecheck of src passes once tests are rewritten",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-941.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86A1HYRNQW0E0JYPDFVTVB7",
+      "matched_feature_id": "01M84J88PS9Z45DYPYF6VK3D3K",
+      "links": [
+        "parent:01M86A1HYRNQW0E0JYPDFVTVB7",
+        "trace:01M84J88PS9Z45DYPYF6VK3D3K",
+        "artifact:.ai-dlc/units/UNIT-941.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRNQW0E0JYPDFVTVB7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-941.md",
+      "artifact_id": "UNIT-941",
+      "steps": [
+        {
+          "file": "game/src/engine/scene.ts",
+          "symbol": "performAction",
+          "lines": "L28-L46",
+          "action": "Delete the performAction function and the now-unused applyEvents import and the ActionDef import only if no longer referenced (ActionDef is still used by SceneObjectView, keep it).",
+          "expected": "scene.ts exports only SceneObjectView and getSceneView."
+        },
+        {
+          "file": "game/src/systems/dialogue.ts",
+          "symbol": "chooseOption",
+          "lines": "L12-L26",
+          "action": "Delete chooseOption and remove the imports of addHistory, applyEvents; keep getActiveNode and the DialogueNode, GameState, SceneDef type imports it uses.",
+          "expected": "dialogue.ts exports only getActiveNode."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYR334MYRZTXW2EXH50",
+      "kind": "unit",
+      "title": "Act: Emit transitions from runner events and share availableActions",
+      "body": "Switch App.handleAction to the events returned by game.act and remove the duplicate availableActions in SceneObject.\n\n## Acceptance criteria\n- transitionTo is emitted from a goto_scene event\n- SceneObject defines no local availableActions\n\n\n## Scope\n- In scope: game/frontend/src/App.tsx\n- In scope: game/src/entities/SceneObject.ts\n- Out of scope: Phaser scenes\n- Preserve: interact animation emission\n- Preserve: SceneObject hover and key behaviour\n\n\n## Technical constraints\n- game/src never imports from game/frontend\n- Phaser ~3.90.0 pin\n- Files under 200 lines\n- Code path: `game/frontend/src/App.tsx`\n- Code path: `game/src/entities/SceneObject.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- No before/after currentScene comparison remains in App\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "App uses goto_scene events from act; SceneObject imports the interaction helper",
+      "description": "Switch App.handleAction to the events returned by game.act and remove the duplicate availableActions in SceneObject.",
+      "acceptance_criteria": [
+        "transitionTo is emitted from a goto_scene event",
+        "SceneObject defines no local availableActions"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/App.tsx",
+          "game/src/entities/SceneObject.ts"
+        ],
+        "out_of_scope": [
+          "Phaser scenes"
+        ],
+        "preserve": [
+          "interact animation emission",
+          "SceneObject hover and key behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "game/src never imports from game/frontend",
+        "Phaser ~3.90.0 pin",
+        "Files under 200 lines",
+        "Code path: `game/frontend/src/App.tsx`",
+        "Code path: `game/src/entities/SceneObject.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "No before/after currentScene comparison remains in App",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-942.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86A1HYRRH8BEJ2CMCD39AMB",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M86A1HYRRH8BEJ2CMCD39AMB",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-942.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRRH8BEJ2CMCD39AMB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-942.md",
+      "artifact_id": "UNIT-942",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "handleAction",
+          "lines": "L72-L78",
+          "action": "Replace the body: call const events = game.act(objectId, actionId); emit playAnimation interact; then find a goto_scene event and emit transitionTo with its scene.",
+          "code": "const events = game.act(objectId, actionId);\nreactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' });\nconst go = events.find((e) => e.type === 'goto_scene');\nif (go && go.type === 'goto_scene') reactToPhaser.emit('transitionTo', { sceneId: go.scene });",
+          "expected": "The before/after currentScene lookups are gone; typecheck passes."
+        },
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "availableActions",
+          "lines": "L8-L11",
+          "action": "Delete the local availableActions function, change the import on L5 to import { availableActions, isActivationKey } from '../systems/interaction', and remove the unused evaluateAll import and the ActionSpec import only if unused (ActionSpec is still used by the listener type, keep it).",
+          "expected": "SceneObject uses the shared helper; typecheck passes."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYRR7DG978A7JAFZ4VS",
+      "kind": "unit",
+      "title": "Verify: useGame act and choose go through runStep unit tests",
+      "body": "Test useGame with the real store and real content; mock only localStorage-backed storage.\n\n## Acceptance criteria\n- act applies runStep result and returns events\n- failed condition leaves state unchanged with no events\n- choose advances the active dialogue\n\n\n## Scope\n- In scope: game/frontend/tests/useGameRunner.test.tsx\n- Out of scope: product code\n- Preserve: existing frontend tests\n\n\n## Technical constraints\n- Tests mock only external storage (runtime/storage)\n- No Phaser, no browser\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove useGame applies runner results and returns events",
+      "description": "Test useGame with the real store and real content; mock only localStorage-backed storage.",
+      "acceptance_criteria": [
+        "act applies runStep result and returns events",
+        "failed condition leaves state unchanged with no events",
+        "choose advances the active dialogue"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/useGameRunner.test.tsx"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing frontend tests"
+        ]
+      },
+      "technical_constraints": [
+        "Tests mock only external storage (runtime/storage)",
+        "No Phaser, no browser"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-943.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86A1HYR7BR229Q9NTNF1PTX",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86A1HYR7BR229Q9NTNF1PTX",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-943.md"
+      ],
+      "depends_on": [
+        "01M86A1HYR7BR229Q9NTNF1PTX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-943.md",
+      "artifact_id": "UNIT-943",
+      "steps": [
+        {
+          "file": "game/frontend/tests/useGameRunner.test.tsx",
+          "symbol": "new: useGame runner tests",
+          "lines": "new",
+          "action": "Create the file with jsdom environment; vi.mock '../src/runtime/storage' so readSaved returns null and writeSaved is a spy; render a hook with renderHook(() => useGame()). Test 1: act('bookshelf','search') from the fresh state returns a non-empty events array and result.current.state equals runStep({scene},initial,{type:'action',objectId:'bookshelf',actionId:'search'}).state. Test 2: act('bookshelf','nonexistent') returns [] and state is the same object. Test 3: after seeding useGameStore with a state whose activeDialogue is a node in the scene, choose(0) sets activeDialogue to that choice's next.",
+          "command": "cd game/frontend && npx vitest run tests/useGameRunner.test.tsx",
+          "expected": "All three tests pass."
+        },
+        {
+          "file": "game/tests/runner.test.ts",
+          "symbol": "describe('runStep inventory')",
+          "lines": "after L163",
+          "action": "Add a test using the existing runner fixture: an action with add_item 'key' then an action with a hasItem 'key' condition and remove_item 'key'; assert inventory contains key after pickup, the gated action is unavailable before pickup, and inventory is empty after use.",
+          "command": "cd game && npx vitest run tests/runner.test.ts",
+          "expected": "Item pickup and use are asserted through runStep and pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYRP453DPRMAJZ0GGVV",
+      "kind": "unit",
+      "title": "Verify: Old paths gone and tests rewritten against runStep",
+      "body": "Rewrite systems, persistence and content tests to use runStep and add a source guard.\n\n## Acceptance criteria\n- No test imports performAction or chooseOption\n- Rewritten tests keep the same assertions\n- A guard test fails if the names reappear in game/src\n\n\n## Scope\n- In scope: game/tests/systems.test.ts\n- In scope: game/tests/persistence.test.ts\n- In scope: game/tests/content.test.ts\n- In scope: game/tests/runner.test.ts\n- Out of scope: product code\n- Preserve: every existing assertion\n\n\n## Technical constraints\n- No test deleted or skipped\n- Tests mock only what is external\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Rewritten tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Existing tests that used performAction and chooseOption now assert behaviour through runStep",
+      "description": "Rewrite systems, persistence and content tests to use runStep and add a source guard.",
+      "acceptance_criteria": [
+        "No test imports performAction or chooseOption",
+        "Rewritten tests keep the same assertions",
+        "A guard test fails if the names reappear in game/src"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/systems.test.ts",
+          "game/tests/persistence.test.ts",
+          "game/tests/content.test.ts",
+          "game/tests/runner.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "every existing assertion"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Rewritten tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-944.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86A1HYRZ2ETX97DJV4KCGYQ",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86A1HYRZ2ETX97DJV4KCGYQ",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-944.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRZ2ETX97DJV4KCGYQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-944.md",
+      "artifact_id": "UNIT-944",
+      "steps": [
+        {
+          "file": "game/tests/systems.test.ts",
+          "symbol": "describe performAction and chooseOption tests",
+          "lines": "L58-end",
+          "action": "Replace imports of performAction and chooseOption with runStep; replace performAction(state, scene, o, a) with runStep({scene}, state, {type:'action',objectId:o,actionId:a}).state and chooseOption(state, scene, i) with runStep({scene}, state, {type:'choose',index:i}).state. Keep every assertion and the same-object check for failed conditions.",
+          "command": "cd game && npx vitest run tests/systems.test.ts",
+          "expected": "Same assertions pass via runStep."
+        },
+        {
+          "file": "game/tests/persistence.test.ts",
+          "symbol": "saved search round trip",
+          "lines": "L7 and L57",
+          "action": "Drop performAction from the import (keep getSceneView) and import runStep; replace the call at L57 with runStep({scene}, initial, {type:'action',objectId:'bookshelf',actionId:'search'}).state.",
+          "command": "cd game && npx vitest run tests/persistence.test.ts",
+          "expected": "Persistence test passes unchanged in meaning."
+        },
+        {
+          "file": "game/tests/content.test.ts",
+          "symbol": "bookshelf search test",
+          "lines": "L5 and L78",
+          "action": "Replace the performAction import and call with runStep({scene: scene!}, makeInitialState(), {type:'action',objectId:'bookshelf',actionId:'search'}).state.",
+          "command": "cd game && npx vitest run tests/content.test.ts",
+          "expected": "Content test passes."
+        },
+        {
+          "file": "game/tests/runner.test.ts",
+          "symbol": "describe('old direct paths removed')",
+          "lines": "after L163",
+          "action": "Add a test reading every .ts file under game/src with readdirSync recursive and readFileSync, asserting none contains the strings 'performAction' or 'chooseOption'.",
+          "command": "cd game && npx vitest run tests/runner.test.ts",
+          "expected": "Guard passes when both functions are gone."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYR7Z4GHQXBZN1Y7MFZ",
+      "kind": "unit",
+      "title": "Verify: Transition from runner events and shared availableActions unit tests",
+      "body": "Extend appTransition and appInteract tests and add a SceneObject source check.\n\n## Acceptance criteria\n- goto_scene action emits transitionTo\n- non-scene action emits no transitionTo\n- SceneObject has no local availableActions\n\n\n## Scope\n- In scope: game/frontend/tests/appTransition.test.tsx\n- In scope: game/frontend/tests/appInteract.test.tsx\n- In scope: game/tests/interaction.test.ts\n- Out of scope: product code\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Phaser and createGame mocked as in appInteract.test.tsx\n- No test deleted or skipped\n\n\n## Dependencies\n- ACT3\n\n\n## Definition of done\n- Updated tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove transitionTo follows goto_scene events and SceneObject reuses interaction helper",
+      "description": "Extend appTransition and appInteract tests and add a SceneObject source check.",
+      "acceptance_criteria": [
+        "goto_scene action emits transitionTo",
+        "non-scene action emits no transitionTo",
+        "SceneObject has no local availableActions"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/appTransition.test.tsx",
+          "game/frontend/tests/appInteract.test.tsx",
+          "game/tests/interaction.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser and createGame mocked as in appInteract.test.tsx",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [
+        "ACT3"
+      ],
+      "definition_of_done": [
+        "Updated tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-945.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86A1HYR334MYRZTXW2EXH50",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86A1HYR334MYRZTXW2EXH50",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-945.md"
+      ],
+      "depends_on": [
+        "01M86A1HYR334MYRZTXW2EXH50"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-945.md",
+      "artifact_id": "UNIT-945",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appTransition.test.tsx",
+          "symbol": "transition emission tests",
+          "lines": "existing describe",
+          "action": "Keep the existing goto_scene test; add a test that clicks the bookshelf Inspect action (no goto_scene) with reactToPhaser.emit spied and asserts transitionTo was not emitted while playAnimation interact was.",
+          "command": "cd game/frontend && npx vitest run tests/appTransition.test.tsx tests/appInteract.test.tsx",
+          "expected": "Both transition cases pass."
+        },
+        {
+          "file": "game/tests/interaction.test.ts",
+          "symbol": "describe('SceneObject uses shared helper')",
+          "lines": "after L20",
+          "action": "Add a test reading src/entities/SceneObject.ts and asserting it does not match /function availableActions/ and does match an import of availableActions from '../systems/interaction'.",
+          "command": "cd game && npx vitest run tests/interaction.test.ts",
+          "expected": "Source guard passes."
+        }
+      ]
+    },
+    {
+      "id": "01M86A1HYRTX4FP9WRY61KN66M",
+      "kind": "evidence",
+      "title": "Evidence: Inventory and interaction through the runner unit tests pass",
+      "body": "Collect results of the Verify units showing the frontend uses runStep, the old paths are gone and transitions follow runner events.\n\n## Acceptance criteria\n- All Verify unit tests pass\n- npm test and npm run typecheck pass in game/ and game/frontend/\n\n\n## Scope\n- In scope: test run output\n- Out of scope: new code\n- Preserve: no test deleted or skipped\n\n\n## Technical constraints\n- Phaser pinned at ~3.90.0 and its guard test passes\n\n\n## Dependencies\n- VER1\n- VER2\n- VER3\n\n\n## Definition of done\n- Passing results are recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results for runner-driven interaction and inventory",
+      "description": "Collect results of the Verify units showing the frontend uses runStep, the old paths are gone and transitions follow runner events.",
+      "acceptance_criteria": [
+        "All Verify unit tests pass",
+        "npm test and npm run typecheck pass in game/ and game/frontend/"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": [
+          "no test deleted or skipped"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser pinned at ~3.90.0 and its guard test passes"
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2",
+        "VER3"
+      ],
+      "definition_of_done": [
+        "Passing results are recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-186.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86A1HYRR7DG978A7JAFZ4VS",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M86A1HYRR7DG978A7JAFZ4VS",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-186.md"
+      ],
+      "depends_on": [
+        "01M86A1HYRR7DG978A7JAFZ4VS",
+        "01M86A1HYRP453DPRMAJZ0GGVV",
+        "01M86A1HYR7Z4GHQXBZN1Y7MFZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-186.md",
+      "artifact_id": "EVD-186"
+    }
+  ],
+  "created_at": "2026-11-24T08:16:33.402133+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
