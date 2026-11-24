@@ -1,4 +1,7 @@
-/** Terms the repo-root context.md Stack section must contain (case-insensitive); the Go backend is listed there as out of scope. */
+/**
+ * Terms the repo-root context.md Stack section must contain (case-insensitive).
+ * The Stack section also names TypeScript and lists the Go backend as out of scope.
+ */
 export const STACK_TERMS = ['Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
 const PATH_RE = /`([^`\s]+\/[^`\s]+\.[a-z]+)`/g;
@@ -13,7 +16,7 @@ export function indexedPaths(md: string): string[] {
   return [...seen];
 }
 
-/** Returns the paths for which exists(p) is false. */
+/** Returns the paths for which exists(p) is false; applied to contextModulePaths(md) with exists = existsSync from the repo root, so every context.md module-table path (game/src/, game/frontend/src/, game/docs/GDD.md, backend/) must exist. */
 export function missingPaths(paths: string[], exists: (p: string) => boolean): string[] {
   return paths.filter((p) => !exists(p));
 }
