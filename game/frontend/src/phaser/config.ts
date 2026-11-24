@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 
-export const GAME_WIDTH = 640;
-export const GAME_HEIGHT = 360;
+export const GAME_WIDTH = 480;
+export const GAME_HEIGHT = 270;
 
 export function computeZoom(w: number, h: number, dpr: number): number {
-  return Math.max(1, Math.floor(Math.min((w * dpr) / GAME_WIDTH, (h * dpr) / GAME_HEIGHT)));
+  const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;
+  return Math.max(1, Math.floor(Math.min((w * ratio) / GAME_WIDTH, (h * ratio) / GAME_HEIGHT)));
 }
 
 export function buildGameConfig(
