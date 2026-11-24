@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { getSceneView, type SceneObjectView } from '@game/engine/scene';
-import { runStep } from '@game/systems/runner';
 import type { GameEvent, GameState, SceneDef } from '@game/state/types';
 import { useGameStore } from '../store/gameStore';
 import { scene } from './content';
 import { chooseOption } from './chooseOption';
+import { performObjectAction } from './objectActions';
 
 export type UseGame = {
   state: GameState;
