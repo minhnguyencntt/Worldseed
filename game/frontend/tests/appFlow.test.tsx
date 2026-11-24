@@ -86,14 +86,17 @@ describe('App flow: story actions and choices', () => {
     );
   });
 
-  it('choosing a dialogue option closes the dialogue and records it', () => {
+  it('choosing a dialogue option advances to the next dialogue node and records it', () => {
     begin();
 
     expect(screen.getByRole('region', { name: 'Dialogue' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Look around the room' }));
 
-    expect(screen.queryByRole('region', { name: 'Dialogue' })).toBeNull();
+    // bedroom.yaml: 'look-around' is a follow-up node with a single 'Okay' choice, so the dialogue stays open.
+    const dialogue = screen.getByRole('region', { name: 'Dialogue' });
+    expect(within(dialogue).getByText('There is a bookshelf, a computer, a bed, a window and a door.')).toBeInTheDocument();
+    expect(within(dialogue).getByRole('button', { name: 'Okay' })).toBeInTheDocument();
     expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
       'Look around the room',
     );
