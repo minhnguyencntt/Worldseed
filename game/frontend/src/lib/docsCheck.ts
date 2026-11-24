@@ -1,7 +1,7 @@
 /**
  * Terms the repo-root context.md Stack section must contain (case-insensitive):
  * TypeScript, Phaser 3.90, React, Zustand, Radix and Vitest.
- * Go for backend/ is out of scope for this list: it is not a STACK_TERMS entry, and the test regex checks it instead.
+ * The repo-root context.md must contain every STACK_TERMS entry above; Go for backend/ is out of scope (not a STACK_TERMS entry; the test regex checks it instead).
  */
 export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
@@ -30,6 +30,7 @@ export function missingTerms(text: string, terms: string[]): string[] {
 
 /**
  * Strings the repo-root context.md must not contain (stale README-only text).
+ * The repo-root context.md must have none of these strings and no UNKNOWN placeholder.
  * Note: 'Frameworks: UNKNOWN' is not in this list; it is checked by the test regex instead.
  */
 export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Executable / server / CLI `main` | UNKNOWN'];
