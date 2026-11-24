@@ -17,6 +17,13 @@ describe('trackedDistPaths', () => {
 
     expect(trackedDistPaths(input)).toEqual(['game/frontend/dist/index.html']);
   });
+
+  it('returns an empty list when given no paths', () => {
+    // Given an empty path list,
+    // when it is filtered for dist,
+    // then the result is an empty list.
+    expect(trackedDistPaths([])).toEqual([]);
+  });
 });
 
 describe('trackedNodeModulesPaths', () => {
