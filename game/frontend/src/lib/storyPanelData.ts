@@ -1,8 +1,10 @@
-import { manifest } from '../runtime/content';
+import manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json';
 
 export type InventorySlot = { id: string | null; name: string; icon: string | undefined };
 
 export const INVENTORY_SLOT_COUNT = 6;
+
+const manifestAssets: { id: string; path: string }[] = manifestJson.assets;
 
 function displayName(id: string): string {
   return id
@@ -12,7 +14,7 @@ function displayName(id: string): string {
 }
 
 function iconFor(id: string): string | undefined {
-  const entry = manifest.assets.find((asset) => asset.id === `item/${id}`);
+  const entry = manifestAssets.find((asset) => asset.id === `item/${id}`);
   return entry ? `/assets/${entry.path}` : undefined;
 }
 

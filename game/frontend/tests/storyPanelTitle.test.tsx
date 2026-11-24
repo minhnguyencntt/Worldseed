@@ -88,7 +88,8 @@ describe('StoryPanel scene title and choices', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: "Let's explore" }));
+    const choices = screen.getByRole('list', { name: 'Choices' });
+    fireEvent.click(within(choices).getByRole('button', { name: "Let's explore" }));
 
     expect(onChoose).toHaveBeenCalledTimes(1);
     expect(onChoose).toHaveBeenCalledWith(1);

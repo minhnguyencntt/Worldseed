@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import * as uiFrames from '../src/art/uiFrames';
 import { FRAME_KIT } from '../src/art/uiFrames';
@@ -77,7 +77,9 @@ describe('frame kit', () => {
     // Given the game layout, header overlay and story panel rendered with the kit props,
     // when they are rendered,
     // then the aside is a sf-frame-panel, the header is a sf-frame-bar with an sf-btn Settings button,
-    // and the inventory item is a sf-frame-slot while the Dialogue region is a sf-frame-parchment.
+    // the story panel root is a sf-frame-panel without the legacy bg-stone-900 or border-amber-900 classes,
+    // the Event log region is a sf-frame-plaque, every inventory slot is a sf-frame-slot,
+    // and the Dialogue region is a sf-frame-parchment.
     useUiStore.setState({ drawerOpen: false, soundEnabled: true });
 
     const layout = render(
@@ -97,7 +99,7 @@ describe('frame kit', () => {
       text: 'Hello there.',
       choices: [],
     } as unknown as DialogueNode;
-    render(
+    const story = render(
       <StoryPanel
         sceneTitle="Room"
         node={node}
@@ -106,7 +108,18 @@ describe('frame kit', () => {
         onChoose={() => {}}
       />,
     );
-    expect(screen.getByRole('listitem')).toHaveClass('sf-frame-slot');
+    const root = story.container.firstElementChild as HTMLElement;
+    expect(root).toHaveClass('sf-frame-panel');
+    expect(root.className).not.toContain('bg-stone-900');
+    expect(root.className).not.toContain('border-amber-900');
+    expect(screen.getByRole('region', { name: 'Event log' })).toHaveClass('sf-frame-plaque');
+    const inventory = screen.getByRole('region', { name: 'Inventory' });
+    const slots = within(inventory).getAllByRole('listitem');
+    expect(slots).toHaveLength(6);
+    for (const slot of slots) {
+      expect(slot).toHaveClass('sf-frame-slot');
+    }
     expect(screen.getByRole('region', { name: 'Dialogue' })).toHaveClass('sf-frame-parchment');
+    story.unmount();
   });
 });

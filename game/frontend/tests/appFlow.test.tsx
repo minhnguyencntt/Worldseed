@@ -14,6 +14,21 @@ vi.mock('../src/runtime/storage', () => ({
   },
 }));
 
+// The Phaser canvas host and the round API are replaced: the panel must render from real store state
+// without a canvas or a network request. Only getCurrentRound is overridden; ApiError stays real.
+vi.mock('../src/components/PhaserHost', () => ({ PhaserHost: () => null }));
+vi.mock('../src/api/client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/api/client')>();
+  const round: import('../src/api/client').Round = {
+    id: 'round-1',
+    number: 1,
+    status: 'open',
+    starts_at: '2026-01-01T00:00:00Z',
+    ends_at: '2026-01-02T00:00:00Z',
+  };
+  return { ...actual, getCurrentRound: vi.fn(() => Promise.resolve(round)) };
+});
+
 // Phaser is replaced at every seam: the game factory, the scene class, and the
 // 'phaser' module itself (config.ts loads it at import time, which crashes in jsdom).
 const { createGameMock } = vi.hoisted(() => ({
@@ -59,6 +74,15 @@ describe('App flow: action menu', () => {
     expect(within(menu).getByRole('button', { name: 'Push' })).toBeInTheDocument();
     expect(within(menu).getByRole('button', { name: 'Search' })).toBeInTheDocument();
     expect(within(menu).getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+  });
+
+  it('Given the playing view, then the App-fed story panel shows the Event log, six Inventory slots and the Dialogue region', () => {
+    begin();
+
+    expect(screen.getByRole('region', { name: 'Event log' })).toBeInTheDocument();
+    const inventory = screen.getByRole('region', { name: 'Inventory' });
+    expect(within(inventory).getAllByRole('listitem')).toHaveLength(6);
+    expect(screen.getByRole('region', { name: 'Dialogue' })).toBeInTheDocument();
   });
 });
 
