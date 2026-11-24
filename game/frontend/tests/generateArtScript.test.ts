@@ -120,3 +120,12 @@ describe('runGenerateArt', () => {
     });
   });
 });
+
+describe('defaultArtPaths', () => {
+  // Given the script directory, the manifest and assets root must resolve from it with no I/O.
+  it('resolves manifest and assets root from the script dir', () => {
+    const paths = defaultArtPaths('/repo/game/frontend/scripts');
+    expect(paths.manifestPath).toBe('/repo/game/frontend/public/assets/worlds/the-boys-room/manifest.json');
+    expect(paths.assetsRoot).toBe('/repo/game/frontend/public/assets');
+  });
+});
