@@ -45,7 +45,7 @@ describe('GameLayout drawer toggle and styles', () => {
     expect(screen.getByTestId('scene-node')).toBeInTheDocument();
   });
 
-  it('Given the game stylesheet, when it is read from disk, then legacy layout classes and the 768px breakpoint are absent and the contribution sheet remains', () => {
+  it('Given the game stylesheet, when it is read from disk, then legacy layout classes and the 768px breakpoint are absent and the placeholder contribution-sheet class is gone', () => {
     // Vitest runs from game/frontend (see the step's run command), so resolve from cwd.
     const css = readFileSync(join(process.cwd(), 'src', 'styles.css'), 'utf8');
 
@@ -53,7 +53,7 @@ describe('GameLayout drawer toggle and styles', () => {
     expect(css).not.toContain('.story-panel');
     expect(css).not.toContain('.scene-area');
     expect(css).not.toContain('@media (max-width: 768px)');
-    expect(css).toContain('.contribution-sheet');
+    expect(css).not.toContain('.contribution-sheet');
   });
 
   it('Given GameLayout wrapping StoryPanel, when rendered, then exactly one aside exists', () => {
