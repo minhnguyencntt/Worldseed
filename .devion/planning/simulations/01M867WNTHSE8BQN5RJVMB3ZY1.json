@@ -1,0 +1,695 @@
+{
+  "intent_id": "01M867WNTHSE8BQN5RJVMB3ZY1",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M867ZTQCTS9K0BBNBZAX0HKM",
+      "kind": "intent",
+      "title": "SG-3.2 Input layer module for pointer and keyboard",
+      "body": "Context: BootScene.onKeyDown and the SceneObject callbacks in BootScene.create hold the keyboard, hover and click logic inline (BootScene.ts L100-L192). Desired behavior: a new module game/frontend/src/phaser/input.ts owns object focus, moveFocus, hover, click and keyboard interaction, and emits only through phaserToReact from events.ts. Expected result: the module exists with unit tests against a mocked Phaser input plugin. Why: SG-3.3 can then switch BootScene to it. BootScene is not changed in this intent.\n\n## Acceptance criteria\n- Given objects and a keyboard plugin, when createInputLayer is called, then it registers one keydown listener and returns an InputLayer with moveFocus, focusObject, focusedId and destroy\n- Given the layer, when focus moves, Enter/Space is pressed, Escape is pressed, an object is hovered or clicked, then the matching typed bridge event is emitted\n- Given destroy() is called, then the keydown listener is removed and later key, hover and click events emit nothing\n- Given the unit tests run with a mocked input plugin, then they pass without Phaser\n\n\n## Scope\n- In scope: new game/frontend/src/phaser/input.ts\n- In scope: unit tests in game/frontend/tests\n- Out of scope: switching BootScene or React components to the layer (SG-3.3)\n- Out of scope: new events beyond those in events.ts\n- Out of scope: backend/\n- Preserve: BootScene behaviour unchanged\n- Preserve: events.ts event maps\n- Preserve: Phaser ~3.90.0 pin\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0; phaser-pin guard test keeps passing\n- No change to what the player sees or can do\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No source file over 200 lines\n- game/src never imports from game/frontend\n- Zustand store is the only owner of GameState\n- No test deleted or skipped; tests mock only what is external\n\n\n## Dependencies\n- SG-3.1 typed bridge (done)\n\n\n## Definition of done\n- input.ts exists and is covered by unit tests\n- All hard constraints hold\n\n\n## Non-functional requirements\n- No per-frame allocations; listeners released on destroy\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add frontend/src/phaser/input.ts, one input layer for focus, hover, click and keyboard that reports through the typed bridge",
+      "description": "Context: BootScene.onKeyDown and the SceneObject callbacks in BootScene.create hold the keyboard, hover and click logic inline (BootScene.ts L100-L192). Desired behavior: a new module game/frontend/src/phaser/input.ts owns object focus, moveFocus, hover, click and keyboard interaction, and emits only through phaserToReact from events.ts. Expected result: the module exists with unit tests against a mocked Phaser input plugin. Why: SG-3.3 can then switch BootScene to it. BootScene is not changed in this intent.",
+      "acceptance_criteria": [
+        "Given objects and a keyboard plugin, when createInputLayer is called, then it registers one keydown listener and returns an InputLayer with moveFocus, focusObject, focusedId and destroy",
+        "Given the layer, when focus moves, Enter/Space is pressed, Escape is pressed, an object is hovered or clicked, then the matching typed bridge event is emitted",
+        "Given destroy() is called, then the keydown listener is removed and later key, hover and click events emit nothing",
+        "Given the unit tests run with a mocked input plugin, then they pass without Phaser"
+      ],
+      "scope": {
+        "in_scope": [
+          "new game/frontend/src/phaser/input.ts",
+          "unit tests in game/frontend/tests"
+        ],
+        "out_of_scope": [
+          "switching BootScene or React components to the layer (SG-3.3)",
+          "new events beyond those in events.ts",
+          "backend/"
+        ],
+        "preserve": [
+          "BootScene behaviour unchanged",
+          "events.ts event maps",
+          "Phaser ~3.90.0 pin"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0; phaser-pin guard test keeps passing",
+        "No change to what the player sees or can do",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No source file over 200 lines",
+        "game/src never imports from game/frontend",
+        "Zustand store is the only owner of GameState",
+        "No test deleted or skipped; tests mock only what is external"
+      ],
+      "dependencies": [
+        "SG-3.1 typed bridge (done)"
+      ],
+      "definition_of_done": [
+        "input.ts exists and is covered by unit tests",
+        "All hard constraints hold",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-180.md`"
+      ],
+      "non_functional": [
+        "No per-frame allocations; listeners released on destroy"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84T653733GNHNR148NM3TA2",
+      "links": [
+        "trace:01M84T653733GNHNR148NM3TA2",
+        "artifact:.ai-dlc/intent/INT-180.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-180.md",
+      "artifact_id": "INT-180"
+    },
+    {
+      "id": "01M867ZTQCWN0RS8KZ932EFPC4",
+      "kind": "requirement",
+      "title": "REQ · Input layer owns object focus and moveFocus and reports focusChange",
+      "body": "Context: BootScene.onKeyDown calls moveFocus, reads the focused id, writes useGameStore.setFocusedObject and emits focusChange. Desired behavior: createInputLayer exposes moveFocus(delta), focusObject(id) and focusedId() doing the same. Expected result: focus movement is testable without BootScene.\n\n## Acceptance criteria\n- Given three visible objects and none focused, when moveFocus(1) is called, then the first object is focused, store focusedObjectId is its id and focusChange is emitted with that id\n- Given an object is focused, when focusObject(null) is called, then every object is blurred, store focus is null and focusChange emits {id:null}\n- Given the first object is focused, when moveFocus(-1) is called, then focus wraps to the last visible object\n\n\n## Scope\n- In scope: createInputLayer, moveFocus, focusObject, focusedId in input.ts\n- Out of scope: BootScene wiring\n- Preserve: moveFocus in game/src/engine/buildScene.ts\n- Preserve: gameStore.setFocusedObject\n\n\n## Technical constraints\n- Hard constraints of the intent apply (Phaser ~3.90.0, 200-line limit, game/src never imports game/frontend, Zustand owns state)\n\n\n## Dependencies\n- game/src/engine/buildScene.ts moveFocus\n- game/frontend/src/store/gameStore.ts\n\n\n## Definition of done\n- Focus API works and emits focusChange\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Focus state and moveFocus live in input.ts and report focusChange through the bridge",
+      "description": "Context: BootScene.onKeyDown calls moveFocus, reads the focused id, writes useGameStore.setFocusedObject and emits focusChange. Desired behavior: createInputLayer exposes moveFocus(delta), focusObject(id) and focusedId() doing the same. Expected result: focus movement is testable without BootScene.",
+      "acceptance_criteria": [
+        "Given three visible objects and none focused, when moveFocus(1) is called, then the first object is focused, store focusedObjectId is its id and focusChange is emitted with that id",
+        "Given an object is focused, when focusObject(null) is called, then every object is blurred, store focus is null and focusChange emits {id:null}",
+        "Given the first object is focused, when moveFocus(-1) is called, then focus wraps to the last visible object"
+      ],
+      "scope": {
+        "in_scope": [
+          "createInputLayer, moveFocus, focusObject, focusedId in input.ts"
+        ],
+        "out_of_scope": [
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "moveFocus in game/src/engine/buildScene.ts",
+          "gameStore.setFocusedObject"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply (Phaser ~3.90.0, 200-line limit, game/src never imports game/frontend, Zustand owns state)"
+      ],
+      "dependencies": [
+        "game/src/engine/buildScene.ts moveFocus",
+        "game/frontend/src/store/gameStore.ts"
+      ],
+      "definition_of_done": [
+        "Focus API works and emits focusChange",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-454.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M867ZTQCTS9K0BBNBZAX0HKM",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M867ZTQCTS9K0BBNBZAX0HKM",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-454.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCTS9K0BBNBZAX0HKM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-454.md",
+      "artifact_id": "REQ-454"
+    },
+    {
+      "id": "01M867ZTQCRHMVMQ28SRKDDKM9",
+      "kind": "requirement",
+      "title": "REQ · Input layer maps Tab, arrows, Enter, Space and Escape to focus, interaction and menuClose",
+      "body": "Context: BootScene.onKeyDown (L177-L192) maps Tab/Shift+Tab/arrows to focus, Enter/Space to handleKey and Escape to menuClose. Desired behavior: createInputLayer registers that one keydown listener on input.keyboard.\n\n## Acceptance criteria\n- Given the layer, when Tab, ArrowRight or ArrowDown is pressed, then moveFocus(1) runs and preventDefault is called; Shift+Tab, ArrowLeft, ArrowUp move -1\n- Given a focused object, when Enter or Space is pressed, then that object's handleKey is called with the key\n- Given any state, when Escape is pressed, then menuClose is emitted with {}\n- Given keyboard is undefined, then createInputLayer does not throw\n\n\n## Scope\n- In scope: keydown handler and registration in input.ts\n- Out of scope: BootScene wiring\n- Preserve: SceneObject.handleKey semantics\n\n\n## Technical constraints\n- Hard constraints of the intent apply\n\n\n## Dependencies\n- R1 focus API in the same file\n\n\n## Definition of done\n- All five key paths behave as in BootScene today\n\n\n## Non-functional requirements\n- Handler is a stable function; no per-keypress allocations beyond the event\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A single keydown listener in input.ts handles all keyboard actions",
+      "description": "Context: BootScene.onKeyDown (L177-L192) maps Tab/Shift+Tab/arrows to focus, Enter/Space to handleKey and Escape to menuClose. Desired behavior: createInputLayer registers that one keydown listener on input.keyboard.",
+      "acceptance_criteria": [
+        "Given the layer, when Tab, ArrowRight or ArrowDown is pressed, then moveFocus(1) runs and preventDefault is called; Shift+Tab, ArrowLeft, ArrowUp move -1",
+        "Given a focused object, when Enter or Space is pressed, then that object's handleKey is called with the key",
+        "Given any state, when Escape is pressed, then menuClose is emitted with {}",
+        "Given keyboard is undefined, then createInputLayer does not throw"
+      ],
+      "scope": {
+        "in_scope": [
+          "keydown handler and registration in input.ts"
+        ],
+        "out_of_scope": [
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "SceneObject.handleKey semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [
+        "R1 focus API in the same file"
+      ],
+      "definition_of_done": [
+        "All five key paths behave as in BootScene today",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-455.md`"
+      ],
+      "non_functional": [
+        "Handler is a stable function; no per-keypress allocations beyond the event"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M867ZTQCTS9K0BBNBZAX0HKM",
+      "matched_feature_id": "01M85CR1JVHTC12JQQ2HHV8S0E",
+      "links": [
+        "parent:01M867ZTQCTS9K0BBNBZAX0HKM",
+        "trace:01M85CR1JVHTC12JQQ2HHV8S0E",
+        "artifact:.ai-dlc/requirements/REQ-455.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCTS9K0BBNBZAX0HKM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-455.md",
+      "artifact_id": "REQ-455"
+    },
+    {
+      "id": "01M867ZTQC4EMCZWGPWMK502NA",
+      "kind": "requirement",
+      "title": "REQ · Input layer reports hover and click and removes every listener on destroy",
+      "body": "Context: BootScene.create binds o.onInteract to objectClick and o.onHoverChange to objectHover. Desired behavior: the layer binds these for every object and destroy() releases them and the keydown listener.\n\n## Acceptance criteria\n- Given an object, when its interact callback fires, then objectClick is emitted with its id\n- Given an object, when hover starts then objectHover emits its id, and when hover ends it emits {id:null}\n- Given destroy() was called, when key, hover or click callbacks fire, then no bridge event is emitted and keyboard.off was called with the registered handler\n- Given destroy() is called twice, then the second call is a no-op\n\n\n## Scope\n- In scope: hover/click binding and destroy in input.ts\n- Out of scope: character sprite clicks\n- Out of scope: BootScene wiring\n- Preserve: SceneObject.onInteract and onHoverChange API\n\n\n## Technical constraints\n- Hard constraints of the intent apply\n\n\n## Dependencies\n- R1, R2 in the same file\n\n\n## Definition of done\n- Hover, click and teardown covered\n\n\n## Non-functional requirements\n- All listeners released on destroy\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "input.ts binds object hover and click to the bridge and tears down cleanly",
+      "description": "Context: BootScene.create binds o.onInteract to objectClick and o.onHoverChange to objectHover. Desired behavior: the layer binds these for every object and destroy() releases them and the keydown listener.",
+      "acceptance_criteria": [
+        "Given an object, when its interact callback fires, then objectClick is emitted with its id",
+        "Given an object, when hover starts then objectHover emits its id, and when hover ends it emits {id:null}",
+        "Given destroy() was called, when key, hover or click callbacks fire, then no bridge event is emitted and keyboard.off was called with the registered handler",
+        "Given destroy() is called twice, then the second call is a no-op"
+      ],
+      "scope": {
+        "in_scope": [
+          "hover/click binding and destroy in input.ts"
+        ],
+        "out_of_scope": [
+          "character sprite clicks",
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "SceneObject.onInteract and onHoverChange API"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [
+        "R1, R2 in the same file"
+      ],
+      "definition_of_done": [
+        "Hover, click and teardown covered",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-456.md`"
+      ],
+      "non_functional": [
+        "All listeners released on destroy"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M867ZTQCTS9K0BBNBZAX0HKM",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M867ZTQCTS9K0BBNBZAX0HKM",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-456.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCTS9K0BBNBZAX0HKM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-456.md",
+      "artifact_id": "REQ-456"
+    },
+    {
+      "id": "01M867ZTQCTNZXVCXFPKF79XTX",
+      "kind": "unit",
+      "title": "Act: Create input.ts with createInputLayer, moveFocus, focusObject and focusedId",
+      "body": "Create game/frontend/src/phaser/input.ts with InputKeyboard and InputPlugin types, InputLayer interface and createInputLayer(input, objects). Implement focus methods using moveFocus from @game/engine/buildScene, useGameStore.getState().setFocusedObject and phaserToReact.emit('focusChange').\n\n## Acceptance criteria\n- createInputLayer(input, objects) returns an InputLayer\n- moveFocus and focusObject write the store and emit focusChange\n\n\n## Scope\n- In scope: new input.ts focus API\n- Out of scope: BootScene changes\n- Preserve: BootScene.ts untouched\n\n\n## Technical constraints\n- Hard constraints of the intent apply (Phaser ~3.90.0, 200-line limit, game/src never imports game/frontend)\n- New file: `game/frontend/src/phaser/input.ts`\n\n\n## Definition of done\n- input.ts compiles under npm run typecheck in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New input module with the focus API reporting focusChange",
+      "description": "Create game/frontend/src/phaser/input.ts with InputKeyboard and InputPlugin types, InputLayer interface and createInputLayer(input, objects). Implement focus methods using moveFocus from @game/engine/buildScene, useGameStore.getState().setFocusedObject and phaserToReact.emit('focusChange').",
+      "acceptance_criteria": [
+        "createInputLayer(input, objects) returns an InputLayer",
+        "moveFocus and focusObject write the store and emit focusChange"
+      ],
+      "scope": {
+        "in_scope": [
+          "new input.ts focus API"
+        ],
+        "out_of_scope": [
+          "BootScene changes"
+        ],
+        "preserve": [
+          "BootScene.ts untouched"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply (Phaser ~3.90.0, 200-line limit, game/src never imports game/frontend)",
+        "New file: `game/frontend/src/phaser/input.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "input.ts compiles under npm run typecheck in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-908.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M867ZTQCWN0RS8KZ932EFPC4",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M867ZTQCWN0RS8KZ932EFPC4",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-908.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCWN0RS8KZ932EFPC4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-908.md",
+      "artifact_id": "UNIT-908",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "new: InputKeyboard, InputPlugin, InputLayer",
+          "lines": "new",
+          "action": "Create the file with imports of moveFocus from '@game/engine/buildScene', type SceneObject from '@game/entities/SceneObject', useGameStore from '../store/gameStore', phaserToReact from './events'. Declare the three types.",
+          "code": "export interface InputKeyboard { on(event: 'keydown', fn: (e: KeyboardEvent) => void): unknown; off(event: 'keydown', fn: (e: KeyboardEvent) => void): unknown }\nexport interface InputPlugin { keyboard?: InputKeyboard | null }\nexport interface InputLayer { moveFocus(delta: 1 | -1): string | null; focusObject(id: string | null): void; focusedId(): string | null; destroy(): void }",
+          "expected": "Types exported; file typechecks"
+        },
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "new: createInputLayer (focus methods)",
+          "lines": "new",
+          "action": "Export createInputLayer(input: InputPlugin, objects: SceneObject[]): InputLayer. Add focusedId() returning objects.find(o => o.isFocused)?.spec.id ?? null; a private report() that reads focusedId(), calls useGameStore.getState().setFocusedObject(id) and phaserToReact.emit('focusChange', { id }) and returns id; moveFocus(delta) calls moveFocus(objects, delta) then report(); focusObject(id) calls o.focus() on the object whose spec.id === id and o.blur() on every other (blur all when id is null) then report(). destroy() is a stub returning void for now.",
+          "code": "const focusedId = () => objects.find((o) => o.isFocused)?.spec.id ?? null;",
+          "expected": "Focus methods return the focused id and emit focusChange"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCEF15HT5EFR2SB2XP",
+      "kind": "unit",
+      "title": "Act: Add the keydown handler to createInputLayer",
+      "body": "In input.ts add onKeyDown mirroring BootScene.onKeyDown and register it on input.keyboard.\n\n## Acceptance criteria\n- Given Tab, arrows, Enter or Space keys, then focus moves or handleKey is called\n- Given Escape is pressed, then menuClose is emitted with an empty payload\n\n\n## Scope\n- In scope: keydown in input.ts\n- Out of scope: BootScene changes\n- Preserve: BootScene.ts untouched\n\n\n## Technical constraints\n- Hard constraints of the intent apply\n- New file: `game/frontend/src/phaser/input.ts`\n\n\n## Dependencies\n- Act: Create input.ts\n\n\n## Definition of done\n- Handler registered once via input.keyboard?.on('keydown', onKeyDown)\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Register one keydown listener mapping keys to focus, interaction and menuClose",
+      "description": "In input.ts add onKeyDown mirroring BootScene.onKeyDown and register it on input.keyboard.",
+      "acceptance_criteria": [
+        "Given Tab, arrows, Enter or Space keys, then focus moves or handleKey is called",
+        "Given Escape is pressed, then menuClose is emitted with an empty payload"
+      ],
+      "scope": {
+        "in_scope": [
+          "keydown in input.ts"
+        ],
+        "out_of_scope": [
+          "BootScene changes"
+        ],
+        "preserve": [
+          "BootScene.ts untouched"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply",
+        "New file: `game/frontend/src/phaser/input.ts`"
+      ],
+      "dependencies": [
+        "Act: Create input.ts"
+      ],
+      "definition_of_done": [
+        "Handler registered once via input.keyboard?.on('keydown', onKeyDown)",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-909.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M867ZTQCRHMVMQ28SRKDDKM9",
+      "matched_feature_id": "01M85MNPTK7BTHK8EDH1RQS65R",
+      "links": [
+        "parent:01M867ZTQCRHMVMQ28SRKDDKM9",
+        "trace:01M85MNPTK7BTHK8EDH1RQS65R",
+        "artifact:.ai-dlc/units/UNIT-909.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCRHMVMQ28SRKDDKM9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-909.md",
+      "artifact_id": "UNIT-909",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "createInputLayer.onKeyDown",
+          "lines": "after the focus methods in createInputLayer",
+          "action": "Add const onKeyDown = (e: KeyboardEvent): void with the same delta computation as BootScene.ts L178: Tab -> shiftKey ? -1 : 1; ArrowRight/ArrowDown -> 1; ArrowLeft/ArrowUp -> -1; else 0. If delta !== 0: e.preventDefault() and layer moveFocus(delta). Else if key is 'Enter' or ' ': objects.forEach(o => o.handleKey(e.key)). Else if 'Escape': phaserToReact.emit('menuClose', {}).",
+          "code": "if (delta !== 0) { e.preventDefault(); moveFocusBy(delta as 1 | -1); } else if (e.key === 'Enter' || e.key === ' ') objects.forEach((o) => o.handleKey(e.key)); else if (e.key === 'Escape') phaserToReact.emit('menuClose', {});",
+          "expected": "Key mapping matches BootScene"
+        },
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "createInputLayer registration",
+          "lines": "after onKeyDown",
+          "action": "Call input.keyboard?.on('keydown', onKeyDown) once at construction.",
+          "expected": "One keydown listener registered; no throw when keyboard is undefined"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCQ4XZWQGJTQCH51T3",
+      "kind": "unit",
+      "title": "Act: Bind hover and click and implement destroy in createInputLayer",
+      "body": "Bind SceneObject.onInteract and onHoverChange for every object and implement destroy() in input.ts.\n\n## Acceptance criteria\n- Given object interact and hover callbacks fire, then objectClick and objectHover are emitted\n- Given destroy() is called, then listeners are removed and a second call is a no-op\n\n\n## Scope\n- In scope: hover, click, destroy in input.ts\n- Out of scope: BootScene changes\n- Preserve: BootScene.ts untouched\n\n\n## Technical constraints\n- Hard constraints of the intent apply\n- New file: `game/frontend/src/phaser/input.ts`\n\n\n## Dependencies\n- Act: Add the keydown handler\n\n\n## Definition of done\n- destroy is idempotent\n\n\n## Non-functional requirements\n- Listeners released on destroy\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Bridge object hover and click and release all listeners on destroy",
+      "description": "Bind SceneObject.onInteract and onHoverChange for every object and implement destroy() in input.ts.",
+      "acceptance_criteria": [
+        "Given object interact and hover callbacks fire, then objectClick and objectHover are emitted",
+        "Given destroy() is called, then listeners are removed and a second call is a no-op"
+      ],
+      "scope": {
+        "in_scope": [
+          "hover, click, destroy in input.ts"
+        ],
+        "out_of_scope": [
+          "BootScene changes"
+        ],
+        "preserve": [
+          "BootScene.ts untouched"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply",
+        "New file: `game/frontend/src/phaser/input.ts`"
+      ],
+      "dependencies": [
+        "Act: Add the keydown handler"
+      ],
+      "definition_of_done": [
+        "destroy is idempotent",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-910.md`"
+      ],
+      "non_functional": [
+        "Listeners released on destroy"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M867ZTQC4EMCZWGPWMK502NA",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M867ZTQC4EMCZWGPWMK502NA",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-910.md"
+      ],
+      "depends_on": [
+        "01M867ZTQC4EMCZWGPWMK502NA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-910.md",
+      "artifact_id": "UNIT-910",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "createInputLayer pointer binding",
+          "lines": "after the keydown registration",
+          "action": "Add let active = true. For each object o call o.onInteract(e => { if (active) phaserToReact.emit('objectClick', { id: e.objectId }); }) and o.onHoverChange(e => { if (active) phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null }); }).",
+          "expected": "Click and hover are emitted through the bridge only while active"
+        },
+        {
+          "file": "game/frontend/src/phaser/input.ts",
+          "symbol": "InputLayer.destroy",
+          "lines": "replace the stub",
+          "action": "Implement destroy(): if (!active) return; active = false; input.keyboard?.off('keydown', onKeyDown).",
+          "expected": "Listener removed once; second call no-op"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCBPV1JPEKXGN747M6",
+      "kind": "unit",
+      "title": "Verify: Input layer focus and moveFocus unit tests",
+      "body": "TDD tests for R1 with a mocked Phaser input plugin and fake SceneObjects.\n\n## Acceptance criteria\n- Tests assert moveFocus(1) focuses the first object and emits focusChange\n- Tests assert focusObject(null) blurs all and moveFocus(-1) wraps to the last\n\n\n## Scope\n- In scope: new game/frontend/tests/inputFocus.test.ts\n- Out of scope: real Phaser\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; mock only external things (Phaser keyboard plugin); use the real gameStore and real events bus\n- Hard constraints of the intent apply\n\n\n## Definition of done\n- inputFocus tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the focus API",
+      "description": "TDD tests for R1 with a mocked Phaser input plugin and fake SceneObjects.",
+      "acceptance_criteria": [
+        "Tests assert moveFocus(1) focuses the first object and emits focusChange",
+        "Tests assert focusObject(null) blurs all and moveFocus(-1) wraps to the last"
+      ],
+      "scope": {
+        "in_scope": [
+          "new game/frontend/tests/inputFocus.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; mock only external things (Phaser keyboard plugin); use the real gameStore and real events bus",
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "inputFocus tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-911.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867ZTQCTNZXVCXFPKF79XTX",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M867ZTQCTNZXVCXFPKF79XTX",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-911.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCTNZXVCXFPKF79XTX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-911.md",
+      "artifact_id": "UNIT-911",
+      "steps": [
+        {
+          "file": "game/frontend/tests/inputFocus.test.ts",
+          "symbol": "new: describe('input layer focus')",
+          "lines": "new",
+          "action": "Build a fake input {keyboard:{on:vi.fn(),off:vi.fn()}} and 3 fake objects with isVisible true, focus()/blur() setting isFocused, spec.id 'a','b','c', handleKey/onInteract/onHoverChange vi.fn(). Do not mock buildScene. Subscribe a vi.fn() to phaserToReact 'focusChange'. Test 1: moveFocus(1) from none returns 'a', useGameStore.getState().focusedObjectId === 'a', handler called with {id:'a'}. Test 2: after focusObject(null) all isFocused false, store null, handler called with {id:null}. Test 3: with 'a' focused moveFocus(-1) returns 'c'. Test 4: focusObject('b') focuses b only.",
+          "command": "cd game/frontend && npx vitest run tests/inputFocus.test.ts",
+          "expected": "4 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCVDX3116V7BJVJ7JR",
+      "kind": "unit",
+      "title": "Verify: Input layer keyboard unit tests",
+      "body": "TDD tests for R2 invoking the registered keydown handler captured from the mocked plugin.\n\n## Acceptance criteria\n- Tests assert every key mapping: Tab, Shift+Tab, arrows, Enter, Space and Escape\n- Tests assert createInputLayer does not throw when keyboard is undefined\n\n\n## Scope\n- In scope: new game/frontend/tests/inputKeyboard.test.ts\n- Out of scope: real Phaser\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; mock only the Phaser keyboard plugin\n- Hard constraints of the intent apply\n\n\n## Definition of done\n- inputKeyboard tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for keydown mapping",
+      "description": "TDD tests for R2 invoking the registered keydown handler captured from the mocked plugin.",
+      "acceptance_criteria": [
+        "Tests assert every key mapping: Tab, Shift+Tab, arrows, Enter, Space and Escape",
+        "Tests assert createInputLayer does not throw when keyboard is undefined"
+      ],
+      "scope": {
+        "in_scope": [
+          "new game/frontend/tests/inputKeyboard.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; mock only the Phaser keyboard plugin",
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "inputKeyboard tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-912.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867ZTQCEF15HT5EFR2SB2XP",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M867ZTQCEF15HT5EFR2SB2XP",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-912.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCEF15HT5EFR2SB2XP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-912.md",
+      "artifact_id": "UNIT-912",
+      "steps": [
+        {
+          "file": "game/frontend/tests/inputKeyboard.test.ts",
+          "symbol": "new: describe('input layer keyboard')",
+          "lines": "new",
+          "action": "Create fake keyboard with on=vi.fn() and capture on.mock.calls[0][1] as handler. Use two fake objects (first isVisible, focusable). Tests: Tab key event {key:'Tab',shiftKey:false,preventDefault:vi.fn()} focuses first and calls preventDefault; Shift+Tab, ArrowLeft/ArrowUp and ArrowRight/ArrowDown move by -1/+1; Enter and ' ' call handleKey with the key on each object; Escape makes a phaserToReact 'menuClose' subscriber receive {}; createInputLayer({}, objs) does not throw.",
+          "command": "cd game/frontend && npx vitest run tests/inputKeyboard.test.ts",
+          "expected": "all key-mapping tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCN22S3YV2M9XJKQ1X",
+      "kind": "unit",
+      "title": "Verify: Input layer hover, click and teardown unit tests",
+      "body": "TDD tests for R3 covering hover, click and teardown of the input layer.\n\n## Acceptance criteria\n- Tests assert click and hover emit objectClick and objectHover with the right ids\n- Tests assert destroy calls keyboard.off, silences later events and is idempotent\n\n\n## Scope\n- In scope: new game/frontend/tests/inputPointerTeardown.test.ts\n- Out of scope: real Phaser\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; mock only the Phaser keyboard plugin\n- Hard constraints of the intent apply\n\n\n## Definition of done\n- inputPointerTeardown tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for pointer events and destroy",
+      "description": "TDD tests for R3 covering hover, click and teardown of the input layer.",
+      "acceptance_criteria": [
+        "Tests assert click and hover emit objectClick and objectHover with the right ids",
+        "Tests assert destroy calls keyboard.off, silences later events and is idempotent"
+      ],
+      "scope": {
+        "in_scope": [
+          "new game/frontend/tests/inputPointerTeardown.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; mock only the Phaser keyboard plugin",
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "inputPointerTeardown tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-913.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867ZTQCQ4XZWQGJTQCH51T3",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M867ZTQCQ4XZWQGJTQCH51T3",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-913.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCQ4XZWQGJTQCH51T3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-913.md",
+      "artifact_id": "UNIT-913",
+      "steps": [
+        {
+          "file": "game/frontend/tests/inputPointerTeardown.test.ts",
+          "symbol": "new: describe('input layer pointer and teardown')",
+          "lines": "new",
+          "action": "Fake objects capture callbacks passed to onInteract and onHoverChange. Subscribe vi.fn() to phaserToReact objectClick and objectHover. Tests: interact callback({objectId:'a',actions:[]}) emits objectClick {id:'a'}; hover callback over:true emits objectHover {id:'a'}, over:false emits {id:null}; after layer.destroy() keyboard.off called with the handler from keyboard.on, and interact, hover and keydown Escape emit nothing; a second destroy() leaves off called once.",
+          "command": "cd game/frontend && npx vitest run tests/inputPointerTeardown.test.ts",
+          "expected": "4 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M867ZTQCGG3Z5W89GANQBVJY",
+      "kind": "evidence",
+      "title": "Evidence: Input layer unit tests pass with the mocked Phaser input plugin",
+      "body": "Records the passing runs of the three input layer test files and the typecheck of game/frontend.\n\n## Acceptance criteria\n- inputFocus, inputKeyboard and inputPointerTeardown tests pass\n- npm run typecheck passes in game/frontend\n\n\n## Scope\n- In scope: test run output\n- Out of scope: BootScene wiring\n- Preserve: all existing tests\n\n\n## Technical constraints\n- Hard constraints of the intent apply\n\n\n## Definition of done\n- Test and typecheck output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence of passing input layer unit tests",
+      "description": "Records the passing runs of the three input layer test files and the typecheck of game/frontend.",
+      "acceptance_criteria": [
+        "inputFocus, inputKeyboard and inputPointerTeardown tests pass",
+        "npm run typecheck passes in game/frontend"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "all existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Hard constraints of the intent apply"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test and typecheck output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-180.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867ZTQCBPV1JPEKXGN747M6",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M867ZTQCBPV1JPEKXGN747M6",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-180.md"
+      ],
+      "depends_on": [
+        "01M867ZTQCBPV1JPEKXGN747M6",
+        "01M867ZTQCVDX3116V7BJVJ7JR",
+        "01M867ZTQCN22S3YV2M9XJKQ1X"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-180.md",
+      "artifact_id": "EVD-180"
+    }
+  ],
+  "created_at": "2026-11-24T07:40:39.746351+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
