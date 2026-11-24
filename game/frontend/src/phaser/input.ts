@@ -27,13 +27,24 @@ export interface InputLayer {
 }
 
 export function createInputLayer(input: InputPlugin, objects: SceneObject[]): InputLayer {
-  const focusedId = (): string | null => objects.find((o) => o.isFocused)?.spec.id ?? null;
+  const focusedId = (): string | null => {
+    for (let i = 0; i < objects.length; i++) {
+      if (objects[i].isFocused) return objects[i].spec.id;
+    }
+    return null;
+  };
+
+  // Payloads reused across emits so hover, focus and click paths allocate nothing per call.
+  const focusPayload = { id: null as string | null };
+  const hoverPayload = { id: null as string | null };
+  const clickPayload = { id: '' };
 
   // Publishes the current focus to the React store and the event bridge, then returns it.
   const report = (): string | null => {
     const id = focusedId();
     useGameStore.getState().setFocusedObject(id);
-    phaserToReact.emit('focusChange', { id });
+    focusPayload.id = id;
+    phaserToReact.emit('focusChange', focusPayload);
     return id;
   };
 
@@ -47,10 +58,14 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
   const releasers: Array<() => void> = [];
   for (const o of objects) {
     o.onInteract((e) => {
-      if (active) phaserToReact.emit('objectClick', { id: e.objectId });
+      if (!active) return;
+      clickPayload.id = e.objectId;
+      phaserToReact.emit('objectClick', clickPayload);
     });
     o.onHoverChange((e) => {
-      if (active) phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null });
+      if (!active) return;
+      hoverPayload.id = e.over ? e.objectId : null;
+      phaserToReact.emit('objectHover', hoverPayload);
     });
   }
 

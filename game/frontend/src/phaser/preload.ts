@@ -11,9 +11,10 @@ export type Preloader = {
 };
 
 // Generates the fallback texture, queues the planned assets and tracks failed loads.
-// dispose() removes the loaderror listener and the fallback texture and clears failed ids.
+// dispose() removes the loaderror listener, the queued textures and the fallback texture, and clears failed ids.
 export function createPreloader(scene: Phaser.Scene, content: SceneDef, manifest: AssetManifest): Preloader {
   const failed = new Set<string>();
+  const queued: string[] = [];
 
   const g = scene.make.graphics({ x: 0, y: 0 }, false);
   g.fillStyle(0xff00ff).fillRect(0, 0, 8, 8).fillStyle(0x000000).fillRect(0, 0, 4, 4).fillRect(4, 4, 4, 4);
@@ -27,12 +28,16 @@ export function createPreloader(scene: Phaser.Scene, content: SceneDef, manifest
   plan.unknown.forEach((id) => console.warn(`unknown asset ref: ${id}`));
   for (const id of plan.load) {
     const entry = manifest.assets.find((a: AssetEntry) => a.id === id);
-    if (entry && entry.type === 'image') scene.load.image(entry.id, `assets/${entry.path}`);
-    else if (entry && entry.type === 'spritesheet' && entry.frames)
+    if (entry && entry.type === 'image') {
+      scene.load.image(entry.id, `assets/${entry.path}`);
+      queued.push(entry.id);
+    } else if (entry && entry.type === 'spritesheet' && entry.frames) {
       scene.load.spritesheet(entry.id, `assets/${entry.path}`, {
         frameWidth: entry.frames.frameWidth,
         frameHeight: entry.frames.frameHeight,
       });
+      queued.push(entry.id);
+    }
   }
 
   return {
@@ -42,6 +47,10 @@ export function createPreloader(scene: Phaser.Scene, content: SceneDef, manifest
     },
     dispose(): void {
       scene.load.off('loaderror', onLoadError);
+      for (let i = 0; i < queued.length; i++) {
+        if (scene.textures.exists(queued[i])) scene.textures.remove(queued[i]);
+      }
+      queued.length = 0;
       if (scene.textures.exists(FALLBACK_KEY)) scene.textures.remove(FALLBACK_KEY);
       failed.clear();
     },

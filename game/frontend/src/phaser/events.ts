@@ -28,6 +28,8 @@ export type EventBus<T extends object> = {
 /** Handlers run in subscription order on a snapshot; off() of an unknown handler is a no-op; clear() drops all handlers. */
 export function createEventBus<T extends object>(): EventBus<T> {
   const handlers = new Map<keyof T, Set<(payload: unknown) => void>>();
+  // Cached dispatch snapshot per event; rebuilt lazily after on()/off() change the Set.
+  const snapshots = new Map<keyof T, Array<(payload: unknown) => void>>();
 
   const on: EventBus<T>["on"] = (event, handler) => {
     let set = handlers.get(event);
@@ -37,24 +39,33 @@ export function createEventBus<T extends object>(): EventBus<T> {
     }
     const stored = handler as (payload: unknown) => void;
     set.add(stored);
+    snapshots.delete(event);
     return () => off(event, handler);
   };
 
   const off: EventBus<T>["off"] = (event, handler) => {
     handlers.get(event)?.delete(handler as (payload: unknown) => void);
+    snapshots.delete(event);
   };
 
   const emit: EventBus<T>["emit"] = (event, payload) => {
     const set = handlers.get(event);
     if (!set) return;
     // Snapshot so handlers that subscribe/unsubscribe during emit don't affect this dispatch.
-    for (const handler of [...set]) {
-      handler(payload);
+    // A snapshot replaced by on()/off() is a new array, so an in-flight dispatch keeps its own.
+    let list = snapshots.get(event);
+    if (!list) {
+      list = Array.from(set);
+      snapshots.set(event, list);
+    }
+    for (let i = 0; i < list.length; i++) {
+      list[i](payload);
     }
   };
 
   const clear = () => {
     handlers.clear();
+    snapshots.clear();
   };
 
   return { on, off, emit, clear };

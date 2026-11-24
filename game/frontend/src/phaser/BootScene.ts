@@ -51,18 +51,20 @@ export class BootScene extends Phaser.Scene {
     this.onStateChange();
     playSceneTransition(createPhaserEffectContext(this, resolve), scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.tweens.killAll();
       this.inputLayer?.destroy();
       this.inputLayer = null;
-      this.preloader?.dispose();
-      this.preloader = null;
       this.unsubscribe?.();
       this.unsubscribe = null;
-      this.build?.dispose();
-      this.build = null;
       this.characters?.dispose();
       this.characters = null;
+      this.build?.dispose();
+      this.build = null;
       this.transitions?.dispose();
       this.transitions = null;
+      // Last: the sprites and objects that use the queued textures are destroyed by now.
+      this.preloader?.dispose();
+      this.preloader = null;
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }

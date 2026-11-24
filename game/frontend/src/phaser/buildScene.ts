@@ -32,14 +32,15 @@ export function createSceneBuild(
     effects,
     effectContext: ctx,
     sync(state: GameState, focusedId: string | null): void {
-      objects.forEach((o) => o.sync(state));
-      objects.forEach((o) => {
+      for (let i = 0; i < objects.length; i++) objects[i].sync(state);
+      for (let i = 0; i < objects.length; i++) {
+        const o = objects[i];
         if (focusedId !== null && o.spec.id === focusedId) {
           if (!o.isFocused) o.focus();
         } else if (o.isFocused) {
           o.blur();
         }
-      });
+      }
     },
     dispose(): void {
       destroyEffects(effects);

@@ -15,6 +15,8 @@ export class SceneObject {
   private lastState?: GameState;
   private listener?: (e: { objectId: string; actions: ActionSpec[] }) => void;
   private hoverListener?: (e: { objectId: string; over: boolean }) => void;
+  // Reused for every hover change so the hover listener receives the same object each time.
+  private hoverEvent = { objectId: '', over: false };
 
   constructor(spec: ObjectSpec, ctx: RenderContext) {
     this.spec = spec;
@@ -32,7 +34,9 @@ export class SceneObject {
       if (!this.visible) return;
       this.handle.setHighlighted(over);
       this.handle.setLabelVisible(over);
-      this.hoverListener?.({ objectId: this.spec.id, over });
+      this.hoverEvent.objectId = this.spec.id;
+      this.hoverEvent.over = over;
+      this.hoverListener?.(this.hoverEvent);
     });
     this.handle.onClick(() => this.activate());
   }

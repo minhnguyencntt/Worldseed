@@ -23,6 +23,7 @@ export function createCharacters(
 ): Characters {
   const sprites: Phaser.GameObjects.Sprite[] = [];
   const map = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
+  const createdAnims: string[] = [];
 
   // Registers the manifest animation as a Phaser animation once, keyed `${asset}:${animation}`.
   const ensureAnim = (assetId: string, animation: string): string | null => {
@@ -37,6 +38,7 @@ export function createCharacters(
         frameRate: def.frameRate,
         repeat: def.repeat,
       });
+      createdAnims.push(key);
     }
     return key;
   };
@@ -91,9 +93,14 @@ export function createCharacters(
     play: playCharacterAnimation,
     dispose(): void {
       unsubscribe();
-      sprites.forEach((s) => s.destroy());
+      for (let i = 0; i < sprites.length; i++) {
+        sprites[i].removeAllListeners();
+        sprites[i].destroy();
+      }
       sprites.length = 0;
       map.clear();
+      for (let i = 0; i < createdAnims.length; i++) scene.anims.remove(createdAnims[i]);
+      createdAnims.length = 0;
     },
   };
 }

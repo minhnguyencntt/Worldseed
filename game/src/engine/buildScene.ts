@@ -11,7 +11,13 @@ export function buildScene(ctx: RenderContext, scene: SceneSpec): SceneObject[] 
 // wrapping at either end and skipping hidden objects. Focus is cleared when no object is visible.
 export function moveFocus(objs: SceneObject[], delta: 1 | -1): void {
   const n = objs.length;
-  const current = objs.findIndex((o) => o.isFocused);
+  let current = -1;
+  for (let i = 0; i < n; i++) {
+    if (objs[i].isFocused) {
+      current = i;
+      break;
+    }
+  }
   // Start one step before the first object when nothing is focused, so the first step lands on it.
   let idx = current === -1 ? (delta === 1 ? -1 : n) : current;
   let target = -1;
@@ -22,8 +28,9 @@ export function moveFocus(objs: SceneObject[], delta: 1 | -1): void {
       break;
     }
   }
-  objs.forEach((o, i) => {
+  for (let i = 0; i < n; i++) {
+    const o = objs[i];
     if (i === target) o.focus();
     else if (o.isFocused) o.blur();
-  });
+  }
 }
