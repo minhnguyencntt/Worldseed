@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 import type { GameState } from '@game/state/types';
-import type { AssetEntry } from '@game/assets/manifest';
 import { useGameStore } from '../store/gameStore';
 import { phaserToReact, reactToPhaser, type Unsubscribe } from './events';
 import { createPhaserEffectContext } from './effectContext';
@@ -8,7 +7,8 @@ import { buildEffects, destroyEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
 import { manifest, scene, sceneSpec } from '../runtime/content';
-import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
+import { resolveTextureKey } from '@game/engine/planPreload';
+import { createPreloader, FALLBACK_KEY, type Preloader } from './preload';
 import { buildScene } from '@game/engine/buildScene';
 import { createInputLayer, type InputLayer } from './input';
 import type { SceneObject } from '@game/entities/SceneObject';
@@ -19,7 +19,7 @@ import type { CharacterSpec } from '@game/content/schema';
 import { layerDepth } from '@game/engine/layers';
 import type { AnimationDef } from '@game/assets/manifest';
 
-export const FALLBACK_KEY = 'fallback:missing';
+export { FALLBACK_KEY };
 export const TRANSITION_FADE_MS = 300;
 
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
@@ -27,7 +27,7 @@ export class BootScene extends Phaser.Scene {
   private unsubscribe: Unsubscribe | null = null;
   private effects: EffectHandle[] = [];
   private sceneObjects: SceneObject[] = [];
-  private failed = new Set<string>();
+  private preloader: Preloader | null = null;
   private characterSprites: Phaser.GameObjects.Sprite[] = [];
   private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
   private unsubscribeAnimation: Unsubscribe | null = null;
@@ -43,28 +43,12 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    const g = this.make.graphics({ x: 0, y: 0 }, false);
-    g.fillStyle(0xff00ff).fillRect(0, 0, 8, 8).fillStyle(0x000000).fillRect(0, 0, 4, 4).fillRect(4, 4, 4, 4);
-    g.generateTexture(FALLBACK_KEY, 8, 8);
-    g.destroy();
-    this.load.on('loaderror', (file: { key: string }) => this.failed.add(file.key));
-
-    const plan = planPreload(scene, manifest);
-    plan.unknown.forEach((id) => console.warn(`unknown asset ref: ${id}`));
-    for (const id of plan.load) {
-      const entry = manifest.assets.find((a: AssetEntry) => a.id === id);
-      if (entry && entry.type === 'image') this.load.image(entry.id, `assets/${entry.path}`);
-      else if (entry && entry.type === 'spritesheet' && entry.frames)
-        this.load.spritesheet(entry.id, `assets/${entry.path}`, {
-          frameWidth: entry.frames.frameWidth,
-          frameHeight: entry.frames.frameHeight,
-        });
-    }
+    this.preloader = createPreloader(this, scene, manifest);
   }
 
   // Maps an asset id to a loaded texture key, or the fallback for unknown or failed ids.
   resolveKey(id: string): string {
-    return this.failed.has(id) ? FALLBACK_KEY : resolveTextureKey(id, manifest, FALLBACK_KEY);
+    return this.preloader?.resolveKey(id) ?? resolveTextureKey(id, manifest, FALLBACK_KEY);
   }
 
   create(): void {
@@ -86,6 +70,8 @@ export class BootScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.inputLayer?.destroy();
       this.inputLayer = null;
+      this.preloader?.dispose();
+      this.preloader = null;
       this.unsubscribe?.();
       this.unsubscribe = null;
       destroyEffects(this.effects);
