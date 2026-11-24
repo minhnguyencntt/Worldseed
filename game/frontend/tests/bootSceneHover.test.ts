@@ -44,11 +44,13 @@ const makeFakeObject = () => ({
 describe('BootScene object hover emission', () => {
   let boot: BootScene;
   let fake: ReturnType<typeof makeFakeObject>;
+  let emit: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     fake = makeFakeObject();
     vi.mocked(buildScene).mockReturnValue([fake] as unknown as ReturnType<typeof buildScene>);
     useGameStore.setState({ state: null });
+    emit = vi.spyOn(phaserToReact, 'emit');
     boot = new BootScene();
   });
 
@@ -58,12 +60,11 @@ describe('BootScene object hover emission', () => {
       ([event]) => event === 'shutdown',
     );
     shutdown?.[1]?.();
+    emit.mockRestore();
     useGameStore.setState({ state: null });
   });
 
   it('emits objectHover with the bookshelf id when hover starts and with a null id when it ends', () => {
-    const emit = vi.spyOn(phaserToReact, 'emit');
-
     boot.create();
 
     expect(fake.onHoverChange).toHaveBeenCalledTimes(1);
@@ -77,5 +78,19 @@ describe('BootScene object hover emission', () => {
       ['objectHover', { id: 'bookshelf' }],
       ['objectHover', { id: null }],
     ]);
+  });
+
+  it('after shutdown invoking the captured hover callback does not emit objectHover', () => {
+    boot.create();
+    const hoverCb = fake.onHoverChange.mock.calls[0][0] as (e: { objectId: string; over: boolean }) => void;
+    const shutdown = (boot.events.once as unknown as ReturnType<typeof vi.fn>).mock.calls.find(
+      ([event]) => event === 'shutdown',
+    );
+    shutdown?.[1]?.();
+    emit.mockClear();
+
+    hoverCb({ objectId: 'bookshelf', over: true });
+
+    expect(emit).not.toHaveBeenCalledWith('objectHover', expect.anything());
   });
 });

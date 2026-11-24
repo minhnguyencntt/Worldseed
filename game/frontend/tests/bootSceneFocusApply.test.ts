@@ -26,7 +26,7 @@ vi.mock('../src/runtime/content', () => ({
 
 // buildScene and moveFocus are mocked so the scene holds two fake objects and focus application is observable.
 vi.mock('@game/engine/buildScene', () => ({ buildScene: vi.fn(), moveFocus: vi.fn() }));
-vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []) }));
+vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []), destroyEffects: vi.fn() }));
 vi.mock('@game/engine/playSceneTransition', () => ({ playSceneTransition: vi.fn() }));
 vi.mock('../src/phaser/renderContext', () => ({ createPhaserRenderContext: vi.fn(() => ({})) }));
 vi.mock('../src/phaser/effectContext', () => ({ createPhaserEffectContext: vi.fn(() => ({})) }));
@@ -37,6 +37,7 @@ const makeFakeObject = (id: string) => ({
   sync: vi.fn(),
   destroy: vi.fn(),
   onInteract: vi.fn(),
+  onHoverChange: vi.fn(),
   handleKey: vi.fn(),
   focus: vi.fn(),
   blur: vi.fn(),

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vite
 import { BootScene } from '../src/phaser/BootScene';
 import { useGameStore } from '../src/store/gameStore';
 import { phaserToReact } from '../src/phaser/events';
-import { buildScene, moveFocus } from '@game/engine/buildScene';
+import { buildScene } from '@game/engine/buildScene';
 
 // Phaser is a browser canvas runtime; create() only needs Scene.events, Scene.input.keyboard and the SHUTDOWN constant.
 vi.mock('phaser', () => ({
@@ -23,9 +23,12 @@ vi.mock('../src/runtime/content', () => ({
   world: { id: 'the-boys-room', startScene: 'bedroom' },
 }));
 
-// buildScene and moveFocus are mocked so the scene holds exactly one fake object and focus movement is observable.
-vi.mock('@game/engine/buildScene', () => ({ buildScene: vi.fn(), moveFocus: vi.fn() }));
-vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []) }));
+// Only buildScene is replaced, so the scene holds one fake object; moveFocus stays real and moves focus through the fake's focus/blur.
+vi.mock('@game/engine/buildScene', async (orig) => ({
+  ...(await orig<typeof import('@game/engine/buildScene')>()),
+  buildScene: vi.fn(),
+}));
+vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []), destroyEffects: vi.fn() }));
 vi.mock('@game/engine/playSceneTransition', () => ({ playSceneTransition: vi.fn() }));
 vi.mock('../src/phaser/renderContext', () => ({ createPhaserRenderContext: vi.fn(() => ({})) }));
 vi.mock('../src/phaser/effectContext', () => ({ createPhaserEffectContext: vi.fn(() => ({})) }));
@@ -33,14 +36,28 @@ vi.mock('../src/phaser/effectContext', () => ({ createPhaserEffectContext: vi.fn
 type KeyHandler = (e: KeyboardEvent) => void;
 type FakeScene = { input: { keyboard: { on: Mock; off: Mock } }; events: { once: Mock } };
 
-const makeFakeObject = () => ({
-  sync: vi.fn(),
-  destroy: vi.fn(),
-  onInteract: vi.fn(),
-  handleKey: vi.fn(),
-  isFocused: true,
-  spec: { id: 'bookshelf' },
-});
+// Fake scene object: focus/blur flip an isFocused flag, so moveFocus and the input layer see real focus state.
+const makeFakeObject = () => {
+  const focusState = { isFocused: false };
+  return {
+    spec: { id: 'bookshelf' },
+    isVisible: true,
+    get isFocused(): boolean {
+      return focusState.isFocused;
+    },
+    sync: vi.fn(),
+    destroy: vi.fn(),
+    onInteract: vi.fn(),
+    onHoverChange: vi.fn(),
+    handleKey: vi.fn(),
+    focus: vi.fn(() => {
+      focusState.isFocused = true;
+    }),
+    blur: vi.fn(() => {
+      focusState.isFocused = false;
+    }),
+  };
+};
 
 describe('BootScene keyboard', () => {
   let boot: BootScene;
@@ -54,11 +71,15 @@ describe('BootScene keyboard', () => {
   const press = (key: string, shiftKey = false) =>
     handler({ key, shiftKey, preventDefault: vi.fn() } as unknown as KeyboardEvent);
 
+  const shutdownHandler = () => scene().events.once.mock.calls.find(([event]) => event === 'shutdown')?.[1] as
+    | (() => void)
+    | undefined;
+
   beforeEach(() => {
     vi.clearAllMocks();
     fake = makeFakeObject();
     vi.mocked(buildScene).mockReturnValue([fake] as unknown as ReturnType<typeof buildScene>);
-    useGameStore.setState({ state: null });
+    useGameStore.setState({ state: null, focusedObjectId: null });
     emit = vi.spyOn(phaserToReact, 'emit');
     boot = new BootScene();
     boot.create();
@@ -68,10 +89,9 @@ describe('BootScene keyboard', () => {
 
   afterEach(() => {
     // Run the SHUTDOWN handler registered in create() so the keyboard and store subscriptions are released between tests.
-    const shutdown = scene().events.once.mock.calls.find(([event]) => event === 'shutdown');
-    shutdown?.[1]?.();
+    shutdownHandler()?.();
     emit.mockRestore();
-    useGameStore.setState({ state: null });
+    useGameStore.setState({ state: null, focusedObjectId: null });
   });
 
   it('registers a callable keydown handler on the keyboard plugin during create', () => {
@@ -83,60 +103,73 @@ describe('BootScene keyboard', () => {
     const event = { key: 'Tab', shiftKey: false, preventDefault: vi.fn() } as unknown as KeyboardEvent;
     handler(event);
 
-    expect(moveFocus).toHaveBeenCalledWith([fake], 1);
     expect(event.preventDefault).toHaveBeenCalled();
+    expect(fake.isFocused).toBe(true);
     expect(emit).toHaveBeenCalledWith('focusChange', { id: 'bookshelf' });
+    expect(useGameStore.getState().focusedObjectId).toBe('bookshelf');
   });
 
   it('moves focus backward when Shift+Tab is pressed', () => {
     press('Tab', true);
 
-    expect(moveFocus).toHaveBeenCalledWith([fake], -1);
+    expect(fake.isFocused).toBe(true);
     expect(emit).toHaveBeenCalledWith('focusChange', { id: 'bookshelf' });
+    expect(useGameStore.getState().focusedObjectId).toBe('bookshelf');
   });
 
   it('moves focus backward when ArrowLeft is pressed', () => {
     press('ArrowLeft');
 
-    expect(moveFocus).toHaveBeenCalledWith([fake], -1);
+    expect(fake.isFocused).toBe(true);
     expect(emit).toHaveBeenCalledWith('focusChange', { id: 'bookshelf' });
+    expect(useGameStore.getState().focusedObjectId).toBe('bookshelf');
   });
 
   it('moves focus forward when ArrowRight is pressed', () => {
     press('ArrowRight');
 
-    expect(moveFocus).toHaveBeenCalledWith([fake], 1);
+    expect(fake.isFocused).toBe(true);
     expect(emit).toHaveBeenCalledWith('focusChange', { id: 'bookshelf' });
+    expect(useGameStore.getState().focusedObjectId).toBe('bookshelf');
   });
 
-  it('forwards Enter to the focused object handleKey', () => {
+  it('forwards Enter to the focused object handleKey without moving focus', () => {
     press('Enter');
 
     expect(fake.handleKey).toHaveBeenCalledWith('Enter');
-    expect(moveFocus).not.toHaveBeenCalled();
+    expect(emit).not.toHaveBeenCalledWith('focusChange', expect.anything());
   });
 
-  it('forwards Space to the focused object handleKey', () => {
+  it('forwards Space to the focused object handleKey without moving focus', () => {
     press(' ');
 
     expect(fake.handleKey).toHaveBeenCalledWith(' ');
-    expect(moveFocus).not.toHaveBeenCalled();
+    expect(emit).not.toHaveBeenCalledWith('focusChange', expect.anything());
   });
 
-  it('emits menuClose to React when Escape is pressed', () => {
+  it('emits menuClose to React when Escape is pressed, without moving focus', () => {
     press('Escape');
 
     expect(emit).toHaveBeenCalledWith('menuClose', {});
-    expect(moveFocus).not.toHaveBeenCalled();
+    expect(emit).not.toHaveBeenCalledWith('focusChange', expect.anything());
     expect(fake.handleKey).not.toHaveBeenCalled();
   });
 
   it('removes the same keydown handler from the keyboard plugin when the scene shuts down', () => {
-    const shutdown = scene().events.once.mock.calls.find(([event]) => event === 'shutdown');
+    const shutdown = shutdownHandler();
     expect(shutdown).toBeDefined();
 
-    shutdown?.[1]?.();
+    shutdown?.();
 
     expect(scene().input.keyboard.off).toHaveBeenCalledWith('keydown', handler);
+  });
+
+  it('after shutdown a keydown emits nothing', () => {
+    shutdownHandler()?.();
+    emit.mockClear();
+
+    press('Tab');
+
+    expect(emit).not.toHaveBeenCalledWith('focusChange', expect.anything());
   });
 });
