@@ -5,6 +5,7 @@ import type { AnimationDef, Origin } from '@game/assets/manifest';
 import { BOY_SOURCES } from './boy';
 import { ROOM_SOURCES } from './roomSources';
 import { SCENE_EXTRA_SOURCES } from './sceneExtras';
+import { ITEM_SOURCES } from './itemIcons';
 
 export interface ArtSource {
   id: string;
@@ -60,4 +61,5 @@ export const ART_SOURCES: ArtSource[] = [
   ...BOY_SOURCES,
   ...ROOM_SOURCES,
   ...SCENE_EXTRA_SOURCES,
+  ...ITEM_SOURCES,
 ];
