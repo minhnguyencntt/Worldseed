@@ -24,6 +24,7 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
         cameras = { main: { fadeIn: vi.fn() } };
         add = {
