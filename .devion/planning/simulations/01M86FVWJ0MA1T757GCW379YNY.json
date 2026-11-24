@@ -1,0 +1,688 @@
+{
+  "intent_id": "01M86FVWJ0MA1T757GCW379YNY",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M86FZ1T22ARQTK0N4Y46WAQA",
+      "kind": "intent",
+      "title": "SG-8.3.3 Rewrite repo-root context.md to the real stack and modules",
+      "body": "Context: the repo-root context.md still says the repo holds only README.md and is full of UNKNOWN placeholders, so the context.md unit tests fail. game/docs/GDD.md already holds the feature index, and no file in game/src or game/frontend/src exceeds 200 lines. Desired behavior: context.md names TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest and Go (backend), lists real module paths, and has no stale text or UNKNOWN. Why: docs must match the code.\n\n## Acceptance criteria\n- Given the repo-root context.md, when contextDoc and contextStack tests run, then all context.md tests pass\n- Given game/src and game/frontend/src, when the size and import scan tests run, then no file exceeds 200 lines and game/src has no import from game/frontend\n- Given game/docs/GDD.md, when gddIndex.test.ts runs, then every indexed path exists\n\n\n## Scope\n- In scope: context.md content contract\n- In scope: GDD index check\n- In scope: size and import scan confirmation\n- Out of scope: backend/ Go code and the contribution/round API\n- Out of scope: new features, content or art\n- Out of scope: Phaser 4 migration\n- Preserve: Phaser pinned at ~3.90.0 and the phaser-pin guard test\n- Preserve: gameplay unchanged\n- Preserve: existing tests, none deleted or skipped\n- Preserve: Zustand store as only GameState owner\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No source file in game/src or game/frontend/src over 200 lines\n- game/src never imports from game/frontend\n- No test is deleted or skipped\n- backend/ (Go) is out of scope\n\n\n## Definition of done\n- All three requirements delivered with Act and Verify units green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Repo-root context.md describes the real Worldseed stack and modules; GDD and 200-line/import scans stay green",
+      "description": "Context: the repo-root context.md still says the repo holds only README.md and is full of UNKNOWN placeholders, so the context.md unit tests fail. game/docs/GDD.md already holds the feature index, and no file in game/src or game/frontend/src exceeds 200 lines. Desired behavior: context.md names TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest and Go (backend), lists real module paths, and has no stale text or UNKNOWN. Why: docs must match the code.",
+      "acceptance_criteria": [
+        "Given the repo-root context.md, when contextDoc and contextStack tests run, then all context.md tests pass",
+        "Given game/src and game/frontend/src, when the size and import scan tests run, then no file exceeds 200 lines and game/src has no import from game/frontend",
+        "Given game/docs/GDD.md, when gddIndex.test.ts runs, then every indexed path exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "context.md content contract",
+          "GDD index check",
+          "size and import scan confirmation"
+        ],
+        "out_of_scope": [
+          "backend/ Go code and the contribution/round API",
+          "new features, content or art",
+          "Phaser 4 migration"
+        ],
+        "preserve": [
+          "Phaser pinned at ~3.90.0 and the phaser-pin guard test",
+          "gameplay unchanged",
+          "existing tests, none deleted or skipped",
+          "Zustand store as only GameState owner"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No source file in game/src or game/frontend/src over 200 lines",
+        "game/src never imports from game/frontend",
+        "No test is deleted or skipped",
+        "backend/ (Go) is out of scope"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements delivered with Act and Verify units green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-210.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85BP7N1BFPBGF8TXMWX525X",
+      "links": [
+        "trace:01M85BP7N1BFPBGF8TXMWX525X",
+        "artifact:.ai-dlc/intent/INT-210.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-210.md",
+      "artifact_id": "INT-210"
+    },
+    {
+      "id": "01M86FZ1T2WADYB5Y51FWJNKP1",
+      "kind": "requirement",
+      "title": "REQ · context.md names the real stack and drops README-only text",
+      "body": "Context: contextStack.test.ts fails 4 tests because the root context.md contains 'hello Worldseed', 'Traceability index' and UNKNOWN. Desired behavior: Stack section lists TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest and Go for backend/. Expected result: staleTextHits returns [] and no UNKNOWN appears.\n\n## Acceptance criteria\n- Given context.md, when missingTerms runs with STACK_TERMS, then it returns []\n- Given context.md, when searched for \\bGo\\b, then it matches\n- Given context.md, when staleTextHits runs, then it returns [] and the text has no UNKNOWN\n\n\n## Scope\n- In scope: Stack section contract in docsCheck\n- Out of scope: backend code\n- Preserve: STACK_TERMS entries\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0\n- No file over 200 lines\n- Tests mock only what is external\n\n\n## Definition of done\n- contextStack tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "context.md Stack section names every STACK_TERMS entry and Go, with no stale text or UNKNOWN",
+      "description": "Context: contextStack.test.ts fails 4 tests because the root context.md contains 'hello Worldseed', 'Traceability index' and UNKNOWN. Desired behavior: Stack section lists TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest and Go for backend/. Expected result: staleTextHits returns [] and no UNKNOWN appears.",
+      "acceptance_criteria": [
+        "Given context.md, when missingTerms runs with STACK_TERMS, then it returns []",
+        "Given context.md, when searched for \\bGo\\b, then it matches",
+        "Given context.md, when staleTextHits runs, then it returns [] and the text has no UNKNOWN"
+      ],
+      "scope": {
+        "in_scope": [
+          "Stack section contract in docsCheck"
+        ],
+        "out_of_scope": [
+          "backend code"
+        ],
+        "preserve": [
+          "STACK_TERMS entries"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0",
+        "No file over 200 lines",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "contextStack tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-525.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M86FZ1T22ARQTK0N4Y46WAQA",
+      "links": [
+        "parent:01M86FZ1T22ARQTK0N4Y46WAQA",
+        "trace:01M86FHM44GK1G57CB3VGSQ4X8",
+        "artifact:.ai-dlc/requirements/REQ-525.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T22ARQTK0N4Y46WAQA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-525.md",
+      "artifact_id": "REQ-525"
+    },
+    {
+      "id": "01M86FZ1T2J02XJ9637QZGQZHC",
+      "kind": "requirement",
+      "title": "REQ · context.md module table lists the real game, docs and backend paths",
+      "body": "Context: contextDoc.test.ts fails because the module table lists only README.md. Desired behavior: rows for game/src/, game/frontend/src/, game/docs/GDD.md and backend/ (Go, out of scope), all existing on disk. Expected result: contextModulePaths returns those four and missingPaths returns [].\n\n## Acceptance criteria\n- Given context.md, when contextModulePaths runs, then it contains game/src/, game/frontend/src/, game/docs/GDD.md and backend/\n- Given those paths, when checked against the repo root, then missingPaths returns []\n- Given context.md, then it has no 'README.md only' or 'No `src/`' text\n\n\n## Scope\n- In scope: module table contract in contextDoc\n- Out of scope: backend code\n- Preserve: contextModulePaths behaviour\n\n\n## Technical constraints\n- No file over 200 lines\n- backend/ is out of scope\n\n\n## Definition of done\n- contextDoc tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "context.md module table lists game/src/, game/frontend/src/, game/docs/GDD.md and backend/",
+      "description": "Context: contextDoc.test.ts fails because the module table lists only README.md. Desired behavior: rows for game/src/, game/frontend/src/, game/docs/GDD.md and backend/ (Go, out of scope), all existing on disk. Expected result: contextModulePaths returns those four and missingPaths returns [].",
+      "acceptance_criteria": [
+        "Given context.md, when contextModulePaths runs, then it contains game/src/, game/frontend/src/, game/docs/GDD.md and backend/",
+        "Given those paths, when checked against the repo root, then missingPaths returns []",
+        "Given context.md, then it has no 'README.md only' or 'No `src/`' text"
+      ],
+      "scope": {
+        "in_scope": [
+          "module table contract in contextDoc"
+        ],
+        "out_of_scope": [
+          "backend code"
+        ],
+        "preserve": [
+          "contextModulePaths behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "No file over 200 lines",
+        "backend/ is out of scope"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "contextDoc tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-526.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86FZ1T22ARQTK0N4Y46WAQA",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M86FZ1T22ARQTK0N4Y46WAQA",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-526.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T22ARQTK0N4Y46WAQA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-526.md",
+      "artifact_id": "REQ-526"
+    },
+    {
+      "id": "01M86FZ1T2RWHKJRGHCEVZ68S8",
+      "kind": "requirement",
+      "title": "REQ · GDD feature index matches code and size/import scans stay green",
+      "body": "Context: game/docs/GDD.md already maps each feature to files; sourceSize and importBoundary helpers and tests exist; no file is over 200 lines now. Desired behavior: this stays true and is proven by unit tests. Expected result: no code split is needed.\n\n## Acceptance criteria\n- Given the GDD, when its indexed paths are checked, then all exist\n- Given game/src and game/frontend/src, when scanned, then overLimit(files, 200) returns []\n- Given game/src, when scanned, then it has no import from game/frontend\n\n\n## Scope\n- In scope: confirming existing helpers and tests\n- Out of scope: splitting files, none are over 200 lines\n- Preserve: sourceSize.ts and importBoundary.ts exports\n\n\n## Technical constraints\n- No file over 200 lines\n- game/src never imports from game/frontend\n- No test deleted or skipped\n\n\n## Definition of done\n- gddIndex, sourceSize and importBoundary tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "GDD feature index paths exist and no file exceeds 200 lines or crosses the game/src boundary",
+      "description": "Context: game/docs/GDD.md already maps each feature to files; sourceSize and importBoundary helpers and tests exist; no file is over 200 lines now. Desired behavior: this stays true and is proven by unit tests. Expected result: no code split is needed.",
+      "acceptance_criteria": [
+        "Given the GDD, when its indexed paths are checked, then all exist",
+        "Given game/src and game/frontend/src, when scanned, then overLimit(files, 200) returns []",
+        "Given game/src, when scanned, then it has no import from game/frontend"
+      ],
+      "scope": {
+        "in_scope": [
+          "confirming existing helpers and tests"
+        ],
+        "out_of_scope": [
+          "splitting files, none are over 200 lines"
+        ],
+        "preserve": [
+          "sourceSize.ts and importBoundary.ts exports"
+        ]
+      },
+      "technical_constraints": [
+        "No file over 200 lines",
+        "game/src never imports from game/frontend",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "gddIndex, sourceSize and importBoundary tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-527.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86FZ1T22ARQTK0N4Y46WAQA",
+      "matched_feature_id": "01M84VFDBH8B1SQYMYQMDMFYB7",
+      "links": [
+        "parent:01M86FZ1T22ARQTK0N4Y46WAQA",
+        "trace:01M84VFDBH8B1SQYMYQMDMFYB7",
+        "artifact:.ai-dlc/requirements/REQ-527.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T22ARQTK0N4Y46WAQA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-527.md",
+      "artifact_id": "REQ-527"
+    },
+    {
+      "id": "01M86FZ1T2JJ6M37SMGE2Z6PSQ",
+      "kind": "unit",
+      "title": "Act: Confirm the STACK_TERMS and STALE_TEXT contracts for the context.md rewrite",
+      "body": "Read game/frontend/src/lib/docsCheck.ts and confirm STACK_TERMS and STALE_TEXT are exported and documented as the context.md contract; the root context.md is regenerated by Devion to satisfy them.\n\n## Acceptance criteria\n- STACK_TERMS equals TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest\n- STALE_TEXT lists the three stale strings\n\n\n## Scope\n- In scope: docsCheck.ts comments only if wrong\n- Out of scope: backend\n- Preserve: export names and values\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0\n- No file over 200 lines\n- Code path: `game/frontend/src/lib/docsCheck.ts`\n\n\n## Definition of done\n- Contracts confirmed with no behaviour change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "docsCheck exports the contracts the rewritten context.md must satisfy",
+      "description": "Read game/frontend/src/lib/docsCheck.ts and confirm STACK_TERMS and STALE_TEXT are exported and documented as the context.md contract; the root context.md is regenerated by Devion to satisfy them.",
+      "acceptance_criteria": [
+        "STACK_TERMS equals TypeScript, Phaser 3.90, React, Zustand, Radix, Vitest",
+        "STALE_TEXT lists the three stale strings"
+      ],
+      "scope": {
+        "in_scope": [
+          "docsCheck.ts comments only if wrong"
+        ],
+        "out_of_scope": [
+          "backend"
+        ],
+        "preserve": [
+          "export names and values"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0",
+        "No file over 200 lines",
+        "Code path: `game/frontend/src/lib/docsCheck.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Contracts confirmed with no behaviour change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1050.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M86FZ1T2WADYB5Y51FWJNKP1",
+      "links": [
+        "parent:01M86FZ1T2WADYB5Y51FWJNKP1",
+        "trace:01M86FHM44RSRR960BASYFVDWM",
+        "artifact:.ai-dlc/units/UNIT-1050.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2WADYB5Y51FWJNKP1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1050.md",
+      "artifact_id": "UNIT-1050",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/docsCheck.ts",
+          "symbol": "STACK_TERMS",
+          "lines": "L1-L7",
+          "action": "Confirm STACK_TERMS holds TypeScript, Phaser 3.90, React, Zustand, Radix and Vitest and that the comment names Go as checked by the test regex; change nothing otherwise.",
+          "expected": "Array equals the six terms."
+        },
+        {
+          "file": "game/frontend/src/lib/docsCheck.ts",
+          "symbol": "STALE_TEXT",
+          "lines": "L36-L45",
+          "action": "Confirm STALE_TEXT lists 'hello Worldseed', 'Traceability index' and the 'Executable / server / CLI `main` | UNKNOWN' string and staleTextHits uses includes.",
+          "expected": "staleTextHits returns [] for a clean doc."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T2M894E26ZDMQ35GMT",
+      "kind": "unit",
+      "title": "Act: Confirm the contextModulePaths contract for the module table",
+      "body": "Read game/frontend/src/lib/contextDoc.ts and confirm it extracts game/ and backend/ paths from table rows with trailing slash kept, as the module table of the rewritten context.md requires.\n\n## Acceptance criteria\n- contextModulePaths returns game/src/, game/frontend/src/, game/docs/GDD.md, backend/ from the required rows\n- contextModulePaths returns paths in first-seen order and only from table lines starting with '|'\n\n\n## Scope\n- In scope: contextDoc.ts comment only if wrong\n- Out of scope: backend\n- Preserve: function signature and regex\n\n\n## Technical constraints\n- No file over 200 lines\n- Code path: `game/frontend/src/lib/contextDoc.ts`\n\n\n## Definition of done\n- Contract confirmed with no behaviour change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "contextModulePaths documents the four required module rows",
+      "description": "Read game/frontend/src/lib/contextDoc.ts and confirm it extracts game/ and backend/ paths from table rows with trailing slash kept, as the module table of the rewritten context.md requires.",
+      "acceptance_criteria": [
+        "contextModulePaths returns game/src/, game/frontend/src/, game/docs/GDD.md, backend/ from the required rows",
+        "contextModulePaths returns paths in first-seen order and only from table lines starting with '|'"
+      ],
+      "scope": {
+        "in_scope": [
+          "contextDoc.ts comment only if wrong"
+        ],
+        "out_of_scope": [
+          "backend"
+        ],
+        "preserve": [
+          "function signature and regex"
+        ]
+      },
+      "technical_constraints": [
+        "No file over 200 lines",
+        "Code path: `game/frontend/src/lib/contextDoc.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Contract confirmed with no behaviour change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1051.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M86FZ1T2J02XJ9637QZGQZHC",
+      "links": [
+        "parent:01M86FZ1T2J02XJ9637QZGQZHC",
+        "trace:01M86FHM44VN2P16N4GXFKK3QV",
+        "artifact:.ai-dlc/units/UNIT-1051.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2J02XJ9637QZGQZHC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1051.md",
+      "artifact_id": "UNIT-1051",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/contextDoc.ts",
+          "symbol": "contextModulePaths",
+          "lines": "L1-L21",
+          "action": "Confirm the regex /`((?:game|backend)\\/[^`\\s]*)`/g runs only on lines starting with '|' and the doc comment lists the four required rows; change nothing otherwise.",
+          "expected": "Four required paths are returned in first-seen order."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T233P9K8CVYWPCBMF2",
+      "kind": "unit",
+      "title": "Act: Confirm size and import scan helpers back the 200-line and boundary rules",
+      "body": "Read game/frontend/src/lib/sourceSize.ts and importBoundary.ts; confirm countLines, overLimit and frontendImports are exported. No file is over 200 lines today so no split is needed.\n\n## Acceptance criteria\n- countLines, overLimit and frontendImports are exported from their modules\n- overLimit returns only paths above max and frontendImports returns [] for text with no frontend import\n\n\n## Scope\n- In scope: confirm exports\n- Out of scope: splitting files\n- Preserve: export signatures\n\n\n## Technical constraints\n- game/src never imports from game/frontend\n- No file over 200 lines\n- Code path: `game/frontend/src/lib/sourceSize.ts`\n- Code path: `game/frontend/src/lib/importBoundary.ts`\n\n\n## Definition of done\n- Exports confirmed with no change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "sourceSize and importBoundary helpers are exported for the scans",
+      "description": "Read game/frontend/src/lib/sourceSize.ts and importBoundary.ts; confirm countLines, overLimit and frontendImports are exported. No file is over 200 lines today so no split is needed.",
+      "acceptance_criteria": [
+        "countLines, overLimit and frontendImports are exported from their modules",
+        "overLimit returns only paths above max and frontendImports returns [] for text with no frontend import"
+      ],
+      "scope": {
+        "in_scope": [
+          "confirm exports"
+        ],
+        "out_of_scope": [
+          "splitting files"
+        ],
+        "preserve": [
+          "export signatures"
+        ]
+      },
+      "technical_constraints": [
+        "game/src never imports from game/frontend",
+        "No file over 200 lines",
+        "Code path: `game/frontend/src/lib/sourceSize.ts`",
+        "Code path: `game/frontend/src/lib/importBoundary.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exports confirmed with no change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1052.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86FZ1T2RWHKJRGHCEVZ68S8",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86FZ1T2RWHKJRGHCEVZ68S8",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-1052.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2RWHKJRGHCEVZ68S8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1052.md",
+      "artifact_id": "UNIT-1052",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/sourceSize.ts",
+          "symbol": "overLimit",
+          "lines": "L1-L2",
+          "action": "Confirm countLines and overLimit(f, max) are exported and overLimit returns paths whose lines exceed max.",
+          "expected": "overLimit returns only paths above max."
+        },
+        {
+          "file": "game/frontend/src/lib/importBoundary.ts",
+          "symbol": "frontendImports",
+          "lines": "L4-L10",
+          "action": "Confirm frontendImports(t) is exported and returns import specifiers that point at game/frontend.",
+          "expected": "Returns [] for text with no frontend import."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T2V6AGM7KA59G62GRJ",
+      "kind": "unit",
+      "title": "Verify: context.md stack terms and stale text unit tests",
+      "body": "Run game/frontend/tests/contextStack.test.ts against the rewritten root context.md and docsCheck.test.ts for the helpers.\n\n## Acceptance criteria\n- All four contextStack tests pass\n- docsCheck helper tests pass\n\n\n## Scope\n- In scope: contextStack.test.ts\n- In scope: docsCheck.test.ts\n- Out of scope: backend\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only, filesystem read of context.md only\n- No test deleted or skipped\n\n\n## Definition of done\n- Both files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "contextStack tests prove stack terms, Go, no stale text, no UNKNOWN",
+      "description": "Run game/frontend/tests/contextStack.test.ts against the rewritten root context.md and docsCheck.test.ts for the helpers.",
+      "acceptance_criteria": [
+        "All four contextStack tests pass",
+        "docsCheck helper tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "contextStack.test.ts",
+          "docsCheck.test.ts"
+        ],
+        "out_of_scope": [
+          "backend"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, filesystem read of context.md only",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1053.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M86FZ1T2JJ6M37SMGE2Z6PSQ",
+      "links": [
+        "parent:01M86FZ1T2JJ6M37SMGE2Z6PSQ",
+        "trace:01M86EP5NY2RC94BK1S2BNKF19",
+        "artifact:.ai-dlc/units/UNIT-1053.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2JJ6M37SMGE2Z6PSQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1053.md",
+      "artifact_id": "UNIT-1053",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contextStack.test.ts",
+          "symbol": "context.md stack and stale text",
+          "lines": "L1-L25",
+          "action": "Run the existing four tests: missingTerms(text, STACK_TERMS) equals [], /\\bGo\\b/ matches, staleTextHits(text) equals [], no /UNKNOWN/.",
+          "command": "cd game/frontend && npx vitest run tests/contextStack.test.ts",
+          "expected": "4 tests pass."
+        },
+        {
+          "file": "game/frontend/tests/docsCheck.test.ts",
+          "symbol": "docsCheck helpers",
+          "lines": "L1-L35",
+          "action": "Run the helper tests: missingTerms, staleTextHits and indexedPaths with inline strings.",
+          "command": "cd game/frontend && npx vitest run tests/docsCheck.test.ts",
+          "expected": "All tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T24YACHYC3TV03AH7N",
+      "kind": "unit",
+      "title": "Verify: context.md module paths unit tests",
+      "body": "Run game/frontend/tests/contextDoc.test.ts against the rewritten root context.md.\n\n## Acceptance criteria\n- Module table has the four required paths, all existing\n- No README-only text\n\n\n## Scope\n- In scope: contextDoc.test.ts\n- Out of scope: backend\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only, filesystem read only\n- No test deleted or skipped\n\n\n## Definition of done\n- File passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "contextDoc tests prove the module table lists existing real paths",
+      "description": "Run game/frontend/tests/contextDoc.test.ts against the rewritten root context.md.",
+      "acceptance_criteria": [
+        "Module table has the four required paths, all existing",
+        "No README-only text"
+      ],
+      "scope": {
+        "in_scope": [
+          "contextDoc.test.ts"
+        ],
+        "out_of_scope": [
+          "backend"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, filesystem read only",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "File passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1054.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M86FZ1T2M894E26ZDMQ35GMT",
+      "links": [
+        "parent:01M86FZ1T2M894E26ZDMQ35GMT",
+        "trace:01M86EP5NYV9J9P0EP64K7T0P4",
+        "artifact:.ai-dlc/units/UNIT-1054.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2M894E26ZDMQ35GMT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1054.md",
+      "artifact_id": "UNIT-1054",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contextDoc.test.ts",
+          "symbol": "context.md",
+          "lines": "L1-L45",
+          "action": "Run the four tests: extraction from inline markdown, root context.md stack and existing paths, four required paths, and stale-text and arrayContaining of game/src/, game/frontend/src/, game/docs/GDD.md, backend/.",
+          "command": "cd game/frontend && npx vitest run tests/contextDoc.test.ts",
+          "expected": "4 tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T2GJCWZ5FSZKE0HKET",
+      "kind": "unit",
+      "title": "Verify: GDD index paths and size/import scan unit tests",
+      "body": "Run the existing unit tests proving GDD paths exist, no file exceeds 200 lines and game/src has no frontend import.\n\n## Acceptance criteria\n- gddIndex test passes\n- sourceSize test shows no file over 200 lines\n- importBoundary test shows no import from game/frontend in game/src\n\n\n## Scope\n- In scope: three existing test files\n- Out of scope: splitting files\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only, filesystem scan only\n- No test deleted or skipped\n\n\n## Definition of done\n- All three files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "gddIndex, sourceSize and importBoundary tests pass",
+      "description": "Run the existing unit tests proving GDD paths exist, no file exceeds 200 lines and game/src has no frontend import.",
+      "acceptance_criteria": [
+        "gddIndex test passes",
+        "sourceSize test shows no file over 200 lines",
+        "importBoundary test shows no import from game/frontend in game/src"
+      ],
+      "scope": {
+        "in_scope": [
+          "three existing test files"
+        ],
+        "out_of_scope": [
+          "splitting files"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, filesystem scan only",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1055.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86FZ1T233P9K8CVYWPCBMF2",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86FZ1T233P9K8CVYWPCBMF2",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-1055.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T233P9K8CVYWPCBMF2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1055.md",
+      "artifact_id": "UNIT-1055",
+      "steps": [
+        {
+          "file": "game/frontend/tests/gddIndex.test.ts",
+          "symbol": "gddIndex",
+          "lines": "L1-L30",
+          "action": "Run the test asserting every path in game/docs/GDD.md exists.",
+          "command": "cd game/frontend && npx vitest run tests/gddIndex.test.ts",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/tests/sourceSize.test.ts",
+          "symbol": "sourceSize",
+          "lines": "L1-L30",
+          "action": "Run the scan asserting overLimit over game/src and game/frontend/src with max 200 returns [].",
+          "command": "cd game && npx vitest run tests/sourceSize.test.ts",
+          "expected": "Tests pass."
+        },
+        {
+          "file": "game/tests/importBoundary.test.ts",
+          "symbol": "importBoundary",
+          "lines": "L1-L30",
+          "action": "Run the scan asserting frontendImports of every game/src file is [].",
+          "command": "cd game && npx vitest run tests/importBoundary.test.ts",
+          "expected": "Tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86FZ1T2VKQCR7XDQYD8DXQW",
+      "kind": "evidence",
+      "title": "Evidence: context.md, GDD and size/import scan unit tests pass",
+      "body": "Collect passing output of contextStack, contextDoc, docsCheck, gddIndex, sourceSize and importBoundary unit tests.\n\n## Acceptance criteria\n- All listed unit test files pass\n- No test deleted or skipped\n\n\n## Scope\n- In scope: test output\n- Out of scope: backend\n- Preserve: phaser-pin guard\n\n\n## Technical constraints\n- Phaser pinned at ~3.90.0\n\n\n## Definition of done\n- Evidence shows all green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that documentation and repo guards pass",
+      "description": "Collect passing output of contextStack, contextDoc, docsCheck, gddIndex, sourceSize and importBoundary unit tests.",
+      "acceptance_criteria": [
+        "All listed unit test files pass",
+        "No test deleted or skipped"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [
+          "backend"
+        ],
+        "preserve": [
+          "phaser-pin guard"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser pinned at ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Evidence shows all green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-210.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86FZ1T2V6AGM7KA59G62GRJ",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M86FZ1T2V6AGM7KA59G62GRJ",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-210.md"
+      ],
+      "depends_on": [
+        "01M86FZ1T2V6AGM7KA59G62GRJ",
+        "01M86FZ1T24YACHYC3TV03AH7N",
+        "01M86FZ1T2GJCWZ5FSZKE0HKET"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-210.md",
+      "artifact_id": "EVD-210"
+    }
+  ],
+  "created_at": "2026-11-24T10:00:02.795122+00:00",
+  "summary": "AI · 5 NEW · 6 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
