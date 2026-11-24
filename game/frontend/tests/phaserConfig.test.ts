@@ -15,7 +15,7 @@ vi.mock('phaser', () => ({
   },
 }));
 
-import { buildGameConfig, computeZoom } from '../src/phaser/config';
+import { GAME_HEIGHT, GAME_WIDTH, buildGameConfig, computeZoom } from '../src/phaser/config';
 import { createGame } from '../src/phaser/createGame';
 
 describe('Phaser game config', () => {
@@ -24,6 +24,14 @@ describe('Phaser game config', () => {
 
     expect(config.render).toMatchObject({ pixelArt: true, roundPixels: true });
     expect(config.scale).toMatchObject({ mode: 3 });
+  });
+
+  it('uses the 480x270 native resolution', () => {
+    expect(GAME_WIDTH).toBe(480);
+    expect(GAME_HEIGHT).toBe(270);
+
+    const config = buildGameConfig(document.createElement('div'), []);
+    expect(config).toMatchObject({ width: 480, height: 270 });
   });
 
   it('computes an integer zoom of at least 1 for a large viewport', () => {
