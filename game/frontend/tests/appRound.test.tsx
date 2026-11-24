@@ -95,7 +95,9 @@ describe('App round states', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
 
-    expect(await screen.findByText('Round service returned an unexpected response (not JSON)')).toBeInTheDocument();
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Round service returned an unexpected response (not JSON)',
+    );
     expect(screen.queryByText(/Unexpected token/)).toBeNull();
   });
 
