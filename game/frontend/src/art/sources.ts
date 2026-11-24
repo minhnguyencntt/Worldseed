@@ -6,6 +6,7 @@ import { BOY_SOURCES } from './boy';
 import { ROOM_SOURCES } from './roomSources';
 import { SCENE_EXTRA_SOURCES } from './sceneExtras';
 import { ITEM_SOURCES } from './itemIcons';
+import { UI_FRAME_SOURCES } from './uiFrames';
 
 export interface ArtSource {
   id: string;
@@ -58,6 +59,7 @@ export const ART_SOURCES: ArtSource[] = [
     path: 'ui/cursors/hand.png',
     frames: [rowsToGrid(HAND_CURSOR_ROWS)],
   },
+  ...UI_FRAME_SOURCES,
   ...BOY_SOURCES,
   ...ROOM_SOURCES,
   ...SCENE_EXTRA_SOURCES,
