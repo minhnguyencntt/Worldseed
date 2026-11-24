@@ -43,6 +43,9 @@ const layout: OverlayLayout = { left: 0, top: 0, zoom: 1, dpr: 1 };
 const ACTION_LABELS = ['Inspect', 'Push', 'Search', 'Leave'];
 
 describe('ObjectOverlay a11y', () => {
+  // Unmount between tests so each query sees only the overlay rendered by that test.
+  afterEach(() => cleanup());
+
   it('renders a polite live region whose text contains the object name and action labels', () => {
     render(
       <ObjectOverlay
