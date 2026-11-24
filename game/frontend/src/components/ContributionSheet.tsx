@@ -70,6 +70,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (remaining <= 0) return;
     const prompt = text.trim();
     if (prompt === '') {
       setValidation(BLANK_MESSAGE);
@@ -125,10 +126,11 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             }
           />
           <p id="contribution-idea-count">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>
-          <button type="submit">Send</button>
+          <button type="submit" disabled={remaining <= 0}>Send</button>
         </form>
         {validation && <p id="contribution-idea-error" role="alert">{validation}</p>}
         {overLimit && <p id="contribution-idea-limit" role="alert">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}
+        {remaining <= 0 && <p id="contribution-idea-quota" role="alert">You have used all your suggestions this round</p>}
 
         {error && <p role="alert">{error}</p>}
 
