@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { indexedPaths, missingPaths, missingTerms, STACK_TERMS } from '../src/lib/docsCheck';
+import { indexedPaths, missingPaths, missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
 
 describe('docsCheck', () => {
   it('returns each backticked path from a table row once, and ignores paths outside table rows', () => {
@@ -13,7 +13,7 @@ describe('docsCheck', () => {
   });
 
   it('reports only the stack terms that the text does not mention, ignoring case', () => {
-    expect(missingTerms('phaser 3.90 react zustand radix', STACK_TERMS)).toEqual(['Vitest']);
+    expect(missingTerms('typescript phaser 3.90 react zustand radix', STACK_TERMS)).toEqual(['Vitest']);
   });
 
   describe('missingTerms', () => {
@@ -24,5 +24,10 @@ describe('docsCheck', () => {
     it('accepts every stack term in any case', () => {
       expect(missingTerms('typescript PHASER 3.90 react zustand radix vitest', STACK_TERMS)).toEqual([]);
     });
+  });
+
+  it('staleTextHits finds README-only phrases', () => {
+    expect(staleTextHits('hello Worldseed')).toEqual(['hello Worldseed']);
+    expect(staleTextHits('## Stack\nTypeScript')).toEqual([]);
   });
 });

@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { contextModulePaths } from '../src/lib/contextDoc';
-import { missingPaths, missingTerms, STACK_TERMS } from '../src/lib/docsCheck';
+import { missingPaths, missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
 
 describe('context.md', () => {
   it('extracts only game/ and backend/ paths from table rows, in first-seen order', () => {
@@ -20,11 +20,16 @@ describe('context.md', () => {
     expect(text).not.toMatch(/Frameworks: UNKNOWN/);
   });
 
+  it('lists the four required module paths that exist', () => {
+    const md = '| Modules | `game/src/`, `game/frontend/src/`, `game/docs/GDD.md`, `backend/` |';
+    expect(missingPaths(contextModulePaths(md), () => true)).toEqual([]);
+    expect(contextModulePaths(md)).toHaveLength(4);
+  });
+
   it('drops the stale README-only text and lists the real game and backend module paths', () => {
     const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
     const text = readFileSync(join(root, 'context.md'), 'utf8');
-    expect(text).not.toMatch(/hello Worldseed|Traceability index/);
-    expect(text).not.toMatch(/Executable \/ server \/ CLI `main` \| UNKNOWN/);
+    expect(staleTextHits(text)).toEqual([]);
     expect(contextModulePaths(text)).toEqual(
       expect.arrayContaining(['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/']),
     );
