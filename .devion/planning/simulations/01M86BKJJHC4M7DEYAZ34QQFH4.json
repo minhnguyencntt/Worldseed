@@ -1,0 +1,498 @@
+{
+  "intent_id": "01M86BKJJHC4M7DEYAZ34QQFH4",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M86BPC81TG03HHWGKCRE9GB1",
+      "kind": "intent",
+      "title": "SG-6.3.1 · Fix App tests for canvas layout and real button names",
+      "body": "Context: in game/frontend/tests/app.test.tsx the cases 'Bookshelf menu buttons', 'Search shows hidden door history' and 'remount restores history and Inventory' fail. ObjectOverlay (src/components/ObjectOverlay.tsx L25) returns null when uiStore.canvasLayout is undefined, and the test never sets it. The tests also query buttons named exactly 'Inspect', 'Push', 'Search', 'Leave', while ObjectOverlay labels them '<Action> <Object>' (L63). Desired: tests set a canvas layout and query real accessible names. Why: green App suite, needed for SG-6.3.\n\n## Acceptance criteria\n- Given the App in the playing view with a canvas layout in uiStore, when objectClick bookshelf is emitted, then buttons 'Inspect Bookshelf', 'Push Bookshelf', 'Search Bookshelf' and 'Leave Bookshelf' are present.\n- Given the Bookshelf menu is open, when 'Search Bookshelf' is clicked, then the hidden door text appears in the story history.\n- Given a played game is unmounted and App remounts, then history and the Inventory region are restored.\n- ObjectOverlay and GameScreen output is unchanged, no test is deleted or skipped, and all tests in tests/app.test.tsx pass.\n\n\n## Scope\n- In scope: game/frontend/tests/app.test.tsx setup and queries\n- Out of scope: ObjectOverlay, GameScreen, PhaserHost changes\n- Out of scope: other test files\n- Out of scope: backend\n- Preserve: ObjectOverlay and GameScreen rendered output\n- Preserve: all existing tests\n\n\n## Technical constraints\n- No test deleted or skipped\n- Tests mock only what is external\n- npm test and npm run typecheck pass in game/frontend\n- No source file over 200 lines\n- Phaser stays pinned at ~3.90.0\n\n\n## Definition of done\n- tests/app.test.tsx passes in full\n- typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Make the App tests for Bookshelf menu buttons, Search hidden door history and remount restore pass against the unchanged ObjectOverlay.",
+      "description": "Context: in game/frontend/tests/app.test.tsx the cases 'Bookshelf menu buttons', 'Search shows hidden door history' and 'remount restores history and Inventory' fail. ObjectOverlay (src/components/ObjectOverlay.tsx L25) returns null when uiStore.canvasLayout is undefined, and the test never sets it. The tests also query buttons named exactly 'Inspect', 'Push', 'Search', 'Leave', while ObjectOverlay labels them '<Action> <Object>' (L63). Desired: tests set a canvas layout and query real accessible names. Why: green App suite, needed for SG-6.3.",
+      "acceptance_criteria": [
+        "Given the App in the playing view with a canvas layout in uiStore, when objectClick bookshelf is emitted, then buttons 'Inspect Bookshelf', 'Push Bookshelf', 'Search Bookshelf' and 'Leave Bookshelf' are present.",
+        "Given the Bookshelf menu is open, when 'Search Bookshelf' is clicked, then the hidden door text appears in the story history.",
+        "Given a played game is unmounted and App remounts, then history and the Inventory region are restored.",
+        "ObjectOverlay and GameScreen output is unchanged, no test is deleted or skipped, and all tests in tests/app.test.tsx pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/app.test.tsx setup and queries"
+        ],
+        "out_of_scope": [
+          "ObjectOverlay, GameScreen, PhaserHost changes",
+          "other test files",
+          "backend"
+        ],
+        "preserve": [
+          "ObjectOverlay and GameScreen rendered output",
+          "all existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Tests mock only what is external",
+        "npm test and npm run typecheck pass in game/frontend",
+        "No source file over 200 lines",
+        "Phaser stays pinned at ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tests/app.test.tsx passes in full",
+        "typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-191.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-191.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-191.md",
+      "artifact_id": "INT-191"
+    },
+    {
+      "id": "01M86BPC81H0ZBRM2K2GQQTXR4",
+      "kind": "requirement",
+      "title": "REQ · Bookshelf menu and Search tests use a canvas layout and real button names",
+      "body": "The App tests must publish a canvas layout to uiStore before objectClick and use the real accessible names so ObjectOverlay renders and its buttons are found.\n\n## Acceptance criteria\n- Given a canvas layout is set, when bookshelf objectClick is emitted, then the four buttons named '<Action> Bookshelf' exist.\n- Given the menu is open, when 'Search Bookshelf' is clicked, then 'A hidden door swings open behind the books.' shows in the history.\n\n\n## Scope\n- In scope: App playing view tests in app.test.tsx\n- Out of scope: ObjectOverlay source\n- Preserve: ObjectOverlay output\n\n\n## Technical constraints\n- No test deleted or skipped\n- Tests mock only what is external\n\n\n## Definition of done\n- Both cases pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Menu-button and Search tests render ObjectOverlay and query 'Inspect Bookshelf' style names.",
+      "description": "The App tests must publish a canvas layout to uiStore before objectClick and use the real accessible names so ObjectOverlay renders and its buttons are found.",
+      "acceptance_criteria": [
+        "Given a canvas layout is set, when bookshelf objectClick is emitted, then the four buttons named '<Action> Bookshelf' exist.",
+        "Given the menu is open, when 'Search Bookshelf' is clicked, then 'A hidden door swings open behind the books.' shows in the history."
+      ],
+      "scope": {
+        "in_scope": [
+          "App playing view tests in app.test.tsx"
+        ],
+        "out_of_scope": [
+          "ObjectOverlay source"
+        ],
+        "preserve": [
+          "ObjectOverlay output"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both cases pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-484.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86BPC81TG03HHWGKCRE9GB1",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M86BPC81TG03HHWGKCRE9GB1",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-484.md"
+      ],
+      "depends_on": [
+        "01M86BPC81TG03HHWGKCRE9GB1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-484.md",
+      "artifact_id": "REQ-484"
+    },
+    {
+      "id": "01M86BPC81172B3B956NNEQ074",
+      "kind": "requirement",
+      "title": "REQ · Remount test restores history and Inventory with a canvas layout",
+      "body": "The remount case clicks 'Search Bookshelf' on the first mount; with no canvasLayout the overlay is null. Set the layout and reset the store between tests.\n\n## Acceptance criteria\n- Given a played game is unmounted and App remounts, then the history shows the hidden door text and the Inventory region exists.\n- The store is reset between tests so layout state does not leak.\n\n\n## Scope\n- In scope: App remount describe in app.test.tsx\n- Out of scope: runtime storage source\n- Preserve: persistence behaviour\n\n\n## Technical constraints\n- No test deleted or skipped\n- Tests mock only what is external\n\n\n## Definition of done\n- Remount case passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The remount test sets the canvas layout so Search Bookshelf is reachable on both mounts.",
+      "description": "The remount case clicks 'Search Bookshelf' on the first mount; with no canvasLayout the overlay is null. Set the layout and reset the store between tests.",
+      "acceptance_criteria": [
+        "Given a played game is unmounted and App remounts, then the history shows the hidden door text and the Inventory region exists.",
+        "The store is reset between tests so layout state does not leak."
+      ],
+      "scope": {
+        "in_scope": [
+          "App remount describe in app.test.tsx"
+        ],
+        "out_of_scope": [
+          "runtime storage source"
+        ],
+        "preserve": [
+          "persistence behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Remount case passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-485.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86BPC81TG03HHWGKCRE9GB1",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M86BPC81TG03HHWGKCRE9GB1",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-485.md"
+      ],
+      "depends_on": [
+        "01M86BPC81TG03HHWGKCRE9GB1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-485.md",
+      "artifact_id": "REQ-485"
+    },
+    {
+      "id": "01M86BPC81NMX16RDKWNTQ5DDC",
+      "kind": "unit",
+      "title": "Act: Confirm ObjectOverlay gating on canvasLayout and button names",
+      "body": "ObjectOverlay returns null without canvasLayout and labels buttons via aria-label. Confirm so the tests can target it; output must stay unchanged.\n\n## Acceptance criteria\n- ObjectOverlay.tsx is unchanged.\n- aria-label equals `${action.label} ${object.name}`.\n\n\n## Scope\n- In scope: read ObjectOverlay.tsx\n- Out of scope: any edit\n- Preserve: ObjectOverlay output\n\n\n## Technical constraints\n- Keep ObjectOverlay and GameScreen output unchanged\n- Code path: `game/frontend/src/components/ObjectOverlay.tsx`\n\n\n## Definition of done\n- No diff in ObjectOverlay.tsx\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Confirm ObjectOverlay needs canvasLayout and names buttons '<Action> <Object>'; no source change.",
+      "description": "ObjectOverlay returns null without canvasLayout and labels buttons via aria-label. Confirm so the tests can target it; output must stay unchanged.",
+      "acceptance_criteria": [
+        "ObjectOverlay.tsx is unchanged.",
+        "aria-label equals `${action.label} ${object.name}`."
+      ],
+      "scope": {
+        "in_scope": [
+          "read ObjectOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "any edit"
+        ],
+        "preserve": [
+          "ObjectOverlay output"
+        ]
+      },
+      "technical_constraints": [
+        "Keep ObjectOverlay and GameScreen output unchanged",
+        "Code path: `game/frontend/src/components/ObjectOverlay.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "No diff in ObjectOverlay.tsx",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-968.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86BPC81H0ZBRM2K2GQQTXR4",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86BPC81H0ZBRM2K2GQQTXR4",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-968.md"
+      ],
+      "depends_on": [
+        "01M86BPC81H0ZBRM2K2GQQTXR4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-968.md",
+      "artifact_id": "UNIT-968",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ObjectOverlay.tsx",
+          "symbol": "ObjectOverlay",
+          "lines": "L25-L63",
+          "action": "Read the guard `if (state === null || !activeId || !layout) return null` and the Button aria-label `${action.label} ${object.name}`; make no edit.",
+          "expected": "Confirmed: overlay needs canvasLayout; names are '<Action> Bookshelf'."
+        }
+      ]
+    },
+    {
+      "id": "01M86BPC817DFHAY33D9STZNVP",
+      "kind": "unit",
+      "title": "Act: Confirm uiStore.setCanvasLayout feeds the overlay on remount",
+      "body": "The remount test relies on useUiStore.getState().setCanvasLayout and zustand getInitialState to reset. Confirm both exist unchanged.\n\n## Acceptance criteria\n- uiStore.ts is unchanged.\n- setCanvasLayout(l) sets canvasLayout.\n\n\n## Scope\n- In scope: read uiStore.ts\n- Out of scope: any edit\n- Preserve: uiStore API\n\n\n## Technical constraints\n- Zustand store stays the only owner of state\n- Code path: `game/frontend/src/store/uiStore.ts`\n\n\n## Definition of done\n- No diff in uiStore.ts\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Confirm uiStore exposes setCanvasLayout and getInitialState reset; no source change.",
+      "description": "The remount test relies on useUiStore.getState().setCanvasLayout and zustand getInitialState to reset. Confirm both exist unchanged.",
+      "acceptance_criteria": [
+        "uiStore.ts is unchanged.",
+        "setCanvasLayout(l) sets canvasLayout."
+      ],
+      "scope": {
+        "in_scope": [
+          "read uiStore.ts"
+        ],
+        "out_of_scope": [
+          "any edit"
+        ],
+        "preserve": [
+          "uiStore API"
+        ]
+      },
+      "technical_constraints": [
+        "Zustand store stays the only owner of state",
+        "Code path: `game/frontend/src/store/uiStore.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "No diff in uiStore.ts",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-969.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86BPC81172B3B956NNEQ074",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86BPC81172B3B956NNEQ074",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-969.md"
+      ],
+      "depends_on": [
+        "01M86BPC81172B3B956NNEQ074"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-969.md",
+      "artifact_id": "UNIT-969",
+      "steps": [
+        {
+          "file": "game/frontend/src/store/uiStore.ts",
+          "symbol": "useUiStore.setCanvasLayout",
+          "lines": "L34-L35",
+          "action": "Read setCanvasLayout: (l) => set({ canvasLayout: l }); make no edit.",
+          "expected": "Confirmed setter exists."
+        }
+      ]
+    },
+    {
+      "id": "01M86BPC81TV9GXYTJ7CXJTHZX",
+      "kind": "unit",
+      "title": "Verify: Bookshelf menu buttons and Search history App tests",
+      "body": "Rewrite the two cases in tests/app.test.tsx against real behaviour.\n\n## Acceptance criteria\n- Menu case asserts four '<Action> Bookshelf' buttons.\n- Search case asserts hidden door text.\n\n\n## Scope\n- In scope: game/frontend/tests/app.test.tsx\n- Out of scope: src changes\n- Preserve: other tests\n\n\n## Technical constraints\n- No test deleted or skipped\n- Mock only external things\n\n\n## Definition of done\n- Cases pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Fix app.test.tsx menu and Search cases with a canvas layout and real names.",
+      "description": "Rewrite the two cases in tests/app.test.tsx against real behaviour.",
+      "acceptance_criteria": [
+        "Menu case asserts four '<Action> Bookshelf' buttons.",
+        "Search case asserts hidden door text."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/app.test.tsx"
+        ],
+        "out_of_scope": [
+          "src changes"
+        ],
+        "preserve": [
+          "other tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Mock only external things"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Cases pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-970.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86BPC81NMX16RDKWNTQ5DDC",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86BPC81NMX16RDKWNTQ5DDC",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-970.md"
+      ],
+      "depends_on": [
+        "01M86BPC81NMX16RDKWNTQ5DDC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-970.md",
+      "artifact_id": "UNIT-970",
+      "steps": [
+        {
+          "file": "game/frontend/tests/app.test.tsx",
+          "symbol": "imports and describe 'App playing view'",
+          "lines": "L2-L5, L49-L50",
+          "action": "Import useUiStore from '../src/store/uiStore' and beforeEach from vitest; inside describe 'App playing view' add a beforeEach that calls useUiStore.setState(useUiStore.getInitialState(), true) then useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 }).",
+          "code": "beforeEach(() => { useUiStore.setState(useUiStore.getInitialState(), true); useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 }); });",
+          "command": "cd game/frontend && npx vitest run tests/app.test.tsx -t 'App playing view'",
+          "expected": "canvasLayout is set before each case."
+        },
+        {
+          "file": "game/frontend/tests/app.test.tsx",
+          "symbol": "it 'Bookshelf ... Inspect, Push, Search and Leave buttons appear'",
+          "lines": "L66-L75",
+          "action": "Replace names 'Inspect','Push','Search','Leave' with 'Inspect Bookshelf','Push Bookshelf','Search Bookshelf','Leave Bookshelf'.",
+          "command": "cd game/frontend && npx vitest run tests/app.test.tsx -t 'Inspect, Push'",
+          "expected": "All four buttons found."
+        },
+        {
+          "file": "game/frontend/tests/app.test.tsx",
+          "symbol": "it 'Bookshelf menu, when Search is clicked'",
+          "lines": "L77-L84",
+          "action": "Change the click query name from 'Search' to 'Search Bookshelf'.",
+          "command": "cd game/frontend && npx vitest run tests/app.test.tsx -t 'Search is clicked'",
+          "expected": "Hidden door text is in the document."
+        }
+      ]
+    },
+    {
+      "id": "01M86BPC81RBGX86TTBV30H6C8",
+      "kind": "unit",
+      "title": "Verify: App remount restores history and Inventory test",
+      "body": "Add layout setup to the remount describe in tests/app.test.tsx.\n\n## Acceptance criteria\n- Remount case passes with history and Inventory restored.\n- Whole app.test.tsx file passes with no test deleted or skipped.\n\n\n## Scope\n- In scope: game/frontend/tests/app.test.tsx\n- Out of scope: src changes\n- Preserve: other tests\n\n\n## Technical constraints\n- No test deleted or skipped\n- Mock only external things\n\n\n## Definition of done\n- Case passes and whole file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Make the remount case set canvas layout so Search Bookshelf is found.",
+      "description": "Add layout setup to the remount describe in tests/app.test.tsx.",
+      "acceptance_criteria": [
+        "Remount case passes with history and Inventory restored.",
+        "Whole app.test.tsx file passes with no test deleted or skipped."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/app.test.tsx"
+        ],
+        "out_of_scope": [
+          "src changes"
+        ],
+        "preserve": [
+          "other tests"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped",
+        "Mock only external things"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Case passes and whole file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-971.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86BPC817DFHAY33D9STZNVP",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86BPC817DFHAY33D9STZNVP",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-971.md"
+      ],
+      "depends_on": [
+        "01M86BPC817DFHAY33D9STZNVP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-971.md",
+      "artifact_id": "UNIT-971",
+      "steps": [
+        {
+          "file": "game/frontend/tests/app.test.tsx",
+          "symbol": "describe 'App remount and saved state'",
+          "lines": "L98-L99",
+          "action": "Add the same beforeEach (reset store via getInitialState, then setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 })) after the opening of the describe.",
+          "code": "beforeEach(() => { useUiStore.setState(useUiStore.getInitialState(), true); useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 }); });",
+          "command": "cd game/frontend && npx vitest run tests/app.test.tsx -t 'remounts'",
+          "expected": "Layout set on first mount and on remount."
+        },
+        {
+          "file": "game/frontend/tests/app.test.tsx",
+          "symbol": "whole file",
+          "lines": "L1-L130",
+          "action": "Run the whole app.test.tsx file to confirm no case is deleted or skipped and all pass.",
+          "command": "cd game/frontend && npx vitest run tests/app.test.tsx",
+          "expected": "All tests in the file pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86BPC81T8EXYJRCBCD2KRQT",
+      "kind": "evidence",
+      "title": "Evidence: App tests pass with canvas layout and real button names",
+      "body": "Collect the passing run of tests/app.test.tsx covering menu buttons, Search history and remount restore.\n\n## Acceptance criteria\n- vitest run tests/app.test.tsx reports all tests passed.\n- ObjectOverlay.tsx and GameScreen show no diff.\n\n\n## Scope\n- In scope: test output\n- Out of scope: source changes\n- Preserve: ObjectOverlay output\n\n\n## Technical constraints\n- No test deleted or skipped\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that tests/app.test.tsx passes in full.",
+      "description": "Collect the passing run of tests/app.test.tsx covering menu buttons, Search history and remount restore.",
+      "acceptance_criteria": [
+        "vitest run tests/app.test.tsx reports all tests passed.",
+        "ObjectOverlay.tsx and GameScreen show no diff."
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [
+          "source changes"
+        ],
+        "preserve": [
+          "ObjectOverlay output"
+        ]
+      },
+      "technical_constraints": [
+        "No test deleted or skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-191.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86BPC81TV9GXYTJ7CXJTHZX",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M86BPC81TV9GXYTJ7CXJTHZX",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-191.md"
+      ],
+      "depends_on": [
+        "01M86BPC81TV9GXYTJ7CXJTHZX",
+        "01M86BPC81RBGX86TTBV30H6C8"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-191.md",
+      "artifact_id": "EVD-191"
+    }
+  ],
+  "created_at": "2026-11-24T08:45:24.238434+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 7/8 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
