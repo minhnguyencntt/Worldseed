@@ -9,13 +9,12 @@ type FakeGame = {
   scale: { refresh: ReturnType<typeof vi.fn>; setZoom: ReturnType<typeof vi.fn> };
 };
 
-const { createGameMock, performActionMock } = vi.hoisted(() => {
+const { createGameMock } = vi.hoisted(() => {
   const createGameMock = vi.fn((): FakeGame => ({
     destroy: vi.fn(),
     scale: { refresh: vi.fn(), setZoom: vi.fn() },
   }));
-  const performActionMock = vi.fn();
-  return { createGameMock, performActionMock };
+  return { createGameMock };
 });
 
 vi.mock('../src/phaser/createGame', () => ({ createGame: createGameMock }));
@@ -31,15 +30,17 @@ vi.mock('phaser', () => ({
   },
 }));
 
-// Only performAction is replaced, so the scene change is controlled by each test.
-// getSceneView stays real so the bookshelf actions still render from the real scene content.
-vi.mock('@game/engine/scene', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@game/engine/scene')>();
-  return { ...actual, performAction: performActionMock };
+// useGame.act routes actions through runStep (systems/runner), which returns the events App turns
+// into transitionTo. runStep is wrapped with the real implementation as its default, so each test
+// can override the events and the scene change stays under its control.
+vi.mock('@game/systems/runner', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@game/systems/runner')>();
+  return { ...actual, runStep: vi.fn(actual.runStep) };
 });
 
 import App from '../src/App';
 import { reactToPhaser, phaserToReact } from '../src/phaser/events';
+import * as runner from '@game/systems/runner';
 
 class FakeResizeObserver {
   observe() {}
@@ -62,7 +63,7 @@ describe('App transitionTo emission', () => {
     emitSpy.mockRestore();
     vi.unstubAllGlobals();
     createGameMock.mockClear();
-    performActionMock.mockReset();
+    vi.mocked(runner.runStep).mockReset();
     localStorage.clear();
   });
 
@@ -80,9 +81,9 @@ describe('App transitionTo emission', () => {
   }
 
   it('Given an action changes the current scene, when Inspect is clicked on the bookshelf, then transitionTo is emitted with the new scene id', () => {
-    performActionMock.mockImplementation((prev: { currentScene: string }) => ({
-      ...prev,
-      currentScene: 'hallway',
+    vi.mocked(runner.runStep).mockImplementation((_content, prev) => ({
+      state: { ...prev, currentScene: 'hallway' },
+      events: [{ type: 'goto_scene', scene: 'hallway' }],
     }));
     begin();
 
@@ -92,17 +93,17 @@ describe('App transitionTo emission', () => {
   });
 
   it('Given an action leaves the current scene unchanged, when Inspect is clicked on the bookshelf, then no transitionTo is emitted', () => {
-    performActionMock.mockImplementation((prev: unknown) => prev);
+    vi.mocked(runner.runStep).mockImplementation((_content, prev) => ({ state: prev, events: [] }));
     begin();
 
     clickInspectBookshelf();
 
-    expect(performActionMock).toHaveBeenCalled();
+    expect(runner.runStep).toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith('transitionTo', expect.anything());
   });
 
   it('Given the bookshelf Inspect action does not change the scene, when Inspect is clicked, then playAnimation interact is emitted and no transitionTo is emitted', () => {
-    performActionMock.mockImplementation((prev: unknown) => prev);
+    vi.mocked(runner.runStep).mockImplementation((_content, prev) => ({ state: prev, events: [] }));
     begin();
 
     clickInspectBookshelf();
