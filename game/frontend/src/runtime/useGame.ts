@@ -17,13 +17,10 @@ export function useGame(): UseGame {
   // Rehydrate once per mount. A plain init() would keep a stale in-memory state from an earlier
   // mount in the same page session, so a mount with no valid save would not start fresh.
   useState(() => {
-    useGameStore.setState({ state: readSaved() ?? createInitialState(world, scene) });
+    useGameStore.getState().hydrate();
   });
-  const state = useGameStore((s) => s.state) as GameState;
-
-  useEffect(() => {
-    writeSaved(state);
-  }, [state]);
+  const state = useGameStore((s) => s.state);
+  if (state === null) throw new Error('GameState not hydrated');
 
   return {
     state,
