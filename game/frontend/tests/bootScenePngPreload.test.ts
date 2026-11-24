@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type Phaser from 'phaser';
 import { BootScene, FALLBACK_KEY } from '../src/phaser/BootScene';
+import { createCharacters } from '../src/phaser/characters';
+import type { InputLayer } from '../src/phaser/input';
 import { planPreload } from '@game/engine/planPreload';
 import { manifest, scene } from '../src/runtime/content';
 
@@ -10,6 +13,7 @@ vi.mock('phaser', () => ({
       events = { once: vi.fn() };
     },
     Scenes: { Events: { SHUTDOWN: 'shutdown' } },
+    Animations: { Events: { ANIMATION_COMPLETE: 'animationcomplete' } },
   },
 }));
 
@@ -74,10 +78,28 @@ describe('BootScene PNG preload', () => {
     boot.textures = { exists: vi.fn(() => true) } as unknown as BootScene['textures'];
     boot.anims = { exists: vi.fn(() => false), create, generateFrameNumbers } as unknown as BootScene['anims'];
 
-    const ensureAnim = (boot as unknown as { ensureAnim: (asset: string, anim: string) => string | null }).ensureAnim.bind(boot);
-    expect(ensureAnim('character:boy-sheet', 'idle')).toBe('character:boy-sheet:idle');
-    expect(ensureAnim('character:boy-sheet', 'walk')).toBe('character:boy-sheet:walk');
-    expect(ensureAnim('character:boy-sheet', 'interact')).toBe('character:boy-sheet:interact');
+    // Animations are registered by the real characters module; the fake scene records what it creates and plays.
+    const sprite = { setOrigin: vi.fn(), setScale: vi.fn(), setDepth: vi.fn(), setInteractive: vi.fn(), play: vi.fn(), once: vi.fn() };
+    sprite.setOrigin.mockReturnValue(sprite);
+    sprite.setScale.mockReturnValue(sprite);
+    sprite.setDepth.mockReturnValue(sprite);
+    sprite.setInteractive.mockReturnValue(sprite);
+    const fakeScene = {
+      textures: { exists: vi.fn(() => true) },
+      anims: { exists: vi.fn(() => false), create, generateFrameNumbers },
+      add: { sprite: vi.fn(() => sprite) },
+    } as unknown as Phaser.Scene;
+    const input = { bindCharacter: vi.fn(), bindObject: vi.fn() } as unknown as InputLayer;
+    const boy = scene.characters?.find((c) => c.animations?.walk?.asset === 'character:boy-sheet');
+    expect(boy).toBeDefined();
+
+    const characters = createCharacters(fakeScene, scene.characters ?? [], manifest, (id) => id, input);
+    characters.play(boy!.id, 'walk');
+    characters.play(boy!.id, 'interact');
+
+    expect(sprite.play).toHaveBeenCalledWith('character:boy-sheet:idle');
+    expect(sprite.play).toHaveBeenCalledWith('character:boy-sheet:walk');
+    expect(sprite.play).toHaveBeenCalledWith('character:boy-sheet:interact');
 
     const configs = create.mock.calls.map((call) => call[0] as { key: string; frames: unknown[]; repeat: number });
     const byKey = Object.fromEntries(configs.map((c) => [c.key, c]));
