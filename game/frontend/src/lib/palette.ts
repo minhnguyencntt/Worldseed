@@ -12,3 +12,10 @@ export const PALETTE_RAMPS = {
 export const WARM_RAMPS = ['wood','brass','parchment','lamp'] as const;
 export const COOL_RAMPS = ['indigo','plum','moon','hoodie'] as const;
 export const PALETTE: readonly string[] = Object.values(PALETTE_RAMPS).flat();
+
+export const paletteTailwindColors: Record<string, Record<string, string>> = Object.fromEntries(
+  Object.entries(PALETTE_RAMPS).map(([name, steps]) => [
+    name,
+    Object.fromEntries(steps.map((hex, i) => [String(i + 1), hex])),
+  ]),
+);
