@@ -132,4 +132,14 @@ export class BootScene extends Phaser.Scene {
     if (!state) return;
     this.sceneObjects.forEach((o) => o.sync(state));
   }
+
+  private onKeyDown = (e: KeyboardEvent): void => {
+    const delta = e.key === 'Tab' ? (e.shiftKey ? -1 : 1) : e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+    if (delta !== 0) {
+      e.preventDefault();
+      moveFocus(this.sceneObjects, delta as 1 | -1);
+      phaserToReact.emit('focusChange', { id: this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null });
+    } else if (e.key === 'Enter' || e.key === ' ') this.sceneObjects.forEach((o) => o.handleKey(e.key));
+    else if (e.key === 'Escape') phaserToReact.emit('menuClose', {});
+  };
 }
