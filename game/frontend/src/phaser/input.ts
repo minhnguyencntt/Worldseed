@@ -32,6 +32,16 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     return id;
   };
 
+  let active = true;
+  for (const o of objects) {
+    o.onInteract((e) => {
+      if (active) phaserToReact.emit('objectClick', { id: e.objectId });
+    });
+    o.onHoverChange((e) => {
+      if (active) phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null });
+    });
+  }
+
   return {
     moveFocus(delta: 1 | -1): string | null {
       moveFocus(objects, delta);
@@ -46,7 +56,10 @@ export function createInputLayer(input: InputPlugin, objects: SceneObject[]): In
     },
     focusedId,
     destroy(): void {
-      // Stub: no listeners are registered yet.
+      if (!active) return;
+      active = false;
+      // The keydown listener is not registered yet (no onKeyDown in this file),
+      // so there is nothing to remove with input.keyboard?.off('keydown', ...).
     },
   };
 }
