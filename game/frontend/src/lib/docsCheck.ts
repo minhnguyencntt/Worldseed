@@ -1,3 +1,4 @@
+/** Terms the repo-root context.md Stack section must contain (case-insensitive substring match). */
 export const STACK_TERMS = ['Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
 const PATH_RE = /`([^`\s]+\/[^`\s]+\.[a-z]+)`/g;
@@ -17,6 +18,7 @@ export function missingPaths(paths: string[], exists: (p: string) => boolean): s
   return paths.filter((p) => !exists(p));
 }
 
+/** Returns the terms not found in text (case-insensitive). */
 export function missingTerms(text: string, terms: string[]): string[] {
   const t = text.toLowerCase();
   return terms.filter((x) => !t.includes(x.toLowerCase()));
