@@ -1,3 +1,5 @@
+export interface CanvasLayout { left: number; top: number; zoom: number; dpr: number; }
+
 export interface AnchorInput {
   position: { x: number; y: number };
   bounds?: { x: number; y: number; width: number; height: number };

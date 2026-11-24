@@ -1,16 +1,19 @@
-import type { DialogueNode } from '../../../src/state/types';
+import { getActiveNode } from '@game/systems/dialogue';
+import { useGameStore } from '../store/gameStore';
 import { buildInventorySlots } from '../lib/storyPanelData';
 import { portraitPath } from '../lib/storyPanelData';
+import { chooseOption } from '../runtime/chooseOption';
+import { scene } from '../runtime/content';
 
-export interface StoryPanelProps {
-  sceneTitle: string;
-  node: DialogueNode | undefined;
-  history: string[];
-  inventory: string[];
-  onChoose: (index: number) => void;
-}
+export function StoryPanel() {
+  const state = useGameStore((s) => s.state);
+  if (state === null) return null;
+  const node = getActiveNode(state, scene);
+  const sceneTitle = scene.title;
+  const history = state.history;
+  const inventory = state.inventory;
+  const onChoose = chooseOption;
 
-export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: StoryPanelProps) {
   return (
     <div className="story-content sf-frame-panel flex flex-col gap-sf-3">
       <h1>{sceneTitle}</h1>

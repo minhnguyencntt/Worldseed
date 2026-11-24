@@ -4,6 +4,7 @@ import { runStep } from '@game/systems/runner';
 import type { GameEvent, GameState, SceneDef } from '@game/state/types';
 import { useGameStore } from '../store/gameStore';
 import { scene } from './content';
+import { chooseOption } from './chooseOption';
 
 export type UseGame = {
   state: GameState;
@@ -26,16 +27,7 @@ export function useGame(): UseGame {
     state,
     scene,
     view: getSceneView(state, scene),
-    act: (objectId, actionId) => {
-      let events: GameEvent[] = [];
-      useGameStore.getState().setState((prev) => {
-        const r = runStep({ scene }, prev, { type: 'action', objectId, actionId });
-        events = r.events;
-        return r.state;
-      });
-      return events;
-    },
-    choose: (index) =>
-      useGameStore.getState().setState((prev) => runStep({ scene }, prev, { type: 'choose', index }).state),
+    act: (objectId, actionId) => performObjectAction(objectId, actionId),
+    choose: chooseOption,
   };
 }

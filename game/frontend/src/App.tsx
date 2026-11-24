@@ -1,66 +1,34 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getActiveNode } from '@game/systems/dialogue';
+import { useEffect, useRef, useState } from 'react';
 import { ContributionSheet } from './components/ContributionSheet';
 import { GameLayout } from './components/GameLayout';
 import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
-import { ObjectOverlay, type OverlayLayout } from './components/ObjectOverlay';
+import { ObjectOverlay } from './components/ObjectOverlay';
 import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
 import { BootScene } from './phaser/BootScene';
 import { useGameStore } from './store/gameStore';
-import { ApiError, getCurrentRound, type Round } from './api/client';
-import { sceneSpec, world } from './runtime/content';
+import { useUiStore } from './store/uiStore';
+import { sceneSpec } from './runtime/content';
 import { useGame } from './runtime/useGame';
 import { phaserToReact, reactToPhaser } from './phaser/events';
 
-export function describeRoundError(e: unknown): string {
-  if (e instanceof ApiError) {
-    return `Round service returned ${e.status}${e.detail ? `: ${e.detail}` : ''}`;
-  }
-  if (e instanceof TypeError) {
-    return 'Could not reach the server';
-  }
-  if (e instanceof SyntaxError) {
-    return 'Round service returned an unexpected response (not JSON)';
-  }
-  if (e instanceof Error && e.message) {
-    return e.message;
-  }
-  return 'Round request failed';
-}
+export { describeRoundError } from './lib/roundError';
 
 export default function App() {
   const game = useGame();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [hoverId, setHoverId] = useState<string | null>(null);
-  const [layout, setLayout] = useState<OverlayLayout | undefined>(undefined);
+  const layout = useUiStore((s) => s.canvasLayout);
   const focusedObjectId = useGameStore((s) => s.focusedObjectId);
+  const roundId = useUiStore((s) => s.round?.id ?? '');
   const [begun, setBegun] = useState(false);
-  const [round, setRound] = useState<Round | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
-  const [roundError, setRoundError] = useState<string | undefined>(undefined);
   const [sheetOpen, setSheetOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const loadRound = useCallback(() => {
-    setLoading(true);
-    setRoundError(undefined);
-    return getCurrentRound()
-      .then(setRound)
-      .catch((e: unknown) => {
-        if (e instanceof ApiError && e.status === 404) {
-          setRound(undefined);
-          return;
-        }
-        setRoundError(describeRoundError(e));
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
   useEffect(() => {
-    void loadRound();
-  }, [loadRound]);
+    void useUiStore.getState().loadRound();
+  }, []);
 
   useEffect(() => phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)), []);
 
@@ -85,11 +53,6 @@ export default function App() {
     <GameLayout
       header={
         <HeaderOverlay
-          worldTitle={world.title}
-          round={round}
-          loading={loading}
-          error={roundError}
-          onRetry={loadRound}
           onSuggest={() => setSheetOpen(true)}
           suggestRef={triggerRef}
         />
@@ -97,7 +60,7 @@ export default function App() {
       scene={
         <>
           <div className="absolute inset-0">
-            <PhaserHost scenes={[BootScene]} onLayout={setLayout} />
+            <PhaserHost scenes={[BootScene]} />
           </div>
           <ObjectOverlay
             view={game.view}
@@ -110,20 +73,12 @@ export default function App() {
           <ContributionSheet
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}
-            roundId={round?.id ?? ''}
+            roundId={roundId}
             returnFocusRef={triggerRef}
           />
         </>
       }
-      story={
-        <StoryPanel
-          sceneTitle={game.scene.title}
-          node={getActiveNode(game.state, game.scene)}
-          history={game.state.history}
-          inventory={game.state.inventory}
-          onChoose={game.choose}
-        />
-      }
+      story={<StoryPanel />}
     />
   );
 }
