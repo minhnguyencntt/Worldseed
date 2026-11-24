@@ -17,6 +17,10 @@ interface Entry {
   state: EntryState;
 }
 
+export type HistoryStatus = 'loading' | 'ready' | 'error';
+const HISTORY_LOADING = 'Loading your suggestions…';
+const HISTORY_ERROR = 'Could not load your suggestions';
+
 const STATE_LABEL: Record<EntryState, string> = {
   sending: 'Sending…',
   sent: 'Sent',
@@ -58,6 +62,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
         });
       })
       .catch(() => {
+        if (cancelled) return;
         // History is best-effort; the sheet still works without it.
       });
     return () => {
@@ -140,6 +145,9 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
 
         {error && <p role="alert">{error}</p>}
         {success && <p id="contribution-idea-success" role="status">{success}</p>}
+
+        {historyStatus === 'loading' && <p role="status">{HISTORY_LOADING}</p>}
+        {historyStatus === 'error' && <p role="alert">{HISTORY_ERROR}</p>}
 
         <ul aria-label="Your suggestions">
           {entries.map((entry) => (
