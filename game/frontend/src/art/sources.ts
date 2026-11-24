@@ -1,10 +1,14 @@
 // Art sources: palette-indexed pixel grids that generateAssets turns into PNG files.
 // Each frame is a row-major grid of PALETTE indices (see src/lib/palette.ts).
 
+import type { AnimationDef, Origin } from '@game/assets/manifest';
+
 export interface ArtSource {
   id: string;
   path: string;
   frames: number[][][];
+  animations?: Record<string, AnimationDef>;
+  origin?: Origin;
 }
 
 const PALETTE_INDEX_BY_CHAR: Record<string, number> = {

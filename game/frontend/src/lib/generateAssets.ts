@@ -39,9 +39,18 @@ export function generateAssets(sources: readonly ArtSource[], palette: readonly 
           frameHeight: sheet.frameHeight,
           frameCount: sheet.frameCount,
         },
+        ...(source.animations ? { animations: source.animations } : {}),
+        ...(source.origin ? { origin: source.origin } : {}),
       });
     } else {
-      entries.push({ id: source.id, path: source.path, type: 'image', dimensions });
+      entries.push({
+        id: source.id,
+        path: source.path,
+        type: 'image',
+        dimensions,
+        ...(source.animations ? { animations: source.animations } : {}),
+        ...(source.origin ? { origin: source.origin } : {}),
+      });
     }
   }
 
