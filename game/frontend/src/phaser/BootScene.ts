@@ -4,7 +4,7 @@ import type { AssetEntry } from '@game/assets/manifest';
 import { useGameStore } from '../store/gameStore';
 import { phaserToReact, reactToPhaser } from './events';
 import { createPhaserEffectContext } from './effectContext';
-import { buildEffects } from '@game/engine/buildEffects';
+import { buildEffects, destroyEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
 import { manifest, scene, sceneSpec } from '../runtime/content';
@@ -85,7 +85,7 @@ export class BootScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown', this.onKeyDown);
       this.unsubscribe?.();
       this.unsubscribe = null;
-      this.effects.forEach((handle) => handle.destroy());
+      destroyEffects(this.effects);
       this.effects = [];
       this.sceneObjects.forEach((o) => o.destroy());
       this.sceneObjects = [];

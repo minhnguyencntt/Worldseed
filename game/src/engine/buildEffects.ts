@@ -10,3 +10,14 @@ export function buildEffects(ctx: EffectRenderContext, scene: SceneDef): EffectH
     .filter((spec) => spec.type !== 'transition')
     .map((spec) => ctx.createEffect({ ...spec, depth }));
 }
+
+// Destroys every handle; a failure on one handle does not stop the rest.
+export function destroyEffects(handles: EffectHandle[]): void {
+  for (const h of handles) {
+    try {
+      h.destroy();
+    } catch {
+      /* keep destroying the rest */
+    }
+  }
+}

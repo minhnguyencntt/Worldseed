@@ -11,6 +11,10 @@ export const conditionSchema = z.union([
 export const effectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('dust'), asset: z.string(), count: z.number().int().positive(), area: boundsSchema }),
   z.object({ type: z.literal('ambientLight'), color: z.string(), alpha: z.number().min(0).max(1) }),
+  z.object({ type: z.literal('moonlightShaft'), color: z.string(), alpha: z.number().min(0).max(1), area: boundsSchema }),
+  z.object({ type: z.literal('lampGlow'), color: z.string(), alpha: z.number().min(0).max(1), x: z.number(), y: z.number(), radius: z.number().positive() }),
+  z.object({ type: z.literal('doorLight'), color: z.string(), alpha: z.number().min(0).max(1), area: boundsSchema }),
+  z.object({ type: z.literal('vignette'), color: z.string(), alpha: z.number().min(0).max(1) }),
   z.object({ type: z.literal('transition'), kind: z.literal('fade'), durationMs: z.number().int().nonnegative() }),
 ]);
 
