@@ -78,6 +78,7 @@ export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: S
             </li>
           ))}
         </ul>
+        {inventory.length === 0 && <p>Empty</p>}
       </section>
     </div>
   );

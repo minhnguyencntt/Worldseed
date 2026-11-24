@@ -6,13 +6,6 @@ export const INVENTORY_SLOT_COUNT = 6;
 
 const manifestAssets: { id: string; path: string }[] = manifestJson.assets;
 
-function displayName(id: string): string {
-  return id
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 function iconFor(id: string): string | undefined {
   const entry = manifestAssets.find((asset) => asset.id === `item/${id}`);
   return entry ? `/assets/${entry.path}` : undefined;
@@ -29,6 +22,6 @@ export function buildInventorySlots(inventory: string[]): InventorySlot[] {
     if (id === undefined) {
       return { id: null, name: '', icon: undefined };
     }
-    return { id, name: displayName(id), icon: iconFor(id) };
+    return { id, name: id, icon: iconFor(id) };
   });
 }
