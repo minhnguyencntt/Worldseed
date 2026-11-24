@@ -1,17 +1,16 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { StoryPanel } from '../src/components/StoryPanel';
-import type { DialogueNode } from '../../src/state/types';
+import { scene } from '../src/runtime/content';
+import { useGameStore } from '../src/store/gameStore';
 
-// Mirrors the `intro` node in game/content/worlds/the-boys-room/scenes/bedroom.yaml.
-const introNode: DialogueNode = {
-  id: 'intro',
-  speaker: 'boy',
-  text: "I don't know what to do next. What should we do?",
-  choices: [{ text: 'Look around the room' }, { text: "Let's explore" }],
-};
+// Seeds the shared game store (history and inventory) with the opening dialogue node ('intro').
+function seed(history: string[], inventory: string[]) {
+  useGameStore.getState().hydrate();
+  useGameStore.getState().setState((prev) => ({ ...prev, history, inventory }));
+}
 
 describe('StoryPanel scene title and choices', () => {
   afterEach(() => {
@@ -19,44 +18,26 @@ describe('StoryPanel scene title and choices', () => {
   });
 
   it('shows the scene title as the heading', () => {
-    render(
-      <StoryPanel
-        sceneTitle="The Boys Room"
-        node={introNode}
-        history={['a', 'b']}
-        inventory={['key']}
-        onChoose={vi.fn()}
-      />,
-    );
+    // Given the bundled scene title (scene.title from runtime/content),
+    // when StoryPanel renders from the store,
+    // then that title is the h1 heading.
+    seed(['a', 'b'], ['key']);
+    render(<StoryPanel />);
 
-    expect(screen.getByRole('heading', { level: 1, name: 'The Boys Room' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: scene.title })).toBeInTheDocument();
   });
 
   it('lists both history entries in the Story history list', () => {
-    render(
-      <StoryPanel
-        sceneTitle="The Boys Room"
-        node={introNode}
-        history={['a', 'b']}
-        inventory={['key']}
-        onChoose={vi.fn()}
-      />,
-    );
+    seed(['a', 'b'], ['key']);
+    render(<StoryPanel />);
 
     const history = screen.getByRole('list', { name: 'Story history' });
     expect(within(history).getAllByRole('listitem')).toHaveLength(2);
   });
 
   it('shows the inventory item inside the Inventory region', () => {
-    render(
-      <StoryPanel
-        sceneTitle="The Boys Room"
-        node={introNode}
-        history={['a', 'b']}
-        inventory={['key']}
-        onChoose={vi.fn()}
-      />,
-    );
+    seed(['a', 'b'], ['key']);
+    render(<StoryPanel />);
 
     const inventory = screen.getByRole('region', { name: 'Inventory' });
     // Inventory ids are rendered humanised ('key' -> 'Key') by buildInventorySlots.
@@ -64,35 +45,19 @@ describe('StoryPanel scene title and choices', () => {
   });
 
   it('keeps the panel root scrollable with the overflow-y-auto class', () => {
-    const { container } = render(
-      <StoryPanel
-        sceneTitle="The Boys Room"
-        node={introNode}
-        history={['a', 'b']}
-        inventory={['key']}
-        onChoose={vi.fn()}
-      />,
-    );
+    seed(['a', 'b'], ['key']);
+    const { container } = render(<StoryPanel />);
 
     expect(container.firstElementChild).toHaveClass('overflow-y-auto');
   });
 
-  it('calls onChoose with 1 when the second choice is clicked', () => {
-    const onChoose = vi.fn();
-    render(
-      <StoryPanel
-        sceneTitle="The Boys Room"
-        node={introNode}
-        history={['a', 'b']}
-        inventory={['key']}
-        onChoose={onChoose}
-      />,
-    );
+  it('chooses the second choice of the intro node and moves the store to the explore node', () => {
+    seed(['a', 'b'], ['key']);
+    render(<StoryPanel />);
 
     const choices = screen.getByRole('list', { name: 'Choices' });
     fireEvent.click(within(choices).getByRole('button', { name: "Let's explore" }));
 
-    expect(onChoose).toHaveBeenCalledTimes(1);
-    expect(onChoose).toHaveBeenCalledWith(1);
+    expect(useGameStore.getState().state?.activeDialogue).toBe('explore');
   });
 });

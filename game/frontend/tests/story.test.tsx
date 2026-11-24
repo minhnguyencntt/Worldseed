@@ -4,15 +4,13 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { IntroScreen } from '../src/components/IntroScreen';
 import { StoryPanel } from '../src/components/StoryPanel';
-import type { DialogueNode } from '../../src/state/types';
+import { useGameStore } from '../src/store/gameStore';
 
-// Mirrors the `intro` node in game/content/worlds/the-boys-room/scenes/bedroom.yaml.
-const introNode: DialogueNode = {
-  id: 'intro',
-  speaker: 'boy',
-  text: "I don't know what to do next. What should we do?",
-  choices: [{ text: 'Look around the room' }, { text: "Let's explore" }],
-};
+// Seeds the shared game store (inventory ids) with the bundled opening node ('intro').
+function seed(inventory: string[] = []) {
+  useGameStore.getState().hydrate();
+  useGameStore.getState().setState((prev) => ({ ...prev, inventory }));
+}
 
 describe('intro copy and choices', () => {
   afterEach(() => {
@@ -34,21 +32,18 @@ describe('intro copy and choices', () => {
     expect(onBegin).toHaveBeenCalledTimes(1);
   });
 
-  it('StoryPanel calls onChoose with 0 when the first choice is clicked', () => {
-    const onChoose = vi.fn();
-    render(
-      <StoryPanel node={introNode} history={[]} inventory={[]} onChoose={onChoose} />,
-    );
+  it('StoryPanel moves the store to the look-around node when the first choice is clicked', () => {
+    seed();
+    render(<StoryPanel />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Look around the room' }));
 
-    expect(onChoose).toHaveBeenCalledWith(0);
+    expect(useGameStore.getState().state?.activeDialogue).toBe('look-around');
   });
 
   it('StoryPanel renders six empty inventory slots when the inventory is empty', () => {
-    render(
-      <StoryPanel node={introNode} history={[]} inventory={[]} onChoose={vi.fn()} />,
-    );
+    seed([]);
+    render(<StoryPanel />);
 
     const slots = within(screen.getByRole('region', { name: 'Inventory' })).getAllByRole('listitem');
     expect(slots).toHaveLength(6);
@@ -58,9 +53,8 @@ describe('intro copy and choices', () => {
   });
 
   it('StoryPanel lists the humanised item name in the first slot when the inventory holds "old-key"', () => {
-    render(
-      <StoryPanel node={introNode} history={[]} inventory={['old-key']} onChoose={vi.fn()} />,
-    );
+    seed(['old-key']);
+    render(<StoryPanel />);
 
     const slots = within(screen.getByRole('region', { name: 'Inventory' })).getAllByRole('listitem');
     expect(slots).toHaveLength(6);

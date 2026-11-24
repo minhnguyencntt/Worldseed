@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App, { describeRoundError } from '../src/App';
 import { ApiError, getCurrentRound } from '../src/api/client';
 import { roundFixture } from './fixtures/api';
+import { useUiStore } from '../src/store/uiStore';
 
 vi.mock('../src/api/client', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../src/api/client')>();
@@ -37,6 +38,7 @@ vi.stubGlobal(
 
 describe('App round states', () => {
   beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
     mockedGetCurrentRound.mockReset();
   });
 

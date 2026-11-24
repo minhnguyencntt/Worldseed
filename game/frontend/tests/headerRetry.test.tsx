@@ -1,37 +1,45 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getCurrentRound } from '../src/api/client';
 import { HeaderOverlay } from '../src/components/HeaderOverlay';
+import { useUiStore } from '../src/store/uiStore';
 import { roundFixture } from './fixtures/api';
 
+vi.mock('../src/api/client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/api/client')>();
+  return {
+    ...actual,
+    getCurrentRound: vi.fn(),
+  };
+});
+
+const mockedGetCurrentRound = vi.mocked(getCurrentRound);
+
 describe('HeaderOverlay retry and success states', () => {
+  beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
+    mockedGetCurrentRound.mockReset();
+  });
+
   afterEach(() => {
     cleanup();
   });
 
-  it('calls onRetry exactly once when the Retry button is clicked in the error state', () => {
-    // Given the round request failed and the header offers a retry
-    const onRetry = vi.fn();
-    render(
-      <HeaderOverlay worldTitle="W" error="Round service returned 500" onRetry={onRetry} />,
-    );
+  it('Given the store holds a round error, when Retry is clicked and the round loads, then the header switches to the ready pill', async () => {
+    // Given the round request failed and the store holds the error
+    useUiStore.setState({ roundLoading: false, round: undefined, roundError: 'Round service returned 500' });
+    mockedGetCurrentRound.mockResolvedValue(roundFixture);
+    render(<HeaderOverlay />);
+    expect(screen.getByTestId('round-pill')).toHaveAttribute('data-state', 'error');
 
     // When the player clicks Retry
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
 
-    // Then the retry handler runs once
-    expect(onRetry).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows the round id, OPEN status and a timer with no Retry button when the round loads', () => {
-    // Given the round loaded successfully and there is no error
-    render(<HeaderOverlay worldTitle="W" round={roundFixture} />);
-
-    // Then no Retry button is shown
+    // Then the header switches to the ready pill with the round id
+    await waitFor(() => expect(screen.getByTestId('round-pill')).toHaveAttribute('data-state', 'ready'));
+    expect(screen.getByText(roundFixture.id)).toBeInTheDocument();
+    // And the round was requested once more
+    await waitFor(() => expect(mockedGetCurrentRound).toHaveBeenCalledTimes(1));
     expect(screen.queryByRole('button', { name: 'Retry' })).toBeNull();
-    // And the round id and OPEN status are visible
-    expect(screen.getByText('round-1')).toBeInTheDocument();
-    expect(screen.getByText('OPEN')).toBeInTheDocument();
-    // And the countdown timer is present
-    expect(screen.getByRole('timer')).toBeInTheDocument();
   });
 });

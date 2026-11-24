@@ -1,19 +1,15 @@
 // @vitest-environment jsdom
 import '@testing-library/jest-dom/vitest';
-import { cleanup, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import { StoryPanel } from '../src/components/StoryPanel';
-import type { DialogueNode } from '../../src/state/types';
+import { useGameStore } from '../src/store/gameStore';
 
-const node: DialogueNode = {
-  id: 'intro',
-  speaker: 'boy',
-  text: 'What should we do?',
-  choices: [{ text: 'Look around the room' }],
-};
-
+// Seeds the shared game store (inventory ids) and renders StoryPanel from it.
 function renderPanel(inventory: string[]) {
-  render(<StoryPanel node={node} history={[]} inventory={inventory} onChoose={vi.fn()} />);
+  useGameStore.getState().hydrate();
+  useGameStore.getState().setState((prev) => ({ ...prev, inventory }));
+  render(<StoryPanel />);
   return within(screen.getByRole('region', { name: 'Inventory' }));
 }
 
@@ -23,7 +19,7 @@ describe('new: StoryPanel inventory grid', () => {
   });
 
   it('renders six empty slots with no icons when the inventory is empty', () => {
-    // Given an empty inventory,
+    // Given an empty inventory in the store,
     // when StoryPanel renders,
     // then the Inventory region shows six list items, all empty, with no images.
     const inventory = renderPanel([]);
@@ -36,7 +32,7 @@ describe('new: StoryPanel inventory grid', () => {
   });
 
   it('shows the item name and a 16px icon in the first slot, leaving five slots empty', () => {
-    // Given an inventory holding 'old-key',
+    // Given an inventory holding 'old-key' in the store,
     // when StoryPanel renders,
     // then the first slot shows 'Old Key' with a 16px icon and the other five slots are empty.
     const inventory = renderPanel(['old-key']);
@@ -59,5 +55,22 @@ describe('new: StoryPanel inventory grid', () => {
     const inventory = renderPanel([]);
     const list = inventory.getAllByRole('listitem')[0].parentElement;
     expect(list).toHaveClass('grid-cols-3');
+  });
+
+  it('re-renders a new slot when the store inventory changes inside act()', () => {
+    // Given StoryPanel rendered with an empty inventory,
+    // when the store adds 'old-key' through setState inside act(),
+    // then the first slot re-renders as 'Old Key' with an icon.
+    const inventory = renderPanel([]);
+    expect(inventory.getAllByRole('listitem')[0]).toHaveAttribute('data-empty', 'true');
+
+    act(() => {
+      useGameStore.getState().setState((prev) => ({ ...prev, inventory: ['old-key'] }));
+    });
+
+    const slots = inventory.getAllByRole('listitem');
+    expect(slots[0]).toHaveTextContent('Old Key');
+    expect(slots[0]).toHaveAttribute('data-empty', 'false');
+    expect(slots[0].querySelector('img')).not.toBeNull();
   });
 });

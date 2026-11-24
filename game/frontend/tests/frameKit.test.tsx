@@ -10,7 +10,7 @@ import { GameLayout } from '../src/components/GameLayout';
 import { HeaderOverlay } from '../src/components/HeaderOverlay';
 import { StoryPanel } from '../src/components/StoryPanel';
 import { useUiStore } from '../src/store/uiStore';
-import type { DialogueNode } from '../src/state/types';
+import { useGameStore } from '../src/store/gameStore';
 
 describe('frame kit', () => {
   afterEach(() => {
@@ -94,20 +94,10 @@ describe('frame kit', () => {
     expect(screen.getByRole('button', { name: 'Settings' })).toHaveClass('sf-btn');
     header.unmount();
 
-    const node = {
-      speaker: 'Guide',
-      text: 'Hello there.',
-      choices: [],
-    } as unknown as DialogueNode;
-    const story = render(
-      <StoryPanel
-        sceneTitle="Room"
-        node={node}
-        history={[]}
-        inventory={['Key']}
-        onChoose={() => {}}
-      />,
-    );
+    // The store supplies the story: the bundled 'intro' node (speaker 'boy') and one inventory item.
+    useGameStore.getState().hydrate();
+    useGameStore.getState().setState((prev) => ({ ...prev, inventory: ['key'] }));
+    const story = render(<StoryPanel />);
     const root = story.container.firstElementChild as HTMLElement;
     expect(root).toHaveClass('sf-frame-panel');
     expect(root.className).not.toContain('bg-stone-900');

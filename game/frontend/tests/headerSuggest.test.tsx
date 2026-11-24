@@ -1,9 +1,15 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HeaderOverlay } from '../src/components/HeaderOverlay';
+import { useUiStore } from '../src/store/uiStore';
 import { roundFixture } from './fixtures/api';
 
 describe('HeaderOverlay suggest button', () => {
+  beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
+    useUiStore.setState({ roundLoading: false, round: roundFixture, roundError: undefined });
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -11,7 +17,7 @@ describe('HeaderOverlay suggest button', () => {
   it('clicking the suggest button calls onSuggest once', () => {
     // Given the header shows a ready round and an onSuggest handler
     const fn = vi.fn();
-    render(<HeaderOverlay worldTitle="W" round={roundFixture} onSuggest={fn} />);
+    render(<HeaderOverlay onSuggest={fn} />);
 
     // When the player clicks "Suggest What Happens Next"
     const button = screen.getByRole('button', { name: 'Suggest What Happens Next' });

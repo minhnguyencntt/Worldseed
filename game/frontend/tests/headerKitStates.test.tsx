@@ -6,6 +6,7 @@ import { roundFixture } from './fixtures/api';
 
 describe('HeaderOverlay pill states', () => {
   beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
     useUiStore.setState({ soundEnabled: true, settingsOpen: false });
   });
 
@@ -15,7 +16,8 @@ describe('HeaderOverlay pill states', () => {
 
   it('shows the loading pill with no timer while the round is loading', () => {
     // Given the round is still loading
-    render(<HeaderOverlay worldTitle="W" loading />);
+    useUiStore.setState({ roundLoading: true, round: undefined, roundError: undefined });
+    render(<HeaderOverlay />);
 
     // Then the round pill is in the loading state with the loading text
     const pill = screen.getByTestId('round-pill');
@@ -25,26 +27,23 @@ describe('HeaderOverlay pill states', () => {
     expect(screen.queryByRole('timer')).toBeNull();
   });
 
-  it('shows the error pill with an alert and a Retry button that calls onRetry once', () => {
-    // Given the round request failed with a service error and a retry handler
-    const onRetry = vi.fn();
-    render(<HeaderOverlay worldTitle="W" error="Round service returned 500" onRetry={onRetry} />);
+  it('shows the error pill with an alert and a Retry button that reloads the round', () => {
+    // Given the round request failed with a service error
+    useUiStore.setState({ roundLoading: false, round: undefined, roundError: 'Round service returned 500' });
+    render(<HeaderOverlay />);
 
     // Then the round pill is in the error state
     expect(screen.getByTestId('round-pill')).toHaveAttribute('data-state', 'error');
     // And an alert explains the failure
     expect(screen.getByRole('alert')).toHaveTextContent('Round unavailable: Round service returned 500');
-
-    // When the player clicks Retry
-    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
-
-    // Then the retry handler runs exactly once
-    expect(onRetry).toHaveBeenCalledTimes(1);
+    // And a Retry button is offered
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
   });
 
   it('shows the empty pill with the no-active-round message when there is no round', () => {
     // Given the world has no round and no loading or error state
-    render(<HeaderOverlay worldTitle="W" />);
+    useUiStore.setState({ roundLoading: false, round: undefined, roundError: undefined });
+    render(<HeaderOverlay />);
 
     // Then the round pill is in the empty state
     const pill = screen.getByTestId('round-pill');
@@ -55,7 +54,8 @@ describe('HeaderOverlay pill states', () => {
 
   it('toggles sound and opens settings through the header icon controls in the store', () => {
     // Given the header shows a loaded round with sound on and settings closed
-    render(<HeaderOverlay worldTitle="W" round={roundFixture} />);
+    useUiStore.setState({ roundLoading: false, round: roundFixture, roundError: undefined });
+    render(<HeaderOverlay />);
     const controls = within(screen.getByRole('group', { name: 'Header controls' }));
 
     // When the player clicks the sound toggle
