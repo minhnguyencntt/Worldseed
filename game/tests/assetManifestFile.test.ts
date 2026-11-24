@@ -4,6 +4,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { parseManifest } from '../src/assets/manifest';
+import { planPreload } from '../src/engine/planPreload';
+import type { SceneDef } from '../src/state/types';
 
 // Read-only checks against the real the-boys-room manifest and scene file.
 // Nothing is written or started. Manifest asset paths are relative to the
@@ -12,7 +14,7 @@ import { parseManifest } from '../src/assets/manifest';
 const manifestPath = fileURLToPath(
   new URL('../public/assets/worlds/the-boys-room/manifest.json', import.meta.url),
 );
-const publicDir = fileURLToPath(new URL('../frontend/public/assets', import.meta.url));
+const publicDir = fileURLToPath(new URL('../public/assets', import.meta.url));
 const scenePath = fileURLToPath(
   new URL('../src/content/worlds/the-boys-room/scenes/bedroom.yaml', import.meta.url),
 );
@@ -63,14 +65,29 @@ describe('the-boys-room manifest.json', () => {
     expect(refs.filter((ref) => !ids.has(ref))).toEqual([]);
   });
 
-  it('describes character:boy as a 2-frame spritesheet with an idle animation', () => {
-    // Given the character:boy entry in the real manifest
+  it('describes character:boy-sheet as a 14-frame spritesheet', () => {
+    // Given the character:boy-sheet entry in the real manifest
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as RawManifest;
-    const boy = manifest.assets.find((asset) => asset.id === 'character:boy');
+    const sheet = manifest.assets.find((asset) => asset.id === 'character:boy-sheet');
     // When its frames and animations are inspected
-    // Then it has 2 frames and an idle animation
-    expect(boy).toBeDefined();
-    expect(boy?.frames?.frameCount).toBe(2);
-    expect(boy?.animations).toHaveProperty('idle');
+    // Then it has 14 frames of 32x48 and idle, walk and interact animations
+    expect(sheet).toBeDefined();
+    expect(sheet?.frames).toMatchObject({ frameCount: 14, frameWidth: 32, frameHeight: 48 });
+    expect(sheet?.animations).toHaveProperty('idle');
+    expect(sheet?.animations).toHaveProperty('walk');
+    expect(sheet?.animations).toHaveProperty('interact');
+  });
+
+  it('plans the boy sheet for preload', () => {
+    // Given the real manifest and bedroom.yaml parsed through their loaders
+    const parsed = parseManifest(JSON.parse(readFileSync(manifestPath, 'utf8')));
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const scene = parse(readFileSync(scenePath, 'utf8')) as SceneDef;
+    // When the preload plan is built for the scene
+    const plan = planPreload(scene, parsed.data);
+    // Then the boy sheet is loaded and no ids are unknown
+    expect(plan.load).toContain('character:boy-sheet');
+    expect(plan.unknown).toEqual([]);
   });
 });

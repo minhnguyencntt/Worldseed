@@ -158,3 +158,48 @@ describe('dispose', () => {
     expect(play).not.toHaveBeenCalled();
   });
 });
+
+describe('manifest animation values', () => {
+  it('takes frames and frameRate from the manifest', () => {
+    // Given a manifest whose character:boy-sheet idle uses frames [2, 3] at frameRate 7
+    const sheetManifest = {
+      assets: [
+        {
+          id: 'character:boy-sheet',
+          path: 'worlds/the-boys-room/characters/boy-sheet.png',
+          type: 'spritesheet',
+          frames: { frameWidth: 32, frameHeight: 48, frameCount: 14 },
+          animations: {
+            idle: { frames: [2, 3], frameRate: 7, repeat: -1 },
+          },
+          origin: { x: 0.5, y: 1 },
+        },
+      ],
+    } as unknown as AssetManifest;
+    const sheetSpec: CharacterSpec = {
+      id: 'boy',
+      name: 'The Boy',
+      position: { x: 150, y: 140 },
+      scale: 1,
+      layer: 'characters',
+      animations: {
+        idle: { asset: 'character:boy-sheet', animation: 'idle' },
+      },
+    };
+    const { scene } = makeScene();
+    const input = { bindCharacter: vi.fn() };
+    // When createCharacters builds the character from that manifest
+    const characters = createCharacters(
+      scene as unknown as Phaser.Scene,
+      [sheetSpec],
+      sheetManifest,
+      (id) => id,
+      input as unknown as InputLayer,
+    );
+    created.push(characters);
+    // Then the frame numbers come from the manifest, not hardcoded values
+    expect(scene.anims.generateFrameNumbers).toHaveBeenCalledWith('character:boy-sheet', { frames: [2, 3] });
+    // And the Phaser animation is created with the manifest frameRate
+    expect(scene.anims.create).toHaveBeenCalledWith(expect.objectContaining({ key: 'character:boy-sheet:idle', frameRate: 7 }));
+  });
+});
