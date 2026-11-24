@@ -1,0 +1,724 @@
+{
+  "intent_id": "01M866KJ1DDYBPYW598TNB1WSK",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M866P1VBD7CQ9S4A2SRGC422",
+      "kind": "intent",
+      "title": "SG-1 Stop tracking node_modules and dist",
+      "body": "Context: game/frontend/node_modules (13,601 files) and game/frontend/dist (4 files: index.html, assets/bedroom.svg, one css, one js) are still tracked by git. The root .gitignore ignores node_modules/ but has no dist/ rule. The repo already has npm run untrack:node-modules (game/frontend/scripts/untrackNodeModules.ts calling untrackNodeModules in src/lib/trackedNodeModules.ts), the guard script assertNoTrackedNodeModules.ts, and tests for both. Desired behavior: dist is ignored and untracked through the same tooling, and the guard tests assert it. Expected result: no file under node_modules or dist is tracked and no source file in game/src or game/frontend/src outside the helpers changes. Why: repo hygiene, first step of the refactor.\n\n## Acceptance criteria\n- Given the root .gitignore, when dist/ is checked with isIgnoredByDirRule for game/frontend/dist/index.html, then it is ignored\n- Given the untrack tooling is run, when git ls-files is listed for game/frontend/dist and game/frontend/node_modules, then both are empty\n- Given a git listing that contains a dist path, when checkTrackedFiles runs, then the dist path is reported and the guard returns 1\n- Given the work is done, when npm test and npm run typecheck run in game/ and game/frontend/, then both pass with no test deleted or skipped\n\n\n## Scope\n- In scope: Add dist/ to root .gitignore\n- In scope: Extend src/lib/trackedNodeModules.ts untrack and guard logic to cover dist\n- In scope: Run the existing npm run untrack:node-modules\n- In scope: Extend existing guard tests\n- Out of scope: Any change in game/src\n- Out of scope: Any change in game/frontend/src outside src/lib helpers\n- Out of scope: Rewriting untrackNodeModules.ts script\n- Out of scope: Phaser upgrade, backend/\n- Preserve: Phaser pinned at ~3.90.0 and phaser-pin guard test\n- Preserve: Gameplay unchanged\n- Preserve: Existing guard tests keep passing\n\n\n## Technical constraints\n- Reuse npm run untrack:node-modules; do not rewrite it\n- Phaser stays pinned at ~3.90.0\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No test deleted or skipped; no source file over 200 lines\n- game/src never imports from game/frontend; Zustand store sole GameState owner\n- backend/ and frontend/src/api/client.ts out of scope\n- No change to what the player sees or can do\n- Tests mock only what is external\n\n\n## Definition of done\n- All requirements delivered with Act and Verify units green\n- node_modules and dist untracked\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Stop tracking game/frontend node_modules and dist with the existing untrack tooling",
+      "description": "Context: game/frontend/node_modules (13,601 files) and game/frontend/dist (4 files: index.html, assets/bedroom.svg, one css, one js) are still tracked by git. The root .gitignore ignores node_modules/ but has no dist/ rule. The repo already has npm run untrack:node-modules (game/frontend/scripts/untrackNodeModules.ts calling untrackNodeModules in src/lib/trackedNodeModules.ts), the guard script assertNoTrackedNodeModules.ts, and tests for both. Desired behavior: dist is ignored and untracked through the same tooling, and the guard tests assert it. Expected result: no file under node_modules or dist is tracked and no source file in game/src or game/frontend/src outside the helpers changes. Why: repo hygiene, first step of the refactor.",
+      "acceptance_criteria": [
+        "Given the root .gitignore, when dist/ is checked with isIgnoredByDirRule for game/frontend/dist/index.html, then it is ignored",
+        "Given the untrack tooling is run, when git ls-files is listed for game/frontend/dist and game/frontend/node_modules, then both are empty",
+        "Given a git listing that contains a dist path, when checkTrackedFiles runs, then the dist path is reported and the guard returns 1",
+        "Given the work is done, when npm test and npm run typecheck run in game/ and game/frontend/, then both pass with no test deleted or skipped"
+      ],
+      "scope": {
+        "in_scope": [
+          "Add dist/ to root .gitignore",
+          "Extend src/lib/trackedNodeModules.ts untrack and guard logic to cover dist",
+          "Run the existing npm run untrack:node-modules",
+          "Extend existing guard tests"
+        ],
+        "out_of_scope": [
+          "Any change in game/src",
+          "Any change in game/frontend/src outside src/lib helpers",
+          "Rewriting untrackNodeModules.ts script",
+          "Phaser upgrade, backend/"
+        ],
+        "preserve": [
+          "Phaser pinned at ~3.90.0 and phaser-pin guard test",
+          "Gameplay unchanged",
+          "Existing guard tests keep passing"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse npm run untrack:node-modules; do not rewrite it",
+        "Phaser stays pinned at ~3.90.0",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No test deleted or skipped; no source file over 200 lines",
+        "game/src never imports from game/frontend; Zustand store sole GameState owner",
+        "backend/ and frontend/src/api/client.ts out of scope",
+        "No change to what the player sees or can do",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered with Act and Verify units green",
+        "node_modules and dist untracked",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-175.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84T653733GNHNR148NM3TA2",
+      "links": [
+        "trace:01M84T653733GNHNR148NM3TA2",
+        "artifact:.ai-dlc/intent/INT-175.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-175.md",
+      "artifact_id": "INT-175"
+    },
+    {
+      "id": "01M866P1VB3DKFDZ3X7QWCHZQ2",
+      "kind": "requirement",
+      "title": "REQ · Root .gitignore ignores game/frontend/dist at any depth",
+      "body": "Context: .gitignore contains node_modules/ but no dist rule; gitignoreCoverage.test.ts reads the real .gitignore and uses isIgnoredByDirRule. Desired behavior: a depth-independent dist/ rule exists. Expected result: game/frontend/dist/index.html is reported as ignored. Why: dist must not return to the index after untracking.\n\n## Acceptance criteria\n- Given the real root .gitignore, when isIgnoredByDirRule checks game/frontend/dist/index.html, then it returns true\n- Given an ignore text without a dist rule, when the same path is checked, then it returns false\n\n\n## Scope\n- In scope: Root .gitignore dist/ line\n- Out of scope: Other ignore rules\n- Preserve: Existing node_modules/ rule and .devion entries\n\n\n## Technical constraints\n- Obeys: no source change in game/src or game/frontend/src\n- Every step lands green\n\n\n## Definition of done\n- dist/ rule present\n- Coverage test asserts it\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "dist/ ignore rule is present and proven by the gitignore coverage test",
+      "description": "Context: .gitignore contains node_modules/ but no dist rule; gitignoreCoverage.test.ts reads the real .gitignore and uses isIgnoredByDirRule. Desired behavior: a depth-independent dist/ rule exists. Expected result: game/frontend/dist/index.html is reported as ignored. Why: dist must not return to the index after untracking.",
+      "acceptance_criteria": [
+        "Given the real root .gitignore, when isIgnoredByDirRule checks game/frontend/dist/index.html, then it returns true",
+        "Given an ignore text without a dist rule, when the same path is checked, then it returns false"
+      ],
+      "scope": {
+        "in_scope": [
+          "Root .gitignore dist/ line"
+        ],
+        "out_of_scope": [
+          "Other ignore rules"
+        ],
+        "preserve": [
+          "Existing node_modules/ rule and .devion entries"
+        ]
+      },
+      "technical_constraints": [
+        "Obeys: no source change in game/src or game/frontend/src",
+        "Every step lands green"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "dist/ rule present",
+        "Coverage test asserts it",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-440.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M866P1VBD7CQ9S4A2SRGC422",
+      "matched_feature_id": "01M85SD77WCS9424A173AC7BP2",
+      "links": [
+        "parent:01M866P1VBD7CQ9S4A2SRGC422",
+        "trace:01M85SD77WCS9424A173AC7BP2",
+        "artifact:.ai-dlc/requirements/REQ-440.md"
+      ],
+      "depends_on": [
+        "01M866P1VBD7CQ9S4A2SRGC422"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-440.md",
+      "artifact_id": "REQ-440"
+    },
+    {
+      "id": "01M866P1VBJDN57R4TX1Y17EZ9",
+      "kind": "requirement",
+      "title": "REQ · Existing untrack logic also untracks dist and the index is cleaned",
+      "body": "Context: untrackNodeModules in game/frontend/src/lib/trackedNodeModules.ts only runs git rm --cached for node_modules. Desired behavior: it also untracks dist with a cached-only recursive rm, and running npm run untrack:node-modules leaves none of the 4 dist files or 13,601 node_modules files tracked. Expected result: git ls-files shows nothing under game/frontend/dist or node_modules. Why: acceptance of SG-1.\n\n## Acceptance criteria\n- Given a fake git runner, when untrackNodeModules runs, then one call is rm -r --cached --ignore-unmatch -q -- dist\n- Given a fake git runner, when untrackNodeModules runs, then every call carries --cached\n- Given the script has been run, when git ls-files lists dist and node_modules under game/frontend, then output is empty\n\n\n## Scope\n- In scope: untrackNodeModules in src/lib/trackedNodeModules.ts\n- In scope: Running the existing npm script once\n- Out of scope: Changing scripts/untrackNodeModules.ts\n- Preserve: Existing node_modules and results.json untrack calls\n- Preserve: Working-tree files stay on disk\n\n\n## Technical constraints\n- Reuse the existing script, no rewrite\n- Only --cached removals so files stay on disk\n- Tests mock only git (fake runner)\n\n\n## Definition of done\n- dist untrack call added\n- Script executed and index clean\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "untrackNodeModules removes dist from the index; the existing npm script is run",
+      "description": "Context: untrackNodeModules in game/frontend/src/lib/trackedNodeModules.ts only runs git rm --cached for node_modules. Desired behavior: it also untracks dist with a cached-only recursive rm, and running npm run untrack:node-modules leaves none of the 4 dist files or 13,601 node_modules files tracked. Expected result: git ls-files shows nothing under game/frontend/dist or node_modules. Why: acceptance of SG-1.",
+      "acceptance_criteria": [
+        "Given a fake git runner, when untrackNodeModules runs, then one call is rm -r --cached --ignore-unmatch -q -- dist",
+        "Given a fake git runner, when untrackNodeModules runs, then every call carries --cached",
+        "Given the script has been run, when git ls-files lists dist and node_modules under game/frontend, then output is empty"
+      ],
+      "scope": {
+        "in_scope": [
+          "untrackNodeModules in src/lib/trackedNodeModules.ts",
+          "Running the existing npm script once"
+        ],
+        "out_of_scope": [
+          "Changing scripts/untrackNodeModules.ts"
+        ],
+        "preserve": [
+          "Existing node_modules and results.json untrack calls",
+          "Working-tree files stay on disk"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the existing script, no rewrite",
+        "Only --cached removals so files stay on disk",
+        "Tests mock only git (fake runner)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "dist untrack call added",
+        "Script executed and index clean",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-441.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M866P1VBD7CQ9S4A2SRGC422",
+      "matched_feature_id": "01M84T6537GC5YKDGR64QW90RD",
+      "links": [
+        "parent:01M866P1VBD7CQ9S4A2SRGC422",
+        "trace:01M84T6537GC5YKDGR64QW90RD",
+        "artifact:.ai-dlc/requirements/REQ-441.md"
+      ],
+      "depends_on": [
+        "01M866P1VBD7CQ9S4A2SRGC422"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-441.md",
+      "artifact_id": "REQ-441"
+    },
+    {
+      "id": "01M866P1VBY9B4X8ERDTNQTTJB",
+      "kind": "requirement",
+      "title": "REQ · Tracked-files guard reports tracked dist paths and fails npm test",
+      "body": "Context: checkTrackedFiles returns tracked node_modules and vitest-cache paths; runGuard in scripts/assertNoTrackedNodeModules.ts returns 1 when any are found and runs before vitest via npm test. Desired behavior: tracked paths with a dist segment are reported too, so the guard fails while dist is tracked. Expected result: runGuard returns 1 and logs game/frontend/dist/index.html when listed. Why: keep dist from being re-tracked.\n\n## Acceptance criteria\n- Given trackedDistPaths input containing game/frontend/dist/index.html and src/a.ts, when called, then only the dist path is returned\n- Given ls-files output with a dist file, when checkTrackedFiles runs, then it includes that file once\n- Given ls-files output with a dist file, when runGuard runs, then it returns 1 and logs the path\n- Given only source files, when runGuard runs, then it returns 0\n\n\n## Scope\n- In scope: New trackedDistPaths helper and checkTrackedFiles in src/lib/trackedNodeModules.ts\n- In scope: Comment in assertNoTrackedNodeModules.ts\n- Out of scope: Changing npm test chain\n- Preserve: node_modules and vitest cache reporting\n- Preserve: Look-alike names such as distance or dist.ts are not matched\n\n\n## Technical constraints\n- Match a whole path segment named dist\n- Tests use a fake git runner only\n\n\n## Definition of done\n- Guard reports dist\n- Existing guard tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "checkTrackedFiles and the guard script report dist files",
+      "description": "Context: checkTrackedFiles returns tracked node_modules and vitest-cache paths; runGuard in scripts/assertNoTrackedNodeModules.ts returns 1 when any are found and runs before vitest via npm test. Desired behavior: tracked paths with a dist segment are reported too, so the guard fails while dist is tracked. Expected result: runGuard returns 1 and logs game/frontend/dist/index.html when listed. Why: keep dist from being re-tracked.",
+      "acceptance_criteria": [
+        "Given trackedDistPaths input containing game/frontend/dist/index.html and src/a.ts, when called, then only the dist path is returned",
+        "Given ls-files output with a dist file, when checkTrackedFiles runs, then it includes that file once",
+        "Given ls-files output with a dist file, when runGuard runs, then it returns 1 and logs the path",
+        "Given only source files, when runGuard runs, then it returns 0"
+      ],
+      "scope": {
+        "in_scope": [
+          "New trackedDistPaths helper and checkTrackedFiles in src/lib/trackedNodeModules.ts",
+          "Comment in assertNoTrackedNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "Changing npm test chain"
+        ],
+        "preserve": [
+          "node_modules and vitest cache reporting",
+          "Look-alike names such as distance or dist.ts are not matched"
+        ]
+      },
+      "technical_constraints": [
+        "Match a whole path segment named dist",
+        "Tests use a fake git runner only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Guard reports dist",
+        "Existing guard tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-442.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M866P1VBD7CQ9S4A2SRGC422",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M866P1VBD7CQ9S4A2SRGC422",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-442.md"
+      ],
+      "depends_on": [
+        "01M866P1VBD7CQ9S4A2SRGC422"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-442.md",
+      "artifact_id": "REQ-442"
+    },
+    {
+      "id": "01M866P1VBDDPAA510KKZFDH69",
+      "kind": "unit",
+      "title": "Act: Add dist/ rule to the root .gitignore",
+      "body": "Add a depth-independent dist/ line to the root .gitignore, after node_modules/, so game/frontend/dist stays ignored.\n\n## Acceptance criteria\n- Given .gitignore, when read, then it contains the line dist/\n- Given the existing rules, when read, then node_modules/ and .devion entries are unchanged\n\n\n## Scope\n- In scope: .gitignore\n- Out of scope: Source files\n- Preserve: Existing ignore lines\n\n\n## Technical constraints\n- No source change in game/src or game/frontend/src\n- Code path: `.gitignore`\n\n\n## Definition of done\n- dist/ line appended\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Append dist/ to .gitignore",
+      "description": "Add a depth-independent dist/ line to the root .gitignore, after node_modules/, so game/frontend/dist stays ignored.",
+      "acceptance_criteria": [
+        "Given .gitignore, when read, then it contains the line dist/",
+        "Given the existing rules, when read, then node_modules/ and .devion entries are unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          ".gitignore"
+        ],
+        "out_of_scope": [
+          "Source files"
+        ],
+        "preserve": [
+          "Existing ignore lines"
+        ]
+      },
+      "technical_constraints": [
+        "No source change in game/src or game/frontend/src",
+        "Code path: `.gitignore`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "dist/ line appended",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-880.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M866P1VB3DKFDZ3X7QWCHZQ2",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M866P1VB3DKFDZ3X7QWCHZQ2",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-880.md"
+      ],
+      "depends_on": [
+        "01M866P1VB3DKFDZ3X7QWCHZQ2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-880.md",
+      "artifact_id": "UNIT-880",
+      "steps": [
+        {
+          "file": ".gitignore",
+          "symbol": "node_modules/ rule",
+          "lines": "after L10",
+          "action": "Append a new final line dist/ directly after the node_modules/ line (L10), keeping all other lines untouched.",
+          "code": "node_modules/ -> node_modules/\\ndist/",
+          "expected": "git check-ignore game/frontend/dist/index.html reports the .gitignore dist/ rule"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBCX61P18KWE419VJZ",
+      "kind": "unit",
+      "title": "Act: Untrack dist in untrackNodeModules and run the existing script",
+      "body": "Add a cached-only recursive rm for dist inside untrackNodeModules, then run the existing npm script so node_modules and dist leave the index.\n\n## Acceptance criteria\n- Given a fake runner, when untrackNodeModules runs, then a call rm -r --cached --ignore-unmatch -q -- dist is made\n- Given the script run, when git ls-files is listed, then no dist or node_modules file remains\n\n\n## Scope\n- In scope: untrackNodeModules function\n- In scope: Running the npm script\n- Out of scope: scripts/untrackNodeModules.ts\n- Preserve: Existing node_modules rm and results.json rm calls\n\n\n## Technical constraints\n- Reuse npm run untrack:node-modules\n- Only --cached so disk files remain\n- Code path: `game/frontend/src/lib/trackedNodeModules.ts`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- dist call added\n- Index clean of both directories\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add dist cached rm and run npm run untrack:node-modules",
+      "description": "Add a cached-only recursive rm for dist inside untrackNodeModules, then run the existing npm script so node_modules and dist leave the index.",
+      "acceptance_criteria": [
+        "Given a fake runner, when untrackNodeModules runs, then a call rm -r --cached --ignore-unmatch -q -- dist is made",
+        "Given the script run, when git ls-files is listed, then no dist or node_modules file remains"
+      ],
+      "scope": {
+        "in_scope": [
+          "untrackNodeModules function",
+          "Running the npm script"
+        ],
+        "out_of_scope": [
+          "scripts/untrackNodeModules.ts"
+        ],
+        "preserve": [
+          "Existing node_modules rm and results.json rm calls"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse npm run untrack:node-modules",
+        "Only --cached so disk files remain",
+        "Code path: `game/frontend/src/lib/trackedNodeModules.ts`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "dist call added",
+        "Index clean of both directories",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-881.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M866P1VBJDN57R4TX1Y17EZ9",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M866P1VBJDN57R4TX1Y17EZ9",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-881.md"
+      ],
+      "depends_on": [
+        "01M866P1VBJDN57R4TX1Y17EZ9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-881.md",
+      "artifact_id": "UNIT-881",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "untrackNodeModules",
+          "lines": "L17-L20",
+          "action": "Insert, after the node_modules rm call and before the results.json call, a run call that untracks dist with the same flags.",
+          "code": "run(['rm', '-r', '--cached', '--ignore-unmatch', '-q', '--', 'dist']);",
+          "expected": "untrackNodeModules issues three cached-only git rm calls"
+        },
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "npm run untrack:node-modules",
+          "lines": "L17-L20",
+          "action": "From game/frontend run the existing npm script once to remove node_modules and dist from the git index; do not edit the script.",
+          "command": "cd game/frontend && npm run untrack:node-modules && git ls-files node_modules dist | wc -l",
+          "expected": "Prints 0 and files remain on disk"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBHWZM8BNR3ZPCJRQ4",
+      "kind": "unit",
+      "title": "Act: Report tracked dist paths from checkTrackedFiles and the guard",
+      "body": "Add trackedDistPaths, matching a whole dist segment, and make checkTrackedFiles return dist paths so runGuard fails while dist is tracked. Update the guard script comment.\n\n## Acceptance criteria\n- Given paths, when trackedDistPaths runs, then only paths with a dist segment are returned\n- Given ls-files output with a dist file, when checkTrackedFiles runs, then it is included once\n\n\n## Scope\n- In scope: trackedNodeModules.ts helpers\n- In scope: assertNoTrackedNodeModules.ts comment\n- Out of scope: npm test chain\n- Preserve: node_modules and vitest cache reporting\n\n\n## Technical constraints\n- Whole-segment match only\n- No file over 200 lines\n- Code path: `game/frontend/src/lib/trackedNodeModules.ts`\n- Code path: `game/frontend/scripts/assertNoTrackedNodeModules.ts`\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Guard reports dist\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add trackedDistPaths and include it in checkTrackedFiles",
+      "description": "Add trackedDistPaths, matching a whole dist segment, and make checkTrackedFiles return dist paths so runGuard fails while dist is tracked. Update the guard script comment.",
+      "acceptance_criteria": [
+        "Given paths, when trackedDistPaths runs, then only paths with a dist segment are returned",
+        "Given ls-files output with a dist file, when checkTrackedFiles runs, then it is included once"
+      ],
+      "scope": {
+        "in_scope": [
+          "trackedNodeModules.ts helpers",
+          "assertNoTrackedNodeModules.ts comment"
+        ],
+        "out_of_scope": [
+          "npm test chain"
+        ],
+        "preserve": [
+          "node_modules and vitest cache reporting"
+        ]
+      },
+      "technical_constraints": [
+        "Whole-segment match only",
+        "No file over 200 lines",
+        "Code path: `game/frontend/src/lib/trackedNodeModules.ts`",
+        "Code path: `game/frontend/scripts/assertNoTrackedNodeModules.ts`"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Guard reports dist",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-882.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M866P1VBY9B4X8ERDTNQTTJB",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M866P1VBY9B4X8ERDTNQTTJB",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-882.md"
+      ],
+      "depends_on": [
+        "01M866P1VBY9B4X8ERDTNQTTJB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-882.md",
+      "artifact_id": "UNIT-882",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "new: trackedDistPaths",
+          "lines": "after L3",
+          "action": "Add an exported function trackedDistPaths(paths: string[]): string[] returning paths whose '/'-split segments include 'dist'.",
+          "code": "export function trackedDistPaths(paths: string[]): string[] {\n  return paths.filter((p) => p.split('/').includes('dist'));\n}",
+          "expected": "Function exported"
+        },
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "checkTrackedFiles",
+          "lines": "L11-L15",
+          "action": "Create const dist = new Set(trackedDistPaths(files)) and extend the filter to also keep paths in dist.",
+          "code": "return files.filter((p) => deps.has(p) || dist.has(p) || p.includes('.vite/vitest/'));",
+          "expected": "Dist paths are returned"
+        },
+        {
+          "file": "game/frontend/scripts/assertNoTrackedNodeModules.ts",
+          "symbol": "runGuard comment",
+          "lines": "L4-L5",
+          "action": "Change the comment to say node_modules, dist and vitest cache files; no logic change.",
+          "expected": "Comment names dist"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBE6SGK1V0KP194PWA",
+      "kind": "unit",
+      "title": "Verify: dist is covered by the real .gitignore unit tests",
+      "body": "Extend gitignoreCoverage.test.ts to prove the real .gitignore ignores game/frontend/dist and that a file without the rule does not.\n\n## Acceptance criteria\n- Given the real .gitignore, when checked for game/frontend/dist/index.html, then true\n- Given only node_modules/ in the text, when checked, then false\n\n\n## Scope\n- In scope: game/frontend/tests/gitignoreCoverage.test.ts\n- Out of scope: Product code\n- Preserve: Existing two tests\n\n\n## Technical constraints\n- Reads only the real .gitignore file; no network\n\n\n## Definition of done\n- Two new tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Coverage test asserts dist ignored",
+      "description": "Extend gitignoreCoverage.test.ts to prove the real .gitignore ignores game/frontend/dist and that a file without the rule does not.",
+      "acceptance_criteria": [
+        "Given the real .gitignore, when checked for game/frontend/dist/index.html, then true",
+        "Given only node_modules/ in the text, when checked, then false"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/gitignoreCoverage.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing two tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reads only the real .gitignore file; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Two new tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-883.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M866P1VBDDPAA510KKZFDH69",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M866P1VBDDPAA510KKZFDH69",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-883.md"
+      ],
+      "depends_on": [
+        "01M866P1VBDDPAA510KKZFDH69"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-883.md",
+      "artifact_id": "UNIT-883",
+      "steps": [
+        {
+          "file": "game/frontend/tests/gitignoreCoverage.test.ts",
+          "symbol": "describe('gitignore coverage of game/frontend/node_modules') it real dist",
+          "lines": "after L28",
+          "action": "Add a constant DIST_FILE = 'game/frontend/dist/index.html' and a test that expects isIgnoredByDirRule(readRealGitignore(), DIST_FILE) toBe(true).",
+          "code": "it('ignores game/frontend/dist/index.html using the real .gitignore', () => { expect(isIgnoredByDirRule(readRealGitignore(), DIST_FILE)).toBe(true); });",
+          "command": "cd game/frontend && npx vitest run tests/gitignoreCoverage.test.ts -t dist",
+          "expected": "New test passes"
+        },
+        {
+          "file": "game/frontend/tests/gitignoreCoverage.test.ts",
+          "symbol": "it no dist rule",
+          "lines": "after L28",
+          "action": "Add a test that expects isIgnoredByDirRule('node_modules/\\n', DIST_FILE) toBe(false).",
+          "code": "it('does not ignore dist when only node_modules/ is listed', () => { expect(isIgnoredByDirRule('node_modules/\\n', DIST_FILE)).toBe(false); });",
+          "command": "cd game/frontend && npx vitest run tests/gitignoreCoverage.test.ts",
+          "expected": "All four tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBT1QVPBHA81DECNJ3",
+      "kind": "unit",
+      "title": "Verify: untrackNodeModules also untracks dist unit tests",
+      "body": "Add tests in trackedNodeModules.test.ts proving the dist call is made and every call stays cached-only.\n\n## Acceptance criteria\n- Given a fake runner, when untrackNodeModules runs, then calls include rm -r --cached ... dist\n- Given a fake runner, then all calls contain --cached\n\n\n## Scope\n- In scope: game/frontend/tests/trackedNodeModules.test.ts\n- Out of scope: Real git\n- Preserve: Existing untrackNodeModules tests\n\n\n## Technical constraints\n- Fake GitRunner via vi.fn; no real git\n\n\n## Definition of done\n- New test passes along with existing ones\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Fake-runner tests for the dist rm call",
+      "description": "Add tests in trackedNodeModules.test.ts proving the dist call is made and every call stays cached-only.",
+      "acceptance_criteria": [
+        "Given a fake runner, when untrackNodeModules runs, then calls include rm -r --cached ... dist",
+        "Given a fake runner, then all calls contain --cached"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/trackedNodeModules.test.ts"
+        ],
+        "out_of_scope": [
+          "Real git"
+        ],
+        "preserve": [
+          "Existing untrackNodeModules tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake GitRunner via vi.fn; no real git"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test passes along with existing ones",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-884.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M866P1VBCX61P18KWE419VJZ",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M866P1VBCX61P18KWE419VJZ",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-884.md"
+      ],
+      "depends_on": [
+        "01M866P1VBCX61P18KWE419VJZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-884.md",
+      "artifact_id": "UNIT-884",
+      "steps": [
+        {
+          "file": "game/frontend/tests/trackedNodeModules.test.ts",
+          "symbol": "describe('untrackNodeModules') it untracks dist",
+          "lines": "after L72",
+          "action": "Add a test with run = vi.fn((_a: string[]) => ''), call untrackNodeModules(run), and assert the recorded calls contain an array containing 'rm','-r','--cached' and 'dist'.",
+          "code": "expect(calls).toEqual(expect.arrayContaining([expect.arrayContaining(['rm','-r','--cached','dist'])]));",
+          "command": "cd game/frontend && npx vitest run tests/trackedNodeModules.test.ts -t untrackNodeModules",
+          "expected": "dist test and existing cached-only test pass"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBKKPXYE1R0TYK1PNZ",
+      "kind": "unit",
+      "title": "Verify: guard reports tracked dist paths unit tests",
+      "body": "Add unit tests for the dist helper and guard with a fake git runner.\n\n## Acceptance criteria\n- trackedDistPaths keeps only dist segment paths\n- checkTrackedFiles reports a dist file once\n- runGuard returns 1 and logs the dist path; returns 0 for source only\n\n\n## Scope\n- In scope: game/frontend/tests/trackedNodeModules.test.ts\n- In scope: game/frontend/tests/assertNoTrackedGuard.test.ts\n- Out of scope: Real git\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fake runner only\n\n\n## Definition of done\n- New tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for trackedDistPaths, checkTrackedFiles and runGuard with dist",
+      "description": "Add unit tests for the dist helper and guard with a fake git runner.",
+      "acceptance_criteria": [
+        "trackedDistPaths keeps only dist segment paths",
+        "checkTrackedFiles reports a dist file once",
+        "runGuard returns 1 and logs the dist path; returns 0 for source only"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/trackedNodeModules.test.ts",
+          "game/frontend/tests/assertNoTrackedGuard.test.ts"
+        ],
+        "out_of_scope": [
+          "Real git"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake runner only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-885.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M866P1VBHWZM8BNR3ZPCJRQ4",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M866P1VBHWZM8BNR3ZPCJRQ4",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-885.md"
+      ],
+      "depends_on": [
+        "01M866P1VBHWZM8BNR3ZPCJRQ4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-885.md",
+      "artifact_id": "UNIT-885",
+      "steps": [
+        {
+          "file": "game/frontend/tests/trackedNodeModules.test.ts",
+          "symbol": "describe('trackedDistPaths')",
+          "lines": "after L8",
+          "action": "Import trackedDistPaths. Add a test: input ['game/frontend/dist/index.html','src/a.ts','src/distance.ts','src/dist.ts'] expects ['game/frontend/dist/index.html'].",
+          "code": "expect(trackedDistPaths(input)).toEqual(['game/frontend/dist/index.html']);",
+          "command": "cd game/frontend && npx vitest run tests/trackedNodeModules.test.ts -t trackedDistPaths",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/trackedNodeModules.test.ts",
+          "symbol": "describe('checkTrackedFiles') reports dist",
+          "lines": "after L175",
+          "action": "Add a test with run returning 'game/frontend/dist/index.html\\0src/a.ts\\0' and expect checkTrackedFiles(run) toEqual(['game/frontend/dist/index.html']).",
+          "command": "cd game/frontend && npx vitest run tests/trackedNodeModules.test.ts -t checkTrackedFiles",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/assertNoTrackedGuard.test.ts",
+          "symbol": "describe('runGuard') dist",
+          "lines": "after L22",
+          "action": "Add a test with run returning 'game/frontend/dist/index.html\\0' and log = vi.fn(); expect runGuard(run, log) toBe(1) and log toHaveBeenCalledWith('game/frontend/dist/index.html').",
+          "command": "cd game/frontend && npx vitest run tests/assertNoTrackedGuard.test.ts",
+          "expected": "All guard tests pass including the dist case"
+        }
+      ]
+    },
+    {
+      "id": "01M866P1VBP1WRWK60R7QZP8GV",
+      "kind": "evidence",
+      "title": "Evidence: node_modules and dist ignored, untracked and guarded unit tests",
+      "body": "Collect the passing runs of gitignoreCoverage, trackedNodeModules and assertNoTrackedGuard tests as evidence for SG-1.\n\n## Acceptance criteria\n- gitignoreCoverage, trackedNodeModules and assertNoTrackedGuard tests pass\n- npm run typecheck passes in game/frontend\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n- Preserve: All existing tests\n\n\n## Technical constraints\n- Unit test output only\n\n\n## Definition of done\n- All three suites green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that dist is ignored, untracked and guarded",
+      "description": "Collect the passing runs of gitignoreCoverage, trackedNodeModules and assertNoTrackedGuard tests as evidence for SG-1.",
+      "acceptance_criteria": [
+        "gitignoreCoverage, trackedNodeModules and assertNoTrackedGuard tests pass",
+        "npm run typecheck passes in game/frontend"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": [
+          "All existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit test output only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three suites green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-175.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M866P1VBE6SGK1V0KP194PWA",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M866P1VBE6SGK1V0KP194PWA",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-175.md"
+      ],
+      "depends_on": [
+        "01M866P1VBE6SGK1V0KP194PWA",
+        "01M866P1VBT1QVPBHA81DECNJ3",
+        "01M866P1VBKKPXYE1R0TYK1PNZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-175.md",
+      "artifact_id": "EVD-175"
+    }
+  ],
+  "created_at": "2026-11-24T07:17:50.729682+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
