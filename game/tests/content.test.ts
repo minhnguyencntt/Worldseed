@@ -47,8 +47,8 @@ describe('bedroom content validity', () => {
     const world = loadWorld(WORLD_DIR);
     const scene = world.scenes.find((s) => s.id === 'bedroom');
     expect(scene).toBeDefined();
-    // Then the scene declares all six objects
-    expect(scene!.objects).toHaveLength(6);
+    // Then the scene declares all fourteen objects from the re-laid-out bedroom.yaml
+    expect(scene!.objects).toHaveLength(14);
     // And each object has a layer and a position
     for (const obj of scene!.objects) {
       expect(obj.layer).toBeTruthy();
