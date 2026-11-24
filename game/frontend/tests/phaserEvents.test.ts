@@ -77,3 +77,36 @@ describe('typed event bus delivery', () => {
     expect(source).not.toContain("from 'phaser'");
   });
 });
+
+describe('phaserToReact keyboard events', () => {
+  it('delivers focusChange payload to a subscribed handler', () => {
+    // Given a handler subscribed to focusChange on the phaser-to-react bus
+    const fn = vi.fn();
+    const unsubscribe = phaserToReact.on('focusChange', fn);
+
+    // When focusChange is emitted with a focused object id
+    phaserToReact.emit('focusChange', { id: 'bookshelf' });
+
+    // Then the handler is called with that exact payload
+    expect(fn).toHaveBeenCalledWith({ id: 'bookshelf' });
+
+    unsubscribe();
+    phaserToReact.clear();
+  });
+
+  it('menuClose unsubscribes: no delivery after the returned unsubscribe is called', () => {
+    // Given a handler subscribed to menuClose and the first emit already delivered
+    const fn = vi.fn();
+    const unsubscribe = phaserToReact.on('menuClose', fn);
+    phaserToReact.emit('menuClose', {});
+
+    // When the unsubscribe function is called and menuClose is emitted again
+    unsubscribe();
+    phaserToReact.emit('menuClose', {});
+
+    // Then the handler has been called only once
+    expect(fn).toHaveBeenCalledTimes(1);
+
+    phaserToReact.clear();
+  });
+});
