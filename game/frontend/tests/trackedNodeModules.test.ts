@@ -3,9 +3,21 @@ import {
   assertNoTrackedNodeModules,
   checkTrackedFiles,
   parseGitLsFiles,
+  trackedDistPaths,
   trackedNodeModulesPaths,
   untrackNodeModules,
 } from '../src/lib/trackedNodeModules';
+
+describe('trackedDistPaths', () => {
+  it('keeps only paths with a dist directory segment and ignores look-alike names', () => {
+    // Given a mixed list of tracked paths including a dist build output,
+    // when it is filtered for dist,
+    // then only the dist/index.html path is returned and src/distance.ts and src/dist.ts are not matched.
+    const input = ['game/frontend/dist/index.html', 'src/a.ts', 'src/distance.ts', 'src/dist.ts'];
+
+    expect(trackedDistPaths(input)).toEqual(['game/frontend/dist/index.html']);
+  });
+});
 
 describe('trackedNodeModulesPaths', () => {
   it('keeps only paths with a node_modules segment and ignores look-alike names', () => {
@@ -187,6 +199,15 @@ describe('checkTrackedFiles', () => {
     const run = vi.fn((_a: string[]) => 'src/a.ts\0');
 
     expect(checkTrackedFiles(run)).toEqual([]);
+  });
+
+  it('reports a tracked dist build output path', () => {
+    // Given a fake git runner that lists a tracked dist build file and a source file,
+    // when checkTrackedFiles is called with it,
+    // then only the dist build file is reported.
+    const run = vi.fn((_a: string[]) => 'game/frontend/dist/index.html\0src/a.ts\0');
+
+    expect(checkTrackedFiles(run)).toEqual(['game/frontend/dist/index.html']);
   });
 
   it('reports a conflicted path once', () => {

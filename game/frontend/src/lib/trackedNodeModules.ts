@@ -17,6 +17,7 @@ export function checkTrackedFiles(run: GitRunner): string[] {
 export function untrackNodeModules(run: GitRunner): void {
   run(['rm', '-r', '--cached', '--ignore-unmatch', '-q', '--', 'node_modules']);
   run(['rm', '--cached', '-f', '--ignore-unmatch', '-q', '--', 'node_modules/.vite/vitest/results.json']);
+  run(['rm', '-r', '--cached', '--ignore-unmatch', '-q', '--', 'dist']);
 }
 
 export function assertNoTrackedNodeModules(paths: string[]): void {

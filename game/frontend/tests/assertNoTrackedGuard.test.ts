@@ -25,6 +25,17 @@ describe('runGuard', () => {
     expect(runGuard(run, log)).toBe(0);
     expect(log).not.toHaveBeenCalled();
   });
+
+  it('returns 1 and logs the offending path when a dist build file is tracked', () => {
+    // Given a fake git runner that reports one tracked dist build file,
+    // when the guard runs,
+    // then it returns 1 and logs the dist path.
+    const run = vi.fn((_a: string[]) => 'game/frontend/dist/index.html\0');
+    const log = vi.fn();
+
+    expect(runGuard(run, log)).toBe(1);
+    expect(log).toHaveBeenCalledWith('game/frontend/dist/index.html');
+  });
 });
 
 describe('guard script', () => {
