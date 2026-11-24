@@ -7,7 +7,6 @@ import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
 import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
-import { Button } from './components/ui/button';
 import { BootScene } from './phaser/BootScene';
 import { ApiError, getCurrentRound, type Round } from './api/client';
 import { world } from './runtime/content';
@@ -67,16 +66,23 @@ export default function App() {
   const selected = game.view.find((o) => o.id === selectedId);
   return (
     <GameLayout
-      header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} onRetry={loadRound} />}
+      header={
+        <HeaderOverlay
+          worldTitle={world.title}
+          round={round}
+          loading={loading}
+          error={roundError}
+          onRetry={loadRound}
+          onSuggest={() => setSheetOpen(true)}
+          suggestRef={triggerRef}
+        />
+      }
       scene={
         <>
           <div className="absolute inset-0">
             <PhaserHost scenes={[BootScene]} />
           </div>
           <ActionMenu object={selected} onAction={game.act} />
-          <Button type="button" variant="frame" ref={triggerRef} onClick={() => setSheetOpen(true)}>
-            Suggest What Happens Next
-          </Button>
           <ContributionSheet
             open={sheetOpen}
             onClose={() => setSheetOpen(false)}
