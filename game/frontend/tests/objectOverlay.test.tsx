@@ -1,88 +1,166 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ObjectOverlay, type OverlayLayout } from '../src/components/ObjectOverlay';
-import { scene, sceneSpec, world } from '../src/runtime/content';
-import { createInitialState } from '@game/state/gameState';
-import { getSceneView } from '@game/engine/scene';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ObjectOverlay } from '../src/components/ObjectOverlay';
+import { anchorFor, type CanvasLayout } from '../src/lib/anchor';
+import { phaserToReact } from '../src/phaser/events';
+import { sceneSpec } from '../src/runtime/content';
+import { useGameStore } from '../src/store/gameStore';
+import { useUiStore } from '../src/store/uiStore';
 
-// Real bedroom content: the view and the authored specs come from the bundled YAML, not from hand-written fixtures.
-const view = getSceneView(createInitialState(world, scene), scene);
-const objectsSpec = sceneSpec.objects;
-const bookshelfView = view.find((o) => o.id === 'bookshelf');
-const bookshelfSpec = objectsSpec.find((o) => o.id === 'bookshelf');
+// The overlay reads everything from the stores and the event bus, so it is rendered without props.
+// The object under test is the first object in the bundled bedroom spec (`bed`).
+const firstSpec = sceneSpec.objects[0];
+const firstId = firstSpec.id;
 
-// zoom 2 on dpr 1 with a zero offset: the bookshelf top edge (y = 60 world px, bounds y = 0, scale 1) sits at 120 CSS px.
-const layout: OverlayLayout = { left: 0, top: 0, zoom: 2, dpr: 1 };
-const BOOKSHELF_TOP_Y = 120;
+const START_LAYOUT: CanvasLayout = { left: 0, top: 0, zoom: 1, dpr: 1 };
+const MOVED_LAYOUT: CanvasLayout = { left: 50, top: 10, zoom: 2, dpr: 1 };
 
-describe('ObjectOverlay with the real bedroom content', () => {
+// The anchor the overlay must place its plaque at, computed from the same spec object the overlay reads.
+function expectedTopAnchor(layout: CanvasLayout) {
+  const anchor = anchorFor({
+    position: firstSpec.position,
+    bounds: firstSpec.interactionBounds,
+    scale: firstSpec.scale,
+    zoom: layout.zoom,
+    offset: { left: layout.left, top: layout.top },
+    dpr: layout.dpr,
+  });
+  if (!anchor) throw new Error('first object has no interaction bounds');
+  return anchor.top;
+}
+
+function plaque(container: HTMLElement) {
+  return container.querySelector<HTMLElement>('[data-frame="plaque"]');
+}
+
+// Only the action runner is spied on, the real implementation still runs, so the bridge is exercised end to end.
+vi.mock('../src/runtime/objectActions', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/runtime/objectActions')>();
+  return { ...actual, performObjectAction: vi.fn(actual.performObjectAction) };
+});
+
+import { performObjectAction } from '../src/runtime/objectActions';
+
+describe('ObjectOverlay driven by events and stores', () => {
+  beforeEach(() => {
+    useGameStore.getState().hydrate();
+    useGameStore.getState().setFocusedObject(null);
+    useUiStore.setState({ canvasLayout: START_LAYOUT });
+  });
+
   // Vitest runs without globals, so RTL does not clean up on its own; unmount between tests so queries see one overlay.
-  afterEach(() => cleanup());
-
-  it('resolves the bookshelf from the real content', () => {
-    expect(bookshelfView).toBeDefined();
-    expect(bookshelfSpec).toBeDefined();
+  afterEach(() => {
+    cleanup();
+    useGameStore.getState().setFocusedObject(null);
+    useUiStore.setState({ canvasLayout: undefined });
   });
 
-  it('shows the bookshelf name in upper case on the plate', () => {
-    const { container } = render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} layout={layout} activeId="bookshelf" onAction={vi.fn()} />,
-    );
+  it('shows the uppercased object name on the plaque after a hover event', () => {
+    const { container } = render(<ObjectOverlay />);
 
-    const plate = container.querySelector('[data-frame="plaque"]');
-    expect(plate).not.toBeNull();
-    expect(plate?.textContent).toBe(bookshelfSpec!.name.toUpperCase());
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
+
+    expect(plaque(container)?.textContent).toBe(firstSpec.name.toUpperCase());
   });
 
-  it('renders one upper-case button per action visible in the view, in order', () => {
-    render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} layout={layout} activeId="bookshelf" onAction={vi.fn()} />,
-    );
+  it('anchors the plaque to the top-centre of the object bounds computed by anchorFor', () => {
+    const { container } = render(<ObjectOverlay />);
 
-    const labels = bookshelfView!.actions.map((a) => a.label.toUpperCase());
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
+
+    const top = expectedTopAnchor(START_LAYOUT);
+    expect(plaque(container)!.style.left).toBe(`${top.x}px`);
+    expect(plaque(container)!.style.top).toBe(`${top.y}px`);
+  });
+
+  it('renders one upper-case button per action of the object, in order', () => {
+    render(<ObjectOverlay />);
+
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
+
+    const labels = firstSpec.actions.map((a) => a.label.toUpperCase());
     expect(labels.length).toBeGreaterThan(0);
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.map((b) => b.textContent)).toEqual(labels);
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(labels);
   });
 
-  it('places the plate at the top y of the anchor for the bookshelf', () => {
-    const { container } = render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} layout={layout} activeId="bookshelf" onAction={vi.fn()} />,
-    );
+  it('moves on layout change', () => {
+    const { container } = render(<ObjectOverlay />);
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
+    const before = expectedTopAnchor(START_LAYOUT);
 
-    const plate = container.querySelector('[data-frame="plaque"]') as HTMLElement | null;
-    expect(plate).not.toBeNull();
-    expect(plate!.style.top).toBe(`${BOOKSHELF_TOP_Y}px`);
+    act(() => {
+      useUiStore.setState({ canvasLayout: MOVED_LAYOUT });
+    });
+
+    const after = expectedTopAnchor(MOVED_LAYOUT);
+    expect(after).not.toEqual(before);
+    expect(plaque(container)!.style.left).toBe(`${after.x}px`);
+    expect(plaque(container)!.style.top).toBe(`${after.y}px`);
   });
 
-  it('calls onAction with the object id and the clicked action id', async () => {
-    const onAction = vi.fn();
-    render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} layout={layout} activeId="bookshelf" onAction={onAction} />,
-    );
+  it('menuClose clears click selection', () => {
+    const { container } = render(<ObjectOverlay />);
+    act(() => {
+      phaserToReact.emit('objectClick', { id: firstId });
+    });
+    expect(plaque(container)).not.toBeNull();
 
-    const inspect = bookshelfView!.actions.find((a) => a.id === 'inspect')!;
-    // The accessible name is "<action label> <object name>", per the ARIA labels on each action button.
-    await userEvent.click(screen.getByRole('button', { name: `${inspect.label} ${bookshelfSpec!.name}` }));
+    act(() => {
+      phaserToReact.emit('menuClose', {});
+    });
 
-    expect(onAction).toHaveBeenCalledTimes(1);
-    expect(onAction).toHaveBeenCalledWith('bookshelf', 'inspect');
+    expect(plaque(container)).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders nothing when activeId is null', () => {
-    const { container } = render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} layout={layout} activeId={null} onAction={vi.fn()} />,
-    );
+  it('store focus shows overlay', () => {
+    const { container } = render(<ObjectOverlay />);
+
+    act(() => {
+      useGameStore.getState().setFocusedObject(firstId);
+    });
+
+    expect(plaque(container)?.textContent).toBe(firstSpec.name.toUpperCase());
+  });
+
+  it('renders nothing when no object is hovered, clicked or focused', () => {
+    const { container } = render(<ObjectOverlay />);
 
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders nothing when the layout is missing', () => {
-    const { container } = render(
-      <ObjectOverlay view={view} objectsSpec={objectsSpec} activeId="bookshelf" onAction={vi.fn()} />,
-    );
+  it('renders nothing when the canvas layout is missing', () => {
+    act(() => {
+      useUiStore.setState({ canvasLayout: undefined });
+    });
+    const { container } = render(<ObjectOverlay />);
+
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('clicking an action runs performObjectAction with the object and action ids', async () => {
+    const user = userEvent.setup();
+    render(<ObjectOverlay />);
+    act(() => {
+      phaserToReact.emit('objectHover', { id: firstId });
+    });
+
+    const action = firstSpec.actions[0];
+    await user.click(screen.getByRole('button', { name: `${action.label} ${firstSpec.name}` }));
+
+    expect(performObjectAction).toHaveBeenCalledWith(firstId, action.id);
   });
 });

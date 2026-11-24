@@ -52,7 +52,7 @@ describe('StoryPanel dialogue card', () => {
     const img = dialogue.querySelector('img');
     expect(img).not.toBeNull();
     expect(img).toHaveAttribute('width', '32');
-    expect(img.getAttribute('src')).toMatch(/boy-portrait\.png$/);
+    expect(img!.getAttribute('src')).toMatch(/boy-portrait\.png$/);
   });
 
   it('renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line', () => {
