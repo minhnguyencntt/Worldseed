@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
+  publicDir: fileURLToPath(new URL('../public', import.meta.url)),
   resolve: {
     alias: {
       '@game': fileURLToPath(new URL('../src', import.meta.url)),

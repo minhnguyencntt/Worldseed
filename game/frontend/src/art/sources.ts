@@ -3,6 +3,8 @@
 
 import type { AnimationDef, Origin } from '@game/assets/manifest';
 import { BOY_SOURCES } from './boy';
+import { ROOM_SOURCES } from './roomSources';
+import { SCENE_EXTRA_SOURCES } from './sceneExtras';
 
 export interface ArtSource {
   id: string;
@@ -56,4 +58,6 @@ export const ART_SOURCES: ArtSource[] = [
     frames: [rowsToGrid(HAND_CURSOR_ROWS)],
   },
   ...BOY_SOURCES,
+  ...ROOM_SOURCES,
+  ...SCENE_EXTRA_SOURCES,
 ];
