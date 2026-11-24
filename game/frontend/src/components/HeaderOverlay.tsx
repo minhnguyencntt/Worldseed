@@ -35,14 +35,14 @@ export function HeaderOverlay({ worldTitle, round, loading, error, onRetry, onSu
       ) : loading ? (
         <span data-testid="round-pill" data-state="loading" className="sf-pill">Loading round…</span>
       ) : round ? (
-        <span data-testid="round-pill" data-state="ready" className="sf-pill">
-          <span data-testid="round-pill" className="sf-pill">
+        <>
+          <span data-testid="round-pill" data-state="ready" className="sf-pill">
             <span data-testid="round-dot" data-status={round.status} className="sf-dot" aria-hidden="true" />
             <span>{round.id}</span>
             <span data-status={round.status}>{round.status}</span>
           </span>
           <Countdown endsAt={round.ends_at} />
-        </span>
+        </>
       ) : (
         <span data-testid="round-pill" data-state="empty" className="sf-pill">No active round</span>
       )}
