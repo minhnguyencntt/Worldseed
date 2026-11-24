@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, URL as NodeURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { indexedPaths, missingPaths } from '../src/lib/docsCheck';
 
-const root = fileURLToPath(new URL('../../../', import.meta.url));
+const root = fileURLToPath(new NodeURL('../../../', import.meta.url));
 const md = readFileSync(join(root, 'game/docs/GDD.md'), 'utf8');
 
 const HEADER = '| Feature | Code files |';
