@@ -16,6 +16,8 @@ describe('context.md', () => {
     const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
     const text = readFileSync(join(root, 'context.md'), 'utf8');
     expect(missingTerms(text, STACK_TERMS)).toEqual([]);
+    expect(text).toMatch(/Go/);
+    expect(text).not.toMatch(/UNKNOWN/);
     expect(missingPaths(contextModulePaths(text), (p) => existsSync(join(root, p)))).toEqual([]);
     expect(text).not.toMatch(/Frameworks: UNKNOWN/);
   });
@@ -30,6 +32,7 @@ describe('context.md', () => {
     const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
     const text = readFileSync(join(root, 'context.md'), 'utf8');
     expect(staleTextHits(text)).toEqual([]);
+    expect(text).not.toMatch(/README\.md only|No `src\/`/);
     expect(contextModulePaths(text)).toEqual(
       expect.arrayContaining(['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/']),
     );

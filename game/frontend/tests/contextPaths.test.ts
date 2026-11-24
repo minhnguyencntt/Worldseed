@@ -15,6 +15,8 @@ describe('context.md module paths', () => {
     expect(paths).toEqual(
       expect.arrayContaining(['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/']),
     );
+    expect(paths).toContain('game/docs/GDD.md');
+    expect(existsSync(join(root, 'game/docs/GDD.md'))).toBe(true);
   });
 
   it('has every context.md module path existing on disk', () => {
