@@ -5,11 +5,15 @@ import { computeZoom } from '../phaser/config';
 
 export interface PhaserHostProps {
   scenes?: Phaser.Types.Scenes.SceneType[];
+  onLayout?: (l: { left: number; top: number; zoom: number; dpr: number }) => void;
 }
 
-export function PhaserHost({ scenes }: PhaserHostProps) {
+export function PhaserHost({ scenes, onLayout }: PhaserHostProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
+  // The mount-once effect below must always call the latest callback.
+  const onLayoutRef = useRef(onLayout);
+  onLayoutRef.current = onLayout;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -18,15 +22,22 @@ export function PhaserHost({ scenes }: PhaserHostProps) {
     const currentZoom = () =>
       computeZoom(container.clientWidth, container.clientHeight, window.devicePixelRatio);
 
+    const reportLayout = () => {
+      const r = container.getBoundingClientRect();
+      onLayoutRef.current?.({ left: r.left, top: r.top, zoom: currentZoom(), dpr: window.devicePixelRatio });
+    };
+
     if (gameRef.current === null) {
       gameRef.current = createGame(container, scenes ?? [], currentZoom());
     }
+    reportLayout();
 
     const applyZoom = () => {
       const game = gameRef.current;
       if (!game) return;
       game.scale.setZoom(currentZoom());
       game.scale.refresh();
+      reportLayout();
     };
 
     const observer = new ResizeObserver(applyZoom);
