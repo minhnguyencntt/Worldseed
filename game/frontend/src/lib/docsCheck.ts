@@ -12,6 +12,7 @@ export function indexedPaths(md: string): string[] {
   return [...seen];
 }
 
+/** Returns the paths for which exists(p) is false. */
 export function missingPaths(paths: string[], exists: (p: string) => boolean): string[] {
   return paths.filter((p) => !exists(p));
 }
