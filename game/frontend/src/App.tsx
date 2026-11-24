@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getActiveNode } from '@game/systems/dialogue';
-import { ActionMenu } from './components/ActionMenu';
 import { ContributionSheet } from './components/ContributionSheet';
 import { GameLayout } from './components/GameLayout';
 import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
+import { ObjectOverlay, type OverlayLayout } from './components/ObjectOverlay';
 import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
 import { BootScene } from './phaser/BootScene';
 import { useGameStore } from './store/gameStore';
 import { ApiError, getCurrentRound, type Round } from './api/client';
-import { world } from './runtime/content';
+import { sceneSpec, world } from './runtime/content';
 import { useGame } from './runtime/useGame';
 import { phaserToReact } from './phaser/events';
 
@@ -30,6 +30,8 @@ export function describeRoundError(e: unknown): string {
 export default function App() {
   const game = useGame();
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [layout, setLayout] = useState<OverlayLayout | undefined>(undefined);
   const focusedObjectId = useGameStore((s) => s.focusedObjectId);
   const [begun, setBegun] = useState(false);
   const [round, setRound] = useState<Round | undefined>(undefined);
@@ -59,13 +61,16 @@ export default function App() {
 
   useEffect(() => phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)), []);
 
+  useEffect(() => phaserToReact.on('objectHover', ({ id }) => setHoverId(id)), []);
+
   useEffect(() => phaserToReact.on('menuClose', () => setSelectedId(undefined)), []);
 
   if (!begun) {
     return <IntroScreen onBegin={() => setBegun(true)} />;
   }
 
-  const selected = game.view.find((o) => o.id === selectedId);
+  // Hover previews the object under the pointer; keyboard focus and the last click keep its actions reachable.
+  const activeId = hoverId ?? focusedObjectId ?? selectedId ?? null;
   return (
     <GameLayout
       header={
@@ -82,12 +87,14 @@ export default function App() {
       scene={
         <>
           <div className="absolute inset-0">
-            <PhaserHost scenes={[BootScene]} />
+            <PhaserHost scenes={[BootScene]} onLayout={setLayout} />
           </div>
-          <ActionMenu
-            object={selected}
+          <ObjectOverlay
+            view={game.view}
+            objectsSpec={sceneSpec.objects}
+            layout={layout}
+            activeId={activeId}
             onAction={game.act}
-            focusFirstAction={selectedId !== undefined && selectedId === focusedObjectId}
           />
           <ContributionSheet
             open={sheetOpen}
