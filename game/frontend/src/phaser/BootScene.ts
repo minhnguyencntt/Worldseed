@@ -131,6 +131,15 @@ export class BootScene extends Phaser.Scene {
     const state = this.readState();
     if (!state) return;
     this.sceneObjects.forEach((o) => o.sync(state));
+    this.applyFocusedObject(useGameStore.getState().focusedObjectId);
+  }
+
+  private applyFocusedObject(id: string | null): void {
+    this.sceneObjects.forEach((o) => {
+      if (id !== null && o.spec.id === id) {
+        if (!o.isFocused) o.focus();
+      } else if (o.isFocused) o.blur();
+    });
   }
 
   private onKeyDown = (e: KeyboardEvent): void => {
