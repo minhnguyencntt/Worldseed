@@ -18,6 +18,11 @@ function iconFor(id: string): string | undefined {
   return entry ? `/assets/${entry.path}` : undefined;
 }
 
+export function portraitPath(speaker: string): string | undefined {
+  const entry = manifestAssets.find((asset) => asset.id === `character:${speaker}-portrait`);
+  return entry ? `/assets/${entry.path}` : undefined;
+}
+
 export function buildInventorySlots(inventory: string[]): InventorySlot[] {
   return Array.from({ length: INVENTORY_SLOT_COUNT }, (_, i): InventorySlot => {
     const id = inventory[i];
