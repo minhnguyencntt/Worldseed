@@ -3,7 +3,19 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // PhaserHost is the only Phaser boundary mocked; the React side under test is real.
-vi.mock('../src/components/PhaserHost', () => ({ PhaserHost: () => null }));
+// The overlay renders only once a canvas layout is published, so the stub publishes one on mount, as the real host does.
+vi.mock('../src/components/PhaserHost', async () => {
+  const { useEffect } = await import('react');
+  const { useUiStore } = await import('../src/store/uiStore');
+  return {
+    PhaserHost: () => {
+      useEffect(() => {
+        useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 });
+      }, []);
+      return null;
+    },
+  };
+});
 
 vi.mock('../src/phaser/BootScene', () => ({ BootScene: class {} }));
 
