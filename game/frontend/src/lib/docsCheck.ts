@@ -1,4 +1,4 @@
-/** Terms the repo-root context.md Stack section must contain (case-insensitive substring match). */
+/** Terms the repo-root context.md Stack section must contain (case-insensitive); the Go backend is listed there as out of scope. */
 export const STACK_TERMS = ['Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
 const PATH_RE = /`([^`\s]+\/[^`\s]+\.[a-z]+)`/g;
