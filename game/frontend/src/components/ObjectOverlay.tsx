@@ -1,49 +1,31 @@
 import { useEffect, useRef } from 'react';
-import type { ObjectSpec } from '@game/content/schema';
-import type { SceneObjectView } from '@game/engine/scene';
-import type { ActionDef } from '@game/state/types';
+import { getSceneView } from '@game/engine/scene';
 import { anchorFor } from '../lib/anchor';
+import { useActiveObject } from '../lib/useActiveObject';
 import { handleMenuKey } from '../phaser/menuKeys';
+import { scene, sceneSpec } from '../runtime/content';
+import { performObjectAction } from '../runtime/objectActions';
+import { useGameStore } from '../store/gameStore';
+import { useUiStore } from '../store/uiStore';
 import { Button } from './ui/button';
 import { Frame } from './ui/Frame';
 
-// Canvas placement reported by PhaserHost: container origin in viewport pixels, zoom and device pixel ratio.
-export interface OverlayLayout {
-  left: number;
-  top: number;
-  zoom: number;
-  dpr: number;
-}
-
-export interface ObjectOverlayProps {
-  view: SceneObjectView[];
-  objectsSpec: ObjectSpec[];
-  layout?: OverlayLayout;
-  activeId?: string | null;
-  // Moves DOM focus to the first action button, used when keyboard focus lands on an object.
-  focusFirstAction?: boolean;
-  onAction: (objectId: string, actionId: ActionDef['id']) => void;
-}
-
 // Name plaque above the object's top edge and its action buttons below the bottom edge, both anchored to the canvas.
-export function ObjectOverlay({
-  view,
-  objectsSpec,
-  layout,
-  activeId,
-  focusFirstAction = false,
-  onAction,
-}: ObjectOverlayProps) {
+export function ObjectOverlay() {
+  const layout = useUiStore((s) => s.canvasLayout);
+  const state = useGameStore((s) => s.state);
+  const { activeId, focusFirst } = useActiveObject();
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (focusFirstAction) firstButtonRef.current?.focus();
-  }, [focusFirstAction, activeId]);
+    if (focusFirst) firstButtonRef.current?.focus();
+  }, [focusFirst, activeId]);
 
-  if (!activeId || !layout) return null;
+  if (state === null || !activeId || !layout) return null;
 
+  const view = getSceneView(state, scene);
   const object = view.find((o) => o.id === activeId);
-  const spec = objectsSpec.find((o) => o.id === activeId);
+  const spec = sceneSpec.objects.find((o) => o.id === activeId);
   if (!object || !spec) return null;
 
   const anchor = anchorFor({
@@ -82,7 +64,7 @@ export function ObjectOverlay({
             ref={index === 0 ? firstButtonRef : undefined}
             variant="frame"
             aria-label={`${action.label} ${object.name}`}
-            onClick={() => onAction(object.id, action.id)}
+            onClick={() => performObjectAction(object.id, action.id)}
           >
             {action.label.toUpperCase()}
           </Button>
