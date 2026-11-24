@@ -18,7 +18,6 @@ import type { CharacterAnimationName } from '@game/engine/characterAnimation';
 import type { CharacterSpec } from '@game/content/schema';
 import { layerDepth } from '@game/engine/layers';
 import type { AnimationDef } from '@game/assets/manifest';
-import type { InputLayer } from './input';
 
 export const FALLBACK_KEY = 'fallback:missing';
 export const TRANSITION_FADE_MS = 300;
@@ -33,7 +32,6 @@ export class BootScene extends Phaser.Scene {
   private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
   private unsubscribeAnimation: Unsubscribe | null = null;
   private unsubscribeTransition: Unsubscribe | null = null;
-  private inputLayer: InputLayer | null = null;
   private inputLayer: InputLayer | null = null;
 
   constructor() {

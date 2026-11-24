@@ -136,7 +136,8 @@ describe('ObjectOverlay a11y', () => {
 
   it('emits menuClose on the phaserToReact bus when Escape is pressed inside the overlay', async () => {
     const user = userEvent.setup();
-    const emit = vi.spyOn(phaserToReact, 'emit');
+    const onMenuClose = vi.fn();
+    const unsubscribe = phaserToReact.on('menuClose', onMenuClose);
     render(
       <ObjectOverlay
         view={[bookshelfView]}
@@ -147,9 +148,13 @@ describe('ObjectOverlay a11y', () => {
       />,
     );
 
-    screen.getByRole('button', { name: 'Inspect Bookshelf' }).focus();
-    await user.keyboard('{Escape}');
+    try {
+      screen.getByRole('button', { name: 'Inspect Bookshelf' }).focus();
+      await user.keyboard('{Escape}');
 
-    expect(emit).toHaveBeenCalledWith('menuClose', {});
+      expect(onMenuClose).toHaveBeenCalledTimes(1);
+    } finally {
+      unsubscribe();
+    }
   });
 });
