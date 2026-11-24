@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import type { GameState } from '@game/state/types';
 import { useGameStore } from '../store/gameStore';
-import { phaserToReact, reactToPhaser, type Unsubscribe } from './events';
+import { phaserToReact, type Unsubscribe } from './events';
+import { createTransitions, TRANSITION_FADE_MS, type Transitions } from './transitions';
 import { createPhaserEffectContext } from './effectContext';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
 import { scene, sceneSpec, manifest } from '../runtime/content';
@@ -12,7 +13,7 @@ import { createSceneBuild, type SceneBuild } from './buildScene';
 import { createCharacters, type Characters } from './characters';
 
 export { FALLBACK_KEY };
-export const TRANSITION_FADE_MS = 300;
+export { TRANSITION_FADE_MS };
 
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
 export class BootScene extends Phaser.Scene {
@@ -20,7 +21,7 @@ export class BootScene extends Phaser.Scene {
   private preloader: Preloader | null = null;
   private build: SceneBuild | null = null;
   private characters: Characters | null = null;
-  private unsubscribeTransition: Unsubscribe | null = null;
+  private transitions: Transitions | null = null;
   private inputLayer: InputLayer | null = null;
 
   constructor() {
@@ -46,12 +47,7 @@ export class BootScene extends Phaser.Scene {
     this.build = createSceneBuild(this, resolve, scene, sceneSpec);
     this.inputLayer = createInputLayer(this.input, this.build.objects);
     this.characters = createCharacters(this, scene.characters ?? [], manifest, resolve, this.inputLayer);
-    this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
-      if (!sceneId || !this.scene.get(sceneId)) return;
-      const cam = this.cameras.main;
-      cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));
-      cam.fadeOut(TRANSITION_FADE_MS);
-    });
+    this.transitions = createTransitions(this);
     this.onStateChange();
     playSceneTransition(createPhaserEffectContext(this, resolve), scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -65,8 +61,8 @@ export class BootScene extends Phaser.Scene {
       this.build = null;
       this.characters?.dispose();
       this.characters = null;
-      this.unsubscribeTransition?.();
-      this.unsubscribeTransition = null;
+      this.transitions?.dispose();
+      this.transitions = null;
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }
