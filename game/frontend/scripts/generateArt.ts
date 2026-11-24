@@ -20,7 +20,7 @@ export interface ArtPaths {
 
 // Resolves the assets root and app manifest path relative to the script directory.
 export function defaultArtPaths(scriptDir: string): ArtPaths {
-  const assetsRoot = resolve(scriptDir, '../public/assets');
+  const assetsRoot = resolve(scriptDir, '../../public/assets');
   return { assetsRoot, manifestPath: resolve(assetsRoot, 'worlds/the-boys-room/manifest.json') };
 }
 
