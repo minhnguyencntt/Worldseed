@@ -30,9 +30,11 @@ describe('new: committed manifest boy entries', () => {
     },
   );
 
-  it('keeps the existing character:boy entry as an SVG', () => {
+  it('has no character:boy entry left over from the removed SVG sheet', () => {
+    // Given the committed manifest after the placeholder SVGs were removed
+    // When the entry with id character:boy is looked up
     const boy = manifest.assets.find((asset) => asset.id === 'character:boy');
-    expect(boy, 'character:boy entry').toBeDefined();
-    expect(boy?.path).toMatch(/\.svg$/);
+    // Then no such entry exists
+    expect(boy, 'character:boy entry').toBeUndefined();
   });
 });
