@@ -19,4 +19,14 @@ describe('context.md', () => {
     expect(missingPaths(contextModulePaths(text), (p) => existsSync(join(root, p)))).toEqual([]);
     expect(text).not.toMatch(/Frameworks: UNKNOWN/);
   });
+
+  it('drops the stale README-only text and lists the real game and backend module paths', () => {
+    const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
+    const text = readFileSync(join(root, 'context.md'), 'utf8');
+    expect(text).not.toMatch(/hello Worldseed|Traceability index/);
+    expect(text).not.toMatch(/Executable \/ server \/ CLI `main` \| UNKNOWN/);
+    expect(contextModulePaths(text)).toEqual(
+      expect.arrayContaining(['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/']),
+    );
+  });
 });
