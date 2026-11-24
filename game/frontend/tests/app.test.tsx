@@ -104,7 +104,7 @@ describe('App remount and saved state', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
   }
 
-  it('Given a played game is unmounted, when the App remounts and Begin is clicked, then history, the opened hotspot and the Inventory region are restored', () => {
+  it('Given a played game is unmounted, when the App remounts and Begin is clicked, then history and the Inventory region are restored', () => {
     const first = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
@@ -119,7 +119,7 @@ describe('App remount and saved state', () => {
     expect(screen.getByRole('region', { name: 'Inventory' })).toBeInTheDocument();
   });
 
-  it('Given no saved state, when Begin is clicked, then the game starts fresh at the opening dialogue with the hotspot closed', () => {
+  it('Given no saved state, when Begin is clicked, then the game starts fresh at the opening dialogue with no story history', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
 
     begin();
