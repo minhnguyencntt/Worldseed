@@ -1,10 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ART_SOURCES } from '../src/art/sources';
 import { readPngSize } from '../src/lib/pngEncode';
-// Planned Act module: the CLI wrapper around generateAssets/mergeManifest. Not present yet.
-import { runGenerateArt } from '../scripts/generateArt';
+import { createFsIo, defaultArtPaths, runGenerateArt } from '../scripts/generateArt';
 
 const ASSETS_ROOT = 'public/assets';
 const MANIFEST_PATH = 'public/assets/manifest.json';
@@ -77,6 +76,47 @@ describe('runGenerateArt', () => {
         readFileSync(join(process.cwd(), 'package.json'), 'utf8'),
       ) as { scripts: Record<string, string> };
       expect(pkg.scripts['art:generate']).toBe('vite-node scripts/generateArt.ts');
+    });
+  });
+
+  // Given a fake fs with an existing manifest, createFsIo must read it and rewrite it at the app manifest path.
+  describe('createFsIo', () => {
+    const SCRIPT_DIR = '/repo/game/frontend/scripts';
+
+    function fakeFs() {
+      return {
+        readFileSync: vi.fn((_p: string, _enc: 'utf8') => MANIFEST_TEXT),
+        writeFileSync: vi.fn((_p: string, _d: Uint8Array | string) => undefined),
+        mkdirSync: vi.fn((_p: string, _o: { recursive: true }) => undefined),
+      };
+    }
+
+    it('rewrites the worlds/the-boys-room manifest and writes every PNG under public/assets', () => {
+      const paths = defaultArtPaths(SCRIPT_DIR);
+      const fs = fakeFs();
+      runGenerateArt(createFsIo(paths, fs));
+
+      const writtenPaths = fs.writeFileSync.mock.calls.map((call) => call[0]);
+      expect(writtenPaths).toContain(paths.manifestPath);
+      const manifestCall = fs.writeFileSync.mock.calls.find((call) => call[0] === paths.manifestPath);
+      expect(typeof manifestCall?.[1]).toBe('string');
+
+      for (const path of writtenPaths) {
+        if (path === paths.manifestPath) continue;
+        expect(path.startsWith(paths.assetsRoot)).toBe(true);
+      }
+    });
+
+    it('throws when the manifest is missing and does not replace it with an empty one', () => {
+      const paths = defaultArtPaths(SCRIPT_DIR);
+      const fs = fakeFs();
+      fs.readFileSync.mockImplementation(() => {
+        throw new Error('ENOENT');
+      });
+
+      const io = createFsIo(paths, fs);
+      expect(() => io.readText(paths.manifestPath)).toThrow('ENOENT');
+      expect(fs.writeFileSync).not.toHaveBeenCalled();
     });
   });
 });
