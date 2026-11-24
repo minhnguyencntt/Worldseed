@@ -61,13 +61,13 @@ describe('interface frame kit art', () => {
   });
 
   it('manifest and files match', () => {
-    const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8')) as { assets: ManifestEntry[] };
-    const entries = manifest.assets ?? (manifest as unknown as ManifestEntry[]);
+    const manifest = JSON.parse(readFileSync(MANIFEST_PATH, 'utf8')) as { version: number; assets: ManifestEntry[] };
+    const entries = manifest.assets;
 
     for (const spec of FRAME_KIT) {
       const entry = entries.find((e) => e.id === spec.id);
       expect(entry, `manifest entry for ${spec.id}`).toBeDefined();
-      expect(entry!.dimensions, spec.id).toEqual({ w: spec.w, h: spec.h } as unknown as ManifestEntry['dimensions']);
+      expect(entry!.dimensions, spec.id).toEqual({ width: spec.w, height: spec.h });
       const bytes = new Uint8Array(readFileSync(join(PUBLIC_DIR, 'assets', entry!.path)));
       expect(readPngSize(bytes), spec.id).toEqual({ width: spec.w, height: spec.h });
     }
