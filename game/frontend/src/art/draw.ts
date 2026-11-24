@@ -1,6 +1,7 @@
 import { PALETTE_RAMPS } from '../lib/palette';
+import type { Grid } from './types';
 
-export type Grid = number[][];
+export type { Grid };
 
 export function rampIndex(ramp: keyof typeof PALETTE_RAMPS, step: number): number {
   if (!Number.isInteger(step) || step < 0 || step > 5) throw new Error(`bad ramp step ${step}`);

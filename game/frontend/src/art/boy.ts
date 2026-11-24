@@ -1,7 +1,7 @@
 // Boy character art for worlds/the-boys-room: portrait grid built with the helpers in ./draw.
 // Each grid is row-major palette indices (see src/lib/palette.ts).
 
-import type { ArtSource } from './sources';
+import type { ArtSource } from './types';
 import { createGrid, fillRect, outlineRect, rampIndex, shadeRect, type Grid } from './draw';
 
 const PORTRAIT_SIZE = 32;

@@ -1,4 +1,4 @@
-import type { AssetEntry } from '@game/assets/manifest';
+import { parseAsset, type AssetEntry } from '@game/assets/manifest';
 import type { ArtSource } from '../art/sources';
 import { encodePng } from './pngEncode';
 import { gridToRgba } from './gridToRgba';
@@ -23,34 +23,50 @@ export function generateAssets(sources: readonly ArtSource[], palette: readonly 
   const files: GeneratedFile[] = [];
   const entries: ManifestEntry[] = [];
 
+  // Validates a built entry with parseAsset and throws a readable error on failure.
+  const accept = (entry: ManifestEntry): ManifestEntry => {
+    const result = parseAsset(entry);
+    if (!result.ok) {
+      throw new Error(
+        `invalid manifest entry ${entry.id}: ` +
+          result.errors.map((e) => `${e.path}: ${e.message}`).join('; '),
+      );
+    }
+    return result.data;
+  };
+
   for (const source of sources) {
     const sheet = buildSpriteSheet(source.frames.map((grid) => gridToRgba(grid, palette)));
     const dimensions = { width: sheet.width, height: sheet.height };
     files.push({ path: source.path, bytes: encodePng(sheet) });
 
     if (sheet.frameCount > 1) {
-      entries.push({
-        id: source.id,
-        path: source.path,
-        type: 'spritesheet',
-        dimensions,
-        frames: {
-          frameWidth: sheet.frameWidth,
-          frameHeight: sheet.frameHeight,
-          frameCount: sheet.frameCount,
-        },
-        ...(source.animations ? { animations: source.animations } : {}),
-        ...(source.origin ? { origin: source.origin } : {}),
-      });
+      entries.push(
+        accept({
+          id: source.id,
+          path: source.path,
+          type: 'spritesheet',
+          dimensions,
+          frames: {
+            frameWidth: sheet.frameWidth,
+            frameHeight: sheet.frameHeight,
+            frameCount: sheet.frameCount,
+          },
+          ...(source.animations ? { animations: source.animations } : {}),
+          ...(source.origin ? { origin: source.origin } : {}),
+        }),
+      );
     } else {
-      entries.push({
-        id: source.id,
-        path: source.path,
-        type: 'image',
-        dimensions,
-        ...(source.animations ? { animations: source.animations } : {}),
-        ...(source.origin ? { origin: source.origin } : {}),
-      });
+      entries.push(
+        accept({
+          id: source.id,
+          path: source.path,
+          type: 'image',
+          dimensions,
+          ...(source.animations ? { animations: source.animations } : {}),
+          ...(source.origin ? { origin: source.origin } : {}),
+        }),
+      );
     }
   }
 
