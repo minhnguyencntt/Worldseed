@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { contextModulePaths } from '../src/lib/contextDoc';
@@ -12,7 +12,8 @@ describe('context.md', () => {
   });
 
   it('names the stack and references only existing module paths in the repo-root context.md', () => {
-    const root = fileURLToPath(new URL('../../../', import.meta.url));
+    // new URL(rel, import.meta.url) resolves to http://localhost under vitest's jsdom env, so build the root from the file path.
+    const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
     const text = readFileSync(join(root, 'context.md'), 'utf8');
     expect(missingTerms(text, STACK_TERMS)).toEqual([]);
     expect(missingPaths(contextModulePaths(text), (p) => existsSync(join(root, p)))).toEqual([]);
