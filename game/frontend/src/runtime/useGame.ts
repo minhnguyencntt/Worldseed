@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { getSceneView, performAction, type SceneObjectView } from '@game/engine/scene';
-import type { GameState, SceneDef } from '@game/state/types';
-import { chooseOption } from '@game/systems/dialogue';
+import { getSceneView, type SceneObjectView } from '@game/engine/scene';
+import { runStep } from '@game/systems/runner';
+import type { GameEvent, GameState, SceneDef } from '@game/state/types';
 import { useGameStore } from '../store/gameStore';
 import { scene } from './content';
 
@@ -9,7 +9,7 @@ export type UseGame = {
   state: GameState;
   scene: SceneDef;
   view: SceneObjectView[];
-  act: (objectId: string, actionId: string) => void;
+  act: (objectId: string, actionId: string) => GameEvent[];
   choose: (index: number) => void;
 };
 
@@ -26,11 +26,16 @@ export function useGame(): UseGame {
     state,
     scene,
     view: getSceneView(state, scene),
-    act: (objectId, actionId) =>
-      useGameStore
-        .getState()
-        .setState((prev) => performAction(prev, scene, objectId, actionId)),
+    act: (objectId, actionId) => {
+      let events: GameEvent[] = [];
+      useGameStore.getState().setState((prev) => {
+        const r = runStep({ scene }, prev, { type: 'action', objectId, actionId });
+        events = r.events;
+        return r.state;
+      });
+      return events;
+    },
     choose: (index) =>
-      useGameStore.getState().setState((prev) => chooseOption(prev, scene, index)),
+      useGameStore.getState().setState((prev) => runStep({ scene }, prev, { type: 'choose', index }).state),
   };
 }

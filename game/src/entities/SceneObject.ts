@@ -2,13 +2,8 @@ import type { ActionSpec, ObjectSpec } from '../content/schema';
 import { layerDepth } from '../engine/layers';
 import type { RenderContext, RenderHandle } from '../engine/renderContext';
 import { evaluateAll } from '../systems/conditions';
-import { isActivationKey } from '../systems/interaction';
+import { availableActions, isActivationKey } from '../systems/interaction';
 import type { GameState } from '../state/types';
-
-// Actions whose conditions currently hold for the given state.
-function availableActions(state: GameState, spec: ObjectSpec): ActionSpec[] {
-  return spec.actions.filter((a) => evaluateAll(state, a.conditions));
-}
 
 // Wraps one authored ObjectSpec and the render handle that draws it.
 export class SceneObject {

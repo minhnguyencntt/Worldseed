@@ -69,11 +69,10 @@ export default function App() {
   useEffect(() => phaserToReact.on('menuClose', () => setSelectedId(undefined)), []);
 
   const handleAction = (objectId: string, actionId: string) => {
-    const before = useGameStore.getState().state?.currentScene;
-    game.act(objectId, actionId);
+    const events = game.act(objectId, actionId);
     reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' });
-    const after = useGameStore.getState().state?.currentScene;
-    if (after && after !== before) reactToPhaser.emit('transitionTo', { sceneId: after });
+    const go = events.find((e) => e.type === 'goto_scene');
+    if (go && go.type === 'goto_scene') reactToPhaser.emit('transitionTo', { sceneId: go.scene });
   };
 
   if (!begun) {
