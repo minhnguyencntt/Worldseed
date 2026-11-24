@@ -38,6 +38,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string | undefined>(undefined);
   const [validation, setValidation] = useState<string | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
 
   // Load the player's existing suggestions for this round when the sheet opens.
   useEffect(() => {
@@ -67,10 +68,11 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
   const length = Array.from(text.trim()).length;
   const overLimit = length > MAX_PROMPT_LENGTH;
+  const submitting = entries.some((e) => e.state === 'sending');
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (remaining <= 0) return;
+    if (submitting || remaining <= 0) return;
     const prompt = text.trim();
     if (prompt === '') {
       setValidation(BLANK_MESSAGE);
@@ -81,14 +83,17 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
     const key = Date.now();
     setText('');
     setError(undefined);
+    setSuccess(undefined);
     setValidation(undefined);
     setEntries((prev) => [...prev, { key, prompt, state: 'sending' }]);
 
     try {
       await submitContribution(prompt);
       setEntries((prev) => prev.map((e) => (e.key === key ? { ...e, state: 'sent' } : e)));
+      setSuccess('Suggestion sent');
     } catch (err) {
       setEntries((prev) => prev.map((e) => (e.key === key ? { ...e, state: 'failed' } : e)));
+      setSuccess(undefined);
       setError(errorMessage(err));
     }
   }
@@ -116,6 +121,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             onChange={(e) => {
               setText(e.target.value);
               setValidation(undefined);
+              setSuccess(undefined);
             }}
             rows={3}
             aria-invalid={validation !== undefined || overLimit}
@@ -126,13 +132,14 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             }
           />
           <p id="contribution-idea-count">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>
-          <button type="submit" disabled={remaining <= 0}>Send</button>
+          <button type="submit" disabled={remaining <= 0 || length === 0 || overLimit || submitting} aria-busy={submitting}>{submitting ? 'Sending…' : 'Send'}</button>
         </form>
         {validation && <p id="contribution-idea-error" role="alert">{validation}</p>}
         {overLimit && <p id="contribution-idea-limit" role="alert">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}
         {remaining <= 0 && <p id="contribution-idea-quota" role="alert">You have used all your suggestions this round</p>}
 
         {error && <p role="alert">{error}</p>}
+        {success && <p id="contribution-idea-success" role="status">{success}</p>}
 
         <ul aria-label="Your suggestions">
           {entries.map((entry) => (
