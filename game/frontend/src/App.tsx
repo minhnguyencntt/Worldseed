@@ -57,6 +57,8 @@ export default function App() {
 
   useEffect(() => phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)), []);
 
+  useEffect(() => phaserToReact.on('menuClose', () => setSelectedId(undefined)), []);
+
   if (!begun) {
     return <IntroScreen onBegin={() => setBegun(true)} />;
   }

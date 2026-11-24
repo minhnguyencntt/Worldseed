@@ -9,7 +9,7 @@ import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
 import { manifest, scene, sceneSpec } from '../runtime/content';
 import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
-import { buildScene } from '@game/engine/buildScene';
+import { buildScene, moveFocus } from '@game/engine/buildScene';
 import type { SceneObject } from '@game/entities/SceneObject';
 import { createPhaserRenderContext } from './renderContext';
 import { resolveCharacterAnimation } from '@game/engine/characterAnimation';
@@ -67,9 +67,11 @@ export class BootScene extends Phaser.Scene {
     this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
+    this.input.keyboard?.on('keydown', this.onKeyDown);
     this.onStateChange();
     playSceneTransition(ctx, scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.input.keyboard?.off('keydown', this.onKeyDown);
       this.unsubscribe?.();
       this.unsubscribe = null;
       this.effects.forEach((handle) => handle.destroy());

@@ -5,6 +5,8 @@ export interface PhaserToReactEvents {
   objectClick: { id: string };
   characterClick: { id: string };
   sceneReady: { sceneId: string };
+  focusChange: { id: string | null };
+  menuClose: Record<string, never>;
 }
 
 export interface ReactToPhaserEvents {
