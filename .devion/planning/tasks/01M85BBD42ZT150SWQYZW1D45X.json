@@ -1,0 +1,65 @@
+{
+  "id": "01M85BBD42ZT150SWQYZW1D45X",
+  "intent_id": "01M85B5WN14APWMN80QG7DSQG9",
+  "title": "Act: Add characterAnimationKey helper to characterAnimation",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export a pure helper that builds the animation key BootScene plays",
+  "description": "Add characterAnimationKey(ref) returning asset:animation, matching keys such as character:boy:idle, so tests can assert the NPC idle key.",
+  "acceptance_criteria": [
+    "characterAnimationKey({asset:'character:npc',animation:'idle'}) returns 'character:npc:idle'",
+    "resolveCharacterAnimation is unchanged"
+  ],
+  "scope": {
+    "in_scope": [
+      "New export in characterAnimation.ts"
+    ],
+    "out_of_scope": [
+      "BootScene changes"
+    ],
+    "preserve": [
+      "resolveCharacterAnimation"
+    ]
+  },
+  "technical_constraints": [
+    "Pure function, no Phaser import",
+    "Code path: `game/src/engine/characterAnimation.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Helper exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-609.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85B7WWWQ5GW0X5SGJNWRKJ3",
+    "trace:01M84T6537706VR5FGDE69V8GW",
+    "artifact:.ai-dlc/units/UNIT-609.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85BBD421GCTHEWAF8MNHYT8"
+  ],
+  "sim_node_id": "01M85B7WWWXD8EVZ4AXB9AXG1P",
+  "feature_id": "01M84T6537706VR5FGDE69V8GW",
+  "artifact_path": ".ai-dlc/units/UNIT-609.md",
+  "artifact_id": "UNIT-609",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/characterAnimation.ts",
+      "symbol": "new: characterAnimationKey",
+      "lines": "after L18",
+      "action": "Append an exported function characterAnimationKey taking ref of type {asset:string; animation:string} and returning the string asset + ':' + animation.",
+      "code": "export function characterAnimationKey(ref: { asset: string; animation: string }): string {\n  return `${ref.asset}:${ref.animation}`;\n}",
+      "expected": "Importing characterAnimationKey yields the asset:animation string"
+    }
+  ],
+  "created_at": "2026-11-23T23:20:10.114552+00:00",
+  "updated_at": "2026-11-23T23:20:27.635038+00:00"
+}

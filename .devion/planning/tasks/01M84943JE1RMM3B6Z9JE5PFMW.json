@@ -1,0 +1,74 @@
+{
+  "id": "01M84943JE1RMM3B6Z9JE5PFMW",
+  "intent_id": "01M84925Q2QV4H5TSGXE3Z4A1J",
+  "title": "Act: Add onReject prop and Reject button to ExecutionPanel",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add onReject prop, canReject flag and Reject button to ExecutionPanel",
+  "description": "Edit ExecutionPanel.tsx: extend ExecutionPanelProps with onReject, compute canReject, include it in the actions container condition and render the Reject button after Approve.",
+  "acceptance_criteria": [
+    "Given AWAITING_APPROVAL and onReject, when rendered, then a Reject button calls onReject(id)",
+    "Given no onReject or a different status, when rendered, then no Reject button is rendered"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/components/ExecutionPanel.tsx"
+    ],
+    "out_of_scope": [
+      "tests",
+      "AdminApp"
+    ],
+    "preserve": [
+      "Approve and Retry"
+    ]
+  },
+  "technical_constraints": [
+    "Keep onClick pattern onX?.(id ?? '')",
+    "Code path: `game/frontend/src/components/ExecutionPanel.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Code compiles with tsc --noEmit",
+    "Reject gated as specified",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-137.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M849411J35B9S7FRH9HEE7DF",
+    "trace:01M848ZFYJ5E173P68XH1YEFX4",
+    "artifact:.ai-dlc/units/UNIT-137.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84943JEPVCCJQ1DZ8MMA7CQ"
+  ],
+  "sim_node_id": "01M849411JTJMJVYZVVT3Y8T18",
+  "artifact_path": ".ai-dlc/units/UNIT-137.md",
+  "artifact_id": "UNIT-137",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ExecutionPanel.tsx",
+      "symbol": "ExecutionPanelProps",
+      "lines": "L14-L20",
+      "action": "Add the optional prop onReject after onRetry in the ExecutionPanelProps interface.",
+      "code": "onRetry?: (id: string) => void;\n  onReject?: (id: string) => void;",
+      "expected": "ExecutionPanelProps accepts onReject without type errors"
+    },
+    {
+      "file": "game/frontend/src/components/ExecutionPanel.tsx",
+      "symbol": "ExecutionPanel",
+      "lines": "L40-L100",
+      "action": "Destructure onReject in the parameters, add const canReject = execution?.status === 'AWAITING_APPROVAL' && onReject !== undefined; change the container condition to (canApprove || canRetry || canReject), and render after the Approve button a Reject button.",
+      "code": "{canReject && (\n  <button type=\"button\" onClick={() => onReject?.(id ?? '')}>\n    Reject\n  </button>\n)}",
+      "expected": "Reject button appears only for AWAITING_APPROVAL with onReject and calls onReject with the id"
+    }
+  ],
+  "created_at": "2026-11-23T13:21:59.374589+00:00",
+  "updated_at": "2026-11-23T13:22:49.659894+00:00"
+}

@@ -1,0 +1,716 @@
+{
+  "id": "01M84PP064HHRMH5V0FAMS893R",
+  "trigger_node_id": "INT-069, UNIT-348 +9",
+  "node_ids": [
+    "INT-069",
+    "UNIT-348",
+    "UNIT-349",
+    "UNIT-350",
+    "UNIT-351",
+    "UNIT-352",
+    "UNIT-353",
+    "REQ-174",
+    "REQ-175",
+    "REQ-176",
+    "EVD-069"
+  ],
+  "intent_id": "INT-069",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-069",
+      "title": "SG-2.1 Typed manifest interfaces and zod validators",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-348",
+      "title": "Act: Add zod to game/package.json",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJN1F22YD0S73SVMFA2"
+      ],
+      "depends_on": [
+        "REQ-174"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "2bdecf3694f09a2a57215de62587a455f45a5d60",
+      "from_sha": "45c984f15e7841578227c806f284e24d239ee468",
+      "started_at": "2026-11-23T17:18:59.032202+00:00",
+      "ended_at": "2026-11-23T17:19:15.461648+00:00",
+      "run_started_at": "2026-11-23T17:18:59.032202+00:00",
+      "duration_ms": 13347,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1262,
+      "estimated_cost_usd": 0.005054
+    },
+    {
+      "unit_id": "UNIT-349",
+      "title": "Act: Add manifest zod schemas and inferred types",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJNSXS9YERSBMG7NXQ3"
+      ],
+      "depends_on": [
+        "REQ-175"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "a57cc06d4bb79cfdf9f1beab3e676ecd1b542a2f",
+      "from_sha": "a57cc06d4bb79cfdf9f1beab3e676ecd1b542a2f",
+      "started_at": "2026-11-23T17:18:59.055786+00:00",
+      "ended_at": "2026-11-23T17:19:42.232801+00:00",
+      "run_started_at": "2026-11-23T17:18:59.055786+00:00",
+      "duration_ms": 41886,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 5398,
+      "estimated_cost_usd": 0.02161
+    },
+    {
+      "unit_id": "UNIT-350",
+      "title": "Act: Add parseManifest validators and index exports",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJNKFCXVYH93S6N01R1"
+      ],
+      "depends_on": [
+        "REQ-176"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "started_at": "2026-11-23T17:18:59.063295+00:00",
+      "ended_at": "2026-11-23T17:19:25.236693+00:00",
+      "run_started_at": "2026-11-23T17:18:59.063295+00:00",
+      "duration_ms": 24202,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 3387,
+      "estimated_cost_usd": 0.013559,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED, no files changed. UNIT-350 depends on game/src/assets/manifest/schema.ts (manifestSchema, assetSchema, types), which is not on this branch (devion/exec-01m84... HEAD 45c984f). game/src/assets/manifest/ does not exist, and no UNIT-350 markdown is under .ai-dlc/units (only UNIT-001..010). The schema was added by commit 174fa89 (INT-068-UNIT-342-Act) on branch devion/exec-01m84pbx, which is not an ancestor of HEAD. That commit exports assetManifestSchema and assetEntrySchema, not the manifestSchema/assetSchema names this step specifies, so importing it as written would not compile even after a cherry-pick. I did not cherry-pick, invent a schema, or write validate.ts/index.ts against a missing module. Needed to proceed: confirm the schema baseline for this unit (which commit or branch to build on, and the export names), or have the schema unit merged into this branch. The validators and barrel are then a small change."
+    },
+    {
+      "unit_id": "UNIT-351",
+      "title": "Verify: zod dependency declaration unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJN3CCZASQX8W8CCBCS"
+      ],
+      "depends_on": [
+        "UNIT-348",
+        "REQ-174"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "a57cc06d4bb79cfdf9f1beab3e676ecd1b542a2f",
+      "from_sha": "2bdecf3694f09a2a57215de62587a455f45a5d60",
+      "tests": [
+        {
+          "id": "manifestDependency.test.ts::declares zod with a semver range in game/package.json",
+          "kind": "unit",
+          "name": "declares zod with a semver range in game/package.json",
+          "title": "declares zod with a semver range in game/package.json",
+          "scenario": "Given the game package manifest read from disk, When the zod entry in dependencies is inspected, Then zod is declared with a major.minor.patch version range",
+          "command": "npx vitest run tests/manifestDependency.test.ts --testTimeout=20000",
+          "file": "tests/manifestDependency.test.ts",
+          "status": "passed",
+          "detail": "Matches /^\\^?\\d+\\.\\d+\\.\\d+/ against the declared zod range."
+        },
+        {
+          "id": "manifestDependency.test.ts::makes zod importable and exposes z.object as a function",
+          "kind": "unit",
+          "name": "makes zod importable and exposes z.object as a function",
+          "title": "makes zod importable and exposes z.object as a function",
+          "scenario": "Given the zod package resolved from game/node_modules, When the module is imported, Then z.object is available as a function",
+          "command": "npx vitest run tests/manifestDependency.test.ts --testTimeout=20000",
+          "file": "tests/manifestDependency.test.ts",
+          "status": "passed",
+          "detail": "await import('zod') exposes z.object as a function."
+        }
+      ],
+      "started_at": "2026-11-23T17:19:15.470512+00:00",
+      "ended_at": "2026-11-23T17:19:37.506944+00:00",
+      "run_started_at": "2026-11-23T17:19:15.470512+00:00",
+      "duration_ms": 19789,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3234,
+      "estimated_cost_usd": 0.012946
+    },
+    {
+      "unit_id": "UNIT-352",
+      "title": "Verify: Manifest schema unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJNACRQT3HPYEFRBKF5"
+      ],
+      "depends_on": [
+        "UNIT-349",
+        "REQ-175"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "e99741e6267d530d8f2819242f74655696689c4c",
+      "from_sha": "a57cc06d4bb79cfdf9f1beab3e676ecd1b542a2f",
+      "tests": [
+        {
+          "id": "manifestSchema-01",
+          "kind": "unit",
+          "name": "accepts a valid image asset with dimensions, origin and interaction bounds",
+          "title": "assetSchema accepts a valid image asset with dimensions, origin and interaction bounds",
+          "scenario": "Given an image asset with valid dimensions, origin and bounds, When validated, Then it succeeds",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-02",
+          "kind": "unit",
+          "name": "accepts a spritesheet with frames, dimensions and named animations",
+          "title": "assetSchema accepts a spritesheet with frames, dimensions and named animations",
+          "scenario": "Given a 64x16 spritesheet with frame layout and an idle animation, When validated, Then it succeeds",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-03",
+          "kind": "unit",
+          "name": "rejects a spritesheet that lacks frames",
+          "title": "assetSchema rejects a spritesheet that lacks frames",
+          "scenario": "Given a spritesheet with dimensions but no frames, When validated, Then it fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-04",
+          "kind": "unit",
+          "name": "rejects dimensions with a width of zero",
+          "title": "assetSchema rejects dimensions with a width of zero",
+          "scenario": "Given an image with dimensions width 0, When validated, Then it fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-05",
+          "kind": "unit",
+          "name": "rejects an asset whose type is not a supported kind",
+          "title": "assetSchema rejects an asset whose type is not a supported kind",
+          "scenario": "Given an asset with type 'video', When validated, Then it fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-06",
+          "kind": "unit",
+          "name": "rejects an origin whose x value is greater than 1",
+          "title": "assetSchema rejects an origin whose x value is greater than 1",
+          "scenario": "Given an image with origin.x 1.5, When validated, Then it fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "manifestSchema-07",
+          "kind": "unit",
+          "name": "rejects interaction bounds with a negative width",
+          "title": "assetSchema rejects interaction bounds with a negative width",
+          "scenario": "Given an image with interactionBounds width -1, When validated, Then it fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T17:19:42.241453+00:00",
+      "ended_at": "2026-11-23T17:20:08.834744+00:00",
+      "run_started_at": "2026-11-23T17:19:42.241453+00:00",
+      "duration_ms": 24882,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 4921,
+      "estimated_cost_usd": 0.019694
+    },
+    {
+      "unit_id": "UNIT-353",
+      "title": "Verify: Manifest validator unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PNZJN6TWBR07F4YCFNDC6"
+      ],
+      "depends_on": [
+        "UNIT-350",
+        "REQ-176"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "8c3e965d3e18ec4cf666f4c9e06d2765261bfc1a",
+      "from_sha": "8c3e965d3e18ec4cf666f4c9e06d2765261bfc1a",
+      "tests": [
+        {
+          "id": "parseManifest-valid-manifest-ok",
+          "kind": "unit",
+          "name": "parseManifest > returns ok true with the parsed assets for a valid manifest",
+          "title": "returns ok true with the parsed assets for a valid manifest",
+          "scenario": "Given a version 1 manifest containing one valid image asset, When parsed, Then ok is true and the first asset id is 'bookshelf'",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseManifest-zero-dimension-path",
+          "kind": "unit",
+          "name": "parseManifest > returns ok false with the failing field path when a dimension is zero",
+          "title": "returns ok false with the failing field path when a dimension is zero",
+          "scenario": "Given a manifest whose first asset has dimensions width 0, When parsed, Then ok is false and the error contains 'assets.0.dimensions.width'",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseManifest-duplicate-id-error",
+          "kind": "unit",
+          "name": "parseManifest > returns ok false with a duplicate id error when two assets share an id",
+          "title": "returns ok false with a duplicate id error when two assets share an id",
+          "scenario": "Given two assets both with id 'bed', When parsed, Then ok is false and the error contains 'duplicate asset id: bed'",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseManifest-non-object-input-no-throw-null",
+          "kind": "unit",
+          "name": "parseManifest > returns ok false without throwing when the input is null",
+          "title": "returns ok false without throwing when the input is null",
+          "scenario": "Given the input null, When parsed, Then parsing does not throw and ok is false",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseManifest-non-object-input-no-throw-string",
+          "kind": "unit",
+          "name": "parseManifest > returns ok false without throwing when the input is a string",
+          "title": "returns ok false without throwing when the input is a string",
+          "scenario": "Given the input 'x', When parsed, Then parsing does not throw and ok is false",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseManifest-non-object-input-no-throw-number",
+          "kind": "unit",
+          "name": "parseManifest > returns ok false without throwing when the input is a number",
+          "title": "returns ok false without throwing when the input is a number",
+          "scenario": "Given the input 42, When parsed, Then parsing does not throw and ok is false",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "parseAsset-valid-image-ok",
+          "kind": "unit",
+          "name": "parseAsset > returns ok true for a valid image asset",
+          "title": "returns ok true for a valid image asset",
+          "scenario": "Given a valid image asset entry, When parsed as a single asset, Then ok is true",
+          "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+          "file": "tests/manifestValidate.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (5): parseManifest > returns ok true with the parsed assets for a valid manifest, parseManifest > returns ok false with the failing field path when a dimension is zero, parseManifest > returns ok false with a duplicate id error when two assets share an id, parseManifest > returns ok false without throwing when the input is null, a string or a number, parseAsset > returns ok true for a valid image asset",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "2a0758767ff05645abd3a74b2660defb344e604f",
+          "from_sha": "e99741e6267d530d8f2819242f74655696689c4c",
+          "tests": [
+            {
+              "id": "manifestValidate.parseManifest.returnsOkForValidManifest",
+              "kind": "unit",
+              "name": "parseManifest > returns ok true with the parsed assets for a valid manifest",
+              "title": "parseManifest returns ok true with the parsed assets for a valid manifest",
+              "scenario": "Given a version 1 manifest with one valid image asset, When parsed, Then ok is true and assets[0].id is 'bookshelf'",
+              "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+              "file": "tests/manifestValidate.test.ts",
+              "status": "failed",
+              "detail": "Suite failed to load: ../src/assets/manifest does not resolve; parseManifest is not implemented."
+            },
+            {
+              "id": "manifestValidate.parseManifest.zeroWidthError",
+              "kind": "unit",
+              "name": "parseManifest > returns ok false with the failing field path when a dimension is zero",
+              "title": "parseManifest returns ok false with the failing field path when a dimension is zero",
+              "scenario": "Given an asset with dimensions width 0, When parsed, Then ok is false and the error contains 'assets.0.dimensions.width'",
+              "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+              "file": "tests/manifestValidate.test.ts",
+              "status": "failed",
+              "detail": "Suite failed to load: ../src/assets/manifest does not resolve; parseManifest is not implemented."
+            },
+            {
+              "id": "manifestValidate.parseManifest.duplicateIdError",
+              "kind": "unit",
+              "name": "parseManifest > returns ok false with a duplicate id error when two assets share an id",
+              "title": "parseManifest returns ok false with a duplicate id error when two assets share an id",
+              "scenario": "Given two assets with id 'bed', When parsed, Then ok is false and the error contains 'duplicate asset id: bed'",
+              "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+              "file": "tests/manifestValidate.test.ts",
+              "status": "failed",
+              "detail": "Suite failed to load: ../src/assets/manifest does not resolve; parseManifest is not implemented."
+            },
+            {
+              "id": "manifestValidate.parseManifest.nonObjectInputs",
+              "kind": "unit",
+              "name": "parseManifest > returns ok false without throwing when the input is null, a string or a number",
+              "title": "parseManifest returns ok false without throwing for null, string and number inputs",
+              "scenario": "Given the inputs null, 'x' and 42, When parsed, Then no exception is thrown and ok is false for each",
+              "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+              "file": "tests/manifestValidate.test.ts",
+              "status": "failed",
+              "detail": "Suite failed to load: ../src/assets/manifest does not resolve; parseManifest is not implemented. Runs as 3 it.each cases (null, 'x', 42)."
+            },
+            {
+              "id": "manifestValidate.parseAsset.validImage",
+              "kind": "unit",
+              "name": "parseAsset > returns ok true for a valid image asset",
+              "title": "parseAsset returns ok true for a valid image asset",
+              "scenario": "Given a valid image asset entry, When parsed as a single asset, Then ok is true",
+              "command": "npx vitest run tests/manifestValidate.test.ts --testTimeout=10000",
+              "file": "tests/manifestValidate.test.ts",
+              "status": "failed",
+              "detail": "Suite failed to load: ../src/assets/manifest does not resolve; parseAsset is not implemented."
+            }
+          ],
+          "started_at": "2026-11-23T17:20:09.567124+00:00",
+          "ended_at": "2026-11-23T17:20:43.495372+00:00",
+          "duration_ms": 32632,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 16,
+          "tokens_out": 6058,
+          "estimated_cost_usd": 0.024245
+        }
+      ],
+      "started_at": "2026-11-23T17:20:09.567124+00:00",
+      "ended_at": "2026-11-23T17:21:29.414620+00:00",
+      "run_started_at": "2026-11-23T17:21:12.572390+00:00",
+      "duration_ms": 15503,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2640,
+      "estimated_cost_usd": 0.010566
+    },
+    {
+      "unit_id": "REQ-174",
+      "title": "REQ · zod is a declared dependency of the game module",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-069"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-175",
+      "title": "REQ · Typed manifest schemas cover id, path, type, dimensions, frames, animations, origin and bounds",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-069"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-176",
+      "title": "REQ · Runtime validators return typed data or path-named errors without throwing",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-069"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-069",
+      "title": "Evidence: Manifest schema and validator unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-348",
+        "UNIT-349",
+        "UNIT-350",
+        "UNIT-351",
+        "UNIT-352",
+        "UNIT-353"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-353",
+      "title": "Act: Fix Verify failure — Manifest validator unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "8c3e965d3e18ec4cf666f4c9e06d2765261bfc1a",
+      "from_sha": "2a0758767ff05645abd3a74b2660defb344e604f",
+      "started_at": "2026-11-23T17:20:43.502870+00:00",
+      "ended_at": "2026-11-23T17:21:12.502853+00:00",
+      "run_started_at": "2026-11-23T17:20:43.502870+00:00",
+      "duration_ms": 27859,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 4401,
+      "estimated_cost_usd": 0.017614
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-349",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "REQ-175",
+      "dst": "UNIT-352"
+    },
+    {
+      "src": "INT-069",
+      "dst": "REQ-174"
+    },
+    {
+      "src": "INT-069",
+      "dst": "REQ-176"
+    },
+    {
+      "src": "REQ-176",
+      "dst": "UNIT-353"
+    },
+    {
+      "src": "REQ-174",
+      "dst": "UNIT-351"
+    },
+    {
+      "src": "UNIT-350",
+      "dst": "UNIT-353"
+    },
+    {
+      "src": "UNIT-350",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "UNIT-352",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "UNIT-349",
+      "dst": "UNIT-352"
+    },
+    {
+      "src": "UNIT-353",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "REQ-174",
+      "dst": "UNIT-348"
+    },
+    {
+      "src": "UNIT-348",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "INT-069",
+      "dst": "REQ-175"
+    },
+    {
+      "src": "REQ-175",
+      "dst": "UNIT-349"
+    },
+    {
+      "src": "REQ-176",
+      "dst": "UNIT-350"
+    },
+    {
+      "src": "UNIT-351",
+      "dst": "EVD-069"
+    },
+    {
+      "src": "UNIT-348",
+      "dst": "UNIT-351"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84pp0",
+  "base_sha": "45c984f15e7841578227c806f284e24d239ee468",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84PP064HHRMH5V0FAMS893R:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T17:18:57.220714+00:00",
+  "updated_at": "2026-11-23T17:21:31.204476+00:00",
+  "completed_at": "2026-11-23T17:21:29.416031+00:00",
+  "duration_ms": 152196,
+  "usage_stats": {
+    "total_duration_ms": 200110,
+    "total_tokens_in": 104,
+    "total_tokens_out": 31301,
+    "total_estimated_cost_usd": 0.125288
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 10,
+  "unit_allowlist": [
+    "UNIT-348",
+    "UNIT-349",
+    "UNIT-350",
+    "UNIT-351",
+    "UNIT-352",
+    "UNIT-353"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-348",
+        "title": "Act: Add zod to game/package.json",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-348 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-349",
+        "title": "Act: Add manifest zod schemas and inferred types",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-349 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-350",
+        "title": "Act: Add parseManifest validators and index exports",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-350 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-351",
+        "title": "Verify: zod dependency declaration unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-351 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-352",
+        "title": "Verify: Manifest schema unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-352 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-353",
+        "title": "Verify: Manifest validator unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-069",
+            "path": ".ai-dlc/evidence/EVD-069.md",
+            "title": "Evidence: Manifest schema and validator unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-353 unless acceptance outcomes recorded in EVD-069 (.ai-dlc/evidence/EVD-069.md; \"Evidence: Manifest schema and validator unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T17:18:58.795414+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-348",
+    "UNIT-349",
+    "UNIT-350",
+    "UNIT-351",
+    "UNIT-352",
+    "UNIT-353"
+  ]
+}

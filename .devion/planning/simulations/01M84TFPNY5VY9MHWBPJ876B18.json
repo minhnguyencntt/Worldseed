@@ -1,0 +1,503 @@
+{
+  "intent_id": "01M84TFPNY5VY9MHWBPJ876B18",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84TGXN31PSQ76EKSAC9ZYNE",
+      "kind": "intent",
+      "title": "SG-4.2.3 Enforce the tracked-dependency check in the test script",
+      "body": "Context: game/frontend/src/lib/trackedNodeModules.ts has assertNoTrackedNodeModules but nothing runs it. Desired behavior: npm test fails whenever git tracks any node_modules or vitest cache path. Why: stops vendored Phaser and cache files from being committed again.\n\n## Acceptance criteria\n- Given a tracked path containing node_modules or a .vite cache directory, when the guard runs, then it throws naming that path\n- Given the frontend package.json, when npm test is read, then it runs the guard before vitest\n\n\n## Scope\n- In scope: guard helper and CLI script\n- In scope: test script wiring in game/frontend/package.json\n- Out of scope: untracking files again\n- Out of scope: CI manifests\n- Preserve: existing trackedNodeModulesPaths, untrackNodeModules and assertNoTrackedNodeModules behavior\n- Preserve: test:phaser-pin script\n\n\n## Technical constraints\n- Use vite-node already used by untrack:node-modules\n- No new dependencies\n\n\n## Definition of done\n- npm test runs the guard first and fails on tracked dependency or cache paths\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Wire the tracked node_modules / test-cache check into npm test so it fails if such a path is tracked again",
+      "description": "Context: game/frontend/src/lib/trackedNodeModules.ts has assertNoTrackedNodeModules but nothing runs it. Desired behavior: npm test fails whenever git tracks any node_modules or vitest cache path. Why: stops vendored Phaser and cache files from being committed again.",
+      "acceptance_criteria": [
+        "Given a tracked path containing node_modules or a .vite cache directory, when the guard runs, then it throws naming that path",
+        "Given the frontend package.json, when npm test is read, then it runs the guard before vitest"
+      ],
+      "scope": {
+        "in_scope": [
+          "guard helper and CLI script",
+          "test script wiring in game/frontend/package.json"
+        ],
+        "out_of_scope": [
+          "untracking files again",
+          "CI manifests"
+        ],
+        "preserve": [
+          "existing trackedNodeModulesPaths, untrackNodeModules and assertNoTrackedNodeModules behavior",
+          "test:phaser-pin script"
+        ]
+      },
+      "technical_constraints": [
+        "Use vite-node already used by untrack:node-modules",
+        "No new dependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "npm test runs the guard first and fails on tracked dependency or cache paths",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-089.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-089.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-089.md",
+      "artifact_id": "INT-089"
+    },
+    {
+      "id": "01M84TGXN3856JS03384J9K4HB",
+      "kind": "requirement",
+      "title": "REQ · Guard reports tracked dependency and test-cache paths from git ls-files output",
+      "body": "Context: trackedNodeModulesPaths only matches a node_modules segment and nothing reads real git output. Desired: parse NUL-separated git ls-files output and flag node_modules or .vite segments. Why: the guard needs real tracked file lists.\n\n## Acceptance criteria\n- Given paths including node_modules/a.js and src/.vite/x.json, when filtered, then both are returned and src/a.ts is not\n- Given git ls-files -z output, when parsed, then empty entries are dropped and paths split on NUL\n\n\n## Scope\n- In scope: src/lib/trackedNodeModules.ts additions\n- Out of scope: running git in tests\n- Preserve: existing exports\n\n\n## Technical constraints\n- Pure functions; git runner injected via GitRunner type\n\n\n## Definition of done\n- Helpers exported and typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure helper and parser report tracked node_modules and .vite paths",
+      "description": "Context: trackedNodeModulesPaths only matches a node_modules segment and nothing reads real git output. Desired: parse NUL-separated git ls-files output and flag node_modules or .vite segments. Why: the guard needs real tracked file lists.",
+      "acceptance_criteria": [
+        "Given paths including node_modules/a.js and src/.vite/x.json, when filtered, then both are returned and src/a.ts is not",
+        "Given git ls-files -z output, when parsed, then empty entries are dropped and paths split on NUL"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/trackedNodeModules.ts additions"
+        ],
+        "out_of_scope": [
+          "running git in tests"
+        ],
+        "preserve": [
+          "existing exports"
+        ]
+      },
+      "technical_constraints": [
+        "Pure functions; git runner injected via GitRunner type"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helpers exported and typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-221.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84TGXN31PSQ76EKSAC9ZYNE",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84TGXN31PSQ76EKSAC9ZYNE",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-221.md"
+      ],
+      "depends_on": [
+        "01M84TGXN31PSQ76EKSAC9ZYNE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-221.md",
+      "artifact_id": "REQ-221"
+    },
+    {
+      "id": "01M84TGXN3NJTAHV5MTT32WM5X",
+      "kind": "requirement",
+      "title": "REQ · npm test runs the tracked-dependency guard and fails when a path is tracked",
+      "body": "Context: package.json test is only vitest run. Desired: test runs the guard script then vitest, and the script exits non-zero when tracked dependency or cache paths exist. Why: enforcement.\n\n## Acceptance criteria\n- Given a git runner returning a tracked node_modules path, when the guard main runs, then it throws and exit code is non-zero\n- Given package.json, when scripts.test is read, then it invokes the guard before vitest run\n\n\n## Scope\n- In scope: scripts/assertNoTrackedNodeModules.ts\n- In scope: package.json scripts\n- Out of scope: CI\n- Preserve: test:phaser-pin and untrack:node-modules scripts\n\n\n## Technical constraints\n- vite-node runs the script\n\n\n## Definition of done\n- npm test fails while a dependency path is tracked\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A CLI guard script is chained before vitest in the test script",
+      "description": "Context: package.json test is only vitest run. Desired: test runs the guard script then vitest, and the script exits non-zero when tracked dependency or cache paths exist. Why: enforcement.",
+      "acceptance_criteria": [
+        "Given a git runner returning a tracked node_modules path, when the guard main runs, then it throws and exit code is non-zero",
+        "Given package.json, when scripts.test is read, then it invokes the guard before vitest run"
+      ],
+      "scope": {
+        "in_scope": [
+          "scripts/assertNoTrackedNodeModules.ts",
+          "package.json scripts"
+        ],
+        "out_of_scope": [
+          "CI"
+        ],
+        "preserve": [
+          "test:phaser-pin and untrack:node-modules scripts"
+        ]
+      },
+      "technical_constraints": [
+        "vite-node runs the script"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "npm test fails while a dependency path is tracked",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-222.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84TGXN31PSQ76EKSAC9ZYNE",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M84TGXN31PSQ76EKSAC9ZYNE",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-222.md"
+      ],
+      "depends_on": [
+        "01M84TGXN31PSQ76EKSAC9ZYNE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-222.md",
+      "artifact_id": "REQ-222"
+    },
+    {
+      "id": "01M84TGXN3RS4YAQG55HJFEY31",
+      "kind": "unit",
+      "title": "Act: Add trackedDependencyPaths and parseGitLsFiles helpers",
+      "body": "Add helpers so the guard can flag node_modules and .vite paths and read git ls-files -z output.\n\n## Acceptance criteria\n- trackedDependencyPaths flags node_modules and .vite segments only\n- checkTrackedFiles(run) throws via assertion when git lists such paths\n\n\n## Scope\n- In scope: game/frontend/src/lib/trackedNodeModules.ts\n- Out of scope: tests\n- Preserve: existing three exports\n\n\n## Technical constraints\n- Keep GitRunner signature\n- Code path: `game/frontend/src/lib/trackedNodeModules.ts`\n\n\n## Definition of done\n- Helpers exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Extend trackedNodeModules.ts with cache-aware filter, parser and checker",
+      "description": "Add helpers so the guard can flag node_modules and .vite paths and read git ls-files -z output.",
+      "acceptance_criteria": [
+        "trackedDependencyPaths flags node_modules and .vite segments only",
+        "checkTrackedFiles(run) throws via assertion when git lists such paths"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/lib/trackedNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "existing three exports"
+        ]
+      },
+      "technical_constraints": [
+        "Keep GitRunner signature",
+        "Code path: `game/frontend/src/lib/trackedNodeModules.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helpers exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-442.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84TGXN3856JS03384J9K4HB",
+      "matched_feature_id": "01M84K6YA89P4HMDHNY8H7SSJ9",
+      "links": [
+        "parent:01M84TGXN3856JS03384J9K4HB",
+        "trace:01M84K6YA89P4HMDHNY8H7SSJ9",
+        "artifact:.ai-dlc/units/UNIT-442.md"
+      ],
+      "depends_on": [
+        "01M84TGXN3856JS03384J9K4HB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-442.md",
+      "artifact_id": "UNIT-442",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "new: trackedDependencyPaths",
+          "lines": "after L3",
+          "action": "Add exported function trackedDependencyPaths(paths: string[]) returning paths whose '/'-split segments include 'node_modules' or '.vite'.",
+          "code": "export function trackedDependencyPaths(paths: string[]): string[] {\n  return paths.filter((p) => p.split('/').some((s) => s === 'node_modules' || s === '.vite'));\n}",
+          "expected": "Function returns only dependency or cache paths"
+        },
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "new: parseGitLsFiles",
+          "lines": "after L3",
+          "action": "Add exported parseGitLsFiles(output: string): string[] that splits on '\\0' and drops empty strings.",
+          "code": "export function parseGitLsFiles(output: string): string[] {\n  return output.split('\\0').filter((p) => p.length > 0);\n}",
+          "expected": "NUL output becomes a path list"
+        },
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "assertNoTrackedNodeModules",
+          "lines": "L13-L16",
+          "action": "Add exported checkTrackedFiles(run: GitRunner): void that calls run(['ls-files','-z']), parses it, and throws Error with count and first 10 paths when trackedDependencyPaths is non-empty.",
+          "code": "export function checkTrackedFiles(run: GitRunner): void {\n  const bad = trackedDependencyPaths(parseGitLsFiles(run(['ls-files', '-z'])));\n  if (bad.length > 0) throw new Error(`${bad.length} tracked dependency or cache paths: ${bad.slice(0, 10).join(', ')}`);\n}",
+          "expected": "Throws only when a dependency/cache path is tracked"
+        }
+      ]
+    },
+    {
+      "id": "01M84TGXN3KBEFN43PVTMK9TYD",
+      "kind": "unit",
+      "title": "Act: Add guard CLI script and chain it into the test script",
+      "body": "Run checkTrackedFiles against real git and run it before vitest in npm test.\n\n## Acceptance criteria\n- Script exits non-zero when a dependency path is tracked\n- scripts.test runs the guard before vitest run\n\n\n## Scope\n- In scope: game/frontend/scripts/assertNoTrackedNodeModules.ts\n- In scope: game/frontend/package.json\n- Out of scope: tests\n- Preserve: other scripts\n\n\n## Technical constraints\n- Reuse execFileSync like untrackNodeModules.ts\n- New file: `game/frontend/scripts/assertNoTrackedNodeModules.ts`\n- Code path: `game/frontend/package.json`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- npm test invokes guard first\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create assertNoTrackedNodeModules.ts script and update package.json scripts",
+      "description": "Run checkTrackedFiles against real git and run it before vitest in npm test.",
+      "acceptance_criteria": [
+        "Script exits non-zero when a dependency path is tracked",
+        "scripts.test runs the guard before vitest run"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/scripts/assertNoTrackedNodeModules.ts",
+          "game/frontend/package.json"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "other scripts"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse execFileSync like untrackNodeModules.ts",
+        "New file: `game/frontend/scripts/assertNoTrackedNodeModules.ts`",
+        "Code path: `game/frontend/package.json`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "npm test invokes guard first",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-443.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84TGXN3NJTAHV5MTT32WM5X",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84TGXN3NJTAHV5MTT32WM5X",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-443.md"
+      ],
+      "depends_on": [
+        "01M84TGXN3NJTAHV5MTT32WM5X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-443.md",
+      "artifact_id": "UNIT-443",
+      "steps": [
+        {
+          "file": "game/frontend/scripts/assertNoTrackedNodeModules.ts",
+          "symbol": "new: guard script",
+          "lines": "new",
+          "action": "Create script that imports checkTrackedFiles and runs it with a runner calling execFileSync('git', args, {encoding:'utf8', maxBuffer: 64*1024*1024, cwd: process.cwd()}); uncaught throw makes vite-node exit non-zero.",
+          "code": "import { execFileSync } from 'node:child_process';\nimport { checkTrackedFiles } from '../src/lib/trackedNodeModules';\ncheckTrackedFiles((args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }));",
+          "expected": "Script exits 0 on a clean index"
+        },
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "scripts",
+          "lines": "L5-L12",
+          "action": "Add \"guard:tracked-deps\" script and change test to run it first.",
+          "code": "\"test\": \"vitest run\" -> \"guard:tracked-deps\": \"vite-node scripts/assertNoTrackedNodeModules.ts\", \"test\": \"npm run guard:tracked-deps && vitest run\"",
+          "expected": "npm test runs guard then vitest"
+        }
+      ]
+    },
+    {
+      "id": "01M84TGXN3MCTTD7R290QKDH41",
+      "kind": "unit",
+      "title": "Verify: tracked dependency helpers unit tests",
+      "body": "Prove the helpers with a fake git runner.\n\n## Acceptance criteria\n- Flags node_modules and .vite paths, ignores look-alikes\n- checkTrackedFiles throws with a tracked path and passes on clean output\n\n\n## Scope\n- In scope: game/frontend/tests/trackedDependencyGuard.test.ts\n- Out of scope: real git\n- Preserve: tests/trackedNodeModules.test.ts\n\n\n## Technical constraints\n- Fake GitRunner via vi.fn\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for trackedDependencyPaths, parseGitLsFiles and checkTrackedFiles",
+      "description": "Prove the helpers with a fake git runner.",
+      "acceptance_criteria": [
+        "Flags node_modules and .vite paths, ignores look-alikes",
+        "checkTrackedFiles throws with a tracked path and passes on clean output"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/trackedDependencyGuard.test.ts"
+        ],
+        "out_of_scope": [
+          "real git"
+        ],
+        "preserve": [
+          "tests/trackedNodeModules.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Fake GitRunner via vi.fn"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-444.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84TGXN3RS4YAQG55HJFEY31",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84TGXN3RS4YAQG55HJFEY31",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-444.md"
+      ],
+      "depends_on": [
+        "01M84TGXN3RS4YAQG55HJFEY31"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-444.md",
+      "artifact_id": "UNIT-444",
+      "steps": [
+        {
+          "file": "game/frontend/tests/trackedDependencyGuard.test.ts",
+          "symbol": "new: trackedDependencyPaths tests",
+          "lines": "new",
+          "action": "Create the test file; test that ['node_modules/phaser/a.js','src/.vite/r.json','src/a.ts','src/my_node_modules_note.ts'] yields the first two only, and [] yields [].",
+          "command": "cd game/frontend && npx vitest run tests/trackedDependencyGuard.test.ts -t trackedDependencyPaths",
+          "expected": "Filter tests pass"
+        },
+        {
+          "file": "game/frontend/tests/trackedDependencyGuard.test.ts",
+          "symbol": "new: parseGitLsFiles and checkTrackedFiles tests",
+          "lines": "new",
+          "action": "Test parseGitLsFiles('a\\0b\\0') equals ['a','b']; test checkTrackedFiles with fake run returning 'src/a.ts\\0node_modules/x.js\\0' throws matching /node_modules\\/x.js/ and that run was called with ['ls-files','-z']; test clean output 'src/a.ts\\0' does not throw.",
+          "command": "cd game/frontend && npx vitest run tests/trackedDependencyGuard.test.ts",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84TGXN3QE7DW7M03J95C9RC",
+      "kind": "unit",
+      "title": "Verify: test script runs the tracked-dependency guard unit tests",
+      "body": "Read the real package.json and script source and assert wiring.\n\n## Acceptance criteria\n- scripts.test starts with the guard before vitest run\n- guard script imports checkTrackedFiles\n\n\n## Scope\n- In scope: game/frontend/tests/testScriptGuard.test.ts\n- Out of scope: running git or npm\n- Preserve: tests/phaserVersionGuard.test.ts\n\n\n## Technical constraints\n- Read files with node:fs from the frontend dir; no child processes\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that package.json wires the guard before vitest and the script uses the helper",
+      "description": "Read the real package.json and script source and assert wiring.",
+      "acceptance_criteria": [
+        "scripts.test starts with the guard before vitest run",
+        "guard script imports checkTrackedFiles"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/testScriptGuard.test.ts"
+        ],
+        "out_of_scope": [
+          "running git or npm"
+        ],
+        "preserve": [
+          "tests/phaserVersionGuard.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Read files with node:fs from the frontend dir; no child processes"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-445.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84TGXN3KBEFN43PVTMK9TYD",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84TGXN3KBEFN43PVTMK9TYD",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-445.md"
+      ],
+      "depends_on": [
+        "01M84TGXN3KBEFN43PVTMK9TYD"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-445.md",
+      "artifact_id": "UNIT-445",
+      "steps": [
+        {
+          "file": "game/frontend/tests/testScriptGuard.test.ts",
+          "symbol": "new: test script wiring",
+          "lines": "new",
+          "action": "Create test reading package.json via readFileSync(new URL('../package.json', import.meta.url)); assert scripts['guard:tracked-deps'] contains 'assertNoTrackedNodeModules.ts' and scripts.test matches /^npm run guard:tracked-deps && vitest run/.",
+          "command": "cd game/frontend && npx vitest run tests/testScriptGuard.test.ts",
+          "expected": "Wiring test passes"
+        },
+        {
+          "file": "game/frontend/tests/testScriptGuard.test.ts",
+          "symbol": "new: guard script source",
+          "lines": "new",
+          "action": "Add test reading scripts/assertNoTrackedNodeModules.ts source and asserting it contains 'checkTrackedFiles' and 'ls-files' is not hard-coded there (delegated to the helper); also assert checkTrackedFiles with a fake run returning 'node_modules/a.js\\0' throws.",
+          "command": "cd game/frontend && npx vitest run tests/testScriptGuard.test.ts",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84TGXN34ADTET5KZ0NCX439",
+      "kind": "evidence",
+      "title": "Evidence: tracked-dependency guard enforced by npm test unit tests",
+      "body": "Evidence from trackedDependencyGuard and testScriptGuard test runs.\n\n## Acceptance criteria\n- Both test files pass\n- Failures name the tracked path\n\n\n## Scope\n- In scope: test run output\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect unit test results proving the guard and its wiring",
+      "description": "Evidence from trackedDependencyGuard and testScriptGuard test runs.",
+      "acceptance_criteria": [
+        "Both test files pass",
+        "Failures name the tracked path"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-089.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84TGXN3MCTTD7R290QKDH41",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84TGXN3MCTTD7R290QKDH41",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-089.md"
+      ],
+      "depends_on": [
+        "01M84TGXN3MCTTD7R290QKDH41",
+        "01M84TGXN3QE7DW7M03J95C9RC"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-089.md",
+      "artifact_id": "EVD-089"
+    }
+  ],
+  "created_at": "2026-11-23T18:26:26.476823+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

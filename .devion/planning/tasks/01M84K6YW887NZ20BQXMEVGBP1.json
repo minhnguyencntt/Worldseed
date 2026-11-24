@@ -1,0 +1,75 @@
+{
+  "id": "01M84K6YW887NZ20BQXMEVGBP1",
+  "intent_id": "01M84K165FF9YSHNCQRV5BN7RC",
+  "title": "Act: Delete deriveStage and EXECUTION_STAGES from LifecycleStepper",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Remove the unused execution helpers from LifecycleStepper.tsx",
+  "description": "Delete the EXECUTION_STAGES map and the deriveStage function from game/frontend/src/components/LifecycleStepper.tsx. Nothing in game/frontend/src imports deriveStage; only AdminApp imports LifecycleStepper.",
+  "acceptance_criteria": [
+    "Given the file after the change, when it is read, then deriveStage and EXECUTION_STAGES are absent",
+    "Given the file after the change, when tsc runs, then it passes"
+  ],
+  "scope": {
+    "in_scope": [
+      "LifecycleStepper.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "STAGES",
+      "stageIndex",
+      "LifecycleStepper"
+    ]
+  },
+  "technical_constraints": [
+    "Keep exports STAGES, stageIndex, LifecycleStepper and LifecycleStepperProps",
+    "Code path: `game/frontend/src/components/LifecycleStepper.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Execution helpers are removed and the frontend type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-274.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84K6FJ9YPJA5D7DA39X5SCC",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-274.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84K6YW8BCTSWF8VN8E5TY56"
+  ],
+  "sim_node_id": "01M84K6FJ9VDXWT92G5XEJZHMR",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-274.md",
+  "artifact_id": "UNIT-274",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/LifecycleStepper.tsx",
+      "symbol": "EXECUTION_STAGES",
+      "lines": "L16-L21",
+      "action": "Delete the const EXECUTION_STAGES Record and the blank line after it.",
+      "code": "const EXECUTION_STAGES: Record<string, string> = { RUNNING: ..., AWAITING_APPROVAL: ..., APPROVED: ..., COMPLETED: ... }; -> (removed)",
+      "expected": "No EXECUTION_STAGES identifier remains in the file."
+    },
+    {
+      "file": "game/frontend/src/components/LifecycleStepper.tsx",
+      "symbol": "deriveStage",
+      "lines": "L29-L37",
+      "action": "Delete the deriveStage function together with its JSDoc comment, leaving stageIndex and LifecycleStepper untouched.",
+      "code": "export function deriveStage(roundStatus: string, executionStatus?: string): string {...} -> (removed)",
+      "expected": "The file exports only STAGES, stageIndex, LifecycleStepperProps and LifecycleStepper."
+    }
+  ],
+  "created_at": "2026-11-23T16:18:18.632246+00:00",
+  "updated_at": "2026-11-23T16:19:11.650444+00:00"
+}

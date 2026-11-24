@@ -12,7 +12,7 @@ export interface StoryPanelProps {
 
 export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: StoryPanelProps) {
   return (
-    <div className="story-content flex flex-col gap-sf-3">
+    <div className="story-content sf-frame-panel h-full overflow-y-auto p-3 text-sm">
       <h1>{sceneTitle}</h1>
       {node && (
         <section className="dialogue sf-frame-parchment" aria-label="Dialogue">
@@ -27,14 +27,14 @@ export function StoryPanel({ sceneTitle, node, history, inventory, onChoose }: S
               />
             )}
             <div>
-              <h2 className="font-pixel">{node.speaker}</h2>
+              <h2>{node.speaker}</h2>
               <p>{node.text}</p>
             </div>
           </div>
           <ul aria-label="Choices">
             {node.choices.map((choice, index) => (
               <li key={index}>
-                <button className="sf-btn sf-btn-gold w-full text-left p-sf-2" type="button" onClick={() => onChoose(index)}>
+                <button className="sf-btn" type="button" onClick={() => onChoose(index)}>
                   {choice.text}
                 </button>
               </li>

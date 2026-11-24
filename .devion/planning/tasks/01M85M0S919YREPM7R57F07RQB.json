@@ -1,0 +1,61 @@
+{
+  "id": "01M85M0S919YREPM7R57F07RQB",
+  "intent_id": "01M85KV2DJJNKDTK66EXGJH3MP",
+  "title": "SG-11 Drive character animations and scene transition from game actions",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "React game actions must trigger the Phaser character interact animation and the scene transition",
+  "description": "Context: BootScene already plays the character idle loop on create, plays interact then idle when a character sprite is clicked, and plays the authored fade once in create(). ReactToPhaserEvents already declares playAnimation and transitionTo, but nothing emits or handles them, so game actions such as object actions and dialogue choices never reach the Phaser scene. Desired behavior: performing a game action in the app screen makes the boy play the interact animation and then return to idle, and a scene change replays the scene transition, all through the Phaser scene. Expected result: unit tests confirm interact and transition are triggered from game actions. Why: the app screen should visibly react to gameplay.",
+  "acceptance_criteria": [
+    "Given the BootScene is created, when a playAnimation event targets a character, then that character sprite plays the named animation and returns to idle",
+    "Given the app is playing, when an object action is performed, then a playAnimation interact event is emitted for the boy",
+    "Given the BootScene is created, when a transitionTo event is received, then the scene transition is played through the Phaser scene",
+    "Given a game action that moves the scene, when it is performed, then a transitionTo event is emitted"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene subscription to playAnimation and transitionTo",
+      "App emitting those events from game actions",
+      "Unit tests for both directions"
+    ],
+    "out_of_scope": [
+      "New assets or new scenes",
+      "Backend or API changes",
+      "Visual redesign"
+    ],
+    "preserve": [
+      "Existing click-to-interact behavior on character sprites",
+      "Idle animation on create and the transition on create",
+      "Typed event bus contracts for existing events"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 with Phaser mocked in unit tests",
+    "Use the existing reactToPhaser bus and event types in game/frontend/src/phaser/events.ts",
+    "No duplicated game state ownership"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Requirements implemented with unit tests passing",
+    "Events are unsubscribed on scene shutdown",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-150.md`"
+  ],
+  "non_functional": [
+    "No Phaser listener leaks after scene shutdown"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84T653733GNHNR148NM3TA2",
+    "artifact:.ai-dlc/intent/INT-150.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85KX50EJ5HGVDSAPF196WQ0",
+  "feature_id": "01M84T653733GNHNR148NM3TA2",
+  "artifact_path": ".ai-dlc/intent/INT-150.md",
+  "artifact_id": "INT-150",
+  "created_at": "2026-11-24T01:51:39.297258+00:00"
+}

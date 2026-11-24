@@ -1,0 +1,77 @@
+{
+  "id": "01M84TT7145VQSWFBYVVPKAVY8",
+  "intent_id": "01M84TNG8S52W2MW8CKH0QCGCP",
+  "title": "Act: Add runGuard and the assertNoTrackedNodeModules CLI script",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add runGuard to the helper module and the script that calls it.",
+  "description": "runGuard(run, log) uses checkTrackedFiles, logs each offender and returns exit code.",
+  "acceptance_criteria": [
+    "runGuard returns 1 with offenders, 0 otherwise.",
+    "Script calls process.exit(runGuard(...))."
+  ],
+  "scope": {
+    "in_scope": [
+      "helper module",
+      "new script"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "existing exports"
+    ]
+  },
+  "technical_constraints": [
+    "Real runner: execFileSync('git', args, {encoding:'utf8', maxBuffer: 256*1024*1024})",
+    "Code path: `game/frontend/src/lib/trackedNodeModules.ts`",
+    "New file: `game/frontend/scripts/assertNoTrackedNodeModules.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Script file created",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-447.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84TRAVSZ2A6RXCVZRF5Y8QE",
+    "trace:01M84T6537DBQNPBEZT7AT0RE7",
+    "artifact:.ai-dlc/units/UNIT-447.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84TT714WRSXXHATGH4B6H7J"
+  ],
+  "sim_node_id": "01M84TRAVST3RB54VTZ9D2XC1R",
+  "feature_id": "01M84T6537DBQNPBEZT7AT0RE7",
+  "artifact_path": ".ai-dlc/units/UNIT-447.md",
+  "artifact_id": "UNIT-447",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/trackedNodeModules.ts",
+      "symbol": "new: runGuard",
+      "lines": "after checkTrackedFiles",
+      "action": "Add exported runGuard(run: GitRunner, log: (msg: string) => void): number that gets checkTrackedFiles(run); if empty returns 0; otherwise logs a header and each path with log and returns 1.",
+      "code": "export function runGuard(run: GitRunner, log: (m: string) => void): number {\n  const bad = checkTrackedFiles(run);\n  if (bad.length === 0) return 0;\n  log(`${bad.length} tracked dependency/test-cache paths:`);\n  for (const p of bad) log(p);\n  return 1;\n}",
+      "expected": "Returns 1 and logs paths when offenders exist."
+    },
+    {
+      "file": "game/frontend/scripts/assertNoTrackedNodeModules.ts",
+      "symbol": "new: script entry",
+      "lines": "new",
+      "action": "Create script importing execFileSync and runGuard; call process.exit(runGuard(args => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }), console.error)).",
+      "code": "import { execFileSync } from 'node:child_process';\nimport { runGuard } from '../src/lib/trackedNodeModules';\nprocess.exit(runGuard((args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }), console.error));",
+      "expected": "File exists under scripts/."
+    }
+  ],
+  "created_at": "2026-11-23T18:31:09.604532+00:00",
+  "updated_at": "2026-11-23T18:40:25.462775+00:00"
+}

@@ -1,0 +1,79 @@
+{
+  "id": "01M84WBYFSTWC46N5ZBDCWTC9B",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "Act: Add preload planner and texture resolver with fallback",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Implement buildPreloadPlan and resolveTextureKey and use them in WorldScene.preload.",
+  "description": "Add pure planner functions over the manifest and wire WorldScene.preload to queue only planned assets.",
+  "acceptance_criteria": [
+    "Plan dedupes refs and reports missing",
+    "resolveTextureKey never throws"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/assets/loaders/preload.ts",
+      "game/frontend/src/phaser/WorldScene.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "manifestLoader exports"
+    ]
+  },
+  "technical_constraints": [
+    "New file: `game/src/assets/loaders/preload.ts`",
+    "New file: `game/frontend/src/phaser/WorldScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Typechecks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-469.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84W96464809F67X1725YYX5",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-469.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84WBYFR94HHX67MWQ4890TS"
+  ],
+  "sim_node_id": "01M84W96460GC3SMHYAF0TZXZ3",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-469.md",
+  "artifact_id": "UNIT-469",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/loaders/preload.ts",
+      "symbol": "new: buildPreloadPlan",
+      "lines": "new",
+      "action": "Export buildPreloadPlan(manifest: AssetManifest, refs: readonly string[]) returning {load: AssetEntry[], missing: string[]}; dedupe refs with a Set, call checkAssetRefs(manifest, uniqueRefs) to get missing ids, and put manifest assets whose id is in the unique present refs into load.",
+      "expected": "Present refs listed once, absent refs in missing"
+    },
+    {
+      "file": "game/src/assets/loaders/preload.ts",
+      "symbol": "new: resolveTextureKey",
+      "lines": "new",
+      "action": "Export resolveTextureKey(plan, loadedKeys: ReadonlySet<string>, assetId?: string): string returning assetId when it is in plan.load and loadedKeys, otherwise FALLBACK_ASSET_ID imported from manifestLoader.",
+      "expected": "Fallback key for missing, undefined or failed assets"
+    },
+    {
+      "file": "game/frontend/src/phaser/WorldScene.ts",
+      "symbol": "WorldScene.preload",
+      "lines": "new",
+      "action": "Add preload() that calls buildPreloadPlan with the scene object asset refs, queues this.load.image or this.load.spritesheet per plan.load entry by type, records loaded keys on load 'filecomplete', and passes resolveTextureKey as the resolver to buildScene.",
+      "expected": "Only planned assets are queued"
+    }
+  ],
+  "created_at": "2026-11-23T18:58:19.256934+00:00",
+  "updated_at": "2026-11-23T19:00:36.720597+00:00"
+}

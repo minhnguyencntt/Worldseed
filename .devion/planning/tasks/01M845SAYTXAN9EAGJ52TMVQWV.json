@@ -1,0 +1,64 @@
+{
+  "id": "01M845SAYTXAN9EAGJ52TMVQWV",
+  "intent_id": "01M845QSXVR8TFAF8A3Q73J967",
+  "title": "Act: Move the Mine route to /api/v1/player/me/contributions",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Re-register ch.Mine at the new path in server.New",
+  "description": "In backend/internal/server/server.go replace the legacy Mine registration with the new path so the player history is served at /api/v1/player/me/contributions.",
+  "acceptance_criteria": [
+    "Given server.New, when routes are registered, then GET /api/v1/player/me/contributions maps to ch.Mine",
+    "Given server.New, when routes are registered, then /api/v1/contributions/mine is not registered"
+  ],
+  "scope": {
+    "in_scope": [
+      "server.go"
+    ],
+    "out_of_scope": [
+      "handler.go"
+    ],
+    "preserve": [
+      "Create and Get routes"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "server.go registers the new path only",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-067.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M845SA7X2XZ5SNR9CVW2S92R",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-067.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M845SAYTXSC6SA3F0DVFWQE7"
+  ],
+  "sim_node_id": "01M845SA7XY8QMWQYMY9T48XJ2",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-067.md",
+  "artifact_id": "UNIT-067",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New",
+      "lines": "L76-L78",
+      "action": "Change the r.Get registration of ch.Mine from /api/v1/contributions/mine to /api/v1/player/me/contributions, keeping it registered after ch is constructed",
+      "code": "r.Get(\"/api/v1/contributions/mine\", ch.Mine) -> r.Get(\"/api/v1/player/me/contributions\", ch.Mine)",
+      "expected": "cd backend && go build ./... succeeds and only the new path routes to Mine"
+    }
+  ],
+  "created_at": "2026-11-23T12:23:40.762531+00:00",
+  "updated_at": "2026-11-23T12:24:26.694970+00:00"
+}

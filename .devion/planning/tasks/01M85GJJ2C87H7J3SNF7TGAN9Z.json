@@ -1,0 +1,86 @@
+{
+  "id": "01M85GJJ2C87H7J3SNF7TGAN9Z",
+  "intent_id": "01M85G7DCQB00J87WR5V991XJ8",
+  "title": "Verify: History loading, empty, error and list unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "New test file for the four history states with fetch mocked",
+  "description": "Write game/frontend/tests/contributionSheetHistory.test.tsx covering loading, empty, error with Retry and populated list.",
+  "acceptance_criteria": [
+    "Four state tests pass",
+    "No real network is used"
+  ],
+  "scope": {
+    "in_scope": [
+      "One new test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "fetch stubbed; GET url is /api/v1/player/me/contributions?round_id=round-1 per listMine in game/frontend/src/api/client.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Command passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-697.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85GCN8C2968R1QRCZ03W8BK",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-697.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85GJJ2CNQ08GSYDST73QNYV"
+  ],
+  "sim_node_id": "01M85GCN8C921P9RCAD623KCKT",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-697.md",
+  "artifact_id": "UNIT-697",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+      "symbol": "new: describe('ContributionSheet history states')",
+      "lines": "new",
+      "action": "Create the file with jsdom pragma and json/stubFetch helpers as in contributionDialog.test.tsx. Fixture contributionFixture from game/frontend/tests/fixtures/api.ts mirrors contributionJSON in backend/internal/contribution/handler.go.",
+      "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx",
+      "expected": "File collected"
+    },
+    {
+      "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+      "symbol": "it('loading and empty')",
+      "lines": "new",
+      "action": "Test 1: fetch stub returns a never-resolving promise; assert getByTestId('contribution-history-loading') present. Test 2: GET returns json(200, []); assert findByTestId('contribution-history-empty') has 'No suggestions yet this round' and loading is gone.",
+      "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx -t \"loading and empty\"",
+      "expected": "Both tests pass"
+    },
+    {
+      "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+      "symbol": "it('error then Retry recovers')",
+      "lines": "new",
+      "action": "First GET returns json(500,{error:'x'}), the second json(200,[contributionFixture]). Assert findByTestId('contribution-history-error') has 'Could not load your suggestions', click Retry, then assert the error id disappears and the list shows the fixture prompt.",
+      "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx -t Retry",
+      "expected": "Retry test passes"
+    },
+    {
+      "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+      "symbol": "it('list renders entries as Sent')",
+      "lines": "new",
+      "action": "GET returns two contributions with prompts 'A' and 'B'. Within findByTestId('contribution-history-list') assert both texts and two 'Sent' labels, and that contribution-history-empty is absent.",
+      "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx",
+      "expected": "All tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T00:51:27.436160+00:00",
+  "updated_at": "2026-11-24T00:52:31.939738+00:00"
+}

@@ -1,0 +1,72 @@
+{
+  "id": "01M844TVDCMJVB2XXTQ5JZVQ4A",
+  "intent_id": "01M844RY0G15P4GR4PE00BC8S2",
+  "title": "Verify: Remount restores saved state unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for remount restore using mocked storage",
+  "description": "Add tests asserting that state written to the mocked storage is restored on remount and that null saved state starts fresh.",
+  "acceptance_criteria": [
+    "Given Search performed, when App unmounted, remounted and Begin clicked, then history has the hidden door text and Bookshelf data-open is true",
+    "Given readSaved returns null, when App begins, then the Dialogue region shows the opening text"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/appFlow.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "tests/useGame.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Intro gate resets on remount, so Begin must be clicked again"
+  ],
+  "dependencies": [
+    "A3"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-052.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M844TTJXZZMAFA9QEJAXWGP4",
+    "trace:01M844GYQJ55B1RVZJXYYRYX24",
+    "artifact:.ai-dlc/units/UNIT-052.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M844TVDCV4DC99WYVSYMZ7PX"
+  ],
+  "sim_node_id": "01M844TTJX2MJKMVC36FPYDCGQ",
+  "feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+  "artifact_path": ".ai-dlc/units/UNIT-052.md",
+  "artifact_id": "UNIT-052",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appFlow.test.tsx",
+      "symbol": "it('restores saved state after remount')",
+      "lines": "after the story describe",
+      "action": "Render <App/>, click Begin, Bookshelf, Search; call unmount() from the render result; render <App/> again and click Begin; assert history toHaveTextContent('A hidden door swings open behind the books.'), button 'Bookshelf' toHaveAttribute('data-open','true'), and region 'Inventory' is in the document.",
+      "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'remount'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/appFlow.test.tsx",
+      "symbol": "it('starts fresh when nothing is saved')",
+      "lines": "after the restore test",
+      "action": "With saved = null, call begin(); assert region 'Dialogue' toHaveTextContent(\"I don't know what to do next. What should we do?\") and Bookshelf data-open is 'false'.",
+      "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'remount|fresh'",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T12:07:01.804814+00:00",
+  "updated_at": "2026-11-23T12:08:18.549170+00:00"
+}

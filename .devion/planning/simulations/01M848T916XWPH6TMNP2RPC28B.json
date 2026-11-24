@@ -1,0 +1,310 @@
+{
+  "intent_id": "01M848T916XWPH6TMNP2RPC28B",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M848W6CZV4EFQ9TD64KPBV1H",
+      "kind": "intent",
+      "title": "SG-6.4.1 · Add rejectExecution to the API client",
+      "body": "Context: game/frontend/src/api/client.ts exports approveExecution and retryExecution, which POST to /api/v1/admin/executions/{id}/approve and /retry through adminRequest. There is no rejectExecution. Desired behavior: add rejectExecution(token, id), which POSTs to /api/v1/admin/executions/{id}/reject with the Bearer token. Expected result: later UI work can call it. Why: SG-6.4 needs a Reject action in AdminApp.\n\n## Acceptance criteria\n- Given a token and an execution id, when rejectExecution is called, then fetch is sent POST to /api/v1/admin/executions/{id}/reject with an Authorization Bearer header.\n- Given the server answers 401, when rejectExecution is called, then the promise rejects with an ApiError whose status is 401.\n\n\n## Scope\n- In scope: rejectExecution function in game/frontend/src/api/client.ts\n- Out of scope: Backend reject route and handler\n- Out of scope: ExecutionPanel Reject button\n- Out of scope: AdminApp wiring\n- Preserve: approveExecution, retryExecution and listExecutions behavior\n- Preserve: adminRequest and readJSON\n\n\n## Technical constraints\n- Use adminRequest like approveExecution and retryExecution do.\n- Return Promise<ExecutionInfo>.\n- Encode the id with encodeURIComponent.\n\n\n## Definition of done\n- rejectExecution is exported from client.ts and the frontend type-checks.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add rejectExecution(token, id) to the admin API client, next to approveExecution and retryExecution.",
+      "description": "Context: game/frontend/src/api/client.ts exports approveExecution and retryExecution, which POST to /api/v1/admin/executions/{id}/approve and /retry through adminRequest. There is no rejectExecution. Desired behavior: add rejectExecution(token, id), which POSTs to /api/v1/admin/executions/{id}/reject with the Bearer token. Expected result: later UI work can call it. Why: SG-6.4 needs a Reject action in AdminApp.",
+      "acceptance_criteria": [
+        "Given a token and an execution id, when rejectExecution is called, then fetch is sent POST to /api/v1/admin/executions/{id}/reject with an Authorization Bearer header.",
+        "Given the server answers 401, when rejectExecution is called, then the promise rejects with an ApiError whose status is 401."
+      ],
+      "scope": {
+        "in_scope": [
+          "rejectExecution function in game/frontend/src/api/client.ts"
+        ],
+        "out_of_scope": [
+          "Backend reject route and handler",
+          "ExecutionPanel Reject button",
+          "AdminApp wiring"
+        ],
+        "preserve": [
+          "approveExecution, retryExecution and listExecutions behavior",
+          "adminRequest and readJSON"
+        ]
+      },
+      "technical_constraints": [
+        "Use adminRequest like approveExecution and retryExecution do.",
+        "Return Promise<ExecutionInfo>.",
+        "Encode the id with encodeURIComponent."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "rejectExecution is exported from client.ts and the frontend type-checks.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-027.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8485RN179N4RYZ1YB7BYKKP",
+      "links": [
+        "trace:01M8485RN179N4RYZ1YB7BYKKP",
+        "artifact:.ai-dlc/intent/INT-027.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-027.md",
+      "artifact_id": "INT-027"
+    },
+    {
+      "id": "01M848W6CZ4HF6N5HF4HTQCQPN",
+      "kind": "requirement",
+      "title": "REQ · rejectExecution client call POSTs to the admin reject endpoint",
+      "body": "Context: approveExecution and retryExecution wrap adminRequest in client.ts (about L92-L105). Desired behavior: a sibling rejectExecution does the same for the reject path. Expected result: callers get the ExecutionInfo the server returns, or an ApiError on failure. Why: the admin UI needs a client call before it can offer Reject.\n\n## Acceptance criteria\n- Given token 'tok' and id 'exec-1', when rejectExecution is called, then fetch receives URL /api/v1/admin/executions/exec-1/reject with method POST and header Authorization 'Bearer tok'.\n- Given a 200 response with an execution JSON body, when rejectExecution resolves, then it returns that execution.\n- Given a 401 response, when rejectExecution is called, then it rejects with ApiError status 401.\n\n\n## Scope\n- In scope: game/frontend/src/api/client.ts\n- Out of scope: backend changes\n- Out of scope: UI changes\n- Preserve: existing client exports\n\n\n## Technical constraints\n- Mirror approveExecution exactly except for the path suffix.\n\n\n## Definition of done\n- Function exported and covered by unit tests.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "rejectExecution(token, id) POSTs to /api/v1/admin/executions/{id}/reject with the admin Bearer token and returns ExecutionInfo.",
+      "description": "Context: approveExecution and retryExecution wrap adminRequest in client.ts (about L92-L105). Desired behavior: a sibling rejectExecution does the same for the reject path. Expected result: callers get the ExecutionInfo the server returns, or an ApiError on failure. Why: the admin UI needs a client call before it can offer Reject.",
+      "acceptance_criteria": [
+        "Given token 'tok' and id 'exec-1', when rejectExecution is called, then fetch receives URL /api/v1/admin/executions/exec-1/reject with method POST and header Authorization 'Bearer tok'.",
+        "Given a 200 response with an execution JSON body, when rejectExecution resolves, then it returns that execution.",
+        "Given a 401 response, when rejectExecution is called, then it rejects with ApiError status 401."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/api/client.ts"
+        ],
+        "out_of_scope": [
+          "backend changes",
+          "UI changes"
+        ],
+        "preserve": [
+          "existing client exports"
+        ]
+      },
+      "technical_constraints": [
+        "Mirror approveExecution exactly except for the path suffix."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Function exported and covered by unit tests.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-067.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M848W6CZV4EFQ9TD64KPBV1H",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M848W6CZV4EFQ9TD64KPBV1H",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-067.md"
+      ],
+      "depends_on": [
+        "01M848W6CZV4EFQ9TD64KPBV1H"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-067.md",
+      "artifact_id": "REQ-067"
+    },
+    {
+      "id": "01M848W6CZD3F544H987VST6Y2",
+      "kind": "unit",
+      "title": "Act: Add rejectExecution to the admin client",
+      "body": "Add rejectExecution(token, id) to game/frontend/src/api/client.ts after retryExecution (ends near L105), copying the approveExecution pattern with the /reject path.\n\n## Acceptance criteria\n- Given the file is saved, when tsc --noEmit runs, then rejectExecution is exported with signature (token: string, id: string) => Promise<ExecutionInfo>.\n- Given a call, when it runs, then it delegates to adminRequest with method POST and the /reject path.\n\n\n## Scope\n- In scope: client.ts\n- Out of scope: tests\n- Out of scope: UI\n- Out of scope: backend\n- Preserve: other client functions\n\n\n## Technical constraints\n- Reuse adminRequest.\n- Code path: `game/frontend/src/api/client.ts`\n\n\n## Dependencies\n- req-1\n\n\n## Definition of done\n- rejectExecution exported and type-checks.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export rejectExecution in client.ts after retryExecution.",
+      "description": "Add rejectExecution(token, id) to game/frontend/src/api/client.ts after retryExecution (ends near L105), copying the approveExecution pattern with the /reject path.",
+      "acceptance_criteria": [
+        "Given the file is saved, when tsc --noEmit runs, then rejectExecution is exported with signature (token: string, id: string) => Promise<ExecutionInfo>.",
+        "Given a call, when it runs, then it delegates to adminRequest with method POST and the /reject path."
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "UI",
+          "backend"
+        ],
+        "preserve": [
+          "other client functions"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse adminRequest.",
+        "Code path: `game/frontend/src/api/client.ts`"
+      ],
+      "dependencies": [
+        "req-1"
+      ],
+      "definition_of_done": [
+        "rejectExecution exported and type-checks.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-133.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M848W6CZ4HF6N5HF4HTQCQPN",
+      "links": [
+        "parent:01M848W6CZ4HF6N5HF4HTQCQPN",
+        "trace:01M848PZA313B7FKQP2BZ7JZGV",
+        "artifact:.ai-dlc/units/UNIT-133.md"
+      ],
+      "depends_on": [
+        "01M848W6CZ4HF6N5HF4HTQCQPN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-133.md",
+      "artifact_id": "UNIT-133",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: rejectExecution",
+          "lines": "after L105",
+          "action": "Add an exported function rejectExecution(token: string, id: string) that returns adminRequest<ExecutionInfo> for the path /api/v1/admin/executions/${encodeURIComponent(id)}/reject with { method: 'POST' }, placed directly after retryExecution and before listExecutions.",
+          "code": "/** Rejects an AWAITING_APPROVAL execution (POST /api/v1/admin/executions/{id}/reject). */\nexport function rejectExecution(token: string, id: string): Promise<ExecutionInfo> {\n  return adminRequest<ExecutionInfo>(token, `/api/v1/admin/executions/${encodeURIComponent(id)}/reject`, {\n    method: 'POST',\n  });\n}",
+          "expected": "client.ts exports rejectExecution and npx tsc --noEmit in game/frontend passes."
+        }
+      ]
+    },
+    {
+      "id": "01M848W6CZMCYB8QRHVXE1AZ5Q",
+      "kind": "unit",
+      "title": "Verify: rejectExecution unit tests with mocked fetch",
+      "body": "Add tests in game/frontend/tests/executions.test.ts using a stubbed global fetch. The fixture is executionFixture from tests/fixtures/api.ts, which mirrors execution.Execution in backend/internal/execution/execution.go.\n\n## Acceptance criteria\n- Given token 'tok' and id 'exec-1', when rejectExecution runs, then fetch is called once with URL /api/v1/admin/executions/exec-1/reject, method POST and Bearer tok.\n- Given a 200 response carrying executionFixture, when it resolves, then the result equals executionFixture.\n- Given a 401 response, when it runs, then it rejects with ApiError status 401.\n\n\n## Scope\n- In scope: tests/executions.test.ts\n- Out of scope: real network or server\n- Preserve: existing tests in the file\n\n\n## Technical constraints\n- Mock fetch with vi.stubGlobal and restore it in afterEach.\n- Code path: `game/frontend/tests/executions.test.ts`\n\n\n## Dependencies\n- act-1\n\n\n## Definition of done\n- New describe block passes.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove rejectExecution sends POST to the reject endpoint with Bearer token and surfaces ApiError.",
+      "description": "Add tests in game/frontend/tests/executions.test.ts using a stubbed global fetch. The fixture is executionFixture from tests/fixtures/api.ts, which mirrors execution.Execution in backend/internal/execution/execution.go.",
+      "acceptance_criteria": [
+        "Given token 'tok' and id 'exec-1', when rejectExecution runs, then fetch is called once with URL /api/v1/admin/executions/exec-1/reject, method POST and Bearer tok.",
+        "Given a 200 response carrying executionFixture, when it resolves, then the result equals executionFixture.",
+        "Given a 401 response, when it runs, then it rejects with ApiError status 401."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/executions.test.ts"
+        ],
+        "out_of_scope": [
+          "real network or server"
+        ],
+        "preserve": [
+          "existing tests in the file"
+        ]
+      },
+      "technical_constraints": [
+        "Mock fetch with vi.stubGlobal and restore it in afterEach.",
+        "Code path: `game/frontend/tests/executions.test.ts`"
+      ],
+      "dependencies": [
+        "act-1"
+      ],
+      "definition_of_done": [
+        "New describe block passes.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-134.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M848W6CZD3F544H987VST6Y2",
+      "links": [
+        "parent:01M848W6CZD3F544H987VST6Y2",
+        "trace:01M848PZA3H3TN6S6AYW4JP0KT",
+        "artifact:.ai-dlc/units/UNIT-134.md"
+      ],
+      "depends_on": [
+        "01M848W6CZD3F544H987VST6Y2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-134.md",
+      "artifact_id": "UNIT-134",
+      "steps": [
+        {
+          "file": "game/frontend/tests/executions.test.ts",
+          "symbol": "import block",
+          "lines": "L2-L7",
+          "action": "Add rejectExecution to the named import from '../src/api/client'.",
+          "command": "cd game/frontend && npx vitest run tests/executions.test.ts",
+          "expected": "File compiles with the new import and the existing tests still pass."
+        },
+        {
+          "file": "game/frontend/tests/executions.test.ts",
+          "symbol": "new: describe('rejectExecution')",
+          "lines": "after L42",
+          "action": "Add describe('rejectExecution') with afterEach vi.unstubAllGlobals(). Test 1 stubs fetch to resolve new Response(JSON.stringify(executionFixture), {status: 200}), calls rejectExecution('tok','exec-1'), asserts the result toEqual executionFixture, fetch called once, URL '/api/v1/admin/executions/exec-1/reject', init.method 'POST' and Authorization header 'Bearer tok'. Test 2 stubs a 401 Response, awaits rejectExecution('bad','exec-1').catch(e => e), and asserts instanceof ApiError with status 401. The fixture comes from tests/fixtures/api.ts executionFixture, matching execution.Execution in backend/internal/execution/execution.go.",
+          "command": "cd game/frontend && npx vitest run tests/executions.test.ts -t rejectExecution",
+          "expected": "Both rejectExecution tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M848W6CZXMY9JQ654Y8SKWMJ",
+      "kind": "evidence",
+      "title": "Evidence: rejectExecution unit tests",
+      "body": "Evidence from running the rejectExecution unit tests in game/frontend/tests/executions.test.ts, showing the POST reject request and the 401 handling.\n\n## Acceptance criteria\n- Given the test run, when it completes, then both rejectExecution tests pass.\n- Given the output, when reviewed, then it shows the /reject URL and POST method asserted.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: live server runs\n\n\n## Dependencies\n- ver-1\n\n\n## Definition of done\n- Passing vitest output captured.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record that the rejectExecution unit tests pass.",
+      "description": "Evidence from running the rejectExecution unit tests in game/frontend/tests/executions.test.ts, showing the POST reject request and the 401 handling.",
+      "acceptance_criteria": [
+        "Given the test run, when it completes, then both rejectExecution tests pass.",
+        "Given the output, when reviewed, then it shows the /reject URL and POST method asserted."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "live server runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "ver-1"
+      ],
+      "definition_of_done": [
+        "Passing vitest output captured.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-027.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848W6CZMCYB8QRHVXE1AZ5Q",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M848W6CZMCYB8QRHVXE1AZ5Q",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-027.md"
+      ],
+      "depends_on": [
+        "01M848W6CZMCYB8QRHVXE1AZ5Q"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-027.md",
+      "artifact_id": "EVD-027"
+    }
+  ],
+  "created_at": "2026-11-23T13:17:41.210887+00:00",
+  "summary": "AI · 2 NEW · 3 UPDATE · 0 UNCHANGED · 2/5 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

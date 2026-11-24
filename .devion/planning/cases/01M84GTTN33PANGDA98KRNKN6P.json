@@ -1,0 +1,665 @@
+{
+  "id": "01M84GTTN33PANGDA98KRNKN6P",
+  "trigger_node_id": "INT-043, UNIT-216 +9",
+  "node_ids": [
+    "INT-043",
+    "UNIT-216",
+    "UNIT-217",
+    "UNIT-218",
+    "UNIT-219",
+    "UNIT-220",
+    "UNIT-221",
+    "REQ-108",
+    "REQ-109",
+    "REQ-110",
+    "EVD-043"
+  ],
+  "intent_id": "INT-043",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-043",
+      "title": "SG-7.8 · Round poller behind a mocked Git interface",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-216",
+      "title": "Act: Create the poller package with Git interface and Poll detection",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZT2VR1R285P1K9QAX9"
+      ],
+      "depends_on": [
+        "REQ-108"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "2bafb849a764fdd27be76c607fd638eeb223405e",
+      "from_sha": "a951956a00ecae513a6424efa8465b3a537d48c3",
+      "started_at": "2026-11-23T15:36:46.712485+00:00",
+      "ended_at": "2026-11-23T15:37:03.847354+00:00",
+      "run_started_at": "2026-11-23T15:36:46.712485+00:00",
+      "duration_ms": 15080,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 2449,
+      "estimated_cost_usd": 0.009801
+    },
+    {
+      "unit_id": "UNIT-217",
+      "title": "Act: Close expired OPEN Rounds in Poll through the Closer",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZTXKFT1RC02PPCYN55"
+      ],
+      "depends_on": [
+        "REQ-109"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "f69b1bd152ed6d47fdf56e0b7b853c37e2804f33",
+      "from_sha": "2bafb849a764fdd27be76c607fd638eeb223405e",
+      "started_at": "2026-11-23T15:36:46.731248+00:00",
+      "ended_at": "2026-11-23T15:37:19.690052+00:00",
+      "run_started_at": "2026-11-23T15:36:46.731248+00:00",
+      "duration_ms": 30370,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 4198,
+      "estimated_cost_usd": 0.016808
+    },
+    {
+      "unit_id": "UNIT-218",
+      "title": "Act: Wrap Git failures and guard a nil Closer in Poll",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZT9632W1K8F6HN6HAP"
+      ],
+      "depends_on": [
+        "REQ-110"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "2bafb849a764fdd27be76c607fd638eeb223405e",
+      "from_sha": "2bafb849a764fdd27be76c607fd638eeb223405e",
+      "started_at": "2026-11-23T15:36:46.740837+00:00",
+      "ended_at": "2026-11-23T15:37:04.903613+00:00",
+      "run_started_at": "2026-11-23T15:36:46.740837+00:00",
+      "duration_ms": 17017,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 1788,
+      "estimated_cost_usd": 0.00716,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Blocked: the target code and spec for UNIT-218 are not in this worktree. There is no backend/worker/internal/poller/poller.go, and no Poller.Poll symbol or 'act-close' OPEN-expired case anywhere in the tree (grep for poller/UNIT-218 returned nothing). Git history has no poller.go either; the only poller-related commit (96d433d, INT-035-UNIT-168) touches worker/internal/rounds/rounds_test.go, a path that does not exist here. .ai-dlc/units stops at UNIT-010, so UNIT-218's acceptance criteria are not readable. Creating a Poller from scratch would invent code the brief does not describe, so no files were changed. Needed to proceed: the poller source from the branch that added Poller.Poll (or its path), and the UNIT-218 unit markdown."
+    },
+    {
+      "unit_id": "UNIT-219",
+      "title": "Verify: Poll detection of SCHEDULED and CLOSED Rounds unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZT62NMSQ8236DPJCDD"
+      ],
+      "depends_on": [
+        "UNIT-216",
+        "REQ-108"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "from_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "tests": [
+        {
+          "id": "TestPollDetectsScheduledAndClosed",
+          "kind": "unit",
+          "name": "TestPollDetectsScheduledAndClosed",
+          "title": "Poll reports SCHEDULED and CLOSED Rounds without closing anything and pulls before listing",
+          "scenario": "Given R1 SCHEDULED, R2 OPEN ending one hour after the clock, and R3 CLOSED; When Poll runs; Then Scheduled is [R1], Closed is [R3], ClosedNow is empty, no error, closer is never called, and git calls are pull then list",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollDetectsScheduledAndClosed -v",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        },
+        {
+          "id": "TestPollNoRounds",
+          "kind": "unit",
+          "name": "TestPollNoRounds",
+          "title": "Poll on a world with no Rounds returns empty results without error",
+          "scenario": "Given a fake Git with no Rounds; When Poll runs; Then no error is returned and Scheduled, Closed and ClosedNow are empty",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollNoRounds -v",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "f69b1bd152ed6d47fdf56e0b7b853c37e2804f33",
+          "from_sha": "f69b1bd152ed6d47fdf56e0b7b853c37e2804f33",
+          "tests": [
+            {
+              "id": "TestPollDetectsScheduledAndClosed",
+              "kind": "unit",
+              "name": "TestPollDetectsScheduledAndClosed",
+              "title": "Poll reports SCHEDULED and CLOSED Rounds, closes nothing, and pulls before listing",
+              "scenario": "Given R1 SCHEDULED, R2 OPEN ending one hour after the clock, and R3 CLOSED; When Poll runs; Then Scheduled is [R1], Closed is [R3], ClosedNow is empty, err is nil, closer.calls is empty, and git.calls is [pull, list]",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollDetectsScheduledAndClosed",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "TestPollNoRounds",
+              "kind": "unit",
+              "name": "TestPollNoRounds",
+              "title": "Poll returns empty results when the world has no Rounds",
+              "scenario": "Given a fake Git with no Rounds; When Poll runs; Then err is nil and Scheduled, Closed and ClosedNow all have length 0",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollNoRounds",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-23T15:37:03.860305+00:00",
+          "ended_at": "2026-11-23T15:37:25.042199+00:00",
+          "duration_ms": 20008,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 6,
+          "tokens_out": 3898,
+          "estimated_cost_usd": 0.015597
+        }
+      ],
+      "started_at": "2026-11-23T15:37:03.860305+00:00",
+      "ended_at": "2026-11-23T15:38:51.631967+00:00",
+      "run_started_at": "2026-11-23T15:38:29.167336+00:00",
+      "duration_ms": 21389,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3493,
+      "estimated_cost_usd": 0.01398
+    },
+    {
+      "unit_id": "UNIT-220",
+      "title": "Verify: Expired Round closing unit tests with fake clock and Closer",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZTSTY8WFAFR1E9XDNJ"
+      ],
+      "depends_on": [
+        "UNIT-217",
+        "REQ-109"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "from_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "tests": [
+        {
+          "id": "TestPollClosesExpiredOpenRound",
+          "kind": "unit",
+          "name": "TestPollClosesExpiredOpenRound",
+          "title": "Poll closes every OPEN Round whose end time has been reached and leaves future Rounds open",
+          "scenario": "Given a fake clock at 12:00 UTC and a world with E1 OPEN ending at 11:00, E2 OPEN ending exactly at 12:00, and F1 OPEN ending at 13:00; When Poll runs; Then the Closer is called with E1 and E2 in order, ClosedNow and Closed are [E1, E2], err is nil, and F1 is not closed",
+          "command": "cd backend/worker && go test -timeout 2m -count=1 ./internal/poller -run 'TestPollClosesExpiredOpenRound$' -v",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestPollClosedAndNewlyClosedCombined",
+          "kind": "unit",
+          "name": "TestPollClosedAndNewlyClosedCombined",
+          "title": "Poll reports both already-CLOSED and newly closed Rounds in Closed, but only newly closed Rounds in ClosedNow",
+          "scenario": "Given a world with C1 already CLOSED and E1 OPEN and expired; When Poll runs; Then Closed is [C1, E1] and ClosedNow is [E1]",
+          "command": "cd backend/worker && go test -timeout 2m -count=1 ./internal/poller -run 'TestPollClosedAndNewlyClosedCombined$' -v",
+          "status": "passed",
+          "detail": "PASS"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "0bd8f80bc2620e0650a51a918d05ba530e361c1d",
+          "from_sha": "f69b1bd152ed6d47fdf56e0b7b853c37e2804f33",
+          "tests": [
+            {
+              "id": "TestPollClosesExpiredOpenRound",
+              "kind": "unit",
+              "name": "TestPollClosesExpiredOpenRound",
+              "title": "Poll closes OPEN Rounds whose end time has been reached and leaves future ones open",
+              "scenario": "Given a clock at 12:00 UTC with E1 OPEN ending 11:00, E2 OPEN ending exactly 12:00 and F1 OPEN ending 13:00; When Poll runs; Then closer calls and ClosedNow and Closed are [E1, E2] with no error",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollClosesExpiredOpenRound",
+              "status": "passed",
+              "detail": "PASS in 0.463s"
+            },
+            {
+              "id": "TestPollClosedAndNewlyClosedCombined",
+              "kind": "unit",
+              "name": "TestPollClosedAndNewlyClosedCombined",
+              "title": "Poll reports already-CLOSED Rounds in Closed and only newly closed Rounds in ClosedNow",
+              "scenario": "Given C1 already CLOSED and E1 OPEN and expired; When Poll runs; Then Closed is [C1, E1] and ClosedNow is [E1]",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollClosedAndNewlyClosedCombined",
+              "status": "passed",
+              "detail": "PASS in 0.229s"
+            }
+          ],
+          "started_at": "2026-11-23T15:37:19.706147+00:00",
+          "ended_at": "2026-11-23T15:37:38.234395+00:00",
+          "duration_ms": 17125,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 6,
+          "tokens_out": 3255,
+          "estimated_cost_usd": 0.013025
+        }
+      ],
+      "started_at": "2026-11-23T15:37:19.706147+00:00",
+      "ended_at": "2026-11-23T15:38:47.140819+00:00",
+      "run_started_at": "2026-11-23T15:38:29.175751+00:00",
+      "duration_ms": 16862,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2778,
+      "estimated_cost_usd": 0.011118
+    },
+    {
+      "unit_id": "UNIT-221",
+      "title": "Verify: Poll error handling unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GTSZTF6CG9F5AXAC9NNEW"
+      ],
+      "depends_on": [
+        "UNIT-218",
+        "REQ-110"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "from_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "tests": [
+        {
+          "id": "TestPollPullFailureAborts",
+          "kind": "unit",
+          "name": "TestPollPullFailureAborts",
+          "title": "Poll aborts before closing anything when Pull or ListRounds fails",
+          "scenario": "Given a fake Git whose Pull or ListRounds fails with errBoom, When Poll runs, Then the error wraps errBoom, git calls stop at pull or list, and the Closer is never called.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollPullFailureAborts -v",
+          "status": "passed",
+          "detail": "Subtests pull_fails and list_fails both pass."
+        },
+        {
+          "id": "TestPollCloseFailureContinues",
+          "kind": "unit",
+          "name": "TestPollCloseFailureContinues",
+          "title": "Poll keeps closing expired OPEN Rounds after one Close fails",
+          "scenario": "Given expired OPEN Rounds E1 and E2 where closing E1 fails with errBoom, When Poll runs, Then the error wraps errBoom, Close is attempted for E1 then E2, and only E2 appears in Closed and ClosedNow.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollCloseFailureContinues -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestPollNilCloser",
+          "kind": "unit",
+          "name": "TestPollNilCloser",
+          "title": "Poll returns an error instead of panicking when no Closer is configured",
+          "scenario": "Given a Poller built with a nil Closer and one expired OPEN Round, When Poll runs, Then no panic occurs and the error message contains \"no closer configured\".",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollNilCloser -v",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (1): TestPollNilCloser",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "13349794ba78877122ae4289ef78ff72b571adfa",
+          "from_sha": "0bd8f80bc2620e0650a51a918d05ba530e361c1d",
+          "tests": [
+            {
+              "id": "TestPollPullFailureAborts",
+              "kind": "unit",
+              "name": "TestPollPullFailureAborts",
+              "title": "Poll aborts before closing any Round when pull or list fails",
+              "scenario": "Given a fake Git whose Pull or ListRounds fails with errBoom, When Poll runs, Then the error wraps errBoom, no Round is closed, and the result is empty.",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollPullFailureAborts",
+              "status": "passed",
+              "detail": "Both subtests pass: pull fails (git.calls is [pull], closer untouched, Result empty) and list fails (closer untouched)."
+            },
+            {
+              "id": "TestPollCloseFailureContinues",
+              "kind": "unit",
+              "name": "TestPollCloseFailureContinues",
+              "title": "Poll keeps closing the remaining expired Rounds after one Close fails",
+              "scenario": "Given expired OPEN Rounds E1 and E2 where closing E1 fails with errBoom, When Poll runs, Then the error wraps errBoom, Close is attempted for E1 then E2, and Result.Closed and Result.ClosedNow are both [E2].",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollCloseFailureContinues",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "TestPollNilCloser",
+              "kind": "unit",
+              "name": "TestPollNilCloser",
+              "title": "Poll returns an error instead of panicking when no Closer is configured",
+              "scenario": "Given a Poller built with a nil Closer and one expired OPEN Round, When Poll runs, Then no panic occurs and the error message contains \"no closer configured\".",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/poller -run TestPollNilCloser",
+              "status": "failed",
+              "detail": "poller_errors_test.go:123: Poll() panicked: runtime error: invalid memory address or nil pointer dereference, want error. Poll in poller.go has no nil-Closer guard before p.closer.Close; the Act agent must add one (return an error containing \"no closer configured\")."
+            }
+          ],
+          "started_at": "2026-11-23T15:37:38.612943+00:00",
+          "ended_at": "2026-11-23T15:38:12.359616+00:00",
+          "duration_ms": 31726,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 12,
+          "tokens_out": 5772,
+          "estimated_cost_usd": 0.023098
+        }
+      ],
+      "started_at": "2026-11-23T15:37:38.612943+00:00",
+      "ended_at": "2026-11-23T15:38:54.041792+00:00",
+      "run_started_at": "2026-11-23T15:38:29.159469+00:00",
+      "duration_ms": 23813,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3933,
+      "estimated_cost_usd": 0.015742
+    },
+    {
+      "unit_id": "REQ-108",
+      "title": "REQ · Poll detects SCHEDULED and CLOSED Rounds through a Git interface",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-043"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-109",
+      "title": "REQ · Poll closes expired OPEN Rounds through the snapshot-freezing Closer",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-043"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-110",
+      "title": "REQ · Poll aborts on Git failures and keeps going after a Close failure",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-043"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-043",
+      "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-216",
+        "UNIT-217",
+        "UNIT-218",
+        "UNIT-219",
+        "UNIT-220",
+        "UNIT-221"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-221",
+      "title": "Act: Fix Verify failure — Poll error handling unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "78baed9f996868cf2ae0c1068422439100d78fac",
+      "from_sha": "13349794ba78877122ae4289ef78ff72b571adfa",
+      "started_at": "2026-11-23T15:38:12.369049+00:00",
+      "ended_at": "2026-11-23T15:38:29.047949+00:00",
+      "run_started_at": "2026-11-23T15:38:12.369049+00:00",
+      "duration_ms": 15671,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 1881,
+      "estimated_cost_usd": 0.007532
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-218",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "REQ-110",
+      "dst": "UNIT-221"
+    },
+    {
+      "src": "INT-043",
+      "dst": "REQ-109"
+    },
+    {
+      "src": "UNIT-219",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "UNIT-218",
+      "dst": "UNIT-221"
+    },
+    {
+      "src": "REQ-108",
+      "dst": "UNIT-216"
+    },
+    {
+      "src": "UNIT-216",
+      "dst": "UNIT-219"
+    },
+    {
+      "src": "REQ-109",
+      "dst": "UNIT-217"
+    },
+    {
+      "src": "UNIT-221",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "INT-043",
+      "dst": "REQ-108"
+    },
+    {
+      "src": "REQ-108",
+      "dst": "UNIT-219"
+    },
+    {
+      "src": "UNIT-217",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "UNIT-220",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "INT-043",
+      "dst": "REQ-110"
+    },
+    {
+      "src": "UNIT-217",
+      "dst": "UNIT-220"
+    },
+    {
+      "src": "UNIT-216",
+      "dst": "EVD-043"
+    },
+    {
+      "src": "REQ-109",
+      "dst": "UNIT-220"
+    },
+    {
+      "src": "REQ-110",
+      "dst": "UNIT-218"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84gtt",
+  "base_sha": "a951956a00ecae513a6424efa8465b3a537d48c3",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84GTTN33PANGDA98KRNKN6P:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T15:36:43.939734+00:00",
+  "updated_at": "2026-11-23T15:38:54.955634+00:00",
+  "completed_at": "2026-11-23T15:38:54.043249+00:00",
+  "duration_ms": 130104,
+  "usage_stats": {
+    "total_duration_ms": 209073,
+    "total_tokens_in": 100,
+    "total_tokens_out": 33445,
+    "total_estimated_cost_usd": 0.133861
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-216",
+    "UNIT-217",
+    "UNIT-218",
+    "UNIT-219",
+    "UNIT-220",
+    "UNIT-221"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-216",
+        "title": "Act: Create the poller package with Git interface and Poll detection",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-216 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-217",
+        "title": "Act: Close expired OPEN Rounds in Poll through the Closer",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-217 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-218",
+        "title": "Act: Wrap Git failures and guard a nil Closer in Poll",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-218 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-219",
+        "title": "Verify: Poll detection of SCHEDULED and CLOSED Rounds unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-219 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-220",
+        "title": "Verify: Expired Round closing unit tests with fake clock and Closer",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-220 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-221",
+        "title": "Verify: Poll error handling unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-043",
+            "path": ".ai-dlc/evidence/EVD-043.md",
+            "title": "Evidence: Round poller unit tests with mocked Git, Closer and clock"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-221 unless acceptance outcomes recorded in EVD-043 (.ai-dlc/evidence/EVD-043.md; \"Evidence: Round poller unit tests with mocked Git, Closer and clock\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T15:36:46.546608+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-216",
+    "UNIT-217",
+    "UNIT-218",
+    "UNIT-219",
+    "UNIT-220",
+    "UNIT-221"
+  ]
+}

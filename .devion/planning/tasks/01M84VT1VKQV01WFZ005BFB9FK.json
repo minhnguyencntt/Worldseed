@@ -1,0 +1,64 @@
+{
+  "id": "01M84VT1VKQV01WFZ005BFB9FK",
+  "intent_id": "01M84VQDRP8RE2SSZF39ACCMW0",
+  "title": "Act: Normalise invalid dpr in computeZoom",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "computeZoom treats non-finite or non-positive dpr as 1",
+  "description": "Guard dpr at the top of computeZoom in config.ts.",
+  "acceptance_criteria": [
+    "Invalid dpr behaves as 1",
+    "Valid inputs unchanged"
+  ],
+  "scope": {
+    "in_scope": [
+      "computeZoom"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Signature"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/phaser/config.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Guard added",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-461.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VRMHFK560RZHTYRJGW4QA",
+    "trace:01M84QJ9DET4TEWFBKZNMAA7D4",
+    "artifact:.ai-dlc/units/UNIT-461.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VT1VKX3GQX6AGA1VE5JBH"
+  ],
+  "sim_node_id": "01M84VRMHFYF541SNNC9HTMB26",
+  "feature_id": "01M84QJ9DET4TEWFBKZNMAA7D4",
+  "artifact_path": ".ai-dlc/units/UNIT-461.md",
+  "artifact_id": "UNIT-461",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/config.ts",
+      "symbol": "computeZoom",
+      "lines": "L6-L8",
+      "action": "Add const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1 and use ratio instead of dpr in the formula.",
+      "code": "const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;\nreturn Math.max(1, Math.floor(Math.min((w * ratio) / GAME_WIDTH, (h * ratio) / GAME_HEIGHT)));",
+      "expected": "computeZoom(1280,720,NaN) returns 2"
+    }
+  ],
+  "created_at": "2026-11-23T18:48:32.883285+00:00",
+  "updated_at": "2026-11-23T18:49:00.733849+00:00"
+}

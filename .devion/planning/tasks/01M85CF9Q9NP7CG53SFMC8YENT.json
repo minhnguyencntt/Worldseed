@@ -1,0 +1,77 @@
+{
+  "id": "01M85CF9Q9NP7CG53SFMC8YENT",
+  "intent_id": "01M85C88YPMM9MTW94HY29EE7T",
+  "title": "Act: Return focus to the trigger when the sheet closes",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add returnFocusRef prop and trigger ref in App",
+  "description": "ContributionSheet accepts optional returnFocusRef; DialogContent onCloseAutoFocus focuses it; App holds the ref on the trigger button.",
+  "acceptance_criteria": [
+    "Given a returnFocusRef with a current element, when the sheet closes, then that element receives focus",
+    "Given no returnFocusRef is passed, when the sheet closes, then the Radix default focus restoration applies"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet.tsx prop",
+      "App.tsx ref"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Existing props"
+    ]
+  },
+  "technical_constraints": [
+    "Prop is optional",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Trigger focused after close",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-628.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CBK3QGTZ01FCTMCBCT4ZG",
+    "trace:01M85C02SB6S6PDSR020JNXF6J",
+    "artifact:.ai-dlc/units/UNIT-628.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85CF9Q9AWM52VP5YV9WB7CS"
+  ],
+  "sim_node_id": "01M85CBK3Q7HX132NRMKADPFKA",
+  "feature_id": "01M85C02SB6S6PDSR020JNXF6J",
+  "artifact_path": ".ai-dlc/units/UNIT-628.md",
+  "artifact_id": "UNIT-628",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheetProps, ContributionSheet",
+      "lines": "L4-L8, DialogContent element",
+      "action": "Add optional field returnFocusRef?: RefObject<HTMLElement | null> to ContributionSheetProps (import type RefObject from react), destructure it, and add onCloseAutoFocus on DialogContent that calls event.preventDefault() then returnFocusRef?.current?.focus() only when the ref has a current element.",
+      "code": "onCloseAutoFocus={(event) => { if (returnFocusRef?.current) { event.preventDefault(); returnFocusRef.current.focus(); } }}",
+      "expected": "With a ref given, focus goes to it on close; without, Radix default applies"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App",
+      "lines": "L1, L31, L70-L77",
+      "action": "Import useRef, add const triggerRef = useRef<HTMLButtonElement>(null) after the sheetOpen state, set ref={triggerRef} on the Suggest What Happens Next button, and pass returnFocusRef={triggerRef} to ContributionSheet.",
+      "code": "<button type=\"button\" ref={triggerRef} onClick={() => setSheetOpen(true)}>",
+      "expected": "Trigger receives focus after the sheet closes"
+    }
+  ],
+  "created_at": "2026-11-23T23:39:46.281326+00:00",
+  "updated_at": "2026-11-23T23:41:16.657774+00:00"
+}

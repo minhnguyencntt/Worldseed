@@ -1,0 +1,73 @@
+{
+  "id": "01M85CR35Z221ZVKF0V8DHB8KD",
+  "intent_id": "01M85CJMBD6F8YVA6APHGQ7386",
+  "title": "Act: Gate ContributionSheet submit on zero remaining quota",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Disable submit and show message at zero quota",
+  "description": "Use the existing remaining value to disable input and Send and show a clear message.",
+  "acceptance_criteria": [
+    "remaining 0 disables Send and textarea and shows the message",
+    "handleSubmit returns early at zero quota"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Backend"
+    ],
+    "preserve": [
+      "Contributions left text"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "No submit at zero quota",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-634.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CMAABHJ8M2T754Z46EF9P",
+    "trace:01M844GYQJJMHCJZGB2V33H3N6",
+    "artifact:.ai-dlc/units/UNIT-634.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85CR35Z36GGBMD521A9CH20"
+  ],
+  "sim_node_id": "01M85CMAABX2FS7BVS5Q5P6S0G",
+  "feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+  "artifact_path": ".ai-dlc/units/UNIT-634.md",
+  "artifact_id": "UNIT-634",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (quota)",
+      "lines": "L64-L69",
+      "action": "Add const outOfQuota = remaining <= 0; at the top of handleSubmit add 'if (outOfQuota) return;' before the blank check.",
+      "code": "const outOfQuota = remaining <= 0;",
+      "expected": "No submission possible at zero quota"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "textarea, Send and message markup",
+      "lines": "L97-L109",
+      "action": "Add disabled={outOfQuota} to the textarea; change Send to disabled={isBlank || tooLong || outOfQuota}; render <p role='status'>No contributions left this round</p> when outOfQuota.",
+      "code": "{outOfQuota && <p role=\"status\">No contributions left this round</p>}",
+      "expected": "Message shown and controls disabled at zero quota"
+    }
+  ],
+  "created_at": "2026-11-23T23:44:34.495487+00:00",
+  "updated_at": "2026-11-23T23:45:36.924078+00:00"
+}

@@ -1,0 +1,494 @@
+{
+  "id": "01M84GAFYZ3X1HF52JMQB1C53M",
+  "trigger_node_id": "INT-041, UNIT-203 +9",
+  "node_ids": [
+    "INT-041",
+    "UNIT-203",
+    "UNIT-204",
+    "UNIT-205",
+    "UNIT-206",
+    "UNIT-207",
+    "UNIT-208",
+    "REQ-102",
+    "REQ-103",
+    "REQ-104",
+    "EVD-041"
+  ],
+  "intent_id": "INT-041",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-041",
+      "title": "SG-7.6 · Runner locking, timeout, retry, budget and approval gate unit tests",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-203",
+      "title": "Act: Export ErrTimeout and wrap it in runAttempt",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ6W2E2WG9GKSCX5JCH"
+      ],
+      "depends_on": [
+        "REQ-102"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "from_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "started_at": "2026-11-23T15:27:49.629699+00:00",
+      "ended_at": "2026-11-23T15:28:03.658414+00:00",
+      "run_started_at": "2026-11-23T15:27:49.629699+00:00",
+      "duration_ms": 12521,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 1649,
+      "estimated_cost_usd": 0.006601
+    },
+    {
+      "unit_id": "UNIT-204",
+      "title": "Act: Confirm retry loop and failure cleanup in Runner.run",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ6C7SWBCFHDNYNZRBN"
+      ],
+      "depends_on": [
+        "REQ-103"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "from_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "started_at": "2026-11-23T15:27:49.648977+00:00",
+      "ended_at": "2026-11-23T15:28:02.929736+00:00",
+      "run_started_at": "2026-11-23T15:27:49.648977+00:00",
+      "duration_ms": 12237,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1426,
+      "estimated_cost_usd": 0.00571
+    },
+    {
+      "unit_id": "UNIT-205",
+      "title": "Act: Confirm lock-first ordering and budget stop in Runner.run",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ63TB5XSXMZ4DWWFAW"
+      ],
+      "depends_on": [
+        "REQ-104"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "from_sha": "ed715654beff125ed2d5f852f39500fad0cca476",
+      "started_at": "2026-11-23T15:27:49.657206+00:00",
+      "ended_at": "2026-11-23T15:27:59.561083+00:00",
+      "run_started_at": "2026-11-23T15:27:49.657206+00:00",
+      "duration_ms": 8730,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 1054,
+      "estimated_cost_usd": 0.004221
+    },
+    {
+      "unit_id": "UNIT-206",
+      "title": "Verify: Timed-out attempt is retried once and fails with ErrTimeout unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ6KRXPYP1B9CJ6N9TS"
+      ],
+      "depends_on": [
+        "UNIT-203",
+        "REQ-102"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "from_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "tests": [
+        {
+          "id": "TestRunTimeoutRetriedOnceThenErrTimeout",
+          "kind": "unit",
+          "name": "TestRunTimeoutRetriedOnceThenErrTimeout",
+          "title": "a timed-out attempt is retried once and the failure wraps ErrTimeout",
+          "scenario": "Given the agent blocks until its context ends, a 20ms timeout and MaxRetries 1; When Run is called; Then the agent runs twice, the error wraps ErrTimeout and context.DeadlineExceeded, and the stored status is FAILED",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run 'TestRunTimeoutRetriedOnceThenErrTimeout$'",
+          "status": "passed",
+          "detail": "PASS in 0.05s"
+        },
+        {
+          "id": "TestRunParentCancelNotErrTimeout",
+          "kind": "unit",
+          "name": "TestRunParentCancelNotErrTimeout",
+          "title": "a cancelled parent context is reported as cancellation, not ErrTimeout",
+          "scenario": "Given the parent context is already cancelled, the agent blocks, a 5s timeout and MaxRetries 0; When Run is called; Then the error is non-nil, wraps context.Canceled, and does not wrap ErrTimeout",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run 'TestRunParentCancelNotErrTimeout$'",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        }
+      ],
+      "started_at": "2026-11-23T15:28:03.682047+00:00",
+      "ended_at": "2026-11-23T15:28:31.089604+00:00",
+      "run_started_at": "2026-11-23T15:28:03.682047+00:00",
+      "duration_ms": 26395,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 4746,
+      "estimated_cost_usd": 0.018995
+    },
+    {
+      "unit_id": "UNIT-207",
+      "title": "Verify: MaxRetries exhaustion removes the worktree once unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ6P5MFRP1JZGX6A4XY"
+      ],
+      "depends_on": [
+        "UNIT-204",
+        "REQ-103"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "from_sha": "adb90f3314f5bfab62b15a3ee6bcaa1214cf9dec",
+      "tests": [
+        {
+          "id": "TestRunRetryExhaustedRemovesWorktreeOnce",
+          "kind": "unit",
+          "name": "TestRunRetryExhaustedRemovesWorktreeOnce",
+          "title": "Exhausting MaxRetries fails the execution and removes its worktree exactly once",
+          "scenario": "Given MaxRetries is 2 and the agent fails on all three attempts, When Run is called, Then it returns an error, the agent ran three times, the stored status is FAILED with the last error text, and the worktree under WorkRoot/EXEC-1 is removed exactly once.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunRetryExhaustedRemovesWorktreeOnce",
+          "status": "passed",
+          "detail": "PASS in 0.00s; test passed on first run because runner.go already satisfies the spec."
+        }
+      ],
+      "started_at": "2026-11-23T15:28:03.668355+00:00",
+      "ended_at": "2026-11-23T15:28:23.573749+00:00",
+      "run_started_at": "2026-11-23T15:28:03.668355+00:00",
+      "duration_ms": 18849,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3227,
+      "estimated_cost_usd": 0.012916
+    },
+    {
+      "unit_id": "UNIT-208",
+      "title": "Verify: Held lock and budget stop unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GAFQ6JKS2QFGJ47S9WYK4"
+      ],
+      "depends_on": [
+        "UNIT-205",
+        "REQ-104"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "from_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "tests": [
+        {
+          "id": "TestRunLockedLeavesNoRecord",
+          "kind": "unit",
+          "name": "TestRunLockedLeavesNoRecord",
+          "title": "A run refused by a held World lock leaves no execution record or worktree",
+          "scenario": "Given the World lock file exists, When Run is called, Then it returns an error wrapping lock.ErrLocked, the agent never runs, no worktree is created and no execution record is stored for EXEC-1",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunLockedLeavesNoRecord",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        },
+        {
+          "id": "TestRunBudgetExceededPersistsFailed",
+          "kind": "unit",
+          "name": "TestRunBudgetExceededPersistsFailed",
+          "title": "A budget stop persists FAILED, wraps ErrBudgetExceeded and removes the worktree once",
+          "scenario": "Given each agent call costs 3.0, every call fails, MaxRetries is 5 and MaxBudget is 5.0, When Run is called, Then it returns an error wrapping ErrBudgetExceeded after two attempts, the stored record is FAILED with an error containing 'budget exceeded', and the worktree is removed exactly once",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunBudgetExceededPersistsFailed",
+          "status": "passed",
+          "detail": "PASS in 0.01s"
+        }
+      ],
+      "started_at": "2026-11-23T15:27:59.568352+00:00",
+      "ended_at": "2026-11-23T15:28:25.578341+00:00",
+      "run_started_at": "2026-11-23T15:27:59.568352+00:00",
+      "duration_ms": 25124,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 4439,
+      "estimated_cost_usd": 0.017766
+    },
+    {
+      "unit_id": "REQ-102",
+      "title": "REQ · A timed-out agent attempt returns ErrTimeout and is retried then marked FAILED",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-041"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-103",
+      "title": "REQ · Run stops after MaxRetries failures, marks FAILED and removes the worktree once",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-041"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-104",
+      "title": "REQ · A held lock blocks Run and exceeded budget stops retries with ErrBudgetExceeded",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-041"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-041",
+      "title": "Evidence: Runner locking, timeout, retry and budget unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-203",
+        "UNIT-204",
+        "UNIT-205",
+        "UNIT-206",
+        "UNIT-207",
+        "UNIT-208"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-205",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "INT-041",
+      "dst": "REQ-102"
+    },
+    {
+      "src": "REQ-102",
+      "dst": "UNIT-206"
+    },
+    {
+      "src": "UNIT-203",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "REQ-103",
+      "dst": "UNIT-207"
+    },
+    {
+      "src": "REQ-104",
+      "dst": "UNIT-205"
+    },
+    {
+      "src": "UNIT-208",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "INT-041",
+      "dst": "REQ-104"
+    },
+    {
+      "src": "UNIT-205",
+      "dst": "UNIT-208"
+    },
+    {
+      "src": "REQ-103",
+      "dst": "UNIT-204"
+    },
+    {
+      "src": "REQ-104",
+      "dst": "UNIT-208"
+    },
+    {
+      "src": "UNIT-207",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "UNIT-204",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "INT-041",
+      "dst": "REQ-103"
+    },
+    {
+      "src": "UNIT-203",
+      "dst": "UNIT-206"
+    },
+    {
+      "src": "REQ-102",
+      "dst": "UNIT-203"
+    },
+    {
+      "src": "UNIT-206",
+      "dst": "EVD-041"
+    },
+    {
+      "src": "UNIT-204",
+      "dst": "UNIT-207"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84gaf",
+  "base_sha": "ed715654beff125ed2d5f852f39500fad0cca476",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84GAFYZ3X1HF52JMQB1C53M:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T15:27:48.703539+00:00",
+  "updated_at": "2026-11-23T15:28:31.925735+00:00",
+  "completed_at": "2026-11-23T15:28:31.090880+00:00",
+  "duration_ms": 42387,
+  "usage_stats": {
+    "total_duration_ms": 103865,
+    "total_tokens_in": 56,
+    "total_tokens_out": 16541,
+    "total_estimated_cost_usd": 0.066209
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 9,
+  "unit_allowlist": [
+    "UNIT-203",
+    "UNIT-204",
+    "UNIT-205",
+    "UNIT-206",
+    "UNIT-207",
+    "UNIT-208"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-203",
+        "title": "Act: Export ErrTimeout and wrap it in runAttempt",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-203 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-204",
+        "title": "Act: Confirm retry loop and failure cleanup in Runner.run",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-204 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-205",
+        "title": "Act: Confirm lock-first ordering and budget stop in Runner.run",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-205 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-206",
+        "title": "Verify: Timed-out attempt is retried once and fails with ErrTimeout unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-206 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-207",
+        "title": "Verify: MaxRetries exhaustion removes the worktree once unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-207 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-208",
+        "title": "Verify: Held lock and budget stop unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-041",
+            "path": ".ai-dlc/evidence/EVD-041.md",
+            "title": "Evidence: Runner locking, timeout, retry and budget unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-208 unless acceptance outcomes recorded in EVD-041 (.ai-dlc/evidence/EVD-041.md; \"Evidence: Runner locking, timeout, retry and budget unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T15:27:49.487091+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-203",
+    "UNIT-204",
+    "UNIT-205",
+    "UNIT-206",
+    "UNIT-207",
+    "UNIT-208"
+  ]
+}

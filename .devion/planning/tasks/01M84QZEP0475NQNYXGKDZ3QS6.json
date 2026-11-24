@@ -1,0 +1,66 @@
+{
+  "id": "01M84QZEP0475NQNYXGKDZ3QS6",
+  "intent_id": "01M84QY4V6THB1MT4RPP17W4WD",
+  "title": "Act: Add findMissingAssetPaths to the manifest loader",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export a pure helper listing manifest asset paths not present in a file list.",
+  "description": "Add findMissingAssetPaths(manifest, presentFiles) to manifestLoader.ts next to checkAssetRefs, returning the asset paths not found in presentFiles.",
+  "acceptance_criteria": [
+    "Returns [] when every manifest path is in presentFiles",
+    "Returns the paths not in presentFiles, in manifest order"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/assets/loaders/manifestLoader.ts"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Other loader functions"
+    ],
+    "preserve": [
+      "loadManifestFile, loadManifestWithFallback, checkAssetRefs"
+    ]
+  },
+  "technical_constraints": [
+    "Pure function, no fs access",
+    "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Helper exported with typed signature; typecheck passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-382.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QYXA7ZQYQ1ZEFJPKFFDS3",
+    "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+    "artifact:.ai-dlc/units/UNIT-382.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QZEP0SAK5C6BBVDR5QHYQ"
+  ],
+  "sim_node_id": "01M84QYXA78NS5BB922D3NQ0KC",
+  "feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+  "artifact_path": ".ai-dlc/units/UNIT-382.md",
+  "artifact_id": "UNIT-382",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/loaders/manifestLoader.ts",
+      "symbol": "new: findMissingAssetPaths",
+      "lines": "after L87",
+      "action": "Append exported function findMissingAssetPaths(manifest: AssetManifest, presentFiles: readonly string[]): string[] that builds a Set from presentFiles and returns manifest.assets paths not in the Set.",
+      "code": "export function findMissingAssetPaths(manifest: AssetManifest, presentFiles: readonly string[]): string[] {\n  const present = new Set(presentFiles);\n  return manifest.assets.map((a) => a.path).filter((p) => !present.has(p));\n}",
+      "expected": "Function is exported and `npx tsc --noEmit` in game/ passes."
+    }
+  ],
+  "created_at": "2026-11-23T17:41:35.552274+00:00",
+  "updated_at": "2026-11-23T17:42:34.893422+00:00"
+}

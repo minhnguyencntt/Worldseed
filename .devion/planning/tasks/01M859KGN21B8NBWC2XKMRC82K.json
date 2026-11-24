@@ -1,0 +1,70 @@
+{
+  "id": "01M859KGN21B8NBWC2XKMRC82K",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Verify: Persistence, restore and secret door re-entry unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Round trip, strict validation and door stays open",
+  "description": "Unit tests for save validation, restore via useGame and scene view.",
+  "acceptance_criteria": [
+    "Door visible only when flag true",
+    "Corrupt element types rejected",
+    "Door open after remount and goto_scene round trip"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/persistenceStrict.test.ts",
+      "game/frontend/tests/secretDoorPersistence.test.tsx"
+    ],
+    "out_of_scope": [],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "jsdom localStorage only; no server"
+  ],
+  "dependencies": [
+    "ACT4"
+  ],
+  "definition_of_done": [
+    "Tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-585.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1B72RV5ZKFBCY16HE7",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-585.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN28F9D244D0FTZ3HZZ"
+  ],
+  "sim_node_id": "01M859FE1BNJ7G1Z2HNXQRYZ2Z",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-585.md",
+  "artifact_id": "UNIT-585",
+  "steps": [
+    {
+      "file": "game/tests/persistenceStrict.test.ts",
+      "symbol": "new: describe deserializeState element validation",
+      "lines": "new",
+      "action": "Assert serialize/deserialize round trip keeps flags.secret_door_open true; JSON with inventory [1] throws 'Invalid game state: inventory'; flags {a:'x'} throws; relationships {a:'x'} throws.",
+      "command": "cd game && npx vitest run tests/persistenceStrict.test.ts",
+      "expected": "All persistence assertions pass"
+    },
+    {
+      "file": "game/frontend/tests/secretDoorPersistence.test.tsx",
+      "symbol": "new: secret door stays open",
+      "lines": "new",
+      "action": "renderHook(useGame): getSceneView lacks secret-door-open; act('bookshelf','search'); view has it; apply applyEvent goto_scene away and back via store setState and assert flag and view unchanged; unmount, remount and assert view still has it; with localStorage getItem returning '{bad' assert fresh state.",
+      "command": "cd game/frontend && npx vitest run tests/secretDoorPersistence.test.tsx",
+      "expected": "All secret door assertions pass"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.623838+00:00"
+}

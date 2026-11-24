@@ -1,0 +1,77 @@
+{
+  "id": "01M855V5TKN59NEQE475PPZB87",
+  "intent_id": "01M855QJJNCNNP0Q6JYBYQ71MB",
+  "title": "Act: Resolve texture keys and generate fallback in BootScene",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Wire resolveTextureKey and fallback texture",
+  "description": "Add resolver param to createPhaserEffectContext, generate the fallback texture in preload, track failed ids.",
+  "acceptance_criteria": [
+    "dust uses resolved key",
+    "loaderror ids map to fallback"
+  ],
+  "scope": {
+    "in_scope": [
+      "effectContext.ts",
+      "BootScene.ts"
+    ],
+    "out_of_scope": [
+      "content.ts"
+    ],
+    "preserve": [
+      "shutdown cleanup"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90",
+    "Code path: `game/frontend/src/phaser/effectContext.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "resolver used for every texture key",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-511.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855SDV0H26MY6CGFH26GXFX",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-511.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M855V5TKNV9N8QDB6P013MM8"
+  ],
+  "sim_node_id": "01M855SDV0MY49TYGN5YDEA880",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-511.md",
+  "artifact_id": "UNIT-511",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/effectContext.ts",
+      "symbol": "createPhaserEffectContext",
+      "lines": "L7-L40",
+      "action": "Add second parameter `resolveKey: (id: string) => string` and replace `spec.asset` in scene.add.particles with `resolveKey(spec.asset)`.",
+      "code": "createPhaserEffectContext(scene, resolveKey) ... .particles(area.x, area.y, resolveKey(spec.asset), {",
+      "expected": "Particles use the resolved key"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.preload / resolveKey / create",
+      "lines": "L22-L30",
+      "action": "In preload, call this.textures.generate? no: use make.graphics to draw a 8x8 magenta/black checker and generateTexture('fallback:missing',8,8); register this.load.on('loaderror', f => this.failed.add(f.key)). Add private failed=new Set<string>() and resolveKey(id)=> this.failed.has(id) ? 'fallback:missing' : resolveTextureKey(id, manifest, 'fallback:missing'). In create pass (id)=>this.resolveKey(id) to createPhaserEffectContext.",
+      "code": "const g = this.make.graphics({ x: 0, y: 0 }, false); g.fillStyle(0xff00ff).fillRect(0,0,8,8).fillStyle(0x000000).fillRect(0,0,4,4).fillRect(4,4,4,4); g.generateTexture('fallback:missing', 8, 8); g.destroy();",
+      "expected": "Fallback texture exists and resolveKey returns it for unknown or failed ids"
+    }
+  ],
+  "created_at": "2026-11-23T21:43:55.475408+00:00",
+  "updated_at": "2026-11-23T21:46:42.313244+00:00"
+}

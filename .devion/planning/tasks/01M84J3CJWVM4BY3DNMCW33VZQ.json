@@ -1,0 +1,79 @@
+{
+  "id": "01M84J3CJWVM4BY3DNMCW33VZQ",
+  "intent_id": "01M84J1R4N0QKR7CQJ9WV8VQ4D",
+  "title": "Verify: Config carries no worker or execution keys unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests guard the Config struct, example YAML and worker-section handling",
+  "description": "Add tests to config_test.go proving REQ1 acceptance criteria with no network or real server.",
+  "acceptance_criteria": [
+    "Config top-level fields are exactly the eight kept",
+    "Example YAML top-level keys are exactly the eight kept",
+    "A worker section in YAML is ignored"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/config/config_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use reflect, os.ReadFile of ../../configs/config.example.yaml and gopkg.in/yaml.v3 already in go.mod"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-246.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84J30C6AS0W000HP7TJC9RK",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-246.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84J3CJW0EDFVJ01EAJRBGJK"
+  ],
+  "sim_node_id": "01M84J30C6EDB0XPJ7DDCEYY8H",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-246.md",
+  "artifact_id": "UNIT-246",
+  "steps": [
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestConfig_HasNoWorkerFields",
+      "lines": "after L181",
+      "action": "Add a test that uses reflect.TypeOf(Config{}) and collects NumField names, asserting the set equals Server, Auth, Git, Hosting, Storage, Contribution, Admin, Round.",
+      "command": "cd backend && go test ./internal/config -run TestConfig_HasNoWorkerFields",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestExampleYAML_TopLevelKeys",
+      "lines": "after L181",
+      "action": "Add a test that reads ../../configs/config.example.yaml, yaml.Unmarshal into map[string]any, and asserts the keys are exactly server, auth, git, hosting, storage, contribution, admin, round.",
+      "command": "cd backend && go test ./internal/config -run TestExampleYAML_TopLevelKeys",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_IgnoresWorkerSection",
+      "lines": "after L181",
+      "action": "Add a test with an fstest.MapFS YAML of 'auth:\\n  token_secret: s\\nworker:\\n  work_root: /tmp\\n'. Assert LoadFS returns no error and cfg.Auth.TokenSecret is 's'.",
+      "command": "cd backend && go test ./internal/config -run TestLoadFS_IgnoresWorkerSection",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:58:53.020085+00:00",
+  "updated_at": "2026-11-23T15:59:57.618324+00:00"
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M84HZP3CD3KCQ74HGMNM36AC",
+  "intent_id": "01M84HWKHFJ1GPYXND4WWA7V9V",
+  "title": "Act: Confirm server.New and adminRoundRoutes hold only round admin routes",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Ensure server.go has no execution, approve, retry or worker wiring",
+  "description": "Read server.go and remove any execution/worker route, handler, store or import if present. Current source already has only five round routes in adminRoundRoutes; keep it that way.",
+  "acceptance_criteria": [
+    "adminRoundRoutes returns exactly five round routes",
+    "server.go imports no execution or worker package"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go"
+    ],
+    "out_of_scope": [
+      "other packages"
+    ],
+    "preserve": [
+      "admin.Middleware"
+    ]
+  },
+  "technical_constraints": [
+    "Do not alter kept routes",
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "server.go contains no execution or worker reference",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-238.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84HZ5N2Q0NDZ7AGEF2MKQF0",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-238.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84HZP3CFN47HSHJCQAH7WF7"
+  ],
+  "sim_node_id": "01M84HZ5N2DYN6FMKCMRCV3KKE",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-238.md",
+  "artifact_id": "UNIT-238",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "adminRoundRoutes",
+      "lines": "L112-L121",
+      "action": "Check that the returned slice lists only rt entries for rounds: POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions; delete any other entry such as executions, approve or retry",
+      "code": "no change expected; table already has five round entries",
+      "expected": "Five round routes and nothing else"
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New",
+      "lines": "L24-L102",
+      "action": "Check that the import block and New body reference no internal/execution, storyforge/worker, execution store or execution handler; remove any found together with its r.Route entry",
+      "code": "no change expected",
+      "expected": "grep -in 'execution\\|worker' backend/internal/server/server.go prints nothing"
+    }
+  ],
+  "created_at": "2026-11-23T15:56:51.692264+00:00",
+  "updated_at": "2026-11-23T15:57:47.477901+00:00"
+}

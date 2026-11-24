@@ -1,0 +1,683 @@
+{
+  "intent_id": "01M84P864QB1EABT3K0S7Y2NSC",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84PATM63QRH8C7V4A4XM45E",
+      "kind": "intent",
+      "title": "SG-2 Typed asset manifest and validated content schemas",
+      "body": "Context: game/ has YAML-based content (game/src/content/loader.ts) and a hardcoded ASSET_PATHS/HOTSPOTS map in game/frontend/src/runtime/assets.ts. Desired behavior: typed interfaces plus zod validators for the asset manifest and world objects, scene/location content under game/src/content/worlds/the-boys-room, the asset folder tree, and a loader that reports missing assets without crashing. Why: future AI cycles can add or replace assets without rewriting the engine.\n\n## Acceptance criteria\n- Given a manifest and world content, When validated, Then typed zod schemas accept valid data and reject invalid data with path-specific errors\n- Given a manifest reference to a file that does not exist, When the loader runs, Then it reports the asset as missing and does not throw\n- Given the repo, When listing game/public/assets, Then worlds/the-boys-room/{backgrounds,furniture,objects,characters,effects,audio} and ui/{icons,frames,cursors} exist\n\n\n## Scope\n- In scope: zod schemas and TS types\n- In scope: the-boys-room content files\n- In scope: asset folder tree\n- In scope: manifest loader and unit tests\n- Out of scope: Phaser rendering\n- Out of scope: new artwork\n- Out of scope: UI changes\n- Preserve: existing game/content YAML loader and its tests\n- Preserve: game/frontend runtime behavior\n\n\n## Technical constraints\n- TypeScript with zod runtime validators\n- content separate from engine\n\n\n## Definition of done\n- All requirements, Act and Verify units complete\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Typed, zod-validated asset manifest and world object schemas with a non-crashing manifest loader",
+      "description": "Context: game/ has YAML-based content (game/src/content/loader.ts) and a hardcoded ASSET_PATHS/HOTSPOTS map in game/frontend/src/runtime/assets.ts. Desired behavior: typed interfaces plus zod validators for the asset manifest and world objects, scene/location content under game/src/content/worlds/the-boys-room, the asset folder tree, and a loader that reports missing assets without crashing. Why: future AI cycles can add or replace assets without rewriting the engine.",
+      "acceptance_criteria": [
+        "Given a manifest and world content, When validated, Then typed zod schemas accept valid data and reject invalid data with path-specific errors",
+        "Given a manifest reference to a file that does not exist, When the loader runs, Then it reports the asset as missing and does not throw",
+        "Given the repo, When listing game/public/assets, Then worlds/the-boys-room/{backgrounds,furniture,objects,characters,effects,audio} and ui/{icons,frames,cursors} exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "zod schemas and TS types",
+          "the-boys-room content files",
+          "asset folder tree",
+          "manifest loader and unit tests"
+        ],
+        "out_of_scope": [
+          "Phaser rendering",
+          "new artwork",
+          "UI changes"
+        ],
+        "preserve": [
+          "existing game/content YAML loader and its tests",
+          "game/frontend runtime behavior"
+        ]
+      },
+      "technical_constraints": [
+        "TypeScript with zod runtime validators",
+        "content separate from engine"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements, Act and Verify units complete",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-068.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8433BDP22G3MWEH7V8ZKH7Z",
+      "links": [
+        "trace:01M8433BDP22G3MWEH7V8ZKH7Z",
+        "artifact:.ai-dlc/intent/INT-068.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-068.md",
+      "artifact_id": "INT-068"
+    },
+    {
+      "id": "01M84PATM6FE9KBD0F6JR7CA7Q",
+      "kind": "requirement",
+      "title": "REQ · Typed manifest and object schemas with runtime validators",
+      "body": "Context: no manifest or object schema exists. Desired behavior: AssetManifest records id, path, type, dimensions, spritesheet frames, animations, origin/anchor and interaction bounds; object schema covers position, scale, layer, bounds, actions, visibility conditions and persistent-state fields. Why: single validated contract for content.\n\n## Acceptance criteria\n- Given a valid manifest entry for each asset type, When parsed, Then it succeeds and returns typed data\n- Given an entry with missing id, negative dimensions or unknown type, When parsed, Then it fails naming the offending field path\n- Given a world object with position, scale, layer, bounds, actions, visibleWhen and persistentState, When parsed, Then it succeeds; an unknown layer fails\n\n\n## Scope\n- In scope: game/src/assets/manifest schemas and types\n- Out of scope: loader\n- Out of scope: content data\n- Preserve: game/src/state/types.ts\n\n\n## Technical constraints\n- zod added to game/package.json\n\n\n## Definition of done\n- Schemas and inferred types exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Manifest and world object zod schemas export inferred TS types",
+      "description": "Context: no manifest or object schema exists. Desired behavior: AssetManifest records id, path, type, dimensions, spritesheet frames, animations, origin/anchor and interaction bounds; object schema covers position, scale, layer, bounds, actions, visibility conditions and persistent-state fields. Why: single validated contract for content.",
+      "acceptance_criteria": [
+        "Given a valid manifest entry for each asset type, When parsed, Then it succeeds and returns typed data",
+        "Given an entry with missing id, negative dimensions or unknown type, When parsed, Then it fails naming the offending field path",
+        "Given a world object with position, scale, layer, bounds, actions, visibleWhen and persistentState, When parsed, Then it succeeds; an unknown layer fails"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/manifest schemas and types"
+        ],
+        "out_of_scope": [
+          "loader",
+          "content data"
+        ],
+        "preserve": [
+          "game/src/state/types.ts"
+        ]
+      },
+      "technical_constraints": [
+        "zod added to game/package.json"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schemas and inferred types exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-171.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PATM63QRH8C7V4A4XM45E",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84PATM63QRH8C7V4A4XM45E",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-171.md"
+      ],
+      "depends_on": [
+        "01M84PATM63QRH8C7V4A4XM45E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-171.md",
+      "artifact_id": "REQ-171"
+    },
+    {
+      "id": "01M84PATM6XR3EZXFG0JZ6J8NJ",
+      "kind": "requirement",
+      "title": "REQ · The Boy's Room scene content and asset folders live outside the engine",
+      "body": "Context: world content is YAML in game/content and hotspots are hardcoded. Desired behavior: a manifest.json and scene definition (bookshelf, computer, bed, window, door) under game/src/content/worlds/the-boys-room, and the public asset folder tree with .gitkeep files. Why: AI agents edit content, not engine.\n\n## Acceptance criteria\n- Given the-boys-room manifest and scene files, When parsed with the R1 schemas, Then both are valid\n- Given the scene objects, When listing their asset ids, Then every id exists in the manifest\n- Given the repo, When checking game/public/assets, Then all required folders exist\n\n\n## Scope\n- In scope: manifest.json\n- In scope: scene.json\n- In scope: folder tree\n- Out of scope: artwork files\n- Out of scope: engine code\n- Preserve: game/content/worlds/the-boys-room YAML\n\n\n## Technical constraints\n- Folders created via .gitkeep\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Content validates against schemas\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Scene, location and manifest content under src/content/worlds/the-boys-room plus the asset folder tree",
+      "description": "Context: world content is YAML in game/content and hotspots are hardcoded. Desired behavior: a manifest.json and scene definition (bookshelf, computer, bed, window, door) under game/src/content/worlds/the-boys-room, and the public asset folder tree with .gitkeep files. Why: AI agents edit content, not engine.",
+      "acceptance_criteria": [
+        "Given the-boys-room manifest and scene files, When parsed with the R1 schemas, Then both are valid",
+        "Given the scene objects, When listing their asset ids, Then every id exists in the manifest",
+        "Given the repo, When checking game/public/assets, Then all required folders exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "manifest.json",
+          "scene.json",
+          "folder tree"
+        ],
+        "out_of_scope": [
+          "artwork files",
+          "engine code"
+        ],
+        "preserve": [
+          "game/content/worlds/the-boys-room YAML"
+        ]
+      },
+      "technical_constraints": [
+        "Folders created via .gitkeep"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Content validates against schemas",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-172.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PATM63QRH8C7V4A4XM45E",
+      "matched_feature_id": "01M843NJMDS7XG831NQ6KW7HPB",
+      "links": [
+        "parent:01M84PATM63QRH8C7V4A4XM45E",
+        "trace:01M843NJMDS7XG831NQ6KW7HPB",
+        "artifact:.ai-dlc/requirements/REQ-172.md"
+      ],
+      "depends_on": [
+        "01M84PATM63QRH8C7V4A4XM45E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-172.md",
+      "artifact_id": "REQ-172"
+    },
+    {
+      "id": "01M84PATM6D174883CHC9HWWNB",
+      "kind": "requirement",
+      "title": "REQ · Manifest loader validates references and reports missing assets without crashing",
+      "body": "Context: no manifest loader exists. Desired behavior: loadManifest validates data, checks every object asset reference exists in the manifest (dangling) and every manifest path exists via an injected exists function, returning a report and fallback entries instead of throwing. Why: missing assets must not crash the game.\n\n## Acceptance criteria\n- Given a manifest whose file is missing, When loaded, Then report.missing lists its id and the call does not throw\n- Given an object referencing an unknown asset id, When loaded, Then report.dangling lists it\n- Given invalid manifest data, When loaded, Then report.errors is non-empty and no exception propagates\n- Given a missing asset, When resolving it, Then the fallback entry is returned\n\n\n## Scope\n- In scope: game/src/assets/loaders/manifestLoader.ts\n- Out of scope: Phaser loading\n- Preserve: existing loader.ts\n\n\n## Technical constraints\n- Filesystem access via injected exists function\n\n\n## Dependencies\n- R1\n- R2\n\n\n## Definition of done\n- Loader implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Loader returns validation errors, dangling references and missing-asset fallbacks",
+      "description": "Context: no manifest loader exists. Desired behavior: loadManifest validates data, checks every object asset reference exists in the manifest (dangling) and every manifest path exists via an injected exists function, returning a report and fallback entries instead of throwing. Why: missing assets must not crash the game.",
+      "acceptance_criteria": [
+        "Given a manifest whose file is missing, When loaded, Then report.missing lists its id and the call does not throw",
+        "Given an object referencing an unknown asset id, When loaded, Then report.dangling lists it",
+        "Given invalid manifest data, When loaded, Then report.errors is non-empty and no exception propagates",
+        "Given a missing asset, When resolving it, Then the fallback entry is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/loaders/manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "Phaser loading"
+        ],
+        "preserve": [
+          "existing loader.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Filesystem access via injected exists function"
+      ],
+      "dependencies": [
+        "R1",
+        "R2"
+      ],
+      "definition_of_done": [
+        "Loader implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-173.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PATM63QRH8C7V4A4XM45E",
+      "matched_feature_id": "01M8457KMMSQBY9VJAQTVZ1RNJ",
+      "links": [
+        "parent:01M84PATM63QRH8C7V4A4XM45E",
+        "trace:01M8457KMMSQBY9VJAQTVZ1RNJ",
+        "artifact:.ai-dlc/requirements/REQ-173.md"
+      ],
+      "depends_on": [
+        "01M84PATM63QRH8C7V4A4XM45E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-173.md",
+      "artifact_id": "REQ-173"
+    },
+    {
+      "id": "01M84PATM6KMK3QSTEKWZRMT9J",
+      "kind": "unit",
+      "title": "Act: Add zod and manifest/object schemas",
+      "body": "Add zod dependency and create schemas for manifest assets and world objects.\n\n## Acceptance criteria\n- Schemas export parse-able validators and inferred types\n- zod is declared in game/package.json\n\n\n## Scope\n- In scope: schema files\n- Out of scope: tests\n- Preserve: existing types.ts\n\n\n## Technical constraints\n- Code path: `game/package.json`\n- New file: `game/src/assets/manifest/schema.ts`\n- New file: `game/src/assets/manifest/types.ts`\n\n\n## Definition of done\n- Schemas exported: assetManifestSchema, worldObjectSchema, sceneSchema\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create zod schemas and inferred types",
+      "description": "Add zod dependency and create schemas for manifest assets and world objects.",
+      "acceptance_criteria": [
+        "Schemas export parse-able validators and inferred types",
+        "zod is declared in game/package.json"
+      ],
+      "scope": {
+        "in_scope": [
+          "schema files"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "existing types.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/package.json`",
+        "New file: `game/src/assets/manifest/schema.ts`",
+        "New file: `game/src/assets/manifest/types.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schemas exported: assetManifestSchema, worldObjectSchema, sceneSchema",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-342.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84PATM6FE9KBD0F6JR7CA7Q",
+      "links": [
+        "parent:01M84PATM6FE9KBD0F6JR7CA7Q",
+        "artifact:.ai-dlc/units/UNIT-342.md"
+      ],
+      "depends_on": [
+        "01M84PATM6FE9KBD0F6JR7CA7Q"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-342.md",
+      "artifact_id": "UNIT-342",
+      "steps": [
+        {
+          "file": "game/package.json",
+          "symbol": "dependencies",
+          "lines": "L1",
+          "action": "Add \"zod\": \"^3.23.0\" to dependencies next to yaml, then run npm install in game/ to update package-lock.json",
+          "code": "\"dependencies\":{\"yaml\":\"^2.5.0\",\"zod\":\"^3.23.0\"}",
+          "expected": "zod resolves from game/node_modules"
+        },
+        {
+          "file": "game/src/assets/manifest/schema.ts",
+          "symbol": "new: assetEntrySchema, assetManifestSchema, worldObjectSchema, sceneSchema",
+          "lines": "new",
+          "action": "Create schemas. assetEntry: id (non-empty string), path (non-empty string), type enum background|furniture|object|spritesheet|effect|audio|icon|frame|cursor, width/height positive ints optional, frames {frameWidth,frameHeight,count} optional, animations record of {frames:number[],frameRate:number positive,repeat:int>=-1} optional, origin {x,y} 0..1 default {0.5,0.5}, interactionBounds {x,y,width,height} optional. manifest: {version:1, assets: array}. worldObject: id, name, asset (string), position {x,y}, scale number positive default 1, layer enum background|furniture|objects|characters|effects|ui, bounds optional, actions array of enum inspect|push|search|leave, visibleWhen optional array of {flag,equals?}|{hasItem}, persistentState optional {flag:string, openAsset?:string}. scene: {id,title,objects:worldObject[]}",
+          "code": "export const layerSchema = z.enum(['background','furniture','objects','characters','effects','ui']);",
+          "expected": "Schemas compile under tsc"
+        },
+        {
+          "file": "game/src/assets/manifest/types.ts",
+          "symbol": "new: AssetEntry, AssetManifest, WorldObject, SceneContent",
+          "lines": "new",
+          "action": "Export types via z.infer of the four schemas from schema.ts",
+          "code": "export type AssetManifest = z.infer<typeof assetManifestSchema>;",
+          "expected": "npm run typecheck passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM6VQ52ZVQS2KPY44T4",
+      "kind": "unit",
+      "title": "Act: Author the-boys-room manifest, scene and asset folders",
+      "body": "Create content data separate from the engine and the asset directory tree.\n\n## Acceptance criteria\n- manifest.json and scene.json exist\n- asset folders exist\n\n\n## Scope\n- In scope: content json\n- In scope: gitkeep files\n- Out of scope: artwork\n- Preserve: game/content YAML\n\n\n## Technical constraints\n- New file: `game/src/content/worlds/the-boys-room/manifest.json`\n- New file: `game/src/content/worlds/the-boys-room/scene.json`\n- New file: `game/public/assets/worlds/the-boys-room/backgrounds/.gitkeep`\n- New file: `game/public/assets/worlds/the-boys-room/furniture/.gitkeep`\n- New file: `game/public/assets/worlds/the-boys-room/objects/.gitkeep`\n- New file: `game/public/assets/worlds/the-boys-room/characters/.gitkeep`\n- New file: `game/public/assets/worlds/the-boys-room/effects/.gitkeep`\n- New file: `game/public/assets/worlds/the-boys-room/audio/.gitkeep`\n- New file: `game/public/assets/ui/icons/.gitkeep`\n- New file: `game/public/assets/ui/frames/.gitkeep`\n- New file: `game/public/assets/ui/cursors/.gitkeep`\n\n\n## Definition of done\n- Content validates against R1 schemas\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add content files and folder tree",
+      "description": "Create content data separate from the engine and the asset directory tree.",
+      "acceptance_criteria": [
+        "manifest.json and scene.json exist",
+        "asset folders exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "content json",
+          "gitkeep files"
+        ],
+        "out_of_scope": [
+          "artwork"
+        ],
+        "preserve": [
+          "game/content YAML"
+        ]
+      },
+      "technical_constraints": [
+        "New file: `game/src/content/worlds/the-boys-room/manifest.json`",
+        "New file: `game/src/content/worlds/the-boys-room/scene.json`",
+        "New file: `game/public/assets/worlds/the-boys-room/backgrounds/.gitkeep`",
+        "New file: `game/public/assets/worlds/the-boys-room/furniture/.gitkeep`",
+        "New file: `game/public/assets/worlds/the-boys-room/objects/.gitkeep`",
+        "New file: `game/public/assets/worlds/the-boys-room/characters/.gitkeep`",
+        "New file: `game/public/assets/worlds/the-boys-room/effects/.gitkeep`",
+        "New file: `game/public/assets/worlds/the-boys-room/audio/.gitkeep`",
+        "New file: `game/public/assets/ui/icons/.gitkeep`",
+        "New file: `game/public/assets/ui/frames/.gitkeep`",
+        "New file: `game/public/assets/ui/cursors/.gitkeep`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Content validates against R1 schemas",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-343.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84PATM6XR3EZXFG0JZ6J8NJ",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M84PATM6XR3EZXFG0JZ6J8NJ",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-343.md"
+      ],
+      "depends_on": [
+        "01M84PATM6XR3EZXFG0JZ6J8NJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-343.md",
+      "artifact_id": "UNIT-343",
+      "steps": [
+        {
+          "file": "game/src/content/worlds/the-boys-room/manifest.json",
+          "symbol": "new: manifest",
+          "lines": "new",
+          "action": "Create manifest {version:1} with assets for ids backgrounds/bedroom (path worlds/the-boys-room/backgrounds/bedroom.png, 320x180), furniture/bed, furniture/bookshelf, objects/computer, objects/window, objects/door, each with type, dimensions, origin and interactionBounds; character boy as spritesheet with frames and idle/interact animations",
+          "expected": "File parses with assetManifestSchema"
+        },
+        {
+          "file": "game/src/content/worlds/the-boys-room/scene.json",
+          "symbol": "new: scene",
+          "lines": "new",
+          "action": "Create scene {id:'bedroom',title:\"The Boy's Room\"} with objects bookshelf, computer, bed, window, door; each references an asset id defined in manifest.json, with position, layer, actions inspect/push/search per the existing YAML in game/content/worlds/the-boys-room, and bookshelf persistentState {flag:'secret_door_open'}",
+          "expected": "File parses with sceneSchema and every asset id is in the manifest"
+        },
+        {
+          "file": "game/public/assets/worlds/the-boys-room/backgrounds/.gitkeep",
+          "symbol": "new: gitkeep",
+          "lines": "new",
+          "action": "Create empty .gitkeep in each of the 9 listed directories (backgrounds, furniture, objects, characters, effects, audio under worlds/the-boys-room; icons, frames, cursors under ui)",
+          "command": "find game/public/assets -name .gitkeep | wc -l",
+          "expected": "Prints 9"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM6E2CV5BF3N6G5ABMJ",
+      "kind": "unit",
+      "title": "Act: Implement the manifest loader",
+      "body": "Implement loader that never throws.\n\n## Acceptance criteria\n- Returns report with errors, dangling, missing\n- resolveAsset returns fallback for missing\n\n\n## Scope\n- In scope: loader file\n- Out of scope: tests\n\n\n## Technical constraints\n- exists injected\n- New file: `game/src/assets/loaders/manifestLoader.ts`\n\n\n## Definition of done\n- Loader exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "loadManifest with reference validation and fallbacks",
+      "description": "Implement loader that never throws.",
+      "acceptance_criteria": [
+        "Returns report with errors, dangling, missing",
+        "resolveAsset returns fallback for missing"
+      ],
+      "scope": {
+        "in_scope": [
+          "loader file"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "exists injected",
+        "New file: `game/src/assets/loaders/manifestLoader.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Loader exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-344.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84PATM6D174883CHC9HWWNB",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M84PATM6D174883CHC9HWWNB",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-344.md"
+      ],
+      "depends_on": [
+        "01M84PATM6D174883CHC9HWWNB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-344.md",
+      "artifact_id": "UNIT-344",
+      "steps": [
+        {
+          "file": "game/src/assets/loaders/manifestLoader.ts",
+          "symbol": "new: loadManifest, resolveAsset, FALLBACK_ASSET",
+          "lines": "new",
+          "action": "Export loadManifest(manifestData: unknown, scene: unknown, exists: (assetPath:string)=>boolean): {manifest: AssetManifest|null; scene: SceneContent|null; errors: string[]; missing: string[]; dangling: {objectId:string; asset:string}[]}. Use safeParse for both; on failure push `path: message` strings to errors. For each manifest asset where !exists(path) push id to missing. For each scene object whose asset is not a manifest id push to dangling. Wrap in try/catch to never throw. Export FALLBACK_ASSET (id 'fallback', type 'object', path 'ui/frames/fallback.png') and resolveAsset(report, id) returning the manifest entry or FALLBACK_ASSET when id is missing from manifest or in report.missing",
+          "expected": "Compiles; never throws"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM6RPJ50JKBRZ946B7N",
+      "kind": "unit",
+      "title": "Verify: Manifest and object schema unit tests",
+      "body": "Test schemas accept valid and reject invalid data.\n\n## Acceptance criteria\n- Valid manifest and object parse\n- Invalid entries fail with field path\n\n\n## Scope\n- In scope: tests/manifestSchema.test.ts\n- Out of scope: I/O\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for valid and invalid manifests and objects",
+      "description": "Test schemas accept valid and reject invalid data.",
+      "acceptance_criteria": [
+        "Valid manifest and object parse",
+        "Invalid entries fail with field path"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/manifestSchema.test.ts"
+        ],
+        "out_of_scope": [
+          "I/O"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-345.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PATM6KMK3QSTEKWZRMT9J",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PATM6KMK3QSTEKWZRMT9J",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-345.md"
+      ],
+      "depends_on": [
+        "01M84PATM6KMK3QSTEKWZRMT9J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-345.md",
+      "artifact_id": "UNIT-345",
+      "steps": [
+        {
+          "file": "game/tests/manifestSchema.test.ts",
+          "symbol": "new: describe('assetManifestSchema')",
+          "lines": "new",
+          "action": "Add tests: valid spritesheet entry with frames, animations, origin and interactionBounds parses; entry missing id fails with issue path ['assets',0,'id']; width -1 fails; type 'bogus' fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t assetManifestSchema",
+          "expected": "Manifest schema tests pass"
+        },
+        {
+          "file": "game/tests/manifestSchema.test.ts",
+          "symbol": "new: describe('worldObjectSchema')",
+          "lines": "after previous describe",
+          "action": "Add tests: object with position, scale, layer 'furniture', bounds, actions ['inspect','push'], visibleWhen [{flag:'x',equals:true}], persistentState {flag:'secret_open'} parses and scale defaults to 1 when omitted; layer 'sky' fails; action 'fly' fails",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t worldObjectSchema",
+          "expected": "Object schema tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM67GZ35PSJM96114PN",
+      "kind": "unit",
+      "title": "Verify: the-boys-room content and folder unit tests",
+      "body": "Validate shipped content against schemas.\n\n## Acceptance criteria\n- Content parses\n- Asset refs resolve\n- Folders exist\n\n\n## Scope\n- In scope: tests/boysRoomContent.test.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that content validates and folders exist",
+      "description": "Validate shipped content against schemas.",
+      "acceptance_criteria": [
+        "Content parses",
+        "Asset refs resolve",
+        "Folders exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/boysRoomContent.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-346.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PATM6VQ52ZVQS2KPY44T4",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PATM6VQ52ZVQS2KPY44T4",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-346.md"
+      ],
+      "depends_on": [
+        "01M84PATM6VQ52ZVQS2KPY44T4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-346.md",
+      "artifact_id": "UNIT-346",
+      "steps": [
+        {
+          "file": "game/tests/boysRoomContent.test.ts",
+          "symbol": "new: describe('the-boys-room content')",
+          "lines": "new",
+          "action": "Read manifest.json and scene.json from src/content/worlds/the-boys-room, assert assetManifestSchema and sceneSchema parse them, every scene object's asset is in manifest ids, and fs.existsSync is true for each of the 9 required asset directories under public/assets",
+          "command": "cd game && npx vitest run tests/boysRoomContent.test.ts",
+          "expected": "All assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM6FFWJR00KBMDV0AKM",
+      "kind": "unit",
+      "title": "Verify: Manifest loader dangling-reference and missing-asset unit tests",
+      "body": "Test the manifest loader behaviors using fake exists functions and inline fixtures.\n\n## Acceptance criteria\n- Missing, dangling and invalid-data cases are asserted\n- Fallback resolution for missing assets is asserted\n\n\n## Scope\n- In scope: tests/manifestLoader.test.ts\n\n\n## Technical constraints\n- Use inline fixtures built from schema-valid objects; exists is a vi.fn\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for loader behaviors with fake exists",
+      "description": "Test the manifest loader behaviors using fake exists functions and inline fixtures.",
+      "acceptance_criteria": [
+        "Missing, dangling and invalid-data cases are asserted",
+        "Fallback resolution for missing assets is asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/manifestLoader.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Use inline fixtures built from schema-valid objects; exists is a vi.fn"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-347.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PATM6E2CV5BF3N6G5ABMJ",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PATM6E2CV5BF3N6G5ABMJ",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-347.md"
+      ],
+      "depends_on": [
+        "01M84PATM6E2CV5BF3N6G5ABMJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-347.md",
+      "artifact_id": "UNIT-347",
+      "steps": [
+        {
+          "file": "game/tests/manifestLoader.test.ts",
+          "symbol": "new: describe('loadManifest')",
+          "lines": "new",
+          "action": "Tests: valid data with exists=()=>true gives empty errors/missing/dangling; exists=()=>false lists all ids in missing and does not throw; scene object with asset 'nope' appears in dangling; manifestData {} yields non-empty errors and manifest null; manifestData undefined does not throw",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest",
+          "expected": "Loader tests pass"
+        },
+        {
+          "file": "game/tests/manifestLoader.test.ts",
+          "symbol": "new: describe('resolveAsset')",
+          "lines": "after previous describe",
+          "action": "Tests: present asset returns its entry; id in missing returns FALLBACK_ASSET; unknown id returns FALLBACK_ASSET",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t resolveAsset",
+          "expected": "Fallback tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PATM6VV5ZKF1FHN13FTWS",
+      "kind": "evidence",
+      "title": "Evidence: Asset manifest schema, content and loader unit tests",
+      "body": "Collect results of manifest schema, content and loader unit tests.\n\n## Acceptance criteria\n- manifestSchema, boysRoomContent and manifestLoader tests pass\n- tsc --noEmit passes\n\n\n## Scope\n- In scope: test run output\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that schema, content and loader tests pass",
+      "description": "Collect results of manifest schema, content and loader unit tests.",
+      "acceptance_criteria": [
+        "manifestSchema, boysRoomContent and manifestLoader tests pass",
+        "tsc --noEmit passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-068.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PATM6RPJ50JKBRZ946B7N",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84PATM6RPJ50JKBRZ946B7N",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-068.md"
+      ],
+      "depends_on": [
+        "01M84PATM6RPJ50JKBRZ946B7N",
+        "01M84PATM67GZ35PSJM96114PN",
+        "01M84PATM6FFWJR00KBMDV0AKM"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-068.md",
+      "artifact_id": "EVD-068"
+    }
+  ],
+  "created_at": "2026-11-23T17:13:08.026493+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

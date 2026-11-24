@@ -1,0 +1,652 @@
+{
+  "id": "01M85QHVP5FQZE0A9TESVZHA5V",
+  "trigger_node_id": "INT-156, UNIT-766 +9",
+  "node_ids": [
+    "INT-156",
+    "UNIT-766",
+    "UNIT-767",
+    "UNIT-768",
+    "UNIT-769",
+    "UNIT-770",
+    "UNIT-771",
+    "REQ-383",
+    "REQ-384",
+    "REQ-385",
+    "EVD-156"
+  ],
+  "intent_id": "INT-156",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-156",
+      "title": "SG-1.1 Define the shared palette and 480x270 render constants",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-766",
+      "title": "Act: Create the shared palette module",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT564AM4K06NG46QFN59"
+      ],
+      "depends_on": [
+        "REQ-383"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "fe14d87c49b221981ee58d97c71ea15d0218efa3",
+      "from_sha": "b363a46a80bea4c02c4ba221f0b6428a1f109aad",
+      "started_at": "2026-11-24T02:53:28.955103+00:00",
+      "ended_at": "2026-11-24T02:53:55.897593+00:00",
+      "run_started_at": "2026-11-24T02:53:28.955103+00:00",
+      "duration_ms": 22493,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2898,
+      "estimated_cost_usd": 0.011598
+    },
+    {
+      "unit_id": "UNIT-767",
+      "title": "Act: Export palette Tailwind colours and register them in tailwind.config.ts",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT5604M8SMRV5KPMR7G7"
+      ],
+      "depends_on": [
+        "REQ-384"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "02a0f6b4e3c5b72337f50ea86404821f7de7dd9f",
+      "from_sha": "551b21e49db7f2c127359b5a138889f95b9e90c2",
+      "started_at": "2026-11-24T02:53:29.010218+00:00",
+      "ended_at": "2026-11-24T02:54:28.609493+00:00",
+      "run_started_at": "2026-11-24T02:53:29.010218+00:00",
+      "duration_ms": 56184,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 30,
+      "tokens_out": 6161,
+      "estimated_cost_usd": 0.024668
+    },
+    {
+      "unit_id": "UNIT-768",
+      "title": "Act: Switch config.ts to 480x270 and guard computeZoom against invalid dpr",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT56ZRDM589ACD7JMRJG"
+      ],
+      "depends_on": [
+        "REQ-385"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "418339acddc25d31835b4ac56df4553dd366a198",
+      "from_sha": "fe14d87c49b221981ee58d97c71ea15d0218efa3",
+      "started_at": "2026-11-24T02:53:29.020024+00:00",
+      "ended_at": "2026-11-24T02:53:57.259042+00:00",
+      "run_started_at": "2026-11-24T02:53:29.020024+00:00",
+      "duration_ms": 24673,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 2133,
+      "estimated_cost_usd": 0.008542
+    },
+    {
+      "unit_id": "UNIT-769",
+      "title": "Verify: Palette module unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT560ZME4JC4Y11DM46C"
+      ],
+      "depends_on": [
+        "UNIT-766",
+        "REQ-383"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "551b21e49db7f2c127359b5a138889f95b9e90c2",
+      "from_sha": "418339acddc25d31835b4ac56df4553dd366a198",
+      "tests": [
+        {
+          "id": "palette-unique-hex-cap",
+          "kind": "unit",
+          "name": "tests/palette.test.ts > palette module > has at most 48 unique hex colours",
+          "title": "has at most 48 unique hex colours",
+          "scenario": "Given the shared PALETTE list, When its length and entries are checked, Then it has at most 48 entries, no duplicates, and every entry is a lowercase #rrggbb hex colour",
+          "command": "cd game/frontend && npx vitest run tests/palette.test.ts --testTimeout=10000",
+          "file": "tests/palette.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "palette-warm-cool-ramps",
+          "kind": "unit",
+          "name": "tests/palette.test.ts > palette module > names warm and cool ramps",
+          "title": "names warm and cool ramps",
+          "scenario": "Given WARM_RAMPS and COOL_RAMPS, When compared with PALETTE_RAMPS keys, Then every warm and cool name is a ramp key, the two lists share no name, and together they cover all ramp keys",
+          "command": "cd game/frontend && npx vitest run tests/palette.test.ts --testTimeout=10000",
+          "file": "tests/palette.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T02:53:57.271762+00:00",
+      "ended_at": "2026-11-24T02:54:19.861928+00:00",
+      "run_started_at": "2026-11-24T02:53:57.271762+00:00",
+      "duration_ms": 18287,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2217,
+      "estimated_cost_usd": 0.008874
+    },
+    {
+      "unit_id": "UNIT-770",
+      "title": "Verify: Palette Tailwind colour export unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT561WKZKH7VNV6NRBE8"
+      ],
+      "depends_on": [
+        "UNIT-767",
+        "REQ-384"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "7baddc36aec5a55ef9bfa13f164e3757b5dee1bf",
+      "from_sha": "02a0f6b4e3c5b72337f50ea86404821f7de7dd9f",
+      "tests": [
+        {
+          "id": "paletteTailwindColors.flattens-to-every-palette-colour-once",
+          "kind": "unit",
+          "name": "paletteTailwindColors",
+          "title": "flattens to every palette colour once",
+          "scenario": "Given paletteTailwindColors is built from PALETTE_RAMPS, When every ramp's colour values are flattened, Then the sorted result equals the sorted PALETTE list",
+          "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts --testTimeout=10000",
+          "file": "tests/paletteTailwind.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "tailwindConfig.pal",
+          "kind": "unit",
+          "name": "tailwind.config pal",
+          "title": "registers the palette ramps under theme.extend.colors.pal and keeps the background token",
+          "scenario": "Given the default export of tailwind.config.ts, When its theme.extend.colors is read, Then pal equals paletteTailwindColors and background is 'hsl(var(--background))'",
+          "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts --testTimeout=10000",
+          "file": "tests/paletteTailwind.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T02:54:28.628221+00:00",
+      "ended_at": "2026-11-24T02:54:55.678249+00:00",
+      "run_started_at": "2026-11-24T02:54:28.628221+00:00",
+      "duration_ms": 23979,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3279,
+      "estimated_cost_usd": 0.013124
+    },
+    {
+      "unit_id": "UNIT-771",
+      "title": "Verify: 480x270 constants and computeZoom unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85QHT56A7YCE8RXK75TK79V"
+      ],
+      "depends_on": [
+        "UNIT-768",
+        "REQ-385"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "7baddc36aec5a55ef9bfa13f164e3757b5dee1bf",
+      "from_sha": "7baddc36aec5a55ef9bfa13f164e3757b5dee1bf",
+      "tests": [
+        {
+          "id": "computeZoom-table-1280x720-dpr1",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1280 x 720 at dpr 1 as 2",
+          "title": "returns the integer zoom 1280 x 720 at dpr 1 as 2",
+          "scenario": "Given viewport 1280x720 and dpr 1, When computeZoom runs, Then zoom is 2 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-1920x1080-dpr1",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1920 x 1080 at dpr 1 as 4",
+          "title": "returns the integer zoom 1920 x 1080 at dpr 1 as 4",
+          "scenario": "Given viewport 1920x1080 and dpr 1, When computeZoom runs, Then zoom is 4 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-1920x1080-dpr2",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1920 x 1080 at dpr 2 as 8",
+          "title": "returns the integer zoom 1920 x 1080 at dpr 2 as 8",
+          "scenario": "Given viewport 1920x1080 and dpr 2, When computeZoom runs, Then zoom is 8 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-1366x768-dpr1",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1366 x 768 at dpr 1 as 2",
+          "title": "returns the integer zoom 1366 x 768 at dpr 1 as 2",
+          "scenario": "Given viewport 1366x768 and dpr 1, When computeZoom runs, Then zoom is 2 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-1280x720-dpr1.5",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1280 x 720 at dpr 1.5 as 4",
+          "title": "returns the integer zoom 1280 x 720 at dpr 1.5 as 4",
+          "scenario": "Given viewport 1280x720 and dpr 1.5, When computeZoom runs, Then zoom is 4 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-1000x600-dpr2",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 1000 x 600 at dpr 2 as 4",
+          "title": "returns the integer zoom 1000 x 600 at dpr 2 as 4",
+          "scenario": "Given viewport 1000x600 and dpr 2, When computeZoom runs, Then zoom is 4 and an integer",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-table-479x269-dpr1",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > returns the integer zoom 479 x 269 at dpr 1 as 1",
+          "title": "returns the integer zoom 479 x 269 at dpr 1 as 1",
+          "scenario": "Given viewport 479x269 (below native 480x270) and dpr 1, When computeZoom runs, Then zoom clamps to 1",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-invalid-dpr-0",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > falls back to dpr 1 when dpr is 0",
+          "title": "falls back to dpr 1 when dpr is 0",
+          "scenario": "Given viewport 1280x720 and dpr 0, When computeZoom runs, Then the result equals computeZoom(1280,720,1) = 2",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-invalid-dpr-minus1",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > falls back to dpr 1 when dpr is -1",
+          "title": "falls back to dpr 1 when dpr is -1",
+          "scenario": "Given viewport 1280x720 and dpr -1, When computeZoom runs, Then the result equals computeZoom(1280,720,1) = 2",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-invalid-dpr-NaN",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > falls back to dpr 1 when dpr is NaN",
+          "title": "falls back to dpr 1 when dpr is NaN",
+          "scenario": "Given viewport 1280x720 and dpr NaN, When computeZoom runs, Then the result equals computeZoom(1280,720,1) = 2",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "computeZoom-invalid-dpr-Infinity",
+          "kind": "unit",
+          "name": "tests/computeZoom.test.ts > computeZoom whole-number scaling > falls back to dpr 1 when dpr is Infinity",
+          "title": "falls back to dpr 1 when dpr is Infinity",
+          "scenario": "Given viewport 1280x720 and dpr Infinity, When computeZoom runs, Then the result equals computeZoom(1280,720,1) = 2",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts --testTimeout=10000",
+          "file": "tests/computeZoom.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "phaserConfig-480x270-native-resolution",
+          "kind": "unit",
+          "name": "tests/phaserConfig.test.ts > Phaser game config > uses the 480x270 native resolution",
+          "title": "uses the 480x270 native resolution",
+          "scenario": "Given the config module, When GAME_WIDTH/GAME_HEIGHT are read and buildGameConfig is called, Then they are 480 and 270 and the config has width 480 and height 270",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts tests/phaserHost.test.tsx --testTimeout=10000",
+          "file": "tests/phaserConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "phaserConfig-existing-tests",
+          "kind": "unit",
+          "name": "tests/phaserConfig.test.ts (5 existing tests)",
+          "title": "existing Phaser game config tests still pass with the 480x270 constants",
+          "scenario": "Given the 480x270 config, When the pre-existing config, zoom and createGame tests run, Then they pass",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts tests/phaserHost.test.tsx --testTimeout=10000",
+          "file": "tests/phaserConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "phaserHost-existing-tests",
+          "kind": "unit",
+          "name": "tests/phaserHost.test.tsx (5 tests)",
+          "title": "PhaserHost tests pass with no literal 640x360 expectation",
+          "scenario": "Given the PhaserHost stubbed viewport, When the host runs, Then zoom expectations derived from computeZoom hold",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts tests/phaserHost.test.tsx --testTimeout=10000",
+          "file": "tests/phaserConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "ac-640x360-audit",
+          "kind": "unit",
+          "name": "audit: no 640x360 literal expectation in tests/src",
+          "title": "no existing test assumes 640x360",
+          "scenario": "Given grep of tests and src for 640 and 360, Then no expectation asserts a 640x360 native size",
+          "command": "grep -rn \"640\\|360\" game/frontend/tests game/frontend/src",
+          "status": "passed",
+          "detail": "Only hit: tests/phaserHost.test.tsx L155-169 uses a 640px viewport stub; expectations are computed via computeZoom, so no change needed."
+        }
+      ],
+      "started_at": "2026-11-24T02:53:57.293324+00:00",
+      "ended_at": "2026-11-24T02:55:11.494324+00:00",
+      "run_started_at": "2026-11-24T02:53:57.293324+00:00",
+      "duration_ms": 72297,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 24,
+      "tokens_out": 11729,
+      "estimated_cost_usd": 0.046935
+    },
+    {
+      "unit_id": "REQ-383",
+      "title": "REQ · One palette file defines at most 48 colours in warm and cool ramps and exports constants",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-156"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-384",
+      "title": "REQ · The palette is exported as Tailwind colours",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-156"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-385",
+      "title": "REQ · Render constants are 480x270 and computeZoom always returns a whole number of at least 1",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-156"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-156",
+      "title": "Evidence: Palette and 480x270 render constants unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-766",
+        "UNIT-767",
+        "UNIT-768",
+        "UNIT-769",
+        "UNIT-770",
+        "UNIT-771"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-768",
+      "dst": "UNIT-771"
+    },
+    {
+      "src": "INT-156",
+      "dst": "REQ-385"
+    },
+    {
+      "src": "REQ-385",
+      "dst": "UNIT-771"
+    },
+    {
+      "src": "INT-156",
+      "dst": "REQ-384"
+    },
+    {
+      "src": "REQ-384",
+      "dst": "UNIT-767"
+    },
+    {
+      "src": "UNIT-766",
+      "dst": "UNIT-769"
+    },
+    {
+      "src": "UNIT-770",
+      "dst": "EVD-156"
+    },
+    {
+      "src": "UNIT-767",
+      "dst": "UNIT-770"
+    },
+    {
+      "src": "UNIT-766",
+      "dst": "EVD-156"
+    },
+    {
+      "src": "UNIT-768",
+      "dst": "EVD-156"
+    },
+    {
+      "src": "UNIT-769",
+      "dst": "EVD-156"
+    },
+    {
+      "src": "INT-156",
+      "dst": "REQ-383"
+    },
+    {
+      "src": "REQ-384",
+      "dst": "UNIT-770"
+    },
+    {
+      "src": "REQ-385",
+      "dst": "UNIT-768"
+    },
+    {
+      "src": "REQ-383",
+      "dst": "UNIT-766"
+    },
+    {
+      "src": "REQ-383",
+      "dst": "UNIT-769"
+    },
+    {
+      "src": "UNIT-767",
+      "dst": "EVD-156"
+    },
+    {
+      "src": "UNIT-771",
+      "dst": "EVD-156"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85qhv",
+  "base_sha": "b363a46a80bea4c02c4ba221f0b6428a1f109aad",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85QHVP5FQZE0A9TESVZHA5V:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T02:53:24.549057+00:00",
+  "updated_at": "2026-11-24T02:55:14.943743+00:00",
+  "completed_at": "2026-11-24T02:55:11.495922+00:00",
+  "duration_ms": 106946,
+  "usage_stats": {
+    "total_duration_ms": 217975,
+    "total_tokens_in": 92,
+    "total_tokens_out": 28417,
+    "total_estimated_cost_usd": 0.113741
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 62,
+  "unit_allowlist": [
+    "UNIT-766",
+    "UNIT-767",
+    "UNIT-768",
+    "UNIT-769",
+    "UNIT-770",
+    "UNIT-771"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-766",
+        "title": "Act: Create the shared palette module",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-766 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-767",
+        "title": "Act: Export palette Tailwind colours and register them in tailwind.config.ts",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-767 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-768",
+        "title": "Act: Switch config.ts to 480x270 and guard computeZoom against invalid dpr",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-768 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-769",
+        "title": "Verify: Palette module unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-769 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-770",
+        "title": "Verify: Palette Tailwind colour export unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-770 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-771",
+        "title": "Verify: 480x270 constants and computeZoom unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-156",
+            "path": ".ai-dlc/evidence/EVD-156.md",
+            "title": "Evidence: Palette and 480x270 render constants unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-771 unless acceptance outcomes recorded in EVD-156 (.ai-dlc/evidence/EVD-156.md; \"Evidence: Palette and 480x270 render constants unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T02:53:28.348209+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-766",
+    "UNIT-767",
+    "UNIT-768",
+    "UNIT-769",
+    "UNIT-770",
+    "UNIT-771"
+  ]
+}

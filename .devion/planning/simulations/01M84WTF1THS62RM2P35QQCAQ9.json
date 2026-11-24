@@ -1,0 +1,647 @@
+{
+  "intent_id": "01M84WTF1THS62RM2P35QQCAQ9",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+      "kind": "intent",
+      "title": "SG-5.1 Layer order, render context, SceneObject and buildScene",
+      "body": "Context: game/src has the layer enum (content/schema.ts), the object schema and getSceneView, but no layer ordering, render context, scene object entity or scene-building step. Desired behavior: add these as one sequenced change with no concurrent writers, so a scene is built only from content definitions into background, furniture, objects, characters, effects and ui layers. Expected result: buildScene(ctx, scene) creates one entity per content object at the depth of its layer. Why: lets future content changes add objects without touching the engine.\n\n## Acceptance criteria\n- Given the six layers, when LAYER_ORDER is read, then it equals background, furniture, objects, characters, effects, ui in that order\n- Given a SceneSpec with objects on several layers, when buildScene runs, then one entity per object is created with depth ordered by layer\n- Given no hardcoded object ids in engine code, when a new object is added to scene content, then buildScene creates it without code changes\n\n\n## Scope\n- In scope: game/src/engine layer order, render context and buildScene\n- In scope: game/src/entities SceneObject\n- Out of scope: Phaser scene wiring\n- Out of scope: new art assets\n- Out of scope: effects and transitions\n- Preserve: getSceneView and performAction behavior\n- Preserve: existing zod schemas\n\n\n## Technical constraints\n- Modules must not import phaser; the render context is an injected interface\n- Reuse layerSchema, ObjectSpec and SceneSpec from game/src/content/schema.ts\n\n\n## Definition of done\n- All three requirements have Act and Verify units passing\n- game typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Scenes are built purely from content definitions into the six ordered layers",
+      "description": "Context: game/src has the layer enum (content/schema.ts), the object schema and getSceneView, but no layer ordering, render context, scene object entity or scene-building step. Desired behavior: add these as one sequenced change with no concurrent writers, so a scene is built only from content definitions into background, furniture, objects, characters, effects and ui layers. Expected result: buildScene(ctx, scene) creates one entity per content object at the depth of its layer. Why: lets future content changes add objects without touching the engine.",
+      "acceptance_criteria": [
+        "Given the six layers, when LAYER_ORDER is read, then it equals background, furniture, objects, characters, effects, ui in that order",
+        "Given a SceneSpec with objects on several layers, when buildScene runs, then one entity per object is created with depth ordered by layer",
+        "Given no hardcoded object ids in engine code, when a new object is added to scene content, then buildScene creates it without code changes"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine layer order, render context and buildScene",
+          "game/src/entities SceneObject"
+        ],
+        "out_of_scope": [
+          "Phaser scene wiring",
+          "new art assets",
+          "effects and transitions"
+        ],
+        "preserve": [
+          "getSceneView and performAction behavior",
+          "existing zod schemas"
+        ]
+      },
+      "technical_constraints": [
+        "Modules must not import phaser; the render context is an injected interface",
+        "Reuse layerSchema, ObjectSpec and SceneSpec from game/src/content/schema.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements have Act and Verify units passing",
+        "game typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-096.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84WBX7KX6B33TTR8240BKV0",
+      "links": [
+        "trace:01M84WBX7KX6B33TTR8240BKV0",
+        "artifact:.ai-dlc/intent/INT-096.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-096.md",
+      "artifact_id": "INT-096"
+    },
+    {
+      "id": "01M84WWZ9GWHQE4XMM82SM3RSN",
+      "kind": "requirement",
+      "title": "REQ · Six-layer render order and injected render context exist",
+      "body": "Context: layerSchema lists the six layers but nothing orders them for rendering. Desired behavior: a layers module exports LAYER_ORDER and layerDepth, and a renderContext module exports RenderContext, RenderSpriteSpec and RenderHandle interfaces. Expected result: depth is monotonic in layer order and unknown layers fall back to objects. Why: gives every entity a single rendering-order source.\n\n## Acceptance criteria\n- Given LAYER_ORDER, when layerDepth is called for each layer, then depths are strictly increasing in order\n- Given an undefined or unknown layer string, when layerDepth is called, then it returns the objects depth\n\n\n## Scope\n- In scope: layers.ts\n- In scope: renderContext.ts\n- Out of scope: Phaser adapter\n- Preserve: layerSchema\n\n\n## Technical constraints\n- No phaser import\n\n\n## Definition of done\n- Exports typed and tested\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "LAYER_ORDER, layerDepth and a RenderContext interface are available",
+      "description": "Context: layerSchema lists the six layers but nothing orders them for rendering. Desired behavior: a layers module exports LAYER_ORDER and layerDepth, and a renderContext module exports RenderContext, RenderSpriteSpec and RenderHandle interfaces. Expected result: depth is monotonic in layer order and unknown layers fall back to objects. Why: gives every entity a single rendering-order source.",
+      "acceptance_criteria": [
+        "Given LAYER_ORDER, when layerDepth is called for each layer, then depths are strictly increasing in order",
+        "Given an undefined or unknown layer string, when layerDepth is called, then it returns the objects depth"
+      ],
+      "scope": {
+        "in_scope": [
+          "layers.ts",
+          "renderContext.ts"
+        ],
+        "out_of_scope": [
+          "Phaser adapter"
+        ],
+        "preserve": [
+          "layerSchema"
+        ]
+      },
+      "technical_constraints": [
+        "No phaser import"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exports typed and tested",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-238.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+      "matched_feature_id": "01M84G51W2EJHJ0AEQGPQSQQNZ",
+      "links": [
+        "parent:01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+        "trace:01M84G51W2EJHJ0AEQGPQSQQNZ",
+        "artifact:.ai-dlc/requirements/REQ-238.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GN0GTQ9WQMBG7JBGZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-238.md",
+      "artifact_id": "REQ-238"
+    },
+    {
+      "id": "01M84WWZ9G7F4KCKAK2EJX6KCT",
+      "kind": "requirement",
+      "title": "REQ · SceneObject entity renders one content object and tracks visibility",
+      "body": "Context: objects carry asset, position, scale, layer and visibleWhen in content. Desired behavior: SceneObject created from an ObjectSpec and a RenderContext creates one sprite at the object's position, scale and layer depth, applies visibleWhen on sync(state), and releases the handle on destroy. Expected result: entity state follows game state. Why: objects become independently managed entities.\n\n## Acceptance criteria\n- Given an ObjectSpec, when SceneObject is constructed, then ctx.createSprite is called once with its asset key, position, scale and layer depth\n- Given visibleWhen on a flag, when sync is called with the flag false then true, then the handle setVisible receives false then true\n- Given a constructed entity, when destroy is called, then the handle destroy is called once\n\n\n## Scope\n- In scope: entities/SceneObject.ts\n- Out of scope: hover and click handling\n- Preserve: evaluateAll semantics\n\n\n## Technical constraints\n- Use evaluateAll from game/src/systems/conditions.ts\n- No phaser import\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Entity tested with a fake RenderContext\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "SceneObject wraps one ObjectSpec with a render handle at its layer depth",
+      "description": "Context: objects carry asset, position, scale, layer and visibleWhen in content. Desired behavior: SceneObject created from an ObjectSpec and a RenderContext creates one sprite at the object's position, scale and layer depth, applies visibleWhen on sync(state), and releases the handle on destroy. Expected result: entity state follows game state. Why: objects become independently managed entities.",
+      "acceptance_criteria": [
+        "Given an ObjectSpec, when SceneObject is constructed, then ctx.createSprite is called once with its asset key, position, scale and layer depth",
+        "Given visibleWhen on a flag, when sync is called with the flag false then true, then the handle setVisible receives false then true",
+        "Given a constructed entity, when destroy is called, then the handle destroy is called once"
+      ],
+      "scope": {
+        "in_scope": [
+          "entities/SceneObject.ts"
+        ],
+        "out_of_scope": [
+          "hover and click handling"
+        ],
+        "preserve": [
+          "evaluateAll semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Use evaluateAll from game/src/systems/conditions.ts",
+        "No phaser import"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Entity tested with a fake RenderContext",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-239.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+      "matched_feature_id": "01M84T6537GC5YKDGR64QW90RD",
+      "links": [
+        "parent:01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+        "trace:01M84T6537GC5YKDGR64QW90RD",
+        "artifact:.ai-dlc/requirements/REQ-239.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GN0GTQ9WQMBG7JBGZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-239.md",
+      "artifact_id": "REQ-239"
+    },
+    {
+      "id": "01M84WWZ9G6H92ZDGAJQ76N1TN",
+      "kind": "requirement",
+      "title": "REQ · buildScene creates all scene entities purely from content in layer order",
+      "body": "Context: scenes are defined in YAML content. Desired behavior: buildScene(ctx, scene) creates one SceneObject per scene object and returns them sorted by layer depth, grouped by layer, using no hardcoded ids. Expected result: the bedroom content yields entities across furniture and objects layers in order. Why: scene construction is data-driven.\n\n## Acceptance criteria\n- Given a scene with objects on objects, furniture and background layers, when buildScene runs, then the returned list is ordered background, furniture, objects\n- Given a scene, when buildScene runs, then ctx.createSprite is called exactly once per object\n- Given an empty objects array, when buildScene runs, then it returns an empty result without error\n\n\n## Scope\n- In scope: engine/buildScene.ts\n- Out of scope: asset preload\n- Preserve: content schema\n\n\n## Technical constraints\n- Stable order within the same layer\n\n\n## Dependencies\n- REQ1\n- REQ2\n\n\n## Definition of done\n- buildScene tested against fake context\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "buildScene turns a SceneSpec into ordered SceneObject entities",
+      "description": "Context: scenes are defined in YAML content. Desired behavior: buildScene(ctx, scene) creates one SceneObject per scene object and returns them sorted by layer depth, grouped by layer, using no hardcoded ids. Expected result: the bedroom content yields entities across furniture and objects layers in order. Why: scene construction is data-driven.",
+      "acceptance_criteria": [
+        "Given a scene with objects on objects, furniture and background layers, when buildScene runs, then the returned list is ordered background, furniture, objects",
+        "Given a scene, when buildScene runs, then ctx.createSprite is called exactly once per object",
+        "Given an empty objects array, when buildScene runs, then it returns an empty result without error"
+      ],
+      "scope": {
+        "in_scope": [
+          "engine/buildScene.ts"
+        ],
+        "out_of_scope": [
+          "asset preload"
+        ],
+        "preserve": [
+          "content schema"
+        ]
+      },
+      "technical_constraints": [
+        "Stable order within the same layer"
+      ],
+      "dependencies": [
+        "REQ1",
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "buildScene tested against fake context",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-240.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84WWZ9GN0GTQ9WQMBG7JBGZ",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-240.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GN0GTQ9WQMBG7JBGZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-240.md",
+      "artifact_id": "REQ-240"
+    },
+    {
+      "id": "01M84WWZ9GVRQ7DZJX6Z41RD1Q",
+      "kind": "unit",
+      "title": "Act: Add layers and renderContext engine modules",
+      "body": "Create game/src/engine/layers.ts and game/src/engine/renderContext.ts reusing Layer from content/schema.ts.\n\n## Acceptance criteria\n- LAYER_ORDER lists six layers in order\n- layerDepth is increasing and falls back to objects\n\n\n## Scope\n- In scope: two new files\n- Out of scope: tests\n- Preserve: content/schema.ts\n\n\n## Technical constraints\n- No phaser import\n- New file: `game/src/engine/layers.ts`\n- New file: `game/src/engine/renderContext.ts`\n\n\n## Definition of done\n- Modules compile under tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create layer order and render context interfaces",
+      "description": "Create game/src/engine/layers.ts and game/src/engine/renderContext.ts reusing Layer from content/schema.ts.",
+      "acceptance_criteria": [
+        "LAYER_ORDER lists six layers in order",
+        "layerDepth is increasing and falls back to objects"
+      ],
+      "scope": {
+        "in_scope": [
+          "two new files"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "content/schema.ts"
+        ]
+      },
+      "technical_constraints": [
+        "No phaser import",
+        "New file: `game/src/engine/layers.ts`",
+        "New file: `game/src/engine/renderContext.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Modules compile under tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-476.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84WWZ9GWHQE4XMM82SM3RSN",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M84WWZ9GWHQE4XMM82SM3RSN",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-476.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GWHQE4XMM82SM3RSN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-476.md",
+      "artifact_id": "UNIT-476",
+      "steps": [
+        {
+          "file": "game/src/engine/layers.ts",
+          "symbol": "new: LAYER_ORDER, layerDepth",
+          "lines": "new",
+          "action": "Export LAYER_ORDER as a readonly Layer array of the six layers and layerDepth(layer?: string) returning index*100, falling back to the objects index for undefined or unknown values.",
+          "code": "import type { Layer } from '../content/schema';\nexport const LAYER_ORDER: readonly Layer[] = ['background','furniture','objects','characters','effects','ui'];\nexport function layerDepth(layer?: string): number {\n  const i = LAYER_ORDER.indexOf(layer as Layer);\n  return (i === -1 ? LAYER_ORDER.indexOf('objects') : i) * 100;\n}",
+          "expected": "Module compiles and exports both symbols"
+        },
+        {
+          "file": "game/src/engine/renderContext.ts",
+          "symbol": "new: RenderContext, RenderSpriteSpec, RenderHandle",
+          "lines": "new",
+          "action": "Export RenderSpriteSpec {key:string; x:number; y:number; scale:number; depth:number}, RenderHandle {setVisible(visible:boolean):void; destroy():void} and RenderContext {createSprite(spec: RenderSpriteSpec): RenderHandle}.",
+          "code": "export interface RenderHandle { setVisible(visible: boolean): void; destroy(): void }\nexport interface RenderSpriteSpec { key: string; x: number; y: number; scale: number; depth: number }\nexport interface RenderContext { createSprite(spec: RenderSpriteSpec): RenderHandle }",
+          "expected": "npx tsc --noEmit in game passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9GGAQBM3EVJFQK0S9R",
+      "kind": "unit",
+      "title": "Act: Add SceneObject entity",
+      "body": "Create game/src/entities/SceneObject.ts wrapping an ObjectSpec and a RenderHandle.\n\n## Acceptance criteria\n- Constructor creates one sprite at layer depth\n- sync applies visibleWhen\n- destroy releases handle\n\n\n## Scope\n- In scope: one new file\n- Out of scope: input handling\n- Preserve: systems/conditions.ts\n\n\n## Technical constraints\n- No phaser import\n- New file: `game/src/entities/SceneObject.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Compiles under tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create the SceneObject class",
+      "description": "Create game/src/entities/SceneObject.ts wrapping an ObjectSpec and a RenderHandle.",
+      "acceptance_criteria": [
+        "Constructor creates one sprite at layer depth",
+        "sync applies visibleWhen",
+        "destroy releases handle"
+      ],
+      "scope": {
+        "in_scope": [
+          "one new file"
+        ],
+        "out_of_scope": [
+          "input handling"
+        ],
+        "preserve": [
+          "systems/conditions.ts"
+        ]
+      },
+      "technical_constraints": [
+        "No phaser import",
+        "New file: `game/src/entities/SceneObject.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Compiles under tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-477.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84WWZ9G7F4KCKAK2EJX6KCT",
+      "matched_feature_id": "01M84WBX7KVSVN9NZX97PKG7NE",
+      "links": [
+        "parent:01M84WWZ9G7F4KCKAK2EJX6KCT",
+        "trace:01M84WBX7KVSVN9NZX97PKG7NE",
+        "artifact:.ai-dlc/units/UNIT-477.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9G7F4KCKAK2EJX6KCT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-477.md",
+      "artifact_id": "UNIT-477",
+      "steps": [
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "new: SceneObject",
+          "lines": "new",
+          "action": "Define class SceneObject with readonly spec: ObjectSpec, readonly depth, private handle. Constructor(spec, ctx) computes depth with layerDepth(spec.layer) and calls ctx.createSprite({key: spec.asset, x: spec.position.x, y: spec.position.y, scale: spec.scale, depth}). sync(state: GameState) calls handle.setVisible(evaluateAll(state, spec.visibleWhen)). destroy() calls handle.destroy().",
+          "code": "sync(state: GameState): void { this.handle.setVisible(evaluateAll(state, spec.visibleWhen)); }",
+          "expected": "Class exported and typechecks"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9G7FRX2EGQCEQVT2B1",
+      "kind": "unit",
+      "title": "Act: Add buildScene step",
+      "body": "Create game/src/engine/buildScene.ts that builds SceneObjects from a SceneSpec.\n\n## Acceptance criteria\n- One entity is created per scene object\n- Entities are returned ordered by layer depth\n\n\n## Scope\n- In scope: one new file\n- Out of scope: preload\n- Preserve: content schema\n\n\n## Technical constraints\n- Stable sort by depth\n- New file: `game/src/engine/buildScene.ts`\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Compiles under tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create buildScene from content",
+      "description": "Create game/src/engine/buildScene.ts that builds SceneObjects from a SceneSpec.",
+      "acceptance_criteria": [
+        "One entity is created per scene object",
+        "Entities are returned ordered by layer depth"
+      ],
+      "scope": {
+        "in_scope": [
+          "one new file"
+        ],
+        "out_of_scope": [
+          "preload"
+        ],
+        "preserve": [
+          "content schema"
+        ]
+      },
+      "technical_constraints": [
+        "Stable sort by depth",
+        "New file: `game/src/engine/buildScene.ts`"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Compiles under tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-478.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84WWZ9G6H92ZDGAJQ76N1TN",
+      "matched_feature_id": "01M847PS3S92ZKV8MN9QEWHYN2",
+      "links": [
+        "parent:01M84WWZ9G6H92ZDGAJQ76N1TN",
+        "trace:01M847PS3S92ZKV8MN9QEWHYN2",
+        "artifact:.ai-dlc/units/UNIT-478.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9G6H92ZDGAJQ76N1TN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-478.md",
+      "artifact_id": "UNIT-478",
+      "steps": [
+        {
+          "file": "game/src/engine/buildScene.ts",
+          "symbol": "new: buildScene",
+          "lines": "new",
+          "action": "Export buildScene(ctx: RenderContext, scene: SceneSpec): SceneObject[] that maps scene.objects to new SceneObject(obj, ctx) and returns them with Array.prototype.sort by depth ascending (stable, so same-layer order follows content order).",
+          "code": "export function buildScene(ctx: RenderContext, scene: SceneSpec): SceneObject[] {\n  return scene.objects.map((o) => new SceneObject(o, ctx)).sort((a, b) => a.depth - b.depth);\n}",
+          "expected": "Function exported and typechecks"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9GZ4AYPD8G2R1V5XDZ",
+      "kind": "unit",
+      "title": "Verify: Layer order and render context unit tests",
+      "body": "Test layers module against REQ1 acceptance criteria.\n\n## Acceptance criteria\n- Order test passes\n- Fallback test passes\n\n\n## Scope\n- In scope: tests/layers.test.ts\n- Out of scope: app\n\n\n## Technical constraints\n- Pure unit test, no mocks needed beyond none\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for LAYER_ORDER and layerDepth",
+      "description": "Test layers module against REQ1 acceptance criteria.",
+      "acceptance_criteria": [
+        "Order test passes",
+        "Fallback test passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/layers.test.ts"
+        ],
+        "out_of_scope": [
+          "app"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Pure unit test, no mocks needed beyond none"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-479.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84WWZ9GVRQ7DZJX6Z41RD1Q",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84WWZ9GVRQ7DZJX6Z41RD1Q",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-479.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GVRQ7DZJX6Z41RD1Q"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-479.md",
+      "artifact_id": "UNIT-479",
+      "steps": [
+        {
+          "file": "game/tests/layers.test.ts",
+          "symbol": "new: layers tests",
+          "lines": "new",
+          "action": "Add test 'LAYER_ORDER is the six layers in order' asserting equality with the array background,furniture,objects,characters,effects,ui; add test 'layerDepth increases per layer and falls back' asserting depths strictly increase over LAYER_ORDER and layerDepth(undefined) and layerDepth('nope') equal layerDepth('objects').",
+          "command": "cd game && npx vitest run tests/layers.test.ts",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9GNZF4KWJ5M5AR2THX",
+      "kind": "unit",
+      "title": "Verify: SceneObject entity unit tests with fake context",
+      "body": "Test entity against REQ2 criteria using a fake RenderContext.\n\n## Acceptance criteria\n- Constructor test passes with one sprite call\n- Visibility and destroy tests pass\n\n\n## Scope\n- In scope: tests/sceneObject.test.ts\n- Out of scope: app\n\n\n## Technical constraints\n- Fake RenderContext built with vi.fn\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for SceneObject",
+      "description": "Test entity against REQ2 criteria using a fake RenderContext.",
+      "acceptance_criteria": [
+        "Constructor test passes with one sprite call",
+        "Visibility and destroy tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/sceneObject.test.ts"
+        ],
+        "out_of_scope": [
+          "app"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Fake RenderContext built with vi.fn"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-480.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84WWZ9GGAQBM3EVJFQK0S9R",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84WWZ9GGAQBM3EVJFQK0S9R",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-480.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GGAQBM3EVJFQK0S9R"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-480.md",
+      "artifact_id": "UNIT-480",
+      "steps": [
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "new: SceneObject tests",
+          "lines": "new",
+          "action": "Using validScene.objects[0] from tests/fixtures/valid-world.ts and a fake ctx with vi.fn createSprite returning {setVisible, destroy} mocks, add tests: constructor calls createSprite once with key, x, y, scale and depth layerDepth(layer); sync with visibleWhen [{flag:'a'}] and flags {} then {a:true} (state from createInitialState and setFlag) calls setVisible(false) then setVisible(true); destroy calls handle.destroy once.",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9GNVTQ2KG92RNP48Y8",
+      "kind": "unit",
+      "title": "Verify: buildScene ordering and count unit tests",
+      "body": "Test buildScene against REQ3 criteria with a fake context.\n\n## Acceptance criteria\n- Order and count tests pass\n- Empty scene test passes\n\n\n## Scope\n- In scope: tests/buildScene.test.ts\n- Out of scope: app\n\n\n## Technical constraints\n- Fake RenderContext\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for buildScene",
+      "description": "Test buildScene against REQ3 criteria with a fake context.",
+      "acceptance_criteria": [
+        "Order and count tests pass",
+        "Empty scene test passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/buildScene.test.ts"
+        ],
+        "out_of_scope": [
+          "app"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Fake RenderContext"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-481.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84WWZ9G7FRX2EGQCEQVT2B1",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84WWZ9G7FRX2EGQCEQVT2B1",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-481.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9G7FRX2EGQCEQVT2B1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-481.md",
+      "artifact_id": "UNIT-481",
+      "steps": [
+        {
+          "file": "game/tests/buildScene.test.ts",
+          "symbol": "new: buildScene tests",
+          "lines": "new",
+          "action": "With a fake ctx (vi.fn createSprite returning handle mocks) and a SceneSpec built from validScene with three objects whose layer is objects, background, furniture, add tests: result layers order is background, furniture, objects; createSprite call count equals 3; scene with objects [] returns [] and createSprite not called.",
+          "command": "cd game && npx vitest run tests/buildScene.test.ts",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84WWZ9GZTWD55Z81GXCYJKP",
+      "kind": "evidence",
+      "title": "Evidence: Layered scene builder unit tests pass",
+      "body": "Record the passing output of the layers, sceneObject and buildScene unit tests.\n\n## Acceptance criteria\n- All three test files pass\n- tsc --noEmit passes in game\n\n\n## Scope\n- In scope: test output\n\n\n## Definition of done\n- Passing output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that layer, entity and buildScene tests pass",
+      "description": "Record the passing output of the layers, sceneObject and buildScene unit tests.",
+      "acceptance_criteria": [
+        "All three test files pass",
+        "tsc --noEmit passes in game"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-096.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84WWZ9GZ4AYPD8G2R1V5XDZ",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84WWZ9GZ4AYPD8G2R1V5XDZ",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-096.md"
+      ],
+      "depends_on": [
+        "01M84WWZ9GZ4AYPD8G2R1V5XDZ",
+        "01M84WWZ9GNZF4KWJ5M5AR2THX",
+        "01M84WWZ9GNVTQ2KG92RNP48Y8"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-096.md",
+      "artifact_id": "EVD-096"
+    }
+  ],
+  "created_at": "2026-11-23T19:08:12.400084+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "01M846R0V2K9FV4V9R15M4JR5P",
+  "intent_id": "01M846M3DV6T8M0JTNKMDEHCEB",
+  "title": "Verify: Admin round route wiring unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Server-level tests for mounted routes, auth and scheduler config",
+  "description": "Run and extend server tests using httptest handlers and a temp repo; no live ports.",
+  "acceptance_criteria": [
+    "Routes not 404 with token",
+    "401 without token",
+    "NewScheduler uses configured interval"
+  ],
+  "scope": {
+    "in_scope": [
+      "internal/server/server_test.go"
+    ],
+    "out_of_scope": [],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "httptest only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-086.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M846QZA4RC9NJVF6YD4G31SX",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-086.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M846R0V2SZWD9PSTYCQN4XQD"
+  ],
+  "sim_node_id": "01M846QZA4BZSMCK5JD2VMZQFX",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-086.md",
+  "artifact_id": "UNIT-086",
+  "steps": [
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "TestNew_AdminRoundsAreMounted",
+      "lines": "L286-L318",
+      "action": "Keep the existing test unchanged; it requests POST /rounds, POST /rounds/ROUND-0000001/open and /close, GET /rounds/ROUND-0000001 and /contributions with Bearer tok and asserts status != 404.",
+      "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsAreMounted",
+      "expected": "PASS for all five subtests"
+    },
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestNewScheduler_UsesConfig",
+      "lines": "after L318",
+      "action": "Build cfg with Round.SchedulerInterval 7s and Storage.RepoPath t.TempDir(); call NewScheduler(cfg) and assert Interval == 7*time.Second and Controller and Rounds are non-nil.",
+      "command": "cd backend && go test ./internal/server -run TestNewScheduler_UsesConfig",
+      "expected": "TestNewScheduler_UsesConfig passes"
+    },
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "TestNew_AdminRoundsRequireToken",
+      "lines": "L240-L277",
+      "action": "Keep the existing assertions that requests without Authorization are rejected with 401, covering the round paths.",
+      "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsRequireToken",
+      "expected": "TestNew_AdminRoundsRequireToken passes"
+    }
+  ],
+  "created_at": "2026-11-23T12:40:26.210176+00:00",
+  "updated_at": "2026-11-23T12:44:02.659948+00:00"
+}

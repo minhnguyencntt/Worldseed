@@ -1,0 +1,78 @@
+{
+  "id": "01M85NA2XC78YZG7XBMASFXTR1",
+  "intent_id": "01M85N4CM4V0AVGP3FWEM1KQ9J",
+  "title": "Verify: transitionTo ignored after SHUTDOWN while other subscribers stay active",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the SHUTDOWN release of transitionTo",
+  "description": "Mirror tests/bootScenePlayAnimationShutdown.test.ts for transitionTo with Phaser mocked.",
+  "acceptance_criteria": [
+    "No fadeOut or scene.start after shutdown",
+    "A pre-existing subscriber still receives transitionTo"
+  ],
+  "scope": {
+    "in_scope": [
+      "new test file"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Everything external mocked"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-759.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85N66P5A4GV4ENG78XWER4E",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-759.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85NA2XC9XY9E3AMRGC5FXE7"
+  ],
+  "sim_node_id": "01M85N66P5WZ4C5BM50ZK61VTM",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-759.md",
+  "artifact_id": "UNIT-759",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+      "symbol": "new: describe('BootScene transitionTo shutdown')",
+      "lines": "new",
+      "action": "Create the file with the phaser mock from bootSceneTransition.test.ts; subscribe otherHandler = vi.fn() via reactToPhaser.on('transitionTo', ...) before new BootScene().create(); add a runShutdown helper that finds the 'shutdown' callback in boot.events.once.mock.calls and calls it",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts",
+      "expected": "File loads"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+      "symbol": "it('ignores transitionTo after the SHUTDOWN callback runs')",
+      "lines": "new",
+      "action": "Call runShutdown(), emit transitionTo { sceneId: 'library' }, assert fadeOut and scene.start were not called",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'ignores transitionTo'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+      "symbol": "it('keeps other transitionTo subscribers active after shutdown')",
+      "lines": "new",
+      "action": "Call runShutdown(), emit transitionTo with payload { sceneId: 'library' }, assert otherHandler toHaveBeenCalledWith(payload) and fadeOut not called",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'other transitionTo subscribers'",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-24T02:14:12.652136+00:00",
+  "updated_at": "2026-11-24T02:15:34.920632+00:00"
+}

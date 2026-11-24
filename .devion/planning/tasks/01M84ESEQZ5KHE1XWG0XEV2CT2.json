@@ -1,0 +1,58 @@
+{
+  "id": "01M84ESEQZ5KHE1XWG0XEV2CT2",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "REQ · Worker detects scheduled and closed Rounds via a Git interface and closes expired Rounds with an immutable snapshot",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Round poller over a mockable Git interface that closes expired Rounds and freezes contributions in the backend snapshot format",
+  "description": "Context: backend round.Service.Close writes snapshot.yaml (Snapshot/SnapshotEntry, mode 0444, never overwritten), records HEAD as freeze_commit and moves to CLOSED. Desired behavior: rounds.Poller pulls through a Git interface, lists worlds/<world>/rounds/*/round.yaml, reports SCHEDULED and CLOSED Rounds and closes OPEN Rounds whose EndsAt is not after the injected clock. Expected result: identical snapshot contract. Why: the Worker must close Rounds even when the backend is down.",
+  "acceptance_criteria": [
+    "Given Rounds in SCHEDULED, OPEN and CLOSED status, when Detect runs, then scheduled and closed lists are returned",
+    "Given an OPEN Round with EndsAt <= fake now, when CloseExpired runs, then snapshot.yaml exists with mode 0444, Git Commit and Head are called, and round.yaml has status CLOSED, freeze_commit and closed_at",
+    "Given an existing snapshot.yaml, when CloseExpired runs, then it is not overwritten and an error is returned",
+    "Given an OPEN Round not yet expired, when CloseExpired runs, then nothing changes"
+  ],
+  "scope": {
+    "in_scope": [
+      "worker/internal/rounds"
+    ],
+    "out_of_scope": [
+      "Git CLI implementation details beyond the interface"
+    ],
+    "preserve": [
+      "Backend snapshot.yaml field names: round, world, frozen_at, contributions[id, player, created_at, prompt_sha256]"
+    ]
+  },
+  "technical_constraints": [
+    "Git interface: Pull, Commit, Head, Contributions; clock injected"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "Poller and closer implemented per contract",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-083.md`"
+  ],
+  "non_functional": [
+    "Path segments sanitized"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14SVHM4ZBNMJTXVGTXW",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-083.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZR9YFPGAMECA789RV"
+  ],
+  "sim_node_id": "01M84ES14SEDKDJ06PKK0E6GD5",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-083.md",
+  "artifact_id": "REQ-083",
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.168486+00:00"
+}

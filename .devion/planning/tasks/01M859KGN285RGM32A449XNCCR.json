@@ -1,0 +1,84 @@
+{
+  "id": "01M859KGN285RGM32A449XNCCR",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Act: Add contextual action events for bed, computer, window and door",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "State-changing events including old-key inventory item",
+  "description": "Edit action events in bedroom.yaml so each key object changes flags, inventory or history.",
+  "acceptance_criteria": [
+    "Bed search adds old-key",
+    "Computer search sets computer_on",
+    "Window inspect sets window_seen",
+    "Door leave gated on old-key sets door_unlocked"
+  ],
+  "scope": {
+    "in_scope": [
+      "bedroom.yaml actions",
+      "world.yaml flags"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Inspect texts"
+    ]
+  },
+  "technical_constraints": [
+    "Action ids from the enum",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`",
+    "Code path: `game/src/content/worlds/the-boys-room/world.yaml`"
+  ],
+  "dependencies": [
+    "REQ3"
+  ],
+  "definition_of_done": [
+    "Events authored",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-580.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1B6PJP7AP9GBTZAJR3",
+    "trace:01M84MX32EMQ7G8B2M8AC4ZXN0",
+    "artifact:.ai-dlc/units/UNIT-580.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN2R8SRBDQMEFR9CN4K"
+  ],
+  "sim_node_id": "01M859FE1B5S6B6WMGXYNMHXKG",
+  "feature_id": "01M84MX32EMQ7G8B2M8AC4ZXN0",
+  "artifact_path": ".ai-dlc/units/UNIT-580.md",
+  "artifact_id": "UNIT-580",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "bed actions",
+      "lines": "L19-L28",
+      "action": "Add action id search label Search with events add_item old-key and show_text 'Under the pillow you find an old key.'.",
+      "expected": "performAction(bed, search) adds old-key"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "window and door actions",
+      "lines": "L99-L132",
+      "action": "Window inspect: append set_flag window_seen true. Door: replace leave events [] with conditions [{hasItem: old-key}] and events set_flag door_unlocked true plus show_text 'The old key turns in the lock.'.",
+      "expected": "Door leave only runs with old-key"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/world.yaml",
+      "symbol": "flags",
+      "lines": "L9-L11",
+      "action": "Append window_seen and door_unlocked.",
+      "expected": "World flags list matches usage"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.618965+00:00"
+}

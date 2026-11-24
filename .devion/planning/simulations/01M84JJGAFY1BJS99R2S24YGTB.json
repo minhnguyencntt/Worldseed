@@ -1,0 +1,483 @@
+{
+  "intent_id": "01M84JJGAFY1BJS99R2S24YGTB",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84JKKPBGRNF1V43WYS4Q24Q",
+      "kind": "intent",
+      "title": "SG-5.1 · Export source interface and stable JSON export type",
+      "body": "Context: the devion workseed handoff needs frozen contributions in a stable format. backend/internal/contribution has Contribution, FileStore.ListByRound and no export types. Desired behavior: the package exposes an export source interface and a JSON export type carrying round id, contribution ids, authors, content and timestamps, with documentation, importing no removed code (worker, execution). Why: removal of dev automation must not break the handoff.\n\n## Acceptance criteria\n- Given the contribution package, when compiled, then an exported export source interface and an exported JSON export type exist\n- Given an export value, when marshalled to JSON, then it contains round id, and per contribution id, author, content and created-at timestamp\n- Given export.go files, when imports are inspected, then none reference worker or execution packages\n\n\n## Scope\n- In scope: New types and interface in backend/internal/contribution\n- Out of scope: Exporter implementation\n- Out of scope: FileStore.FrozenIDs\n- Out of scope: HTTP routes or CLI\n- Preserve: Existing Contribution, FileStore and Repository behavior\n\n\n## Technical constraints\n- Go package contribution, module github.com/worldseed/storyforge/backend\n- Must not import removed code\n\n\n## Definition of done\n- Types, interface and docs exist and compile\n- Unit tests pass\n\n\n## Non-functional requirements\n- JSON field names are stable snake_case\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add an export source interface and a stable, documented JSON export type to the contribution package",
+      "description": "Context: the devion workseed handoff needs frozen contributions in a stable format. backend/internal/contribution has Contribution, FileStore.ListByRound and no export types. Desired behavior: the package exposes an export source interface and a JSON export type carrying round id, contribution ids, authors, content and timestamps, with documentation, importing no removed code (worker, execution). Why: removal of dev automation must not break the handoff.",
+      "acceptance_criteria": [
+        "Given the contribution package, when compiled, then an exported export source interface and an exported JSON export type exist",
+        "Given an export value, when marshalled to JSON, then it contains round id, and per contribution id, author, content and created-at timestamp",
+        "Given export.go files, when imports are inspected, then none reference worker or execution packages"
+      ],
+      "scope": {
+        "in_scope": [
+          "New types and interface in backend/internal/contribution"
+        ],
+        "out_of_scope": [
+          "Exporter implementation",
+          "FileStore.FrozenIDs",
+          "HTTP routes or CLI"
+        ],
+        "preserve": [
+          "Existing Contribution, FileStore and Repository behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Go package contribution, module github.com/worldseed/storyforge/backend",
+        "Must not import removed code"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Types, interface and docs exist and compile",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-051.md`"
+      ],
+      "non_functional": [
+        "JSON field names are stable snake_case"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+      "links": [
+        "trace:01M84JF0K0XHTV40GE5BY6073A",
+        "artifact:.ai-dlc/intent/INT-051.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-051.md",
+      "artifact_id": "INT-051"
+    },
+    {
+      "id": "01M84JKKPBM9922GX6MNAJ5549",
+      "kind": "requirement",
+      "title": "REQ · Stable documented JSON export type with round id, ids, authors, content and timestamps",
+      "body": "Context: no export type exists. Desired behavior: exported Export and ExportContribution structs with explicit json tags and doc comments describing the format and its version. Expected result: marshalling yields a stable shape. Why: the devion handoff consumes it.\n\n## Acceptance criteria\n- Given an Export, when json.Marshal runs, then keys include version, world_id, round_id, contributions\n- Given an ExportContribution, when marshalled, then keys are id, author, content, created_at with RFC3339 time\n- Given the types, when read, then each has a doc comment\n\n\n## Scope\n- In scope: Export, ExportContribution structs, ExportVersion const\n- Out of scope: Producing exports\n- Preserve: Contribution struct unchanged\n\n\n## Technical constraints\n- Only stdlib and existing contribution package\n\n\n## Definition of done\n- Struct tags and docs present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Export JSON type carries round id and per-contribution id, author, content, timestamp, documented",
+      "description": "Context: no export type exists. Desired behavior: exported Export and ExportContribution structs with explicit json tags and doc comments describing the format and its version. Expected result: marshalling yields a stable shape. Why: the devion handoff consumes it.",
+      "acceptance_criteria": [
+        "Given an Export, when json.Marshal runs, then keys include version, world_id, round_id, contributions",
+        "Given an ExportContribution, when marshalled, then keys are id, author, content, created_at with RFC3339 time",
+        "Given the types, when read, then each has a doc comment"
+      ],
+      "scope": {
+        "in_scope": [
+          "Export, ExportContribution structs, ExportVersion const"
+        ],
+        "out_of_scope": [
+          "Producing exports"
+        ],
+        "preserve": [
+          "Contribution struct unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Only stdlib and existing contribution package"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Struct tags and docs present",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-129.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JKKPBGRNF1V43WYS4Q24Q",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84JKKPBGRNF1V43WYS4Q24Q",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-129.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBGRNF1V43WYS4Q24Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-129.md",
+      "artifact_id": "REQ-129"
+    },
+    {
+      "id": "01M84JKKPBGZ9AS02VEQRG24WW",
+      "kind": "requirement",
+      "title": "REQ · Export source interface supplies a round's contributions and imports no removed code",
+      "body": "Context: FileStore.ListByRound(ctx, worldID, roundID) already lists contributions. Desired behavior: a documented ExportSource interface with that method so exporters depend on an abstraction; FileStore satisfies it. Why: allows mocking and handoff independence from removed code.\n\n## Acceptance criteria\n- Given FileStore, when assigned to ExportSource, then it compiles\n- Given a fake ExportSource, when ListByRound is called, then it returns its contributions\n- Given export source files, when imports are parsed, then none contain worker or execution\n\n\n## Scope\n- In scope: ExportSource interface and compile-time assertion\n- Out of scope: Exporter logic\n- Preserve: FileStore.ListByRound signature\n\n\n## Technical constraints\n- Method signature must equal FileStore.ListByRound\n\n\n## Definition of done\n- Interface documented and asserted\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "ExportSource interface satisfied by FileStore, with no worker or execution imports",
+      "description": "Context: FileStore.ListByRound(ctx, worldID, roundID) already lists contributions. Desired behavior: a documented ExportSource interface with that method so exporters depend on an abstraction; FileStore satisfies it. Why: allows mocking and handoff independence from removed code.",
+      "acceptance_criteria": [
+        "Given FileStore, when assigned to ExportSource, then it compiles",
+        "Given a fake ExportSource, when ListByRound is called, then it returns its contributions",
+        "Given export source files, when imports are parsed, then none contain worker or execution"
+      ],
+      "scope": {
+        "in_scope": [
+          "ExportSource interface and compile-time assertion"
+        ],
+        "out_of_scope": [
+          "Exporter logic"
+        ],
+        "preserve": [
+          "FileStore.ListByRound signature"
+        ]
+      },
+      "technical_constraints": [
+        "Method signature must equal FileStore.ListByRound"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Interface documented and asserted",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-130.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JKKPBGRNF1V43WYS4Q24Q",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84JKKPBGRNF1V43WYS4Q24Q",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-130.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBGRNF1V43WYS4Q24Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-130.md",
+      "artifact_id": "REQ-130"
+    },
+    {
+      "id": "01M84JKKPBG0E9E0SJCRSW87EV",
+      "kind": "unit",
+      "title": "Act: Add Export and ExportContribution JSON types",
+      "body": "Create backend/internal/contribution/export.go declaring ExportVersion, Export and ExportContribution with json tags and doc comments.\n\n## Acceptance criteria\n- export.go compiles in package contribution\n- Types carry snake_case json tags and doc comments\n\n\n## Scope\n- In scope: export.go\n- Out of scope: Tests\n- Preserve: model.go\n\n\n## Technical constraints\n- Import only time\n- New file: `backend/internal/contribution/export.go`\n\n\n## Definition of done\n- go build ./internal/contribution passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create export.go with documented JSON types",
+      "description": "Create backend/internal/contribution/export.go declaring ExportVersion, Export and ExportContribution with json tags and doc comments.",
+      "acceptance_criteria": [
+        "export.go compiles in package contribution",
+        "Types carry snake_case json tags and doc comments"
+      ],
+      "scope": {
+        "in_scope": [
+          "export.go"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "model.go"
+        ]
+      },
+      "technical_constraints": [
+        "Import only time",
+        "New file: `backend/internal/contribution/export.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./internal/contribution passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-258.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JKKPBM9922GX6MNAJ5549",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M84JKKPBM9922GX6MNAJ5549",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-258.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBM9922GX6MNAJ5549"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-258.md",
+      "artifact_id": "UNIT-258",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export.go",
+          "symbol": "new: Export, ExportContribution, ExportVersion",
+          "lines": "new",
+          "action": "Create the file with package contribution, importing time; declare const ExportVersion = 1, type ExportContribution with ID, Author, Content string and CreatedAt time.Time, and type Export with Version int, WorldID, RoundID string, Contributions []ExportContribution; document the format in package-level and type doc comments.",
+          "code": "type ExportContribution struct {\n\tID string `json:\"id\"`\n\tAuthor string `json:\"author\"`\n\tContent string `json:\"content\"`\n\tCreatedAt time.Time `json:\"created_at\"`\n}\ntype Export struct {\n\tVersion int `json:\"version\"`\n\tWorldID string `json:\"world_id\"`\n\tRoundID string `json:\"round_id\"`\n\tContributions []ExportContribution `json:\"contributions\"`\n}",
+          "expected": "go build ./internal/contribution succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84JKKPBTYP06R095QZQ2EP7",
+      "kind": "unit",
+      "title": "Act: Add the ExportSource interface",
+      "body": "Declare ExportSource with ListByRound matching FileStore, plus a compile-time assertion.\n\n## Acceptance criteria\n- ExportSource is exported and documented\n- FileStore satisfies it at compile time\n\n\n## Scope\n- In scope: export_source.go\n- Out of scope: Tests\n- Preserve: store.go\n\n\n## Technical constraints\n- Imports only context\n- New file: `backend/internal/contribution/export_source.go`\n\n\n## Definition of done\n- go build ./internal/contribution passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create export_source.go with ExportSource interface and FileStore assertion",
+      "description": "Declare ExportSource with ListByRound matching FileStore, plus a compile-time assertion.",
+      "acceptance_criteria": [
+        "ExportSource is exported and documented",
+        "FileStore satisfies it at compile time"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_source.go"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "store.go"
+        ]
+      },
+      "technical_constraints": [
+        "Imports only context",
+        "New file: `backend/internal/contribution/export_source.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./internal/contribution passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-259.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JKKPBGZ9AS02VEQRG24WW",
+      "matched_feature_id": "01M8457KMNQYD6Q6SVD91393EZ",
+      "links": [
+        "parent:01M84JKKPBGZ9AS02VEQRG24WW",
+        "trace:01M8457KMNQYD6Q6SVD91393EZ",
+        "artifact:.ai-dlc/units/UNIT-259.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBGZ9AS02VEQRG24WW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-259.md",
+      "artifact_id": "UNIT-259",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_source.go",
+          "symbol": "new: ExportSource",
+          "lines": "new",
+          "action": "Create the file importing context; declare interface ExportSource with ListByRound(ctx context.Context, worldID, roundID string) ([]Contribution, error) with a doc comment, and add var _ ExportSource = (*FileStore)(nil). FileStore.ListByRound is at store.go L138.",
+          "code": "var _ ExportSource = (*FileStore)(nil)",
+          "expected": "go build ./internal/contribution succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84JKKPBQ85GSBP97QY9X332",
+      "kind": "unit",
+      "title": "Verify: Export JSON shape and docs unit tests",
+      "body": "Write export_test.go asserting marshalled keys, RFC3339 time and doc comments on the types.\n\n## Acceptance criteria\n- Marshalled Export has version, world_id, round_id, contributions\n- Each contribution has id, author, content, created_at\n\n\n## Scope\n- In scope: export_test.go\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Pure unit test, no I/O\n- New file: `backend/internal/contribution/export_test.go`\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Export JSON keys and doc comments",
+      "description": "Write export_test.go asserting marshalled keys, RFC3339 time and doc comments on the types.",
+      "acceptance_criteria": [
+        "Marshalled Export has version, world_id, round_id, contributions",
+        "Each contribution has id, author, content, created_at"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_test.go"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Pure unit test, no I/O",
+        "New file: `backend/internal/contribution/export_test.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-260.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JKKPBG0E9E0SJCRSW87EV",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JKKPBG0E9E0SJCRSW87EV",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-260.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBG0E9E0SJCRSW87EV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-260.md",
+      "artifact_id": "UNIT-260",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_test.go",
+          "symbol": "new: TestExport_JSONShape",
+          "lines": "new",
+          "action": "Marshal Export{Version: ExportVersion, WorldID: \"w\", RoundID: \"ROUND-0000001\", Contributions: one ExportContribution with ID CON-1, Author p1, Content hi, CreatedAt 2026-01-02T03:04:05Z}; unmarshal into map[string]any and assert keys version, world_id, round_id, contributions and the four contribution keys, and created_at equals \"2026-01-02T03:04:05Z\".",
+          "command": "cd backend && go test ./internal/contribution -run TestExport_JSONShape",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/export_test.go",
+          "symbol": "new: TestExport_TypesDocumented",
+          "lines": "new",
+          "action": "Use go/parser with parser.ParseComments on export.go and assert the GenDecls for Export and ExportContribution have non-empty Doc.",
+          "command": "cd backend && go test ./internal/contribution -run TestExport_TypesDocumented",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84JKKPBA00VQ6MC45SH1EJQ",
+      "kind": "unit",
+      "title": "Verify: ExportSource contract and import hygiene unit tests",
+      "body": "Write export_source_test.go with a fake source and an import scan.\n\n## Acceptance criteria\n- Fake source works through ExportSource\n- No export file imports worker or execution\n\n\n## Scope\n- In scope: export_source_test.go\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No filesystem beyond reading source files\n- New file: `backend/internal/contribution/export_source_test.go`\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for ExportSource satisfaction and no removed imports",
+      "description": "Write export_source_test.go with a fake source and an import scan.",
+      "acceptance_criteria": [
+        "Fake source works through ExportSource",
+        "No export file imports worker or execution"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_source_test.go"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No filesystem beyond reading source files",
+        "New file: `backend/internal/contribution/export_source_test.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-261.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JKKPBTYP06R095QZQ2EP7",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JKKPBTYP06R095QZQ2EP7",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-261.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBTYP06R095QZQ2EP7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-261.md",
+      "artifact_id": "UNIT-261",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_source_test.go",
+          "symbol": "new: TestExportSource_Fake",
+          "lines": "new",
+          "action": "Define fakeSource returning two Contributions from ListByRound; assign to ExportSource; call ListByRound(ctx,\"w\",\"ROUND-0000001\") and assert length 2.",
+          "command": "cd backend && go test ./internal/contribution -run TestExportSource_Fake",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/export_source_test.go",
+          "symbol": "new: TestExportFiles_NoRemovedImports",
+          "lines": "new",
+          "action": "Parse export.go and export_source.go with parser.ImportsOnly and assert no import path contains \"worker\" or \"execution\".",
+          "command": "cd backend && go test ./internal/contribution -run TestExportFiles_NoRemovedImports",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84JKKPBEP14EZGYG5MG944T",
+      "kind": "evidence",
+      "title": "Evidence: Export type and source interface unit tests",
+      "body": "Record passing results of the export unit tests as evidence.\n\n## Acceptance criteria\n- All export tests pass\n- Output shows no failures\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Code changes\n\n\n## Definition of done\n- Test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results for export types and interface",
+      "description": "Record passing results of the export unit tests as evidence.",
+      "acceptance_criteria": [
+        "All export tests pass",
+        "Output shows no failures"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Code changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-051.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JKKPBQ85GSBP97QY9X332",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84JKKPBQ85GSBP97QY9X332",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-051.md"
+      ],
+      "depends_on": [
+        "01M84JKKPBQ85GSBP97QY9X332",
+        "01M84JKKPBA00VQ6MC45SH1EJQ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-051.md",
+      "artifact_id": "EVD-051"
+    }
+  ],
+  "created_at": "2026-11-23T16:07:51.754306+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

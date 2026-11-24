@@ -1,0 +1,303 @@
+{
+  "intent_id": "01M84QY4V6THB1MT4RPP17W4WD",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84QYXA70C7RHCY1JWFY9VFX",
+      "kind": "intent",
+      "title": "SG-2.8 · Mocked-fs unit test checks every manifest.json path against present files",
+      "body": "Context: game/public/assets/worlds/the-boys-room/manifest.json lists 14 assets. Existing tests (tests/manifestLoaderMocked.test.ts, tests/manifestDanglingMocked.test.ts) mock fs with synthetic manifests but none checks the committed manifest against a list of files. Desired behavior: a mocked-fs test reads the committed manifest and verifies every asset path is in a given list of files. Expected result: manifest and asset folders cannot drift apart unnoticed. Why: keeps manifest and assets in sync.\n\n## Acceptance criteria\n- Given the committed manifest.json and a file list that contains every manifest path, when the test runs, then no path is reported missing.\n- Given a file list lacking one manifest path, when the check runs, then exactly that path is reported missing.\n\n\n## Scope\n- In scope: One mocked-fs unit test against the committed manifest.json\n- In scope: A small pure helper to compare manifest paths with a file list\n- Out of scope: Adding or changing asset files\n- Out of scope: Changing manifest.json content\n- Out of scope: Browser or e2e checks\n- Preserve: Existing loadManifestFile and loadManifestWithFallback behavior and tests\n\n\n## Technical constraints\n- Vitest with vi.mock('node:fs'); no real asset directory reads in the new test\n\n\n## Definition of done\n- Test passes and covers every committed manifest path\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Lock the outcome: a unit test with the file system mocked checks every path in the committed manifest.json against a list of present files.",
+      "description": "Context: game/public/assets/worlds/the-boys-room/manifest.json lists 14 assets. Existing tests (tests/manifestLoaderMocked.test.ts, tests/manifestDanglingMocked.test.ts) mock fs with synthetic manifests but none checks the committed manifest against a list of files. Desired behavior: a mocked-fs test reads the committed manifest and verifies every asset path is in a given list of files. Expected result: manifest and asset folders cannot drift apart unnoticed. Why: keeps manifest and assets in sync.",
+      "acceptance_criteria": [
+        "Given the committed manifest.json and a file list that contains every manifest path, when the test runs, then no path is reported missing.",
+        "Given a file list lacking one manifest path, when the check runs, then exactly that path is reported missing."
+      ],
+      "scope": {
+        "in_scope": [
+          "One mocked-fs unit test against the committed manifest.json",
+          "A small pure helper to compare manifest paths with a file list"
+        ],
+        "out_of_scope": [
+          "Adding or changing asset files",
+          "Changing manifest.json content",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing loadManifestFile and loadManifestWithFallback behavior and tests"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest with vi.mock('node:fs'); no real asset directory reads in the new test"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes and covers every committed manifest path",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-076.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-076.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-076.md",
+      "artifact_id": "INT-076"
+    },
+    {
+      "id": "01M84QYXA7ZQYQ1ZEFJPKFFDS3",
+      "kind": "requirement",
+      "title": "REQ · Every committed manifest path is checked against a list of present files with fs mocked",
+      "body": "Context: loadManifestFile checks existence per asset via existsSync but offers no reusable comparison against a file list. Desired behavior: an exported pure helper returns manifest asset paths absent from a supplied file list; the test feeds it the committed manifest read through mocked fs. Expected result: drift between manifest.json and asset folders fails the test. Why: prevents silent drift.\n\n## Acceptance criteria\n- Given the committed manifest and a list of all its paths, when the helper runs, then it returns an empty array.\n- Given the list with one path removed, when the helper runs, then it returns that single path.\n- Given node:fs is mocked, when the test runs, then no real asset file is touched.\n\n\n## Scope\n- In scope: findMissingAssetPaths helper\n- In scope: Mocked-fs test of committed manifest\n- Out of scope: Asset creation\n- Out of scope: Schema changes\n- Preserve: Existing loader exports\n\n\n## Technical constraints\n- Helper must be pure and not throw\n\n\n## Definition of done\n- Helper exported and tested\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A helper and a mocked-fs test compare all committed manifest asset paths to a present-files list.",
+      "description": "Context: loadManifestFile checks existence per asset via existsSync but offers no reusable comparison against a file list. Desired behavior: an exported pure helper returns manifest asset paths absent from a supplied file list; the test feeds it the committed manifest read through mocked fs. Expected result: drift between manifest.json and asset folders fails the test. Why: prevents silent drift.",
+      "acceptance_criteria": [
+        "Given the committed manifest and a list of all its paths, when the helper runs, then it returns an empty array.",
+        "Given the list with one path removed, when the helper runs, then it returns that single path.",
+        "Given node:fs is mocked, when the test runs, then no real asset file is touched."
+      ],
+      "scope": {
+        "in_scope": [
+          "findMissingAssetPaths helper",
+          "Mocked-fs test of committed manifest"
+        ],
+        "out_of_scope": [
+          "Asset creation",
+          "Schema changes"
+        ],
+        "preserve": [
+          "Existing loader exports"
+        ]
+      },
+      "technical_constraints": [
+        "Helper must be pure and not throw"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and tested",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-191.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84QYXA70C7RHCY1JWFY9VFX",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84QYXA70C7RHCY1JWFY9VFX",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-191.md"
+      ],
+      "depends_on": [
+        "01M84QYXA70C7RHCY1JWFY9VFX"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-191.md",
+      "artifact_id": "REQ-191"
+    },
+    {
+      "id": "01M84QYXA78NS5BB922D3NQ0KC",
+      "kind": "unit",
+      "title": "Act: Add findMissingAssetPaths to the manifest loader",
+      "body": "Add findMissingAssetPaths(manifest, presentFiles) to manifestLoader.ts next to checkAssetRefs, returning the asset paths not found in presentFiles.\n\n## Acceptance criteria\n- Returns [] when every manifest path is in presentFiles\n- Returns the paths not in presentFiles, in manifest order\n\n\n## Scope\n- In scope: game/src/assets/loaders/manifestLoader.ts\n- Out of scope: Tests\n- Out of scope: Other loader functions\n- Preserve: loadManifestFile, loadManifestWithFallback, checkAssetRefs\n\n\n## Technical constraints\n- Pure function, no fs access\n- Code path: `game/src/assets/loaders/manifestLoader.ts`\n\n\n## Definition of done\n- Helper exported with typed signature; typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export a pure helper listing manifest asset paths not present in a file list.",
+      "description": "Add findMissingAssetPaths(manifest, presentFiles) to manifestLoader.ts next to checkAssetRefs, returning the asset paths not found in presentFiles.",
+      "acceptance_criteria": [
+        "Returns [] when every manifest path is in presentFiles",
+        "Returns the paths not in presentFiles, in manifest order"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/loaders/manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Other loader functions"
+        ],
+        "preserve": [
+          "loadManifestFile, loadManifestWithFallback, checkAssetRefs"
+        ]
+      },
+      "technical_constraints": [
+        "Pure function, no fs access",
+        "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported with typed signature; typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-382.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84QYXA7ZQYQ1ZEFJPKFFDS3",
+      "matched_feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+      "links": [
+        "parent:01M84QYXA7ZQYQ1ZEFJPKFFDS3",
+        "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+        "artifact:.ai-dlc/units/UNIT-382.md"
+      ],
+      "depends_on": [
+        "01M84QYXA7ZQYQ1ZEFJPKFFDS3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-382.md",
+      "artifact_id": "UNIT-382",
+      "steps": [
+        {
+          "file": "game/src/assets/loaders/manifestLoader.ts",
+          "symbol": "new: findMissingAssetPaths",
+          "lines": "after L87",
+          "action": "Append exported function findMissingAssetPaths(manifest: AssetManifest, presentFiles: readonly string[]): string[] that builds a Set from presentFiles and returns manifest.assets paths not in the Set.",
+          "code": "export function findMissingAssetPaths(manifest: AssetManifest, presentFiles: readonly string[]): string[] {\n  const present = new Set(presentFiles);\n  return manifest.assets.map((a) => a.path).filter((p) => !present.has(p));\n}",
+          "expected": "Function is exported and `npx tsc --noEmit` in game/ passes."
+        }
+      ]
+    },
+    {
+      "id": "01M84QYXA78KZYW5WEQ7PDX2H6",
+      "kind": "unit",
+      "title": "Verify: Committed manifest paths vs present files with fs mocked unit tests",
+      "body": "New test file tests/manifestFilesMocked.test.ts mocks node:fs, serves the committed manifest.json text via the mock, and asserts the helper against a file list.\n\n## Acceptance criteria\n- Full list yields no missing paths\n- List missing one path yields exactly that path\n- fs is mocked and no asset file is read\n\n\n## Scope\n- In scope: game/tests/manifestFilesMocked.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- vi.mock('node:fs'); committed manifest text obtained via vi.importActual('node:fs') once in a hoisted factory, or imported as JSON\n\n\n## Definition of done\n- Test file passes via vitest filter\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for findMissingAssetPaths using the committed manifest read through mocked node:fs.",
+      "description": "New test file tests/manifestFilesMocked.test.ts mocks node:fs, serves the committed manifest.json text via the mock, and asserts the helper against a file list.",
+      "acceptance_criteria": [
+        "Full list yields no missing paths",
+        "List missing one path yields exactly that path",
+        "fs is mocked and no asset file is read"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/manifestFilesMocked.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "vi.mock('node:fs'); committed manifest text obtained via vi.importActual('node:fs') once in a hoisted factory, or imported as JSON"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes via vitest filter",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-383.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84QYXA78NS5BB922D3NQ0KC",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84QYXA78NS5BB922D3NQ0KC",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-383.md"
+      ],
+      "depends_on": [
+        "01M84QYXA78NS5BB922D3NQ0KC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-383.md",
+      "artifact_id": "UNIT-383",
+      "steps": [
+        {
+          "file": "game/tests/manifestFilesMocked.test.ts",
+          "symbol": "new: committed manifest paths are all in the file list",
+          "lines": "new",
+          "action": "Create the test: mock node:fs with readFileSync returning the committed manifest.json text (obtained via vi.importActual in the mock factory) and existsSync mocked; call parseManifest on JSON.parse(readFileSync(...)); build files = manifest.assets.map(a=>a.path); assert findMissingAssetPaths(manifest, files) equals [].",
+          "command": "cd game && npx vitest run tests/manifestFilesMocked.test.ts",
+          "expected": "Test passes; helper returns []."
+        },
+        {
+          "file": "game/tests/manifestFilesMocked.test.ts",
+          "symbol": "new: reports a path missing from the file list",
+          "lines": "new",
+          "action": "Add test: remove 'worlds/the-boys-room/furniture/bed.svg' from files; assert findMissingAssetPaths returns ['worlds/the-boys-room/furniture/bed.svg']. Add test that the manifest has at least one asset so the check is not vacuous.",
+          "command": "cd game && npx vitest run tests/manifestFilesMocked.test.ts",
+          "expected": "All tests in the file pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84QYXA74MC99QZ1PAQ65VCT",
+      "kind": "evidence",
+      "title": "Evidence: Manifest-vs-files mocked-fs unit tests pass",
+      "body": "Record the passing run of tests/manifestFilesMocked.test.ts showing drift detection works with node:fs mocked.\n\n## Acceptance criteria\n- manifestFilesMocked tests pass\n- Test run uses mocked node:fs only\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser checks\n\n\n## Definition of done\n- Vitest output shows all tests passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the committed manifest paths are checked against a file list with fs mocked.",
+      "description": "Record the passing run of tests/manifestFilesMocked.test.ts showing drift detection works with node:fs mocked.",
+      "acceptance_criteria": [
+        "manifestFilesMocked tests pass",
+        "Test run uses mocked node:fs only"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Vitest output shows all tests passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-076.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84QYXA78KZYW5WEQ7PDX2H6",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84QYXA78KZYW5WEQ7PDX2H6",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-076.md"
+      ],
+      "depends_on": [
+        "01M84QYXA78KZYW5WEQ7PDX2H6"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-076.md",
+      "artifact_id": "EVD-076"
+    }
+  ],
+  "created_at": "2026-11-23T17:41:26.189348+00:00",
+  "summary": "AI · 0 NEW · 5 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

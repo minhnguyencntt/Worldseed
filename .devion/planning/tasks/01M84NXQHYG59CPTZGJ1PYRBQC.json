@@ -1,0 +1,59 @@
+{
+  "id": "01M84NXQHYG59CPTZGJ1PYRBQC",
+  "intent_id": "01M84NTACFKP3XP1PWVBPDHNCT",
+  "title": "SG-1.4.2 · Render HeaderOverlay from App through the GameLayout header slot",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "App renders HeaderOverlay via a GameLayout header slot using round loading/error state; old RoundBadge and Countdown usage is removed from the layout.",
+  "description": "Context: HeaderOverlay exists (game/frontend/src/components/HeaderOverlay.tsx) with props worldTitle, round, loading, error, but App.tsx still renders RoundBadge and Countdown inside the scene and GameLayout has no header slot. Desired behavior: App fetches the current round, tracks loading and error, and passes a HeaderOverlay into a new GameLayout header slot. Expected result: the header shows round ID, status and countdown, or a loading or an explained error state, and the old RoundBadge and Countdown usage in App is gone. Why: the header must be a compact overlay with explained failure states.",
+  "acceptance_criteria": [
+    "Given App is playing and getCurrentRound resolves, when it renders, then the header shows the round id, status and countdown from the HeaderOverlay.",
+    "Given getCurrentRound is pending, when App renders, then the header shows 'Loading round…'.",
+    "Given getCurrentRound rejects with an Error, when App renders, then the header alert shows 'Round unavailable: <message>'.",
+    "Given App is playing, when it renders, then no standalone RoundBadge or Countdown element is rendered outside the header."
+  ],
+  "scope": {
+    "in_scope": [
+      "GameLayout header slot",
+      "App round loading/error state and HeaderOverlay wiring",
+      "Removal of RoundBadge and Countdown usage from App",
+      "Unit tests with api client mocked"
+    ],
+    "out_of_scope": [
+      "Changing HeaderOverlay internals",
+      "Backend or API changes",
+      "Deleting RoundBadge.tsx or Countdown.tsx files"
+    ],
+    "preserve": [
+      "ContributionSheet flow",
+      "SceneView, ActionMenu and StoryPanel behavior",
+      "Existing drawer behavior of GameLayout"
+    ]
+  },
+  "technical_constraints": [
+    "React + TypeScript + Tailwind; use the existing getCurrentRound client and HeaderOverlay component",
+    "Unit tests use vitest with dependencies mocked"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements implemented and unit tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-066.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "trace:01M843NJMCH5NMK1PNJ4293CEP",
+    "artifact:.ai-dlc/intent/INT-066.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84NWMXSKE97TM38XP450JC5",
+  "feature_id": "01M843NJMCH5NMK1PNJ4293CEP",
+  "artifact_path": ".ai-dlc/intent/INT-066.md",
+  "artifact_id": "INT-066",
+  "created_at": "2026-11-23T17:05:41.950035+00:00",
+  "updated_at": "2026-11-23T17:07:11.618239+00:00"
+}

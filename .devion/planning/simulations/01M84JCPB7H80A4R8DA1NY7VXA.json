@@ -1,0 +1,466 @@
+{
+  "intent_id": "01M84JCPB7H80A4R8DA1NY7VXA",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84JEKH540Q2ZA91C7P924G6",
+      "kind": "intent",
+      "title": "SG-5 · Define frozen-contribution export for devion workseed handoff",
+      "body": "Context: Worldseed hands player contributions of a closed Round to devion project workseed. backend/internal/contribution has FileStore.ListByRound and ErrFrozen, and backend/internal/round writes snapshot.yaml (round, world, frozen_at, contributions with ids) on Close. No export exists. Desired behavior: a documented export with stable JSON (round id, contribution ids, authors, content, timestamps) containing only frozen contributions, independent of removed code. Why: removal of development automation must not break the handoff.\n\n## Acceptance criteria\n- Given a round with a snapshot, When the export runs, Then JSON contains round id and for each frozen contribution id, author, content and created_at\n- Given a round with no contributions, When exported, Then JSON has an empty contributions array, not null\n- Given contributions on disk that are absent from the snapshot, When exported, Then they are excluded\n- Given the export package, When compiled, Then it imports nothing from removed packages (worker, execution) and unit tests use mocked storage\n\n\n## Scope\n- In scope: backend/internal/contribution export code and its unit tests\n- Out of scope: Calling devion\n- Out of scope: Changing round package\n- Out of scope: HTTP routes\n- Preserve: Existing contribution Save/Get/List behavior\n- Preserve: snapshot.yaml format\n\n\n## Technical constraints\n- Go module github.com/worldseed/storyforge/backend; contribution must not import internal/round (round depends on contribution)\n\n\n## Definition of done\n- Export documented, tested and go test ./internal/contribution passes\n\n\n## Non-functional requirements\n- Deterministic output order and field names\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Documented, stable JSON export of frozen contributions per round in backend/internal/contribution",
+      "description": "Context: Worldseed hands player contributions of a closed Round to devion project workseed. backend/internal/contribution has FileStore.ListByRound and ErrFrozen, and backend/internal/round writes snapshot.yaml (round, world, frozen_at, contributions with ids) on Close. No export exists. Desired behavior: a documented export with stable JSON (round id, contribution ids, authors, content, timestamps) containing only frozen contributions, independent of removed code. Why: removal of development automation must not break the handoff.",
+      "acceptance_criteria": [
+        "Given a round with a snapshot, When the export runs, Then JSON contains round id and for each frozen contribution id, author, content and created_at",
+        "Given a round with no contributions, When exported, Then JSON has an empty contributions array, not null",
+        "Given contributions on disk that are absent from the snapshot, When exported, Then they are excluded",
+        "Given the export package, When compiled, Then it imports nothing from removed packages (worker, execution) and unit tests use mocked storage"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/contribution export code and its unit tests"
+        ],
+        "out_of_scope": [
+          "Calling devion",
+          "Changing round package",
+          "HTTP routes"
+        ],
+        "preserve": [
+          "Existing contribution Save/Get/List behavior",
+          "snapshot.yaml format"
+        ]
+      },
+      "technical_constraints": [
+        "Go module github.com/worldseed/storyforge/backend; contribution must not import internal/round (round depends on contribution)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Export documented, tested and go test ./internal/contribution passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-050.md`"
+      ],
+      "non_functional": [
+        "Deterministic output order and field names"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "artifact:.ai-dlc/intent/INT-050.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-050.md",
+      "artifact_id": "INT-050"
+    },
+    {
+      "id": "01M84JEKH5DFWWPDMY5GSJBA36",
+      "kind": "requirement",
+      "title": "REQ · Frozen export has a documented stable JSON format with only frozen contributions",
+      "body": "Add an Exporter in backend/internal/contribution that reads a round via an ExportSource interface (ListByRound, FrozenIDs) and returns an Export struct with stable JSON tags: version, world, round, contributions[{id, author, content, created_at}]. Package docs describe the format and lifecycle (only closed rounds with a snapshot are exportable).\n\n## Acceptance criteria\n- Given a source with 3 contributions of which 2 are frozen, When Export is called, Then output lists exactly the 2 frozen ones ordered by created_at then id\n- Given a frozen set that is empty, When Export is called, Then contributions marshals to [] \n- Given a round not yet frozen, When Export is called, Then ErrNotFrozen is returned\n\n\n## Scope\n- In scope: export.go with Export types, Exporter, ErrNotFrozen, format doc comment\n- Out of scope: Filesystem reading of snapshot\n- Preserve: Contribution struct fields\n\n\n## Technical constraints\n- JSON field names fixed: version, world, round, contributions, id, author, content, created_at (RFC3339 UTC)\n\n\n## Definition of done\n- Format documented in package comment of export.go\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Exporter builds versioned JSON from a source interface, filtered to frozen IDs, empty round gives empty array",
+      "description": "Add an Exporter in backend/internal/contribution that reads a round via an ExportSource interface (ListByRound, FrozenIDs) and returns an Export struct with stable JSON tags: version, world, round, contributions[{id, author, content, created_at}]. Package docs describe the format and lifecycle (only closed rounds with a snapshot are exportable).",
+      "acceptance_criteria": [
+        "Given a source with 3 contributions of which 2 are frozen, When Export is called, Then output lists exactly the 2 frozen ones ordered by created_at then id",
+        "Given a frozen set that is empty, When Export is called, Then contributions marshals to [] ",
+        "Given a round not yet frozen, When Export is called, Then ErrNotFrozen is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "export.go with Export types, Exporter, ErrNotFrozen, format doc comment"
+        ],
+        "out_of_scope": [
+          "Filesystem reading of snapshot"
+        ],
+        "preserve": [
+          "Contribution struct fields"
+        ]
+      },
+      "technical_constraints": [
+        "JSON field names fixed: version, world, round, contributions, id, author, content, created_at (RFC3339 UTC)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Format documented in package comment of export.go",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-127.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JEKH540Q2ZA91C7P924G6",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84JEKH540Q2ZA91C7P924G6",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-127.md"
+      ],
+      "depends_on": [
+        "01M84JEKH540Q2ZA91C7P924G6"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-127.md",
+      "artifact_id": "REQ-127"
+    },
+    {
+      "id": "01M84JEKH5EBGTJXH0D8CPGP54",
+      "kind": "requirement",
+      "title": "REQ · FileStore supplies frozen contribution IDs from snapshot.yaml",
+      "body": "FileStore already implements ListByRound. Add FrozenIDs reading worlds/<world>/rounds/<round>/snapshot.yaml (the file round.writeSnapshot creates) and returning the contribution ids, reporting not-frozen when the file is absent.\n\n## Acceptance criteria\n- Given a temp root with snapshot.yaml listing ids, When FrozenIDs is called, Then those ids are returned with frozen=true\n- Given no snapshot.yaml, When FrozenIDs is called, Then frozen=false and no error\n- Given unsafe world or round ids, When FrozenIDs is called, Then an error is returned\n\n\n## Scope\n- In scope: FileStore.FrozenIDs in a new file\n- Out of scope: Writing snapshots\n- Preserve: round.Snapshot format\n\n\n## Technical constraints\n- No import of internal/round; use a local minimal yaml struct\n\n\n## Definition of done\n- FileStore satisfies ExportSource via compile-time assertion\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "FileStore implements ExportSource so the export works on the real GitOps layout",
+      "description": "FileStore already implements ListByRound. Add FrozenIDs reading worlds/<world>/rounds/<round>/snapshot.yaml (the file round.writeSnapshot creates) and returning the contribution ids, reporting not-frozen when the file is absent.",
+      "acceptance_criteria": [
+        "Given a temp root with snapshot.yaml listing ids, When FrozenIDs is called, Then those ids are returned with frozen=true",
+        "Given no snapshot.yaml, When FrozenIDs is called, Then frozen=false and no error",
+        "Given unsafe world or round ids, When FrozenIDs is called, Then an error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "FileStore.FrozenIDs in a new file"
+        ],
+        "out_of_scope": [
+          "Writing snapshots"
+        ],
+        "preserve": [
+          "round.Snapshot format"
+        ]
+      },
+      "technical_constraints": [
+        "No import of internal/round; use a local minimal yaml struct"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "FileStore satisfies ExportSource via compile-time assertion",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-128.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JEKH540Q2ZA91C7P924G6",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M84JEKH540Q2ZA91C7P924G6",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-128.md"
+      ],
+      "depends_on": [
+        "01M84JEKH540Q2ZA91C7P924G6"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-128.md",
+      "artifact_id": "REQ-128"
+    },
+    {
+      "id": "01M84JEKH5WZ9VSHZ1MEDYDY2T",
+      "kind": "unit",
+      "title": "Act: Add Exporter, Export format and ErrNotFrozen",
+      "body": "New file export.go implementing the Exporter over ExportSource.\n\n## Acceptance criteria\n- Export returns only frozen contributions in stable order\n- Not-frozen round returns ErrNotFrozen\n\n\n## Scope\n- In scope: export.go\n- Out of scope: tests\n- Preserve: model.go\n\n\n## Technical constraints\n- New file: `backend/internal/contribution/export.go`\n\n\n## Definition of done\n- go build ./internal/contribution succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create export.go with the documented export",
+      "description": "New file export.go implementing the Exporter over ExportSource.",
+      "acceptance_criteria": [
+        "Export returns only frozen contributions in stable order",
+        "Not-frozen round returns ErrNotFrozen"
+      ],
+      "scope": {
+        "in_scope": [
+          "export.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "model.go"
+        ]
+      },
+      "technical_constraints": [
+        "New file: `backend/internal/contribution/export.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./internal/contribution succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-254.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JEKH5DFWWPDMY5GSJBA36",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M84JEKH5DFWWPDMY5GSJBA36",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-254.md"
+      ],
+      "depends_on": [
+        "01M84JEKH5DFWWPDMY5GSJBA36"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-254.md",
+      "artifact_id": "UNIT-254",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export.go",
+          "symbol": "new: package doc, ExportSource, Export, ExportEntry, ErrNotFrozen",
+          "lines": "new",
+          "action": "Create the file with a package-level doc comment describing the JSON format and that only snapshot-frozen contributions are exported; declare ExportSource interface, Export and ExportEntry structs with the json tags and ErrNotFrozen.",
+          "code": "type ExportSource interface {\n\tListByRound(ctx context.Context, worldID, roundID string) ([]Contribution, error)\n\tFrozenIDs(ctx context.Context, worldID, roundID string) ([]string, bool, error)\n}\ntype ExportEntry struct {\n\tID string `json:\"id\"`\n\tAuthor string `json:\"author\"`\n\tContent string `json:\"content\"`\n\tCreatedAt time.Time `json:\"created_at\"`\n}\ntype Export struct {\n\tVersion int `json:\"version\"`\n\tWorld string `json:\"world\"`\n\tRound string `json:\"round\"`\n\tContributions []ExportEntry `json:\"contributions\"`\n}\nvar ErrNotFrozen = errors.New(\"contribution: round is not frozen\")",
+          "expected": "Types compile"
+        },
+        {
+          "file": "backend/internal/contribution/export.go",
+          "symbol": "new: Exporter.Export",
+          "lines": "new",
+          "action": "Add type Exporter{Source ExportSource} and method Export(ctx, worldID, roundID) (Export, error): call FrozenIDs (return ErrNotFrozen if frozen=false), call ListByRound, keep only contributions whose ID is in the frozen set, convert to ExportEntry with CreatedAt.UTC(), initialise Contributions to an empty non-nil slice, set Version 1.",
+          "code": "func (e Exporter) Export(ctx context.Context, worldID, roundID string) (Export, error)",
+          "expected": "Returns Export with Contributions [] when none are frozen"
+        }
+      ]
+    },
+    {
+      "id": "01M84JEKH5WSAR2Z3Q7K0TXM6D",
+      "kind": "unit",
+      "title": "Act: Implement FileStore.FrozenIDs from snapshot.yaml",
+      "body": "Add FrozenIDs to FileStore.\n\n## Acceptance criteria\n- Ids read from snapshot.yaml\n- Missing snapshot reported as not frozen\n\n\n## Scope\n- In scope: frozen.go\n- Out of scope: tests\n- Preserve: store.go\n\n\n## Technical constraints\n- yaml.v3 already in go.mod\n- New file: `backend/internal/contribution/frozen.go`\n\n\n## Definition of done\n- var _ ExportSource = (*FileStore)(nil) compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Read frozen ids from the round snapshot",
+      "description": "Add FrozenIDs to FileStore.",
+      "acceptance_criteria": [
+        "Ids read from snapshot.yaml",
+        "Missing snapshot reported as not frozen"
+      ],
+      "scope": {
+        "in_scope": [
+          "frozen.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "store.go"
+        ]
+      },
+      "technical_constraints": [
+        "yaml.v3 already in go.mod",
+        "New file: `backend/internal/contribution/frozen.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "var _ ExportSource = (*FileStore)(nil) compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-255.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JEKH5EBGTJXH0D8CPGP54",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M84JEKH5EBGTJXH0D8CPGP54",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-255.md"
+      ],
+      "depends_on": [
+        "01M84JEKH5EBGTJXH0D8CPGP54"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-255.md",
+      "artifact_id": "UNIT-255",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/frozen.go",
+          "symbol": "new: FileStore.FrozenIDs",
+          "lines": "new",
+          "action": "Validate worldID and roundID with safepath.Segment; read filepath.Join(s.Root,\"worlds\",worldID,\"rounds\",strings.ToLower(roundID),\"snapshot.yaml\"); on fs.ErrNotExist return nil,false,nil; otherwise yaml.Unmarshal into a local struct {Contributions []struct{ID string `yaml:\"id\"`} `yaml:\"contributions\"`} and return the ids and true. Add `var _ ExportSource = (*FileStore)(nil)`.",
+          "code": "func (s *FileStore) FrozenIDs(_ context.Context, worldID, roundID string) ([]string, bool, error)",
+          "expected": "Compiles and satisfies ExportSource"
+        }
+      ]
+    },
+    {
+      "id": "01M84JEKH5RP806SDS8541NM46",
+      "kind": "unit",
+      "title": "Verify: Exporter format, empty round and frozen-only unit tests",
+      "body": "Test Exporter with a fake source, no filesystem.\n\n## Acceptance criteria\n- Given 2 frozen contributions, When exported and marshalled, Then JSON matches the expected literal with version, world, round and entries\n- Given empty, frozen-only and not-frozen inputs, Then three tests pass asserting [] , exactly 2 of 3 entries, and ErrNotFrozen\n\n\n## Scope\n- In scope: export_test.go\n- Out of scope: real storage\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with a fake ExportSource",
+      "description": "Test Exporter with a fake source, no filesystem.",
+      "acceptance_criteria": [
+        "Given 2 frozen contributions, When exported and marshalled, Then JSON matches the expected literal with version, world, round and entries",
+        "Given empty, frozen-only and not-frozen inputs, Then three tests pass asserting [] , exactly 2 of 3 entries, and ErrNotFrozen"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_test.go"
+        ],
+        "out_of_scope": [
+          "real storage"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-256.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JEKH5WZ9VSHZ1MEDYDY2T",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JEKH5WZ9VSHZ1MEDYDY2T",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-256.md"
+      ],
+      "depends_on": [
+        "01M84JEKH5WZ9VSHZ1MEDYDY2T"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-256.md",
+      "artifact_id": "UNIT-256",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_test.go",
+          "symbol": "new: fakeSource, TestExport_Format",
+          "lines": "new",
+          "action": "Define fakeSource implementing ExportSource with in-memory contributions and frozen ids. TestExport_Format: 2 frozen contributions with fixed CreatedAt; json.Marshal the result and assert it equals an expected literal containing version 1, world, round and each entry's id, author, content, created_at.",
+          "command": "cd backend && go test ./internal/contribution -run TestExport_Format",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/export_test.go",
+          "symbol": "new: TestExport_EmptyRound, TestExport_OnlyFrozen, TestExport_NotFrozen",
+          "lines": "new",
+          "action": "EmptyRound: frozen=true with no ids; assert marshalled JSON contains \"contributions\":[]. OnlyFrozen: 3 listed, 2 frozen ids; assert exactly those 2 returned in created_at order. NotFrozen: frozen=false; assert errors.Is(err, ErrNotFrozen).",
+          "command": "cd backend && go test ./internal/contribution -run 'TestExport_(EmptyRound|OnlyFrozen|NotFrozen)'",
+          "expected": "All pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84JEKH5J7NZ9RDCC7YN0X7E",
+      "kind": "unit",
+      "title": "Verify: FileStore.FrozenIDs unit tests",
+      "body": "Test FrozenIDs with a temp dir.\n\n## Acceptance criteria\n- Given a snapshot.yaml with ids, When FrozenIDs is called, Then ids are returned with frozen=true\n- Given a missing snapshot or an unsafe world id, Then not-frozen without error and a non-nil error respectively\n\n\n## Scope\n- In scope: frozen_test.go\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Temp-dir tests for snapshot reading",
+      "description": "Test FrozenIDs with a temp dir.",
+      "acceptance_criteria": [
+        "Given a snapshot.yaml with ids, When FrozenIDs is called, Then ids are returned with frozen=true",
+        "Given a missing snapshot or an unsafe world id, Then not-frozen without error and a non-nil error respectively"
+      ],
+      "scope": {
+        "in_scope": [
+          "frozen_test.go"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-257.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JEKH5WSAR2Z3Q7K0TXM6D",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JEKH5WSAR2Z3Q7K0TXM6D",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-257.md"
+      ],
+      "depends_on": [
+        "01M84JEKH5WSAR2Z3Q7K0TXM6D"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-257.md",
+      "artifact_id": "UNIT-257",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/frozen_test.go",
+          "symbol": "new: TestFrozenIDs",
+          "lines": "new",
+          "action": "With t.TempDir() as Root, write worlds/w/rounds/round-0000001/snapshot.yaml listing ids CON-a and CON-b in the format of round.Snapshot; assert FrozenIDs returns [CON-a CON-b], true. Then for round-0000002 without the file assert nil,false,nil. Then call with worldID \"../x\" and assert a non-nil error.",
+          "command": "cd backend && go test ./internal/contribution -run TestFrozenIDs",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84JEKH52JR9ZDF51Q8G5QW3",
+      "kind": "evidence",
+      "title": "Evidence: Frozen contribution export unit tests pass",
+      "body": "Evidence that export and FrozenIDs unit tests pass and that the package imports no removed code.\n\n## Acceptance criteria\n- go test ./internal/contribution passes\n- No import of worker or execution packages in the contribution package\n\n\n## Scope\n- In scope: Test output\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record passing contribution package tests",
+      "description": "Evidence that export and FrozenIDs unit tests pass and that the package imports no removed code.",
+      "acceptance_criteria": [
+        "go test ./internal/contribution passes",
+        "No import of worker or execution packages in the contribution package"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-050.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JEKH5RP806SDS8541NM46",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84JEKH5RP806SDS8541NM46",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-050.md"
+      ],
+      "depends_on": [
+        "01M84JEKH5RP806SDS8541NM46",
+        "01M84JEKH5J7NZ9RDCC7YN0X7E"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-050.md",
+      "artifact_id": "EVD-050"
+    }
+  ],
+  "created_at": "2026-11-23T16:05:07.300294+00:00",
+  "summary": "AI · 1 NEW · 7 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

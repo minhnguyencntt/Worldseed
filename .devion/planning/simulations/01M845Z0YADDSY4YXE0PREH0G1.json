@@ -1,0 +1,1360 @@
+{
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "kind": "intent",
+      "title": "SG-5 · Implement round lifecycle and admin API",
+      "body": "Context: the backend stores contributions as Markdown under worlds/<world>/rounds/<round>/contributions and has no round write model, scheduler or admin API. Desired behavior: a round model persisted in round.yaml with a transition table, open/close that freeze a snapshot.yaml and record the Git commit SHA, a clock-injected scheduler, and admin endpoints behind an admin token. Expected result: rounds move through the lifecycle only by legal transitions and admins can drive them over HTTP. Why: the Worker and the next-round cycle depend on a trustworthy round record.\n\n## Acceptance criteria\n- Given a round in any status, when a transition not in the table is requested, then it is rejected with ErrIllegalTransition and round.yaml is unchanged\n- Given an OPEN round, when it is closed, then snapshot.yaml is written once, the freeze commit SHA is recorded and status is CLOSED\n- Given a frozen round, when a contribution is saved, then the store rejects it and no file is written\n- Given a fake clock, when it passes starts_at or ends_at, then the scheduler opens or closes the round\n- Given a request without or with a wrong admin token, when any admin endpoint is called, then the response is 401\n\n\n## Scope\n- In scope: backend/internal/round package\n- In scope: Git HEAD lookup in gitrepo\n- In scope: frozen guard in contribution FileStore\n- In scope: admin middleware, round endpoints, execution endpoints\n- In scope: config for admin token and round defaults\n- Out of scope: Local Worker\n- Out of scope: frontend admin UI\n- Out of scope: release publishing\n- Out of scope: changing the existing world current-round reader\n- Preserve: existing contribution validation behaviour\n- Preserve: player session endpoints\n- Preserve: gitrepo Commit signature\n\n\n## Technical constraints\n- No database; state lives in YAML files committed through gitrepo.Committer\n- Go 1.22, chi v5, yaml.v3, module github.com/worldseed/storyforge/backend\n- Clock is injected, never time.Now directly in tested code\n\n\n## Definition of done\n- All six requirements implemented with unit tests passing via go test ./...\n\n\n## Non-functional requirements\n- Admin token compared in constant time\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Round state machine, snapshot freeze, scheduler and token-protected admin API in the Go backend",
+      "description": "Context: the backend stores contributions as Markdown under worlds/<world>/rounds/<round>/contributions and has no round write model, scheduler or admin API. Desired behavior: a round model persisted in round.yaml with a transition table, open/close that freeze a snapshot.yaml and record the Git commit SHA, a clock-injected scheduler, and admin endpoints behind an admin token. Expected result: rounds move through the lifecycle only by legal transitions and admins can drive them over HTTP. Why: the Worker and the next-round cycle depend on a trustworthy round record.",
+      "acceptance_criteria": [
+        "Given a round in any status, when a transition not in the table is requested, then it is rejected with ErrIllegalTransition and round.yaml is unchanged",
+        "Given an OPEN round, when it is closed, then snapshot.yaml is written once, the freeze commit SHA is recorded and status is CLOSED",
+        "Given a frozen round, when a contribution is saved, then the store rejects it and no file is written",
+        "Given a fake clock, when it passes starts_at or ends_at, then the scheduler opens or closes the round",
+        "Given a request without or with a wrong admin token, when any admin endpoint is called, then the response is 401"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round package",
+          "Git HEAD lookup in gitrepo",
+          "frozen guard in contribution FileStore",
+          "admin middleware, round endpoints, execution endpoints",
+          "config for admin token and round defaults"
+        ],
+        "out_of_scope": [
+          "Local Worker",
+          "frontend admin UI",
+          "release publishing",
+          "changing the existing world current-round reader"
+        ],
+        "preserve": [
+          "existing contribution validation behaviour",
+          "player session endpoints",
+          "gitrepo Commit signature"
+        ]
+      },
+      "technical_constraints": [
+        "No database; state lives in YAML files committed through gitrepo.Committer",
+        "Go 1.22, chi v5, yaml.v3, module github.com/worldseed/storyforge/backend",
+        "Clock is injected, never time.Now directly in tested code"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All six requirements implemented with unit tests passing via go test ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-015.md`"
+      ],
+      "non_functional": [
+        "Admin token compared in constant time"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M845WDCWPKE3DX0JEY7MF1GB",
+      "links": [
+        "trace:01M845WDCWPKE3DX0JEY7MF1GB",
+        "artifact:.ai-dlc/intent/INT-015.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-015.md",
+      "artifact_id": "INT-015"
+    },
+    {
+      "id": "01M8465XD8W9ER9QA7HHPHTCN3",
+      "kind": "requirement",
+      "title": "REQ · Round model with 13 statuses, transition table and round.yaml store",
+      "body": "Context: world.Round only reads id/number/status/times. Desired behavior: a round package defines statuses SCHEDULED, OPEN, CLOSED, ANALYZING, PLANNING, DEVELOPING, TESTING, BUILDING, PUBLISHING, COMPLETED, FAILED, CANCELLED, RECOVERING, a transition table, and a FileStore reading and writing worlds/<world>/rounds/<round-lowercase>/round.yaml. Expected result: illegal transitions are rejected. Why: single source of truth for the lifecycle.\n\n## Acceptance criteria\n- Given status SCHEDULED, when transitioning to OPEN, then it succeeds; to CLOSED it returns ErrIllegalTransition\n- Given a saved round, when Get is called, then the same fields are returned including base_release and freeze_commit\n- Given an unsafe world or round id, when Get or Save is called, then an error is returned and nothing is written\n\n\n## Scope\n- In scope: backend/internal/round/round.go\n- In scope: backend/internal/round/store.go\n- Out of scope: open/close logic\n- Out of scope: HTTP\n- Preserve: worlds/<world>/rounds/<round>/ path convention used by contribution.FileStore\n\n\n## Technical constraints\n- Validate ids with safepath.Segment\n- Write via temp file then os.Rename\n\n\n## Definition of done\n- round package compiles with table and store\n\n\n## Non-functional requirements\n- Atomic writes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Round struct, legal transition table and atomic round.yaml persistence",
+      "description": "Context: world.Round only reads id/number/status/times. Desired behavior: a round package defines statuses SCHEDULED, OPEN, CLOSED, ANALYZING, PLANNING, DEVELOPING, TESTING, BUILDING, PUBLISHING, COMPLETED, FAILED, CANCELLED, RECOVERING, a transition table, and a FileStore reading and writing worlds/<world>/rounds/<round-lowercase>/round.yaml. Expected result: illegal transitions are rejected. Why: single source of truth for the lifecycle.",
+      "acceptance_criteria": [
+        "Given status SCHEDULED, when transitioning to OPEN, then it succeeds; to CLOSED it returns ErrIllegalTransition",
+        "Given a saved round, when Get is called, then the same fields are returned including base_release and freeze_commit",
+        "Given an unsafe world or round id, when Get or Save is called, then an error is returned and nothing is written"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/round.go",
+          "backend/internal/round/store.go"
+        ],
+        "out_of_scope": [
+          "open/close logic",
+          "HTTP"
+        ],
+        "preserve": [
+          "worlds/<world>/rounds/<round>/ path convention used by contribution.FileStore"
+        ]
+      },
+      "technical_constraints": [
+        "Validate ids with safepath.Segment",
+        "Write via temp file then os.Rename"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "round package compiles with table and store",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-036.md`"
+      ],
+      "non_functional": [
+        "Atomic writes"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-036.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-036.md",
+      "artifact_id": "REQ-036"
+    },
+    {
+      "id": "01M8465XD8NA2CZZEYWRT094SG",
+      "kind": "requirement",
+      "title": "REQ · Open and close rounds with frozen snapshot and recorded Git commit SHA",
+      "body": "Context: no code creates, opens or closes rounds. Desired behavior: Open records start/end (24h default) and base release; Close writes snapshot.yaml once listing contributions, commits it, records the exact SHA from the Git interface, sets CLOSED; frozen rounds reject new contribution files. Expected result: contribution snapshot is immutable. Why: the Worker needs a stable input.\n\n## Acceptance criteria\n- Given a SCHEDULED round, when opened with no duration, then ends_at = starts_at + 24h and base_release is recorded\n- Given an OPEN round, when closed, then snapshot.yaml lists its contributions, freeze_commit equals the SHA returned by Head, status is CLOSED\n- Given snapshot.yaml exists, when FileStore.Save is called for that round, then ErrFrozen is returned and no file is created\n- Given a round that is not OPEN, when closed, then ErrIllegalTransition is returned and no snapshot is written\n\n\n## Scope\n- In scope: round/lifecycle.go\n- In scope: round/snapshot.go\n- In scope: gitrepo Head\n- In scope: contribution ListByRound and frozen guard\n- Out of scope: scheduler\n- Out of scope: HTTP\n- Preserve: Committer.Commit behaviour\n- Preserve: contribution Save semantics for open rounds\n\n\n## Technical constraints\n- snapshot written with O_EXCL and mode 0o444\n- Git access only through the gitrepo interface\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Lifecycle service compiles\n\n\n## Non-functional requirements\n- Serialize lifecycle operations with a mutex\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Create/open/close service, snapshot.yaml freeze, Git HEAD lookup and frozen guard",
+      "description": "Context: no code creates, opens or closes rounds. Desired behavior: Open records start/end (24h default) and base release; Close writes snapshot.yaml once listing contributions, commits it, records the exact SHA from the Git interface, sets CLOSED; frozen rounds reject new contribution files. Expected result: contribution snapshot is immutable. Why: the Worker needs a stable input.",
+      "acceptance_criteria": [
+        "Given a SCHEDULED round, when opened with no duration, then ends_at = starts_at + 24h and base_release is recorded",
+        "Given an OPEN round, when closed, then snapshot.yaml lists its contributions, freeze_commit equals the SHA returned by Head, status is CLOSED",
+        "Given snapshot.yaml exists, when FileStore.Save is called for that round, then ErrFrozen is returned and no file is created",
+        "Given a round that is not OPEN, when closed, then ErrIllegalTransition is returned and no snapshot is written"
+      ],
+      "scope": {
+        "in_scope": [
+          "round/lifecycle.go",
+          "round/snapshot.go",
+          "gitrepo Head",
+          "contribution ListByRound and frozen guard"
+        ],
+        "out_of_scope": [
+          "scheduler",
+          "HTTP"
+        ],
+        "preserve": [
+          "Committer.Commit behaviour",
+          "contribution Save semantics for open rounds"
+        ]
+      },
+      "technical_constraints": [
+        "snapshot written with O_EXCL and mode 0o444",
+        "Git access only through the gitrepo interface"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Lifecycle service compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-037.md`"
+      ],
+      "non_functional": [
+        "Serialize lifecycle operations with a mutex"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-037.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-037.md",
+      "artifact_id": "REQ-037"
+    },
+    {
+      "id": "01M8465XD8S1YJ0Z1WCEMFG8G7",
+      "kind": "requirement",
+      "title": "REQ · Scheduler auto-opens and auto-closes rounds using an injected clock",
+      "body": "Context: nothing triggers open/close at scheduled times. Desired behavior: Scheduler.Tick uses an injected Clock to open SCHEDULED rounds whose starts_at has passed and close OPEN rounds whose ends_at has passed. Expected result: rounds change state without admin action. Why: continuous cycle.\n\n## Acceptance criteria\n- Given a SCHEDULED round with starts_at <= clock now, when Tick runs, then Open is called\n- Given an OPEN round with ends_at <= now, when Tick runs, then Close is called\n- Given times in the future, when Tick runs, then nothing is called\n\n\n## Scope\n- In scope: backend/internal/round/scheduler.go\n- Out of scope: process wiring\n- Preserve: Service API\n\n\n## Technical constraints\n- Clock interface {Now() time.Time}\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- Scheduler compiles\n\n\n## Non-functional requirements\n- Run stops on context cancel\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Clock-driven Tick that opens SCHEDULED and closes expired OPEN rounds",
+      "description": "Context: nothing triggers open/close at scheduled times. Desired behavior: Scheduler.Tick uses an injected Clock to open SCHEDULED rounds whose starts_at has passed and close OPEN rounds whose ends_at has passed. Expected result: rounds change state without admin action. Why: continuous cycle.",
+      "acceptance_criteria": [
+        "Given a SCHEDULED round with starts_at <= clock now, when Tick runs, then Open is called",
+        "Given an OPEN round with ends_at <= now, when Tick runs, then Close is called",
+        "Given times in the future, when Tick runs, then nothing is called"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/scheduler.go"
+        ],
+        "out_of_scope": [
+          "process wiring"
+        ],
+        "preserve": [
+          "Service API"
+        ]
+      },
+      "technical_constraints": [
+        "Clock interface {Now() time.Time}"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "Scheduler compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-038.md`"
+      ],
+      "non_functional": [
+        "Run stops on context cancel"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "artifact:.ai-dlc/requirements/REQ-038.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-038.md",
+      "artifact_id": "REQ-038"
+    },
+    {
+      "id": "01M8465XD8VENQFBRDMT803MZQ",
+      "kind": "requirement",
+      "title": "REQ · Admin token middleware and round/admin configuration",
+      "body": "Context: no admin protection exists. Desired behavior: middleware requiring Authorization: Bearer <admin token> with constant-time comparison, failing closed when no token is configured; config gains admin.token (env STORYFORGE_ADMIN_TOKEN) and round.duration, base_release, scheduler_interval defaults. Expected result: admin routes are unreachable without the token.\n\n## Acceptance criteria\n- Given no Authorization header, when called, then 401 and next handler not run\n- Given a wrong token, when called, then 401\n- Given an empty configured token, when any request arrives, then 401\n- Given round config absent, when loaded, then duration is 24h, base_release 1.0.0, scheduler_interval 30s\n\n\n## Scope\n- In scope: backend/internal/admin/middleware.go\n- In scope: backend/internal/config/config.go\n- In scope: backend/configs/config.example.yaml\n- Out of scope: routes\n- Preserve: existing config defaults and env overrides\n\n\n## Technical constraints\n- crypto/subtle ConstantTimeCompare over sha256 digests\n\n\n## Definition of done\n- middleware and config compile\n\n\n## Non-functional requirements\n- Fail closed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Reject missing or wrong admin credentials and add config for token and round defaults",
+      "description": "Context: no admin protection exists. Desired behavior: middleware requiring Authorization: Bearer <admin token> with constant-time comparison, failing closed when no token is configured; config gains admin.token (env STORYFORGE_ADMIN_TOKEN) and round.duration, base_release, scheduler_interval defaults. Expected result: admin routes are unreachable without the token.",
+      "acceptance_criteria": [
+        "Given no Authorization header, when called, then 401 and next handler not run",
+        "Given a wrong token, when called, then 401",
+        "Given an empty configured token, when any request arrives, then 401",
+        "Given round config absent, when loaded, then duration is 24h, base_release 1.0.0, scheduler_interval 30s"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/middleware.go",
+          "backend/internal/config/config.go",
+          "backend/configs/config.example.yaml"
+        ],
+        "out_of_scope": [
+          "routes"
+        ],
+        "preserve": [
+          "existing config defaults and env overrides"
+        ]
+      },
+      "technical_constraints": [
+        "crypto/subtle ConstantTimeCompare over sha256 digests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "middleware and config compile",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-039.md`"
+      ],
+      "non_functional": [
+        "Fail closed"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "matched_feature_id": "01M8457KMNZEKD0H1DQSEXK0KS",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "trace:01M8457KMNZEKD0H1DQSEXK0KS",
+        "artifact:.ai-dlc/requirements/REQ-039.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-039.md",
+      "artifact_id": "REQ-039"
+    },
+    {
+      "id": "01M8465XD8H9B46AFCHHXNDX6E",
+      "kind": "requirement",
+      "title": "REQ · Admin round endpoints wired behind token auth with scheduler started",
+      "body": "Context: lifecycle service and middleware exist but are not exposed. Desired behavior: POST /api/v1/admin/rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions behind admin.Middleware; contribution round lookup reads round.yaml so closed rounds reject submissions; scheduler started from main. Expected result: admin can drive a round over HTTP.\n\n## Acceptance criteria\n- Given a valid token and world_id, when POST /admin/rounds, then 201 with the SCHEDULED round\n- Given an OPEN round, when POST close, then 200 with status CLOSED; illegal transition returns 409\n- Given no token, when any admin round route is called, then 401\n- Given an unknown round, when GET, then 404\n\n\n## Scope\n- In scope: backend/internal/admin/rounds.go\n- In scope: backend/internal/server/server.go\n- In scope: backend/cmd/server/main.go\n- Out of scope: executions\n- Preserve: existing public routes\n- Preserve: world.Handler CurrentRound\n\n\n## Technical constraints\n- world_id passed as query parameter world for routes with {id}, body field for create\n- Use chi route group with admin.Middleware\n\n\n## Dependencies\n- R1\n- R2\n- R3\n- R4\n\n\n## Definition of done\n- Routes registered and scheduler running\n\n\n## Non-functional requirements\n- Structured error logging\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "POST rounds, open, close, GET round and contributions under /api/v1/admin",
+      "description": "Context: lifecycle service and middleware exist but are not exposed. Desired behavior: POST /api/v1/admin/rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions behind admin.Middleware; contribution round lookup reads round.yaml so closed rounds reject submissions; scheduler started from main. Expected result: admin can drive a round over HTTP.",
+      "acceptance_criteria": [
+        "Given a valid token and world_id, when POST /admin/rounds, then 201 with the SCHEDULED round",
+        "Given an OPEN round, when POST close, then 200 with status CLOSED; illegal transition returns 409",
+        "Given no token, when any admin round route is called, then 401",
+        "Given an unknown round, when GET, then 404"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/rounds.go",
+          "backend/internal/server/server.go",
+          "backend/cmd/server/main.go"
+        ],
+        "out_of_scope": [
+          "executions"
+        ],
+        "preserve": [
+          "existing public routes",
+          "world.Handler CurrentRound"
+        ]
+      },
+      "technical_constraints": [
+        "world_id passed as query parameter world for routes with {id}, body field for create",
+        "Use chi route group with admin.Middleware"
+      ],
+      "dependencies": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "definition_of_done": [
+        "Routes registered and scheduler running",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-040.md`"
+      ],
+      "non_functional": [
+        "Structured error logging"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-040.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-040.md",
+      "artifact_id": "REQ-040"
+    },
+    {
+      "id": "01M8465XD8M0VQ8QCT0W76TEFF",
+      "kind": "requirement",
+      "title": "REQ · Admin execution list, retry and approve endpoints",
+      "body": "Context: no execution model exists. Desired behavior: development/executions/<id>.yaml records (id, world_id, round_id, status, error, updated_at); GET /api/v1/admin/executions lists them; POST executions/{id}/retry moves FAILED to QUEUED; POST executions/{id}/approve moves AWAITING_APPROVAL to APPROVED; changes committed via Git. Expected result: admin can retry and approve.\n\n## Acceptance criteria\n- Given stored executions, when GET list, then all are returned as JSON\n- Given a FAILED execution, when retry, then status QUEUED; otherwise 409\n- Given an AWAITING_APPROVAL execution, when approve, then status APPROVED; otherwise 409\n- Given an unknown or unsafe id, when retry or approve, then 404; no token gives 401\n\n\n## Scope\n- In scope: backend/internal/execution package\n- In scope: execution routes in server.go\n- Out of scope: Worker execution logic\n- Preserve: admin round routes\n\n\n## Technical constraints\n- Validate id with safepath.Segment; atomic write then Committer.Commit\n\n\n## Dependencies\n- R4\n\n\n## Definition of done\n- Routes live\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "File-backed execution records with list, retry and approve behind admin token",
+      "description": "Context: no execution model exists. Desired behavior: development/executions/<id>.yaml records (id, world_id, round_id, status, error, updated_at); GET /api/v1/admin/executions lists them; POST executions/{id}/retry moves FAILED to QUEUED; POST executions/{id}/approve moves AWAITING_APPROVAL to APPROVED; changes committed via Git. Expected result: admin can retry and approve.",
+      "acceptance_criteria": [
+        "Given stored executions, when GET list, then all are returned as JSON",
+        "Given a FAILED execution, when retry, then status QUEUED; otherwise 409",
+        "Given an AWAITING_APPROVAL execution, when approve, then status APPROVED; otherwise 409",
+        "Given an unknown or unsafe id, when retry or approve, then 404; no token gives 401"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/execution package",
+          "execution routes in server.go"
+        ],
+        "out_of_scope": [
+          "Worker execution logic"
+        ],
+        "preserve": [
+          "admin round routes"
+        ]
+      },
+      "technical_constraints": [
+        "Validate id with safepath.Segment; atomic write then Committer.Commit"
+      ],
+      "dependencies": [
+        "R4"
+      ],
+      "definition_of_done": [
+        "Routes live",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-041.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8465XD8RSC0W1JFGKG52WJM",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M8465XD8RSC0W1JFGKG52WJM",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-041.md"
+      ],
+      "depends_on": [
+        "01M8465XD8RSC0W1JFGKG52WJM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-041.md",
+      "artifact_id": "REQ-041"
+    },
+    {
+      "id": "01M8465XD88GGV84CAHN3JBFDA",
+      "kind": "unit",
+      "title": "Act: Implement round model, transition table and FileStore",
+      "body": "Create the round package: Status type and 13 constants, Round struct with yaml tags, Transitions map, CanTransition and Round.Transition, and FileStore with Get, Save and List.\n\n## Acceptance criteria\n- Transitions follow SCHEDULED→OPEN|CANCELLED, OPEN→CLOSED|CANCELLED, CLOSED→ANALYZING|FAILED|CANCELLED, ANALYZING→PLANNING|FAILED, PLANNING→DEVELOPING|FAILED, DEVELOPING→TESTING|FAILED, TESTING→BUILDING|FAILED, BUILDING→PUBLISHING|FAILED, PUBLISHING→COMPLETED|FAILED, FAILED→RECOVERING|CANCELLED, RECOVERING→ANALYZING|FAILED|CANCELLED\n- COMPLETED and CANCELLED have no outgoing transitions\n- FileStore.Save never leaves a partial round.yaml\n\n\n## Scope\n- In scope: backend/internal/round/round.go\n- In scope: backend/internal/round/store.go\n- Out of scope: lifecycle service\n- Preserve: safepath.Segment\n\n\n## Technical constraints\n- Round dir is worlds/<world>/rounds/<strings.ToLower(id)>\n- New file: `backend/internal/round/round.go`\n- New file: `backend/internal/round/store.go`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- go build ./internal/round succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create round.go and store.go in internal/round",
+      "description": "Create the round package: Status type and 13 constants, Round struct with yaml tags, Transitions map, CanTransition and Round.Transition, and FileStore with Get, Save and List.",
+      "acceptance_criteria": [
+        "Transitions follow SCHEDULED→OPEN|CANCELLED, OPEN→CLOSED|CANCELLED, CLOSED→ANALYZING|FAILED|CANCELLED, ANALYZING→PLANNING|FAILED, PLANNING→DEVELOPING|FAILED, DEVELOPING→TESTING|FAILED, TESTING→BUILDING|FAILED, BUILDING→PUBLISHING|FAILED, PUBLISHING→COMPLETED|FAILED, FAILED→RECOVERING|CANCELLED, RECOVERING→ANALYZING|FAILED|CANCELLED",
+        "COMPLETED and CANCELLED have no outgoing transitions",
+        "FileStore.Save never leaves a partial round.yaml"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/round.go",
+          "backend/internal/round/store.go"
+        ],
+        "out_of_scope": [
+          "lifecycle service"
+        ],
+        "preserve": [
+          "safepath.Segment"
+        ]
+      },
+      "technical_constraints": [
+        "Round dir is worlds/<world>/rounds/<strings.ToLower(id)>",
+        "New file: `backend/internal/round/round.go`",
+        "New file: `backend/internal/round/store.go`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "go build ./internal/round succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-071.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8W9ER9QA7HHPHTCN3",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M8465XD8W9ER9QA7HHPHTCN3",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-071.md"
+      ],
+      "depends_on": [
+        "01M8465XD8W9ER9QA7HHPHTCN3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-071.md",
+      "artifact_id": "UNIT-071",
+      "steps": [
+        {
+          "file": "backend/internal/round/round.go",
+          "symbol": "new: Status, Round, Transitions, CanTransition, (*Round).Transition, ErrIllegalTransition",
+          "lines": "new",
+          "action": "Declare type Status string with constants StatusScheduled..StatusRecovering (values are the upper-case names), Round{ID, WorldID, Number, Status, StartsAt, EndsAt, BaseRelease, FreezeCommit, ClosedAt} with yaml tags id, world, number, status, starts_at, ends_at, base_release, freeze_commit, closed_at; Transitions map[Status][]Status per the acceptance criteria; CanTransition(from,to) bool; (*Round).Transition(to) error returning fmt.Errorf wrapping ErrIllegalTransition and leaving Status unchanged when not allowed",
+          "code": "var ErrIllegalTransition = errors.New(\"round: illegal transition\")",
+          "expected": "Package compiles; Transition mutates Status only on legal moves"
+        },
+        {
+          "file": "backend/internal/round/store.go",
+          "symbol": "new: FileStore (Root string), Get, Save, List, RoundDir",
+          "lines": "new",
+          "action": "Add FileStore with Root; RoundDir(worldID, roundID) validates both with safepath.Segment and returns filepath.Join(Root,\"worlds\",worldID,\"rounds\",strings.ToLower(roundID)); Get reads round.yaml (yaml.v3) and returns ErrNotFound when missing; Save marshals to a temp file in the same dir then os.Rename to round.yaml, MkdirAll 0o755; List(worldID) reads rounds/* dirs and returns all rounds sorted by Number",
+          "expected": "Round round-trips through round.yaml; unsafe ids error"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8S0XZ4Z5G51RC5NWT",
+      "kind": "unit",
+      "title": "Act: Implement lifecycle Create/Open/Close, snapshot and Git head",
+      "body": "Add round.Service with Create, Open, Close, Get; snapshot.go writing snapshot.yaml; gitrepo.Head via rev-parse; contribution FileStore.ListByRound and ErrFrozen guard.\n\n## Acceptance criteria\n- Create assigns Number max+1 and ID ROUND-%07d and rejects when a non-terminal round exists with ErrActiveRound\n- Close order: write snapshot, commit, Head, set freeze_commit and CLOSED, save, commit round.yaml\n- Save in FileStore returns ErrFrozen when snapshot.yaml exists\n\n\n## Scope\n- In scope: backend/internal/round/lifecycle.go\n- In scope: backend/internal/round/snapshot.go\n- In scope: backend/internal/gitrepo/gitrepo.go\n- In scope: backend/internal/contribution/store.go\n- Out of scope: HTTP\n- Preserve: Commit path validation\n\n\n## Technical constraints\n- Service fields: Store *FileStore, Git GitRevisioner{Committer; Head(ctx)(string,error)}, Contributions interface ListByRound, Now func() time.Time, DefaultDuration, DefaultBaseRelease\n- New file: `backend/internal/round/lifecycle.go`\n- New file: `backend/internal/round/snapshot.go`\n- Code path: `backend/internal/gitrepo/gitrepo.go`\n- Code path: `backend/internal/contribution/store.go`\n\n\n## Dependencies\n- R2\n- A1\n\n\n## Definition of done\n- go build ./... succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add Service, snapshot writer, gitrepo.Head and store frozen guard",
+      "description": "Add round.Service with Create, Open, Close, Get; snapshot.go writing snapshot.yaml; gitrepo.Head via rev-parse; contribution FileStore.ListByRound and ErrFrozen guard.",
+      "acceptance_criteria": [
+        "Create assigns Number max+1 and ID ROUND-%07d and rejects when a non-terminal round exists with ErrActiveRound",
+        "Close order: write snapshot, commit, Head, set freeze_commit and CLOSED, save, commit round.yaml",
+        "Save in FileStore returns ErrFrozen when snapshot.yaml exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/lifecycle.go",
+          "backend/internal/round/snapshot.go",
+          "backend/internal/gitrepo/gitrepo.go",
+          "backend/internal/contribution/store.go"
+        ],
+        "out_of_scope": [
+          "HTTP"
+        ],
+        "preserve": [
+          "Commit path validation"
+        ]
+      },
+      "technical_constraints": [
+        "Service fields: Store *FileStore, Git GitRevisioner{Committer; Head(ctx)(string,error)}, Contributions interface ListByRound, Now func() time.Time, DefaultDuration, DefaultBaseRelease",
+        "New file: `backend/internal/round/lifecycle.go`",
+        "New file: `backend/internal/round/snapshot.go`",
+        "Code path: `backend/internal/gitrepo/gitrepo.go`",
+        "Code path: `backend/internal/contribution/store.go`"
+      ],
+      "dependencies": [
+        "R2",
+        "A1"
+      ],
+      "definition_of_done": [
+        "go build ./... succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-072.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8NA2CZZEYWRT094SG",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M8465XD8NA2CZZEYWRT094SG",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-072.md"
+      ],
+      "depends_on": [
+        "01M8465XD8NA2CZZEYWRT094SG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-072.md",
+      "artifact_id": "UNIT-072",
+      "steps": [
+        {
+          "file": "backend/internal/gitrepo/gitrepo.go",
+          "symbol": "CLI.Head",
+          "lines": "after L77",
+          "action": "Add interface Revisioner{Head(ctx context.Context)(string,error)} and method (c *CLI) Head that runs `rev-parse HEAD` through c.Run (defaulting to defaultRunner) in c.Dir and returns strings.TrimSpace of output, wrapping errors with commandError(\"rev-parse\",...)",
+          "code": "var _ Revisioner = (*CLI)(nil)",
+          "expected": "Head returns the 40-char SHA"
+        },
+        {
+          "file": "backend/internal/contribution/store.go",
+          "symbol": "FileStore.ListByRound, ErrFrozen, FileStore.Save",
+          "lines": "L16-L21, L50-L80",
+          "action": "Add ErrFrozen var; add ListByRound(ctx, worldID, roundID) globbing worlds/<world>/rounds/<round>/contributions/*.md via readFile sorted by CreatedAt then ID; in Save, after taking s.mu.Lock and before os.OpenFile, stat filepath.Join(s.Root,\"worlds\",c.WorldID,\"rounds\",strings.ToLower(c.RoundID),\"snapshot.yaml\") and return ErrFrozen when it exists",
+          "expected": "Save into a frozen round returns ErrFrozen"
+        },
+        {
+          "file": "backend/internal/round/snapshot.go",
+          "symbol": "new: Snapshot, writeSnapshot",
+          "lines": "new",
+          "action": "Define Snapshot{Round,World string; FrozenAt time.Time; Contributions []SnapshotEntry{ID,Player string; CreatedAt time.Time; PromptSHA256 string}} with yaml tags; writeSnapshot(dir,s) marshals and creates snapshot.yaml with os.OpenFile O_CREATE|O_EXCL|O_WRONLY mode 0o444, returning ErrSnapshotExists if present",
+          "expected": "Second write to same dir fails"
+        },
+        {
+          "file": "backend/internal/round/lifecycle.go",
+          "symbol": "new: Service, Create, Open, Close, Get, ErrActiveRound",
+          "lines": "new",
+          "action": "Implement Service guarded by sync.Mutex. Create(ctx,worldID,startsAt,duration,baseRelease) builds the next Round in SCHEDULED, rejects when any round is not COMPLETED/FAILED/CANCELLED, saves, commits round.yaml. Open(ctx,worldID,roundID,opts) calls Transition(StatusOpen), sets StartsAt=Now(), EndsAt=StartsAt+duration (opts.Duration or DefaultDuration), BaseRelease (opts or default), saves and commits. Close(ctx,worldID,roundID) checks CanTransition(OPEN,CLOSED) first, lists contributions, writeSnapshot, commits snapshot.yaml, calls Git.Head, sets FreezeCommit, ClosedAt, Transition(CLOSED), saves and commits round.yaml",
+          "expected": "Rounds open and close with frozen snapshot"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8XTF5N91DVZMTHW96",
+      "kind": "unit",
+      "title": "Act: Implement round Scheduler with injected Clock",
+      "body": "Scheduler iterates worlds, lists rounds and calls the lifecycle controller.\n\n## Acceptance criteria\n- Tick returns the first error but continues other rounds\n- Run ticks every Interval until ctx is done\n\n\n## Scope\n- In scope: backend/internal/round/scheduler.go\n- Out of scope: main.go\n\n\n## Technical constraints\n- Controller interface {Open(ctx,world,id,OpenOptions)(Round,error); Close(ctx,world,id)(Round,error)}\n- New file: `backend/internal/round/scheduler.go`\n\n\n## Dependencies\n- R3\n- A2\n\n\n## Definition of done\n- go build ./internal/round\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add scheduler.go with Tick and Run",
+      "description": "Scheduler iterates worlds, lists rounds and calls the lifecycle controller.",
+      "acceptance_criteria": [
+        "Tick returns the first error but continues other rounds",
+        "Run ticks every Interval until ctx is done"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/scheduler.go"
+        ],
+        "out_of_scope": [
+          "main.go"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Controller interface {Open(ctx,world,id,OpenOptions)(Round,error); Close(ctx,world,id)(Round,error)}",
+        "New file: `backend/internal/round/scheduler.go`"
+      ],
+      "dependencies": [
+        "R3",
+        "A2"
+      ],
+      "definition_of_done": [
+        "go build ./internal/round",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-073.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8S1YJ0Z1WCEMFG8G7",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M8465XD8S1YJ0Z1WCEMFG8G7",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-073.md"
+      ],
+      "depends_on": [
+        "01M8465XD8S1YJ0Z1WCEMFG8G7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-073.md",
+      "artifact_id": "UNIT-073",
+      "steps": [
+        {
+          "file": "backend/internal/round/scheduler.go",
+          "symbol": "new: Clock, Controller, Scheduler, Tick, Run",
+          "lines": "new",
+          "action": "Define Clock, Controller, Lister{List(worldID)([]Round,error)}; Scheduler{Controller, Rounds Lister, Worlds func()([]string,error), Clock, Interval}. Tick(ctx): for each world and round, if Status==SCHEDULED and !Clock.Now().Before(StartsAt) call Open with zero OpenOptions; if Status==OPEN and !Clock.Now().Before(EndsAt) call Close; collect errors with errors.Join. Run(ctx): ticker of Interval (default 30s) calling Tick, logging errors with slog, returning on ctx.Done()",
+          "expected": "Tick drives the lifecycle"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8G47NJ5N8ENNAXBAK",
+      "kind": "unit",
+      "title": "Act: Add admin Middleware and Admin/Round config",
+      "body": "Implement admin.Middleware and config AdminConfig, RoundConfig.\n\n## Acceptance criteria\n- 401 body is plain text unauthorized\n- Env STORYFORGE_ADMIN_TOKEN overrides admin.token\n\n\n## Scope\n- In scope: backend/internal/admin/middleware.go\n- In scope: backend/internal/config/config.go\n- In scope: backend/configs/config.example.yaml\n- Preserve: Contribution defaults\n\n\n## Technical constraints\n- Never log the token\n- New file: `backend/internal/admin/middleware.go`\n- Code path: `backend/internal/config/config.go`\n- Code path: `backend/configs/config.example.yaml`\n\n\n## Dependencies\n- R4\n\n\n## Definition of done\n- go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create middleware and extend config",
+      "description": "Implement admin.Middleware and config AdminConfig, RoundConfig.",
+      "acceptance_criteria": [
+        "401 body is plain text unauthorized",
+        "Env STORYFORGE_ADMIN_TOKEN overrides admin.token"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/middleware.go",
+          "backend/internal/config/config.go",
+          "backend/configs/config.example.yaml"
+        ],
+        "out_of_scope": [],
+        "preserve": [
+          "Contribution defaults"
+        ]
+      },
+      "technical_constraints": [
+        "Never log the token",
+        "New file: `backend/internal/admin/middleware.go`",
+        "Code path: `backend/internal/config/config.go`",
+        "Code path: `backend/configs/config.example.yaml`"
+      ],
+      "dependencies": [
+        "R4"
+      ],
+      "definition_of_done": [
+        "go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-074.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8VENQFBRDMT803MZQ",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD8VENQFBRDMT803MZQ",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-074.md"
+      ],
+      "depends_on": [
+        "01M8465XD8VENQFBRDMT803MZQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-074.md",
+      "artifact_id": "UNIT-074",
+      "steps": [
+        {
+          "file": "backend/internal/admin/middleware.go",
+          "symbol": "new: Middleware",
+          "lines": "new",
+          "action": "Middleware(token string) func(http.Handler) http.Handler: reject with http.Error(w,\"unauthorized\",401) when token==\"\" or the Authorization header lacks the \"Bearer \" prefix or sha256 digests differ under subtle.ConstantTimeCompare; otherwise call next",
+          "expected": "Only the correct bearer token passes"
+        },
+        {
+          "file": "backend/internal/config/config.go",
+          "symbol": "Config, AdminConfig, RoundConfig, LoadFS, applyEnv",
+          "lines": "L21-L28, L111-L126, L128-L140",
+          "action": "Add Admin AdminConfig{Token string yaml:\"token\"} and Round RoundConfig{Duration time.Duration yaml:\"duration\"; BaseRelease string yaml:\"base_release\"; SchedulerInterval time.Duration yaml:\"scheduler_interval\"} to Config; in LoadFS default Duration 24h, BaseRelease \"1.0.0\", SchedulerInterval 30s when zero/empty; in applyEnv add override(&cfg.Admin.Token, \"STORYFORGE_ADMIN_TOKEN\")",
+          "expected": "Defaults and env override apply"
+        },
+        {
+          "file": "backend/configs/config.example.yaml",
+          "symbol": "admin, round keys",
+          "lines": "after L30",
+          "action": "Append `admin:\\n  token: \"\"` and `round:\\n  duration: \"24h\"\\n  base_release: \"1.0.0\"\\n  scheduler_interval: \"30s\"`",
+          "expected": "Example config documents new keys"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD83MWTYE9Z8AFX0B9K",
+      "kind": "unit",
+      "title": "Act: Add admin round handlers, route wiring and scheduler start",
+      "body": "Handler maps service errors to HTTP statuses; server builds the shared Service and routes.\n\n## Acceptance criteria\n- ErrNotFound->404, ErrIllegalTransition and ErrActiveRound->409, bad JSON->400\n- roundSource.Current uses the round FileStore latest round\n\n\n## Scope\n- In scope: backend/internal/admin/rounds.go\n- In scope: backend/internal/server/server.go\n- In scope: backend/cmd/server/main.go\n- Out of scope: executions\n- Preserve: New(cfg,log) signature\n\n\n## Technical constraints\n- Handler depends on RoundService and ContributionLister interfaces\n- New file: `backend/internal/admin/rounds.go`\n- Code path: `backend/internal/server/server.go`\n- Code path: `backend/cmd/server/main.go`\n\n\n## Dependencies\n- R5\n- A2\n- A3\n- A4\n\n\n## Definition of done\n- go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Implement rounds.go, NewWithScheduler and main wiring",
+      "description": "Handler maps service errors to HTTP statuses; server builds the shared Service and routes.",
+      "acceptance_criteria": [
+        "ErrNotFound->404, ErrIllegalTransition and ErrActiveRound->409, bad JSON->400",
+        "roundSource.Current uses the round FileStore latest round"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/rounds.go",
+          "backend/internal/server/server.go",
+          "backend/cmd/server/main.go"
+        ],
+        "out_of_scope": [
+          "executions"
+        ],
+        "preserve": [
+          "New(cfg,log) signature"
+        ]
+      },
+      "technical_constraints": [
+        "Handler depends on RoundService and ContributionLister interfaces",
+        "New file: `backend/internal/admin/rounds.go`",
+        "Code path: `backend/internal/server/server.go`",
+        "Code path: `backend/cmd/server/main.go`"
+      ],
+      "dependencies": [
+        "R5",
+        "A2",
+        "A3",
+        "A4"
+      ],
+      "definition_of_done": [
+        "go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-075.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8H9B46AFCHHXNDX6E",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD8H9B46AFCHHXNDX6E",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-075.md"
+      ],
+      "depends_on": [
+        "01M8465XD8H9B46AFCHHXNDX6E"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-075.md",
+      "artifact_id": "UNIT-075",
+      "steps": [
+        {
+          "file": "backend/internal/admin/rounds.go",
+          "symbol": "new: RoundHandler (Create, Open, Close, Get, Contributions)",
+          "lines": "new",
+          "action": "Define RoundService{Create,Open,Close,Get} and ContributionLister{ListByRound}; RoundHandler methods decode JSON {world_id,starts_at,duration,base_release}, read chi param id and query world, call the service, write JSON, and map errors via a statusFor(err) helper (404/409/400/500)",
+          "expected": "Handlers return JSON with correct codes"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New, NewWithScheduler, roundSource",
+          "lines": "L21-L81, L84-L97",
+          "action": "Rename body of New into NewWithScheduler(cfg,log) (http.Handler,*round.Scheduler) and make New call it returning only the handler; build round.FileStore and round.Service (Git: gitrepo.CLI, Contributions: contribution FileStore, DefaultDuration cfg.Round.Duration, DefaultBaseRelease cfg.Round.BaseRelease); register r.Route(\"/api/v1/admin\") with r.Use(admin.Middleware(cfg.Admin.Token)) and the five round routes; change roundSource.Current to read the latest round from the round FileStore (by world) instead of world.Repo; build Scheduler with Worlds from world.Repo.List and time-based Clock",
+          "expected": "Admin routes protected; contributions see round.yaml status"
+        },
+        {
+          "file": "backend/cmd/server/main.go",
+          "symbol": "main",
+          "lines": "L24-L30",
+          "action": "Call server.NewWithScheduler, start `go sched.Run(ctx)` with a signal.NotifyContext context, and pass the handler to http.ListenAndServe",
+          "expected": "Scheduler runs alongside the server"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD83E3NCEZACFHAXMSW",
+      "kind": "unit",
+      "title": "Act: Implement execution store, handlers and routes",
+      "body": "Add execution.go, handler.go and wire into the admin route group.\n\n## Acceptance criteria\n- Illegal state returns ErrIllegalState mapped to 409\n- Updated record is committed through the Committer\n\n\n## Scope\n- In scope: backend/internal/execution/execution.go\n- In scope: backend/internal/execution/handler.go\n- In scope: backend/internal/server/server.go\n- Out of scope: Worker\n- Preserve: Round routes\n\n\n## Technical constraints\n- Path development/executions/<id>.yaml\n- New file: `backend/internal/execution/execution.go`\n- New file: `backend/internal/execution/handler.go`\n- Code path: `backend/internal/server/server.go`\n\n\n## Dependencies\n- R6\n- A4\n- A5\n\n\n## Definition of done\n- go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create execution package and register routes",
+      "description": "Add execution.go, handler.go and wire into the admin route group.",
+      "acceptance_criteria": [
+        "Illegal state returns ErrIllegalState mapped to 409",
+        "Updated record is committed through the Committer"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/execution/execution.go",
+          "backend/internal/execution/handler.go",
+          "backend/internal/server/server.go"
+        ],
+        "out_of_scope": [
+          "Worker"
+        ],
+        "preserve": [
+          "Round routes"
+        ]
+      },
+      "technical_constraints": [
+        "Path development/executions/<id>.yaml",
+        "New file: `backend/internal/execution/execution.go`",
+        "New file: `backend/internal/execution/handler.go`",
+        "Code path: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [
+        "R6",
+        "A4",
+        "A5"
+      ],
+      "definition_of_done": [
+        "go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-076.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8465XD8M0VQ8QCT0W76TEFF",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD8M0VQ8QCT0W76TEFF",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-076.md"
+      ],
+      "depends_on": [
+        "01M8465XD8M0VQ8QCT0W76TEFF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-076.md",
+      "artifact_id": "UNIT-076",
+      "steps": [
+        {
+          "file": "backend/internal/execution/execution.go",
+          "symbol": "new: Execution, FileStore, List, Get, Retry, Approve, ErrNotFound, ErrIllegalState",
+          "lines": "new",
+          "action": "Define Status constants QUEUED, RUNNING, AWAITING_APPROVAL, APPROVED, FAILED, COMPLETED and Execution with yaml tags id, world_id, round_id, status, error, updated_at; FileStore{Root, Git gitrepo.Committer, Now}; List reads development/executions/*.yaml sorted by id; Get validates id via safepath.Segment; Retry requires FAILED->QUEUED and clears error; Approve requires AWAITING_APPROVAL->APPROVED; both write atomically and Commit the path",
+          "expected": "Transitions persisted and committed"
+        },
+        {
+          "file": "backend/internal/execution/handler.go",
+          "symbol": "new: Handler (List, Retry, Approve)",
+          "lines": "new",
+          "action": "Handler with Service interface{List,Retry,Approve}; List returns JSON array (empty array not null); Retry/Approve read chi param id and map ErrNotFound->404, ErrIllegalState->409, others 500",
+          "expected": "HTTP statuses match"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "NewWithScheduler",
+          "lines": "inside admin route group",
+          "action": "Build execution.FileStore{Root: cfg.Storage.RepoPath, Git: same gitrepo.CLI, Now: time.Now} and register r.Get(\"/executions\", eh.List), r.Post(\"/executions/{id}/retry\", eh.Retry), r.Post(\"/executions/{id}/approve\", eh.Approve)",
+          "expected": "Routes are under the admin token group"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8X17HZGWJA5X35QQ0",
+      "kind": "unit",
+      "title": "Verify: Round transition table and FileStore unit tests",
+      "body": "Write TDD-style tests in internal/round using t.TempDir only.\n\n## Acceptance criteria\n- Every legal edge passes and a table of illegal edges returns ErrIllegalTransition with status unchanged\n- Save then Get round-trips all fields; unsafe ids are rejected\n\n\n## Scope\n- In scope: backend/internal/round/round_test.go\n- In scope: backend/internal/round/store_test.go\n- Out of scope: network, git\n\n\n## Technical constraints\n- Temp dir filesystem only\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for transitions and round.yaml persistence",
+      "description": "Write TDD-style tests in internal/round using t.TempDir only.",
+      "acceptance_criteria": [
+        "Every legal edge passes and a table of illegal edges returns ErrIllegalTransition with status unchanged",
+        "Save then Get round-trips all fields; unsafe ids are rejected"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/round_test.go",
+          "backend/internal/round/store_test.go"
+        ],
+        "out_of_scope": [
+          "network, git"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Temp dir filesystem only"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-077.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD88GGV84CAHN3JBFDA",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8465XD88GGV84CAHN3JBFDA",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-077.md"
+      ],
+      "depends_on": [
+        "01M8465XD88GGV84CAHN3JBFDA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-077.md",
+      "artifact_id": "UNIT-077",
+      "steps": [
+        {
+          "file": "backend/internal/round/round_test.go",
+          "symbol": "new: TestTransitions",
+          "lines": "new",
+          "action": "Table test: iterate Transitions and assert CanTransition true for each listed edge; assert CanTransition false for SCHEDULED→CLOSED, OPEN→SCHEDULED, COMPLETED→OPEN, CANCELLED→OPEN, CLOSED→OPEN; assert Transition returns errors.Is ErrIllegalTransition and Status is unchanged",
+          "command": "cd backend && go test ./internal/round -run TestTransitions",
+          "expected": "TestTransitions passes (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/round/store_test.go",
+          "symbol": "new: TestFileStore_RoundTrip, TestFileStore_UnsafeIDs",
+          "lines": "new",
+          "action": "Save a Round{ID:\"ROUND-0000001\",WorldID:\"the-boys-room\",Number:1,Status:StatusOpen,BaseRelease:\"1.0.0\"} into t.TempDir, assert file worlds/the-boys-room/rounds/round-0000001/round.yaml exists and Get returns equal fields; assert Save/Get with WorldID \"../x\" returns an error and no file is created",
+          "command": "cd backend && go test ./internal/round -run TestFileStore",
+          "expected": "TestFileStore tests pass (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8B20D8QB8GAMT4H58",
+      "kind": "unit",
+      "title": "Verify: Lifecycle, snapshot freeze and Git head unit tests",
+      "body": "Test Open/Close/Create, snapshot immutability, Head and ErrFrozen with fakes.\n\n## Acceptance criteria\n- Open sets 24h window and base release\n- Close writes snapshot, records fake SHA, status CLOSED, and a second Close fails\n- FileStore.Save into a frozen round returns ErrFrozen and creates no file\n- CLI.Head returns trimmed SHA from a fake Runner\n\n\n## Scope\n- In scope: backend/internal/round/lifecycle_test.go\n- In scope: backend/internal/contribution/store_test.go\n- In scope: backend/internal/gitrepo/gitrepo_test.go\n- Out of scope: real git\n\n\n## Technical constraints\n- Fake committer records calls; fake clock; t.TempDir\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with fake committer, fixed clock and temp dir",
+      "description": "Test Open/Close/Create, snapshot immutability, Head and ErrFrozen with fakes.",
+      "acceptance_criteria": [
+        "Open sets 24h window and base release",
+        "Close writes snapshot, records fake SHA, status CLOSED, and a second Close fails",
+        "FileStore.Save into a frozen round returns ErrFrozen and creates no file",
+        "CLI.Head returns trimmed SHA from a fake Runner"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/lifecycle_test.go",
+          "backend/internal/contribution/store_test.go",
+          "backend/internal/gitrepo/gitrepo_test.go"
+        ],
+        "out_of_scope": [
+          "real git"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Fake committer records calls; fake clock; t.TempDir"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-078.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD8S0XZ4Z5G51RC5NWT",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8465XD8S0XZ4Z5G51RC5NWT",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-078.md"
+      ],
+      "depends_on": [
+        "01M8465XD8S0XZ4Z5G51RC5NWT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-078.md",
+      "artifact_id": "UNIT-078",
+      "steps": [
+        {
+          "file": "backend/internal/round/lifecycle_test.go",
+          "symbol": "new: TestOpen_SetsWindow, TestClose_FreezesSnapshot, TestClose_RequiresOpen, TestCreate_RejectsActiveRound",
+          "lines": "new",
+          "action": "Use fakeGit{head:\"abc123\"} recording Commit paths, a fixed Now, a stub Contributions returning two contributions. Assert Open yields EndsAt=StartsAt+24h and BaseRelease \"1.0.0\"; Close creates snapshot.yaml with 2 entries (mode 0o444), FreezeCommit==\"abc123\", Status CLOSED, committed paths include snapshot.yaml; Close on SCHEDULED round returns ErrIllegalTransition and no snapshot.yaml; second Close errors and snapshot bytes unchanged; Create with an OPEN round present returns ErrActiveRound",
+          "command": "cd backend && go test ./internal/round -run 'TestOpen|TestClose|TestCreate'",
+          "expected": "Lifecycle tests pass (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "new: TestFileStore_SaveRejectsFrozenRound, TestFileStore_ListByRound",
+          "lines": "after existing tests",
+          "action": "With fakeCommitter and t.TempDir, create worlds/w/rounds/round-0000001/snapshot.yaml then Save a Contribution for that round; assert errors.Is ErrFrozen and no *.md created; separately save two contributions and assert ListByRound returns both oldest first",
+          "command": "cd backend && go test ./internal/contribution -run 'TestFileStore_SaveRejectsFrozenRound|TestFileStore_ListByRound'",
+          "expected": "Frozen and ListByRound tests pass (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/gitrepo/gitrepo_test.go",
+          "symbol": "new: TestHead_ReturnsTrimmedSHA",
+          "lines": "after existing tests",
+          "action": "Fake Runner returns \"deadbeef\\n\"; assert Head returns \"deadbeef\" and args were rev-parse HEAD; a failing runner returns an error",
+          "command": "cd backend && go test ./internal/gitrepo -run TestHead",
+          "expected": "TestHead passes (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8PYPJE9TRJEX4JQMR",
+      "kind": "unit",
+      "title": "Verify: Scheduler behavior with a fake clock unit tests",
+      "body": "Test Tick decisions only; no real timers.\n\n## Acceptance criteria\n- Open called once for due SCHEDULED round\n- Close called once for expired OPEN round\n- No calls for future rounds or other statuses\n\n\n## Scope\n- In scope: backend/internal/round/scheduler_test.go\n- Out of scope: Run ticker\n\n\n## Technical constraints\n- fakeClock, fakeController, fakeLister\n\n\n## Dependencies\n- A3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Fake clock and fake controller tests",
+      "description": "Test Tick decisions only; no real timers.",
+      "acceptance_criteria": [
+        "Open called once for due SCHEDULED round",
+        "Close called once for expired OPEN round",
+        "No calls for future rounds or other statuses"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/round/scheduler_test.go"
+        ],
+        "out_of_scope": [
+          "Run ticker"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "fakeClock, fakeController, fakeLister"
+      ],
+      "dependencies": [
+        "A3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-079.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD8XTF5N91DVZMTHW96",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8465XD8XTF5N91DVZMTHW96",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-079.md"
+      ],
+      "depends_on": [
+        "01M8465XD8XTF5N91DVZMTHW96"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-079.md",
+      "artifact_id": "UNIT-079",
+      "steps": [
+        {
+          "file": "backend/internal/round/scheduler_test.go",
+          "symbol": "new: TestTick_OpensDueRound, TestTick_ClosesExpiredRound, TestTick_IgnoresFutureAndOtherStatuses",
+          "lines": "new",
+          "action": "Clock fixed at 2026-01-01T12:00Z. Rounds: SCHEDULED starts 11:00 -> expect Open call; OPEN ends 11:59 -> expect Close call; advance clock field to prove future SCHEDULED (starts 13:00) and OPEN (ends 13:00), COMPLETED rounds produce zero calls; controller error on Open is returned from Tick while Close still runs",
+          "command": "cd backend && go test ./internal/round -run TestTick",
+          "expected": "TestTick tests pass (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8QPZEBGV13CJ8HVHK",
+      "kind": "unit",
+      "title": "Verify: Admin auth middleware and config unit tests",
+      "body": "Cover missing, wrong, empty and correct credentials plus config defaults.\n\n## Acceptance criteria\n- Missing/wrong/empty-token cases return 401 and next is not called\n- Correct token calls next with 200\n- Config defaults and env override asserted\n\n\n## Scope\n- In scope: backend/internal/admin/middleware_test.go\n- In scope: backend/internal/config/config_test.go\n\n\n## Technical constraints\n- httptest.NewRecorder; config via LoadFS with fstest.MapFS and fake getenv\n\n\n## Dependencies\n- A4\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "httptest middleware cases and config default tests",
+      "description": "Cover missing, wrong, empty and correct credentials plus config defaults.",
+      "acceptance_criteria": [
+        "Missing/wrong/empty-token cases return 401 and next is not called",
+        "Correct token calls next with 200",
+        "Config defaults and env override asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/middleware_test.go",
+          "backend/internal/config/config_test.go"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "httptest.NewRecorder; config via LoadFS with fstest.MapFS and fake getenv"
+      ],
+      "dependencies": [
+        "A4"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-080.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD8G47NJ5N8ENNAXBAK",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD8G47NJ5N8ENNAXBAK",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-080.md"
+      ],
+      "depends_on": [
+        "01M8465XD8G47NJ5N8ENNAXBAK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-080.md",
+      "artifact_id": "UNIT-080",
+      "steps": [
+        {
+          "file": "backend/internal/admin/middleware_test.go",
+          "symbol": "new: TestMiddleware",
+          "lines": "new",
+          "action": "Table test with token \"s3cret\": no header -> 401; \"Bearer wrong\" -> 401; \"Basic s3cret\" -> 401; \"Bearer s3cret\" -> 200; Middleware(\"\") with \"Bearer \" -> 401; assert a flag set by next is false for 401 cases",
+          "command": "cd backend && go test ./internal/admin -run TestMiddleware",
+          "expected": "TestMiddleware passes (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_AdminAndRoundDefaults",
+          "lines": "after existing tests",
+          "action": "Load a MapFS config with only auth.token_secret; assert Round.Duration==24h, BaseRelease==\"1.0.0\", SchedulerInterval==30s; with getenv returning \"tok\" for STORYFORGE_ADMIN_TOKEN assert Admin.Token==\"tok\"",
+          "command": "cd backend && go test ./internal/config -run TestLoadFS_AdminAndRoundDefaults",
+          "expected": "Config defaults test passes (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD83HDTJAD0Y7XG6TE4",
+      "kind": "unit",
+      "title": "Verify: Admin round handlers and route auth unit tests",
+      "body": "Test status mapping with a fake RoundService and auth on the mounted router.\n\n## Acceptance criteria\n- Create 201, Close 200, illegal transition 409, unknown 404\n- Router without token returns 401 for each admin round route\n\n\n## Scope\n- In scope: backend/internal/admin/rounds_test.go\n- In scope: backend/internal/server/server_test.go\n- Out of scope: real git\n\n\n## Technical constraints\n- httptest; server test uses config with t.TempDir repo path\n\n\n## Dependencies\n- A5\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Handler tests with fake service and router 401 test",
+      "description": "Test status mapping with a fake RoundService and auth on the mounted router.",
+      "acceptance_criteria": [
+        "Create 201, Close 200, illegal transition 409, unknown 404",
+        "Router without token returns 401 for each admin round route"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/admin/rounds_test.go",
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "real git"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "httptest; server test uses config with t.TempDir repo path"
+      ],
+      "dependencies": [
+        "A5"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-081.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD83MWTYE9Z8AFX0B9K",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD83MWTYE9Z8AFX0B9K",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-081.md"
+      ],
+      "depends_on": [
+        "01M8465XD83MWTYE9Z8AFX0B9K"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-081.md",
+      "artifact_id": "UNIT-081",
+      "steps": [
+        {
+          "file": "backend/internal/admin/rounds_test.go",
+          "symbol": "new: TestRoundHandler_Statuses",
+          "lines": "new",
+          "action": "Fake RoundService returning configurable round/error; mount handlers on chi; assert POST /rounds body {\"world_id\":\"w\"} -> 201 JSON with status SCHEDULED; Close returning round.ErrIllegalTransition -> 409; Get returning round.ErrNotFound -> 404; malformed JSON -> 400; Contributions returns the fake list as JSON",
+          "command": "cd backend && go test ./internal/admin -run TestRoundHandler",
+          "expected": "TestRoundHandler passes (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestNew_AdminRoundsRequireToken",
+          "lines": "after L193",
+          "action": "Build the handler via New with Admin.Token \"tok\" and temp RepoPath; for POST /api/v1/admin/rounds, POST /api/v1/admin/rounds/ROUND-0000001/open, POST .../close, GET .../ROUND-0000001, GET .../contributions assert 401 without header and not 401 with \"Authorization: Bearer tok\"",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsRequireToken",
+          "expected": "Router auth test passes (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8JWRJP6HEKR26YXX8",
+      "kind": "unit",
+      "title": "Verify: Execution store and handler unit tests",
+      "body": "Test Retry/Approve legality, persistence and HTTP mapping.\n\n## Acceptance criteria\n- Retry FAILED->QUEUED, Approve AWAITING_APPROVAL->APPROVED, others ErrIllegalState\n- Unsafe id returns ErrNotFound-class error\n- Handler maps 200/404/409 and list is a JSON array\n\n\n## Scope\n- In scope: backend/internal/execution/execution_test.go\n- In scope: backend/internal/execution/handler_test.go\n\n\n## Technical constraints\n- t.TempDir, fake committer, fake service\n\n\n## Dependencies\n- A6\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Store transitions with fake committer and handler status mapping",
+      "description": "Test Retry/Approve legality, persistence and HTTP mapping.",
+      "acceptance_criteria": [
+        "Retry FAILED->QUEUED, Approve AWAITING_APPROVAL->APPROVED, others ErrIllegalState",
+        "Unsafe id returns ErrNotFound-class error",
+        "Handler maps 200/404/409 and list is a JSON array"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/execution/execution_test.go",
+          "backend/internal/execution/handler_test.go"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "t.TempDir, fake committer, fake service"
+      ],
+      "dependencies": [
+        "A6"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-082.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD83E3NCEZACFHAXMSW",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8465XD83E3NCEZACFHAXMSW",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-082.md"
+      ],
+      "depends_on": [
+        "01M8465XD83E3NCEZACFHAXMSW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-082.md",
+      "artifact_id": "UNIT-082",
+      "steps": [
+        {
+          "file": "backend/internal/execution/execution_test.go",
+          "symbol": "new: TestRetry, TestApprove, TestList",
+          "lines": "new",
+          "action": "Write EXE-1 FAILED and EXE-2 AWAITING_APPROVAL yaml into t.TempDir; Retry(EXE-1) -> QUEUED and committer saw development/executions/EXE-1.yaml; Retry(EXE-2) -> ErrIllegalState; Approve(EXE-2) -> APPROVED; Approve(\"../x\") errors; List returns two sorted",
+          "command": "cd backend && go test ./internal/execution -run 'TestRetry|TestApprove|TestList'",
+          "expected": "Store tests pass (go test reports PASS)"
+        },
+        {
+          "file": "backend/internal/execution/handler_test.go",
+          "symbol": "new: TestHandler_Statuses",
+          "lines": "new",
+          "action": "Fake Service returning nil, ErrNotFound, ErrIllegalState; call Retry and Approve through chi router and assert 200, 404, 409; empty List body decodes to []",
+          "command": "cd backend && go test ./internal/execution -run TestHandler",
+          "expected": "TestHandler passes (go test reports PASS)"
+        }
+      ]
+    },
+    {
+      "id": "01M8465XD8Q20JZQN92AZZXXGD",
+      "kind": "evidence",
+      "title": "Evidence: Round lifecycle and admin API unit test results",
+      "body": "Record passing results of the round, scheduler, admin, config, gitrepo, contribution and execution unit tests as evidence that every acceptance criterion is met.\n\n## Acceptance criteria\n- go test output for the six Verify units is all PASS\n- Each intent acceptance criterion maps to a named passing test\n\n\n## Scope\n- In scope: test run output\n- Out of scope: integration runs\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- V1\n- V2\n- V3\n- V4\n- V5\n- V6\n\n\n## Definition of done\n- Evidence lists test names and PASS status\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing unit test output for SG-5",
+      "description": "Record passing results of the round, scheduler, admin, config, gitrepo, contribution and execution unit tests as evidence that every acceptance criterion is met.",
+      "acceptance_criteria": [
+        "go test output for the six Verify units is all PASS",
+        "Each intent acceptance criterion maps to a named passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "integration runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3",
+        "V4",
+        "V5",
+        "V6"
+      ],
+      "definition_of_done": [
+        "Evidence lists test names and PASS status",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-015.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8465XD8X17HZGWJA5X35QQ0",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M8465XD8X17HZGWJA5X35QQ0",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-015.md"
+      ],
+      "depends_on": [
+        "01M8465XD8X17HZGWJA5X35QQ0",
+        "01M8465XD8B20D8QB8GAMT4H58",
+        "01M8465XD8PYPJE9TRJEX4JQMR",
+        "01M8465XD8QPZEBGV13CJ8HVHK",
+        "01M8465XD83HDTJAD0Y7XG6TE4",
+        "01M8465XD8JWRJP6HEKR26YXX8"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-015.md",
+      "artifact_id": "EVD-015"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:34.394472+00:00",
+  "summary": "AI · 1 NEW · 19 UPDATE · 0 UNCHANGED · 20/20 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M84VT1VK73J84VZ8A3CH340X",
+  "intent_id": "01M84VQDRP8RE2SSZF39ACCMW0",
+  "title": "Act: Extract render constant and add autoRound in buildGameConfig",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add PIXEL_ART_RENDER constant and scale.autoRound",
+  "description": "Edit config.ts so render settings come from an exported constant and scale has autoRound true.",
+  "acceptance_criteria": [
+    "render equals the constant with pixelArt, roundPixels true and antialias false",
+    "scale.autoRound is true"
+  ],
+  "scope": {
+    "in_scope": [
+      "config.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "FIT and CENTER_BOTH"
+    ]
+  },
+  "technical_constraints": [
+    "Only Phaser.AUTO, Phaser.Scale.FIT, Phaser.Scale.CENTER_BOTH referenced from phaser",
+    "Code path: `game/frontend/src/phaser/config.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "config.ts compiles under tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-460.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VRMHFSWWX35DHN7AZZZ58",
+    "trace:01M847PS3SV6DQF7XMZE55MCYX",
+    "artifact:.ai-dlc/units/UNIT-460.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VT1VKME5X79XY9ET14W9X"
+  ],
+  "sim_node_id": "01M84VRMHFD6GNYTMQNGYTHV3Y",
+  "feature_id": "01M847PS3SV6DQF7XMZE55MCYX",
+  "artifact_path": ".ai-dlc/units/UNIT-460.md",
+  "artifact_id": "UNIT-460",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/config.ts",
+      "symbol": "new: PIXEL_ART_RENDER",
+      "lines": "after L4",
+      "action": "Add an exported constant PIXEL_ART_RENDER with pixelArt true, roundPixels true, antialias false, typed as Phaser.Types.Core.RenderConfig.",
+      "code": "export const PIXEL_ART_RENDER: Phaser.Types.Core.RenderConfig = { pixelArt: true, roundPixels: true, antialias: false };",
+      "expected": "Constant exported from config.ts"
+    },
+    {
+      "file": "game/frontend/src/phaser/config.ts",
+      "symbol": "buildGameConfig",
+      "lines": "L10-L30",
+      "action": "Replace the inline render object with a spread of PIXEL_ART_RENDER and add autoRound: true to the scale object.",
+      "code": "render: { ...PIXEL_ART_RENDER }, scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, autoRound: true }",
+      "expected": "Returned config has render keys and scale.autoRound true"
+    }
+  ],
+  "created_at": "2026-11-23T18:48:32.883285+00:00",
+  "updated_at": "2026-11-23T18:48:59.614112+00:00"
+}

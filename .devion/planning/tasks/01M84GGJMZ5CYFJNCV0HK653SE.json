@@ -1,0 +1,68 @@
+{
+  "id": "01M84GGJMZ5CYFJNCV0HK653SE",
+  "intent_id": "01M84GCPQV4VDXPM8F6AXV18ZS",
+  "title": "Verify: Recover scan and resume unit tests with fake store",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for which statuses are resumed and for list errors.",
+  "description": "Tests in recovery_test.go with in-memory fakes only.",
+  "acceptance_criteria": [
+    "Only unfinished statuses are resumed",
+    "List error is returned wrapped"
+  ],
+  "scope": {
+    "in_scope": [
+      "recovery_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Fakes: fakeStore, fakeResumer; no filesystem"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-213.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GG45V0BQMV423AW3AC0H7",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-213.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GGJMZCWXQ7044JE8V3WAS"
+  ],
+  "sim_node_id": "01M84GG45V7JGM0C9B4HJBFT0N",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-213.md",
+  "artifact_id": "UNIT-213",
+  "steps": [
+    {
+      "file": "backend/worker/internal/recovery/recovery_test.go",
+      "symbol": "new: fakeStore, fakeResumer, TestRecoverResumesOnlyUnfinished",
+      "lines": "new",
+      "action": "Define fakeStore (slice of store.Execution, saved slice, listErr) and fakeResumer (records IDs, errFor map). TestRecoverResumesOnlyUnfinished: seed executions a-pending(PENDING), b-running(RUNNING), c-recovering(RECOVERING), d-done(COMPLETED), e-failed(FAILED), f-await(AWAITING_APPROVAL); call New(Config{}, fs, fr, nil, clock).Recover; assert resumer IDs equal [a-pending b-running c-recovering], Result.Resumed equals the same, and fs.saved is empty.",
+      "command": "cd backend/worker && go test ./internal/recovery -run TestRecoverResumesOnlyUnfinished",
+      "expected": "Test passes."
+    },
+    {
+      "file": "backend/worker/internal/recovery/recovery_test.go",
+      "symbol": "new: TestRecoverListError",
+      "lines": "new",
+      "action": "Set fakeStore.listErr to errors.New(\"disk\"); call Recover; assert errors.Is(err, listErr) and resumer recorded no IDs.",
+      "command": "cd backend/worker && go test ./internal/recovery -run TestRecoverListError",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T15:31:08.063019+00:00",
+  "updated_at": "2026-11-23T15:34:49.112461+00:00"
+}

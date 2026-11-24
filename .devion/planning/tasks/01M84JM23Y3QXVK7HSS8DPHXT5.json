@@ -1,0 +1,71 @@
+{
+  "id": "01M84JM23Y3QXVK7HSS8DPHXT5",
+  "intent_id": "01M84JJGAFY1BJS99R2S24YGTB",
+  "title": "Verify: Export JSON shape and docs unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Export JSON keys and doc comments",
+  "description": "Write export_test.go asserting marshalled keys, RFC3339 time and doc comments on the types.",
+  "acceptance_criteria": [
+    "Marshalled Export has version, world_id, round_id, contributions",
+    "Each contribution has id, author, content, created_at"
+  ],
+  "scope": {
+    "in_scope": [
+      "export_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Pure unit test, no I/O",
+    "New file: `backend/internal/contribution/export_test.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-260.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JKKPBG0E9E0SJCRSW87EV",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-260.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JM23Y9VN6X493N29MG1E5"
+  ],
+  "sim_node_id": "01M84JKKPBQ85GSBP97QY9X332",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-260.md",
+  "artifact_id": "UNIT-260",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/export_test.go",
+      "symbol": "new: TestExport_JSONShape",
+      "lines": "new",
+      "action": "Marshal Export{Version: ExportVersion, WorldID: \"w\", RoundID: \"ROUND-0000001\", Contributions: one ExportContribution with ID CON-1, Author p1, Content hi, CreatedAt 2026-01-02T03:04:05Z}; unmarshal into map[string]any and assert keys version, world_id, round_id, contributions and the four contribution keys, and created_at equals \"2026-01-02T03:04:05Z\".",
+      "command": "cd backend && go test ./internal/contribution -run TestExport_JSONShape",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/contribution/export_test.go",
+      "symbol": "new: TestExport_TypesDocumented",
+      "lines": "new",
+      "action": "Use go/parser with parser.ParseComments on export.go and assert the GenDecls for Export and ExportContribution have non-empty Doc.",
+      "command": "cd backend && go test ./internal/contribution -run TestExport_TypesDocumented",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:07:59.358037+00:00",
+  "updated_at": "2026-11-23T16:08:47.351834+00:00"
+}

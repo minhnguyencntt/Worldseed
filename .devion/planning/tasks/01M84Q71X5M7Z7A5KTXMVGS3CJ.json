@@ -1,0 +1,65 @@
+{
+  "id": "01M84Q71X5M7Z7A5KTXMVGS3CJ",
+  "intent_id": "01M84Q3B7M3DF3GWX62AHQ8TYP",
+  "title": "Act: Implement loadManifestFile with on-disk reference check",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add the manifest file loader.",
+  "description": "Create game/src/assets/loaders/manifestLoader.ts exporting loadManifestFile.",
+  "acceptance_criteria": [
+    "Given a valid manifest and files, when called, then returns ok with data",
+    "Given a missing file or bad JSON, when called, then returns issues and does not throw"
+  ],
+  "scope": {
+    "in_scope": [
+      "new loader file"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "manifest/index.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Return ParseResult shape from manifest/index.ts",
+    "New file: `game/src/assets/loaders/manifestLoader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Loader exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-362.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84Q5VQHKP9QREWVYF072BCM",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-362.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84Q71X58ZQSK6FZPZ3ZP3E5"
+  ],
+  "sim_node_id": "01M84Q5VQHYH0NGWBYE834KDDB",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-362.md",
+  "artifact_id": "UNIT-362",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/loaders/manifestLoader.ts",
+      "symbol": "new: loadManifestFile",
+      "lines": "new",
+      "action": "Export loadManifestFile(manifestPath: string, assetsRoot: string): ParseResult<AssetManifest>. Wrap readFileSync and JSON.parse in try/catch returning {ok:false,errors:[{path:'manifest',message:`cannot read manifest: ${manifestPath}`}]}. Call parseManifest; if not ok return it. Then for each asset index i, if !existsSync(join(assetsRoot, asset.path)) push {path:`assets.${i}.path`, message:`missing asset file: ${asset.path}`}. Return {ok:false,errors} if any, else {ok:true,data}.",
+      "code": "import { existsSync, readFileSync } from 'node:fs'; import { join } from 'node:path'; import { parseManifest, type ParseResult, type ManifestIssue, type AssetManifest } from '../manifest';",
+      "expected": "Module compiles and exports loadManifestFile"
+    }
+  ],
+  "created_at": "2026-11-23T17:28:16.037177+00:00",
+  "updated_at": "2026-11-23T17:30:24.016937+00:00"
+}

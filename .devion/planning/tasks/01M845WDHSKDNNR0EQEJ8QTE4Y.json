@@ -1,0 +1,54 @@
+{
+  "id": "01M845WDHSKDNNR0EQEJ8QTE4Y",
+  "intent_id": "01M845V737K0347Y1X7BM0QP20",
+  "title": "SG-4.2 · Serve the current round at /round/current",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Serve the current round at GET /api/v1/worlds/{id}/round/current instead of /rounds/current",
+  "description": "Context: backend/internal/server/server.go:46 registers GET /api/v1/worlds/{id}/rounds/current, but the spec path is /api/v1/worlds/{id}/round/current. Desired behavior: the server serves the current round at the spec path and a routing test uses that path. Expected result: the specified path returns the current round and the old plural path is no longer routed. Why: API consumers must match the documented contract.",
+  "acceptance_criteria": [
+    "Given a world and a round on disk, when GET /api/v1/worlds/the-boys-room/round/current is requested, then the response is 200 with the round JSON",
+    "Given the same data, when GET /api/v1/worlds/the-boys-room/rounds/current is requested, then the response is 404",
+    "A routing test in the server package requests the specified path"
+  ],
+  "scope": {
+    "in_scope": [
+      "Change the route path in backend/internal/server/server.go",
+      "Add a routing test using the specified path"
+    ],
+    "out_of_scope": [
+      "Changing the CurrentRound handler or repository logic",
+      "Other routes"
+    ],
+    "preserve": [
+      "world.Handler.CurrentRound behavior and 404 handling",
+      "All other registered routes"
+    ]
+  },
+  "technical_constraints": [
+    "Go with Chi router; no database"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Route is /api/v1/worlds/{id}/round/current",
+    "Server routing test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-014.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M845SASN3QAR9EWZF01RMEKV",
+    "artifact:.ai-dlc/intent/INT-014.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M845WCV5N7024PKQFBRQBYEX",
+  "feature_id": "01M845SASN3QAR9EWZF01RMEKV",
+  "artifact_path": ".ai-dlc/intent/INT-014.md",
+  "artifact_id": "INT-014",
+  "created_at": "2026-11-23T12:25:21.721764+00:00",
+  "updated_at": "2026-11-23T12:26:14.615330+00:00"
+}

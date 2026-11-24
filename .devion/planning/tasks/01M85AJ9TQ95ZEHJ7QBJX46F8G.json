@@ -1,0 +1,64 @@
+{
+  "id": "01M85AJ9TQ95ZEHJ7QBJX46F8G",
+  "intent_id": "01M85AFPKSSVV0F8J6651E2JG1",
+  "title": "Act: Check scene characters in validateWorld",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add scene character id loop to validateWorld.",
+  "description": "Add a loop over scene.characters ?? [] inside the per-scene loop of validateWorld that pushes a path-tagged error for ids absent from the characters Set.",
+  "acceptance_criteria": [
+    "validateWorld returns the path-tagged error for an unknown scene character id",
+    "Worlds with valid scene characters return no new errors"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/content/loader.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "existing checks"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/src/content/loader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Loop added and the existing the-boys-room content still validates",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-598.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85AGXVK8PGQM721TA8951QW",
+    "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+    "artifact:.ai-dlc/units/UNIT-598.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85AJ9TQJDKJ295XZKAFMYA1"
+  ],
+  "sim_node_id": "01M85AGXVKM551J6F7MJY9WQ6A",
+  "feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+  "artifact_path": ".ai-dlc/units/UNIT-598.md",
+  "artifact_id": "UNIT-598",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/loader.ts",
+      "symbol": "validateWorld",
+      "lines": "after L140",
+      "action": "Inside `for (const scene of world.scenes)`, after the dialogue node loop, add a loop over scene.characters ?? [] with index that pushes a path-tagged error when the character id is not in the `characters` Set.",
+      "code": "(scene.characters ?? []).forEach((c, i) => {\n  if (!characters.has(c.id)) errors.push(`scenes.${scene.id}.characters.${i}.id: unknown character: ${c.id}`);\n});",
+      "expected": "validateWorld returns 'scenes.bedroom.characters.1.id: unknown character: ghost' for an undeclared scene character"
+    }
+  ],
+  "created_at": "2026-11-23T23:06:27.543120+00:00",
+  "updated_at": "2026-11-23T23:06:46.393169+00:00"
+}

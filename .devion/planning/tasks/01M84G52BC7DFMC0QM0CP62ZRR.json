@@ -1,0 +1,64 @@
+{
+  "id": "01M84G52BC7DFMC0QM0CP62ZRR",
+  "intent_id": "01M84G0SGVRTS10AHNW40X86RM",
+  "title": "Act: Confirm report writing and error precedence in Runner.Run",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm Run uses the injected clock and returns a reporter error only when the run succeeded",
+  "description": "Read Run and confirm start and finished come from r.now, reporting is skipped when reporter is nil, and the reporter error is returned only when err == nil. No product change is expected.",
+  "acceptance_criteria": [
+    "Given runner.go, When read, Then StartedAt and FinishedAt use r.now",
+    "Given runner.go, When read, Then the reporter error is returned only when err == nil"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner.go Run"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Report fields"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/worker/internal/runner/runner.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Code confirmed; go build succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-198.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84G4KBB33JG954ZEPVXGMQ6",
+    "trace:01M8470M8T9BC85XFQSVAAYGZG",
+    "artifact:.ai-dlc/units/UNIT-198.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84G52BCKC8967RCFAT1AX7M"
+  ],
+  "sim_node_id": "01M84G4KBBKGM8D8Q8V6KHT7SJ",
+  "feature_id": "01M8470M8T9BC85XFQSVAAYGZG",
+  "artifact_path": ".ai-dlc/units/UNIT-198.md",
+  "artifact_id": "UNIT-198",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner.go",
+      "symbol": "Runner.Run",
+      "lines": "L87-L122",
+      "action": "Confirm start := r.now(), finished := r.now(), the 'r.reporter != nil' guard and 'werr != nil && err == nil' return; change nothing if so.",
+      "command": "cd backend/worker && go build ./internal/runner",
+      "expected": "Build succeeds; report logic confirmed"
+    }
+  ],
+  "created_at": "2026-11-23T15:24:50.923969+00:00",
+  "updated_at": "2026-11-23T15:26:09.396322+00:00"
+}

@@ -1,0 +1,994 @@
+{
+  "intent_id": "01M85YRXQEN9TWD6B1NFMQ938P",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85YXV0AFE6Y3TJYPB6N5DRP",
+      "kind": "intent",
+      "title": "SG-6 In-scene object interaction anchored to the object, hotspot path removed",
+      "body": "Context: BootScene already builds SceneObjects from content, highlights them on hover or focus, and emits objectClick. The only on-canvas label is a Phaser Text showing the plain name. Actions appear in a separate ActionMenu panel that is not anchored to the object. Desired behavior: while an object is hovered or focused, a DOM overlay shows an upper-case name plate above the object and its content-defined actions (INSPECT, SEARCH, PUSH) beneath it. The overlay is anchored by a pure function of native position, scale, canvas offset and DPR, and is recomputed on resize. Every object and action is reachable by Tab, arrows, Enter and Space, with a live region and labels read from the same game state. Expected result: the old unanchored ActionMenu is replaced and no hotspot path remains. Why: the framed reference interface shows actions on the object.\n\n## Acceptance criteria\n- Given an object is hovered or keyboard-focused, When the overlay renders, Then a name plate above the object shows its content name in upper case and buttons beneath show its available action labels\n- Given the anchor inputs (native position, bounds, scale, canvas offset, DPR), When the anchor function runs, Then it returns the same screen point for the same inputs and a different point after the zoom or offset changes\n- Given a keyboard user presses Tab, arrows, Enter and Space, When focus reaches an object and its actions, Then each is reachable and activatable and the live region announces the focused object\n- Given the source tree, When searched, Then SceneView, HOTSPOTS and ASSET_PATHS do not appear in code or tests and the unanchored ActionMenu is no longer rendered\n\n\n## Scope\n- In scope: Pure anchor function\n- In scope: Content-driven action list\n- In scope: DOM overlay with name plate and action buttons\n- In scope: Hand cursor on interactive objects\n- In scope: Keyboard flow and ARIA live region\n- In scope: Removal of ActionMenu and leftover hotspot-path names\n- Out of scope: New rooms or story content\n- Out of scope: Backend changes\n- Out of scope: Audio\n- Out of scope: Deployment\n- Out of scope: Repository clean-up beyond the hotspot path\n- Preserve: objectClick and game.act flow\n- Preserve: Existing focus store and keyboard handling in BootScene\n- Preserve: Phaser 3.90.x pin\n- Preserve: 480x270 native resolution with whole-number zoom\n\n\n## Technical constraints\n- Phaser stays on 3.90.x (~3.90.0 pin and guard tests stay)\n- React, TypeScript, Vite, Tailwind, Radix and Zustand stay\n- Keep the Go API contracts; no mock data in place of real API calls\n- Scene content stays data-driven: no object, position or asset id hardcoded in a scene class\n- One native scene resolution of 480x270, scaled by whole numbers only, nearest-neighbour\n- One shared palette of at most 48 colours used by art and UI\n- Tests are unit tests with every dependency mocked\n\n\n## Definition of done\n- All four requirements delivered with unit tests passing\n- No ActionMenu or hotspot path remains\n\n\n## Non-functional requirements\n- Overlay recomputes on resize without layout thrash\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Hovering or focusing a scene object shows a name plate and action buttons anchored to it, driven by content, with keyboard and screen-reader access.",
+      "description": "Context: BootScene already builds SceneObjects from content, highlights them on hover or focus, and emits objectClick. The only on-canvas label is a Phaser Text showing the plain name. Actions appear in a separate ActionMenu panel that is not anchored to the object. Desired behavior: while an object is hovered or focused, a DOM overlay shows an upper-case name plate above the object and its content-defined actions (INSPECT, SEARCH, PUSH) beneath it. The overlay is anchored by a pure function of native position, scale, canvas offset and DPR, and is recomputed on resize. Every object and action is reachable by Tab, arrows, Enter and Space, with a live region and labels read from the same game state. Expected result: the old unanchored ActionMenu is replaced and no hotspot path remains. Why: the framed reference interface shows actions on the object.",
+      "acceptance_criteria": [
+        "Given an object is hovered or keyboard-focused, When the overlay renders, Then a name plate above the object shows its content name in upper case and buttons beneath show its available action labels",
+        "Given the anchor inputs (native position, bounds, scale, canvas offset, DPR), When the anchor function runs, Then it returns the same screen point for the same inputs and a different point after the zoom or offset changes",
+        "Given a keyboard user presses Tab, arrows, Enter and Space, When focus reaches an object and its actions, Then each is reachable and activatable and the live region announces the focused object",
+        "Given the source tree, When searched, Then SceneView, HOTSPOTS and ASSET_PATHS do not appear in code or tests and the unanchored ActionMenu is no longer rendered"
+      ],
+      "scope": {
+        "in_scope": [
+          "Pure anchor function",
+          "Content-driven action list",
+          "DOM overlay with name plate and action buttons",
+          "Hand cursor on interactive objects",
+          "Keyboard flow and ARIA live region",
+          "Removal of ActionMenu and leftover hotspot-path names"
+        ],
+        "out_of_scope": [
+          "New rooms or story content",
+          "Backend changes",
+          "Audio",
+          "Deployment",
+          "Repository clean-up beyond the hotspot path"
+        ],
+        "preserve": [
+          "objectClick and game.act flow",
+          "Existing focus store and keyboard handling in BootScene",
+          "Phaser 3.90.x pin",
+          "480x270 native resolution with whole-number zoom"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x (~3.90.0 pin and guard tests stay)",
+        "React, TypeScript, Vite, Tailwind, Radix and Zustand stay",
+        "Keep the Go API contracts; no mock data in place of real API calls",
+        "Scene content stays data-driven: no object, position or asset id hardcoded in a scene class",
+        "One native scene resolution of 480x270, scaled by whole numbers only, nearest-neighbour",
+        "One shared palette of at most 48 colours used by art and UI",
+        "Tests are unit tests with every dependency mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All four requirements delivered with unit tests passing",
+        "No ActionMenu or hotspot path remains",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-171.md`"
+      ],
+      "non_functional": [
+        "Overlay recomputes on resize without layout thrash"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85SD77VTP8W9E7079K4A509",
+      "links": [
+        "trace:01M85SD77VTP8W9E7079K4A509",
+        "artifact:.ai-dlc/intent/INT-171.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-171.md",
+      "artifact_id": "INT-171"
+    },
+    {
+      "id": "01M85YXV0AWBVBD6NC5YGYPX3R",
+      "kind": "requirement",
+      "title": "REQ · Overlay anchor is a pure function of native position, scale, canvas offset and DPR",
+      "body": "Context: PhaserHost computes zoom via computeZoom(w,h,dpr) in frontend/src/phaser/config.ts and re-applies it on resize. There is no function that converts an object's native position to a DOM position. Desired: a pure function takes the object's position, interactionBounds, scale, the whole-number zoom, the canvas offset in CSS pixels and DPR, and returns the top-centre and bottom-centre screen points. Expected result: the overlay can be placed over the canvas at any zoom. Why: anchors must be exact and testable without Phaser.\n\n## Acceptance criteria\n- Given position (150,60), bounds 48x96, scale 1, zoom 2, offset (10,20), DPR 1, When anchorFor runs, Then top-centre is (10+(150+24)*2, 20+60*2) and bottom-centre is (10+(150+24)*2, 20+(60+96)*2)\n- Given DPR 2 and a device-pixel zoom of 4, When anchorFor runs, Then the CSS-pixel result equals the DPR 1 zoom 2 result\n- Given an object without interactionBounds, When anchorFor runs, Then it returns null\n\n\n## Scope\n- In scope: Pure anchor maths module\n- In scope: Reading canvas offset and zoom from the Phaser host on resize\n- Out of scope: Rendering the overlay\n- Preserve: computeZoom behaviour\n\n\n## Technical constraints\n- Whole-number zoom only; nearest-neighbour\n- Phaser stays on 3.90.x\n- No position hardcoded; values come from ObjectSpec\n\n\n## Definition of done\n- anchorFor exported and used by the overlay\n- PhaserHost reports canvas rect and zoom on resize and DPR change\n\n\n## Non-functional requirements\n- Pure, no DOM or Phaser access inside anchorFor\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure anchorFor function maps an object's native bounds to a screen point and is recomputed on resize.",
+      "description": "Context: PhaserHost computes zoom via computeZoom(w,h,dpr) in frontend/src/phaser/config.ts and re-applies it on resize. There is no function that converts an object's native position to a DOM position. Desired: a pure function takes the object's position, interactionBounds, scale, the whole-number zoom, the canvas offset in CSS pixels and DPR, and returns the top-centre and bottom-centre screen points. Expected result: the overlay can be placed over the canvas at any zoom. Why: anchors must be exact and testable without Phaser.",
+      "acceptance_criteria": [
+        "Given position (150,60), bounds 48x96, scale 1, zoom 2, offset (10,20), DPR 1, When anchorFor runs, Then top-centre is (10+(150+24)*2, 20+60*2) and bottom-centre is (10+(150+24)*2, 20+(60+96)*2)",
+        "Given DPR 2 and a device-pixel zoom of 4, When anchorFor runs, Then the CSS-pixel result equals the DPR 1 zoom 2 result",
+        "Given an object without interactionBounds, When anchorFor runs, Then it returns null"
+      ],
+      "scope": {
+        "in_scope": [
+          "Pure anchor maths module",
+          "Reading canvas offset and zoom from the Phaser host on resize"
+        ],
+        "out_of_scope": [
+          "Rendering the overlay"
+        ],
+        "preserve": [
+          "computeZoom behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "Whole-number zoom only; nearest-neighbour",
+        "Phaser stays on 3.90.x",
+        "No position hardcoded; values come from ObjectSpec"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "anchorFor exported and used by the overlay",
+        "PhaserHost reports canvas rect and zoom on resize and DPR change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-425.md`"
+      ],
+      "non_functional": [
+        "Pure, no DOM or Phaser access inside anchorFor"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85YXV0AFE6Y3TJYPB6N5DRP",
+      "matched_feature_id": "01M84T6537DBT4A27GNM8ZT8DW",
+      "links": [
+        "parent:01M85YXV0AFE6Y3TJYPB6N5DRP",
+        "trace:01M84T6537DBT4A27GNM8ZT8DW",
+        "artifact:.ai-dlc/requirements/REQ-425.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AFE6Y3TJYPB6N5DRP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-425.md",
+      "artifact_id": "REQ-425"
+    },
+    {
+      "id": "01M85YXV0AN9CX539VTJDNJTQM",
+      "kind": "requirement",
+      "title": "REQ · Hover or focus shows a content-driven name plate and action buttons through the existing flow",
+      "body": "Context: objectHover is typed in events.ts but never emitted; SceneObject.onHover only toggles highlight and the Phaser label; ActionMenu is shown only after a click and is not anchored. Desired: BootScene emits objectHover on pointer over/out, an ObjectOverlay component reads the active id (hover or store focusedObjectId), looks the object up in game.view (already filtered by action conditions), and renders a plate with the name upper-cased and a button per action label, positioned by anchorFor. Clicking a button calls game.act(objectId, actionId). Hand cursor is kept on interactive objects. Expected result: the reference-style name plate and INSPECT / SEARCH / PUSH buttons. Why: Done-when 3.8.\n\n## Acceptance criteria\n- Given the bookshelf is hovered, When the overlay renders, Then a plate reads the content name upper-cased and one button per available action appears with its content label\n- Given a button is clicked, When the handler runs, Then game.act is called with that object id and action id\n- Given the pointer leaves the object and nothing is focused, When objectHover emits null, Then the overlay disappears\n- Given the interactive image, When created, Then useHandCursor is set for objects with and without bounds\n\n\n## Scope\n- In scope: objectHover emission\n- In scope: ObjectOverlay component\n- In scope: Replacing ActionMenu in App\n- In scope: Hand cursor on bounded objects\n- Out of scope: Changing action content\n- Out of scope: Restyling Phaser text label\n- Preserve: objectClick event\n- Preserve: game.act and useGame view filtering\n\n\n## Technical constraints\n- Labels and actions come from the object's content definition only\n- Use existing Frame kit and palette tokens\n- React, Tailwind, Zustand stay\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- ObjectOverlay replaces ActionMenu in App\n- ActionMenu.tsx removed\n\n\n## Non-functional requirements\n- Buttons use the shared four-state Button styling\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A React overlay renders the plate and action buttons for the hovered or focused object from content, calling game.act.",
+      "description": "Context: objectHover is typed in events.ts but never emitted; SceneObject.onHover only toggles highlight and the Phaser label; ActionMenu is shown only after a click and is not anchored. Desired: BootScene emits objectHover on pointer over/out, an ObjectOverlay component reads the active id (hover or store focusedObjectId), looks the object up in game.view (already filtered by action conditions), and renders a plate with the name upper-cased and a button per action label, positioned by anchorFor. Clicking a button calls game.act(objectId, actionId). Hand cursor is kept on interactive objects. Expected result: the reference-style name plate and INSPECT / SEARCH / PUSH buttons. Why: Done-when 3.8.",
+      "acceptance_criteria": [
+        "Given the bookshelf is hovered, When the overlay renders, Then a plate reads the content name upper-cased and one button per available action appears with its content label",
+        "Given a button is clicked, When the handler runs, Then game.act is called with that object id and action id",
+        "Given the pointer leaves the object and nothing is focused, When objectHover emits null, Then the overlay disappears",
+        "Given the interactive image, When created, Then useHandCursor is set for objects with and without bounds"
+      ],
+      "scope": {
+        "in_scope": [
+          "objectHover emission",
+          "ObjectOverlay component",
+          "Replacing ActionMenu in App",
+          "Hand cursor on bounded objects"
+        ],
+        "out_of_scope": [
+          "Changing action content",
+          "Restyling Phaser text label"
+        ],
+        "preserve": [
+          "objectClick event",
+          "game.act and useGame view filtering"
+        ]
+      },
+      "technical_constraints": [
+        "Labels and actions come from the object's content definition only",
+        "Use existing Frame kit and palette tokens",
+        "React, Tailwind, Zustand stay"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "ObjectOverlay replaces ActionMenu in App",
+        "ActionMenu.tsx removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-426.md`"
+      ],
+      "non_functional": [
+        "Buttons use the shared four-state Button styling"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85YXV0AFE6Y3TJYPB6N5DRP",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85YXV0AFE6Y3TJYPB6N5DRP",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-426.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AFE6Y3TJYPB6N5DRP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-426.md",
+      "artifact_id": "REQ-426"
+    },
+    {
+      "id": "01M85YXV0AQBAJENDYY3Y8ZRJ4",
+      "kind": "requirement",
+      "title": "REQ · Every object and action is reachable by keyboard and screen reader from game state",
+      "body": "Context: BootScene.onKeyDown moves focus with Tab/arrows, writes focusedObjectId to the store, and Enter/Space activate the focused object via objectClick. Nothing announces the focus and the DOM has no labelled list of objects. Desired: the overlay region has role=group with aria-label from the object name, buttons carry aria-label like 'Inspect Old Bookshelf', Enter on a focused object moves DOM focus to its first action button, Tab/arrows/Enter/Space then work between action buttons, Escape closes via menuClose, and an aria-live=polite region announces the focused object and its actions from the same store state. Expected result: usable without a mouse or sight. Why: Done-when 3.9.\n\n## Acceptance criteria\n- Given focusedObjectId changes to bookshelf, When the live region renders, Then it contains the object name and its action labels\n- Given an object is selected, When the overlay renders, Then each button has an aria-label combining action label and object name\n- Given focus is on an action button, When Enter or Space is pressed, Then game.act is called for that action\n- Given the overlay is open, When Escape is pressed, Then menuClose clears the selection\n\n\n## Scope\n- In scope: ARIA labels and live region\n- In scope: DOM focus move to actions\n- In scope: Escape close\n- Out of scope: Screen-reader testing in a real browser\n- Preserve: BootScene key mapping\n- Preserve: focusChange and menuClose events\n\n\n## Technical constraints\n- Labels come from the same game state and content as the visuals\n- Radix and Tailwind stay\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- Live region and labels implemented in ObjectOverlay\n\n\n## Non-functional requirements\n- Announcements use aria-live polite\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Tab, arrows, Enter and Space reach each object and action, with a live region and ARIA labels from game state.",
+      "description": "Context: BootScene.onKeyDown moves focus with Tab/arrows, writes focusedObjectId to the store, and Enter/Space activate the focused object via objectClick. Nothing announces the focus and the DOM has no labelled list of objects. Desired: the overlay region has role=group with aria-label from the object name, buttons carry aria-label like 'Inspect Old Bookshelf', Enter on a focused object moves DOM focus to its first action button, Tab/arrows/Enter/Space then work between action buttons, Escape closes via menuClose, and an aria-live=polite region announces the focused object and its actions from the same store state. Expected result: usable without a mouse or sight. Why: Done-when 3.9.",
+      "acceptance_criteria": [
+        "Given focusedObjectId changes to bookshelf, When the live region renders, Then it contains the object name and its action labels",
+        "Given an object is selected, When the overlay renders, Then each button has an aria-label combining action label and object name",
+        "Given focus is on an action button, When Enter or Space is pressed, Then game.act is called for that action",
+        "Given the overlay is open, When Escape is pressed, Then menuClose clears the selection"
+      ],
+      "scope": {
+        "in_scope": [
+          "ARIA labels and live region",
+          "DOM focus move to actions",
+          "Escape close"
+        ],
+        "out_of_scope": [
+          "Screen-reader testing in a real browser"
+        ],
+        "preserve": [
+          "BootScene key mapping",
+          "focusChange and menuClose events"
+        ]
+      },
+      "technical_constraints": [
+        "Labels come from the same game state and content as the visuals",
+        "Radix and Tailwind stay"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Live region and labels implemented in ObjectOverlay",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-427.md`"
+      ],
+      "non_functional": [
+        "Announcements use aria-live polite"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85YXV0AFE6Y3TJYPB6N5DRP",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85YXV0AFE6Y3TJYPB6N5DRP",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-427.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AFE6Y3TJYPB6N5DRP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-427.md",
+      "artifact_id": "REQ-427"
+    },
+    {
+      "id": "01M85YXV0AAVW255AWCJ9JC242",
+      "kind": "requirement",
+      "title": "REQ · The unused hotspot-over-image path is fully removed",
+      "body": "Context: the SceneView component, HOTSPOTS and ASSET_PATHS have already been deleted from source; the remaining leftover is the unanchored ActionMenu component, its .action-menu use in App, and its CSS and test references. Desired: remove them and keep the name getSceneView (a data helper in src/engine/scene.ts) untouched. Expected result: a single interaction path through the Phaser scene overlay. Why: Done-when requires the hotspot path gone.\n\n## Acceptance criteria\n- Given the frontend source, When searched for ActionMenu, SceneView component, HOTSPOTS and ASSET_PATHS, Then no component, import or style references remain\n- Given App renders, When an object is selected, Then only ObjectOverlay shows actions\n- Given existing tests that referenced ActionMenu, When run, Then they assert ObjectOverlay instead\n\n\n## Scope\n- In scope: Delete ActionMenu.tsx\n- In scope: Remove import and render in App\n- In scope: Remove .action-menu CSS if present\n- Out of scope: getSceneView data helper\n- Out of scope: Engine scene.ts\n- Preserve: useGame.view and act\n\n\n## Technical constraints\n- Do not touch .devion/worktrees\n- Tests are unit tests with mocks\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- ActionMenu.tsx removed and App compiles with tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "No SceneView, HOTSPOTS, ASSET_PATHS or unanchored ActionMenu code, styles or tests remain.",
+      "description": "Context: the SceneView component, HOTSPOTS and ASSET_PATHS have already been deleted from source; the remaining leftover is the unanchored ActionMenu component, its .action-menu use in App, and its CSS and test references. Desired: remove them and keep the name getSceneView (a data helper in src/engine/scene.ts) untouched. Expected result: a single interaction path through the Phaser scene overlay. Why: Done-when requires the hotspot path gone.",
+      "acceptance_criteria": [
+        "Given the frontend source, When searched for ActionMenu, SceneView component, HOTSPOTS and ASSET_PATHS, Then no component, import or style references remain",
+        "Given App renders, When an object is selected, Then only ObjectOverlay shows actions",
+        "Given existing tests that referenced ActionMenu, When run, Then they assert ObjectOverlay instead"
+      ],
+      "scope": {
+        "in_scope": [
+          "Delete ActionMenu.tsx",
+          "Remove import and render in App",
+          "Remove .action-menu CSS if present"
+        ],
+        "out_of_scope": [
+          "getSceneView data helper",
+          "Engine scene.ts"
+        ],
+        "preserve": [
+          "useGame.view and act"
+        ]
+      },
+      "technical_constraints": [
+        "Do not touch .devion/worktrees",
+        "Tests are unit tests with mocks"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "ActionMenu.tsx removed and App compiles with tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-428.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85YXV0AFE6Y3TJYPB6N5DRP",
+      "matched_feature_id": "01M84T6537GC5YKDGR64QW90RD",
+      "links": [
+        "parent:01M85YXV0AFE6Y3TJYPB6N5DRP",
+        "trace:01M84T6537GC5YKDGR64QW90RD",
+        "artifact:.ai-dlc/requirements/REQ-428.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AFE6Y3TJYPB6N5DRP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-428.md",
+      "artifact_id": "REQ-428"
+    },
+    {
+      "id": "01M85YXV0AG6657J5BY8EAW4EA",
+      "kind": "unit",
+      "title": "Act: Add anchorFor and report canvas rect and zoom from PhaserHost",
+      "body": "Add frontend/src/lib/anchor.ts exporting anchorFor and have PhaserHost report its canvas rect and zoom through an optional onLayout callback on mount, resize and DPR change.\n\n## Acceptance criteria\n- anchorFor returns top-centre and bottom-centre CSS-pixel points from position, bounds, scale, zoom, offset and DPR\n- PhaserHost calls onLayout with {left, top, zoom, dpr} after every applyZoom\n\n\n## Scope\n- In scope: frontend/src/lib/anchor.ts\n- In scope: PhaserHost onLayout prop\n- Out of scope: Overlay rendering\n- Preserve: computeZoom, mount-once game creation\n\n\n## Technical constraints\n- Whole-number zoom only\n- Phaser stays on 3.90.x\n- New file: `game/frontend/src/lib/anchor.ts`\n- Code path: `game/frontend/src/components/PhaserHost.tsx`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- anchorFor exported\n- onLayout invoked on resize\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create the pure anchor function and expose canvas rect and zoom on resize.",
+      "description": "Add frontend/src/lib/anchor.ts exporting anchorFor and have PhaserHost report its canvas rect and zoom through an optional onLayout callback on mount, resize and DPR change.",
+      "acceptance_criteria": [
+        "anchorFor returns top-centre and bottom-centre CSS-pixel points from position, bounds, scale, zoom, offset and DPR",
+        "PhaserHost calls onLayout with {left, top, zoom, dpr} after every applyZoom"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/lib/anchor.ts",
+          "PhaserHost onLayout prop"
+        ],
+        "out_of_scope": [
+          "Overlay rendering"
+        ],
+        "preserve": [
+          "computeZoom, mount-once game creation"
+        ]
+      },
+      "technical_constraints": [
+        "Whole-number zoom only",
+        "Phaser stays on 3.90.x",
+        "New file: `game/frontend/src/lib/anchor.ts`",
+        "Code path: `game/frontend/src/components/PhaserHost.tsx`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "anchorFor exported",
+        "onLayout invoked on resize",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-850.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85YXV0AWBVBD6NC5YGYPX3R",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M85YXV0AWBVBD6NC5YGYPX3R",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-850.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AWBVBD6NC5YGYPX3R"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-850.md",
+      "artifact_id": "UNIT-850",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/anchor.ts",
+          "symbol": "new: anchorFor",
+          "lines": "new",
+          "action": "Create exported type AnchorInput {position:{x:number;y:number}; bounds?:{x:number;y:number;width:number;height:number}; scale:number; zoom:number; offset:{left:number;top:number}; dpr:number} and function anchorFor(input) returning {top:{x,y}; bottom:{x,y}} in CSS pixels or null when bounds is undefined. cssZoom = zoom / dpr; top.x = offset.left + (position.x + (bounds.x + bounds.width/2)*scale)*cssZoom; top.y = offset.top + (position.y + bounds.y*scale)*cssZoom; bottom.y uses bounds.y+bounds.height.",
+          "code": "const z = input.zoom / input.dpr;",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "anchor.ts type-checks"
+        },
+        {
+          "file": "game/frontend/src/components/PhaserHost.tsx",
+          "symbol": "PhaserHost, applyZoom",
+          "lines": "L8-L65",
+          "action": "Add optional prop onLayout?: (l:{left:number;top:number;zoom:number;dpr:number})=>void to PhaserHostProps. After the initial createGame call and at the end of applyZoom, read container.getBoundingClientRect() and call onLayout?.({left:r.left, top:r.top, zoom:currentZoom(), dpr:window.devicePixelRatio}).",
+          "code": "onLayout?.({ left: r.left, top: r.top, zoom: currentZoom(), dpr: window.devicePixelRatio });",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "PhaserHost accepts onLayout"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0AGG79VBMJ5PPB4QEW",
+      "kind": "unit",
+      "title": "Act: Emit objectHover and build the anchored ObjectOverlay in App",
+      "body": "BootScene emits objectHover on SceneObject hover; new ObjectOverlay component uses anchorFor and game.view; App renders it in place of ActionMenu and passes onLayout.\n\n## Acceptance criteria\n- objectHover emits {id} on hover over and {id:null} on out\n- ObjectOverlay shows upper-case name and action buttons for the hovered or focused object\n\n\n## Scope\n- In scope: SceneObject.onHover emission hook\n- In scope: ObjectOverlay.tsx\n- In scope: App wiring\n- In scope: hand cursor for bounded objects in renderContext\n- Out of scope: Keyboard ARIA work\n- Preserve: objectClick flow\n\n\n## Technical constraints\n- Labels from content only\n- Palette tokens and Frame kit\n- Phaser stays on 3.90.x\n- Code path: `game/src/entities/SceneObject.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n- Code path: `game/frontend/src/phaser/renderContext.ts`\n- New file: `game/frontend/src/components/ObjectOverlay.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Overlay visible for hover and focus\n- game.act called on button click\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Emit objectHover from BootScene and render ObjectOverlay with plate and action buttons driven by content.",
+      "description": "BootScene emits objectHover on SceneObject hover; new ObjectOverlay component uses anchorFor and game.view; App renders it in place of ActionMenu and passes onLayout.",
+      "acceptance_criteria": [
+        "objectHover emits {id} on hover over and {id:null} on out",
+        "ObjectOverlay shows upper-case name and action buttons for the hovered or focused object"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject.onHover emission hook",
+          "ObjectOverlay.tsx",
+          "App wiring",
+          "hand cursor for bounded objects in renderContext"
+        ],
+        "out_of_scope": [
+          "Keyboard ARIA work"
+        ],
+        "preserve": [
+          "objectClick flow"
+        ]
+      },
+      "technical_constraints": [
+        "Labels from content only",
+        "Palette tokens and Frame kit",
+        "Phaser stays on 3.90.x",
+        "Code path: `game/src/entities/SceneObject.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`",
+        "Code path: `game/frontend/src/phaser/renderContext.ts`",
+        "New file: `game/frontend/src/components/ObjectOverlay.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Overlay visible for hover and focus",
+        "game.act called on button click",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-851.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85YXV0AN9CX539VTJDNJTQM",
+      "matched_feature_id": "01M857STNYBSFHHDJRC4CHWYJJ",
+      "links": [
+        "parent:01M85YXV0AN9CX539VTJDNJTQM",
+        "trace:01M857STNYBSFHHDJRC4CHWYJJ",
+        "artifact:.ai-dlc/units/UNIT-851.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AN9CX539VTJDNJTQM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-851.md",
+      "artifact_id": "UNIT-851",
+      "steps": [
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "SceneObject.onHoverChange",
+          "lines": "after L84",
+          "action": "Add method onHoverChange(cb:(e:{objectId:string;over:boolean})=>void) storing a private hoverListener; in the constructor handle.onHover callback (L33-L37) call this.hoverListener?.({objectId:this.spec.id, over}) after the highlight calls.",
+          "code": "this.hoverListener?.({ objectId: this.spec.id, over });",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "type-checks"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L66-L67",
+          "action": "After the onInteract line add sceneObjects.forEach to call o.onHoverChange(e => phaserToReact.emit('objectHover',{id: e.over ? e.objectId : null})).",
+          "code": "this.sceneObjects.forEach((o) => o.onHoverChange((e) => phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null })));",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "type-checks"
+        },
+        {
+          "file": "game/frontend/src/phaser/renderContext.ts",
+          "symbol": "createPhaserRenderContext.createSprite",
+          "lines": "L16-L21",
+          "action": "Change the bounded branch to call image.setInteractive(new Phaser.Geom.Rectangle(x,y,width,height), Phaser.Geom.Rectangle.Contains) then image.input.cursor = 'pointer' guarded by image.input being defined, so the hand cursor is used for bounded objects too.",
+          "code": "if (image.input) image.input.cursor = 'pointer';",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "type-checks"
+        },
+        {
+          "file": "game/frontend/src/components/ObjectOverlay.tsx",
+          "symbol": "new: ObjectOverlay",
+          "lines": "new",
+          "action": "Create component ObjectOverlay({view, objectsSpec, layout, activeId, onAction}). Find the object in view by activeId, find its ObjectSpec (position, scale, interactionBounds) from scene.objects in runtime/content, compute anchorFor with layout, and render an absolutely positioned Frame kind='plaque' showing name.toUpperCase() above top point and a Frame with one Button per action (label upper-cased) beneath bottom point. Return null when no active object, no anchor or no layout. Button onClick calls onAction(object.id, action.id).",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "component type-checks"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App",
+          "lines": "L5-L9, L44-L46, L72-L77",
+          "action": "Remove ActionMenu import and render. Add state hoverId (set from phaserToReact.on('objectHover')) and layout (set from PhaserHost onLayout). Compute activeId = hoverId ?? focusedObjectId from useGameStore, keep selectedId set by objectClick. Render <ObjectOverlay .../> inside the scene slot and pass onLayout to PhaserHost.",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "App type-checks and renders ObjectOverlay"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0A9DZ29J8KB3D8WEF2",
+      "kind": "unit",
+      "title": "Act: Add keyboard focus flow, ARIA labels and live region to ObjectOverlay",
+      "body": "ObjectOverlay renders a role=group region with aria-label, per-button aria-label, an aria-live polite region from focusedObjectId, and moves focus to the first action on Enter for a focused object.\n\n## Acceptance criteria\n- Live region text derives from store focus and content\n- Buttons carry combined aria-labels\n- Escape emits menuClose\n\n\n## Scope\n- In scope: ObjectOverlay a11y\n- In scope: Escape handling\n- Out of scope: BootScene key mapping changes\n- Preserve: focusChange and menuClose events\n\n\n## Technical constraints\n- Labels from the same game state\n- Radix and Tailwind stay\n- New file: `game/frontend/src/components/ObjectOverlay.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Live region present while focus is set\n\n\n## Non-functional requirements\n- aria-live polite\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add aria labels, the live region and DOM focus movement to the overlay.",
+      "description": "ObjectOverlay renders a role=group region with aria-label, per-button aria-label, an aria-live polite region from focusedObjectId, and moves focus to the first action on Enter for a focused object.",
+      "acceptance_criteria": [
+        "Live region text derives from store focus and content",
+        "Buttons carry combined aria-labels",
+        "Escape emits menuClose"
+      ],
+      "scope": {
+        "in_scope": [
+          "ObjectOverlay a11y",
+          "Escape handling"
+        ],
+        "out_of_scope": [
+          "BootScene key mapping changes"
+        ],
+        "preserve": [
+          "focusChange and menuClose events"
+        ]
+      },
+      "technical_constraints": [
+        "Labels from the same game state",
+        "Radix and Tailwind stay",
+        "New file: `game/frontend/src/components/ObjectOverlay.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Live region present while focus is set",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-852.md`"
+      ],
+      "non_functional": [
+        "aria-live polite"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85YXV0AQBAJENDYY3Y8ZRJ4",
+      "matched_feature_id": "01M85C02SBR2NF26GC1VJ182TZ",
+      "links": [
+        "parent:01M85YXV0AQBAJENDYY3Y8ZRJ4",
+        "trace:01M85C02SBR2NF26GC1VJ182TZ",
+        "artifact:.ai-dlc/units/UNIT-852.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AQBAJENDYY3Y8ZRJ4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-852.md",
+      "artifact_id": "UNIT-852",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ObjectOverlay.tsx",
+          "symbol": "ObjectOverlay",
+          "lines": "new section",
+          "action": "Add role='group' and aria-label={object.name} on the action container; aria-label={`${action.label} ${object.name}`} on each button; always render a visually-hidden div role='status' aria-live='polite' whose text is `${name}. Actions: ${labels.join(', ')}` for the active object and '' otherwise; add onKeyDown on the container: Escape calls phaserToReact.emit('menuClose',{}).",
+          "code": "<div role=\"status\" aria-live=\"polite\" className=\"sr-only\">{announcement}</div>",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "type-checks"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App objectClick handler",
+          "lines": "L44",
+          "action": "On objectClick also keep selectedId; pass a focusFirstAction flag to ObjectOverlay when selectedId equals activeId so its first button receives DOM focus through a ref in a useEffect.",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "type-checks"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0AJBPGPRK1XB9MTCVA",
+      "kind": "unit",
+      "title": "Act: Delete ActionMenu and leftover hotspot-path styles",
+      "body": "After ObjectOverlay replaced it, delete the unanchored ActionMenu component and remaining references.\n\n## Acceptance criteria\n- ActionMenu.tsx is gone\n- No import of ActionMenu remains\n\n\n## Scope\n- In scope: Delete ActionMenu.tsx\n- In scope: CSS cleanup\n- Out of scope: getSceneView helper\n- Preserve: useGame.view\n\n\n## Technical constraints\n- Do not read .devion/worktrees\n- Code path: `game/frontend/src/components/ActionMenu.tsx`\n- Code path: `game/frontend/src/styles.css`\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- tsc passes without ActionMenu\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Remove ActionMenu.tsx and any .action-menu CSS.",
+      "description": "After ObjectOverlay replaced it, delete the unanchored ActionMenu component and remaining references.",
+      "acceptance_criteria": [
+        "ActionMenu.tsx is gone",
+        "No import of ActionMenu remains"
+      ],
+      "scope": {
+        "in_scope": [
+          "Delete ActionMenu.tsx",
+          "CSS cleanup"
+        ],
+        "out_of_scope": [
+          "getSceneView helper"
+        ],
+        "preserve": [
+          "useGame.view"
+        ]
+      },
+      "technical_constraints": [
+        "Do not read .devion/worktrees",
+        "Code path: `game/frontend/src/components/ActionMenu.tsx`",
+        "Code path: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "tsc passes without ActionMenu",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-853.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85YXV0AAVW255AWCJ9JC242",
+      "matched_feature_id": "01M84J88PS9Z45DYPYF6VK3D3K",
+      "links": [
+        "parent:01M85YXV0AAVW255AWCJ9JC242",
+        "trace:01M84J88PS9Z45DYPYF6VK3D3K",
+        "artifact:.ai-dlc/units/UNIT-853.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AAVW255AWCJ9JC242"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-853.md",
+      "artifact_id": "UNIT-853",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ActionMenu.tsx",
+          "symbol": "ActionMenu",
+          "lines": "L1-L27",
+          "action": "Delete the file; it is no longer imported by App.tsx after the ObjectOverlay swap.",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "no unresolved ActionMenu import"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": ".action-menu rules",
+          "lines": "search",
+          "action": "Remove any .action-menu and .actions selectors if present; leave Tailwind directives untouched.",
+          "command": "cd game/frontend && grep -n 'action-menu' src/styles.css",
+          "expected": "no matches"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0A1Z5P8ESCVRWFY6E1",
+      "kind": "unit",
+      "title": "Verify: anchorFor maths and PhaserHost layout reporting unit tests",
+      "body": "Test anchorFor with fixed inputs and PhaserHost onLayout with createGame, ResizeObserver and matchMedia faked.\n\n## Acceptance criteria\n- Anchor results match the formula for zoom, offset and DPR\n- onLayout fires on mount and on resize\n\n\n## Scope\n- In scope: frontend/tests/anchor.test.ts\n- In scope: frontend/tests/phaserHostLayout.test.tsx\n- Out of scope: Real browser\n- Preserve: Existing phaserHost tests\n\n\n## Technical constraints\n- All dependencies mocked\n- Phaser stays on 3.90.x\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for anchor maths and onLayout calls with Phaser mocked.",
+      "description": "Test anchorFor with fixed inputs and PhaserHost onLayout with createGame, ResizeObserver and matchMedia faked.",
+      "acceptance_criteria": [
+        "Anchor results match the formula for zoom, offset and DPR",
+        "onLayout fires on mount and on resize"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/anchor.test.ts",
+          "frontend/tests/phaserHostLayout.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real browser"
+        ],
+        "preserve": [
+          "Existing phaserHost tests"
+        ]
+      },
+      "technical_constraints": [
+        "All dependencies mocked",
+        "Phaser stays on 3.90.x"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-854.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85YXV0AG6657J5BY8EAW4EA",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85YXV0AG6657J5BY8EAW4EA",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-854.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AG6657J5BY8EAW4EA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-854.md",
+      "artifact_id": "UNIT-854",
+      "steps": [
+        {
+          "file": "game/frontend/tests/anchor.test.ts",
+          "symbol": "new: anchorFor tests",
+          "lines": "new",
+          "action": "Add tests: (1) position (150,60), bounds {0,0,48,96}, scale 1, zoom 2, offset (10,20), dpr 1 expects top {x:358,y:140} and bottom {x:358,y:332}; (2) zoom 4 dpr 2 equals result (1); (3) bounds undefined returns null; (4) scale 2 doubles bounds offsets.",
+          "command": "cd game/frontend && npx vitest run tests/anchor.test.ts",
+          "expected": "4 tests pass"
+        },
+        {
+          "file": "game/frontend/tests/phaserHostLayout.test.tsx",
+          "symbol": "new: PhaserHost onLayout",
+          "lines": "new",
+          "action": "Copy the mock setup (vi.mock createGame, fake ResizeObserver capturing its callback, jsdom) from frontend/tests/appObjectClick.test.tsx. Render PhaserHost with onLayout spy; assert one call with zoom>=1 and dpr 1 on mount; invoke the captured ResizeObserver callback and assert a second call.",
+          "command": "cd game/frontend && npx vitest run tests/phaserHostLayout.test.tsx",
+          "expected": "onLayout called on mount and on resize"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0AR73QRRFM4FTCPQYN",
+      "kind": "unit",
+      "title": "Verify: hover emission and overlay plate and action list unit tests",
+      "body": "Test SceneObject hover callback, BootScene emission with Phaser mocked, and ObjectOverlay output from the real bedroom content.\n\n## Acceptance criteria\n- objectHover emission verified\n- Plate and action list verified against content\n- Click calls game.act\n\n\n## Scope\n- In scope: frontend/tests/objectOverlay.test.tsx\n- In scope: frontend/tests/bootSceneHover.test.ts\n- Out of scope: Real browser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- All dependencies mocked\n- Fixtures come from game/src/content/worlds/the-boys-room/scenes/bedroom.yaml via runtime/content, not hard-coded payloads\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for objectHover emission and the overlay content from content definitions.",
+      "description": "Test SceneObject hover callback, BootScene emission with Phaser mocked, and ObjectOverlay output from the real bedroom content.",
+      "acceptance_criteria": [
+        "objectHover emission verified",
+        "Plate and action list verified against content",
+        "Click calls game.act"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/objectOverlay.test.tsx",
+          "frontend/tests/bootSceneHover.test.ts"
+        ],
+        "out_of_scope": [
+          "Real browser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "All dependencies mocked",
+        "Fixtures come from game/src/content/worlds/the-boys-room/scenes/bedroom.yaml via runtime/content, not hard-coded payloads"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-855.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85YXV0AGG79VBMJ5PPB4QEW",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85YXV0AGG79VBMJ5PPB4QEW",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-855.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AGG79VBMJ5PPB4QEW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-855.md",
+      "artifact_id": "UNIT-855",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneHover.test.ts",
+          "symbol": "new: BootScene objectHover",
+          "lines": "new",
+          "action": "Reuse the Phaser mock pattern from frontend/tests/bootSceneSync.test.ts. Trigger the fake handle hover callback with true then false for the bookshelf; spy phaserToReact.emit and assert calls objectHover {id:'bookshelf'} then {id:null}.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneHover.test.ts",
+          "expected": "two emissions asserted"
+        },
+        {
+          "file": "game/frontend/tests/objectOverlay.test.tsx",
+          "symbol": "new: ObjectOverlay tests",
+          "lines": "new",
+          "action": "Render ObjectOverlay with the real scene content from runtime/content, getSceneView(createInitialState) as view, layout {left:0,top:0,zoom:2,dpr:1}, activeId 'bookshelf'. Assert plate text equals the bookshelf content name upper-cased, buttons equal the action labels of the view upper-cased, and the plate sits at the anchorFor top y. Click a button and assert onAction spy called with ('bookshelf', id). Assert null render for activeId null and for missing layout.",
+          "command": "cd game/frontend && npx vitest run tests/objectOverlay.test.tsx",
+          "expected": "all overlay tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0ANQQSBW31YT0KG86Q",
+      "kind": "unit",
+      "title": "Verify: keyboard flow and ARIA labels unit tests",
+      "body": "Test the overlay a11y with the store seeded and the event bus spied.\n\n## Acceptance criteria\n- Live region, aria-labels, focus move and Escape asserted in one a11y test file\n- Enter on an action button calls onAction and Escape emits menuClose\n\n\n## Scope\n- In scope: frontend/tests/objectOverlayA11y.test.tsx\n- Out of scope: Screen reader in a browser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- All dependencies mocked\n- Fixtures come from runtime/content bedroom scene\n\n\n## Dependencies\n- ACT3\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for live region, labels, focus move and Escape.",
+      "description": "Test the overlay a11y with the store seeded and the event bus spied.",
+      "acceptance_criteria": [
+        "Live region, aria-labels, focus move and Escape asserted in one a11y test file",
+        "Enter on an action button calls onAction and Escape emits menuClose"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/objectOverlayA11y.test.tsx"
+        ],
+        "out_of_scope": [
+          "Screen reader in a browser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "All dependencies mocked",
+        "Fixtures come from runtime/content bedroom scene"
+      ],
+      "dependencies": [
+        "ACT3"
+      ],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-856.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85YXV0A9DZ29J8KB3D8WEF2",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85YXV0A9DZ29J8KB3D8WEF2",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-856.md"
+      ],
+      "depends_on": [
+        "01M85YXV0A9DZ29J8KB3D8WEF2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-856.md",
+      "artifact_id": "UNIT-856",
+      "steps": [
+        {
+          "file": "game/frontend/tests/objectOverlayA11y.test.tsx",
+          "symbol": "new: ObjectOverlay a11y tests",
+          "lines": "new",
+          "action": "jsdom test: render ObjectOverlay for 'bookshelf'; assert role=status text contains the content name and action labels; assert each button aria-label equals `${label} ${name}`; with focus flag assert document.activeElement is the first button; userEvent Tab moves to the second button; press Enter on a button and assert onAction spy called; press Escape and assert phaserToReact.emit spy called with ('menuClose',{}).",
+          "command": "cd game/frontend && npx vitest run tests/objectOverlayA11y.test.tsx",
+          "expected": "all a11y tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0A3E0TKYDSFZCNRYGG",
+      "kind": "unit",
+      "title": "Verify: hotspot path removed and App selection uses the overlay unit tests",
+      "body": "A source scan test with fs reading of the src tree and updated appObjectClick and appMenuClose tests.\n\n## Acceptance criteria\n- No forbidden names in source\n- App selection renders overlay\n\n\n## Scope\n- In scope: frontend/tests/noHotspotPath.test.ts\n- In scope: frontend/tests/appObjectClick.test.tsx\n- In scope: frontend/tests/appMenuClose.test.tsx\n- Out of scope: Real browser\n- Preserve: Other tests\n\n\n## Technical constraints\n- fs reads only real source files in the repo; Phaser mocked\n\n\n## Dependencies\n- ACT4\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving no hotspot-path names remain and App shows the overlay.",
+      "description": "A source scan test with fs reading of the src tree and updated appObjectClick and appMenuClose tests.",
+      "acceptance_criteria": [
+        "No forbidden names in source",
+        "App selection renders overlay"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/noHotspotPath.test.ts",
+          "frontend/tests/appObjectClick.test.tsx",
+          "frontend/tests/appMenuClose.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real browser"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "fs reads only real source files in the repo; Phaser mocked"
+      ],
+      "dependencies": [
+        "ACT4"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-857.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85YXV0AJBPGPRK1XB9MTCVA",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85YXV0AJBPGPRK1XB9MTCVA",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-857.md"
+      ],
+      "depends_on": [
+        "01M85YXV0AJBPGPRK1XB9MTCVA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-857.md",
+      "artifact_id": "UNIT-857",
+      "steps": [
+        {
+          "file": "game/frontend/tests/noHotspotPath.test.ts",
+          "symbol": "new: no hotspot path",
+          "lines": "new",
+          "action": "Walk game/frontend/src and game/src with node:fs; assert no file contains HOTSPOTS, ASSET_PATHS, ActionMenu or a component named SceneView (word-boundary regex /\\bSceneView\\b/), and that components/ActionMenu.tsx does not exist.",
+          "command": "cd game/frontend && npx vitest run tests/noHotspotPath.test.ts",
+          "expected": "scan finds no matches"
+        },
+        {
+          "file": "game/frontend/tests/appObjectClick.test.tsx",
+          "symbol": "App objectClick bridge",
+          "lines": "L50-end",
+          "action": "Change assertions that query the ActionMenu region to query the overlay buttons after emitting objectClick and objectHover for the bookshelf with the Phaser host mocked.",
+          "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx tests/appMenuClose.test.tsx",
+          "expected": "both files pass using the overlay"
+        }
+      ]
+    },
+    {
+      "id": "01M85YXV0A01KPHSVHRQ7S23WG",
+      "kind": "evidence",
+      "title": "Evidence: In-scene object interaction unit tests pass",
+      "body": "Evidence bundle of the verify unit test runs proving SG-6 acceptance criteria.\n\n## Acceptance criteria\n- Anchor, overlay, a11y and removal tests all pass\n- tsc --noEmit passes\n\n\n## Scope\n- In scope: Test run outputs\n- Out of scope: Manual checks\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- VER1\n- VER2\n- VER3\n- VER4\n\n\n## Definition of done\n- All four verify units green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing results of the anchor, overlay, a11y and hotspot-removal unit tests.",
+      "description": "Evidence bundle of the verify unit test runs proving SG-6 acceptance criteria.",
+      "acceptance_criteria": [
+        "Anchor, overlay, a11y and removal tests all pass",
+        "tsc --noEmit passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run outputs"
+        ],
+        "out_of_scope": [
+          "Manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2",
+        "VER3",
+        "VER4"
+      ],
+      "definition_of_done": [
+        "All four verify units green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-171.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85YXV0A1Z5P8ESCVRWFY6E1",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85YXV0A1Z5P8ESCVRWFY6E1",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-171.md"
+      ],
+      "depends_on": [
+        "01M85YXV0A1Z5P8ESCVRWFY6E1",
+        "01M85YXV0AR73QRRFM4FTCPQYN",
+        "01M85YXV0ANQQSBW31YT0KG86Q",
+        "01M85YXV0A3E0TKYDSFZCNRYGG"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-171.md",
+      "artifact_id": "EVD-171"
+    }
+  ],
+  "created_at": "2026-11-24T05:04:41.622674+00:00",
+  "summary": "AI · 0 NEW · 14 UPDATE · 0 UNCHANGED · 14/14 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

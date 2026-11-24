@@ -1,0 +1,327 @@
+{
+  "intent_id": "01M85FCQ25QMCWYX5G3PQG6Y92",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85FE4F3V1QD4WT032JZXGQ7",
+      "kind": "intent",
+      "title": "SG-8.4.2 Loading message while history loads, list stays rendered",
+      "body": "Context: ContributionSheet already renders 'Loading your suggestions…' while listMine is pending and always renders the 'Your suggestions' list. Gap: historyStatus starts as 'loading' and the history effect returns early when roundId is '' or the sheet is closed, so the message stays visible forever in that state, which the 401-retry test in tests/contribution.test.tsx uses. Desired behavior: the message appears only while a history request is in flight, and the list remains rendered so the 401-retry test still passes unchanged. Why: avoid a permanent misleading loading state.\n\n## Acceptance criteria\n- Given roundId is 'round-1' and listMine is pending, when the sheet opens, then 'Loading your suggestions…' is shown and the 'Your suggestions' list is rendered\n- Given roundId is '', when the sheet opens, then 'Loading your suggestions…' is not shown and the 'Your suggestions' list is rendered\n- Given the existing 401-retry test, when it runs, then it passes unchanged\n\n\n## Scope\n- In scope: ContributionSheet history status initialisation\n- Out of scope: API client changes\n- Out of scope: Retry and error UI changes\n- Out of scope: Backend changes\n- Preserve: Existing loading, error and Retry behavior\n- Preserve: aria-label 'Your suggestions' list\n- Preserve: Merge of history with in-flight entries\n\n\n## Technical constraints\n- React + TypeScript; keep the HistoryStatus type 'loading' | 'ready' | 'error'\n- No mock data replacing the real listMine call\n\n\n## Definition of done\n- Loading message never persists without a request in flight\n- Existing contribution tests remain green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Show 'Loading your suggestions…' only while history is really loading; keep the Your suggestions list rendered",
+      "description": "Context: ContributionSheet already renders 'Loading your suggestions…' while listMine is pending and always renders the 'Your suggestions' list. Gap: historyStatus starts as 'loading' and the history effect returns early when roundId is '' or the sheet is closed, so the message stays visible forever in that state, which the 401-retry test in tests/contribution.test.tsx uses. Desired behavior: the message appears only while a history request is in flight, and the list remains rendered so the 401-retry test still passes unchanged. Why: avoid a permanent misleading loading state.",
+      "acceptance_criteria": [
+        "Given roundId is 'round-1' and listMine is pending, when the sheet opens, then 'Loading your suggestions…' is shown and the 'Your suggestions' list is rendered",
+        "Given roundId is '', when the sheet opens, then 'Loading your suggestions…' is not shown and the 'Your suggestions' list is rendered",
+        "Given the existing 401-retry test, when it runs, then it passes unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet history status initialisation"
+        ],
+        "out_of_scope": [
+          "API client changes",
+          "Retry and error UI changes",
+          "Backend changes"
+        ],
+        "preserve": [
+          "Existing loading, error and Retry behavior",
+          "aria-label 'Your suggestions' list",
+          "Merge of history with in-flight entries"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript; keep the HistoryStatus type 'loading' | 'ready' | 'error'",
+        "No mock data replacing the real listMine call"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Loading message never persists without a request in flight",
+        "Existing contribution tests remain green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-136.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85EQPDK0TEWFPXS0R0FYGWD",
+      "links": [
+        "trace:01M85EQPDK0TEWFPXS0R0FYGWD",
+        "artifact:.ai-dlc/intent/INT-136.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-136.md",
+      "artifact_id": "INT-136"
+    },
+    {
+      "id": "01M85FE4F3AKMEPXFZ592CAWXQ",
+      "kind": "requirement",
+      "title": "REQ · Loading message is shown only while history is loading and the list stays rendered",
+      "body": "Context: game/frontend/src/components/ContributionSheet.tsx line 47 initialises historyStatus to 'loading' and the effect at L50-L76 returns early without changing it when !open or roundId === ''. Desired behavior: with no round id or a closed sheet there is no request, so status must not be 'loading'. Expected result: the loading message is absent in that case and present while listMine is pending. Why: removes a stuck message and keeps the 401-retry test passing.\n\n## Acceptance criteria\n- Given roundId is '' when the sheet is open, then no 'Loading your suggestions…' text is rendered\n- Given roundId is set and listMine is pending, then 'Loading your suggestions…' is rendered and the list 'Your suggestions' exists\n- Given the 401-retry scenario with roundId '', then the three ordered POST calls occur and the list shows 'Sent'\n\n\n## Scope\n- In scope: historyStatus initial value and early-return branch in ContributionSheet\n- Out of scope: Retry button behavior\n- Out of scope: Error message text\n- Preserve: HISTORY_LOADING and HISTORY_ERROR texts\n- Preserve: Cancellation guard in the effect\n\n\n## Technical constraints\n- Keep the single-writer history status in ContributionSheet\n\n\n## Definition of done\n- Behavior matches acceptance criteria\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "History loading message tied to an actual in-flight request",
+      "description": "Context: game/frontend/src/components/ContributionSheet.tsx line 47 initialises historyStatus to 'loading' and the effect at L50-L76 returns early without changing it when !open or roundId === ''. Desired behavior: with no round id or a closed sheet there is no request, so status must not be 'loading'. Expected result: the loading message is absent in that case and present while listMine is pending. Why: removes a stuck message and keeps the 401-retry test passing.",
+      "acceptance_criteria": [
+        "Given roundId is '' when the sheet is open, then no 'Loading your suggestions…' text is rendered",
+        "Given roundId is set and listMine is pending, then 'Loading your suggestions…' is rendered and the list 'Your suggestions' exists",
+        "Given the 401-retry scenario with roundId '', then the three ordered POST calls occur and the list shows 'Sent'"
+      ],
+      "scope": {
+        "in_scope": [
+          "historyStatus initial value and early-return branch in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "Retry button behavior",
+          "Error message text"
+        ],
+        "preserve": [
+          "HISTORY_LOADING and HISTORY_ERROR texts",
+          "Cancellation guard in the effect"
+        ]
+      },
+      "technical_constraints": [
+        "Keep the single-writer history status in ContributionSheet"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Behavior matches acceptance criteria",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-339.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85FE4F3V1QD4WT032JZXGQ7",
+      "matched_feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+      "links": [
+        "parent:01M85FE4F3V1QD4WT032JZXGQ7",
+        "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+        "artifact:.ai-dlc/requirements/REQ-339.md"
+      ],
+      "depends_on": [
+        "01M85FE4F3V1QD4WT032JZXGQ7"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-339.md",
+      "artifact_id": "REQ-339"
+    },
+    {
+      "id": "01M85FE4F3NT6Y7TCY8XTXTTF2",
+      "kind": "unit",
+      "title": "Act: Do not report loading when no history request is made",
+      "body": "In ContributionSheet, make historyStatus 'ready' whenever the history effect does not fire a request (roundId === '' or !open), and keep 'loading' only while listMine is in flight.\n\n## Acceptance criteria\n- With roundId '' the status is 'ready' on first render\n- With roundId set the status is 'loading' until listMine settles\n\n\n## Scope\n- In scope: ContributionSheet.tsx historyStatus initial state and early-return branch\n- Out of scope: Tests\n- Out of scope: API client\n- Preserve: Loading and error rendering at L153-L157\n- Preserve: Cancelled-flag guards\n\n\n## Technical constraints\n- Do not add a second status state; keep a single writer\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Loading message absent when roundId is ''\n- Product code compiles with tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Initialise and reset historyStatus to ready when there is no round id or the sheet is closed",
+      "description": "In ContributionSheet, make historyStatus 'ready' whenever the history effect does not fire a request (roundId === '' or !open), and keep 'loading' only while listMine is in flight.",
+      "acceptance_criteria": [
+        "With roundId '' the status is 'ready' on first render",
+        "With roundId set the status is 'loading' until listMine settles"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx historyStatus initial state and early-return branch"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "API client"
+        ],
+        "preserve": [
+          "Loading and error rendering at L153-L157",
+          "Cancelled-flag guards"
+        ]
+      },
+      "technical_constraints": [
+        "Do not add a second status state; keep a single writer",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Loading message absent when roundId is ''",
+        "Product code compiles with tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-678.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85FE4F3AKMEPXFZ592CAWXQ",
+      "matched_feature_id": "01M85BP7N2JZRD4NTYPN5F17SW",
+      "links": [
+        "parent:01M85FE4F3AKMEPXFZ592CAWXQ",
+        "trace:01M85BP7N2JZRD4NTYPN5F17SW",
+        "artifact:.ai-dlc/units/UNIT-678.md"
+      ],
+      "depends_on": [
+        "01M85FE4F3AKMEPXFZ592CAWXQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-678.md",
+      "artifact_id": "UNIT-678",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (historyStatus useState)",
+          "lines": "L47",
+          "action": "Change the initial state so it is 'loading' only when a request will be made: derive it from open and roundId instead of the constant 'loading'.",
+          "code": "useState<HistoryStatus>('loading') -> useState<HistoryStatus>(open && roundId !== '' ? 'loading' : 'ready')",
+          "expected": "First render with roundId '' has historyStatus 'ready' so no loading paragraph renders"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet history useEffect",
+          "lines": "L50-L53",
+          "action": "Replace the early return with a branch that sets status 'ready' before returning, so reopening with an empty round id or closing never leaves 'loading'.",
+          "code": "if (!open || roundId === '') return; -> if (!open || roundId === '') { setHistoryStatus('ready'); return; }",
+          "expected": "Status is 'ready' whenever no listMine request is issued; request path still sets 'loading' at L53"
+        }
+      ]
+    },
+    {
+      "id": "01M85FE4F3NKMDS2EKMXZBDZYG",
+      "kind": "unit",
+      "title": "Verify: Loading message only during in-flight history and 401-retry test still passes",
+      "body": "Add unit tests for ContributionSheet history loading visibility, with listMine mocked, and re-run the existing 401-retry test.\n\n## Acceptance criteria\n- Test asserts the loading text is absent when roundId is ''\n- Test asserts loading text and list both present while listMine is pending\n- Existing 401-retry test passes unchanged\n\n\n## Scope\n- In scope: New test file for loading visibility\n- In scope: Running tests/contribution.test.tsx\n- Out of scope: Product code changes\n- Preserve: Existing test files\n\n\n## Technical constraints\n- listMine and submitContribution are mocked via vi.mock of ../src/api/client as in tests/contributionHistoryStatus.test.tsx; no network\n\n\n## Definition of done\n- New tests pass\n- tests/contribution.test.tsx passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for loading visibility with and without a round id",
+      "description": "Add unit tests for ContributionSheet history loading visibility, with listMine mocked, and re-run the existing 401-retry test.",
+      "acceptance_criteria": [
+        "Test asserts the loading text is absent when roundId is ''",
+        "Test asserts loading text and list both present while listMine is pending",
+        "Existing 401-retry test passes unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file for loading visibility",
+          "Running tests/contribution.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing test files"
+        ]
+      },
+      "technical_constraints": [
+        "listMine and submitContribution are mocked via vi.mock of ../src/api/client as in tests/contributionHistoryStatus.test.tsx; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New tests pass",
+        "tests/contribution.test.tsx passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-679.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85FE4F3NT6Y7TCY8XTXTTF2",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85FE4F3NT6Y7TCY8XTXTTF2",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-679.md"
+      ],
+      "depends_on": [
+        "01M85FE4F3NT6Y7TCY8XTXTTF2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-679.md",
+      "artifact_id": "UNIT-679",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistoryLoadingVisibility.test.tsx",
+          "symbol": "new: describe('history loading visibility')",
+          "lines": "new",
+          "action": "Create the file with the jsdom pragma and the vi.mock of '../src/api/client' (listMine, submitContribution as vi.fn) copied from contributionHistoryStatus.test.tsx lines 1-16. Add test 'hides loading when roundId is empty': render <ContributionSheet open onClose={vi.fn()} roundId=\"\" />, assert screen.queryByText('Loading your suggestions…') is null, assert getByRole('list',{name:'Your suggestions'}) exists, and assert listMine was not called.",
+          "command": "npx vitest run tests/contributionHistoryLoadingVisibility.test.tsx",
+          "expected": "Test passes: no loading text, list present, listMine not called"
+        },
+        {
+          "file": "game/frontend/tests/contributionHistoryLoadingVisibility.test.tsx",
+          "symbol": "it('shows loading and the list while listMine is pending')",
+          "lines": "new",
+          "action": "Mock listMine with mockReturnValue(new Promise(() => {})), render with roundId=\"round-1\", assert getByText('Loading your suggestions…') is present and getByRole('list',{name:'Your suggestions'}) is present.",
+          "command": "npx vitest run tests/contributionHistoryLoadingVisibility.test.tsx",
+          "expected": "Test passes: both loading text and list visible"
+        },
+        {
+          "file": "game/frontend/tests/contribution.test.tsx",
+          "symbol": "it('Given the server answers 401 once ...')",
+          "lines": "L87-L112",
+          "action": "Do not edit; run this existing test to confirm it passes with the Act change.",
+          "command": "npx vitest run tests/contribution.test.tsx -t \"answers 401 once\"",
+          "expected": "The 401-retry test passes with the three ordered POST calls and 'Sent' in the list"
+        }
+      ]
+    },
+    {
+      "id": "01M85FE4F3AVQ1M9SD22VGWAFK",
+      "kind": "evidence",
+      "title": "Evidence: History loading visibility unit tests",
+      "body": "Collect the passing results of the loading visibility tests and the existing 401-retry test as evidence that the loading message is accurate and the list stays rendered.\n\n## Acceptance criteria\n- Loading visibility tests report passing\n- 401-retry test reports passing\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n\n\n## Definition of done\n- Test outputs recorded as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results for loading visibility and the 401-retry test",
+      "description": "Collect the passing results of the loading visibility tests and the existing 401-retry test as evidence that the loading message is accurate and the list stays rendered.",
+      "acceptance_criteria": [
+        "Loading visibility tests report passing",
+        "401-retry test reports passing"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test outputs recorded as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-136.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85FE4F3NKMDS2EKMXZBDZYG",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85FE4F3NKMDS2EKMXZBDZYG",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-136.md"
+      ],
+      "depends_on": [
+        "01M85FE4F3NKMDS2EKMXZBDZYG"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-136.md",
+      "artifact_id": "EVD-136"
+    }
+  ],
+  "created_at": "2026-11-24T00:32:02.034182+00:00",
+  "summary": "AI · 0 NEW · 5 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

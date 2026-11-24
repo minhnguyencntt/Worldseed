@@ -1,0 +1,82 @@
+{
+  "id": "01M84660HRQ8WB40ZEMH0B6N2V",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "Act: Add admin Middleware and Admin/Round config",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create middleware and extend config",
+  "description": "Implement admin.Middleware and config AdminConfig, RoundConfig.",
+  "acceptance_criteria": [
+    "401 body is plain text unauthorized",
+    "Env STORYFORGE_ADMIN_TOKEN overrides admin.token"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/admin/middleware.go",
+      "backend/internal/config/config.go",
+      "backend/configs/config.example.yaml"
+    ],
+    "out_of_scope": [],
+    "preserve": [
+      "Contribution defaults"
+    ]
+  },
+  "technical_constraints": [
+    "Never log the token",
+    "New file: `backend/internal/admin/middleware.go`",
+    "Code path: `backend/internal/config/config.go`",
+    "Code path: `backend/configs/config.example.yaml`"
+  ],
+  "dependencies": [
+    "R4"
+  ],
+  "definition_of_done": [
+    "go build ./...",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-074.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD8VENQFBRDMT803MZQ",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-074.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HR2V4VSY3C381ZBPQK"
+  ],
+  "sim_node_id": "01M8465XD8G47NJ5N8ENNAXBAK",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-074.md",
+  "artifact_id": "UNIT-074",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/admin/middleware.go",
+      "symbol": "new: Middleware",
+      "lines": "new",
+      "action": "Middleware(token string) func(http.Handler) http.Handler: reject with http.Error(w,\"unauthorized\",401) when token==\"\" or the Authorization header lacks the \"Bearer \" prefix or sha256 digests differ under subtle.ConstantTimeCompare; otherwise call next",
+      "expected": "Only the correct bearer token passes"
+    },
+    {
+      "file": "backend/internal/config/config.go",
+      "symbol": "Config, AdminConfig, RoundConfig, LoadFS, applyEnv",
+      "lines": "L21-L28, L111-L126, L128-L140",
+      "action": "Add Admin AdminConfig{Token string yaml:\"token\"} and Round RoundConfig{Duration time.Duration yaml:\"duration\"; BaseRelease string yaml:\"base_release\"; SchedulerInterval time.Duration yaml:\"scheduler_interval\"} to Config; in LoadFS default Duration 24h, BaseRelease \"1.0.0\", SchedulerInterval 30s when zero/empty; in applyEnv add override(&cfg.Admin.Token, \"STORYFORGE_ADMIN_TOKEN\")",
+      "expected": "Defaults and env override apply"
+    },
+    {
+      "file": "backend/configs/config.example.yaml",
+      "symbol": "admin, round keys",
+      "lines": "after L30",
+      "action": "Append `admin:\\n  token: \"\"` and `round:\\n  duration: \"24h\"\\n  base_release: \"1.0.0\"\\n  scheduler_interval: \"30s\"`",
+      "expected": "Example config documents new keys"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.276260+00:00"
+}

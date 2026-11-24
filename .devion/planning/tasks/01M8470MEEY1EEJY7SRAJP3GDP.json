@@ -1,0 +1,54 @@
+{
+  "id": "01M8470MEEY1EEJY7SRAJP3GDP",
+  "intent_id": "01M846Z6ACXTWSSAY9C7B11N6G",
+  "title": "REQ · Tick ignores future rounds and rounds in other statuses and keeps closing after an open failure",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Non-due and non-matching rounds are skipped; errors are joined and the pass continues",
+  "description": "Context: Tick skips rounds not matching either case and collects errors in errs, returning errors.Join(errs...). Desired behavior: failure to open one round never prevents closing another. Expected result: Tick returns an error wrapping the open error while Close still runs. Why: a stuck round must not block expiry of others.",
+  "acceptance_criteria": [
+    "Given future SCHEDULED, future OPEN and COMPLETED rounds, when Tick runs before the boundary, then no Controller call is made.",
+    "Given Open returns an error for one round, when Tick runs, then Close is still called for an expired OPEN round.",
+    "Given Open returns an error, when Tick returns, then errors.Is(err, openErr) is true."
+  ],
+  "scope": {
+    "in_scope": [
+      "Skip logic and error aggregation in Tick"
+    ],
+    "out_of_scope": [
+      "Run loop logging"
+    ],
+    "preserve": [
+      "errors.Join return value",
+      "error wrapping with %w"
+    ]
+  },
+  "technical_constraints": [
+    "Do not return early from the per-round loop on a Controller error"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Skip and continue-on-error behavior matches the acceptance criteria",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-045.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8470JSMH8S1CPXC2ESPZFX5",
+    "trace:01M844GYQJKSFBQC069PMYP5R3",
+    "artifact:.ai-dlc/requirements/REQ-045.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M8470MEEZG7PXATWZD3FTMR0"
+  ],
+  "sim_node_id": "01M8470JSMA8W2YSMCAJJ2VXB0",
+  "feature_id": "01M844GYQJKSFBQC069PMYP5R3",
+  "artifact_path": ".ai-dlc/requirements/REQ-045.md",
+  "artifact_id": "REQ-045",
+  "created_at": "2026-11-23T12:45:08.429996+00:00",
+  "updated_at": "2026-11-23T12:45:32.269563+00:00"
+}

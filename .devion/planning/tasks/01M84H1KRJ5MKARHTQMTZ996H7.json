@@ -1,0 +1,69 @@
+{
+  "id": "01M84H1KRJ5MKARHTQMTZ996H7",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "Act: Implement the provider factory New",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create provider.go with New selecting by kind",
+  "description": "Create backend/worker/internal/provider/provider.go with New(kind string, e Exec) (Agent-compatible, error).",
+  "acceptance_criteria": [
+    "New returns Mock for mock",
+    "New returns Claude for claude and an error for unknown kinds"
+  ],
+  "scope": {
+    "in_scope": [
+      "provider.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "config kind strings"
+    ]
+  },
+  "technical_constraints": [
+    "Return type is an Agent interface declared in the provider package with the same Run signature as runner.Agent",
+    "New file: `backend/worker/internal/provider/provider.go`"
+  ],
+  "dependencies": [
+    "R3",
+    "A1",
+    "A2"
+  ],
+  "definition_of_done": [
+    "package compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-224.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H148VTGZM54F839F9WYMV",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-224.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H1KRJH3DYB1K7ZFZNMGEC"
+  ],
+  "sim_node_id": "01M84H148VRQMQACEETB7RFPWB",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-224.md",
+  "artifact_id": "UNIT-224",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/provider/provider.go",
+      "symbol": "new: Agent, New",
+      "lines": "new",
+      "action": "Declare interface Agent with Run(ctx context.Context, workDir string) (float64, error). Declare func New(kind string, e Exec) (Agent, error) with a switch: \"mock\" returns Mock{}, nil; \"claude\" returns NewClaude(e); default returns fmt.Errorf with text provider: unknown kind %q.",
+      "code": "default: return nil, fmt.Errorf(\"provider: unknown kind %q\", kind)",
+      "expected": "go build ./internal/provider succeeds"
+    }
+  ],
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.942053+00:00"
+}

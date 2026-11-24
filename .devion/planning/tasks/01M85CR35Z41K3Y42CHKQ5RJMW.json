@@ -1,0 +1,84 @@
+{
+  "id": "01M85CR35Z41K3Y42CHKQ5RJMW",
+  "intent_id": "01M85CJMBD6F8YVA6APHGQ7386",
+  "title": "Act: Add max length, counter and over-limit message to ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Counter and length gating",
+  "description": "Add MAX_PROMPT_LENGTH constant and render a counter plus over-limit message, gating submit.",
+  "acceptance_criteria": [
+    "Counter reads N/500",
+    "Over-limit text disables Send and shows 'Idea is too long'"
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts constant",
+      "ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "MAX_PER_PLAYER"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/api/client.ts`",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Length rule enforced in UI",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-633.md`"
+  ],
+  "non_functional": [
+    "Counter linked via aria-describedby"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CMAABKWM4KVBHDV31W1XR",
+    "trace:01M85C02SB6S6PDSR020JNXF6J",
+    "artifact:.ai-dlc/units/UNIT-633.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85CR35ZDR0VD233JVFEFKS0"
+  ],
+  "sim_node_id": "01M85CMAABSZGJ12NNMYXQNNAP",
+  "feature_id": "01M85C02SB6S6PDSR020JNXF6J",
+  "artifact_path": ".ai-dlc/units/UNIT-633.md",
+  "artifact_id": "UNIT-633",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "MAX_PROMPT_LENGTH",
+      "lines": "after L2",
+      "action": "Export the constant matching the backend default max_prompt_len.",
+      "code": "export const MAX_PROMPT_LENGTH = 500;",
+      "expected": "Constant importable from client"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (length state)",
+      "lines": "L2, L64-L69",
+      "action": "Import MAX_PROMPT_LENGTH; add const length = text.trim().length and const tooLong = length > MAX_PROMPT_LENGTH; in handleSubmit add 'if (tooLong) { setError(\"Idea is too long\"); return; }' after the blank check.",
+      "code": "const tooLong = text.trim().length > MAX_PROMPT_LENGTH;",
+      "expected": "Over-limit submit is rejected before submitContribution"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "textarea and Send markup",
+      "lines": "L102-L108",
+      "action": "Add aria-describedby='contribution-count' to the textarea; after it render <p id='contribution-count'>{`${text.length}/${MAX_PROMPT_LENGTH}`}</p>; render <p role='alert'>Idea is too long</p> when tooLong; change Send to disabled={isBlank || tooLong}.",
+      "code": "<p id=\"contribution-count\">{`${text.length}/${MAX_PROMPT_LENGTH}`}</p>",
+      "expected": "Counter visible, message shown when over limit, Send disabled"
+    }
+  ],
+  "created_at": "2026-11-23T23:44:34.495487+00:00",
+  "updated_at": "2026-11-23T23:45:33.615420+00:00"
+}

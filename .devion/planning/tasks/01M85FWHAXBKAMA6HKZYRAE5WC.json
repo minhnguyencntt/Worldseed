@@ -1,0 +1,72 @@
+{
+  "id": "01M85FWHAXBKAMA6HKZYRAE5WC",
+  "intent_id": "01M85FR0WWK6S9G6P5579YTBZV",
+  "title": "Act: Confirm Retry increments reloadKey and the effect resets to loading",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Verify the Retry handler and effect behavior",
+  "description": "Confirm onClick calls setReloadKey((k) => k + 1), reloadKey is in the effect deps, and the effect begins with setHistoryStatus('loading') before listMine.",
+  "acceptance_criteria": [
+    "Retry click changes reloadKey",
+    "Effect sets status 'loading' before calling listMine"
+  ],
+  "scope": {
+    "in_scope": [
+      "Retry handler and history effect"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "cancelled guard"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Retry flow confirmed to reload and show loading",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-683.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FSDYWZ7M9WRZAGJ7Q3YRN",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-683.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85FWHAXWSM1E41NB5V246QJ"
+  ],
+  "sim_node_id": "01M85FSDYWKA4V0PVS7VER1EW3",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-683.md",
+  "artifact_id": "UNIT-683",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet history useEffect",
+      "lines": "L51-L77",
+      "action": "Read the effect: confirm setHistoryStatus('loading') runs before listMine(roundId) and the dependency array is [open, roundId, reloadKey]; make no change when it matches.",
+      "code": "}, [open, roundId, reloadKey]);",
+      "expected": "Effect re-runs on reloadKey change and sets loading first"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet Retry button onClick",
+      "lines": "L156-L158",
+      "action": "Confirm onClick is () => setReloadKey((k) => k + 1) and the button label is 'Retry'.",
+      "code": "<button type=\"button\" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>",
+      "expected": "Retry click triggers a re-run of the history effect"
+    }
+  ],
+  "created_at": "2026-11-24T00:39:25.789687+00:00",
+  "updated_at": "2026-11-24T00:39:39.799320+00:00"
+}

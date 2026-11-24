@@ -1,0 +1,70 @@
+{
+  "id": "01M8571CRMXBV7B4ED00PSGJC0",
+  "intent_id": "01M856Y94246BE58JRPDAXHYJH",
+  "title": "Verify: BootScene single sceneObjects field and unchanged sync unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for single field and existing sync/destroy behavior",
+  "description": "Add a source test counting the field, and rerun existing sync tests proving behavior is preserved.",
+  "acceptance_criteria": [
+    "Given the source, when matched, then one private sceneObjects field exists",
+    "Given mocked objects, when state changes and shutdown fires, then sync and destroy are called"
+  ],
+  "scope": {
+    "in_scope": [
+      "Test files"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "bootSceneSync.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser and store mocked as in existing bootSceneSync tests"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-533.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M856ZGDNJS0JVQYBRXDA3ZND",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-533.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8571CRMZSZR63GTMVF9TG5E"
+  ],
+  "sim_node_id": "01M856ZGDN74AWNYCMBPG1F6MQ",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-533.md",
+  "artifact_id": "UNIT-533",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneNoDuplicates.test.ts",
+      "symbol": "new: BootScene single sceneObjects field",
+      "lines": "after L1",
+      "action": "Add test `declares private sceneObjects once` reading BootScene.ts and asserting the count of lines matching /private sceneObjects: SceneObject\\[\\]/ equals 1.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneNoDuplicates.test.ts -t 'sceneObjects'",
+      "expected": "Test passes with count 1"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneSync.test.ts",
+      "symbol": "existing sync and shutdown tests",
+      "lines": "L1-end",
+      "action": "Run the existing suite unchanged to confirm sync and destroy behavior still pass with the single field.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneSync.test.ts",
+      "expected": "All tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T22:04:47.764044+00:00",
+  "updated_at": "2026-11-23T22:05:55.747639+00:00"
+}

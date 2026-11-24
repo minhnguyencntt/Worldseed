@@ -1,0 +1,75 @@
+{
+  "id": "01M84MA4F54XNM7KW22WY60GM5",
+  "intent_id": "01M84M8HTP9R8NH34RBDEJ59M0",
+  "title": "Act: Add zustand and create useUiStore with drawer and modal state",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create store file with drawer and modal state and actions.",
+  "description": "Add zustand to package.json dependencies and create src/store/uiStore.ts exporting useUiStore with drawerOpen, activeModal and their actions.",
+  "acceptance_criteria": [
+    "Given the file, When imported, Then useUiStore is exported",
+    "Given toggleDrawer, When called, Then drawerOpen flips"
+  ],
+  "scope": {
+    "in_scope": [
+      "package.json",
+      "src/store/uiStore.ts"
+    ],
+    "out_of_scope": [
+      "GameLayout changes"
+    ],
+    "preserve": [
+      "Other dependencies"
+    ]
+  },
+  "technical_constraints": [
+    "zustand ^4.5.0",
+    "Code path: `game/frontend/package.json`",
+    "New file: `game/frontend/src/store/uiStore.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Store compiles with tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-292.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84M9HA7T8SGQQNREW94A6XC",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-292.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84MA4F583Z2WY3W4H8EVQ0F"
+  ],
+  "sim_node_id": "01M84M9HA75RK23P3B1BAN0YS5",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-292.md",
+  "artifact_id": "UNIT-292",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/package.json",
+      "symbol": "dependencies",
+      "lines": "L11-L22",
+      "action": "Add the dependency \"zustand\": \"^4.5.0\" to the dependencies object, then run npm install in game/frontend.",
+      "code": "\"zustand\": \"^4.5.0\"",
+      "expected": "zustand resolves from node_modules"
+    },
+    {
+      "file": "game/frontend/src/store/uiStore.ts",
+      "symbol": "new: useUiStore",
+      "lines": "new",
+      "action": "Create the file exporting type UiModal = 'contribution' | 'settings', interface UiState and useUiStore with drawerOpen=false, activeModal=null, toggleDrawer, setDrawerOpen(open), openModal(modal), closeModal().",
+      "code": "import { create } from 'zustand';\nexport type UiModal = 'contribution' | 'settings';\nexport interface UiState {\n  drawerOpen: boolean;\n  activeModal: UiModal | null;\n  toggleDrawer: () => void;\n  setDrawerOpen: (open: boolean) => void;\n  openModal: (modal: UiModal) => void;\n  closeModal: () => void;\n}\nexport const useUiStore = create<UiState>((set) => ({\n  drawerOpen: false,\n  activeModal: null,\n  toggleDrawer: () => set((s) => ({ drawerOpen: !s.drawerOpen })),\n  setDrawerOpen: (open) => set({ drawerOpen: open }),\n  openModal: (modal) => set({ activeModal: modal }),\n  closeModal: () => set({ activeModal: null }),\n}));",
+      "expected": "npx tsc --noEmit passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:37:31.237179+00:00",
+  "updated_at": "2026-11-23T16:39:39.765959+00:00"
+}

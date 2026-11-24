@@ -1,0 +1,837 @@
+{
+  "id": "01M8601QGMNVMJTZQE40XS5AHV",
+  "trigger_node_id": "INT-172, UNIT-858 +15",
+  "node_ids": [
+    "INT-172",
+    "UNIT-858",
+    "UNIT-859",
+    "UNIT-860",
+    "UNIT-861",
+    "UNIT-862",
+    "UNIT-863",
+    "UNIT-864",
+    "UNIT-865",
+    "UNIT-866",
+    "UNIT-867",
+    "REQ-429",
+    "REQ-430",
+    "REQ-431",
+    "REQ-432",
+    "REQ-433",
+    "EVD-172"
+  ],
+  "intent_id": "INT-172",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-172",
+      "title": "SG-7 Integrate the game screen, behaviours and responsive layout",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-858",
+      "title": "Act: Switch GameLayout to a 3fr/1fr split",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8ZDKMWTCH2DEEC2VH0"
+      ],
+      "depends_on": [
+        "REQ-429"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "6b0be98c42c3d0fc8f58a57d507be0e427dd598d",
+      "from_sha": "be1e3a60eec71e74b1313b85e7739a47024c2e90",
+      "started_at": "2026-11-24T05:21:56.928894+00:00",
+      "ended_at": "2026-11-24T05:22:21.683288+00:00",
+      "run_started_at": "2026-11-24T05:21:56.928894+00:00",
+      "duration_ms": 21856,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 2079,
+      "estimated_cost_usd": 0.008326
+    },
+    {
+      "unit_id": "UNIT-859",
+      "title": "Act: Emit playAnimation interact from the App action handler",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8Z885CCWRTVQ6Y618N"
+      ],
+      "depends_on": [
+        "REQ-430"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "from_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "started_at": "2026-11-24T05:21:56.956814+00:00",
+      "ended_at": "2026-11-24T05:22:50.489783+00:00",
+      "run_started_at": "2026-11-24T05:21:56.956814+00:00",
+      "duration_ms": 51841,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 5082,
+      "estimated_cost_usd": 0.020342,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Steps 1–3 are done in game/frontend/src/App.tsx. The boy's `playAnimation` interact event is emitted from the App action handler, which is now wired to `ObjectOverlay onAction`. Baseline: active scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa.\n\nDeviation: App.tsx changed on disk after my edits, from another writer. Their `handleAction` (L68–74) already calls `game.act`, emits `playAnimation {target:'boy', name:'interact'}`, and also emits `transitionTo` when the scene changes. My duplicate handler was in the same scope and caused TS2451. It is gone now, so only their handler remains and it is what `onAction={handleAction}` uses. I did not revert their changes. BootScene.ts also has an uncommitted guard on `transitionTo`, and ContributionSheet.tsx, GameLayout.tsx and styles.css show modifications I did not make.\n\nNot compiling: `npx tsc --noEmit` reports App.tsx(69,20) and App.tsx(72,19), 'Object is possibly null', on `useGameStore.getState().state.currentScene` in the transition lines of the other writer's handler. My playAnimation lines compile. The other ~46 errors are pre-existing: missing zod, implicit any in files I did not touch, and tests. Fixing the two null errors means changing the concurrent transition code, so I left it. Suggested fix: optional chaining or a null guard on `state` in that handler, then re-run tsc.\n\nNo tests were written, per the Act rules."
+    },
+    {
+      "unit_id": "UNIT-860",
+      "title": "Act: Emit transitionTo from handleAction when currentScene changes",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8ZWYHNKJY2387H8D97"
+      ],
+      "depends_on": [
+        "REQ-431"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "7aaffd0bc562c994f64127a76518c83dcb6908f4",
+      "from_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "started_at": "2026-11-24T05:21:56.965746+00:00",
+      "ended_at": "2026-11-24T05:23:04.155587+00:00",
+      "run_started_at": "2026-11-24T05:21:56.965746+00:00",
+      "duration_ms": 65540,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 28,
+      "tokens_out": 7702,
+      "estimated_cost_usd": 0.03083
+    },
+    {
+      "unit_id": "UNIT-861",
+      "title": "Act: Guard the BootScene transitionTo handler",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8ZD0A2AM2G5ERHTFG4"
+      ],
+      "depends_on": [
+        "REQ-432"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "be1e3a60eec71e74b1313b85e7739a47024c2e90",
+      "from_sha": "ca34dc58db3c010660f92c57e1c67102f199ce6b",
+      "started_at": "2026-11-24T05:21:56.992530+00:00",
+      "ended_at": "2026-11-24T05:22:16.417582+00:00",
+      "run_started_at": "2026-11-24T05:21:56.992530+00:00",
+      "duration_ms": 14984,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 1781,
+      "estimated_cost_usd": 0.007129
+    },
+    {
+      "unit_id": "UNIT-862",
+      "title": "Act: Delete placeholder CSS and restyle the contribution dialog with the kit",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8Z6GGWHF9YKG5VRTGW"
+      ],
+      "depends_on": [
+        "REQ-433"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "487a68fddaab6066461369c79aaa7881b6a99e9c",
+      "from_sha": "6b0be98c42c3d0fc8f58a57d507be0e427dd598d",
+      "started_at": "2026-11-24T05:21:57.003151+00:00",
+      "ended_at": "2026-11-24T05:22:42.440422+00:00",
+      "run_started_at": "2026-11-24T05:21:57.003151+00:00",
+      "duration_ms": 41042,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 5186,
+      "estimated_cost_usd": 0.020755
+    },
+    {
+      "unit_id": "UNIT-863",
+      "title": "Verify: GameLayout wide split and narrow drawer unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8Z8E2M7NG1KSSFMRAT"
+      ],
+      "depends_on": [
+        "UNIT-858",
+        "REQ-429"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "from_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "tests": [
+        {
+          "id": "layoutDesktop.root-grid-classes",
+          "kind": "unit",
+          "name": "tests/layoutDesktop.test.tsx > root grid classes",
+          "title": "GameLayout desktop classes: root grid uses a 3fr/1fr split, the aside scrolls, and the main column has min-w-0",
+          "scenario": "Given GameLayout with a scene and a story, when rendered, then the root grid has md:grid-cols-[3fr_1fr], the aside has overflow-y-auto and md:h-screen, and main has min-w-0",
+          "command": "cd game/frontend && npx vitest run tests/layoutDesktop.test.tsx --testTimeout=20000",
+          "file": "tests/layoutDesktop.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "layoutDesktop.stylesheet-overflow-rule",
+          "kind": "unit",
+          "name": "tests/layoutDesktop.test.tsx > stylesheet overflow rule",
+          "title": "GameLayout desktop classes: html, body and #root are fixed to 100% height with overflow hidden",
+          "scenario": "Given the game stylesheet on disk, when it is read, then the html, body and #root block sets height 100% and overflow hidden",
+          "command": "cd game/frontend && npx vitest run tests/layoutDesktop.test.tsx --testTimeout=20000",
+          "file": "tests/layoutDesktop.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "layoutSplit.narrow-drawer-toggle",
+          "kind": "unit",
+          "name": "tests/layoutSplit.test.tsx > narrow drawer classes and toggle",
+          "title": "GameLayout narrow drawer: the aside is a fixed bottom drawer that opens when the Story button is clicked",
+          "scenario": "Given GameLayout with a scene and a story and the drawer closed, when rendered, then the aside has max-md:fixed, max-md:bottom-0 and data-state closed; when the Story button is clicked, then data-state is open and uiStore drawerOpen is true",
+          "command": "cd game/frontend && npx vitest run tests/layoutSplit.test.tsx --testTimeout=20000",
+          "file": "tests/layoutSplit.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T05:22:21.704688+00:00",
+      "ended_at": "2026-11-24T05:22:49.014588+00:00",
+      "run_started_at": "2026-11-24T05:22:21.704688+00:00",
+      "duration_ms": 25774,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3949,
+      "estimated_cost_usd": 0.015806
+    },
+    {
+      "unit_id": "UNIT-864",
+      "title": "Verify: interact animation emitted on an action unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8Z16VADADFZKV4T7GM"
+      ],
+      "depends_on": [
+        "UNIT-859",
+        "REQ-430"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "f2897197774706db54d50f903a79a3768c154ba9",
+      "from_sha": "457fe1c43cb82306625730e9ba438caecac2d76f",
+      "tests": [
+        {
+          "id": "appInteract.test.tsx::App interact animation emission",
+          "kind": "unit",
+          "name": "Given the bookshelf is selected, when Inspect is clicked, then playAnimation is emitted for the boy with the interact name",
+          "title": "App interact animation emission: Inspect on the bookshelf emits playAnimation for the boy with the interact name",
+          "scenario": "Given the bookshelf is selected, when Inspect is clicked, then playAnimation is emitted for the boy with the interact name",
+          "command": "npx vitest run tests/appInteract.test.tsx --testTimeout=10000",
+          "file": "tests/appInteract.test.tsx",
+          "status": "passed",
+          "detail": "Spy on reactToPhaser.emit recorded ('playAnimation', { target: 'boy', name: 'interact' })."
+        }
+      ],
+      "started_at": "2026-11-24T05:24:19.130806+00:00",
+      "ended_at": "2026-11-24T05:24:51.014488+00:00",
+      "run_started_at": "2026-11-24T05:24:19.130806+00:00",
+      "duration_ms": 30438,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 4487,
+      "estimated_cost_usd": 0.017964
+    },
+    {
+      "unit_id": "UNIT-865",
+      "title": "Verify: transitionTo emitted on scene change and fade on a valid scene unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8ZT4YWS0YF3T014DY5"
+      ],
+      "depends_on": [
+        "UNIT-860",
+        "REQ-431"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "457fe1c43cb82306625730e9ba438caecac2d76f",
+      "from_sha": "c00e6f908f19752e3a8fc857044426287364b176",
+      "tests": [
+        {
+          "id": "appTransition.test.tsx > App transitionTo emission > emits transitionTo with the new scene id",
+          "kind": "unit",
+          "name": "new: App emits transitionTo",
+          "title": "App emits transitionTo with the new scene id when an action changes the scene",
+          "scenario": "Given an action changes the current scene to hallway, when Inspect is clicked on the bookshelf, then reactToPhaser emits transitionTo with sceneId hallway",
+          "command": "cd game/frontend && npx vitest run tests/appTransition.test.tsx --testTimeout=10000",
+          "file": "tests/appTransition.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appTransition.test.tsx > App transitionTo emission > emits no transitionTo when the scene is unchanged",
+          "kind": "unit",
+          "name": "new: App emits transitionTo (no change)",
+          "title": "App emits no transitionTo when the action leaves the scene unchanged",
+          "scenario": "Given performAction returns the previous state, when Inspect is clicked on the bookshelf, then no transitionTo event is emitted",
+          "command": "cd game/frontend && npx vitest run tests/appTransition.test.tsx --testTimeout=10000",
+          "file": "tests/appTransition.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransition.test.ts > BootScene transitionTo > fades the camera out on transitionTo",
+          "kind": "unit",
+          "name": "fades the camera out on transitionTo",
+          "title": "BootScene fades the camera out for a registered scene on transitionTo",
+          "scenario": "Given a BootScene with a fake camera and a scene.get that resolves the target, when transitionTo is emitted for library, then fadeOut is called once with TRANSITION_FADE_MS and scene.start has not yet fired",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransition.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransition.test.ts > BootScene transitionTo > starts the scene only after fade-out completes",
+          "kind": "unit",
+          "name": "starts the scene only after fade-out completes",
+          "title": "BootScene starts the target scene only after the fade-out completion callback runs",
+          "scenario": "Given a BootScene with a fake camera, when transitionTo is emitted and the fade-out completion callback is invoked, then scene.start is called once with library",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransition.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransition.test.ts > BootScene transitionTo > does nothing without a transitionTo event",
+          "kind": "unit",
+          "name": "does nothing without a transitionTo event",
+          "title": "BootScene neither fades nor starts a scene when no transitionTo is emitted",
+          "scenario": "Given a created BootScene, when no transitionTo event is emitted, then fadeOut and scene.start are not called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransition.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T05:23:04.166278+00:00",
+      "ended_at": "2026-11-24T05:24:17.773390+00:00",
+      "run_started_at": "2026-11-24T05:23:04.166278+00:00",
+      "duration_ms": 72112,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 32,
+      "tokens_out": 10891,
+      "estimated_cost_usd": 0.04359
+    },
+    {
+      "unit_id": "UNIT-866",
+      "title": "Verify: empty and unknown scene transition ignored unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8Z5K4NH18D74EZDFMD"
+      ],
+      "depends_on": [
+        "UNIT-861",
+        "REQ-432"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "97c11aae961b5b92c693321c66344794f5f9c813",
+      "from_sha": "487a68fddaab6066461369c79aaa7881b6a99e9c",
+      "tests": [
+        {
+          "id": "bootSceneTransitionIgnore.empty",
+          "kind": "unit",
+          "name": "transitionTo ignored: empty sceneId",
+          "title": "ignores an empty sceneId and does not fade or start a scene",
+          "scenario": "Given BootScene created with scene.get returning null; When transitionTo is emitted with sceneId ''; Then cameras.main.fadeOut and scene.start are never called",
+          "command": "npx vitest run tests/bootSceneTransitionIgnore.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransitionIgnore.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransitionIgnore.unknown",
+          "kind": "unit",
+          "name": "transitionTo ignored: unknown sceneId",
+          "title": "ignores an unknown sceneId and does not fade or start a scene",
+          "scenario": "Given BootScene created with scene.get returning null; When transitionTo is emitted with sceneId 'nope'; Then cameras.main.fadeOut and scene.start are never called",
+          "command": "npx vitest run tests/bootSceneTransitionIgnore.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransitionIgnore.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T05:22:16.430525+00:00",
+      "ended_at": "2026-11-24T05:22:43.578343+00:00",
+      "run_started_at": "2026-11-24T05:22:16.430525+00:00",
+      "duration_ms": 23111,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 4277,
+      "estimated_cost_usd": 0.017114
+    },
+    {
+      "unit_id": "UNIT-867",
+      "title": "Verify: placeholder styling removed unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8601P8ZESG5A5W8HX13RVAV"
+      ],
+      "depends_on": [
+        "UNIT-862",
+        "REQ-433"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "c00e6f908f19752e3a8fc857044426287364b176",
+      "from_sha": "7aaffd0bc562c994f64127a76518c83dcb6908f4",
+      "tests": [
+        {
+          "id": "layout.test.tsx > stylesheet test",
+          "kind": "unit",
+          "name": "stylesheet test",
+          "title": "Given the game stylesheet, when it is read from disk, then legacy layout classes and the 768px breakpoint are absent and the placeholder contribution-sheet class is gone",
+          "scenario": "Given src/styles.css read from disk; When the legacy-class assertions run; Then .game-layout, .story-panel, .scene-area and the 768px media query are absent and .contribution-sheet is absent",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx --testTimeout=20000",
+          "file": "tests/layout.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "noPlaceholderStyles.test.tsx > dialog uses kit class",
+          "kind": "unit",
+          "name": "dialog uses kit class",
+          "title": "Given an open contribution dialog, when rendered, then the dialog uses the kit parchment frame class and not the removed contribution-sheet placeholder class",
+          "scenario": "Given ContributionSheet open=true with fetch stubbed to an empty history; When rendered; Then the role=dialog element has class sf-frame-parchment and does not have class contribution-sheet",
+          "command": "cd game/frontend && npx vitest run tests/noPlaceholderStyles.test.tsx --testTimeout=20000",
+          "file": "tests/noPlaceholderStyles.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T05:22:43.591427+00:00",
+      "ended_at": "2026-11-24T05:23:10.613147+00:00",
+      "run_started_at": "2026-11-24T05:22:43.591427+00:00",
+      "duration_ms": 25467,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 4031,
+      "estimated_cost_usd": 0.016134
+    },
+    {
+      "unit_id": "REQ-429",
+      "title": "REQ · GameLayout gives about 3/4 width to the game area and drops to a store-driven bottom drawer when narrow",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-172"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-430",
+      "title": "REQ · Game actions emit playAnimation interact so the boy plays the interact animation",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-172"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-431",
+      "title": "REQ · A scene change from a game action emits transitionTo so the scene fades",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-172"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-432",
+      "title": "REQ · A transition to an empty or unknown scene id is ignored",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-172"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-433",
+      "title": "REQ · Old placeholder styling is removed from styles.css",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-172"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-172",
+      "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-858",
+        "UNIT-859",
+        "UNIT-860",
+        "UNIT-861",
+        "UNIT-862",
+        "UNIT-863",
+        "UNIT-864",
+        "UNIT-865",
+        "UNIT-866",
+        "UNIT-867"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-431",
+      "dst": "UNIT-865"
+    },
+    {
+      "src": "UNIT-859",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-863",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-867",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "REQ-429",
+      "dst": "UNIT-858"
+    },
+    {
+      "src": "UNIT-861",
+      "dst": "UNIT-866"
+    },
+    {
+      "src": "UNIT-861",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-862",
+      "dst": "UNIT-867"
+    },
+    {
+      "src": "INT-172",
+      "dst": "REQ-433"
+    },
+    {
+      "src": "REQ-430",
+      "dst": "UNIT-859"
+    },
+    {
+      "src": "UNIT-859",
+      "dst": "UNIT-864"
+    },
+    {
+      "src": "REQ-429",
+      "dst": "UNIT-863"
+    },
+    {
+      "src": "UNIT-865",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "REQ-432",
+      "dst": "UNIT-861"
+    },
+    {
+      "src": "REQ-430",
+      "dst": "UNIT-864"
+    },
+    {
+      "src": "INT-172",
+      "dst": "REQ-430"
+    },
+    {
+      "src": "REQ-431",
+      "dst": "UNIT-860"
+    },
+    {
+      "src": "UNIT-860",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "REQ-433",
+      "dst": "UNIT-862"
+    },
+    {
+      "src": "REQ-433",
+      "dst": "UNIT-867"
+    },
+    {
+      "src": "UNIT-866",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-862",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-858",
+      "dst": "UNIT-863"
+    },
+    {
+      "src": "REQ-432",
+      "dst": "UNIT-866"
+    },
+    {
+      "src": "INT-172",
+      "dst": "REQ-431"
+    },
+    {
+      "src": "INT-172",
+      "dst": "REQ-432"
+    },
+    {
+      "src": "UNIT-858",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "UNIT-864",
+      "dst": "EVD-172"
+    },
+    {
+      "src": "INT-172",
+      "dst": "REQ-429"
+    },
+    {
+      "src": "UNIT-860",
+      "dst": "UNIT-865"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m8601q",
+  "base_sha": "ca34dc58db3c010660f92c57e1c67102f199ce6b",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M8601QGMNVMJTZQE40XS5AHV:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T05:21:53.172840+00:00",
+  "updated_at": "2026-11-24T05:24:52.822561+00:00",
+  "completed_at": "2026-11-24T05:24:51.015984+00:00",
+  "duration_ms": 177843,
+  "usage_stats": {
+    "total_duration_ms": 372183,
+    "total_tokens_in": 162,
+    "total_tokens_out": 49465,
+    "total_estimated_cost_usd": 0.19799
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 18,
+  "unit_allowlist": [
+    "UNIT-858",
+    "UNIT-859",
+    "UNIT-860",
+    "UNIT-861",
+    "UNIT-862",
+    "UNIT-863",
+    "UNIT-864",
+    "UNIT-865",
+    "UNIT-866",
+    "UNIT-867"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-858",
+        "title": "Act: Switch GameLayout to a 3fr/1fr split",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-858 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-859",
+        "title": "Act: Emit playAnimation interact from the App action handler",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-859 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-860",
+        "title": "Act: Emit transitionTo from handleAction when currentScene changes",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-860 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-861",
+        "title": "Act: Guard the BootScene transitionTo handler",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-861 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-862",
+        "title": "Act: Delete placeholder CSS and restyle the contribution dialog with the kit",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-862 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-863",
+        "title": "Verify: GameLayout wide split and narrow drawer unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-863 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-864",
+        "title": "Verify: interact animation emitted on an action unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-864 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-865",
+        "title": "Verify: transitionTo emitted on scene change and fade on a valid scene unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-865 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-866",
+        "title": "Verify: empty and unknown scene transition ignored unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-866 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-867",
+        "title": "Verify: placeholder styling removed unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-172",
+            "path": ".ai-dlc/evidence/EVD-172.md",
+            "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-867 unless acceptance outcomes recorded in EVD-172 (.ai-dlc/evidence/EVD-172.md; \"Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T05:21:56.242185+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-858",
+    "UNIT-859",
+    "UNIT-860",
+    "UNIT-861",
+    "UNIT-862",
+    "UNIT-863",
+    "UNIT-864",
+    "UNIT-865",
+    "UNIT-866",
+    "UNIT-867"
+  ]
+}

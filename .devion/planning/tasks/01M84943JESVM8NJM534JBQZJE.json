@@ -1,0 +1,86 @@
+{
+  "id": "01M84943JESVM8NJM534JBQZJE",
+  "intent_id": "01M84925Q2QV4H5TSGXE3Z4A1J",
+  "title": "Verify: ExecutionPanel Reject button unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Reject visibility and callback, and unchanged Approve/Retry",
+  "description": "Add a new test file rendering ExecutionPanel directly with vi.fn callbacks, asserting Reject gating and that Approve and Retry still work.",
+  "acceptance_criteria": [
+    "Reject shows only for AWAITING_APPROVAL with onReject and calls onReject with the id",
+    "Reject is hidden without onReject and for other statuses",
+    "Approve and Retry still call their callbacks with the id"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/executionReject.test.tsx"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Vitest + Testing Library; no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All tests in the new file pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-138.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M849411JTJMJVYZVVT3Y8T18",
+    "trace:01M848ZFYJ0M10R6GX7ZK6A6KB",
+    "artifact:.ai-dlc/units/UNIT-138.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84943JE1RMM3B6Z9JE5PFMW"
+  ],
+  "sim_node_id": "01M849411JN3RW9RSMWD2EE252",
+  "artifact_path": ".ai-dlc/units/UNIT-138.md",
+  "artifact_id": "UNIT-138",
+  "steps": [
+    {
+      "file": "game/frontend/tests/executionReject.test.tsx",
+      "symbol": "new: renderPanel helper",
+      "lines": "new",
+      "action": "Create the file with imports from @testing-library/react, userEvent, vitest, ExecutionPanel and executionFixture from ./fixtures/api (the ExecutionInfo contract); add renderPanel(status, withReject = true) rendering ExecutionPanel with execution {...executionFixture, id: 'EX1', status}, contributionCount 2 and vi.fn onApprove, onRetry and optional onReject, plus afterEach(cleanup).",
+      "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx",
+      "expected": "Helper renders the panel and returns the mocks; the file is collected by vitest without import errors"
+    },
+    {
+      "file": "game/frontend/tests/executionReject.test.tsx",
+      "symbol": "it: shows Reject for AWAITING_APPROVAL and calls onReject with the id",
+      "lines": "new",
+      "action": "Render with status AWAITING_APPROVAL, click the button named Reject, assert onReject called once with 'EX1' and onApprove/onRetry not called.",
+      "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx -t \"shows Reject for AWAITING_APPROVAL\"",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/executionReject.test.tsx",
+      "symbol": "it: hides Reject without onReject or for non-awaiting statuses",
+      "lines": "new",
+      "action": "Render AWAITING_APPROVAL without onReject, then FAILED and RUNNING with onReject; assert queryByRole('button', {name:'Reject'}) is not in the document each time.",
+      "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx -t \"hides Reject\"",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/executionReject.test.tsx",
+      "symbol": "it: Approve and Retry still call their callbacks",
+      "lines": "new",
+      "action": "Render AWAITING_APPROVAL, click Approve, assert onApprove called with 'EX1'; render FAILED, click Retry, assert onRetry called with 'EX1'; assert onReject never called.",
+      "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx",
+      "expected": "All tests in executionReject.test.tsx pass"
+    }
+  ],
+  "created_at": "2026-11-23T13:21:59.374589+00:00",
+  "updated_at": "2026-11-23T13:22:49.660091+00:00"
+}

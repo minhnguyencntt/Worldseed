@@ -1,0 +1,85 @@
+{
+  "id": "01M85D85DW1BCPJQHPH9Y5G2NF",
+  "intent_id": "01M85D3P2X6TSZEGE1EGP1A47P",
+  "title": "Act: Block over-limit submit with an inline message",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add over-limit state, message and guard to ContributionSheet",
+  "description": "Derive overLimit from the trimmed length, render an inline alert, mark the textarea invalid and return early from handleSubmit.",
+  "acceptance_criteria": [
+    "Message 'Too long: n / 500' shows when over",
+    "submitContribution not called when over"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet only"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Backend"
+    ],
+    "preserve": [
+      "Blank message",
+      "Text kept when blocked"
+    ]
+  },
+  "technical_constraints": [
+    "No maxLength attribute",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Over-limit blocked with message",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-643.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85D5DFACG689A67KP4BEX1S",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-643.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85D85DW56DHRS281T1CR0KC"
+  ],
+  "sim_node_id": "01M85D5DFANTEFD294TA2ET3HT",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-643.md",
+  "artifact_id": "UNIT-643",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (derived value)",
+      "lines": "after the length const added by the counter unit",
+      "action": "Add const overLimit = length > MAX_PROMPT_LENGTH;",
+      "code": "const overLimit = length > MAX_PROMPT_LENGTH;",
+      "expected": "overLimit is true only above 500 trimmed characters"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "handleSubmit",
+      "lines": "L69-L78",
+      "action": "After the blank check (prompt === '') add an early return when overLimit so text, entries and error are untouched",
+      "code": "if (overLimit) return;",
+      "expected": "submitContribution is never called while over the limit"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "textarea JSX and message",
+      "lines": "L112-L128",
+      "action": "Set aria-invalid={validation !== undefined || overLimit}; add 'contribution-idea-limit' to aria-describedby when overLimit; after the form render {overLimit && <p id=\"contribution-idea-limit\" role=\"alert\">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}",
+      "code": "{overLimit && <p id=\"contribution-idea-limit\" role=\"alert\">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}",
+      "expected": "Message appears at 501 characters and disappears at 500"
+    }
+  ],
+  "created_at": "2026-11-23T23:53:21.084571+00:00",
+  "updated_at": "2026-11-23T23:55:55.423529+00:00"
+}

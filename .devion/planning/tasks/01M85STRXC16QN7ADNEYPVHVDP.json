@@ -1,0 +1,74 @@
+{
+  "id": "01M85STRXC16QN7ADNEYPVHVDP",
+  "intent_id": "01M85SHYJTCGKNGQ56NSZS65QJ",
+  "title": "Verify: Furniture and full room source size and palette unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Tests for all room sources",
+  "description": "Write tests from the R3 criteria and the intent criteria across ROOM_SOURCES.",
+  "acceptance_criteria": [
+    "Every ROOM_SOURCES grid has its declared size",
+    "Every grid renders with only palette colours and at least 3 distinct indices",
+    "Registry covers all 13 declared ids"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/roomSources.test.ts"
+    ],
+    "out_of_scope": [
+      "Manifest tests"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, no filesystem",
+    "Palette read from src/lib/palette.ts"
+  ],
+  "dependencies": [
+    "A3"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-797.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SMTB5DK6E67P79N38R5HA",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-797.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85STRXCMNE81K3D58H365H7"
+  ],
+  "sim_node_id": "01M85SMTB548CPFR6A3YQZZGHE",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-797.md",
+  "artifact_id": "UNIT-797",
+  "steps": [
+    {
+      "file": "game/frontend/tests/roomSources.test.ts",
+      "symbol": "new: coverage and sizes",
+      "lines": "new",
+      "action": "Create the file. Assert ROOM_SOURCES ids are unique and sorted names after stripping 'room/' equal Object.keys(ROOM_ART_SIZES) sorted. For each source assert frames.length 1, grid height and every row width equal ROOM_ART_SIZES[name].",
+      "command": "cd game/frontend && npx vitest run tests/roomSources.test.ts",
+      "expected": "Coverage and size tests pass for 13 ids"
+    },
+    {
+      "file": "game/frontend/tests/roomSources.test.ts",
+      "symbol": "new: palette use",
+      "lines": "after sizes",
+      "action": "For each source, collect the Set of indices; assert it has at least 3 members, every index is an integer in [0, PALETTE.length), and gridToRgba(frames[0], PALETTE) does not throw. Assert the bookshelf set includes rampIndex('plum',3), rampIndex('hoodie',3), rampIndex('lamp',3) and rampIndex('moon',3), the bed includes rampIndex('hoodie',3) and rampIndex('hoodie',2), and the door bottom row equals rampIndex('lamp',5) throughout.",
+      "command": "cd game/frontend && npx vitest run tests/roomSources.test.ts",
+      "expected": "Palette tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T03:33:13.772213+00:00",
+  "updated_at": "2026-11-24T03:38:50.014267+00:00"
+}

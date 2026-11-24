@@ -1,0 +1,66 @@
+{
+  "id": "01M85962H3FVRG8GKZAY26D6FK",
+  "intent_id": "01M85900YQHG388J06E5XY0PR4",
+  "title": "Verify: Scene layer ordering, entity creation and visibility unit tests via @game",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Suite asserts ordering, one sprite per object and visibleWhen using @game imports and a fake RenderContext.",
+  "description": "Context: ACT-B confirmed buildScene and SceneObject behavior. Desired behavior: a suite asserts ordering, entity creation and visibility through @game with a fake RenderContext. Expected result: three tests pass. Why: proves REQ-B from the spec.",
+  "acceptance_criteria": [
+    "Depths ascend background<furniture<objects",
+    "createSprite called once per object with asset, position, scale",
+    "setVisible gets false then true as flag toggles"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/sceneAliasBuild.test.ts"
+    ],
+    "out_of_scope": [
+      "Phaser"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Imports only from @game/... and ./fixtures/valid-world"
+  ],
+  "dependencies": [
+    "ACT-B",
+    "VER-A"
+  ],
+  "definition_of_done": [
+    "test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-576.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8592ZTS1QVZM817BSW6GA53",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-576.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85962H34GH0A1NAYTG6QQE4"
+  ],
+  "sim_node_id": "01M8592ZTSF6ZX5540W3SCY1FQ",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-576.md",
+  "artifact_id": "UNIT-576",
+  "steps": [
+    {
+      "file": "game/tests/sceneAliasBuild.test.ts",
+      "symbol": "new: scene build via @game",
+      "lines": "new",
+      "action": "Import buildScene from '@game/engine/buildScene', SceneObject from '@game/entities/SceneObject', layerDepth/LAYER_ORDER from '@game/engine/layers', createInitialState/setFlag from '@game/state/gameState', validScene from './fixtures/valid-world'. Build a fake RenderContext whose createSprite returns vi.fn handle. Tests: (1) objects authored out of order yield ascending depth array; (2) createSprite call count equals scene.objects.length with key/x/y/scale matching spec; (3) object with visibleWhen: sync(state without flag) then sync(setFlag) gives setVisible calls [[false],[true]]",
+      "command": "cd game && npx vitest run tests/sceneAliasBuild.test.ts",
+      "expected": "All three tests pass, no real Phaser loaded"
+    }
+  ],
+  "created_at": "2026-11-23T22:42:18.275159+00:00",
+  "updated_at": "2026-11-23T22:43:13.373274+00:00"
+}

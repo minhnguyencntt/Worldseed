@@ -1,0 +1,72 @@
+{
+  "id": "01M85JVFP073CH0K8DE7Y1GP9J",
+  "intent_id": "01M85JNHV7YEGSWAECMZEFSTYC",
+  "title": "Verify: Null store focus clears scene focus unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test that null store focus blurs focused objects",
+  "description": "Write Phaser-mocked unit tests proving REQ-2.",
+  "acceptance_criteria": [
+    "Setting focusedObjectId null blurs a focused object",
+    "No focus or blur call when nothing is focused and id is null"
+  ],
+  "scope": {
+    "in_scope": [
+      "Add tests to game/frontend/tests/bootSceneFocus.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Test from VER-1"
+    ]
+  },
+  "technical_constraints": [
+    "Same mocks as VER-1"
+  ],
+  "dependencies": [
+    "ACT-2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-729.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85JQZJPMWVM5EY268R01JTG",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-729.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85JVFP0XGXD4VJC06HSP2D0"
+  ],
+  "sim_node_id": "01M85JQZJPB9AP50XG1AGAVK67",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-729.md",
+  "artifact_id": "UNIT-729",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneFocus.test.ts",
+      "symbol": "new: it('blurs focused objects when focusedObjectId is null')",
+      "lines": "after the VER-1 test",
+      "action": "Create a fake bookshelf with isFocused:true, call create(), set the store focus to 'bookshelf' then to null via setFocusedObject(null). Assert bookshelf.blur toHaveBeenCalledTimes(1).",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneFocus.test.ts -t 'blurs focused objects'",
+      "expected": "Test passes: blur called once after null"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneFocus.test.ts",
+      "symbol": "new: it('does nothing when no object is focused and focus is null')",
+      "lines": "after the previous test",
+      "action": "Create a fake with isFocused:false, call create(), call setFocusedObject(null) on a store whose focusedObjectId is already null plus a call via setState. Assert focus and blur are not called.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneFocus.test.ts -t 'does nothing when no object'",
+      "expected": "Test passes: neither focus nor blur called"
+    }
+  ],
+  "created_at": "2026-11-24T01:31:17.055955+00:00",
+  "updated_at": "2026-11-24T01:32:59.540653+00:00"
+}

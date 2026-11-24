@@ -1,0 +1,90 @@
+{
+  "id": "01M85C049DDSGVVDBG17C28373",
+  "intent_id": "01M85BT8V5PEXWT9XD06WGJ0HQ",
+  "title": "Act: Add validation, quota gating and submit states to ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Client-side validation and submit state UI",
+  "description": "Add MAX_PROMPT_LEN to the client and implement validation, disabled/loading submit and success feedback in handleSubmit.",
+  "acceptance_criteria": [
+    "Empty and over-length text produce inline alerts without a fetch",
+    "Quota exhausted disables the form",
+    "Success shows 'Idea sent'"
+  ],
+  "scope": {
+    "in_scope": [
+      "handleSubmit and form markup",
+      "MAX_PROMPT_LEN export"
+    ],
+    "out_of_scope": [
+      "History states"
+    ],
+    "preserve": [
+      "errorMessage",
+      "submitContribution call"
+    ]
+  },
+  "technical_constraints": [
+    "Count length with Array.from(prompt).length to match rune count",
+    "Code path: `game/frontend/src/api/client.ts`",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Validation paths implemented",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-621.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M85BWFWR5J3K7WE0RNC46H2H",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-621.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85C049D2WDXMYPFXRKE12V7"
+  ],
+  "sim_node_id": "01M85BWFWRXXYQHDAGZZPGBR5D",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-621.md",
+  "artifact_id": "UNIT-621",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "MAX_PROMPT_LEN",
+      "lines": "after L2",
+      "action": "Add a new exported constant mirroring backend MaxPromptLen in backend/internal/contribution/service.go.",
+      "code": "export const MAX_PROMPT_LEN = 500;",
+      "expected": "MAX_PROMPT_LEN is importable and equals 500"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet state",
+      "lines": "L33-L35, L66",
+      "action": "Add state `const [success, setSuccess] = useState(false)` and `const [sending, setSending] = useState(false)`. Compute `const exhausted = remaining <= 0`. Import MAX_PROMPT_LEN.",
+      "expected": "Component tracks sending, success and exhausted"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "handleSubmit",
+      "lines": "L68-L85",
+      "action": "After preventDefault: return early if exhausted or sending. Compute prompt = text.trim(). If prompt === '' call setError('Enter an idea before sending') and return. If Array.from(prompt).length > MAX_PROMPT_LEN call setError(`Ideas are limited to ${MAX_PROMPT_LEN} characters`) and return. Before the await call setSuccess(false) and setSending(true); on success setSuccess(true); on catch keep existing failed handling; in a finally block setSending(false).",
+      "expected": "Invalid input sets an alert and never calls submitContribution; valid input sets success after resolve"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "form markup",
+      "lines": "L93-L104",
+      "action": "Set textarea disabled={exhausted || sending}. Set the submit button disabled={exhausted || sending} with text {sending ? 'Sending…' : 'Send'}. Below the form render <p>No contributions left</p> when exhausted, and <p role=\"status\">Idea sent</p> when success is true.",
+      "expected": "Send is disabled while sending or exhausted; status and exhausted message render"
+    }
+  ],
+  "created_at": "2026-11-23T23:31:29.197514+00:00",
+  "updated_at": "2026-11-23T23:32:11.995129+00:00"
+}

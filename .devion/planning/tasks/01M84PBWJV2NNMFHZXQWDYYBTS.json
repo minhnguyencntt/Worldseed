@@ -1,0 +1,66 @@
+{
+  "id": "01M84PBWJV2NNMFHZXQWDYYBTS",
+  "intent_id": "01M84P864QB1EABT3K0S7Y2NSC",
+  "title": "Verify: Manifest loader dangling-reference and missing-asset unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for loader behaviors with fake exists",
+  "description": "Test the manifest loader behaviors using fake exists functions and inline fixtures.",
+  "acceptance_criteria": [
+    "Missing, dangling and invalid-data cases are asserted",
+    "Fallback resolution for missing assets is asserted"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/manifestLoader.test.ts"
+    ],
+    "out_of_scope": [],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Use inline fixtures built from schema-valid objects; exists is a vi.fn"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-347.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84PATM6E2CV5BF3N6G5ABMJ",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-347.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84PBWJV9DK3WABC0YTENBYW"
+  ],
+  "sim_node_id": "01M84PATM6FFWJR00KBMDV0AKM",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-347.md",
+  "artifact_id": "UNIT-347",
+  "steps": [
+    {
+      "file": "game/tests/manifestLoader.test.ts",
+      "symbol": "new: describe('loadManifest')",
+      "lines": "new",
+      "action": "Tests: valid data with exists=()=>true gives empty errors/missing/dangling; exists=()=>false lists all ids in missing and does not throw; scene object with asset 'nope' appears in dangling; manifestData {} yields non-empty errors and manifest null; manifestData undefined does not throw",
+      "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest",
+      "expected": "Loader tests pass"
+    },
+    {
+      "file": "game/tests/manifestLoader.test.ts",
+      "symbol": "new: describe('resolveAsset')",
+      "lines": "after previous describe",
+      "action": "Tests: present asset returns its entry; id in missing returns FALLBACK_ASSET; unknown id returns FALLBACK_ASSET",
+      "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t resolveAsset",
+      "expected": "Fallback tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T17:13:25.851552+00:00",
+  "updated_at": "2026-11-23T17:16:44.901367+00:00"
+}

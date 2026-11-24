@@ -1,0 +1,399 @@
+{
+  "id": "01M84QDPQSYGWHYW9BNY723KAZ",
+  "trigger_node_id": "INT-072, UNIT-366 +6",
+  "node_ids": [
+    "INT-072",
+    "UNIT-366",
+    "UNIT-367",
+    "UNIT-368",
+    "UNIT-369",
+    "REQ-183",
+    "REQ-184",
+    "EVD-072"
+  ],
+  "intent_id": "INT-072",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-072",
+      "title": "SG-2.4 Manifest loader checks references and falls back without crashing",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-366",
+      "title": "Act: Add checkAssetRefs to the manifest loader",
+      "kind": "unit",
+      "task_ids": [
+        "01M84QDP9EYW151V07ZJ969KEV"
+      ],
+      "depends_on": [
+        "REQ-183"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "fb420a92ad74abc6ce2fae348a77e01cee1480d2",
+      "from_sha": "13f2cc04d7b1baa973b94724a9dbd592170cc5f1",
+      "started_at": "2026-11-23T17:31:55.704723+00:00",
+      "ended_at": "2026-11-23T17:32:39.193372+00:00",
+      "run_started_at": "2026-11-23T17:31:55.704723+00:00",
+      "duration_ms": 40817,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 4505,
+      "estimated_cost_usd": 0.018034,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Added exported checkAssetRefs(manifest, refs) to game/src/assets/loaders/manifestLoader.ts, matching the brief's snippet, at end of file (the file is 31 lines, not 33, so 'after L33' became 'at end'). Another change landed in the same file during the run, adding loadManifestWithFallback and an AssetEntry import; I left it untouched and kept checkAssetRefs. The expected 'npx tsc --noEmit passes' is not met: it exits with 33 errors, the same count as a clean HEAD checkout. None are in checkAssetRefs. They come from a missing @types/node (tsconfig has types: [], so node:fs/node:path are unresolved) and pre-existing test files (config.test.ts, content.test.ts, persistence.test.ts). Fixing that is outside this unit. I ran npm ci in game/ to get node_modules (gitignored). Nothing committed. Tests not run."
+    },
+    {
+      "unit_id": "UNIT-367",
+      "title": "Act: Add loadManifestWithFallback to the manifest loader",
+      "kind": "unit",
+      "task_ids": [
+        "01M84QDP9ERZYAE7FT8ETRP9TA"
+      ],
+      "depends_on": [
+        "REQ-184"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "13f2cc04d7b1baa973b94724a9dbd592170cc5f1",
+      "from_sha": "686834ec519f17d52cba409ef0d20a82b3a85e50",
+      "started_at": "2026-11-23T17:31:55.722176+00:00",
+      "ended_at": "2026-11-23T17:32:23.123490+00:00",
+      "run_started_at": "2026-11-23T17:31:55.722176+00:00",
+      "duration_ms": 24536,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 3165,
+      "estimated_cost_usd": 0.012674
+    },
+    {
+      "unit_id": "UNIT-368",
+      "title": "Verify: checkAssetRefs unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84QDP9EXG3QAB5JZDFBVHAV"
+      ],
+      "depends_on": [
+        "UNIT-366",
+        "REQ-183"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "e641e903bad7745ca544e7c07973f361731b2c88",
+      "from_sha": "fb420a92ad74abc6ce2fae348a77e01cee1480d2",
+      "tests": [
+        {
+          "id": "manifestRefs.checkAssetRefs.unknownRef",
+          "kind": "unit",
+          "name": "checkAssetRefs reports unknown ref",
+          "title": "checkAssetRefs reports one issue naming the unknown ref when a ref has no matching asset id",
+          "scenario": "Given a manifest defining asset 'a', When refs ['a', 'ghost'] are checked, Then one issue is returned whose message contains 'ghost'",
+          "command": "cd game && npx vitest run tests/manifestRefs.test.ts --testTimeout=10000",
+          "file": "tests/manifestRefs.test.ts",
+          "status": "passed",
+          "detail": "Expected 1 issue containing 'ghost'; passed."
+        },
+        {
+          "id": "manifestRefs.checkAssetRefs.allRefsKnown",
+          "kind": "unit",
+          "name": "checkAssetRefs no issues for known refs",
+          "title": "checkAssetRefs returns no issues when every ref matches an asset id",
+          "scenario": "Given a manifest defining asset 'a', When refs ['a'] are checked, Then no issues are returned",
+          "command": "cd game && npx vitest run tests/manifestRefs.test.ts --testTimeout=10000",
+          "file": "tests/manifestRefs.test.ts",
+          "status": "passed",
+          "detail": "Expected []; passed."
+        },
+        {
+          "id": "manifestRefs.checkAssetRefs.emptyRefs",
+          "kind": "unit",
+          "name": "checkAssetRefs no issues for empty refs",
+          "title": "checkAssetRefs returns no issues when there are no refs to check",
+          "scenario": "Given a manifest defining asset 'a', When refs [] are checked, Then no issues are returned",
+          "command": "cd game && npx vitest run tests/manifestRefs.test.ts --testTimeout=10000",
+          "file": "tests/manifestRefs.test.ts",
+          "status": "passed",
+          "detail": "Expected []; passed."
+        }
+      ],
+      "started_at": "2026-11-23T17:32:46.612139+00:00",
+      "ended_at": "2026-11-23T17:33:10.724294+00:00",
+      "run_started_at": "2026-11-23T17:32:46.612139+00:00",
+      "duration_ms": 22768,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 3739,
+      "estimated_cost_usd": 0.014967
+    },
+    {
+      "unit_id": "UNIT-369",
+      "title": "Verify: loadManifestWithFallback unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84QDP9E52TT529XZT3Z8569"
+      ],
+      "depends_on": [
+        "UNIT-367",
+        "REQ-184"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "fb420a92ad74abc6ce2fae348a77e01cee1480d2",
+      "from_sha": "fb420a92ad74abc6ce2fae348a77e01cee1480d2",
+      "tests": [
+        {
+          "id": "keeps-present-assets-reports-missing",
+          "kind": "unit",
+          "name": "loadManifestWithFallback keeps assets whose files exist and reports the missing ones without throwing",
+          "title": "keeps assets whose files exist and reports the missing ones without throwing",
+          "scenario": "Given manifest assets a and b with only a.svg present, When loaded with fallback, Then a is kept, b is reported missing as {id:'b',path:'b.svg'}, and fallbackAssetId is FALLBACK_ASSET_ID",
+          "command": "npx vitest run tests/manifestFallback.test.ts --testTimeout=20000",
+          "file": "tests/manifestFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "nonexistent-manifest-fallback",
+          "kind": "unit",
+          "name": "loadManifestWithFallback falls back to an empty manifest with one error when the manifest file does not exist",
+          "title": "falls back to an empty manifest with one error when the manifest file does not exist",
+          "scenario": "Given a manifest path that was never written, When loaded with fallback, Then assets are [] and errors has length 1 and nothing throws",
+          "command": "npx vitest run tests/manifestFallback.test.ts --testTimeout=20000",
+          "file": "tests/manifestFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "invalid-json-manifest-fallback",
+          "kind": "unit",
+          "name": "loadManifestWithFallback falls back to an empty manifest with one error when the manifest is not valid JSON",
+          "title": "falls back to an empty manifest with one error when the manifest is not valid JSON",
+          "scenario": "Given a manifest file containing invalid JSON, When loaded with fallback, Then assets are [] and errors has length 1 and nothing throws",
+          "command": "npx vitest run tests/manifestFallback.test.ts --testTimeout=20000",
+          "file": "tests/manifestFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "all-files-present-no-missing",
+          "kind": "unit",
+          "name": "loadManifestWithFallback reports no missing assets when every referenced file exists",
+          "title": "reports no missing assets when every referenced file exists",
+          "scenario": "Given manifest assets a and b with both files present, When loaded with fallback, Then both assets are kept and missing is []",
+          "command": "npx vitest run tests/manifestFallback.test.ts --testTimeout=20000",
+          "file": "tests/manifestFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T17:32:23.132090+00:00",
+      "ended_at": "2026-11-23T17:32:46.054198+00:00",
+      "run_started_at": "2026-11-23T17:32:23.132090+00:00",
+      "duration_ms": 21668,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3942,
+      "estimated_cost_usd": 0.015776
+    },
+    {
+      "unit_id": "REQ-183",
+      "title": "REQ · Loader reports object and scene asset refs that are not manifest ids",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-072"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-184",
+      "title": "REQ · Loader reports missing asset files and falls back without crashing",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-072"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-072",
+      "title": "Evidence: Manifest loader reference and fallback unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-366",
+        "UNIT-367",
+        "UNIT-368",
+        "UNIT-369"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-367",
+      "dst": "EVD-072"
+    },
+    {
+      "src": "UNIT-369",
+      "dst": "EVD-072"
+    },
+    {
+      "src": "REQ-183",
+      "dst": "UNIT-368"
+    },
+    {
+      "src": "UNIT-366",
+      "dst": "EVD-072"
+    },
+    {
+      "src": "INT-072",
+      "dst": "REQ-183"
+    },
+    {
+      "src": "UNIT-368",
+      "dst": "EVD-072"
+    },
+    {
+      "src": "REQ-183",
+      "dst": "UNIT-366"
+    },
+    {
+      "src": "INT-072",
+      "dst": "REQ-184"
+    },
+    {
+      "src": "UNIT-367",
+      "dst": "UNIT-369"
+    },
+    {
+      "src": "REQ-184",
+      "dst": "UNIT-367"
+    },
+    {
+      "src": "UNIT-366",
+      "dst": "UNIT-368"
+    },
+    {
+      "src": "REQ-184",
+      "dst": "UNIT-369"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84qdp",
+  "base_sha": "686834ec519f17d52cba409ef0d20a82b3a85e50",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84QDPQSYGWHYW9BNY723KAZ:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T17:31:53.977759+00:00",
+  "updated_at": "2026-11-23T17:33:12.133298+00:00",
+  "completed_at": "2026-11-23T17:33:10.725340+00:00",
+  "duration_ms": 76748,
+  "usage_stats": {
+    "total_duration_ms": 109799,
+    "total_tokens_in": 60,
+    "total_tokens_out": 15351,
+    "total_estimated_cost_usd": 0.061451
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 10,
+  "unit_allowlist": [
+    "UNIT-366",
+    "UNIT-367",
+    "UNIT-368",
+    "UNIT-369"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-366",
+        "title": "Act: Add checkAssetRefs to the manifest loader",
+        "evidence_refs": [
+          {
+            "id": "EVD-072",
+            "path": ".ai-dlc/evidence/EVD-072.md",
+            "title": "Evidence: Manifest loader reference and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-366 unless acceptance outcomes recorded in EVD-072 (.ai-dlc/evidence/EVD-072.md; \"Evidence: Manifest loader reference and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-367",
+        "title": "Act: Add loadManifestWithFallback to the manifest loader",
+        "evidence_refs": [
+          {
+            "id": "EVD-072",
+            "path": ".ai-dlc/evidence/EVD-072.md",
+            "title": "Evidence: Manifest loader reference and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-367 unless acceptance outcomes recorded in EVD-072 (.ai-dlc/evidence/EVD-072.md; \"Evidence: Manifest loader reference and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-368",
+        "title": "Verify: checkAssetRefs unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-072",
+            "path": ".ai-dlc/evidence/EVD-072.md",
+            "title": "Evidence: Manifest loader reference and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-368 unless acceptance outcomes recorded in EVD-072 (.ai-dlc/evidence/EVD-072.md; \"Evidence: Manifest loader reference and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-369",
+        "title": "Verify: loadManifestWithFallback unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-072",
+            "path": ".ai-dlc/evidence/EVD-072.md",
+            "title": "Evidence: Manifest loader reference and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-369 unless acceptance outcomes recorded in EVD-072 (.ai-dlc/evidence/EVD-072.md; \"Evidence: Manifest loader reference and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T17:31:55.460021+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-366",
+    "UNIT-367",
+    "UNIT-368",
+    "UNIT-369"
+  ]
+}

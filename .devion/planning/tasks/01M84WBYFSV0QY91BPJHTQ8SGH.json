@@ -1,0 +1,76 @@
+{
+  "id": "01M84WBYFSV0QY91BPJHTQ8SGH",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "Verify: Effects schema, effect creation and transition order unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Prove effects parse, build and transition in order with fakes.",
+  "description": "Fake RenderContext and schema parsing tests.",
+  "acceptance_criteria": [
+    "Dust and ambient light effect creation, the empty-effects default and the invalid effect type error are asserted",
+    "Transition order fade out, swap, fade in is asserted"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/effects.test.ts",
+      "game/tests/transition.test.ts",
+      "game/tests/contentSchema.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-475.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84W96466SZBNSKJKZWWMTHZ",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-475.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84WBYFS9Q8ND9V0EA24F13K"
+  ],
+  "sim_node_id": "01M84W96465RH08D0CH04HGYGR",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-475.md",
+  "artifact_id": "UNIT-475",
+  "steps": [
+    {
+      "file": "game/tests/effects.test.ts",
+      "symbol": "new: createEffects",
+      "lines": "new",
+      "action": "With a fake RenderContext, assert a dust def with count 5 calls addParticles(key,5) and setDepth(400), an ambientLight def with color 0x112233 and alpha 0.3 calls addOverlay(0x112233,0.3), and undefined defs return [].",
+      "command": "cd game && npx vitest run tests/effects.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/tests/transition.test.ts",
+      "symbol": "new: runTransition order",
+      "lines": "new",
+      "action": "Use a fake ctx whose fade invokes its callback synchronously and records calls; assert the recorded sequence is ['fade:out','swap','fade:in'].",
+      "command": "cd game && npx vitest run tests/transition.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/tests/contentSchema.test.ts",
+      "symbol": "new: effects field",
+      "lines": "after existing tests",
+      "action": "Add tests that parseWorldContent('scene', fixture without effects) is ok with data.effects equal to [] and that effects [{id:'d',type:'bogus'}] returns ok false with an error path starting 'effects.0'.",
+      "command": "cd game && npx vitest run tests/contentSchema.test.ts",
+      "expected": "New and existing tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T18:58:19.256934+00:00",
+  "updated_at": "2026-11-23T19:03:24.421708+00:00"
+}

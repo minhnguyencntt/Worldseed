@@ -1,0 +1,76 @@
+{
+  "id": "01M85B0SSF6QWW5G92S65K8V3K",
+  "intent_id": "01M85ATKCA4JPNPQZD365VQEFV",
+  "title": "Act: Confirm BootScene creates, clicks and destroys character sprites",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm BootScene create, createCharacter and shutdown handle characters.",
+  "description": "Read BootScene.ts and confirm characters are created from scene.characters, characterClick is emitted before animation guards, and shutdown destroys sprites. Edit only if missing.",
+  "acceptance_criteria": [
+    "create maps scene.characters ?? [] to createCharacter",
+    "The shutdown handler destroys each character sprite and clears the array",
+    "POINTER_DOWN emits characterClick before the interact guards"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/phaser/BootScene.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Public methods of BootScene"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three behaviors present",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-604.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85AXB9MA66MCQWH3P51KMGG",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-604.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85B0SSFXWDK9JCXVRHVF2VH"
+  ],
+  "sim_node_id": "01M85AXB9MYQFBCN0D01YG43TN",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-604.md",
+  "artifact_id": "UNIT-604",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create",
+      "lines": "L66-L82",
+      "action": "Check this.characterSprites is assigned from (scene.characters ?? []).map(createCharacter) and the SHUTDOWN callback runs characterSprites.forEach((s) => s.destroy()); restore if missing.",
+      "code": "this.characterSprites.forEach((s) => s.destroy());",
+      "command": "cd game/frontend && grep -n \"characterSprites\" src/phaser/BootScene.ts",
+      "expected": "Assignment, destroy and reset lines are listed."
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.createCharacter",
+      "lines": "L103-L124",
+      "action": "Check the POINTER_DOWN handler calls phaserToReact.emit('characterClick', { id: spec.id }) before the idleKey and interactKey guards; reorder only if wrong.",
+      "code": "phaserToReact.emit('characterClick', { id: spec.id });",
+      "command": "cd game/frontend && grep -n \"characterClick\" src/phaser/BootScene.ts",
+      "expected": "One emit line inside createCharacter."
+    }
+  ],
+  "created_at": "2026-11-23T23:14:22.639602+00:00",
+  "updated_at": "2026-11-23T23:16:13.758071+00:00"
+}

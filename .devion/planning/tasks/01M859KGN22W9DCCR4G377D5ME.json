@@ -1,0 +1,75 @@
+{
+  "id": "01M859KGN22W9DCCR4G377D5ME",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Act: Author opening dialogue branches in bedroom.yaml",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Intro choices lead to look-around and explore nodes with flags",
+  "description": "Give each intro choice a next node and set_flag events.",
+  "acceptance_criteria": [
+    "Intro choice 0 goes to look-around and sets looked_around",
+    "Intro choice 1 goes to explore and sets exploring"
+  ],
+  "scope": {
+    "in_scope": [
+      "bedroom.yaml dialogue",
+      "world.yaml flags"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Intro text"
+    ]
+  },
+  "technical_constraints": [
+    "Existing GameEvent types only",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`",
+    "Code path: `game/src/content/worlds/the-boys-room/world.yaml`"
+  ],
+  "dependencies": [
+    "REQ2"
+  ],
+  "definition_of_done": [
+    "Branch nodes authored",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-579.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1BY27HK37Y77PWZQME",
+    "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+    "artifact:.ai-dlc/units/UNIT-579.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN23K60Z1ZZYW40WTZZ"
+  ],
+  "sim_node_id": "01M859FE1BBFPM4DBQANJ9PF92",
+  "feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+  "artifact_path": ".ai-dlc/units/UNIT-579.md",
+  "artifact_id": "UNIT-579",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "dialogue intro choices",
+      "lines": "L4-L11",
+      "action": "Set choice 'Look around the room' to next: look-around with events set_flag looked_around true; set choice \"Let's explore\" to next: explore with events set_flag exploring true. Append nodes look-around (speaker boy, text 'There is a bookshelf, a computer, a bed, a window and a door.', one choice 'Okay') and explore (speaker boy, text 'Something in here must lead somewhere.', one choice 'Okay').",
+      "expected": "Dialogue graph has three nodes and valid next ids"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/world.yaml",
+      "symbol": "flags",
+      "lines": "L9-L11",
+      "action": "Append flags looked_around and exploring.",
+      "expected": "validateWorld finds no unknown flags"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.616930+00:00"
+}

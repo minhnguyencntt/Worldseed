@@ -1,0 +1,824 @@
+{
+  "id": "01M842H2CPZ9096JZ74WDY6Z9Z",
+  "title": "worldseed - new era",
+  "description": "# STORYFORGE — MASTER IMPLEMENTATION PROMPT\n## Build from a Blank Repository\n\nYou are the Principal Software Architect, Senior Full-stack Engineer, Game Designer, and AI Engineering Lead responsible for building **StoryForge** from an empty repository.\n\nYour mission is to build a working, end-to-end community-driven text RPG platform.\n\nDo not build merely a UI mockup, prototype, or CRUD application. Build a functional product foundation with a playable game, community contribution system, GitOps-based Round lifecycle, Go backend, and Local AI Development Worker.\n\n---\n\n# 1. PRODUCT VISION\n\nStoryForge is a community-driven RPG development platform.\n\nThe central concept:\n\n**Players decide what happens next. AI developers turn community ideas into actual game code.**\n\nPlayers enter a living text-based RPG, explore the world, interact with objects and characters, make choices, and submit natural-language prompts describing what they want to happen next.\n\nThe platform collects contributions during a Round.\n\nWhen the Round closes:\n1. Freeze all contributions.\n2. Analyze and consolidate community ideas.\n3. Generate structured game requirements.\n4. Create a development plan.\n5. Invoke a local coding agent to modify the actual game source code.\n6. Run tests and build the game.\n7. Publish a new immutable release.\n8. Automatically open the next Round using the new release.\n\nThe game must evolve through real source-code changes, not just AI-generated dialogue at runtime.\n\n# 2. NON-NEGOTIABLE ARCHITECTURAL PRINCIPLES\n\n- Git repository is the Single Source of Truth.\n- No Firebase.\n- No PostgreSQL, MongoDB, MySQL, Redis, or other database.\n- No message queue.\n- No unnecessary microservices.\n- Do not introduce a database to simplify implementation.\n- Persistent business data must be stored in Git as Markdown, YAML, JSON, or source files.\n- Temporary runtime state may use local filesystem files and lock files.\n- The Local Worker runs on the administrator's personal computer.\n- The coding agent must operate on the actual game source code.\n- All community prompts are untrusted input.\n- Production must remain available using the latest successfully published release.\n- A failed development cycle must never corrupt the current production release.\n\nUse simple, modular, maintainable architecture.\n\n# 3. TECHNOLOGY STACK\n\n## Frontend\n- React\n- TypeScript\n- Vite\n- Modern CSS\n- Responsive design\n- Reusable UI components\n\n## Backend\n- Go\n- Chi HTTP router\n- REST API\n- Git CLI or a suitable Git library\n- YAML configuration\n- Structured logging\n\n## Local Worker\n- Go\n- Claude Code CLI as the initial coding agent\n- Git worktree or isolated workspace\n- Filesystem-based execution state\n\n## GitOps\n- Git repository as persistent data storage\n- Git branches for development isolation\n- Git commits for contribution history and execution artifacts\n- Git tags for immutable game releases\n\n## Deployment\n- Static HTML5 game hosting\n- Cloudflare Pages or configurable static hosting\n- Backend deployment must be independently configurable\n\nDo not hardcode hosting providers.\n\n# 4. INITIAL GAME EXPERIENCE\n\nThe initial game world is called:\n\n**The Boy's Room**\n\nThe first game screen must establish an emotional and memorable opening.\n\n## Opening scene\n\nA young boy is sitting in his bedroom.\n\nIt is a quiet morning.\n\nHis room contains:\n- A bed.\n- A bookshelf.\n- A desk.\n- An old computer.\n- A window.\n- A bedroom door.\n- A few personal belongings.\n\nThe boy looks around.\n\nHe does not know what to do.\n\nHe has no mission, no objective, and no idea what is going to happen next.\n\nHe turns toward the player and asks:\n\n**\"I don't know what to do next. What should we do?\"**\n\nThe player is not simply controlling a predefined story.\n\nThe player is helping decide the direction of the world.\n\nThe first community development cycle must be:\n\n`ROUND-0000001`\n\nThe opening experience should communicate that the community is creating the story together.\n\nSuggested introductory copy:\n\n\"Every great adventure begins with a question.\n\nI'm just a boy in my room. I don't know what happens next.\n\nYou decide.\n\nWhat should I do?\"\n\n## First Round\n\n- Round ID: `ROUND-0000001`\n- Round number: 1\n- Initial status: OPEN\n- Duration: 24 hours\n- Maximum contributions per player: 5\n- Base release: `1.0.0`\n- Allow new characters: true\n- Allow new locations: true\n- Allow gameplay changes: true\n\nThe game must allow a player to submit a natural-language idea immediately.\n\nExample prompts:\n- \"Look behind the bookshelf. Maybe there is a secret door.\"\n- \"The boy should turn on his old computer and discover a mysterious message.\"\n- \"Let the boy go outside and meet a strange neighbor.\"\n- \"I want a mysterious cat to appear at the window.\"\n\nThese are examples, not predefined mandatory story branches.\n\nDo not artificially restrict the story to these examples.\n\n# 5. GAMEPLAY DESIGN — HYBRID RPG\n\nThe game uses a hybrid interaction model:\n\n1. Point & Click.\n2. Choice-based interactions.\n3. Dialogue and narrative.\n\nPlayers can explore the environment by clicking objects and characters.\n\nClicking an object opens its description and available interactions.\n\nExample:\n\nObject: Old Bookshelf\n\nDescription:\n\"An old wooden bookshelf covered with dust.\"\n\nAvailable actions:\n- Inspect\n- Push\n- Search\n- Leave\n\nActions can trigger game events, update world state, reveal items, or navigate to another scene.\n\n## Persistent Game State\n\nImplement:\n- Current scene.\n- Inventory.\n- Discovered objects.\n- Completed quests.\n- Character relationships.\n- World flags.\n- Previous player actions.\n\nThe world should remember meaningful actions.\n\nFor example:\nIf the player opens a secret door, returning to the room must show that the door remains open.\n\n# 6. GAME UI — 80/20 LAYOUT\n\nThe gameplay screen must use two primary areas.\n\n## Main Game Screen — 80%\n\nThe main area displays:\n- Pixel-art environment.\n- Characters.\n- Interactive objects.\n- Visual state changes.\n- Scene transitions.\n- Interaction highlights.\n\nThe bedroom should be visually rich and immersive.\n\nUse original or properly licensed assets. If final art assets are unavailable, provide polished placeholder assets and a clear asset replacement structure.\n\n## Story and Interaction Panel — 20%\n\nThe side panel displays:\n- Current narrative.\n- Character dialogue.\n- Player choices.\n- Action results.\n- Story history.\n- Inventory summary.\n\nIt must have independent scrolling.\n\nDo not make the story panel look like an ordinary AI chatbot.\n\nIt should feel like an RPG narrative interface.\n\n## Community Contribution\n\nProvide a clearly visible action:\n\n\"Suggest What Happens Next\"\n\nThis opens a contribution interface.\n\nPlayers can enter natural-language prompts.\n\nExplain that submitted ideas will be considered when the current Round closes.\n\nDo not confuse community contributions with ordinary gameplay choices.\n\nBoth must be available.\n\n## Responsive behavior\n\nDesktop:\n- Preserve the 80/20 layout.\n\nMobile:\n- Game scene remains the primary area.\n- Story panel becomes a bottom drawer or dedicated collapsible section.\n- Important gameplay actions must remain accessible.\n- Contribution submission must be easy to use.\n\n# 7. GAME CONTENT AND RUNTIME ARCHITECTURE\n\nSeparate Game Runtime from Game Content.\n\n## Game Runtime\n\nImplement reusable systems for:\n- Scene rendering.\n- Clickable objects.\n- Dialogue engine.\n- Choice engine.\n- Event execution.\n- Inventory.\n- Conditions.\n- World state.\n- Scene transitions.\n\n## Game Content\n\nStore game-specific content separately.\n\nExample structure:\n\ngame/\n  src/\n    engine/\n    components/\n    systems/\n    state/\n  content/\n    worlds/\n      the-boys-room/\n        world.yaml\n        scenes/\n          bedroom.yaml\n        characters/\n        objects/\n        quests/\n  public/\n    assets/\n  tests/\n\nPrefer declarative YAML or JSON content where appropriate.\n\nThe runtime must validate content schemas and report invalid references.\n\nThe coding agent should be able to add new scenes, characters, objects, quests, and dialogues without rewriting the engine unnecessarily.\n\nHowever, genuine gameplay changes may modify runtime source code.\n\n# 8. ROUND LIFECYCLE — CONTINUOUS CYCLE\n\nThis is a critical part of the product.\n\nImplement a Continuous Cycle.\n\nEach Round lasts 24 hours by default.\n\nThe lifecycle:\n\nSCHEDULED\n→ OPEN\n→ CLOSED\n→ ANALYZING\n→ PLANNING\n→ DEVELOPING\n→ TESTING\n→ BUILDING\n→ PUBLISHING\n→ COMPLETED\n→ NEXT ROUND OPEN\n\nExceptional states:\n- FAILED\n- CANCELLED\n- RECOVERING\n\n## Round Opening\n\nWhen a Round opens:\n- Set status to OPEN.\n- Record start and end timestamps.\n- Record the base release.\n- Accept community contributions.\n- Display countdown timer.\n- Enforce contribution limits.\n\n## Round Closing\n\nAt the scheduled end time:\n- Reject new submissions.\n- Freeze the contribution snapshot.\n- Record the exact Git commit containing the frozen contributions.\n- Transition to CLOSED.\n- Trigger the development pipeline.\n\nNever modify frozen contribution files.\n\n## Development\n\nThe Local Worker processes the closed Round.\n\nThe game must continue serving the latest production release during development.\n\nPlayers must not experience partially built game code.\n\n## Publishing\n\nOnly publish if:\n- Requirements are satisfied.\n- Tests pass.\n- Build succeeds.\n- Release metadata is valid.\n\nCreate an immutable release with:\n- Version.\n- Git commit SHA.\n- Round ID.\n- Artifact checksum.\n- Changelog.\n- Test summary.\n- Publication timestamp.\n\nUpdate the production release pointer only after successful publication.\n\n## Opening the Next Round\n\nAfter a successful release:\n- Create the next Round.\n- Increment the Round number.\n- Use the newly published release as the base release.\n- Set the new start timestamp.\n- Set the end timestamp to 24 hours later.\n- Automatically open the next Round.\n\nExample:\n\nROUND-0000001 → Release 1.1.0\nROUND-0000002 → Release 1.2.0\nROUND-0000003 → Release 1.3.0\n\nImportant:\nIf development or publishing fails, do not open the next Round automatically.\n\nKeep the previous production release available.\n\nAllow the administrator to retry, recover, or cancel the failed execution.\n\nOnly one active Round per World in the MVP.\n\n# 9. GITOPS REPOSITORY STRUCTURE\n\nCreate a clean repository structure.\n\nSuggested structure:\n\nstoryforge/\n├── frontend/\n│   ├── src/\n│   ├── public/\n│   └── package.json\n├── backend/\n│   ├── cmd/\n│   ├── internal/\n│   ├── configs/\n│   └── go.mod\n├── game/\n│   ├── src/\n│   ├── content/\n│   ├── public/\n│   └── tests/\n├── worker/\n│   ├── cmd/\n│   ├── internal/\n│   └── configs/\n├── worlds/\n│   └── the-boys-room/\n│       ├── world.yaml\n│       ├── current-release.yaml\n│       ├── rounds/\n│       │   └── round-0000001/\n│       │       ├── round.yaml\n│       │       ├── contributions/\n│       │       ├── snapshot.yaml\n│       │       └── analysis/\n│       └── releases/\n├── development/\n│   ├── plans/\n│   ├── tasks/\n│   ├── executions/\n│   └── templates/\n├── scripts/\n├── docs/\n├── .github/\n│   └── workflows/\n├── docker-compose.yml\n└── README.md\n\nYou may improve the structure if necessary, but preserve the separation of concerns.\n\nDo not commit noisy temporary logs or generated build artifacts into the source-of-truth directories.\n\nPersist meaningful execution summaries and reports.\n\n# 10. GO BACKEND\n\nBuild a functional REST API.\n\n## Player APIs\n\nPOST /api/v1/player/session\nGET /api/v1/player/me\nGET /api/v1/player/me/contributions\n\nUse anonymous player sessions initially.\n\nThe backend generates a random player ID and a secure session token.\n\nUse signed or opaque tokens with secure HttpOnly cookies.\n\nDo not require GitHub accounts from players.\n\nNo database is allowed.\n\n## World APIs\n\nGET /api/v1/worlds\nGET /api/v1/worlds/{id}\nGET /api/v1/worlds/{id}/game\nGET /api/v1/worlds/{id}/round/current\n\n## Contribution APIs\n\nPOST /api/v1/contributions\nGET /api/v1/contributions/{id}\n\nValidate:\n- Player identity.\n- World existence.\n- Round status.\n- Prompt length.\n- Contribution limit.\n- Request rate.\n- Duplicate or spam submissions.\n\n## Admin APIs\n\nPOST /api/v1/admin/rounds\nPOST /api/v1/admin/rounds/{id}/open\nPOST /api/v1/admin/rounds/{id}/close\nGET /api/v1/admin/rounds/{id}\nGET /api/v1/admin/rounds/{id}/contributions\nGET /api/v1/admin/executions\nPOST /api/v1/admin/executions/{id}/retry\nPOST /api/v1/admin/executions/{id}/approve\n\nProtect all admin endpoints.\n\n## Git Integration\n\nUse a dedicated bot identity for Git writes.\n\nNever expose Git credentials to the frontend.\n\nUse atomic or concurrency-safe Git operations.\n\nEvery contribution must have a unique immutable file.\n\nHandle concurrent submissions without overwriting other contributions.\n\nIf using a remote Git hosting provider, make the provider configurable.\n\n# 11. LOCAL AI DEVELOPMENT WORKER\n\nBuild a Go Local Worker.\n\nThe Worker runs on the administrator's computer.\n\nIt is responsible for:\n1. Pulling the latest repository.\n2. Detecting scheduled and closed Rounds.\n3. Closing expired Rounds when appropriate.\n4. Freezing contributions.\n5. Preparing AI context.\n6. Analyzing contributions.\n7. Generating requirements.\n8. Generating development tasks.\n9. Invoking Claude Code CLI.\n10. Running tests.\n11. Building the HTML5 game.\n12. Publishing the release.\n13. Opening the next Round.\n\nUse an isolated Git worktree for development.\n\nThe Worker must never modify production files while an execution is in progress.\n\nRun only one development execution per World at a time.\n\nImplement:\n- Execution timeout.\n- Retry mechanism.\n- Lock management.\n- Recovery after process restart.\n- Structured execution reports.\n- Agent command configuration.\n- Maximum execution budget.\n- Human approval gates.\n\nThe Worker must check for unfinished executions on startup.\n\nDo not assume it was running continuously.\n\n# 12. AI DEVELOPMENT PIPELINE\n\nImplement the following logical roles.\n\nThese can initially use the same LLM/coding agent with different instructions.\n\n## Contribution Analyzer\n\nClassify:\n- New location.\n- New character.\n- New object.\n- New quest.\n- New story event.\n- Gameplay mechanic.\n- Dialogue.\n- Visual or UX suggestion.\n\n## Story Architect\n\n- Group related contributions.\n- Deduplicate ideas.\n- Identify contradictions.\n- Preserve original player intent.\n- Propose a coherent story direction.\n\nDo not silently discard community ideas.\n\nCreate a report describing accepted, merged, deferred, and rejected suggestions.\n\n## Game Product Owner\n\nConvert ideas into structured requirements with:\n- Requirement ID.\n- Title.\n- Description.\n- Source contribution IDs.\n- Acceptance criteria.\n- Priority.\n- Dependencies.\n\n## Development Planner\n\nInspect the real game source.\n\nCreate implementation tasks with:\n- Files likely to change.\n- Dependencies.\n- Technical implementation notes.\n- Test expectations.\n\n## QA and Release Reviewer\n\nValidate:\n- Requirements.\n- Game behavior.\n- Build output.\n- Test reports.\n- Release metadata.\n\nThe coding agent must not receive raw player prompts as trusted system instructions.\n\nTreat all community content as untrusted data.\n\nUse structured requirements as its implementation input.\n\n# 13. SECURITY\n\nImplement security from the beginning.\n\n- Never execute player prompts as shell commands.\n- Never expose API secrets to the browser.\n- Never expose coding agent credentials.\n- Run coding agents with restricted permissions.\n- Use isolated worktrees.\n- Restrict file access to the project workspace.\n- Set execution time and resource limits.\n- Validate all submitted content.\n- Protect against path traversal.\n- Protect admin APIs.\n- Rate-limit anonymous submissions.\n- Do not allow community prompts to modify worker configuration or deployment credentials.\n\n# 14. ADMIN EXPERIENCE\n\nBuild a functional admin interface.\n\nThe admin should be able to:\n- View the current World.\n- View the current Round.\n- Configure Round duration.\n- Configure contribution limits.\n- Open and close a Round.\n- View contributions.\n- View AI analysis.\n- Review generated requirements.\n- Review development tasks.\n- Monitor Worker execution.\n- View build and test results.\n- Approve or reject publication.\n- Retry failed executions.\n- Inspect release history.\n\nShow a clear live lifecycle:\n\nOPEN → CLOSED → ANALYZING → DEVELOPING → TESTING → PUBLISHING → COMPLETED\n\nDisplay:\n- Current stage.\n- Round number.\n- Contribution count.\n- Execution duration.\n- Agent logs.\n- Test results.\n- Release version.\n- Failure reasons.\n\nThe initial default should be supervised publishing: the pipeline runs automatically, but the administrator must approve the first production releases. Provide an explicit configuration to enable automatic publishing later.\n\n# 15. DESIGN DIRECTION\n\nThe UI must be modern, polished, friendly, and immersive.\n\nAvoid generic enterprise dashboards.\n\nThe game itself should feel like a real retro RPG.\n\nVisual direction:\n- Pixel-art world.\n- Warm bedroom atmosphere.\n- Retro-inspired game UI.\n- Clear typography.\n- Warm and inviting colors.\n- Subtle animations.\n- Modern responsive layout.\n\nThe admin experience should be clean and colorful but professional.\n\nUse consistent reusable components.\n\nPrioritize:\n- Good loading states.\n- Empty states.\n- Error handling.\n- Responsive layouts.\n- Accessible controls.\n- Clear status indicators.\n\n# 16. MVP IMPLEMENTATION PHASES\n\nDo not attempt to implement every advanced feature simultaneously.\n\nBuild incrementally, but ensure every phase results in a working application.\n\n## Phase 1 — Repository Bootstrap\n\n- Initialize frontend.\n- Initialize Go backend.\n- Initialize game runtime.\n- Initialize Local Worker.\n- Create repository documentation.\n- Create configuration examples.\n- Add development scripts.\n\nDeliverable: application starts locally.\n\n## Phase 2 — First Playable Game\n\n- Implement the bedroom scene.\n- Implement the boy's opening dialogue.\n- Implement clickable objects.\n- Implement choices.\n- Implement story history.\n- Implement inventory.\n- Implement persistent game state.\n- Implement 80/20 gameplay layout.\n\nDeliverable: users can actually play the opening scene.\n\n## Phase 3 — Community Contributions\n\n- Anonymous player session.\n- Contribution submission UI.\n- Go API.\n- Git contribution storage.\n- Round validation.\n- Contribution history.\n\nDeliverable: a player without a Git account can submit an idea, and the contribution is committed to Git.\n\n## Phase 4 — Round Management\n\n- Round YAML model.\n- Scheduling.\n- Automatic opening and closing.\n- Contribution snapshot.\n- Countdown.\n- Admin Round UI.\n\nDeliverable: ROUND-0000001 works end to end.\n\n## Phase 5 — AI Development Worker\n\n- Git polling.\n- Round detection.\n- Contribution analysis.\n- Requirements generation.\n- Task generation.\n- Claude Code CLI integration.\n- Isolated development workspace.\n\nDeliverable: a closed Round can trigger real code development.\n\n## Phase 6 — Testing and Release\n\n- Automated tests.\n- Build.\n- Release metadata.\n- Deployment.\n- Production release pointer.\n- Next Round creation.\n\nDeliverable: a successful development cycle publishes a new game release and automatically opens the next Round.\n\n## Phase 7 — Operational Hardening\n\n- Recovery.\n- Retry.\n- Logging.\n- Security.\n- Monitoring.\n- Documentation.\n- End-to-end tests.\n\n# 17. ACCEPTANCE CRITERIA\n\nThe project is not considered complete just because the UI looks finished.\n\nThe following end-to-end scenario must work:\n\n1. Start the application from a clean repository.\n2. Open the StoryForge website.\n3. See the boy in his bedroom.\n4. The boy asks the player what they should do next.\n5. See ROUND-0000001 is OPEN.\n6. Play using Point & Click and Choice-based interactions.\n7. Submit a natural-language contribution without a Git account.\n8. Verify that a Markdown contribution file is committed to Git.\n9. Close the Round.\n10. Verify that the contribution snapshot is immutable.\n11. Run the Local Worker.\n12. Verify that AI analyzes contributions.\n13. Verify that structured requirements and development tasks are generated.\n14. Verify that Claude Code modifies actual game source or content.\n15. Run automated tests.\n16. Build the HTML5 game.\n17. Publish a new immutable release.\n18. Verify that production still works.\n19. Verify that ROUND-0000002 is created and opened using the new release.\n\nIf Claude Code CLI is unavailable, implement a mock development provider for local testing, but clearly distinguish mock execution from real development.\n\nNever report an operation as successful unless it actually completed.\n\n# 18. DEVELOPMENT INSTRUCTIONS\n\nStart by inspecting the repository.\n\nIf it is empty, initialize the entire project structure.\n\nThen:\n1. Create `docs/ARCHITECTURE.md`.\n2. Create `docs/ROUND-LIFECYCLE.md`.\n3. Create `docs/GAME-DESIGN.md`.\n4. Create a detailed implementation plan.\n5. Implement Phase 1 and Phase 2 first.\n6. Continue with subsequent phases in working increments.\n\nDo not stop after writing documentation or proposing architecture.\n\nBuild and run the actual application.\n\nRun tests and resolve errors.\n\nUse realistic sample content for the first bedroom scene.\n\nKeep the code clean, typed, modular, and easy for future AI coding agents to understand.\n\nDo not introduce unnecessary abstractions or technologies.\n\n**The ultimate goal: a player enters a small bedroom, helps a boy decide what happens next, and sees the community transform that idea into a real new version of the game through the next development cycle.**",
+  "status": "cancelled",
+  "created_at": "2026-11-23T11:26:44.118055+00:00",
+  "updated_at": "2026-11-23T15:44:20.771494+00:00",
+  "agent_suggestion": {
+    "confirmed": true,
+    "agents": [
+      {
+        "name": "loomwright-plan",
+        "role": "Plan-phase agent that maps StoryForge change requests onto Round lifecycle states, Git paths, and release pointer impact before any implementation starts.",
+        "based_on": "atlas",
+        "summary": "Inherits the AI-DLC planning skill and adds a Round lifecycle dependency map covering SCHEDULED through NEXT ROUND OPEN, the Git paths each stage writes, and the current-release.yaml pointer.",
+        "skills": [
+          {
+            "name": "aidlc-plan",
+            "version": "v1",
+            "inherited": true,
+            "from_agent": "atlas"
+          },
+          {
+            "name": "sf-round-lifecycle-dependency-map",
+            "version": "v1",
+            "inherited": false
+          }
+        ]
+      },
+      {
+        "name": "hearth-forge",
+        "role": "Act-phase agent that builds the bedroom game runtime and declarative YAML content so the player can explore, choose, and submit ideas without engine rewrites.",
+        "based_on": "forge",
+        "summary": "Inherits the AI-DLC implementation skill and adds a schema-validated content skill for scenes, objects, characters, and quests, plus a check that reports invalid content references.",
+        "skills": [
+          {
+            "name": "aidlc-act",
+            "version": "v1",
+            "inherited": true,
+            "from_agent": "forge"
+          },
+          {
+            "name": "sf-bedroom-runtime-builder",
+            "version": "v1",
+            "inherited": false
+          }
+        ]
+      },
+      {
+        "name": "ledger-forge",
+        "role": "Act-phase agent that implements the Go Chi API for anonymous sessions and immutable contribution files committed to Git with concurrency-safe writes.",
+        "based_on": "forge",
+        "summary": "Inherits the AI-DLC implementation skill and adds a Git writer that gives each contribution a unique immutable file, handles concurrent submissions without overwrites, and rejects untrusted path input.",
+        "skills": [
+          {
+            "name": "aidlc-act",
+            "version": "v1",
+            "inherited": true,
+            "from_agent": "forge"
+          },
+          {
+            "name": "sf-immutable-contribution-committer",
+            "version": "v1",
+            "inherited": false
+          }
+        ]
+      },
+      {
+        "name": "relay-forge",
+        "role": "Act-phase agent that implements the local worker pipeline: execution locks, one execution per World, isolated worktrees, the Claude Code CLI provider with a clearly labeled mock, and publish gates.",
+        "based_on": "forge",
+        "summary": "Inherits the AI-DLC implementation skill and adds worker lifecycle skills for Round close, analysis, planning, development, testing, and immutable release publishing, with restart recovery.",
+        "skills": [
+          {
+            "name": "aidlc-act",
+            "version": "v1",
+            "inherited": true,
+            "from_agent": "forge"
+          },
+          {
+            "name": "sf-worker-execution-orchestrator",
+            "version": "v1",
+            "inherited": false
+          }
+        ]
+      },
+      {
+        "name": "warden-verify",
+        "role": "Verify-phase agent that writes mocked unit tests proving frozen contributions are never rewritten, failed builds never move the production pointer, and path traversal and prompt injection are rejected.",
+        "based_on": "sentinel",
+        "summary": "Inherits the AI-DLC verification skill and adds a security boundary check for untrusted prompts, path inputs, admin endpoints, and release metadata, with no live servers or browsers.",
+        "skills": [
+          {
+            "name": "aidlc-verify",
+            "version": "v1",
+            "inherited": true,
+            "from_agent": "sentinel"
+          },
+          {
+            "name": "sf-release-pointer-safety-check",
+            "version": "v1",
+            "inherited": false
+          }
+        ]
+      }
+    ],
+    "created_at": "2026-11-23T11:28:53.429676+00:00"
+  },
+  "loop_position": {
+    "phase": "advancing_intents",
+    "round": 43,
+    "max_rounds": 100,
+    "auto_complete": true,
+    "intent_ids": [
+      "01M84H5BPMDDKFQ09WVB93984T"
+    ],
+    "case_ids": [],
+    "message": "Advancing 1 intent(s)…"
+  },
+  "control_transition": "cancelled",
+  "execution_agents": {
+    "plan": "atlas",
+    "act": "draco-act",
+    "verify": "draco-verify"
+  },
+  "max_rounds": 100,
+  "plan": {
+    "nodes": [
+      {
+        "id": "SG-1",
+        "title": "Bootstrap Go backend with player sessions",
+        "criteria": "In backend/ there is a Go module using the Chi router with a YAML config loader (configs/ example file, env overrides for secrets and Git/hosting settings), slog-based structured logging, and a health endpoint. POST /api/v1/player/session creates an anonymous player with a random ID and a signed or opaque token set as a Secure HttpOnly cookie, and GET /api/v1/player/me returns the player for a valid session and 401 otherwise. No database or external store is used; tokens are verified with an HMAC secret from config. Unit tests with httptest cover session creation, cookie attributes, valid and invalid tokens, and config loading, and pass with no network access.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M842N0PAB8ZNGFNQNRV0TC13"
+        ],
+        "attempts": 0,
+        "children": []
+      },
+      {
+        "id": "SG-2",
+        "title": "Implement game runtime and The Boy's Room content",
+        "criteria": "In game/src/engine, game/src/state and game/src/systems there are TypeScript modules for scene model, clickable objects with actions (inspect, push, search, leave), dialogue, choices, event execution, inventory, conditions, world flags, and scene transitions, all as pure functions over a serializable state object. A YAML content loader plus schema validator reads game/content/worlds/the-boys-room/world.yaml and scenes/bedroom.yaml and returns errors for unknown scene, object, character, or flag references. The bedroom content defines the opening dialogue where the boy asks 'I don't know what to do next. What should we do?', the bed, bookshelf with a hidden door that stays open once opened, desk, old computer, window, and door. Vitest unit tests cover each system, the reference validator with invalid fixtures, and persistence of state changes such as an opened secret door.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M842YVXQ6YESCRGFAQREM4JH"
+        ],
+        "attempts": 1,
+        "children": [
+          {
+            "id": "SG-2.1",
+            "title": "Merge the duplicate loader/validator implementations…",
+            "criteria": "Technical: Merge the duplicate loader/validator implementations (src/content/loader.ts and src/content/world.ts) into one, update every import, and make sure the validator tests cover the surviving one, including unknown scene, object, character, and flag references.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 2
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M843E57254ZA19GZD0A71MZ9"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-2.2",
+            "title": "Move the game runtime from backend/game to the top-level game/ folder…",
+            "criteria": "Requirement: Move the game runtime from backend/game to the top-level game/ folder the goal specifies (game/src/engine, game/src/state, game/src/systems, game/content), and fix the paths in the tests and config so they still pass.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 2
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M843M47NXN7ZRX51D3ZFX1AY"
+            ],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-3",
+        "title": "Build playable 80/20 game frontend",
+        "criteria": "In frontend/ there is a Vite + React + TypeScript app with reusable components for the scene view (pixel-art placeholder assets with a replaceable asset path map), clickable object hotspots, action menu, dialogue, choice buttons, story history, and inventory summary. Desktop uses an 80/20 layout with the story panel scrolling independently; below a mobile breakpoint the scene stays primary and the story panel becomes a collapsible bottom drawer while gameplay actions stay reachable. Game state is held in the runtime from sub-goal 2 and persisted to localStorage inside try/catch with a working fallback when storage is unavailable. The opening screen shows the suggested intro copy. Vitest and React Testing Library tests cover clicking an object, making a choice, state persisting across remount, the mobile drawer toggle, and storage failure fallback.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M843R7T9SKB55NJQJYKCQ435"
+        ],
+        "attempts": 1,
+        "children": [
+          {
+            "id": "SG-3.1",
+            "title": "Create the missing top-level App component. It should use the…",
+            "criteria": "Requirement: Create the missing top-level App component. It should use the game-state hook to show the intro screen, then the scene view, action menu and story panel inside the 80/20 layout, so the entry point compiles and the opening scene is playable.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 5
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M844F1NQRPF2YPVQKN324ARH"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-3.2",
+            "title": "Fix the doubled story-panel class, where the layout wraps a panel that…",
+            "criteria": "Technical: Fix the doubled story-panel class, where the layout wraps a panel that already has its own root with the same class. The mobile fixed-position and transform rules should apply only once.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 5
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M844NGP950K1Z8RGGSQA5CF2"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-3.3",
+            "title": "Add unit tests, with dependencies mocked, for the App flow: clicking an…",
+            "criteria": "Technical: Add unit tests, with dependencies mocked, for the App flow: clicking an object opens the action menu, choosing an action or dialogue choice updates the story, and a remount restores the saved state.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 5
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M844RY0G15P4GR4PE00BC8S2"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-3.4",
+            "title": "Make sure the assembled frontend type-checks and the entry point…",
+            "criteria": "Technical: Make sure the assembled frontend type-checks and the entry point resolves, covered by an App render test.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 5
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M844XNJF45JVTC7S2T492R66"
+            ],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-4",
+        "title": "Add Git-backed contribution storage and API",
+        "criteria": "In backend/internal there is a contribution service that validates prompt length, world existence, round status (OPEN only), per-player contribution limit (5), request rate limit, and duplicate or spam submissions. Each accepted contribution is written as a unique immutable Markdown file under worlds/the-boys-room/rounds/<round>/contributions/ with a generated ID and a serialized write lock so concurrent submissions never overwrite each other; paths are sanitized against traversal. Git writes go through an interface wrapping the Git CLI using a configured bot identity, mocked in tests. POST /api/v1/contributions, GET /api/v1/contributions/{id}, GET /api/v1/player/me/contributions, GET /api/v1/worlds, GET /api/v1/worlds/{id}, GET /api/v1/worlds/{id}/game, and GET /api/v1/worlds/{id}/round/current are wired to the service. Unit tests cover every validation rule, concurrent submissions producing distinct files, path traversal rejection, and the handlers with mocked Git and clock.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M84522HNMQHD166PMNC6CKQ8"
+        ],
+        "attempts": 1,
+        "children": [
+          {
+            "id": "SG-4.1",
+            "title": "Serve the player contribution history at GET…",
+            "criteria": "Requirement: Serve the player contribution history at GET /api/v1/player/me/contributions. It is currently only at /api/v1/contributions/mine. Update the routing and add a unit test for the new path.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 10
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M845QSXVR8TFAF8A3Q73J967"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-4.2",
+            "title": "Serve the current round at GET /api/v1/worlds/{id}/round/current. The…",
+            "criteria": "Requirement: Serve the current round at GET /api/v1/worlds/{id}/round/current. The server registers /rounds/current, so change the route in the server and add a routing test that uses the specified path.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 10
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M845V737K0347Y1X7BM0QP20"
+            ],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-5",
+        "title": "Implement round lifecycle and admin API",
+        "criteria": "In backend/internal there is a round model read from and written to round.yaml with the statuses SCHEDULED, OPEN, CLOSED, ANALYZING, PLANNING, DEVELOPING, TESTING, BUILDING, PUBLISHING, COMPLETED, FAILED, CANCELLED, and RECOVERING, and a transition table that rejects illegal transitions. Opening records start and end timestamps (24h default) and the base release; closing rejects new submissions, freezes the contribution snapshot by writing snapshot.yaml, records the exact commit SHA through the Git interface, and sets CLOSED. A scheduler takes an injected clock and auto-opens and auto-closes rounds at their scheduled times. Admin endpoints POST /api/v1/admin/rounds, POST open, POST close, GET /api/v1/admin/rounds/{id}, GET /api/v1/admin/rounds/{id}/contributions, GET /api/v1/admin/executions, and POST executions retry and approve are protected by an admin token middleware that rejects missing or wrong credentials. Unit tests cover transitions, snapshot immutability (no write to frozen files), scheduler behavior with a fake clock, and admin auth.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M845Z0YADDSY4YXE0PREH0G1"
+        ],
+        "attempts": 1,
+        "children": [
+          {
+            "id": "SG-5.1",
+            "title": "Remove the duplicate Status, Round and CanTransition declarations in…",
+            "criteria": "Technical: Remove the duplicate Status, Round and CanTransition declarations in the round package (keep one owner) so it and the whole backend compile cleanly, and make the existing round, lifecycle and scheduler files agree on the same types.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M846M3DV6T8M0JTNKMDEHCEB"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-5.2",
+            "title": "Make the scheduler auto-open due rounds and auto-close expired rounds…",
+            "criteria": "Requirement: Make the scheduler auto-open due rounds and auto-close expired rounds using the injected clock, ignore future or other-status rounds, and keep closing even if opening fails. Fix the code so the four failing scheduler tick tests pass.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M846Z6ACXTWSSAY9C7B11N6G"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-5.3",
+            "title": "Add a round service with Create/Open/Close and list-by-round for…",
+            "criteria": "Requirement: Add a round service with Create/Open/Close and list-by-round for contributions, then wire the admin round handlers (create, open, close, get, contributions) into the router behind the admin token middleware, and start the scheduler in main. Fix the route test for mounted admin rounds so it passes.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M8471WDMNZZFD9PS77RZ5FV4"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-5.4",
+            "title": "Add or confirm admin route tests (with dependencies mocked) showing…",
+            "criteria": "Technical: Add or confirm admin route tests (with dependencies mocked) showing that every admin round and execution endpoint, including retry and approve, rejects missing and wrong tokens.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M8474YGPRVPGRGG93CDACF9F"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-5.5",
+            "title": "the unit tests of “Scheduler behavior with a fake clock unit tests”…",
+            "criteria": "Technical: the unit tests of “Scheduler behavior with a fake clock unit tests” fail: opens a SCHEDULED round whose start time has passed; closes an OPEN round whose end time has passed; ignores future-start, future-end and COMPLETED rounds until the clock reaches their boundary; returns a failing Open error from Tick while still running Close for another due round",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M847A84P3F0A9BH7JBTPZMQ5"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-5.6",
+            "title": "the unit tests of “Admin round handlers and route auth unit tests”…",
+            "criteria": "Technical: the unit tests of “Admin round handlers and route auth unit tests” fail: Admin round endpoints are mounted on the router when called with the admin token",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 13
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M847D5C6SMCTQZMHKHW04FF3"
+            ],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-6",
+        "title": "Add contribution UI and admin console",
+        "criteria": "In frontend/ there is a 'Suggest What Happens Next' sheet that submits natural-language prompts through the API, shows remaining contribution count and a clear note that ideas are considered when the Round closes, and displays contribution history with status and error states. A countdown component shows time left for the current Round and a Round status badge. Admin routes sit behind a token entry and show: current World and Round, configuration fields for duration and contribution limits, open and close buttons, a contributions list, a lifecycle stepper (OPEN, CLOSED, ANALYZING, DEVELOPING, TESTING, PUBLISHING, COMPLETED) with current stage, contribution count, execution duration, agent logs, test results, release version, failure reasons, and approve or reject and retry controls. The API client reads no secrets from the browser beyond the admin token the user types. Vitest tests with mocked fetch cover the submission flow, the countdown, the stepper rendering each stage, and the approve and retry actions.",
+        "status": "met",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [
+          "01M847H43ZBM8SEWC3A33AWNS1"
+        ],
+        "attempts": 1,
+        "children": [
+          {
+            "id": "SG-6.1",
+            "title": "Add a listExecutions admin client function (GET…",
+            "criteria": "Requirement: Add a listExecutions admin client function (GET /api/v1/admin/executions) and an ExecutionInfo lookup for the current Round, with a unit test using mocked fetch.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 20
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M8484541C7KDE7W3W3SF735R"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-6.2",
+            "title": "Render LifecycleStepper in AdminApp showing the current stage derived…",
+            "criteria": "Requirement: Render LifecycleStepper in AdminApp showing the current stage derived from the Round and execution status, and add a unit test with mocked client calls.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 20
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M8488A5EB9Q4CM9CCCXWRTPV"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-6.3",
+            "title": "Render ExecutionPanel in AdminApp with the contribution count,…",
+            "criteria": "Requirement: Render ExecutionPanel in AdminApp with the contribution count, duration, agent logs, test results, release version and failure reason from the loaded execution, and add a unit test.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 20
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M848GB8HFYZ9ADT911Y1DFK5"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-6.4",
+            "title": "Wire the Approve and Retry buttons in AdminApp to approveExecution and…",
+            "criteria": "Requirement: Wire the Approve and Retry buttons in AdminApp to approveExecution and retryExecution, reload afterwards, show errors, and add a Reject control with a matching client call. Add a unit test with mocked fetch covering each action and a 401 returning to the token gate.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 20
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M848MYBREVK6QG7ZHG6C6WM8"
+            ],
+            "attempts": 1,
+            "children": [
+              {
+                "id": "SG-6.4.1",
+                "title": "Add a rejectExecution(token, id) function to the API client, calling…",
+                "criteria": "Requirement: Add a rejectExecution(token, id) function to the API client, calling the admin reject endpoint like approveExecution and retryExecution do.",
+                "status": "met",
+                "origin": {
+                  "kind": "gap",
+                  "round": 24
+                },
+                "gaps": [],
+                "intent_ids": [
+                  "01M848T916XWPH6TMNP2RPC28B"
+                ],
+                "attempts": 0,
+                "children": []
+              },
+              {
+                "id": "SG-6.4.2",
+                "title": "Add an optional onReject prop and a Reject button to the execution…",
+                "criteria": "Requirement: Add an optional onReject prop and a Reject button to the execution panel, shown only when the run is awaiting approval.",
+                "status": "met",
+                "origin": {
+                  "kind": "gap",
+                  "round": 24
+                },
+                "gaps": [],
+                "intent_ids": [
+                  "01M848Y893SC3716E86HDAH89B",
+                  "01M84925Q2QV4H5TSGXE3Z4A1J"
+                ],
+                "attempts": 1,
+                "children": []
+              },
+              {
+                "id": "SG-6.4.3",
+                "title": "In the admin app, pass approve, retry and reject handlers to the…",
+                "criteria": "Requirement: In the admin app, pass approve, retry and reject handlers to the execution panel. Each handler should call the matching client function, reload the data afterwards, and show an error message on failure.",
+                "status": "met",
+                "origin": {
+                  "kind": "gap",
+                  "round": 24
+                },
+                "gaps": [],
+                "intent_ids": [
+                  "01M84965YYKGGNFFABT1YYSSX6",
+                  "01M849FQBXR5H3ECAEWQQS5KCK"
+                ],
+                "attempts": 1,
+                "children": []
+              },
+              {
+                "id": "SG-6.4.4",
+                "title": "Make a 401 from any of the three actions clear the token and return to…",
+                "criteria": "Requirement: Make a 401 from any of the three actions clear the token and return to the token gate, as the existing load path does.",
+                "status": "met",
+                "origin": {
+                  "kind": "gap",
+                  "round": 24
+                },
+                "gaps": [],
+                "intent_ids": [
+                  "01M849QW64DPCAKCRHQPBQ25N5"
+                ],
+                "attempts": 0,
+                "children": []
+              },
+              {
+                "id": "SG-6.4.5",
+                "title": "Add or restore unit tests with mocked fetch covering rejectExecution,…",
+                "criteria": "Technical: Add or restore unit tests with mocked fetch covering rejectExecution, the panel's Reject button, and the admin app's approve, retry, reject and 401 behaviour. Confirm the tests exist in the workspace and pass.",
+                "status": "met",
+                "origin": {
+                  "kind": "gap",
+                  "round": 24
+                },
+                "gaps": [],
+                "intent_ids": [
+                  "01M849X1AERWAQDETDA3T0J9KQ"
+                ],
+                "attempts": 0,
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "SG-6.5",
+            "title": "Show the current World, and make the duration and contribution-limit…",
+            "criteria": "Requirement: Show the current World, and make the duration and contribution-limit fields send their values to the backend (or disable them if no endpoint exists), with a unit test.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 20
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84A1ZJRF3WV8S0RQ97FT5Q6"
+            ],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-7",
+        "title": "Build worker execution engine",
+        "criteria": "In worker/internal there is a Go Local Worker with config loading and structured logging, a file-based per-World lock that permits one development execution at a time, and filesystem execution state with a JSON record per execution. On startup it scans for unfinished executions and resumes or marks them for recovery instead of assuming continuous running. It detects scheduled and closed Rounds by polling a Git interface, closes expired Rounds, and freezes contributions through the same snapshot logic contract. Each execution runs in an isolated Git worktree interface, enforces an execution timeout via context, retries up to a configured limit, enforces a maximum budget, and blocks at a human approval gate before publishing. A coding agent provider interface has a mock provider and a Claude Code CLI adapter that runs with restricted permissions and no shell interpolation of community text. Structured execution reports are written to development/executions. Unit tests with mocked Git, provider, and clock cover locking, startup recovery, timeout, retry, budget, and approval gating.",
+        "status": "unmet",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [
+          "Requirement: Add startup recovery in backend/worker/internal. It should scan the execution store for unfinished executions and resume them or mark them for recovery. Release stale locks. Cover it with unit tests using a mocked store and clock.",
+          "Requirement: Add a Round poller behind a mocked Git interface. It should detect SCHEDULED and CLOSED Rounds, close expired Rounds, and freeze contributions through the snapshot logic. Add unit tests.",
+          "Requirement: Add a coding agent provider with a mock provider that is clearly labelled as mock. Wire it to the runner's Agent interface, and select it from the provider kind in config. Add unit tests.",
+          "Requirement: Add a Claude Code CLI adapter. It should run with restricted permissions and pass structured requirements as arguments or stdin, never through a shell and never with raw community text. Add unit tests with a mocked command executor.",
+          "Technical: Add a concrete isolated Git worktree implementation of the runner's Worktrees interface. Add unit tests with mocked Git commands."
+        ],
+        "intent_ids": [
+          "01M84AA9EFNY0VMSWPSHTEN2PR"
+        ],
+        "attempts": 2,
+        "children": [
+          {
+            "id": "SG-7.1",
+            "title": "Make the worker Go module present in the workspace, with the config…",
+            "criteria": "Technical: Make the worker Go module present in the workspace, with the config loader, structured logger, file lock and JSON execution store, so the runner has something to build on. No worker directory exists now.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84F2Y7B1BMD41PYYF9Y78WM"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.2",
+            "title": "Extend the worker config with the work root, maximum retries, maximum…",
+            "criteria": "Requirement: Extend the worker config with the work root, maximum retries, maximum budget, execution timeout, auto-publish flag and provider kind. Validate these fields.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84FAX57EP7AEAK5DCCEZWXM"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.3",
+            "title": "Implement the execution runner in worker/internal. It must take the…",
+            "criteria": "Requirement: Implement the execution runner in worker/internal. It must take the per-World lock, return a locked error when the lock is held, run the agent in an isolated worktree under a context timeout, and retry up to the configured limit. It must stop when the budget is exceeded and block at the approval gate before publishing unless auto-publish is on.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84FERAGQYD5W5YBKTKZYQYX"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.4",
+            "title": "Write a structured execution report to development/executions after…",
+            "criteria": "Requirement: Write a structured execution report to development/executions after each run, whatever the outcome. Validate the execution ID the same way the state store does.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84FTKD5XMM4BXW2DYCC40ZD"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.5",
+            "title": "Make the runner's unit tests (lock held, timeout, retry limit, budget,…",
+            "criteria": "Technical: Make the runner's unit tests (lock held, timeout, retry limit, budget, approval gate, report) pass with Git, the provider and the clock all mocked.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84G0SGVRTS10AHNW40X86RM"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.6",
+            "title": "the unit tests of “Runner locking, timeout, retry, budget and approval…",
+            "criteria": "Technical: the unit tests of “Runner locking, timeout, retry, budget and approval gate unit tests” fail: Run refuses to start when the lock is already held and creates no worktree; Run retries a timed-out agent once and then marks the execution FAILED with ErrTimeout; Run stops after MaxRetries failures, marks FAILED and removes the worktree once; Run stops with ErrBudgetExceeded once accumulated cost",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 33
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84G82XSTGQPFX9S20XVE6SR"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.7",
+            "title": "Add startup recovery in backend/worker/internal. It should scan the…",
+            "criteria": "Requirement: Add startup recovery in backend/worker/internal. It should scan the execution store for unfinished executions and resume them or mark them for recovery. Release stale locks. Cover it with unit tests using a mocked store and clock.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 39
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84GCPQV4VDXPM8F6AXV18ZS"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.8",
+            "title": "Add a Round poller behind a mocked Git interface. It should detect…",
+            "criteria": "Requirement: Add a Round poller behind a mocked Git interface. It should detect SCHEDULED and CLOSED Rounds, close expired Rounds, and freeze contributions through the snapshot logic. Add unit tests.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 39
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84GQXYGEM5FW8AXNR539H4W"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.9",
+            "title": "Add a coding agent provider with a mock provider that is clearly…",
+            "criteria": "Requirement: Add a coding agent provider with a mock provider that is clearly labelled as mock. Wire it to the runner's Agent interface, and select it from the provider kind in config. Add unit tests.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 39
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84GZGJMDAJB58G65Y37M2N3"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.10",
+            "title": "Add a Claude Code CLI adapter. It should run with restricted…",
+            "criteria": "Requirement: Add a Claude Code CLI adapter. It should run with restricted permissions and pass structured requirements as arguments or stdin, never through a shell and never with raw community text. Add unit tests with a mocked command executor.",
+            "status": "met",
+            "origin": {
+              "kind": "gap",
+              "round": 39
+            },
+            "gaps": [],
+            "intent_ids": [
+              "01M84H5BPMDDKFQ09WVB93984T"
+            ],
+            "attempts": 0,
+            "children": []
+          },
+          {
+            "id": "SG-7.11",
+            "title": "Add a concrete isolated Git worktree implementation of the runner's…",
+            "criteria": "Technical: Add a concrete isolated Git worktree implementation of the runner's Worktrees interface. Add unit tests with mocked Git commands.",
+            "status": "pending",
+            "origin": {
+              "kind": "gap",
+              "round": 39
+            },
+            "gaps": [],
+            "intent_ids": [],
+            "attempts": 0,
+            "children": []
+          }
+        ]
+      },
+      {
+        "id": "SG-8",
+        "title": "Add AI pipeline and release publishing",
+        "criteria": "In worker/internal there are pipeline stages for the Contribution Analyzer, Story Architect, Game Product Owner, Development Planner, and QA Release Reviewer. Each builds its prompt from structured inputs and labels all community content as untrusted data, never as system instructions; each validates the agent's structured output (classification, accepted, merged, deferred, rejected report, requirement IDs with source contribution IDs and acceptance criteria, tasks with files and test expectations) and fails the stage on invalid output. The stage runner runs the test and build commands from config and only proceeds on success. On success it writes release metadata containing version, Git commit SHA, Round ID, artifact SHA-256 checksum, changelog, test summary, and publication timestamp, then updates current-release.yaml only after publication succeeds and creates the next Round with an incremented number, the new base release, and a 24-hour window. On any failure it does not open the next Round and leaves the previous production release pointer unchanged. Unit tests with a mock agent provider and mock command runner cover schema validation, prompt untrusted-data labeling, the publish-only-on-success rule, checksum output, and next-Round creation.",
+        "status": "pending",
+        "origin": {
+          "kind": "split"
+        },
+        "gaps": [],
+        "intent_ids": [],
+        "attempts": 0,
+        "children": []
+      }
+    ],
+    "confirmed": true,
+    "split_at": "2026-11-23T11:27:20.910885+00:00"
+  }
+}

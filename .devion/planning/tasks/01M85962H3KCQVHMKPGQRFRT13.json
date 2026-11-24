@@ -1,0 +1,66 @@
+{
+  "id": "01M85962H3KCQVHMKPGQRFRT13",
+  "intent_id": "01M85900YQHG388J06E5XY0PR4",
+  "title": "Verify: Scene hover, click and missing-asset fallback unit tests with Phaser mocked via @game",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Suite asserts hover, click and fallback behavior with phaser mocked and @game imports.",
+  "description": "Context: ACT-C confirmed hover, click and fallback paths. Desired behavior: a suite asserts them through @game with phaser mocked. Expected result: tests pass together with the build suite. Why: proves REQ-C from the spec.",
+  "acceptance_criteria": [
+    "Hover true/false toggles highlight and label",
+    "Click emits objectId and actions only when visible",
+    "Unknown asset resolves to fallback key and fallback texture is generated"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/sceneAliasInteraction.test.ts"
+    ],
+    "out_of_scope": [
+      "real rendering"
+    ],
+    "preserve": [
+      "preload.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('phaser') and the frontend runtime/store/events/effectContext modules, mirroring tests/preload.test.ts"
+  ],
+  "dependencies": [
+    "ACT-C",
+    "VER-B"
+  ],
+  "definition_of_done": [
+    "test passes; all scene tests pass together",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-577.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8592ZTSATGBM6AR9S6WZ68F",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-577.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85962H3V2BV6F3BS77BXTEZ"
+  ],
+  "sim_node_id": "01M8592ZTSMDNQ4GNHE1Q10RPK",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-577.md",
+  "artifact_id": "UNIT-577",
+  "steps": [
+    {
+      "file": "game/tests/sceneAliasInteraction.test.ts",
+      "symbol": "new: scene interaction and fallback via @game",
+      "lines": "new",
+      "action": "Import SceneObject from '@game/entities/SceneObject', planPreload/resolveTextureKey from '@game/engine/planPreload', FALLBACK_KEY and BootScene from '../frontend/src/phaser/BootScene' with vi.mock('phaser') copied in shape from tests/preload.test.ts. Tests: (1) captured onHover callback(true) then (false) gives setHighlighted/setLabelVisible [[true],[false]]; (2) after sync, captured onClick callback calls listener with objectId and actions, and hidden object calls nothing; (3) resolveTextureKey for unknown id returns FALLBACK_KEY; (4) BootScene.preload with unknown asset ref does not call load.image for it and generates texture FALLBACK_KEY",
+      "command": "cd game && npx vitest run tests/sceneAliasInteraction.test.ts tests/sceneAliasBuild.test.ts",
+      "expected": "Both scene alias suites pass together"
+    }
+  ],
+  "created_at": "2026-11-23T22:42:18.275159+00:00",
+  "updated_at": "2026-11-23T22:43:13.373433+00:00"
+}

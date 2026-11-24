@@ -1,0 +1,64 @@
+{
+  "id": "01M845SAYT9TN4VN21PKM7Q6M6",
+  "intent_id": "01M845QSXVR8TFAF8A3Q73J967",
+  "title": "Verify: Player contributions route unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for new and legacy contribution history paths",
+  "description": "Add subtests to backend/internal/server/server_test.go using httptest and a temp-dir repo, proving the new path serves Mine and the legacy path no longer does.",
+  "acceptance_criteria": [
+    "Given a session cookie and round_id, when the new path is requested, then 200 and an empty JSON array body",
+    "Given a session cookie, when the legacy path is requested, then 404",
+    "Given no cookie, when the new path is requested, then 401"
+  ],
+  "scope": {
+    "in_scope": [
+      "server_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use t.TempDir() for Storage.RepoPath; no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-068.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M845SA7XY8QMWQYMY9T48XJ2",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-068.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M845SAYTXAN9EAGJ52TMVQWV"
+  ],
+  "sim_node_id": "01M845SA7XZ972Z2YVHTZZ8NA5",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-068.md",
+  "artifact_id": "UNIT-068",
+  "steps": [
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestNew_PlayerContributionsRoute",
+      "lines": "after L125",
+      "action": "Build cfg like TestNew_RegistersRoutes; create a session via POST /api/v1/player/session and copy its cookies; add subtests: GET /api/v1/player/me/contributions?round_id=ROUND-0000001 with cookies expects 200 and body []; GET /api/v1/contributions/mine?round_id=ROUND-0000001 with cookies expects 404; GET /api/v1/player/me/contributions?round_id=ROUND-0000001 without cookies expects 401",
+      "code": "h.ServeHTTP(rec, req); if rec.Code != want { t.Fatalf(\"status = %d, want %d\", rec.Code, want) }",
+      "command": "cd backend && go test ./internal/server -run TestNew_PlayerContributionsRoute",
+      "expected": "All three subtests pass"
+    }
+  ],
+  "created_at": "2026-11-23T12:23:40.762531+00:00",
+  "updated_at": "2026-11-23T12:24:26.695121+00:00"
+}

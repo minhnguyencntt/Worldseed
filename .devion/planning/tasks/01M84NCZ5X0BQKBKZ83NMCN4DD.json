@@ -1,0 +1,74 @@
+{
+  "id": "01M84NCZ5X0BQKBKZ83NMCN4DD",
+  "intent_id": "01M84N970GYAQKQ4K6QW9C8AW9",
+  "title": "Act: Track round loading/error in App and render HeaderOverlay",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Wire HeaderOverlay in App",
+  "description": "Replace round useState with loading/error state, remove loose RoundBadge/Countdown, pass header prop to GameLayout.",
+  "acceptance_criteria": [
+    "Given each of loading, error and ready round states, when App renders, then HeaderOverlay receives matching loading, error and round props",
+    "Given the GameLayout header slot, when App renders, then the header is passed through the header prop and no loose RoundBadge or Countdown remains"
+  ],
+  "scope": {
+    "in_scope": [
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Intro gate"
+    ]
+  },
+  "technical_constraints": [
+    "Depends on GameLayout header prop",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "GameLayout header slot"
+  ],
+  "definition_of_done": [
+    "tsc passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-319.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84NC09WCYQWBCM6B1MQA49G",
+    "trace:01M84JF0K1DC68QPCZ6V752H5C",
+    "artifact:.ai-dlc/units/UNIT-319.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84NCZ5XQC18FJYQK0MZ12C3"
+  ],
+  "sim_node_id": "01M84NC09WSQV4JTY7T20AWW34",
+  "feature_id": "01M84JF0K1DC68QPCZ6V752H5C",
+  "artifact_path": ".ai-dlc/units/UNIT-319.md",
+  "artifact_id": "UNIT-319",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App state and effect",
+      "lines": "L14-L24",
+      "action": "Add const [roundError, setRoundError] = useState<string | undefined>(undefined) and const [roundLoading, setRoundLoading] = useState(true). Change the effect to: getCurrentRound().then(setRound).catch((e) => setRoundError(`Round status unavailable: ${e instanceof Error ? e.message : 'request failed'}`)).finally(() => setRoundLoading(false)).",
+      "code": "getCurrentRound().then(setRound).catch(e => setRoundError(`Round status unavailable: ${e instanceof Error ? e.message : 'request failed'}`)).finally(() => setRoundLoading(false))",
+      "expected": "State reflects pending, success and failure"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App return JSX",
+      "lines": "L27-L48",
+      "action": "Delete the RoundBadge and Countdown lines and their imports. Import HeaderOverlay. Pass to GameLayout header={<HeaderOverlay worldTitle=\"The Boy's Room\" round={round} loading={roundLoading} error={roundError} />}.",
+      "expected": "Header appears via GameLayout slot; no 'Round unavailable' text in App"
+    }
+  ],
+  "created_at": "2026-11-23T16:56:32.701036+00:00",
+  "updated_at": "2026-11-23T17:00:10.689295+00:00"
+}

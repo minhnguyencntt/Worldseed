@@ -1,0 +1,59 @@
+{
+  "id": "01M856R5861X81PXZC6BSMM5HN",
+  "intent_id": "01M856K83CFVAYV4ZXQVP28ZQ8",
+  "title": "REQ · BootScene builds its objects from content via buildScene with none hardcoded",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "BootScene.create calls buildScene on the bundled scene and destroys the objects on shutdown",
+  "description": "Context: BootScene.create only builds effects. runtime/content.ts exports scene as an unvalidated SceneDef, while buildScene needs a SceneSpec. Desired behavior: content.ts also exports a schema-validated sceneSpec, and BootScene.create builds the objects with buildScene(createPhaserRenderContext(...), sceneSpec). Expected result: all objects come from bedroom.yaml. Why: the scene is content-driven.",
+  "acceptance_criteria": [
+    "Given the bundled scene, when create runs, then buildScene is called once with sceneSpec and a context exposing createSprite",
+    "Given BootScene.ts and renderContext.ts, when read as text, then no object id (bed, bookshelf, etc.) or asset id literal appears",
+    "Given shutdown, when the SHUTDOWN callback runs, then destroy is called on every built SceneObject"
+  ],
+  "scope": {
+    "in_scope": [
+      "content.ts sceneSpec export",
+      "BootScene.create and shutdown wiring"
+    ],
+    "out_of_scope": [
+      "Changing bedroom.yaml",
+      "State sync"
+    ],
+    "preserve": [
+      "scene export",
+      "effects and transition wiring",
+      "FALLBACK_KEY export"
+    ]
+  },
+  "technical_constraints": [
+    "Use sceneSchema from game/src/content/schema.ts for validation"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "BootScene builds objects via buildScene only",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-263.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M856NGY295R1E3CT0TTTKSNJ",
+    "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+    "artifact:.ai-dlc/requirements/REQ-263.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M856R586YB98JEDRFGWCA5R6"
+  ],
+  "sim_node_id": "01M856NGY29MJGYB1CN9TECRXQ",
+  "feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+  "artifact_path": ".ai-dlc/requirements/REQ-263.md",
+  "artifact_id": "REQ-263",
+  "created_at": "2026-11-23T21:59:45.158149+00:00",
+  "updated_at": "2026-11-23T22:02:50.219118+00:00"
+}

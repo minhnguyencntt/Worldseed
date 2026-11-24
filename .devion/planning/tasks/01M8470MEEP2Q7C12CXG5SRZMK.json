@@ -1,0 +1,70 @@
+{
+  "id": "01M8470MEEP2Q7C12CXG5SRZMK",
+  "intent_id": "01M846Z6ACXTWSSAY9C7B11N6G",
+  "title": "Verify: Tick opens due and closes expired rounds unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Open and Close dispatch with fake clock and controller",
+  "description": "Tests use fakeClock, fakeController and fakeLister from scheduler_test.go so no real time, filesystem or controller is involved.",
+  "acceptance_criteria": [
+    "TestTick_OpensDueRound asserts exactly one open call for the due SCHEDULED round.",
+    "TestTick_ClosesExpiredRound asserts exactly one close call for the expired OPEN round."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/scheduler_test.go"
+    ],
+    "out_of_scope": [
+      "integration with Lifecycle"
+    ],
+    "preserve": [
+      "Existing test helpers"
+    ]
+  },
+  "technical_constraints": [
+    "Everything mocked; no real clock"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both tests pass with -count=1",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-089.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8470JSM18PFQTTTXYNY7X6E",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-089.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8470MEEEWPZ8M2YJRQNRC4V"
+  ],
+  "sim_node_id": "01M8470JSM18EMXJRVRDK5PV70",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-089.md",
+  "artifact_id": "UNIT-089",
+  "steps": [
+    {
+      "file": "backend/internal/round/scheduler_test.go",
+      "symbol": "TestTick_OpensDueRound",
+      "lines": "L68-L83",
+      "action": "Run the test with a SCHEDULED round with StartsAt 11:00 and clock 12:00 in world w1 and assert ctrl.calls equals [{open w1 r1}]. Keep it as is if it passes.",
+      "command": "cd backend && go test -count=1 -run 'TestTick_OpensDueRound$' ./internal/round/",
+      "expected": "Test passes with ok."
+    },
+    {
+      "file": "backend/internal/round/scheduler_test.go",
+      "symbol": "TestTick_ClosesExpiredRound",
+      "lines": "L86-L101",
+      "action": "Run the test with an OPEN round with EndsAt 11:59 and clock 12:00 and assert ctrl.calls equals [{close w1 r1}]. Keep it as is if it passes.",
+      "command": "cd backend && go test -count=1 -run 'TestTick_ClosesExpiredRound$' ./internal/round/",
+      "expected": "Test passes with ok."
+    }
+  ],
+  "created_at": "2026-11-23T12:45:08.429996+00:00",
+  "updated_at": "2026-11-23T12:45:32.260527+00:00"
+}

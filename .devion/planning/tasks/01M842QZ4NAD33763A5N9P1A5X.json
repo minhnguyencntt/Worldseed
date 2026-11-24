@@ -1,0 +1,55 @@
+{
+  "id": "01M842QZ4NAD33763A5N9P1A5X",
+  "intent_id": "01M842N0PAB8ZNGFNQNRV0TC13",
+  "title": "REQ · Player me endpoint validating session cookie",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "GET /api/v1/player/me returns player for valid token and 401 otherwise",
+  "description": "Context: tokens are issued by the session endpoint. Desired behavior: GET /api/v1/player/me reads the cookie, verifies HMAC and expiry, and returns the player JSON, or 401 JSON error for missing, tampered, malformed or expired tokens. Expected result: deterministic auth behavior. Why: later APIs reuse the same check.",
+  "acceptance_criteria": [
+    "Given a valid cookie, when GET /api/v1/player/me, then 200 and {\"id\":<playerID>}",
+    "Given no cookie, when requested, then 401",
+    "Given a token with altered signature or signed with another secret, when requested, then 401",
+    "Given an expired token, when requested, then 401"
+  ],
+  "scope": {
+    "in_scope": [
+      "me handler",
+      "expiry check using injected clock"
+    ],
+    "out_of_scope": [
+      "contributions listing"
+    ],
+    "preserve": [
+      "session endpoint behavior"
+    ]
+  },
+  "technical_constraints": [
+    "clock injected for testability"
+  ],
+  "dependencies": [
+    "R2"
+  ],
+  "definition_of_done": [
+    "Me endpoint returns 200 or 401 correctly",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-008.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M842QZ113TGVEJJXCED3Z86P",
+    "artifact:.ai-dlc/requirements/REQ-008.md"
+  ],
+  "change": "NEW",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M842QZ4NR8J3BT8QMG6FC14T"
+  ],
+  "sim_node_id": "01M842QZ11P5RVDT6R0MBFDVST",
+  "artifact_path": ".ai-dlc/requirements/REQ-008.md",
+  "artifact_id": "REQ-008",
+  "created_at": "2026-11-23T11:30:30.165836+00:00",
+  "updated_at": "2026-11-23T11:33:56.110289+00:00"
+}

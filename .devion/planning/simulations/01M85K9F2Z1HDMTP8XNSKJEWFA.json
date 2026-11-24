@@ -1,0 +1,469 @@
+{
+  "intent_id": "01M85K9F2Z1HDMTP8XNSKJEWFA",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85KATM0BVTDW9TF37MJGJV9",
+      "kind": "intent",
+      "title": "SG-10.2.3 Remove store-driven focus and unsubscribe on scene shutdown",
+      "body": "Context: BootScene.create registers a SHUTDOWN handler (game/frontend/src/phaser/BootScene.ts) that removes the keydown listener, unsubscribes from useGameStore, and destroys effects, scene objects and characters. It does not blur focused objects or reset gameStore.focusedObjectId. Desired behavior: on shutdown the focus is removed and the subscription is released. Expected result: after shutdown no scene object stays focused, the store focusedObjectId is null, and later store changes do not reach the scene. Why: a stale focus id would re-highlight objects when the scene restarts.\n\n## Acceptance criteria\n- Given a focused object, when the scene shuts down, then the object is blurred and focusedObjectId is null.\n- Given the scene has shut down, when the store changes, then onStateChange is not invoked and no object is focused.\n- A unit test asserts both behaviors.\n\n\n## Scope\n- In scope: BootScene SHUTDOWN handler\n- In scope: Unit test for shutdown focus removal\n- Out of scope: Keyboard handler logic\n- Out of scope: Store schema changes\n- Out of scope: Backend\n- Preserve: Existing shutdown cleanup of keyboard listener, effects, objects and characters\n- Preserve: applyFocusedObject behavior\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Unit tests mock Phaser as in tests/bootSceneFocusClear.test.ts\n\n\n## Definition of done\n- Shutdown removes focus and unsubscribes\n- Unit test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "On BootScene shutdown, clear scene and store focus and release the store subscription, covered by a unit test.",
+      "description": "Context: BootScene.create registers a SHUTDOWN handler (game/frontend/src/phaser/BootScene.ts) that removes the keydown listener, unsubscribes from useGameStore, and destroys effects, scene objects and characters. It does not blur focused objects or reset gameStore.focusedObjectId. Desired behavior: on shutdown the focus is removed and the subscription is released. Expected result: after shutdown no scene object stays focused, the store focusedObjectId is null, and later store changes do not reach the scene. Why: a stale focus id would re-highlight objects when the scene restarts.",
+      "acceptance_criteria": [
+        "Given a focused object, when the scene shuts down, then the object is blurred and focusedObjectId is null.",
+        "Given the scene has shut down, when the store changes, then onStateChange is not invoked and no object is focused.",
+        "A unit test asserts both behaviors."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene SHUTDOWN handler",
+          "Unit test for shutdown focus removal"
+        ],
+        "out_of_scope": [
+          "Keyboard handler logic",
+          "Store schema changes",
+          "Backend"
+        ],
+        "preserve": [
+          "Existing shutdown cleanup of keyboard listener, effects, objects and characters",
+          "applyFocusedObject behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Unit tests mock Phaser as in tests/bootSceneFocusClear.test.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Shutdown removes focus and unsubscribes",
+        "Unit test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-148.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-148.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-148.md",
+      "artifact_id": "INT-148"
+    },
+    {
+      "id": "01M85KATM0HTDVVDJ7CSSPRJEB",
+      "kind": "requirement",
+      "title": "REQ · Shutdown blurs focused scene objects and clears store focusedObjectId",
+      "body": "Context: the SHUTDOWN handler in BootScene.create leaves objects focused and the store id set. Desired behavior: blur every focused SceneObject and call useGameStore.getState().setFocusedObject(null) during shutdown. Expected result: no focus remains in scene or store. Why: avoid stale focus after the scene is torn down.\n\n## Acceptance criteria\n- Given bookshelf is focused in scene and store, when SHUTDOWN runs, then blur is called on it and focusedObjectId is null.\n- Given nothing is focused, when SHUTDOWN runs, then focusedObjectId remains null and blur is not called.\n\n\n## Scope\n- In scope: BootScene SHUTDOWN handler focus removal\n- Out of scope: Store changes\n- Preserve: Other shutdown cleanup\n\n\n## Technical constraints\n- Use the existing setFocusedObject action\n\n\n## Definition of done\n- Shutdown clears scene and store focus\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The SHUTDOWN handler removes focus from scene objects and sets focusedObjectId to null.",
+      "description": "Context: the SHUTDOWN handler in BootScene.create leaves objects focused and the store id set. Desired behavior: blur every focused SceneObject and call useGameStore.getState().setFocusedObject(null) during shutdown. Expected result: no focus remains in scene or store. Why: avoid stale focus after the scene is torn down.",
+      "acceptance_criteria": [
+        "Given bookshelf is focused in scene and store, when SHUTDOWN runs, then blur is called on it and focusedObjectId is null.",
+        "Given nothing is focused, when SHUTDOWN runs, then focusedObjectId remains null and blur is not called."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene SHUTDOWN handler focus removal"
+        ],
+        "out_of_scope": [
+          "Store changes"
+        ],
+        "preserve": [
+          "Other shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Use the existing setFocusedObject action"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Shutdown clears scene and store focus",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-367.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85KATM0BVTDW9TF37MJGJV9",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85KATM0BVTDW9TF37MJGJV9",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-367.md"
+      ],
+      "depends_on": [
+        "01M85KATM0BVTDW9TF37MJGJV9"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-367.md",
+      "artifact_id": "REQ-367"
+    },
+    {
+      "id": "01M85KATM00WZE7HJ881DZ1YMA",
+      "kind": "requirement",
+      "title": "REQ · Shutdown unsubscribes from the store so later changes do not reach the scene",
+      "body": "Context: the handler already calls this.unsubscribe, but ordering relative to the focus reset matters: the unsubscribe must run before setFocusedObject(null) so the reset does not trigger onStateChange on destroyed objects. Desired behavior: unsubscribe first, then clear focus. Expected result: onStateChange is not called after shutdown. Why: prevents calls on destroyed objects.\n\n## Acceptance criteria\n- Given shutdown has run, when setFocusedObject is called with an id, then no object focus or sync is invoked.\n- Given shutdown, when focus is cleared, then onStateChange is not called by that update.\n\n\n## Scope\n- In scope: Ordering of unsubscribe and focus reset in the SHUTDOWN handler\n- Out of scope: Subscription creation\n- Preserve: unsubscribe set to null after shutdown\n\n\n## Technical constraints\n- Keep this.unsubscribe nullable field\n\n\n## Definition of done\n- Unsubscribe precedes the focus reset\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "After shutdown the scene's store subscription is released and store updates no longer touch the scene.",
+      "description": "Context: the handler already calls this.unsubscribe, but ordering relative to the focus reset matters: the unsubscribe must run before setFocusedObject(null) so the reset does not trigger onStateChange on destroyed objects. Desired behavior: unsubscribe first, then clear focus. Expected result: onStateChange is not called after shutdown. Why: prevents calls on destroyed objects.",
+      "acceptance_criteria": [
+        "Given shutdown has run, when setFocusedObject is called with an id, then no object focus or sync is invoked.",
+        "Given shutdown, when focus is cleared, then onStateChange is not called by that update."
+      ],
+      "scope": {
+        "in_scope": [
+          "Ordering of unsubscribe and focus reset in the SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "Subscription creation"
+        ],
+        "preserve": [
+          "unsubscribe set to null after shutdown"
+        ]
+      },
+      "technical_constraints": [
+        "Keep this.unsubscribe nullable field"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Unsubscribe precedes the focus reset",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-368.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85KATM0BVTDW9TF37MJGJV9",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85KATM0BVTDW9TF37MJGJV9",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-368.md"
+      ],
+      "depends_on": [
+        "01M85KATM0BVTDW9TF37MJGJV9"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-368.md",
+      "artifact_id": "REQ-368"
+    },
+    {
+      "id": "01M85KATM0SCDG25099ENGHYV2",
+      "kind": "unit",
+      "title": "Act: Blur focused objects and clear store focus in the BootScene SHUTDOWN handler",
+      "body": "Edit the SHUTDOWN callback in BootScene.create so focused objects are blurred before destruction and the store focus is cleared after unsubscribing.\n\n## Acceptance criteria\n- Focused objects are blurred on shutdown.\n- Store focusedObjectId is null after shutdown.\n\n\n## Scope\n- In scope: BootScene.ts SHUTDOWN handler\n- Out of scope: Tests\n- Preserve: Existing cleanup lines\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Handler blurs objects, unsubscribes, then calls setFocusedObject(null)\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add blur and setFocusedObject(null) to the shutdown handler.",
+      "description": "Edit the SHUTDOWN callback in BootScene.create so focused objects are blurred before destruction and the store focus is cleared after unsubscribing.",
+      "acceptance_criteria": [
+        "Focused objects are blurred on shutdown.",
+        "Store focusedObjectId is null after shutdown."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing cleanup lines"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Handler blurs objects, unsubscribes, then calls setFocusedObject(null)",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-734.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85KATM0HTDVVDJ7CSSPRJEB",
+      "matched_feature_id": "01M84MX32EMQ7G8B2M8AC4ZXN0",
+      "links": [
+        "parent:01M85KATM0HTDVVDJ7CSSPRJEB",
+        "trace:01M84MX32EMQ7G8B2M8AC4ZXN0",
+        "artifact:.ai-dlc/units/UNIT-734.md"
+      ],
+      "depends_on": [
+        "01M85KATM0HTDVVDJ7CSSPRJEB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-734.md",
+      "artifact_id": "UNIT-734",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN callback",
+          "lines": "L73-L83",
+          "action": "Inside the callback, after the keyboard off call, blur each focused scene object; keep unsubscribe; then call useGameStore.getState().setFocusedObject(null) after this.unsubscribe is set to null and before sceneObjects is destroyed or emptied is NOT required, place it right after unsubscribe nulling.",
+          "code": "this.sceneObjects.forEach((o) => { if (o.isFocused) o.blur(); });\nthis.unsubscribe?.();\nthis.unsubscribe = null;\nuseGameStore.getState().setFocusedObject(null);",
+          "expected": "Shutdown blurs focused objects and sets focusedObjectId to null without re-entering onStateChange."
+        }
+      ]
+    },
+    {
+      "id": "01M85KATM0Z6RT1HGMHW9WXYCW",
+      "kind": "unit",
+      "title": "Act: Order unsubscribe before the focus reset in the SHUTDOWN handler",
+      "body": "Ensure the handler sequence is blur, unsubscribe, null, setFocusedObject(null), then destroy, so store updates after unsubscribe never reach the scene.\n\n## Acceptance criteria\n- Unsubscribe runs before setFocusedObject(null).\n- this.unsubscribe is null after shutdown.\n\n\n## Scope\n- In scope: Ordering in BootScene SHUTDOWN handler\n- Out of scope: Tests\n- Preserve: Destroy of effects, objects and characters\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Order verified in source\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Confirm the handler releases the subscription before the store focus reset.",
+      "description": "Ensure the handler sequence is blur, unsubscribe, null, setFocusedObject(null), then destroy, so store updates after unsubscribe never reach the scene.",
+      "acceptance_criteria": [
+        "Unsubscribe runs before setFocusedObject(null).",
+        "this.unsubscribe is null after shutdown."
+      ],
+      "scope": {
+        "in_scope": [
+          "Ordering in BootScene SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Destroy of effects, objects and characters"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Order verified in source",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-735.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85KATM00WZE7HJ881DZ1YMA",
+      "matched_feature_id": "01M85FWFYFE625T3SW7DMYMFW3",
+      "links": [
+        "parent:01M85KATM00WZE7HJ881DZ1YMA",
+        "trace:01M85FWFYFE625T3SW7DMYMFW3",
+        "artifact:.ai-dlc/units/UNIT-735.md"
+      ],
+      "depends_on": [
+        "01M85KATM00WZE7HJ881DZ1YMA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-735.md",
+      "artifact_id": "UNIT-735",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN callback",
+          "lines": "L73-L83",
+          "action": "Check that this.unsubscribe?.() and this.unsubscribe = null appear before the setFocusedObject(null) call, and move the setFocusedObject call below them if it is not.",
+          "expected": "Order is blur, unsubscribe, unsubscribe = null, setFocusedObject(null), destroy calls."
+        }
+      ]
+    },
+    {
+      "id": "01M85KATM0ZAFGAHPDTB5R62PG",
+      "kind": "unit",
+      "title": "Verify: Shutdown clears scene and store focus unit tests",
+      "body": "Add tests/bootSceneShutdownFocus.test.ts using the Phaser/content/buildScene mocks from tests/bootSceneFocusClear.test.ts.\n\n## Acceptance criteria\n- Focused object is blurred and store id null after shutdown.\n- No-focus case leaves state null.\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- All Phaser, content and engine dependencies mocked\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that shutdown blurs objects and nulls the store id.",
+      "description": "Add tests/bootSceneShutdownFocus.test.ts using the Phaser/content/buildScene mocks from tests/bootSceneFocusClear.test.ts.",
+      "acceptance_criteria": [
+        "Focused object is blurred and store id null after shutdown.",
+        "No-focus case leaves state null."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "All Phaser, content and engine dependencies mocked"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-736.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KATM0SCDG25099ENGHYV2",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85KATM0SCDG25099ENGHYV2",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-736.md"
+      ],
+      "depends_on": [
+        "01M85KATM0SCDG25099ENGHYV2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-736.md",
+      "artifact_id": "UNIT-736",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneShutdownFocus.test.ts",
+          "symbol": "new: BootScene shutdown focus removal",
+          "lines": "new",
+          "action": "Copy the vi.mock blocks and makeFakeObject from tests/bootSceneFocusClear.test.ts. Test 'blurs focused object and nulls store id': set fake.isFocused = true, setState focusedObjectId 'bookshelf', boot.create(), find the 'shutdown' call in events.once.mock.calls and invoke it; assert fake.blur called once and useGameStore.getState().focusedObjectId === null. Test 'no focus': isFocused false, focusedObjectId null; invoke shutdown; assert blur not called and id null.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneShutdownFocus.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85KATM0RCXE3TB1TSDT1QMF",
+      "kind": "unit",
+      "title": "Verify: Store changes after shutdown do not reach the scene unit tests",
+      "body": "Add tests/bootSceneShutdownUnsubscribe.test.ts with the same mocks, asserting no scene calls after shutdown.\n\n## Acceptance criteria\n- After shutdown setFocusedObject does not call focus on objects.\n- State updates after shutdown do not call sync.\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- All Phaser, content and engine dependencies mocked\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that the subscription is released on shutdown.",
+      "description": "Add tests/bootSceneShutdownUnsubscribe.test.ts with the same mocks, asserting no scene calls after shutdown.",
+      "acceptance_criteria": [
+        "After shutdown setFocusedObject does not call focus on objects.",
+        "State updates after shutdown do not call sync."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "All Phaser, content and engine dependencies mocked"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-737.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KATM0Z6RT1HGMHW9WXYCW",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85KATM0Z6RT1HGMHW9WXYCW",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-737.md"
+      ],
+      "depends_on": [
+        "01M85KATM0Z6RT1HGMHW9WXYCW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-737.md",
+      "artifact_id": "UNIT-737",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneShutdownUnsubscribe.test.ts",
+          "symbol": "new: BootScene shutdown unsubscribe",
+          "lines": "new",
+          "action": "Reuse mocks from tests/bootSceneFocusClear.test.ts. Test 'ignores store changes after shutdown': boot.create(), invoke the 'shutdown' callback, vi.clearAllMocks on fake, call useGameStore.getState().setFocusedObject('bookshelf'); assert fake.focus and fake.sync not called. Test 'focus reset does not trigger sync': spy on boot.onStateChange via vi.spyOn, invoke shutdown, assert the spy was not called after the shutdown callback returned.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneShutdownUnsubscribe.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85KATM0K61GHW9Y8MMQ85Y6",
+      "kind": "evidence",
+      "title": "Evidence: Shutdown focus removal and unsubscribe unit tests",
+      "body": "Collect results of the shutdown focus and unsubscribe unit tests as evidence for SG-10.2.3.\n\n## Acceptance criteria\n- Both shutdown test files pass.\n- Existing focus tests still pass.\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Product code\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that shutdown unit tests pass.",
+      "description": "Collect results of the shutdown focus and unsubscribe unit tests as evidence for SG-10.2.3.",
+      "acceptance_criteria": [
+        "Both shutdown test files pass.",
+        "Existing focus tests still pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-148.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KATM0ZAFGAHPDTB5R62PG",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85KATM0ZAFGAHPDTB5R62PG",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-148.md"
+      ],
+      "depends_on": [
+        "01M85KATM0ZAFGAHPDTB5R62PG",
+        "01M85KATM0RCXE3TB1TSDT1QMF"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-148.md",
+      "artifact_id": "EVD-148"
+    }
+  ],
+  "created_at": "2026-11-24T01:40:37.415189+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "01M85FFWN0BJ1NFQSMPZ9VSJD2",
+  "intent_id": "01M85FCQ25QMCWYX5G3PQG6Y92",
+  "title": "REQ · Loading message is shown only while history is loading and the list stays rendered",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "History loading message tied to an actual in-flight request",
+  "description": "Context: game/frontend/src/components/ContributionSheet.tsx line 47 initialises historyStatus to 'loading' and the effect at L50-L76 returns early without changing it when !open or roundId === ''. Desired behavior: with no round id or a closed sheet there is no request, so status must not be 'loading'. Expected result: the loading message is absent in that case and present while listMine is pending. Why: removes a stuck message and keeps the 401-retry test passing.",
+  "acceptance_criteria": [
+    "Given roundId is '' when the sheet is open, then no 'Loading your suggestions…' text is rendered",
+    "Given roundId is set and listMine is pending, then 'Loading your suggestions…' is rendered and the list 'Your suggestions' exists",
+    "Given the 401-retry scenario with roundId '', then the three ordered POST calls occur and the list shows 'Sent'"
+  ],
+  "scope": {
+    "in_scope": [
+      "historyStatus initial value and early-return branch in ContributionSheet"
+    ],
+    "out_of_scope": [
+      "Retry button behavior",
+      "Error message text"
+    ],
+    "preserve": [
+      "HISTORY_LOADING and HISTORY_ERROR texts",
+      "Cancellation guard in the effect"
+    ]
+  },
+  "technical_constraints": [
+    "Keep the single-writer history status in ContributionSheet"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Behavior matches acceptance criteria",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-339.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FE4F3V1QD4WT032JZXGQ7",
+    "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+    "artifact:.ai-dlc/requirements/REQ-339.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M85FFWN0VKJ90JSJZ4ZZAZGD"
+  ],
+  "sim_node_id": "01M85FE4F3AKMEPXFZ592CAWXQ",
+  "feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+  "artifact_path": ".ai-dlc/requirements/REQ-339.md",
+  "artifact_id": "REQ-339",
+  "created_at": "2026-11-24T00:32:31.392298+00:00"
+}

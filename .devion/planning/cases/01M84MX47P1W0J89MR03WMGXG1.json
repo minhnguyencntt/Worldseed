@@ -1,0 +1,377 @@
+{
+  "id": "01M84MX47P1W0J89MR03WMGXG1",
+  "trigger_node_id": "INT-062, UNIT-310 +6",
+  "node_ids": [
+    "INT-062",
+    "UNIT-310",
+    "UNIT-311",
+    "UNIT-312",
+    "UNIT-313",
+    "REQ-155",
+    "REQ-156",
+    "EVD-062"
+  ],
+  "intent_id": "INT-062",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-062",
+      "title": "SG-1.2.3 · Unit tests for the real UI store covering defaults and each action",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-310",
+      "title": "Act: Confirm uiStore exposes every default field and action the suite asserts",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MX3VGVWKEXC14VZE6TDN4"
+      ],
+      "depends_on": [
+        "REQ-155"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+      "from_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+      "started_at": "2026-11-23T16:47:55.307281+00:00",
+      "ended_at": "2026-11-23T16:48:12.764980+00:00",
+      "run_started_at": "2026-11-23T16:47:55.307281+00:00",
+      "duration_ms": 15746,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1390,
+      "estimated_cost_usd": 0.005566
+    },
+    {
+      "unit_id": "UNIT-311",
+      "title": "Act: Confirm uiStore is a named export of a real zustand store",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MX3VG4ZZQ7VC018DJW9NT"
+      ],
+      "depends_on": [
+        "REQ-156"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+      "from_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+      "started_at": "2026-11-23T16:47:55.328507+00:00",
+      "ended_at": "2026-11-23T16:48:14.809150+00:00",
+      "run_started_at": "2026-11-23T16:47:55.328507+00:00",
+      "duration_ms": 18038,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 1999,
+      "estimated_cost_usd": 0.008004,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Step 1 confirmed: line 16 of game/frontend/src/store/uiStore.ts is exactly `export const useUiStore = create<UiState>()((set) => ({`, a real zustand store (imports `create` from 'zustand'). No edit made. The step's expected result (type-check passes) is not met: `npx tsc --noEmit` exits 2 with one error, TS7016 at tests/tailwindConfig.test.ts:5 (no declaration file for '../postcss.config.js'). That file was added by INT-057-UNIT-290-Verify (commit 902d8db), is outside this unit, and is a test file this Act agent must not change; the error is not in uiStore.ts. No mocks of uiStore were found in src/ or tests/ (the only match is a comment in tests/uiStoreSoundSettings.test.ts saying it runs against the real uiStore). Worktree is clean, no changes made. Baseline: active scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa; case HEAD a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7. The `timeout` command is unavailable on this macOS shell, so the check was run without it."
+    },
+    {
+      "unit_id": "UNIT-312",
+      "title": "Verify: Real store defaults and each action unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MX3VGR9YNYWZZFD1H2YPN"
+      ],
+      "depends_on": [
+        "UNIT-310",
+        "REQ-155"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "42eddd7f05def9fe81e0c4d6a2a5a56eab670205",
+      "from_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+      "tests": [
+        {
+          "id": "uiStoreReal.default-state",
+          "kind": "unit",
+          "name": "default state",
+          "title": "real uiStore defaults: default state has drawer closed, no modal, sound on, settings closed, and action functions",
+          "scenario": "Given the store is reset to its initial state, When the state is read, Then drawerOpen is false, modal is null, soundEnabled is true, settingsOpen is false and all actions are functions",
+          "command": "npx vitest run tests/uiStoreReal.test.ts --testTimeout=10000",
+          "file": "tests/uiStoreReal.test.ts",
+          "status": "passed",
+          "detail": "Passed."
+        },
+        {
+          "id": "uiStoreReal.each-toggle-flips-and-restores",
+          "kind": "unit",
+          "name": "each toggle flips and restores",
+          "title": "real uiStore defaults: toggleDrawer, toggleSound and toggleSettings each flip and restore their flag, leaving modal null",
+          "scenario": "Given the default state, When each toggle is called once and then again, Then the flags go true/false/true and back to their defaults, and modal stays null",
+          "command": "npx vitest run tests/uiStoreReal.test.ts --testTimeout=10000",
+          "file": "tests/uiStoreReal.test.ts",
+          "status": "passed",
+          "detail": "Passed."
+        },
+        {
+          "id": "uiStoreReal.open-modal-then-close-modal",
+          "kind": "unit",
+          "name": "openModal then closeModal",
+          "title": "real uiStore defaults: openModal sets the contribution modal without opening the drawer, and closeModal clears it",
+          "scenario": "Given the default state, When openModal('contribution') is called and then closeModal(), Then modal is 'contribution' with drawerOpen false, and then modal is null",
+          "command": "npx vitest run tests/uiStoreReal.test.ts --testTimeout=10000",
+          "file": "tests/uiStoreReal.test.ts",
+          "status": "passed",
+          "detail": "Passed."
+        }
+      ],
+      "started_at": "2026-11-23T16:48:12.776209+00:00",
+      "ended_at": "2026-11-23T16:48:31.928709+00:00",
+      "run_started_at": "2026-11-23T16:48:12.776209+00:00",
+      "duration_ms": 17368,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2718,
+      "estimated_cost_usd": 0.010878
+    },
+    {
+      "unit_id": "UNIT-313",
+      "title": "Verify: Tests import the actual store and never mock it",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MX3VGNHR54XE8KVV0HBNJ"
+      ],
+      "depends_on": [
+        "UNIT-311",
+        "REQ-156"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "7b4c4570dbb756f8a71340903090143309020465",
+      "from_sha": "42eddd7f05def9fe81e0c4d6a2a5a56eab670205",
+      "tests": [
+        {
+          "id": "uiStoreRealGuard.store-is-not-a-mock",
+          "kind": "unit",
+          "name": "store is not a mock",
+          "title": "uiStore module exports useUiStore and none of its actions are mock functions",
+          "scenario": "Given the uiStore module is imported, when its exports and actions are inspected, then useUiStore is exported and no action is a vi mock",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts -t 'not a mock' --testTimeout=20000",
+          "file": "tests/uiStoreRealGuard.test.ts",
+          "status": "passed",
+          "detail": "Object.keys(mod) contains useUiStore; vi.isMockFunction is false for useUiStore, toggleDrawer, openModal, closeModal, toggleSound, toggleSettings."
+        },
+        {
+          "id": "uiStoreRealGuard.no-vi-mock-in-store-tests",
+          "kind": "unit",
+          "name": "no vi.mock in store tests",
+          "title": "Store test sources never call vi.mock and each imports the real store",
+          "scenario": "Given the four uiStore test files, when their sources are read, then none contains vi.mock( and each contains ../src/store/uiStore",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts --testTimeout=20000",
+          "file": "tests/uiStoreRealGuard.test.ts",
+          "status": "passed",
+          "detail": "uiStoreReal.test.ts, uiStoreDrawerModal.test.ts, uiStoreSoundSettings.test.ts and uiStoreHook.test.tsx have no vi.mock( and import ../src/store/uiStore."
+        }
+      ],
+      "started_at": "2026-11-23T16:48:32.419176+00:00",
+      "ended_at": "2026-11-23T16:49:00.433728+00:00",
+      "run_started_at": "2026-11-23T16:48:32.419176+00:00",
+      "duration_ms": 26701,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 4282,
+      "estimated_cost_usd": 0.017139
+    },
+    {
+      "unit_id": "REQ-155",
+      "title": "REQ · Default state and every action of the real store are asserted in one suite",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-062"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-156",
+      "title": "REQ · Tests are proven to use the actual store module, not a mock",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-062"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-062",
+      "title": "Evidence: Real uiStore unit tests pass with the store unmocked",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-310",
+        "UNIT-311",
+        "UNIT-312",
+        "UNIT-313"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-313",
+      "dst": "EVD-062"
+    },
+    {
+      "src": "REQ-156",
+      "dst": "UNIT-311"
+    },
+    {
+      "src": "REQ-156",
+      "dst": "UNIT-313"
+    },
+    {
+      "src": "UNIT-310",
+      "dst": "EVD-062"
+    },
+    {
+      "src": "UNIT-312",
+      "dst": "EVD-062"
+    },
+    {
+      "src": "UNIT-311",
+      "dst": "UNIT-313"
+    },
+    {
+      "src": "INT-062",
+      "dst": "REQ-156"
+    },
+    {
+      "src": "UNIT-311",
+      "dst": "EVD-062"
+    },
+    {
+      "src": "UNIT-310",
+      "dst": "UNIT-312"
+    },
+    {
+      "src": "REQ-155",
+      "dst": "UNIT-312"
+    },
+    {
+      "src": "REQ-155",
+      "dst": "UNIT-310"
+    },
+    {
+      "src": "INT-062",
+      "dst": "REQ-155"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84mx4",
+  "base_sha": "a8acc43788cfa8235f90a1ee8b6cccf3d1a0a7c7",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84MX47P1W0J89MR03WMGXG1:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T16:47:53.590306+00:00",
+  "updated_at": "2026-11-23T16:49:14.389709+00:00",
+  "completed_at": "2026-11-23T16:49:00.436239+00:00",
+  "duration_ms": 66846,
+  "usage_stats": {
+    "total_duration_ms": 77864,
+    "total_tokens_in": 40,
+    "total_tokens_out": 10389,
+    "total_estimated_cost_usd": 0.041587
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-310",
+    "UNIT-311",
+    "UNIT-312",
+    "UNIT-313"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-310",
+        "title": "Act: Confirm uiStore exposes every default field and action the suite asserts",
+        "evidence_refs": [
+          {
+            "id": "EVD-062",
+            "path": ".ai-dlc/evidence/EVD-062.md",
+            "title": "Evidence: Real uiStore unit tests pass with the store unmocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-310 unless acceptance outcomes recorded in EVD-062 (.ai-dlc/evidence/EVD-062.md; \"Evidence: Real uiStore unit tests pass with the store unmocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-311",
+        "title": "Act: Confirm uiStore is a named export of a real zustand store",
+        "evidence_refs": [
+          {
+            "id": "EVD-062",
+            "path": ".ai-dlc/evidence/EVD-062.md",
+            "title": "Evidence: Real uiStore unit tests pass with the store unmocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-311 unless acceptance outcomes recorded in EVD-062 (.ai-dlc/evidence/EVD-062.md; \"Evidence: Real uiStore unit tests pass with the store unmocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-312",
+        "title": "Verify: Real store defaults and each action unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-062",
+            "path": ".ai-dlc/evidence/EVD-062.md",
+            "title": "Evidence: Real uiStore unit tests pass with the store unmocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-312 unless acceptance outcomes recorded in EVD-062 (.ai-dlc/evidence/EVD-062.md; \"Evidence: Real uiStore unit tests pass with the store unmocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-313",
+        "title": "Verify: Tests import the actual store and never mock it",
+        "evidence_refs": [
+          {
+            "id": "EVD-062",
+            "path": ".ai-dlc/evidence/EVD-062.md",
+            "title": "Evidence: Real uiStore unit tests pass with the store unmocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-313 unless acceptance outcomes recorded in EVD-062 (.ai-dlc/evidence/EVD-062.md; \"Evidence: Real uiStore unit tests pass with the store unmocked\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T16:47:55.083061+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-310",
+    "UNIT-311",
+    "UNIT-312",
+    "UNIT-313"
+  ]
+}

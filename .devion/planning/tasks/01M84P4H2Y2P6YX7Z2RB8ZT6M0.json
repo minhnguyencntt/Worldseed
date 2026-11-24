@@ -1,0 +1,75 @@
+{
+  "id": "01M84P4H2Y2P6YX7Z2RB8ZT6M0",
+  "intent_id": "01M84P0WJ9VWM3B8CNSBQS7E2N",
+  "title": "Act: Wire round loading/error state and HeaderOverlay into App",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Track loading and error in App and render HeaderOverlay through the header slot.",
+  "description": "Edit App.tsx: add loading and error state, replace the silent catch, and pass HeaderOverlay to GameLayout header.",
+  "acceptance_criteria": [
+    "Header shows loading, round, or error",
+    "No silent catch remains"
+  ],
+  "scope": {
+    "in_scope": [
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "HeaderOverlay"
+    ],
+    "preserve": [
+      "Intro gate",
+      "ContributionSheet roundId"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "App passes round, loading, error to HeaderOverlay in header slot",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-337.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84P3EYR0MP08Q22JM0N2TC9",
+    "trace:01M84NXPJNXND8JGEKAYMETGHM",
+    "artifact:.ai-dlc/units/UNIT-337.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84P4H2Y6GE3SEDAZHWVXW27"
+  ],
+  "sim_node_id": "01M84P3EYR86BQTY6ER7H2836Y",
+  "artifact_path": ".ai-dlc/units/UNIT-337.md",
+  "artifact_id": "UNIT-337",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App useState/useEffect",
+      "lines": "L14-L24",
+      "action": "Add const [loading, setLoading] = useState(true) and const [roundError, setRoundError] = useState<string | undefined>(undefined). Rewrite the effect so getCurrentRound().then(setRound).catch((e: unknown) => setRoundError(e instanceof Error ? e.message : 'Round request failed')).finally(() => setLoading(false)), removing the silent .catch(() => setRound(undefined)).",
+      "code": "getCurrentRound().then(setRound).catch((e: unknown) => setRoundError(e instanceof Error ? e.message : 'Round request failed')).finally(() => setLoading(false));",
+      "expected": "State reflects pending, resolved and rejected round fetch."
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App return JSX / HeaderOverlay import",
+      "lines": "L1-L12, L30-L35",
+      "action": "Import HeaderOverlay from './components/HeaderOverlay' and pass header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} />} to GameLayout, importing world from './runtime/content' (the same export useGame uses).",
+      "code": "<GameLayout header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} />} scene={...}",
+      "expected": "HeaderOverlay renders inside the layout main area."
+    }
+  ],
+  "created_at": "2026-11-23T17:09:24.702451+00:00",
+  "updated_at": "2026-11-23T17:10:46.633982+00:00"
+}

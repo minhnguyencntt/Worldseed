@@ -1,0 +1,60 @@
+{
+  "id": "01M8457KSMXS87JGW0YSSCY1AD",
+  "intent_id": "01M84522HNMQHD166PMNC6CKQ8",
+  "title": "REQ · Contribution service validates prompt, world, round status, limits, rate and spam",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "The service rejects invalid submissions before anything is written.",
+  "description": "Context: no contribution logic exists. Desired behavior: Service.Submit validates prompt length, world existence, OPEN round, per-player limit of 5, request rate and duplicate/spam prompts using an injected clock. Expected result: typed errors per rule. Why: protect the Git-backed record from abuse.",
+  "acceptance_criteria": [
+    "Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned",
+    "Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned",
+    "Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned",
+    "Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned",
+    "Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned",
+    "Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned"
+  ],
+  "scope": {
+    "in_scope": [
+      "The service rejects invalid submissions before anything is written."
+    ],
+    "out_of_scope": [
+      "Admin APIs",
+      "Frontend changes",
+      "Git push"
+    ],
+    "preserve": [
+      "Existing player session handlers in backend/internal/player",
+      "GET /healthz"
+    ]
+  },
+  "technical_constraints": [
+    "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+    "Git writes go through an interface wrapping the Git CLI"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Acceptance criteria met by implementation",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-029.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8457J1JTYNHTFP298ECTMXW",
+    "trace:01M8414WGR17QT0BMYRJPZ02TC",
+    "artifact:.ai-dlc/requirements/REQ-029.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M8457KSM6PWG208R3W4G0CSG"
+  ],
+  "sim_node_id": "01M8457J1JWHRY5ETZ2W87W449",
+  "feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+  "artifact_path": ".ai-dlc/requirements/REQ-029.md",
+  "artifact_id": "REQ-029",
+  "created_at": "2026-11-23T12:13:59.988368+00:00",
+  "updated_at": "2026-11-23T12:22:20.049024+00:00"
+}

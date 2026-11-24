@@ -1,0 +1,74 @@
+{
+  "id": "01M84NXQHY1802BC1FB6MA9EQY",
+  "intent_id": "01M84NTACFKP3XP1PWVBPDHNCT",
+  "title": "Act: Wire round loading/error state and HeaderOverlay into App",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add loading/error state and header prop in App.",
+  "description": "Track loading and error, pass HeaderOverlay to GameLayout header.",
+  "acceptance_criteria": [
+    "Header receives round, loading and error.",
+    "ContributionSheet still gets round id."
+  ],
+  "scope": {
+    "in_scope": [
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Existing flow"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "App renders HeaderOverlay in header slot",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-331.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84NWMXSX9K5MGQBFPZECFJW",
+    "trace:01M84JF0K1DC68QPCZ6V752H5C",
+    "artifact:.ai-dlc/units/UNIT-331.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84NXQHY4W6T1EDS027C9GPT"
+  ],
+  "sim_node_id": "01M84NWMXSTNFNCSWYNJSREN8T",
+  "feature_id": "01M84JF0K1DC68QPCZ6V752H5C",
+  "artifact_path": ".ai-dlc/units/UNIT-331.md",
+  "artifact_id": "UNIT-331",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App state and effect",
+      "lines": "L14-L24",
+      "action": "Add useState<boolean> loading initialised true and useState<string|undefined> error. Replace the effect body so it calls getCurrentRound().then(setRound).catch((e) => setError(e instanceof Error ? e.message : String(e))).finally(() => setLoading(false)). Import HeaderOverlay from './components/HeaderOverlay' and world from './runtime/content'.",
+      "code": "getCurrentRound().then(setRound).catch((e) => setError(e instanceof Error ? e.message : String(e))).finally(() => setLoading(false));",
+      "expected": "State tracks loading and error."
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "GameLayout usage",
+      "lines": "L32-L33",
+      "action": "Pass header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={error} />} to GameLayout.",
+      "code": "<GameLayout header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={error} />} scene={...}",
+      "expected": "Header renders through the slot."
+    }
+  ],
+  "created_at": "2026-11-23T17:05:41.950035+00:00",
+  "updated_at": "2026-11-23T17:07:11.486802+00:00"
+}

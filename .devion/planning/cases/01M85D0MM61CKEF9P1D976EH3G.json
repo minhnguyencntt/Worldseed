@@ -1,0 +1,386 @@
+{
+  "id": "01M85D0MM61CKEF9P1D976EH3G",
+  "trigger_node_id": "INT-128, UNIT-638 +6",
+  "node_ids": [
+    "INT-128",
+    "UNIT-638",
+    "UNIT-639",
+    "UNIT-640",
+    "UNIT-641",
+    "REQ-319",
+    "REQ-320",
+    "EVD-128"
+  ],
+  "intent_id": "INT-128",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-128",
+      "title": "SG-8.2.1 Block blank contribution submit with an inline message",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-638",
+      "title": "Act: Show 'Enter an idea first' for blank submit in ContributionSheet",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D0KRYGACBACCP7P1J0ZYZ"
+      ],
+      "depends_on": [
+        "REQ-319"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "216e80bb1359b622de88fcda2d723fb2de050f4a",
+      "from_sha": "49504fc800fd2705f9221dca37684d70a3fae7f3",
+      "started_at": "2026-11-23T23:49:17.139557+00:00",
+      "ended_at": "2026-11-23T23:49:51.240728+00:00",
+      "run_started_at": "2026-11-23T23:49:17.139557+00:00",
+      "duration_ms": 30730,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 3193,
+      "estimated_cost_usd": 0.012783
+    },
+    {
+      "unit_id": "UNIT-639",
+      "title": "Act: Clear the blank-text message on typing and valid submit",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D0KRYK5MCDCBZFHGHQ4S8"
+      ],
+      "depends_on": [
+        "REQ-320"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "216e80bb1359b622de88fcda2d723fb2de050f4a",
+      "from_sha": "216e80bb1359b622de88fcda2d723fb2de050f4a",
+      "started_at": "2026-11-23T23:49:17.176997+00:00",
+      "ended_at": "2026-11-23T23:49:53.471951+00:00",
+      "run_started_at": "2026-11-23T23:49:17.176997+00:00",
+      "duration_ms": 34574,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 3453,
+      "estimated_cost_usd": 0.013828
+    },
+    {
+      "unit_id": "UNIT-640",
+      "title": "Verify: Blank and whitespace-only submit shows the inline message unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D0KRYR1PBAB8JN29GC8EE"
+      ],
+      "depends_on": [
+        "UNIT-638",
+        "REQ-319"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "db4486860c9f8b80315df0c97e9984f83146c4b3",
+      "from_sha": "db4486860c9f8b80315df0c97e9984f83146c4b3",
+      "tests": [
+        {
+          "id": "contributionBlank.empty-text",
+          "kind": "unit",
+          "name": "contributionBlank.test.tsx > empty text shows \"Enter an idea first\" and does not submit",
+          "title": "empty text shows \"Enter an idea first\" and does not submit",
+          "scenario": "Given the sheet is open with an empty textarea, When Send is clicked, Then the alert reads 'Enter an idea first' and submitContribution is called 0 times",
+          "command": "npx vitest run tests/contributionBlank.test.tsx -t \"empty text\" --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 4 skipped by filter"
+        },
+        {
+          "id": "contributionBlank.whitespace-only",
+          "kind": "unit",
+          "name": "contributionBlank.test.tsx > whitespace-only text shows \"Enter an idea first\" and does not submit",
+          "title": "whitespace-only text shows \"Enter an idea first\" and does not submit",
+          "scenario": "Given the textarea holds '   \\n  ', When Send is clicked, Then the alert reads 'Enter an idea first' and submitContribution is not called",
+          "command": "npx vitest run tests/contributionBlank.test.tsx -t \"whitespace-only\" --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 4 skipped by filter"
+        },
+        {
+          "id": "contributionBlank.marked-invalid",
+          "kind": "unit",
+          "name": "contributionBlank.test.tsx > textarea is marked invalid and described by the alert after a blank submit",
+          "title": "textarea is marked invalid and described by the alert after a blank submit",
+          "scenario": "Given a blank Send, Then the textarea has aria-invalid='true' and aria-describedby equal to the alert id",
+          "command": "npx vitest run tests/contributionBlank.test.tsx -t \"marked invalid\" --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 4 skipped by filter"
+        },
+        {
+          "id": "contributionBlank.setup",
+          "kind": "unit",
+          "name": "contributionBlank.test.tsx (mock setup and render)",
+          "title": "Blank submit sheet loads with client mocks in place",
+          "scenario": "Given vi.mock of ../src/api/client and a rendered ContributionSheet, the file loads and tests run",
+          "command": "npx vitest run tests/contributionBlank.test.tsx --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "File loads; full file 5 passed on final run (one earlier run had 1 timing-flaky failure in a test outside this unit's steps, not reproduced)"
+        }
+      ],
+      "started_at": "2026-11-23T23:49:51.249399+00:00",
+      "ended_at": "2026-11-23T23:50:39.321737+00:00",
+      "run_started_at": "2026-11-23T23:49:51.249399+00:00",
+      "duration_ms": 46450,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 6633,
+      "estimated_cost_usd": 0.026548
+    },
+    {
+      "unit_id": "UNIT-641",
+      "title": "Verify: Blank message clears on typing and valid submit unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D0KRYXCN4PBW15QTQ2939"
+      ],
+      "depends_on": [
+        "UNIT-639",
+        "REQ-320"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "db4486860c9f8b80315df0c97e9984f83146c4b3",
+      "from_sha": "216e80bb1359b622de88fcda2d723fb2de050f4a",
+      "tests": [
+        {
+          "id": "typing clears the blank message",
+          "kind": "unit",
+          "name": "typing clears the blank message",
+          "title": "typing clears the blank message and the invalid state",
+          "scenario": "Given a blank submit shows the alert, when the user types 'a' into the textarea, then no alert is shown, aria-invalid is not 'true', and submitContribution is not called",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"typing clears\" --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 4 skipped in 73ms"
+        },
+        {
+          "id": "valid idea after a blank attempt is sent trimmed",
+          "kind": "unit",
+          "name": "valid idea after a blank attempt is sent trimmed",
+          "title": "a valid idea after a blank attempt is sent trimmed and the blank message is gone",
+          "scenario": "Given a blank submit, when the user types '  hello  ' and clicks Send, then submitContribution (mocked to resolve) is called once with 'hello' and no 'Enter an idea first' text remains",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"sent trimmed\" --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 4 skipped in 91ms"
+        }
+      ],
+      "started_at": "2026-11-23T23:49:53.479835+00:00",
+      "ended_at": "2026-11-23T23:50:36.828747+00:00",
+      "run_started_at": "2026-11-23T23:49:53.479835+00:00",
+      "duration_ms": 40505,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 5109,
+      "estimated_cost_usd": 0.020449
+    },
+    {
+      "unit_id": "REQ-319",
+      "title": "REQ · Blank or whitespace-only submit is blocked with 'Enter an idea first'",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-128"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-320",
+      "title": "REQ · The blank-text message clears on typing and valid submit still works",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-128"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-128",
+      "title": "Evidence: Blank contribution submit message unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-638",
+        "UNIT-639",
+        "UNIT-640",
+        "UNIT-641"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-639",
+      "dst": "EVD-128"
+    },
+    {
+      "src": "INT-128",
+      "dst": "REQ-320"
+    },
+    {
+      "src": "REQ-320",
+      "dst": "UNIT-641"
+    },
+    {
+      "src": "UNIT-638",
+      "dst": "EVD-128"
+    },
+    {
+      "src": "REQ-319",
+      "dst": "UNIT-638"
+    },
+    {
+      "src": "INT-128",
+      "dst": "REQ-319"
+    },
+    {
+      "src": "UNIT-641",
+      "dst": "EVD-128"
+    },
+    {
+      "src": "REQ-319",
+      "dst": "UNIT-640"
+    },
+    {
+      "src": "REQ-320",
+      "dst": "UNIT-639"
+    },
+    {
+      "src": "UNIT-638",
+      "dst": "UNIT-640"
+    },
+    {
+      "src": "UNIT-639",
+      "dst": "UNIT-641"
+    },
+    {
+      "src": "UNIT-640",
+      "dst": "EVD-128"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85d0m",
+  "base_sha": "49504fc800fd2705f9221dca37684d70a3fae7f3",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85D0MM61CKEF9P1D976EH3G:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T23:49:14.502361+00:00",
+  "updated_at": "2026-11-23T23:50:42.145053+00:00",
+  "completed_at": "2026-11-23T23:50:39.322925+00:00",
+  "duration_ms": 84820,
+  "usage_stats": {
+    "total_duration_ms": 152271,
+    "total_tokens_in": 70,
+    "total_tokens_out": 18388,
+    "total_estimated_cost_usd": 0.073608
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-638",
+    "UNIT-639",
+    "UNIT-640",
+    "UNIT-641"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-638",
+        "title": "Act: Show 'Enter an idea first' for blank submit in ContributionSheet",
+        "evidence_refs": [
+          {
+            "id": "EVD-128",
+            "path": ".ai-dlc/evidence/EVD-128.md",
+            "title": "Evidence: Blank contribution submit message unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-638 unless acceptance outcomes recorded in EVD-128 (.ai-dlc/evidence/EVD-128.md; \"Evidence: Blank contribution submit message unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-639",
+        "title": "Act: Clear the blank-text message on typing and valid submit",
+        "evidence_refs": [
+          {
+            "id": "EVD-128",
+            "path": ".ai-dlc/evidence/EVD-128.md",
+            "title": "Evidence: Blank contribution submit message unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-639 unless acceptance outcomes recorded in EVD-128 (.ai-dlc/evidence/EVD-128.md; \"Evidence: Blank contribution submit message unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-640",
+        "title": "Verify: Blank and whitespace-only submit shows the inline message unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-128",
+            "path": ".ai-dlc/evidence/EVD-128.md",
+            "title": "Evidence: Blank contribution submit message unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-640 unless acceptance outcomes recorded in EVD-128 (.ai-dlc/evidence/EVD-128.md; \"Evidence: Blank contribution submit message unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-641",
+        "title": "Verify: Blank message clears on typing and valid submit unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-128",
+            "path": ".ai-dlc/evidence/EVD-128.md",
+            "title": "Evidence: Blank contribution submit message unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-641 unless acceptance outcomes recorded in EVD-128 (.ai-dlc/evidence/EVD-128.md; \"Evidence: Blank contribution submit message unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T23:49:16.666766+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-638",
+    "UNIT-639",
+    "UNIT-640",
+    "UNIT-641"
+  ]
+}

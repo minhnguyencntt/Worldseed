@@ -1,0 +1,78 @@
+{
+  "id": "01M85XAF1P7WNC2JA0R0CWE35G",
+  "intent_id": "01M85WY6FJYG6CP4WV6SDZB9VM",
+  "title": "Act: Add tokens module, Tailwind token plugin and theme values",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "tokens.ts, plugin, theme extension",
+  "description": "Create tokens from PALETTE_RAMPS and expose them via a Tailwind plugin (:root vars) and theme.extend.",
+  "acceptance_criteria": [
+    "tokensToCssVars returns --sf-color-*, --sf-space-*, --sf-font-* entries",
+    "tailwind.config theme.extend has sf colours, spacing, fontFamily"
+  ],
+  "scope": {
+    "in_scope": [
+      "tokens.ts",
+      "tailwind.config.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "pal colours"
+    ]
+  },
+  "technical_constraints": [
+    "One palette of at most 48 colours",
+    "Tailwind stays",
+    "New file: `game/frontend/src/lib/tokens.ts`",
+    "Code path: `game/frontend/tailwind.config.ts`"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "Tokens available as CSS variables and Tailwind values",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-830.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85X219H0X9HVG5B40Y11XDZ",
+    "trace:01M84T6537TTHDFGGZN902Z65D",
+    "artifact:.ai-dlc/units/UNIT-830.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XAF1PKZNTX1835YJHW2SV"
+  ],
+  "sim_node_id": "01M85X219H7X8PFJ44CWBMPYDY",
+  "feature_id": "01M84T6537TTHDFGGZN902Z65D",
+  "artifact_path": ".ai-dlc/units/UNIT-830.md",
+  "artifact_id": "UNIT-830",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/tokens.ts",
+      "symbol": "new: COLOR_TOKENS, SPACING_TOKENS, TYPE_TOKENS, tokensToCssVars",
+      "lines": "new",
+      "action": "Import PALETTE_RAMPS from ./palette. Export COLOR_TOKENS as an object mapping ink, plum, moon, hoodie, wood, brass, parchment, lamp to PALETTE_RAMPS[ramp] arrays (no new hex literals). Export SPACING_TOKENS {1:'4px',2:'8px',3:'12px',4:'16px',6:'24px'}. Export TYPE_TOKENS {fontPixel:\"'Press Start 2P', monospace\", fontBody:\"'VT323', monospace\", sizeSm:'12px', sizeMd:'16px', sizeLg:'24px'}. Export tokensToCssVars(): Record<string,string> emitting --sf-color-<ramp>-<1..6>, --sf-space-<n>, --sf-font-pixel, --sf-font-body, --sf-size-<sm|md|lg>.",
+      "code": "export function tokensToCssVars(): Record<string,string> { /* build from the three maps */ }",
+      "expected": "tokensToCssVars()['--sf-color-brass-4'] equals PALETTE_RAMPS.brass[3]"
+    },
+    {
+      "file": "game/frontend/tailwind.config.ts",
+      "symbol": "default config (theme.extend, plugins)",
+      "lines": "L1-L3",
+      "action": "Import plugin from 'tailwindcss/plugin' and tokensToCssVars, SPACING_TOKENS, TYPE_TOKENS. Add theme.extend.colors.sf as an object mapping each COLOR_TOKENS key and step to var(--sf-color-<ramp>-<n>), theme.extend.spacing entries sf-<n> -> var(--sf-space-<n>), fontFamily pixel/body -> var(--sf-font-pixel)/var(--sf-font-body), fontSize sf-sm/md/lg -> var(--sf-size-*). Append plugin(({addBase}) => addBase({':root': tokensToCssVars(), body:{fontFamily:'var(--sf-font-body)'}})) to plugins after animate. Keep colors.pal, background, primary untouched.",
+      "code": "plugins: [animate, plugin(({ addBase }) => addBase({ ':root': tokensToCssVars() }))]",
+      "expected": "npm run typecheck passes and config still exposes colors.pal"
+    }
+  ],
+  "created_at": "2026-11-24T04:34:13.686310+00:00",
+  "updated_at": "2026-11-24T04:38:49.491058+00:00"
+}

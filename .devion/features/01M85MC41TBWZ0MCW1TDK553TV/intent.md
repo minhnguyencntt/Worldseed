@@ -1,0 +1,43 @@
+---
+id: "01M85MC41TBWZ0MCW1TDK553TV"
+kind: intent
+parent: null
+status: draft
+links: []
+agent: null
+source: llm
+evidence: {"project_id":"944dfe9c-3760-4ab1-81a3-865a561626d8"}
+---
+# SG-11.1 Phaser scene listens for playAnimation on the event bus
+
+Context: ReactToPhaserEvents already declares playAnimation { target, name } in game/frontend/src/phaser/events.ts, but nothing in BootScene subscribes to reactToPhaser. Desired behavior: the scene plays the target character's idle or interact animation when the event arrives and releases the subscription when the scene shuts down. Why: React game actions (SG-11) need to drive character animations.
+
+## Acceptance criteria
+- Given a created BootScene, when reactToPhaser emits playAnimation {target:'boy', name:'interact'}, then the boy sprite plays its interact animation key
+- Given a created BootScene, when playAnimation {name:'idle'} is emitted, then the target sprite plays its idle animation key
+- Given the scene has shut down, when playAnimation is emitted, then no sprite play call is made
+
+
+## Scope
+- In scope: game/frontend/src/phaser/BootScene.ts subscription and character animation dispatch
+- Out of scope: Emitting playAnimation from App
+- Out of scope: transitionTo handling
+- Out of scope: New events or content changes
+- Preserve: Existing characterClick interact-then-idle behavior
+- Preserve: Existing shutdown cleanup
+- Preserve: Typed event bus API
+
+
+## Technical constraints
+- Phaser 3.90 APIs only
+- Use reactToPhaser from events.ts; no new bus
+- Reuse resolveCharacterAnimation and ensureAnim
+
+
+## Definition of done
+- Both requirements have passing unit tests
+- Existing bootScene tests still pass
+
+
+## Clarifying questions
+- None

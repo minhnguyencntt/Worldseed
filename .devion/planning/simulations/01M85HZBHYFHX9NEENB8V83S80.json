@@ -1,0 +1,670 @@
+{
+  "intent_id": "01M85HZBHYFHX9NEENB8V83S80",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85J2QP25TH68W50KCCXZ6YY",
+      "kind": "intent",
+      "title": "SG-10.2 Push the keyboard-focused object into the scene",
+      "body": "Context: BootScene already maps Tab and arrow keys to moveFocus and emits focusChange, and SceneObject.focus() already shows the hover highlight and label. The shared game store has no focus field, so React cannot push focus into the scene. Desired behavior: the store owns the focused object id, BootScene applies it to its SceneObjects, and shutdown removes focus. Expected result: a store focus change highlights the matching object with its label. Why: keyboard focus must look the same as hover.\n\n## Acceptance criteria\n- Given a scene with objects, when the store focus id changes to an object id, then that SceneObject is focused and the others are blurred\n- Given a focused object, when the scene shuts down, then every SceneObject is blurred and the store focus id is null\n- Given the store focus id is null, when the store changes, then no SceneObject stays focused\n\n\n## Scope\n- In scope: game store focus field and setter\n- In scope: BootScene focus sync from the store\n- In scope: BootScene shutdown focus removal\n- In scope: unit tests for all three\n- Out of scope: React App or ActionMenu changes\n- Out of scope: new events\n- Out of scope: backend or API changes\n- Out of scope: new visual styles for highlight\n- Preserve: existing focusChange and menuClose emissions\n- Preserve: SceneObject.focus and blur behavior\n- Preserve: existing BootScene sync and shutdown cleanup\n\n\n## Technical constraints\n- Phaser 3.90 and zustand; no new dependencies\n- Phaser is mocked in unit tests\n- Reuse SceneObject.focus and blur\n\n\n## Definition of done\n- All requirements have Act and Verify units done\n- Unit tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A store focus change shows the same highlight and label in the scene as hover, and focus is removed on shutdown",
+      "description": "Context: BootScene already maps Tab and arrow keys to moveFocus and emits focusChange, and SceneObject.focus() already shows the hover highlight and label. The shared game store has no focus field, so React cannot push focus into the scene. Desired behavior: the store owns the focused object id, BootScene applies it to its SceneObjects, and shutdown removes focus. Expected result: a store focus change highlights the matching object with its label. Why: keyboard focus must look the same as hover.",
+      "acceptance_criteria": [
+        "Given a scene with objects, when the store focus id changes to an object id, then that SceneObject is focused and the others are blurred",
+        "Given a focused object, when the scene shuts down, then every SceneObject is blurred and the store focus id is null",
+        "Given the store focus id is null, when the store changes, then no SceneObject stays focused"
+      ],
+      "scope": {
+        "in_scope": [
+          "game store focus field and setter",
+          "BootScene focus sync from the store",
+          "BootScene shutdown focus removal",
+          "unit tests for all three"
+        ],
+        "out_of_scope": [
+          "React App or ActionMenu changes",
+          "new events",
+          "backend or API changes",
+          "new visual styles for highlight"
+        ],
+        "preserve": [
+          "existing focusChange and menuClose emissions",
+          "SceneObject.focus and blur behavior",
+          "existing BootScene sync and shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 and zustand; no new dependencies",
+        "Phaser is mocked in unit tests",
+        "Reuse SceneObject.focus and blur"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements have Act and Verify units done",
+        "Unit tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-144.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-144.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-144.md",
+      "artifact_id": "INT-144"
+    },
+    {
+      "id": "01M85J2QP24S60QXYEAEW4D50T",
+      "kind": "requirement",
+      "title": "REQ · Game store holds the focused object id",
+      "body": "Context: useGameStore in game/frontend/src/store/gameStore.ts holds only state, setState and init. Desired behavior: add a focusedObjectId field (default null) and a setFocusedObject action. Expected result: any module can set and read the focused object id. Why: the scene needs a shared place to read focus from.\n\n## Acceptance criteria\n- Given a fresh store, when focusedObjectId is read, then it is null\n- Given the store, when setFocusedObject('bookshelf') is called, then focusedObjectId is 'bookshelf'\n- Given a focused id, when setFocusedObject(null) is called, then focusedObjectId is null\n\n\n## Scope\n- In scope: gameStore focus field and action\n- Out of scope: scene changes\n- Preserve: init and setState semantics\n\n\n## Technical constraints\n- Keep init and setState behavior unchanged\n\n\n## Definition of done\n- Field and action exist with typed signatures\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "gameStore exposes focusedObjectId and setFocusedObject",
+      "description": "Context: useGameStore in game/frontend/src/store/gameStore.ts holds only state, setState and init. Desired behavior: add a focusedObjectId field (default null) and a setFocusedObject action. Expected result: any module can set and read the focused object id. Why: the scene needs a shared place to read focus from.",
+      "acceptance_criteria": [
+        "Given a fresh store, when focusedObjectId is read, then it is null",
+        "Given the store, when setFocusedObject('bookshelf') is called, then focusedObjectId is 'bookshelf'",
+        "Given a focused id, when setFocusedObject(null) is called, then focusedObjectId is null"
+      ],
+      "scope": {
+        "in_scope": [
+          "gameStore focus field and action"
+        ],
+        "out_of_scope": [
+          "scene changes"
+        ],
+        "preserve": [
+          "init and setState semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Keep init and setState behavior unchanged"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Field and action exist with typed signatures",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-358.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85J2QP25TH68W50KCCXZ6YY",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M85J2QP25TH68W50KCCXZ6YY",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-358.md"
+      ],
+      "depends_on": [
+        "01M85J2QP25TH68W50KCCXZ6YY"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-358.md",
+      "artifact_id": "REQ-358"
+    },
+    {
+      "id": "01M85J2QP2ZKZAAH6QSQ3SFKPP",
+      "kind": "requirement",
+      "title": "REQ · BootScene shows store focus with the hover highlight and label",
+      "body": "Context: BootScene subscribes to useGameStore and calls onStateChange; Tab and arrows call moveFocus and emit focusChange. Desired behavior: onStateChange focuses the SceneObject whose spec.id equals focusedObjectId and blurs the rest, and the keyboard handler stores the focused id. Expected result: a store focus change shows the same highlight and label as hover. Why: one source of truth for focus.\n\n## Acceptance criteria\n- Given objects bookshelf and bed, when focusedObjectId becomes 'bed', then bed.focus() is called and bookshelf.blur() is called if it was focused\n- Given focusedObjectId is null, when the store changes, then a focused object is blurred\n- Given Tab is pressed, when focus moves, then focusedObjectId in the store equals the focused object id and focusChange is still emitted\n\n\n## Scope\n- In scope: BootScene.onStateChange focus application\n- In scope: BootScene.onKeyDown store write\n- Out of scope: shutdown cleanup\n- Preserve: focusChange emission\n- Preserve: sync(state) for each object\n\n\n## Technical constraints\n- Reuse SceneObject.focus and blur; do not render highlight in BootScene\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Store focus drives scene highlight\n- Keyboard path writes the store\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene applies focusedObjectId to its SceneObjects and the keyboard handler writes it",
+      "description": "Context: BootScene subscribes to useGameStore and calls onStateChange; Tab and arrows call moveFocus and emit focusChange. Desired behavior: onStateChange focuses the SceneObject whose spec.id equals focusedObjectId and blurs the rest, and the keyboard handler stores the focused id. Expected result: a store focus change shows the same highlight and label as hover. Why: one source of truth for focus.",
+      "acceptance_criteria": [
+        "Given objects bookshelf and bed, when focusedObjectId becomes 'bed', then bed.focus() is called and bookshelf.blur() is called if it was focused",
+        "Given focusedObjectId is null, when the store changes, then a focused object is blurred",
+        "Given Tab is pressed, when focus moves, then focusedObjectId in the store equals the focused object id and focusChange is still emitted"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.onStateChange focus application",
+          "BootScene.onKeyDown store write"
+        ],
+        "out_of_scope": [
+          "shutdown cleanup"
+        ],
+        "preserve": [
+          "focusChange emission",
+          "sync(state) for each object"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse SceneObject.focus and blur; do not render highlight in BootScene"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Store focus drives scene highlight",
+        "Keyboard path writes the store",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-359.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85J2QP25TH68W50KCCXZ6YY",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85J2QP25TH68W50KCCXZ6YY",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-359.md"
+      ],
+      "depends_on": [
+        "01M85J2QP25TH68W50KCCXZ6YY"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-359.md",
+      "artifact_id": "REQ-359"
+    },
+    {
+      "id": "01M85J2QP2QGWW9DYTZ6YNBHQM",
+      "kind": "requirement",
+      "title": "REQ · Focus is removed when the scene shuts down",
+      "body": "Context: the SHUTDOWN handler in BootScene.create unsubscribes the store, destroys effects, objects and sprites. Desired behavior: before destroying objects it blurs each one and sets focusedObjectId to null. Expected result: no stale focus survives a scene restart. Why: a remounted scene must not start with a phantom highlight.\n\n## Acceptance criteria\n- Given a focused object, when SHUTDOWN fires, then blur() is called on every SceneObject\n- Given focusedObjectId is 'bed', when SHUTDOWN fires, then the store focusedObjectId is null\n- Given SHUTDOWN has fired, when the store focus changes afterwards, then no SceneObject focus or blur call occurs\n\n\n## Scope\n- In scope: BootScene SHUTDOWN handler\n- Out of scope: React unmount\n- Preserve: existing destroy and unsubscribe cleanup\n\n\n## Technical constraints\n- Unsubscribe from the store before writing null so the scene is not re-entered\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Shutdown removes scene and store focus\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene shutdown blurs every SceneObject and clears the store focus",
+      "description": "Context: the SHUTDOWN handler in BootScene.create unsubscribes the store, destroys effects, objects and sprites. Desired behavior: before destroying objects it blurs each one and sets focusedObjectId to null. Expected result: no stale focus survives a scene restart. Why: a remounted scene must not start with a phantom highlight.",
+      "acceptance_criteria": [
+        "Given a focused object, when SHUTDOWN fires, then blur() is called on every SceneObject",
+        "Given focusedObjectId is 'bed', when SHUTDOWN fires, then the store focusedObjectId is null",
+        "Given SHUTDOWN has fired, when the store focus changes afterwards, then no SceneObject focus or blur call occurs"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "React unmount"
+        ],
+        "preserve": [
+          "existing destroy and unsubscribe cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Unsubscribe from the store before writing null so the scene is not re-entered"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Shutdown removes scene and store focus",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-360.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85J2QP25TH68W50KCCXZ6YY",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85J2QP25TH68W50KCCXZ6YY",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-360.md"
+      ],
+      "depends_on": [
+        "01M85J2QP25TH68W50KCCXZ6YY"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-360.md",
+      "artifact_id": "REQ-360"
+    },
+    {
+      "id": "01M85J2QP2T8WZ6VVG8PGEJ2SK",
+      "kind": "unit",
+      "title": "Act: Add focusedObjectId and setFocusedObject to gameStore",
+      "body": "Add a focusedObjectId field defaulting to null and a setFocusedObject action to useGameStore in gameStore.ts without changing init or setState.\n\n## Acceptance criteria\n- focusedObjectId defaults to null\n- setFocusedObject sets the value\n\n\n## Scope\n- In scope: game/frontend/src/store/gameStore.ts\n- Out of scope: tests\n- Preserve: init and setState\n\n\n## Technical constraints\n- Typed with string | null\n- Code path: `game/frontend/src/store/gameStore.ts`\n\n\n## Definition of done\n- Interface and creator updated; tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Extend GameStoreState and the zustand creator with focus field and action",
+      "description": "Add a focusedObjectId field defaulting to null and a setFocusedObject action to useGameStore in gameStore.ts without changing init or setState.",
+      "acceptance_criteria": [
+        "focusedObjectId defaults to null",
+        "setFocusedObject sets the value"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/store/gameStore.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "init and setState"
+        ]
+      },
+      "technical_constraints": [
+        "Typed with string | null",
+        "Code path: `game/frontend/src/store/gameStore.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Interface and creator updated; tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-716.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85J2QP24S60QXYEAEW4D50T",
+      "links": [
+        "parent:01M85J2QP24S60QXYEAEW4D50T",
+        "artifact:.ai-dlc/units/UNIT-716.md"
+      ],
+      "depends_on": [
+        "01M85J2QP24S60QXYEAEW4D50T"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-716.md",
+      "artifact_id": "UNIT-716",
+      "steps": [
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "GameStoreState",
+          "lines": "L4-L8",
+          "action": "Add the fields focusedObjectId: string | null and setFocusedObject: (id: string | null) => void to the interface after init.",
+          "code": "focusedObjectId: string | null;\n  setFocusedObject: (id: string | null) => void;",
+          "expected": "Interface declares the focus field and action."
+        },
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "useGameStore",
+          "lines": "L15-L30",
+          "action": "In the create callback add focusedObjectId: null as the default and setFocusedObject: (id) => set({ focusedObjectId: id }) after the init entry.",
+          "code": "focusedObjectId: null,\n  setFocusedObject: (id) => set({ focusedObjectId: id }),",
+          "expected": "useGameStore.getState().focusedObjectId is null and setFocusedObject updates it."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP2V2V83RHWTZBZYK3K",
+      "kind": "unit",
+      "title": "Act: Apply store focus to SceneObjects and write it from the keyboard handler",
+      "body": "BootScene reads focusedObjectId on every store change and focuses the matching SceneObject, blurring the others. The Tab/arrow branch of onKeyDown stores the focused id.\n\n## Acceptance criteria\n- Matching object focused, others blurred\n- Keyboard focus writes the store\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: shutdown\n- Preserve: focusChange emission\n- Preserve: sync loop\n\n\n## Technical constraints\n- Use SceneObject.focus, blur and isFocused\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Store focus drives highlight; tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add applyFocus to BootScene.onStateChange and setFocusedObject to onKeyDown",
+      "description": "BootScene reads focusedObjectId on every store change and focuses the matching SceneObject, blurring the others. The Tab/arrow branch of onKeyDown stores the focused id.",
+      "acceptance_criteria": [
+        "Matching object focused, others blurred",
+        "Keyboard focus writes the store"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "shutdown"
+        ],
+        "preserve": [
+          "focusChange emission",
+          "sync loop"
+        ]
+      },
+      "technical_constraints": [
+        "Use SceneObject.focus, blur and isFocused",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Store focus drives highlight; tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-717.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85J2QP2ZKZAAH6QSQ3SFKPP",
+      "matched_feature_id": "01M84MX32EMQ7G8B2M8AC4ZXN0",
+      "links": [
+        "parent:01M85J2QP2ZKZAAH6QSQ3SFKPP",
+        "trace:01M84MX32EMQ7G8B2M8AC4ZXN0",
+        "artifact:.ai-dlc/units/UNIT-717.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2ZKZAAH6QSQ3SFKPP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-717.md",
+      "artifact_id": "UNIT-717",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onStateChange",
+          "lines": "L130-L134",
+          "action": "At the top of onStateChange, before the null-state return, read focusedObjectId from useGameStore.getState() and loop this.sceneObjects: if o.spec.id === focusedObjectId call o.focus(), else if o.isFocused call o.blur().",
+          "code": "const focusedId = useGameStore.getState().focusedObjectId;\nthis.sceneObjects.forEach((o) => {\n  if (o.spec.id === focusedId) o.focus();\n  else if (o.isFocused) o.blur();\n});",
+          "expected": "Changing the store focus id focuses exactly the matching object."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onKeyDown",
+          "lines": "L136-L142",
+          "action": "In the delta !== 0 branch, after moveFocus, compute const focusedId = this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null; call useGameStore.getState().setFocusedObject(focusedId) and reuse focusedId in the existing focusChange emit.",
+          "code": "const focusedId = this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null;\nuseGameStore.getState().setFocusedObject(focusedId);\nphaserToReact.emit('focusChange', { id: focusedId });",
+          "expected": "Tab stores the focused id and still emits focusChange."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP2KR2D8HR5X1B611X6",
+      "kind": "unit",
+      "title": "Act: Remove scene and store focus in the BootScene SHUTDOWN handler",
+      "body": "Extend the SHUTDOWN callback in BootScene.create so focus is cleared after the store is unsubscribed and before objects are destroyed.\n\n## Acceptance criteria\n- All objects blurred\n- Store focus null\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: onStateChange\n- Preserve: existing cleanup\n\n\n## Technical constraints\n- Unsubscribe first\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Shutdown clears focus; tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Blur every SceneObject and set focusedObjectId to null on shutdown",
+      "description": "Extend the SHUTDOWN callback in BootScene.create so focus is cleared after the store is unsubscribed and before objects are destroyed.",
+      "acceptance_criteria": [
+        "All objects blurred",
+        "Store focus null"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "onStateChange"
+        ],
+        "preserve": [
+          "existing cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Unsubscribe first",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Shutdown clears focus; tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-718.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85J2QP2QGWW9DYTZ6YNBHQM",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M85J2QP2QGWW9DYTZ6YNBHQM",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-718.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2QGWW9DYTZ6YNBHQM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-718.md",
+      "artifact_id": "UNIT-718",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN handler",
+          "lines": "L73-L84",
+          "action": "Immediately after this.unsubscribe = null and before this.effects.forEach, add a loop calling o.blur() on every this.sceneObjects entry, then call useGameStore.getState().setFocusedObject(null).",
+          "code": "this.sceneObjects.forEach((o) => o.blur());\nuseGameStore.getState().setFocusedObject(null);",
+          "expected": "After SHUTDOWN no object is focused and the store focus id is null."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP2463916FRNM6KNCD3",
+      "kind": "unit",
+      "title": "Verify: gameStore focus field and action unit tests",
+      "body": "Test the real store with no mocks; it has no external dependencies.\n\n## Acceptance criteria\n- Default is null\n- Setter sets and clears the id\n\n\n## Scope\n- In scope: game/frontend/tests/gameStoreFocus.test.ts\n- Out of scope: BootScene\n- Preserve: gameStore.test.ts\n\n\n## Technical constraints\n- vitest; reset store between tests\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the default and setter of focusedObjectId",
+      "description": "Test the real store with no mocks; it has no external dependencies.",
+      "acceptance_criteria": [
+        "Default is null",
+        "Setter sets and clears the id"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/gameStoreFocus.test.ts"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "gameStore.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "vitest; reset store between tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-719.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85J2QP2T8WZ6VVG8PGEJ2SK",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85J2QP2T8WZ6VVG8PGEJ2SK",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-719.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2T8WZ6VVG8PGEJ2SK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-719.md",
+      "artifact_id": "UNIT-719",
+      "steps": [
+        {
+          "file": "game/frontend/tests/gameStoreFocus.test.ts",
+          "symbol": "new: gameStore focus defaults and setter",
+          "lines": "new",
+          "action": "Create the file importing useGameStore. In beforeEach call useGameStore.setState({ focusedObjectId: null }). Add test 'defaults focusedObjectId to null' asserting getState().focusedObjectId is null. Add test 'setFocusedObject sets then clears' calling setFocusedObject('bookshelf') asserting 'bookshelf', then setFocusedObject(null) asserting null.",
+          "command": "cd game/frontend && npx vitest run tests/gameStoreFocus.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP25JPMWZVN8Z6KRX94",
+      "kind": "unit",
+      "title": "Verify: store focus drives scene highlight unit tests",
+      "body": "Mock phaser, content and buildScene as in bootSceneKeyboard.test.ts. Fakes expose focus, blur, sync, destroy, onInteract, handleKey, isFocused, spec. Update existing bootScene* test fakes that lack focus and blur if they now fail.\n\n## Acceptance criteria\n- Store change focuses matching object\n- Null id blurs\n- Tab writes store\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneFocusSync.test.ts\n- Out of scope: real Phaser\n- Preserve: bootSceneKeyboard.test.ts assertions\n\n\n## Technical constraints\n- Same vi.mock set as bootSceneKeyboard.test.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Phaser-mocked BootScene tests for focus sync and keyboard store write",
+      "description": "Mock phaser, content and buildScene as in bootSceneKeyboard.test.ts. Fakes expose focus, blur, sync, destroy, onInteract, handleKey, isFocused, spec. Update existing bootScene* test fakes that lack focus and blur if they now fail.",
+      "acceptance_criteria": [
+        "Store change focuses matching object",
+        "Null id blurs",
+        "Tab writes store"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneFocusSync.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "bootSceneKeyboard.test.ts assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Same vi.mock set as bootSceneKeyboard.test.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-720.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85J2QP2V2V83RHWTZBZYK3K",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85J2QP2V2V83RHWTZBZYK3K",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-720.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2V2V83RHWTZBZYK3K"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-720.md",
+      "artifact_id": "UNIT-720",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFocusSync.test.ts",
+          "symbol": "new: BootScene store focus sync",
+          "lines": "new",
+          "action": "Copy the vi.mock blocks and BootScene create setup from bootSceneKeyboard.test.ts. Build two fakes (bookshelf, bed) with focus: vi.fn(), blur: vi.fn(), isFocused false. Test 1: useGameStore.setState({ focusedObjectId: 'bed' }) then assert bed.focus called once and bookshelf.focus not called. Test 2: set bed.isFocused true, setState({ focusedObjectId: null }), assert bed.blur called. Test 3: press Tab via the registered keydown handler with moveFocus mocked and bookshelf.isFocused true, assert useGameStore.getState().focusedObjectId equals 'bookshelf' and phaserToReact.emit called with focusChange.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFocusSync.test.ts tests/bootSceneKeyboard.test.ts",
+          "expected": "New tests pass and the keyboard suite stays green."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP2KK7C1RXXV5659QF5",
+      "kind": "unit",
+      "title": "Verify: shutdown removes focus unit tests",
+      "body": "Run create with fake objects, trigger the captured shutdown handler, assert cleanup.\n\n## Acceptance criteria\n- Blur is called on every object\n- Store focus id becomes null\n- No focus calls after shutdown\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneFocusShutdown.test.ts\n- Out of scope: real Phaser\n- Preserve: existing shutdown tests\n\n\n## Technical constraints\n- Same mocks as bootSceneKeyboard.test.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Phaser-mocked test that SHUTDOWN blurs objects and nulls the store focus",
+      "description": "Run create with fake objects, trigger the captured shutdown handler, assert cleanup.",
+      "acceptance_criteria": [
+        "Blur is called on every object",
+        "Store focus id becomes null",
+        "No focus calls after shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneFocusShutdown.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing shutdown tests"
+        ]
+      },
+      "technical_constraints": [
+        "Same mocks as bootSceneKeyboard.test.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-721.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85J2QP2KR2D8HR5X1B611X6",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85J2QP2KR2D8HR5X1B611X6",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-721.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2KR2D8HR5X1B611X6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-721.md",
+      "artifact_id": "UNIT-721",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFocusShutdown.test.ts",
+          "symbol": "new: BootScene shutdown focus removal",
+          "lines": "new",
+          "action": "Copy the mock setup from bootSceneKeyboard.test.ts with two fakes having blur: vi.fn(), focus: vi.fn(), isFocused false. Set useGameStore.setState({ focusedObjectId: 'bed' }), call boot.create(), take the 'shutdown' callback from events.once.mock.calls and invoke it. Assert each fake blur was called, useGameStore.getState().focusedObjectId is null, then clear mocks, call setState({ focusedObjectId: 'bed' }) and assert focus was not called again.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFocusShutdown.test.ts",
+          "expected": "All three assertions pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85J2QP2S2KK1QV10H3C83RQ",
+      "kind": "evidence",
+      "title": "Evidence: store focus reaches scene highlight and shutdown clears it",
+      "body": "Collect passing output of the three new unit test files covering store focus, scene sync, and shutdown removal.\n\n## Acceptance criteria\n- gameStoreFocus, bootSceneFocusSync and bootSceneFocusShutdown tests pass\n- Existing bootSceneKeyboard tests pass\n\n\n## Scope\n- In scope: test run output\n- Out of scope: browser checks\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving the SG-10.2 criteria",
+      "description": "Collect passing output of the three new unit test files covering store focus, scene sync, and shutdown removal.",
+      "acceptance_criteria": [
+        "gameStoreFocus, bootSceneFocusSync and bootSceneFocusShutdown tests pass",
+        "Existing bootSceneKeyboard tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-144.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85J2QP2463916FRNM6KNCD3",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85J2QP2463916FRNM6KNCD3",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-144.md"
+      ],
+      "depends_on": [
+        "01M85J2QP2463916FRNM6KNCD3",
+        "01M85J2QP25JPMWZVN8Z6KRX94",
+        "01M85J2QP2KK7C1RXXV5659QF5"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-144.md",
+      "artifact_id": "EVD-144"
+    }
+  ],
+  "created_at": "2026-11-24T01:19:04.503034+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "01M84XZTDVP2GQ8PV455FT5KKZ",
+  "intent_id": "01M84XX09TMV0HD13VSQ0V419T",
+  "title": "Verify: BootScene plays the authored transition on create",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Test BootScene wiring with mocks",
+  "description": "Add a test file frontend/tests/bootSceneTransition.test.ts mocking phaser, @game/engine/buildEffects and ../src/phaser/effectContext.",
+  "acceptance_criteria": [
+    "create() calls the context playTransition with the content duration",
+    "No call when the scene has no transition"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "bootSceneEffects.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Follow the phaser mock in frontend/tests/bootSceneEffects.test.ts; mock ../src/runtime/content to supply the scene"
+  ],
+  "dependencies": [
+    "ACT-2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-497.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84XY7MSKGDPNG9GC5575QHG",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-497.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84XZTDVPNQQCSXFXQT108DK"
+  ],
+  "sim_node_id": "01M84XY7MS88WS8WDSKP2CDZX8",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-497.md",
+  "artifact_id": "UNIT-497",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "new: BootScene transition describe",
+      "lines": "new",
+      "action": "Create the test: vi.mock phaser as in bootSceneEffects.test.ts; vi.mock '@game/engine/buildEffects' returning []; vi.mock '../src/phaser/effectContext' so createPhaserEffectContext returns {createEffect: vi.fn(), playTransition} with a shared playTransition vi.fn; set the store state via createInitialState(world, scene). Test 1 'fades with the bundled scene duration': call new BootScene().create(); expect playTransition toHaveBeenCalledTimes(1) and toHaveBeenCalledWith(400) (the bedroom.yaml duration, read from scene.effects). Test 2 'no fade without a transition entry': vi.mock '../src/runtime/content' with a scene whose effects omit the transition (use vi.doMock plus dynamic import of BootScene) and expect playTransition not called.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts",
+      "expected": "2 tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T19:26:39.035719+00:00",
+  "updated_at": "2026-11-23T19:27:50.434279+00:00"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "01M845WDHSYC4ZJZYNTXQE474R",
+  "intent_id": "01M845V737K0347Y1X7BM0QP20",
+  "title": "Act: Move the current round route to /round/current",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Change the registered path in server.New",
+  "description": "In backend/internal/server/server.go line 46, change the Chi route path from /api/v1/worlds/{id}/rounds/current to /api/v1/worlds/{id}/round/current, keeping the wh.CurrentRound handler.",
+  "acceptance_criteria": [
+    "server.go registers GET /api/v1/worlds/{id}/round/current to wh.CurrentRound",
+    "server.go no longer registers /rounds/current"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go"
+    ],
+    "out_of_scope": [
+      "world package"
+    ],
+    "preserve": [
+      "Other routes"
+    ]
+  },
+  "technical_constraints": [
+    "Chi router",
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go build ./... succeeds in backend",
+    "Route string changed",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-069.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M845WCV5GAYRF2TQD4NK8MPF",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-069.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M845WDHSAV6B4X88YKXG7R8Y"
+  ],
+  "sim_node_id": "01M845WCV5KWEAW0BJM0Z83R4V",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-069.md",
+  "artifact_id": "UNIT-069",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "server.New",
+      "lines": "L46",
+      "action": "Replace the path string passed to r.Get for wh.CurrentRound, changing 'rounds/current' to 'round/current'.",
+      "code": "r.Get(\"/api/v1/worlds/{id}/rounds/current\", wh.CurrentRound) -> r.Get(\"/api/v1/worlds/{id}/round/current\", wh.CurrentRound)",
+      "expected": "The route is registered at /api/v1/worlds/{id}/round/current and the package compiles with go build ./..."
+    }
+  ],
+  "created_at": "2026-11-23T12:25:21.721764+00:00",
+  "updated_at": "2026-11-23T12:26:14.591111+00:00"
+}

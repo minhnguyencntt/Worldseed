@@ -1,0 +1,80 @@
+{
+  "id": "01M849HAN9JVYTZHTX8Y4TXP1T",
+  "intent_id": "01M849FQBXR5H3ECAEWQQS5KCK",
+  "title": "Act: Show execution action failures through actionError",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add actionError state and pass it to ExecutionPanel.",
+  "description": "Add actionError state to AdminApp, clear on start/success, set on non-401 failure with 'Request failed' fallback, route 401 to handleError, pass to ExecutionPanel.",
+  "acceptance_criteria": [
+    "Non-401 failures set actionError",
+    "401 failures invoke handleError and leave actionError empty"
+  ],
+  "scope": {
+    "in_scope": [
+      "AdminApp.tsx"
+    ],
+    "out_of_scope": [
+      "ExecutionPanel"
+    ],
+    "preserve": [
+      "handleError"
+    ]
+  },
+  "technical_constraints": [
+    "No duplicate declarations of actionError or runExecutionAction",
+    "Code path: `game/frontend/src/components/AdminApp.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "npm run typecheck passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-144.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M849H5YA5AX5KQAZF3HW28XZ",
+    "trace:01M84993RDSVH4WV7M19JP8E5S",
+    "artifact:.ai-dlc/units/UNIT-144.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M849HAN9NDENVDAEV7BFJQN6"
+  ],
+  "sim_node_id": "01M849H5YASMTB5G6QKSZ3Q77N",
+  "artifact_path": ".ai-dlc/units/UNIT-144.md",
+  "artifact_id": "UNIT-144",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp state",
+      "lines": "after L33",
+      "action": "Add state hook for actionError.",
+      "code": "const [actionError, setActionError] = useState<string | undefined>(undefined);",
+      "expected": "actionError state exists."
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp::runExecutionAction",
+      "lines": "the function added by the handlers Act",
+      "action": "Edit the existing runExecutionAction (do not declare a second one): call setActionError(undefined) before the await and again after success; in catch, if err is an ApiError with status 401 call handleError(err), else setActionError(err instanceof Error ? err.message : 'Request failed').",
+      "code": "} catch (err) {\n  if (err instanceof ApiError && err.status === 401) {\n    handleError(err);\n    return;\n  }\n  setActionError(err instanceof Error ? err.message : 'Request failed');\n}",
+      "expected": "Failures populate actionError except 401."
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp ExecutionPanel JSX",
+      "lines": "the ExecutionPanel line",
+      "action": "Add the prop actionError={actionError} to the existing ExecutionPanel element.",
+      "code": "actionError={actionError}",
+      "expected": "The message renders in ExecutionPanel's role=alert paragraph."
+    }
+  ],
+  "created_at": "2026-11-23T13:29:12.617460+00:00",
+  "updated_at": "2026-11-23T13:32:28.234078+00:00"
+}

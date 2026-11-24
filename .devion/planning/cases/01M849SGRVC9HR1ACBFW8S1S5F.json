@@ -1,0 +1,360 @@
+{
+  "id": "01M849SGRVC9HR1ACBFW8S1S5F",
+  "trigger_node_id": "INT-032, UNIT-147 +6",
+  "node_ids": [
+    "INT-032",
+    "UNIT-147",
+    "UNIT-148",
+    "UNIT-149",
+    "UNIT-150",
+    "REQ-074",
+    "REQ-075",
+    "EVD-032"
+  ],
+  "intent_id": "INT-032",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-032",
+      "title": "SG-6.4.4 · A 401 from Approve, Retry or Reject returns to the token gate",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-147",
+      "title": "Act: Clear action error state in the handleError 401 branch",
+      "kind": "unit",
+      "task_ids": [
+        "01M849SGKDZVYR3CEDQ6PJ2J0B"
+      ],
+      "depends_on": [
+        "REQ-074"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "4ecad3de1883d277ca13a768e884d44bf7c8145c",
+      "from_sha": "15bf79f11eb8a891a7cf0f258830e5403a59c8ed",
+      "started_at": "2026-11-23T13:33:42.031332+00:00",
+      "ended_at": "2026-11-23T13:34:12.653379+00:00",
+      "run_started_at": "2026-11-23T13:33:42.031332+00:00",
+      "duration_ms": 30089,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-148",
+      "title": "Act: Reset round, execution and contributions in the 401 branch",
+      "kind": "unit",
+      "task_ids": [
+        "01M849SGKDPZBNEXDHCZNKBQ4C"
+      ],
+      "depends_on": [
+        "REQ-075"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "15bf79f11eb8a891a7cf0f258830e5403a59c8ed",
+      "from_sha": "324d05615e402f2a97015bdeb56e48f14112ae5a",
+      "started_at": "2026-11-23T13:33:42.053105+00:00",
+      "ended_at": "2026-11-23T13:33:56.620530+00:00",
+      "run_started_at": "2026-11-23T13:33:42.053105+00:00",
+      "duration_ms": 14090,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-149",
+      "title": "Verify: Approve, Retry and Reject 401 return to the token gate without stale action error",
+      "kind": "unit",
+      "task_ids": [
+        "01M849SGKDQ5BVFE53HJJYQDYA"
+      ],
+      "depends_on": [
+        "UNIT-147",
+        "REQ-074"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "940d850b10ce40bd64d4ac3f56c002a0167088a6",
+      "from_sha": "9674574c079226764d414e36d8f6e33c23dba665",
+      "tests": [
+        {
+          "id": "adminActions-retry-401",
+          "kind": "unit",
+          "name": "retry endpoint returns 401",
+          "title": "Given a FAILED execution, when the retry endpoint returns 401, then the token gate shows \"Invalid token\" and the admin token field",
+          "scenario": "Given a FAILED execution whose retry endpoint rejects the token; when Retry is clicked; then the alert reads 'Invalid token' and the Admin token field is present",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"retry endpoint returns 401\" --testTimeout=30000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 11 skipped"
+        },
+        {
+          "id": "adminActions-reject-401",
+          "kind": "unit",
+          "name": "reject endpoint returns 401",
+          "title": "Given an AWAITING_APPROVAL execution, when the reject endpoint returns 401, then the token gate shows \"Invalid token\" and the admin token field",
+          "scenario": "Given an AWAITING_APPROVAL execution whose reject endpoint rejects the token; when Reject is clicked; then the alert reads 'Invalid token' and the Admin token field is present",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"reject endpoint returns 401\" --testTimeout=30000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 11 skipped"
+        },
+        {
+          "id": "adminActions-clears-prior-action-error",
+          "kind": "unit",
+          "name": "clears prior action error",
+          "title": "Given a prior action error, when a later approve returns 401, then the 401 clears prior action error and no \"boom\" alert remains after re-entering the token",
+          "scenario": "Given an AWAITING_APPROVAL execution whose first approve returns 500 {error:'boom'} and whose second returns 401; when Approve is clicked twice and the token is entered again; then the Execution region shows no 'boom' alert",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"clears prior action error\" --testTimeout=30000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 11 skipped"
+        }
+      ],
+      "started_at": "2026-11-23T13:34:12.664403+00:00",
+      "ended_at": "2026-11-23T13:34:58.066157+00:00",
+      "run_started_at": "2026-11-23T13:34:12.664403+00:00",
+      "duration_ms": 44845,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-150",
+      "title": "Verify: No stale round or execution data after a 401 and token re-entry",
+      "kind": "unit",
+      "task_ids": [
+        "01M849SGKDJ5HE1J7CYFKBXVMM"
+      ],
+      "depends_on": [
+        "UNIT-148",
+        "REQ-075"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "9674574c079226764d414e36d8f6e33c23dba665",
+      "from_sha": "4ecad3de1883d277ca13a768e884d44bf7c8145c",
+      "tests": [
+        {
+          "id": "hides execution region",
+          "kind": "unit",
+          "name": "hides execution region",
+          "title": "Given an AWAITING_APPROVAL execution, when the approve endpoint returns 401, then it hides execution region and shows the admin token field",
+          "scenario": "Given an approve action returning 401; When Approve is clicked; Then the Admin token field is shown and queryByRole('region',{name:'Execution'}) is null",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"hides execution region\" --testTimeout=20000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 8 skipped"
+        },
+        {
+          "id": "re-entry reloads data",
+          "kind": "unit",
+          "name": "re-entry reloads data",
+          "title": "Given a 401 cleared the round and execution, when the admin token is entered again, then re-entry reloads data into the Execution region",
+          "scenario": "Given the approve action returned 401 and the token gate is shown; When enterToken('secret') is called; Then findByRole('region',{name:'Execution'}) appears and the executions GET count has increased",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"re-entry reloads data\" --testTimeout=20000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "1 passed, 8 skipped"
+        }
+      ],
+      "started_at": "2026-11-23T13:33:56.630199+00:00",
+      "ended_at": "2026-11-23T13:34:32.906219+00:00",
+      "run_started_at": "2026-11-23T13:33:56.630199+00:00",
+      "duration_ms": 35409,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-074",
+      "title": "REQ · Approve, Retry and Reject 401 clear the token and show the gate with no stale action error",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-032"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-075",
+      "title": "REQ · After a 401 and re-entry, AdminApp shows no stale round or execution data",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-032"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-032",
+      "title": "Evidence: AdminApp 401 handling unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-147",
+        "UNIT-148",
+        "UNIT-149",
+        "UNIT-150"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-148",
+      "dst": "EVD-032"
+    },
+    {
+      "src": "INT-032",
+      "dst": "REQ-075"
+    },
+    {
+      "src": "REQ-074",
+      "dst": "UNIT-149"
+    },
+    {
+      "src": "REQ-075",
+      "dst": "UNIT-148"
+    },
+    {
+      "src": "UNIT-150",
+      "dst": "EVD-032"
+    },
+    {
+      "src": "UNIT-149",
+      "dst": "EVD-032"
+    },
+    {
+      "src": "REQ-075",
+      "dst": "UNIT-150"
+    },
+    {
+      "src": "UNIT-148",
+      "dst": "UNIT-150"
+    },
+    {
+      "src": "REQ-074",
+      "dst": "UNIT-147"
+    },
+    {
+      "src": "UNIT-147",
+      "dst": "UNIT-149"
+    },
+    {
+      "src": "UNIT-147",
+      "dst": "EVD-032"
+    },
+    {
+      "src": "INT-032",
+      "dst": "REQ-074"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m849sg",
+  "base_sha": "324d05615e402f2a97015bdeb56e48f14112ae5a",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M849SGRVC9HR1ACBFW8S1S5F:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T13:33:41.019713+00:00",
+  "updated_at": "2026-11-23T13:35:11.983841+00:00",
+  "completed_at": "2026-11-23T13:34:58.067151+00:00",
+  "duration_ms": 77048,
+  "usage_stats": {
+    "total_duration_ms": 124445
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-147",
+    "UNIT-148",
+    "UNIT-149",
+    "UNIT-150"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-147",
+        "title": "Act: Clear action error state in the handleError 401 branch",
+        "evidence_refs": [
+          {
+            "id": "EVD-032",
+            "path": ".ai-dlc/evidence/EVD-032.md",
+            "title": "Evidence: AdminApp 401 handling unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-147 unless acceptance outcomes recorded in EVD-032 (.ai-dlc/evidence/EVD-032.md; \"Evidence: AdminApp 401 handling unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-148",
+        "title": "Act: Reset round, execution and contributions in the 401 branch",
+        "evidence_refs": [
+          {
+            "id": "EVD-032",
+            "path": ".ai-dlc/evidence/EVD-032.md",
+            "title": "Evidence: AdminApp 401 handling unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-148 unless acceptance outcomes recorded in EVD-032 (.ai-dlc/evidence/EVD-032.md; \"Evidence: AdminApp 401 handling unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-149",
+        "title": "Verify: Approve, Retry and Reject 401 return to the token gate without stale action error",
+        "evidence_refs": [
+          {
+            "id": "EVD-032",
+            "path": ".ai-dlc/evidence/EVD-032.md",
+            "title": "Evidence: AdminApp 401 handling unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-149 unless acceptance outcomes recorded in EVD-032 (.ai-dlc/evidence/EVD-032.md; \"Evidence: AdminApp 401 handling unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-150",
+        "title": "Verify: No stale round or execution data after a 401 and token re-entry",
+        "evidence_refs": [
+          {
+            "id": "EVD-032",
+            "path": ".ai-dlc/evidence/EVD-032.md",
+            "title": "Evidence: AdminApp 401 handling unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-150 unless acceptance outcomes recorded in EVD-032 (.ai-dlc/evidence/EVD-032.md; \"Evidence: AdminApp 401 handling unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T13:33:41.916398+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-147",
+    "UNIT-148",
+    "UNIT-149",
+    "UNIT-150"
+  ]
+}

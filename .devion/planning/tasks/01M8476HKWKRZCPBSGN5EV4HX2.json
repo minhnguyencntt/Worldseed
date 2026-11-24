@@ -1,0 +1,73 @@
+{
+  "id": "01M8476HKWKRZCPBSGN5EV4HX2",
+  "intent_id": "01M8474YGPRVPGRGG93CDACF9F",
+  "title": "Verify: Admin execution routes reject missing and wrong tokens unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Server-level tests that all eight admin routes, including retry and approve, reject missing and wrong tokens.",
+  "description": "Walk the real router and the route table to prove every admin route is protected and listed.",
+  "acceptance_criteria": [
+    "All eight admin routes return 401 for missing and wrong tokens.",
+    "retry and approve with 'Bearer tok' are not 401.",
+    "Every /api/v1/admin route in the chi router is in adminRoutes."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server_test.go"
+    ],
+    "out_of_scope": [
+      "Live server"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "httptest, chi.Walk, temp dir"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-098.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8476FMSS6SQZ520M5CS29J8",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-098.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8476HKWBS08PBYKK2FP4A4E"
+  ],
+  "sim_node_id": "01M8476FMS5W435KZXN7A85AP7",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-098.md",
+  "artifact_id": "UNIT-098",
+  "steps": [
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestNew_AllAdminRoutesRejectMissingAndWrongToken",
+      "lines": "after L286",
+      "action": "Build server with token 'tok'. For each route in adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) with {id} replaced by ID-1, assert 401 with no header and with 'Bearer wrong'; assert not 401 with 'Bearer tok' for POST /executions/ID-1/retry and /approve.",
+      "command": "cd backend && go test ./internal/server -run TestNew_AllAdminRoutesRejectMissingAndWrongToken",
+      "expected": "All 8 routes yield 401 unauthenticated; retry and approve are not 401 with tok."
+    },
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestNew_AdminRoutesMatchTable",
+      "lines": "after the new test",
+      "action": "Type-assert New(cfg, log) to chi.Routes, chi.Walk it collecting method+route for routes starting with /api/v1/admin, and assert the set equals adminRoutes entries prefixed with /api/v1/admin.",
+      "command": "cd backend && go test ./internal/server -run TestNew_AdminRoutesMatchTable",
+      "expected": "Walked routes equal the table; no unlisted admin route."
+    }
+  ],
+  "created_at": "2026-11-23T12:48:22.140634+00:00",
+  "updated_at": "2026-11-23T12:50:03.639356+00:00"
+}

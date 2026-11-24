@@ -1,0 +1,81 @@
+{
+  "id": "01M85962H3V2BV6F3BS77BXTEZ",
+  "intent_id": "01M85900YQHG388J06E5XY0PR4",
+  "title": "Act: Confirm hover, click and fallback paths in SceneObject and BootScene",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm SceneObject hover/click wiring and BootScene fallback use are exported and importable under @game.",
+  "description": "Read SceneObject constructor/activate, planPreload.ts and BootScene.ts; keep FALLBACK_KEY, planPreload, resolveTextureKey exports intact.",
+  "acceptance_criteria": [
+    "SceneObject registers onHover and onClick on the handle",
+    "BootScene exports FALLBACK_KEY and resolves unknown ids to it"
+  ],
+  "scope": {
+    "in_scope": [
+      "named exports"
+    ],
+    "out_of_scope": [
+      "behavior changes"
+    ],
+    "preserve": [
+      "signatures"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/src/entities/SceneObject.ts`",
+    "Code path: `game/src/engine/planPreload.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "REQ-C"
+  ],
+  "definition_of_done": [
+    "exports confirmed, no behavior change",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-574.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8592ZTS7K44CB8JF83N0ZFP",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-574.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85962H3V8W14TBC3QXN9S5X"
+  ],
+  "sim_node_id": "01M8592ZTSATGBM6AR9S6WZ68F",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-574.md",
+  "artifact_id": "UNIT-574",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/entities/SceneObject.ts",
+      "symbol": "SceneObject constructor / activate",
+      "lines": "L29-L41",
+      "action": "Confirm the constructor calls handle.onHover and handle.onClick and activate emits objectId and available actions only when visible; change nothing if so",
+      "expected": "hover and click wiring present"
+    },
+    {
+      "file": "game/src/engine/planPreload.ts",
+      "symbol": "resolveTextureKey",
+      "lines": "L1-L40",
+      "action": "Confirm resolveTextureKey and planPreload are named exports; change nothing if so",
+      "expected": "both importable via @game/engine/planPreload"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "FALLBACK_KEY",
+      "lines": "L16-L40",
+      "action": "Confirm FALLBACK_KEY is a named export and preload generates the fallback texture; change nothing if so",
+      "expected": "FALLBACK_KEY exported"
+    }
+  ],
+  "created_at": "2026-11-23T22:42:18.275159+00:00",
+  "updated_at": "2026-11-23T22:43:13.372969+00:00"
+}

@@ -1,0 +1,864 @@
+{
+  "intent_id": "01M85TNNZE2X0Q5KXTGSXP7JZQ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85TR8QX8QYPR9FH6QB748EX",
+      "kind": "intent",
+      "title": "SG-2.2 Author the boy sheet and portrait",
+      "body": "Context: game/frontend/src/art has draw helpers, room sources and a generator (scripts/generateArt.ts, src/lib/generateAssets.ts) but no boy art source, and ArtSource has no animations or origin. Desired behavior: boy sources exist, are registered in ART_SOURCES, and art:generate writes boy PNGs plus manifest entries with animation frame ranges and rates. Expected result: manifest declares the PNG sheet at 448x48 and the portrait at 32x32. Why: replaces placeholder art; switching scene content to these assets belongs to SG-2.3.\n\n## Acceptance criteria\n- Given the boy sheet source, when its frames are counted, then there are 14 frames of 32x48 using only palette indices\n- Given the boy portrait source, when its grid is read, then it is 32x32 and uses only palette indices\n- Given the generator, when it runs on the boy sources, then manifest entries carry animations idle 0-3, walk 4-9, interact 10-13 with frame rates, plus origin\n- Given the manifest, when read, then boy sheet and portrait entries exist as PNG paths at their declared sizes and scene content is not changed\n\n\n## Scope\n- In scope: boy art source file\n- In scope: ArtSource animations and origin fields\n- In scope: generator copying them into entries\n- In scope: registering boy sources in ART_SOURCES\n- In scope: generated PNGs and manifest entries\n- In scope: unit tests\n- Out of scope: switching world content or scene to the new assets\n- Out of scope: deleting SVGs\n- Out of scope: new rooms, backend, audio, deployment\n- Preserve: existing room sources and hand cursor source\n- Preserve: existing SVG manifest entries and character:boy id\n- Preserve: Phaser 3.90.x pin\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay\n- All art is raster pixel art generated from source data by a deterministic script; no downloaded art\n- One shared palette of at most 48 colours (src/lib/palette.ts)\n- Tests are unit tests with all dependencies mocked\n- Scene content stays data-driven; no hardcoded ids in scene classes\n\n\n## Definition of done\n- All requirements met and their Verify units pass\n\n\n## Non-functional requirements\n- Generation is deterministic: identical bytes on each run\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Boy 32x48 sheet (idle 4, walk 6, interact 4) and 32x32 portrait generated as palette-only PNGs and declared in the manifest",
+      "description": "Context: game/frontend/src/art has draw helpers, room sources and a generator (scripts/generateArt.ts, src/lib/generateAssets.ts) but no boy art source, and ArtSource has no animations or origin. Desired behavior: boy sources exist, are registered in ART_SOURCES, and art:generate writes boy PNGs plus manifest entries with animation frame ranges and rates. Expected result: manifest declares the PNG sheet at 448x48 and the portrait at 32x32. Why: replaces placeholder art; switching scene content to these assets belongs to SG-2.3.",
+      "acceptance_criteria": [
+        "Given the boy sheet source, when its frames are counted, then there are 14 frames of 32x48 using only palette indices",
+        "Given the boy portrait source, when its grid is read, then it is 32x32 and uses only palette indices",
+        "Given the generator, when it runs on the boy sources, then manifest entries carry animations idle 0-3, walk 4-9, interact 10-13 with frame rates, plus origin",
+        "Given the manifest, when read, then boy sheet and portrait entries exist as PNG paths at their declared sizes and scene content is not changed"
+      ],
+      "scope": {
+        "in_scope": [
+          "boy art source file",
+          "ArtSource animations and origin fields",
+          "generator copying them into entries",
+          "registering boy sources in ART_SOURCES",
+          "generated PNGs and manifest entries",
+          "unit tests"
+        ],
+        "out_of_scope": [
+          "switching world content or scene to the new assets",
+          "deleting SVGs",
+          "new rooms, backend, audio, deployment"
+        ],
+        "preserve": [
+          "existing room sources and hand cursor source",
+          "existing SVG manifest entries and character:boy id",
+          "Phaser 3.90.x pin"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay",
+        "All art is raster pixel art generated from source data by a deterministic script; no downloaded art",
+        "One shared palette of at most 48 colours (src/lib/palette.ts)",
+        "Tests are unit tests with all dependencies mocked",
+        "Scene content stays data-driven; no hardcoded ids in scene classes"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements met and their Verify units pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-164.md`"
+      ],
+      "non_functional": [
+        "Generation is deterministic: identical bytes on each run"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "trace:01M85TDR9D0794KHV7H7G8BVSN",
+        "artifact:.ai-dlc/intent/INT-164.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-164.md",
+      "artifact_id": "INT-164"
+    },
+    {
+      "id": "01M85TR8QXPR247MDRJ5PVPK8E",
+      "kind": "requirement",
+      "title": "REQ · Boy sheet source holds 14 frames of 32x48 for idle, walk and interact",
+      "body": "Context: no boy source exists in game/frontend/src/art. Desired behavior: boy.ts exports a pure BOY_SHEET_SOURCE with 14 frames built from draw.ts helpers with outline and ramp shading (blue hoodie). Expected result: frame count and size are testable. Why: SG-2.2 done-when.\n\n## Acceptance criteria\n- Given BOY_SHEET_SOURCE, when frames.length is read, then it equals 14\n- Given each frame, when height and width are read, then they are 48 and 32\n- Given every cell, when checked, then each value is an integer in 0..PALETTE.length-1\n\n\n## Scope\n- In scope: game/frontend/src/art/boy.ts sheet source\n- Out of scope: portrait\n- Out of scope: generator changes\n- Preserve: draw.ts helpers\n\n\n## Technical constraints\n- Shared palette only, max 48 colours\n- Native scale, no scaling\n- Deterministic pure functions\n\n\n## Definition of done\n- boy.ts exports BOY_SHEET_SOURCE with 14 frames\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Boy sheet grids: 4 idle, 6 walk, 4 interact frames at 32x48, palette-only",
+      "description": "Context: no boy source exists in game/frontend/src/art. Desired behavior: boy.ts exports a pure BOY_SHEET_SOURCE with 14 frames built from draw.ts helpers with outline and ramp shading (blue hoodie). Expected result: frame count and size are testable. Why: SG-2.2 done-when.",
+      "acceptance_criteria": [
+        "Given BOY_SHEET_SOURCE, when frames.length is read, then it equals 14",
+        "Given each frame, when height and width are read, then they are 48 and 32",
+        "Given every cell, when checked, then each value is an integer in 0..PALETTE.length-1"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/art/boy.ts sheet source"
+        ],
+        "out_of_scope": [
+          "portrait",
+          "generator changes"
+        ],
+        "preserve": [
+          "draw.ts helpers"
+        ]
+      },
+      "technical_constraints": [
+        "Shared palette only, max 48 colours",
+        "Native scale, no scaling",
+        "Deterministic pure functions"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "boy.ts exports BOY_SHEET_SOURCE with 14 frames",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-402.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85TR8QX8QYPR9FH6QB748EX",
+      "matched_feature_id": "01M85R5RX57W7MTZ85XZDMYS5Y",
+      "links": [
+        "parent:01M85TR8QX8QYPR9FH6QB748EX",
+        "trace:01M85R5RX57W7MTZ85XZDMYS5Y",
+        "artifact:.ai-dlc/requirements/REQ-402.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX8QYPR9FH6QB748EX"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-402.md",
+      "artifact_id": "REQ-402"
+    },
+    {
+      "id": "01M85TR8QX566MTNRYVBS3DJB3",
+      "kind": "requirement",
+      "title": "REQ · Boy portrait grid is 32x32 and palette-only",
+      "body": "Context: dialogue card needs a boy portrait. Desired behavior: boy.ts exports BOY_PORTRAIT_SOURCE, one 32x32 frame with outline and ramp shading. Expected result: size and palette checkable. Why: SG-2.2 done-when.\n\n## Acceptance criteria\n- Given BOY_PORTRAIT_SOURCE, when frames.length is read, then it equals 1\n- Given the frame, when size is read, then it is 32 rows by 32 columns\n- Given every cell, when checked, then it is a valid palette index\n\n\n## Scope\n- In scope: portrait source in boy.ts\n- Out of scope: dialogue card UI\n- Preserve: boy sheet source\n\n\n## Technical constraints\n- Shared palette only\n- Deterministic pure functions\n\n\n## Definition of done\n- BOY_PORTRAIT_SOURCE exported at 32x32\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "32x32 portrait source for the dialogue card",
+      "description": "Context: dialogue card needs a boy portrait. Desired behavior: boy.ts exports BOY_PORTRAIT_SOURCE, one 32x32 frame with outline and ramp shading. Expected result: size and palette checkable. Why: SG-2.2 done-when.",
+      "acceptance_criteria": [
+        "Given BOY_PORTRAIT_SOURCE, when frames.length is read, then it equals 1",
+        "Given the frame, when size is read, then it is 32 rows by 32 columns",
+        "Given every cell, when checked, then it is a valid palette index"
+      ],
+      "scope": {
+        "in_scope": [
+          "portrait source in boy.ts"
+        ],
+        "out_of_scope": [
+          "dialogue card UI"
+        ],
+        "preserve": [
+          "boy sheet source"
+        ]
+      },
+      "technical_constraints": [
+        "Shared palette only",
+        "Deterministic pure functions"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BOY_PORTRAIT_SOURCE exported at 32x32",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-403.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M85TR8QX8QYPR9FH6QB748EX",
+      "links": [
+        "parent:01M85TR8QX8QYPR9FH6QB748EX",
+        "trace:01M85TDR9EKM2R1898WB3307RV",
+        "artifact:.ai-dlc/requirements/REQ-403.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX8QYPR9FH6QB748EX"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-403.md",
+      "artifact_id": "REQ-403"
+    },
+    {
+      "id": "01M85TR8QX9XFJHGEWB3P5G4QB",
+      "kind": "requirement",
+      "title": "REQ · Generator carries animations and origin into manifest entries and boy sources are registered",
+      "body": "Context: ArtSource (src/art/sources.ts) has only id, path, frames, and generateAssets (src/lib/generateAssets.ts) emits entries without animations or origin. Desired behavior: optional fields copied to spritesheet entries; boy sheet declares idle [0-3], walk [4-9], interact [10-13] with rates and origin {0.5,1}; both boy sources added to ART_SOURCES. Expected result: generated entries pass parseManifest.\n\n## Acceptance criteria\n- Given a source with animations and origin, when generateAssets runs, then the entry has the same animations and origin\n- Given a source without them, when generateAssets runs, then the entry has neither key\n- Given ART_SOURCES, when ids are listed, then they include the boy sheet and portrait ids once each\n- Given the boy sheet entry, when read, then frameCount is 14 and animations idle, walk, interact cover frames 0-3, 4-9, 10-13\n\n\n## Scope\n- In scope: sources.ts type and registration\n- In scope: generateAssets.ts entry copying\n- In scope: animation declarations on the boy sheet source\n- Out of scope: room source registration\n- Out of scope: scene content switch\n- Preserve: existing entry shape for sources without new fields\n- Preserve: mergeManifest behaviour\n\n\n## Technical constraints\n- Manifest animation shape must match animationSchema in game/src/assets/manifest/schema.ts\n- Shared palette; deterministic output\n\n\n## Dependencies\n- REQ1\n- REQ2\n\n\n## Definition of done\n- Generated boy entries validate against manifestSchema\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "ArtSource gains optional animations and origin; generateAssets copies them; ART_SOURCES lists boy sources",
+      "description": "Context: ArtSource (src/art/sources.ts) has only id, path, frames, and generateAssets (src/lib/generateAssets.ts) emits entries without animations or origin. Desired behavior: optional fields copied to spritesheet entries; boy sheet declares idle [0-3], walk [4-9], interact [10-13] with rates and origin {0.5,1}; both boy sources added to ART_SOURCES. Expected result: generated entries pass parseManifest.",
+      "acceptance_criteria": [
+        "Given a source with animations and origin, when generateAssets runs, then the entry has the same animations and origin",
+        "Given a source without them, when generateAssets runs, then the entry has neither key",
+        "Given ART_SOURCES, when ids are listed, then they include the boy sheet and portrait ids once each",
+        "Given the boy sheet entry, when read, then frameCount is 14 and animations idle, walk, interact cover frames 0-3, 4-9, 10-13"
+      ],
+      "scope": {
+        "in_scope": [
+          "sources.ts type and registration",
+          "generateAssets.ts entry copying",
+          "animation declarations on the boy sheet source"
+        ],
+        "out_of_scope": [
+          "room source registration",
+          "scene content switch"
+        ],
+        "preserve": [
+          "existing entry shape for sources without new fields",
+          "mergeManifest behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "Manifest animation shape must match animationSchema in game/src/assets/manifest/schema.ts",
+        "Shared palette; deterministic output"
+      ],
+      "dependencies": [
+        "REQ1",
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Generated boy entries validate against manifestSchema",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-404.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85TR8QX8QYPR9FH6QB748EX",
+      "matched_feature_id": "01M85SD77WCS9424A173AC7BP2",
+      "links": [
+        "parent:01M85TR8QX8QYPR9FH6QB748EX",
+        "trace:01M85SD77WCS9424A173AC7BP2",
+        "artifact:.ai-dlc/requirements/REQ-404.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX8QYPR9FH6QB748EX"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-404.md",
+      "artifact_id": "REQ-404"
+    },
+    {
+      "id": "01M85TR8QXCSZV6NJ88H5QTWST",
+      "kind": "requirement",
+      "title": "REQ · Generated boy PNGs and manifest entries exist at their declared sizes",
+      "body": "Context: manifest still points to the placeholder character:boy SVG. Desired behavior: art:generate writes boy PNGs and adds entries with new ids character:boy-sheet (448x48) and character:boy-portrait (32x32) while the old SVG entries and scene content stay untouched. Expected result: manifest declares PNG boy assets.\n\n## Acceptance criteria\n- Given the manifest, when read, then character:boy-sheet is a spritesheet at 448x48 with 14 frames of 32x48 and a .png path\n- Given the manifest, when read, then character:boy-portrait is an image at 32x32 with a .png path\n- Given the manifest, when read, then the existing character:boy SVG entry is unchanged\n\n\n## Scope\n- In scope: generated boy PNG files\n- In scope: manifest.json boy entries\n- Out of scope: world content edits\n- Out of scope: removing SVGs\n- Preserve: all existing manifest entries\n\n\n## Technical constraints\n- Output only from the deterministic script, no hand-edited PNGs\n\n\n## Dependencies\n- REQ3\n\n\n## Definition of done\n- PNG files and manifest entries produced by npm run art:generate\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Run art:generate so boy PNGs and manifest entries are committed",
+      "description": "Context: manifest still points to the placeholder character:boy SVG. Desired behavior: art:generate writes boy PNGs and adds entries with new ids character:boy-sheet (448x48) and character:boy-portrait (32x32) while the old SVG entries and scene content stay untouched. Expected result: manifest declares PNG boy assets.",
+      "acceptance_criteria": [
+        "Given the manifest, when read, then character:boy-sheet is a spritesheet at 448x48 with 14 frames of 32x48 and a .png path",
+        "Given the manifest, when read, then character:boy-portrait is an image at 32x32 with a .png path",
+        "Given the manifest, when read, then the existing character:boy SVG entry is unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "generated boy PNG files",
+          "manifest.json boy entries"
+        ],
+        "out_of_scope": [
+          "world content edits",
+          "removing SVGs"
+        ],
+        "preserve": [
+          "all existing manifest entries"
+        ]
+      },
+      "technical_constraints": [
+        "Output only from the deterministic script, no hand-edited PNGs"
+      ],
+      "dependencies": [
+        "REQ3"
+      ],
+      "definition_of_done": [
+        "PNG files and manifest entries produced by npm run art:generate",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-405.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85TR8QX8QYPR9FH6QB748EX",
+      "matched_feature_id": "01M85SD77WCS9424A173AC7BP2",
+      "links": [
+        "parent:01M85TR8QX8QYPR9FH6QB748EX",
+        "trace:01M85SD77WCS9424A173AC7BP2",
+        "artifact:.ai-dlc/requirements/REQ-405.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX8QYPR9FH6QB748EX"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-405.md",
+      "artifact_id": "REQ-405"
+    },
+    {
+      "id": "01M85TR8QXYKFBTZFAAGAMHNPJ",
+      "kind": "unit",
+      "title": "Act: Author the boy sheet frames in boy.ts",
+      "body": "Create game/frontend/src/art/boy.ts with a pure boyFrame function and BOY_SHEET_SOURCE using draw.ts helpers.\n\n## Acceptance criteria\n- boy.ts exports BOY_SHEET_SOURCE with 14 frames of 32x48\n- All cells are palette indices\n\n\n## Scope\n- In scope: boy.ts sheet\n- Out of scope: portrait\n- Out of scope: registration\n- Preserve: draw.ts\n\n\n## Technical constraints\n- Shared palette max 48 colours\n- Deterministic pure functions\n- New file: `game/frontend/src/art/boy.ts`\n\n\n## Definition of done\n- BOY_SHEET_SOURCE exported and builds without throwing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create pure frame builders for 14 boy frames",
+      "description": "Create game/frontend/src/art/boy.ts with a pure boyFrame function and BOY_SHEET_SOURCE using draw.ts helpers.",
+      "acceptance_criteria": [
+        "boy.ts exports BOY_SHEET_SOURCE with 14 frames of 32x48",
+        "All cells are palette indices"
+      ],
+      "scope": {
+        "in_scope": [
+          "boy.ts sheet"
+        ],
+        "out_of_scope": [
+          "portrait",
+          "registration"
+        ],
+        "preserve": [
+          "draw.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Shared palette max 48 colours",
+        "Deterministic pure functions",
+        "New file: `game/frontend/src/art/boy.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BOY_SHEET_SOURCE exported and builds without throwing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-804.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85TR8QXPR247MDRJ5PVPK8E",
+      "links": [
+        "parent:01M85TR8QXPR247MDRJ5PVPK8E",
+        "trace:01M85TDR9EMAXPHV60Q2H7XFDG",
+        "artifact:.ai-dlc/units/UNIT-804.md"
+      ],
+      "depends_on": [
+        "01M85TR8QXPR247MDRJ5PVPK8E"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-804.md",
+      "artifact_id": "UNIT-804",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "new: BOY_W, BOY_H, boyFrame",
+          "lines": "new",
+          "action": "Create the file. Import createGrid, fillRect, outlineRect, shadeRect, rampIndex and type Grid from './draw', and type ArtSource from './sources'. Export const BOY_W = 32 and BOY_H = 48. Add boyFrame(pose: {legShift: number; armShift: number; bob: number}): Grid that makes createGrid(32,48,0), draws head (parchment 3-4 shade, rows 4+bob..), hoodie body with shadeRect('hoodie',4,2), arms offset by armShift, two legs offset by +/-legShift with indigo 2, then outlineRect around head and body using OUTLINE = rampIndex('indigo',1).",
+          "code": "const OUTLINE = rampIndex('indigo', 1);\nexport function boyFrame(p:{legShift:number;armShift:number;bob:number}): Grid { const g = createGrid(BOY_W, BOY_H, 0); /* head, hoodie, arms, legs, outlines */ return g; }",
+          "expected": "boyFrame returns a 48-row by 32-column grid"
+        },
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "new: IDLE_POSES, WALK_POSES, INTERACT_POSES",
+          "lines": "new",
+          "action": "Add three const arrays of pose objects: IDLE_POSES length 4 (bob values 0,1,0,-1 with legShift 0), WALK_POSES length 6 (legShift -3,-2,0,3,2,0 alternating, bob 0,1,0,0,1,0), INTERACT_POSES length 4 (armShift 0,2,4,2 with legShift 0).",
+          "expected": "Arrays have lengths 4, 6 and 4"
+        },
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "new: BOY_SHEET_SOURCE",
+          "lines": "new",
+          "action": "Export const BOY_SHEET_SOURCE: ArtSource with id 'character:boy-sheet', path 'worlds/the-boys-room/characters/boy-sheet.png', frames [...IDLE_POSES, ...WALK_POSES, ...INTERACT_POSES].map(boyFrame).",
+          "expected": "BOY_SHEET_SOURCE.frames.length is 14"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QX4B92MZTTVNBE464E",
+      "kind": "unit",
+      "title": "Act: Author the 32x32 boy portrait source",
+      "body": "Add a pure portrait grid builder and source to boy.ts.\n\n## Acceptance criteria\n- BOY_PORTRAIT_SOURCE has one 32x32 frame\n- Only palette indices used\n\n\n## Scope\n- In scope: portrait in boy.ts\n- Out of scope: sheet\n- Preserve: sheet exports\n\n\n## Technical constraints\n- Shared palette max 48 colours\n- New file: `game/frontend/src/art/boy.ts`\n\n\n## Definition of done\n- BOY_PORTRAIT_SOURCE exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add BOY_PORTRAIT_SOURCE to boy.ts",
+      "description": "Add a pure portrait grid builder and source to boy.ts.",
+      "acceptance_criteria": [
+        "BOY_PORTRAIT_SOURCE has one 32x32 frame",
+        "Only palette indices used"
+      ],
+      "scope": {
+        "in_scope": [
+          "portrait in boy.ts"
+        ],
+        "out_of_scope": [
+          "sheet"
+        ],
+        "preserve": [
+          "sheet exports"
+        ]
+      },
+      "technical_constraints": [
+        "Shared palette max 48 colours",
+        "New file: `game/frontend/src/art/boy.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BOY_PORTRAIT_SOURCE exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-805.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85TR8QX566MTNRYVBS3DJB3",
+      "links": [
+        "parent:01M85TR8QX566MTNRYVBS3DJB3",
+        "trace:01M85TDR9EFBW75T2QS53TN41G",
+        "artifact:.ai-dlc/units/UNIT-805.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX566MTNRYVBS3DJB3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-805.md",
+      "artifact_id": "UNIT-805",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "new: boyPortraitGrid",
+          "lines": "after BOY_SHEET_SOURCE",
+          "action": "Add export function boyPortraitGrid(): Grid that creates createGrid(32,32,0), fills a face (parchment 3-4 via shadeRect), hair (wood 1-2) on top rows, eyes (indigo 1) as 2x2 rects, hoodie collar (hoodie 3-2) on bottom 8 rows, and outlineRect around the face with rampIndex('indigo',1).",
+          "expected": "Returns 32 rows of 32 columns"
+        },
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "new: BOY_PORTRAIT_SOURCE, BOY_SOURCES",
+          "lines": "after boyPortraitGrid",
+          "action": "Export BOY_PORTRAIT_SOURCE: ArtSource with id 'character:boy-portrait', path 'worlds/the-boys-room/characters/boy-portrait.png', frames [boyPortraitGrid()]. Export BOY_SOURCES: ArtSource[] = [BOY_SHEET_SOURCE, BOY_PORTRAIT_SOURCE].",
+          "expected": "BOY_SOURCES has two entries"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QXQ09NJTN4PAM18EFZ",
+      "kind": "unit",
+      "title": "Act: Carry animations and origin into generated entries and register boy sources",
+      "body": "Add optional animations and origin to ArtSource, copy them in generateAssets, declare boy animations and origin, register BOY_SOURCES.\n\n## Acceptance criteria\n- Entries copy animations and origin when present\n- ART_SOURCES includes boy sources\n\n\n## Scope\n- In scope: sources.ts\n- In scope: generateAssets.ts\n- In scope: boy.ts animation fields\n- Out of scope: room sources\n- Preserve: entries for sources without the fields\n\n\n## Technical constraints\n- Types from @game/assets/manifest (AnimationDef, Origin)\n- Code path: `game/frontend/src/art/sources.ts`\n- Code path: `game/frontend/src/lib/generateAssets.ts`\n- New file: `game/frontend/src/art/boy.ts`\n\n\n## Definition of done\n- Typecheck passes for touched files\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Extend ArtSource and generateAssets, add boy animations, register in ART_SOURCES",
+      "description": "Add optional animations and origin to ArtSource, copy them in generateAssets, declare boy animations and origin, register BOY_SOURCES.",
+      "acceptance_criteria": [
+        "Entries copy animations and origin when present",
+        "ART_SOURCES includes boy sources"
+      ],
+      "scope": {
+        "in_scope": [
+          "sources.ts",
+          "generateAssets.ts",
+          "boy.ts animation fields"
+        ],
+        "out_of_scope": [
+          "room sources"
+        ],
+        "preserve": [
+          "entries for sources without the fields"
+        ]
+      },
+      "technical_constraints": [
+        "Types from @game/assets/manifest (AnimationDef, Origin)",
+        "Code path: `game/frontend/src/art/sources.ts`",
+        "Code path: `game/frontend/src/lib/generateAssets.ts`",
+        "New file: `game/frontend/src/art/boy.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Typecheck passes for touched files",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-806.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85TR8QX9XFJHGEWB3P5G4QB",
+      "links": [
+        "parent:01M85TR8QX9XFJHGEWB3P5G4QB",
+        "trace:01M85TDR9EGC6R7WNBXWJ58WRY",
+        "artifact:.ai-dlc/units/UNIT-806.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX9XFJHGEWB3P5G4QB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-806.md",
+      "artifact_id": "UNIT-806",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/sources.ts",
+          "symbol": "ArtSource",
+          "lines": "L4-L8",
+          "action": "Add optional fields animations?: Record<string, AnimationDef> and origin?: Origin, importing types AnimationDef and Origin from '@game/assets/manifest'.",
+          "code": "animations?: Record<string, AnimationDef>;\norigin?: Origin;",
+          "expected": "ArtSource accepts the new optional fields"
+        },
+        {
+          "file": "game/frontend/src/art/sources.ts",
+          "symbol": "ART_SOURCES",
+          "lines": "L47-L52",
+          "action": "Import BOY_SOURCES from './boy' and change the array to [hand cursor entry, ...BOY_SOURCES].",
+          "expected": "ART_SOURCES lists cursor-hand then the boy sheet and portrait"
+        },
+        {
+          "file": "game/frontend/src/lib/generateAssets.ts",
+          "symbol": "generateAssets",
+          "lines": "L22-L53",
+          "action": "In both entries.push calls, spread optional fields: ...(source.animations ? { animations: source.animations } : {}), ...(source.origin ? { origin: source.origin } : {}).",
+          "expected": "Entries include animations and origin only when the source has them"
+        },
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "BOY_SHEET_SOURCE",
+          "lines": "end of object",
+          "action": "Add animations idle {frames:[0,1,2,3],frameRate:6,repeat:-1}, walk {frames:[4,5,6,7,8,9],frameRate:10,repeat:-1}, interact {frames:[10,11,12,13],frameRate:8,repeat:0} and origin {x:0.5,y:1}.",
+          "expected": "Sheet source declares three animations and origin"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QX71MKGD96H0R27NGZ",
+      "kind": "unit",
+      "title": "Act: Generate boy PNGs and manifest entries with art:generate",
+      "body": "Run the existing generator so boy PNGs and manifest entries are written. No scene content is edited.\n\n## Acceptance criteria\n- boy-sheet.png (448x48) and boy-portrait.png (32x32) exist\n- manifest.json has the two new entries\n\n\n## Scope\n- In scope: generated PNGs\n- In scope: manifest.json entries\n- Out of scope: content YAML\n- Out of scope: SVG removal\n- Preserve: existing manifest entries\n\n\n## Technical constraints\n- Use the script only\n- New file: `game/frontend/public/assets/worlds/the-boys-room/characters/boy-sheet.png`\n- New file: `game/frontend/public/assets/worlds/the-boys-room/characters/boy-portrait.png`\n- New file: `game/frontend/public/assets/worlds/the-boys-room/manifest.json`\n\n\n## Definition of done\n- Files regenerated byte-identically on a second run\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Run the deterministic generator to produce boy PNGs and update the manifest",
+      "description": "Run the existing generator so boy PNGs and manifest entries are written. No scene content is edited.",
+      "acceptance_criteria": [
+        "boy-sheet.png (448x48) and boy-portrait.png (32x32) exist",
+        "manifest.json has the two new entries"
+      ],
+      "scope": {
+        "in_scope": [
+          "generated PNGs",
+          "manifest.json entries"
+        ],
+        "out_of_scope": [
+          "content YAML",
+          "SVG removal"
+        ],
+        "preserve": [
+          "existing manifest entries"
+        ]
+      },
+      "technical_constraints": [
+        "Use the script only",
+        "New file: `game/frontend/public/assets/worlds/the-boys-room/characters/boy-sheet.png`",
+        "New file: `game/frontend/public/assets/worlds/the-boys-room/characters/boy-portrait.png`",
+        "New file: `game/frontend/public/assets/worlds/the-boys-room/manifest.json`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Files regenerated byte-identically on a second run",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-807.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85TR8QXCSZV6NJ88H5QTWST",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M85TR8QXCSZV6NJ88H5QTWST",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-807.md"
+      ],
+      "depends_on": [
+        "01M85TR8QXCSZV6NJ88H5QTWST"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-807.md",
+      "artifact_id": "UNIT-807",
+      "steps": [
+        {
+          "file": "game/frontend/public/assets/worlds/the-boys-room/manifest.json",
+          "symbol": "assets (generated entries)",
+          "lines": "after L110 (end of assets array)",
+          "action": "From game/frontend run the generator; it appends entries character:boy-sheet and character:boy-portrait and leaves character:boy untouched. Do not hand-edit.",
+          "command": "cd game/frontend && npm run art:generate",
+          "expected": "Two PNG files written and manifest has the two new entries"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QX9DRB6BA4Q3KJ7YQ7",
+      "kind": "unit",
+      "title": "Verify: Boy sheet frame count, size and palette unit tests",
+      "body": "Test frame count, per-frame size and palette use from the REQ1 spec.\n\n## Acceptance criteria\n- 14 frames of 32x48 asserted\n- Palette indices asserted\n\n\n## Scope\n- In scope: tests/boySheet.test.ts\n- Out of scope: generator\n\n\n## Technical constraints\n- Unit tests, no I/O\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for BOY_SHEET_SOURCE",
+      "description": "Test frame count, per-frame size and palette use from the REQ1 spec.",
+      "acceptance_criteria": [
+        "14 frames of 32x48 asserted",
+        "Palette indices asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/boySheet.test.ts"
+        ],
+        "out_of_scope": [
+          "generator"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests, no I/O"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-808.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M85TR8QXYKFBTZFAAGAMHNPJ",
+      "links": [
+        "parent:01M85TR8QXYKFBTZFAAGAMHNPJ",
+        "trace:01M85TDR9EQKBCT55K3M82QKR6",
+        "artifact:.ai-dlc/units/UNIT-808.md"
+      ],
+      "depends_on": [
+        "01M85TR8QXYKFBTZFAAGAMHNPJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-808.md",
+      "artifact_id": "UNIT-808",
+      "steps": [
+        {
+          "file": "game/frontend/tests/boySheet.test.ts",
+          "symbol": "new: boy sheet frames",
+          "lines": "new",
+          "action": "Create tests importing BOY_SHEET_SOURCE and PALETTE. Test 'has 14 frames' expects frames.length 14; test 'each frame is 48 rows by 32 columns' loops frames; test 'uses only palette indices' flattens every grid and asserts Number.isInteger(v) && v>=0 && v<PALETTE.length; test 'idle, walk and interact frames differ' asserts frame 0 != frame 4 != frame 10 via JSON.stringify.",
+          "command": "cd game/frontend && npx vitest run tests/boySheet.test.ts",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QXE12EKZ86GYTDZ6XP",
+      "kind": "unit",
+      "title": "Verify: Boy portrait size and palette unit tests",
+      "body": "Test portrait size and palette from the REQ2 spec.\n\n## Acceptance criteria\n- 32x32 asserted\n- Palette indices asserted\n\n\n## Scope\n- In scope: tests/boyPortrait.test.ts\n\n\n## Technical constraints\n- Unit tests, no I/O\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for BOY_PORTRAIT_SOURCE",
+      "description": "Test portrait size and palette from the REQ2 spec.",
+      "acceptance_criteria": [
+        "32x32 asserted",
+        "Palette indices asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/boyPortrait.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests, no I/O"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-809.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M85TR8QX4B92MZTTVNBE464E",
+      "links": [
+        "parent:01M85TR8QX4B92MZTTVNBE464E",
+        "trace:01M85TDR9EJHS78SMNWFFKFRD7",
+        "artifact:.ai-dlc/units/UNIT-809.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX4B92MZTTVNBE464E"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-809.md",
+      "artifact_id": "UNIT-809",
+      "steps": [
+        {
+          "file": "game/frontend/tests/boyPortrait.test.ts",
+          "symbol": "new: boy portrait",
+          "lines": "new",
+          "action": "Create tests importing BOY_PORTRAIT_SOURCE and PALETTE: 'has one frame' expects frames.length 1; 'is 32x32' expects 32 rows each of length 32; 'uses only palette indices' asserts every cell is an integer in 0..PALETTE.length-1.",
+          "command": "cd game/frontend && npx vitest run tests/boyPortrait.test.ts",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QXS9KVAEN097FWYNZ3",
+      "kind": "unit",
+      "title": "Verify: Boy manifest animations, sizes and generator unit tests",
+      "body": "Test generateAssets with and without new fields and the boy entries from ART_SOURCES.\n\n## Acceptance criteria\n- Animations and origin copied\n- Boy ids registered\n- Entries validate\n\n\n## Scope\n- In scope: tests/boyManifest.test.ts\n- Preserve: tests/generateAssets.test.ts\n\n\n## Technical constraints\n- Pure generateAssets, no fs\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for animations/origin copy and boy registration",
+      "description": "Test generateAssets with and without new fields and the boy entries from ART_SOURCES.",
+      "acceptance_criteria": [
+        "Animations and origin copied",
+        "Boy ids registered",
+        "Entries validate"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/boyManifest.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": [
+          "tests/generateAssets.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Pure generateAssets, no fs"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-810.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M85TR8QXQ09NJTN4PAM18EFZ",
+      "links": [
+        "parent:01M85TR8QXQ09NJTN4PAM18EFZ",
+        "trace:01M85TDR9EYJNMH0F27G31CBBZ",
+        "artifact:.ai-dlc/units/UNIT-810.md"
+      ],
+      "depends_on": [
+        "01M85TR8QXQ09NJTN4PAM18EFZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-810.md",
+      "artifact_id": "UNIT-810",
+      "steps": [
+        {
+          "file": "game/frontend/tests/boyManifest.test.ts",
+          "symbol": "new: generator animations and origin",
+          "lines": "new",
+          "action": "Create tests: (1) a two-frame inline ArtSource with animations {idle:{frames:[0,1],frameRate:2,repeat:-1}} and origin {x:0.5,y:1} through generateAssets gives an entry with equal animations and origin; (2) a source without them gives an entry where 'animations' and 'origin' are not in the entry; (3) ART_SOURCES ids contain 'character:boy-sheet' and 'character:boy-portrait' once each; (4) entries from generateAssets(BOY_SOURCES) give sheet dimensions 448x48, frameCount 14, animations idle [0..3], walk [4..9], interact [10..13] with positive frameRate, portrait dimensions 32x32; (5) parseManifest({version:1,assets:entries}).ok is true.",
+          "command": "cd game/frontend && npx vitest run tests/boyManifest.test.ts",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QXS9T428QVETKTP9NJ",
+      "kind": "unit",
+      "title": "Verify: Committed manifest boy entries match generated output unit tests",
+      "body": "Import manifest.json and compare boy entries to the pure generator output; assert the old boy entry is unchanged.\n\n## Acceptance criteria\n- Boy sheet and portrait entries match generated entries\n- character:boy still points to the svg\n\n\n## Scope\n- In scope: tests/boyManifestFile.test.ts\n\n\n## Technical constraints\n- Read manifest through a JSON import, no real fs and no app start\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test that manifest.json boy entries equal generator output",
+      "description": "Import manifest.json and compare boy entries to the pure generator output; assert the old boy entry is unchanged.",
+      "acceptance_criteria": [
+        "Boy sheet and portrait entries match generated entries",
+        "character:boy still points to the svg"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/boyManifestFile.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Read manifest through a JSON import, no real fs and no app start"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-811.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85TR8QX71MKGD96H0R27NGZ",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85TR8QX71MKGD96H0R27NGZ",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-811.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX71MKGD96H0R27NGZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-811.md",
+      "artifact_id": "UNIT-811",
+      "steps": [
+        {
+          "file": "game/frontend/tests/boyManifestFile.test.ts",
+          "symbol": "new: committed manifest boy entries",
+          "lines": "new",
+          "action": "Import manifest from '../public/assets/worlds/the-boys-room/manifest.json' and generateAssets, BOY_SOURCES. For each entry from generateAssets(BOY_SOURCES).entries, expect manifest.assets.find(a=>a.id===entry.id) toEqual entry and path to end with '.png'. Also expect the asset with id 'character:boy' to have a path ending '.svg'.",
+          "command": "cd game/frontend && npx vitest run tests/boyManifestFile.test.ts",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85TR8QXJRVSGRF7CN7AZ2T3",
+      "kind": "evidence",
+      "title": "Evidence: Boy sheet, portrait and manifest unit tests pass",
+      "body": "Collect results of boySheet, boyPortrait, boyManifest and boyManifestFile tests.\n\n## Acceptance criteria\n- All four test files pass\n- No test mentions a real server or browser\n\n\n## Scope\n- In scope: test run output\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the four boy unit test files pass",
+      "description": "Collect results of boySheet, boyPortrait, boyManifest and boyManifestFile tests.",
+      "acceptance_criteria": [
+        "All four test files pass",
+        "No test mentions a real server or browser"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-164.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85TR8QX9DRB6BA4Q3KJ7YQ7",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85TR8QX9DRB6BA4Q3KJ7YQ7",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-164.md"
+      ],
+      "depends_on": [
+        "01M85TR8QX9DRB6BA4Q3KJ7YQ7",
+        "01M85TR8QXE12EKZ86GYTDZ6XP",
+        "01M85TR8QXS9KVAEN097FWYNZ3",
+        "01M85TR8QXS9T428QVETKTP9NJ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-164.md",
+      "artifact_id": "EVD-164"
+    }
+  ],
+  "created_at": "2026-11-24T03:51:31.106377+00:00",
+  "summary": "AI · 8 NEW · 6 UPDATE · 0 UNCHANGED · 14/14 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

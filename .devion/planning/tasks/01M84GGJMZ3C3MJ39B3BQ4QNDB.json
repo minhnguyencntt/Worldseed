@@ -1,0 +1,55 @@
+{
+  "id": "01M84GGJMZ3C3MJ39B3BQ4QNDB",
+  "intent_id": "01M84GCPQV4VDXPM8F6AXV18ZS",
+  "title": "REQ · Recover scans the store and resumes unfinished executions",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Recoverer.Recover lists executions and resumes only PENDING, RUNNING and RECOVERING ones.",
+  "description": "Context: store.Store.List returns all executions sorted by ID. Desired behavior: Recoverer.Recover resumes every unfinished execution through an injected Resumer and skips finished or approval-pending ones. Expected result: a Result lists resumed IDs. Why: unfinished work continues after a restart.",
+  "acceptance_criteria": [
+    "Given PENDING, RUNNING and RECOVERING executions, When Recover runs, Then Resumer.Resume is called once for each in ID order",
+    "Given COMPLETED, FAILED and AWAITING_APPROVAL executions, When Recover runs, Then Resume is not called for them and the store is not written",
+    "Given store.List returns an error, When Recover runs, Then Recover returns an error wrapping it and resumes nothing"
+  ],
+  "scope": {
+    "in_scope": [
+      "Recoverer, Resumer and ExecutionStore types",
+      "Recover method"
+    ],
+    "out_of_scope": [
+      "Lock handling",
+      "Marking failed resumes"
+    ],
+    "preserve": [
+      "store package API"
+    ]
+  },
+  "technical_constraints": [
+    "ExecutionStore interface must be satisfied by *store.Store"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Recover implemented and compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-105.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GG45VZVMV4MMTZPE40H5Q",
+    "trace:01M84F6TVF93MMXGC3MNASZ8J5",
+    "artifact:.ai-dlc/requirements/REQ-105.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GGJMZQ62GN2MEXQFV59V3"
+  ],
+  "sim_node_id": "01M84GG45VCTDK9YM67CW6568A",
+  "feature_id": "01M84F6TVF93MMXGC3MNASZ8J5",
+  "artifact_path": ".ai-dlc/requirements/REQ-105.md",
+  "artifact_id": "REQ-105",
+  "created_at": "2026-11-23T15:31:08.063019+00:00",
+  "updated_at": "2026-11-23T15:34:49.188719+00:00"
+}

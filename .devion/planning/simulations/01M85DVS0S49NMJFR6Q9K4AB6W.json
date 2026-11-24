@@ -1,0 +1,679 @@
+{
+  "intent_id": "01M85DVS0S49NMJFR6Q9K4AB6W",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85DXK44ZV6AYH754ECHSB93",
+      "kind": "intent",
+      "title": "SG-8.2.4 Validation unit tests assert real dialog behaviour",
+      "body": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already blocks blank text, over-limit text and zero quota. Desired behavior: the unit tests assert the inline messages, counter text, disabled or blocked submit, and that submitContribution is never called. Expected result: each test fails if the matching guard in the component is removed. Why: tests that pass without the guards give false confidence.\n\n## Acceptance criteria\n- Given blank or whitespace text, when Send is clicked, then the inline message 'Enter an idea first' shows and submitContribution has 0 calls\n- Given text over MAX_PROMPT_LENGTH, when Send is clicked, then the over-limit message and the counter text show and submitContribution has 0 calls\n- Given zero remaining quota, when the sheet renders, then Send is disabled, the quota message shows and a form submit does not call submitContribution\n\n\n## Scope\n- In scope: game/frontend/tests/contributionBlank.test.tsx\n- In scope: game/frontend/tests/contributionMaxLength.test.tsx\n- In scope: game/frontend/tests/contributionQuotaGate.test.tsx\n- In scope: game/frontend/tests/contributionQuotaMessage.test.tsx\n- Out of scope: Backend API changes\n- Out of scope: New validation rules\n- Out of scope: Browser or e2e tests\n- Preserve: Existing ContributionSheet behaviour and messages\n- Preserve: vi.mock of ../src/api/client with importOriginal\n\n\n## Technical constraints\n- Use vitest and @testing-library/react in jsdom\n- Mock only the API client; render the real ContributionSheet\n\n\n## Definition of done\n- All three requirements have passing unit tests that fail when their guard is removed\n\n\n## Non-functional requirements\n- Each test file runs in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Rewrite ContributionSheet validation unit tests to assert real dialog behaviour and fail when the validation code is removed",
+      "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already blocks blank text, over-limit text and zero quota. Desired behavior: the unit tests assert the inline messages, counter text, disabled or blocked submit, and that submitContribution is never called. Expected result: each test fails if the matching guard in the component is removed. Why: tests that pass without the guards give false confidence.",
+      "acceptance_criteria": [
+        "Given blank or whitespace text, when Send is clicked, then the inline message 'Enter an idea first' shows and submitContribution has 0 calls",
+        "Given text over MAX_PROMPT_LENGTH, when Send is clicked, then the over-limit message and the counter text show and submitContribution has 0 calls",
+        "Given zero remaining quota, when the sheet renders, then Send is disabled, the quota message shows and a form submit does not call submitContribution"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contributionBlank.test.tsx",
+          "game/frontend/tests/contributionMaxLength.test.tsx",
+          "game/frontend/tests/contributionQuotaGate.test.tsx",
+          "game/frontend/tests/contributionQuotaMessage.test.tsx"
+        ],
+        "out_of_scope": [
+          "Backend API changes",
+          "New validation rules",
+          "Browser or e2e tests"
+        ],
+        "preserve": [
+          "Existing ContributionSheet behaviour and messages",
+          "vi.mock of ../src/api/client with importOriginal"
+        ]
+      },
+      "technical_constraints": [
+        "Use vitest and @testing-library/react in jsdom",
+        "Mock only the API client; render the real ContributionSheet"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements have passing unit tests that fail when their guard is removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-132.md`"
+      ],
+      "non_functional": [
+        "Each test file runs in seconds"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-132.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-132.md",
+      "artifact_id": "INT-132"
+    },
+    {
+      "id": "01M85DXK44AJXFZVHBBXFA2YRW",
+      "kind": "requirement",
+      "title": "REQ · Blank-text tests assert inline message and no submit call",
+      "body": "Context: handleSubmit sets validation 'Enter an idea first' and returns before submitContribution. Desired behavior: tests assert the alert text, aria-invalid, aria-describedby and zero submit calls. Expected result: removing the blank guard fails these tests. Why: proves blank text cannot be submitted.\n\n## Acceptance criteria\n- Given empty or whitespace text, when Send is clicked, then role=alert text equals 'Enter an idea first' and submitContribution has 0 calls\n- Given the message is shown, when the user types, then the alert disappears and aria-invalid is no longer true\n\n\n## Scope\n- In scope: Blank-text assertions\n- Out of scope: Length and quota behaviour\n- Preserve: BLANK_MESSAGE text\n\n\n## Technical constraints\n- Component source must not be mocked\n\n\n## Definition of done\n- Blank tests pass and fail without the blank guard\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Blank and whitespace-only submit tests assert the real inline message and zero API calls",
+      "description": "Context: handleSubmit sets validation 'Enter an idea first' and returns before submitContribution. Desired behavior: tests assert the alert text, aria-invalid, aria-describedby and zero submit calls. Expected result: removing the blank guard fails these tests. Why: proves blank text cannot be submitted.",
+      "acceptance_criteria": [
+        "Given empty or whitespace text, when Send is clicked, then role=alert text equals 'Enter an idea first' and submitContribution has 0 calls",
+        "Given the message is shown, when the user types, then the alert disappears and aria-invalid is no longer true"
+      ],
+      "scope": {
+        "in_scope": [
+          "Blank-text assertions"
+        ],
+        "out_of_scope": [
+          "Length and quota behaviour"
+        ],
+        "preserve": [
+          "BLANK_MESSAGE text"
+        ]
+      },
+      "technical_constraints": [
+        "Component source must not be mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Blank tests pass and fail without the blank guard",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-327.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85DXK44ZV6AYH754ECHSB93",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M85DXK44ZV6AYH754ECHSB93",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-327.md"
+      ],
+      "depends_on": [
+        "01M85DXK44ZV6AYH754ECHSB93"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-327.md",
+      "artifact_id": "REQ-327"
+    },
+    {
+      "id": "01M85DXK44727AWVMJVVMN2NH9",
+      "kind": "requirement",
+      "title": "REQ · Max-length tests assert counter text and over-limit block",
+      "body": "Context: the sheet shows `${length} / ${MAX_PROMPT_LENGTH}` and an over-limit alert. Desired behavior: tests assert both texts and that no submit happens over the limit. Expected result: removing the overLimit guard fails the tests.\n\n## Acceptance criteria\n- Given 3 typed characters, then the counter reads '3 / 500'\n- Given 501 characters, when Send is clicked, then the alert reads 'Too long: 501 / 500' and submitContribution has 0 calls\n\n\n## Scope\n- In scope: Counter and over-limit assertions\n- Out of scope: Blank and quota behaviour\n- Preserve: MAX_PROMPT_LENGTH constant\n\n\n## Technical constraints\n- Import MAX_PROMPT_LENGTH from the client rather than hard-coding 500 in logic\n\n\n## Definition of done\n- Over-limit tests pass and fail without the guard\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Over-limit tests assert counter text, inline message and zero submit calls",
+      "description": "Context: the sheet shows `${length} / ${MAX_PROMPT_LENGTH}` and an over-limit alert. Desired behavior: tests assert both texts and that no submit happens over the limit. Expected result: removing the overLimit guard fails the tests.",
+      "acceptance_criteria": [
+        "Given 3 typed characters, then the counter reads '3 / 500'",
+        "Given 501 characters, when Send is clicked, then the alert reads 'Too long: 501 / 500' and submitContribution has 0 calls"
+      ],
+      "scope": {
+        "in_scope": [
+          "Counter and over-limit assertions"
+        ],
+        "out_of_scope": [
+          "Blank and quota behaviour"
+        ],
+        "preserve": [
+          "MAX_PROMPT_LENGTH constant"
+        ]
+      },
+      "technical_constraints": [
+        "Import MAX_PROMPT_LENGTH from the client rather than hard-coding 500 in logic"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Over-limit tests pass and fail without the guard",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-328.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85DXK44ZV6AYH754ECHSB93",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M85DXK44ZV6AYH754ECHSB93",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-328.md"
+      ],
+      "depends_on": [
+        "01M85DXK44ZV6AYH754ECHSB93"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-328.md",
+      "artifact_id": "REQ-328"
+    },
+    {
+      "id": "01M85DXK44ES6ZNSPW07MWT68V",
+      "kind": "requirement",
+      "title": "REQ · Zero-quota tests assert disabled Send, message and blocked submit",
+      "body": "Context: when listMine returns MAX_PER_PLAYER entries, remaining is 0, Send is disabled and a quota alert shows. Expected result: tests fail if the disabled attribute, message or handleSubmit guard is removed.\n\n## Acceptance criteria\n- Given 5 sent suggestions, then Send is disabled and the alert reads 'You have used all your suggestions this round'\n- Given zero quota, when the form is submitted directly, then submitContribution has 0 calls\n\n\n## Scope\n- In scope: Quota gating assertions\n- Out of scope: Blank and length behaviour\n- Preserve: Contributions left text\n\n\n## Technical constraints\n- Quota history comes from the mocked listMine using contributionFixture\n\n\n## Definition of done\n- Quota tests pass and fail without the guards\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Zero-quota tests assert Send disabled, inline message and no submit call",
+      "description": "Context: when listMine returns MAX_PER_PLAYER entries, remaining is 0, Send is disabled and a quota alert shows. Expected result: tests fail if the disabled attribute, message or handleSubmit guard is removed.",
+      "acceptance_criteria": [
+        "Given 5 sent suggestions, then Send is disabled and the alert reads 'You have used all your suggestions this round'",
+        "Given zero quota, when the form is submitted directly, then submitContribution has 0 calls"
+      ],
+      "scope": {
+        "in_scope": [
+          "Quota gating assertions"
+        ],
+        "out_of_scope": [
+          "Blank and length behaviour"
+        ],
+        "preserve": [
+          "Contributions left text"
+        ]
+      },
+      "technical_constraints": [
+        "Quota history comes from the mocked listMine using contributionFixture"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Quota tests pass and fail without the guards",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-329.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85DXK44ZV6AYH754ECHSB93",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M85DXK44ZV6AYH754ECHSB93",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-329.md"
+      ],
+      "depends_on": [
+        "01M85DXK44ZV6AYH754ECHSB93"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-329.md",
+      "artifact_id": "REQ-329"
+    },
+    {
+      "id": "01M85DXK44XDXYJ4R4PZ5X4Z32",
+      "kind": "unit",
+      "title": "Act: Confirm blank-text guard in ContributionSheet handleSubmit",
+      "body": "Context: ContributionSheet.handleSubmit already trims and rejects blank text. Desired behavior: no product change unless the guard or its aria wiring is missing. Expected result: the guard, BLANK_MESSAGE and aria attributes are present.\n\n## Acceptance criteria\n- handleSubmit sets validation to BLANK_MESSAGE and returns before submitContribution when the trimmed text is empty\n- The textarea sets aria-invalid and aria-describedby pointing at contribution-idea-error while validation is set\n\n\n## Scope\n- In scope: handleSubmit blank branch\n- In scope: textarea aria attributes\n- Out of scope: Tests\n- Preserve: Existing messages\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ-BLANK\n\n\n## Definition of done\n- Guard and aria wiring confirmed present, adding them only if missing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Check the blank guard exposes the message and aria wiring the tests assert",
+      "description": "Context: ContributionSheet.handleSubmit already trims and rejects blank text. Desired behavior: no product change unless the guard or its aria wiring is missing. Expected result: the guard, BLANK_MESSAGE and aria attributes are present.",
+      "acceptance_criteria": [
+        "handleSubmit sets validation to BLANK_MESSAGE and returns before submitContribution when the trimmed text is empty",
+        "The textarea sets aria-invalid and aria-describedby pointing at contribution-idea-error while validation is set"
+      ],
+      "scope": {
+        "in_scope": [
+          "handleSubmit blank branch",
+          "textarea aria attributes"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing messages"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ-BLANK"
+      ],
+      "definition_of_done": [
+        "Guard and aria wiring confirmed present, adding them only if missing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-654.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85DXK44AJXFZVHBBXFA2YRW",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85DXK44AJXFZVHBBXFA2YRW",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-654.md"
+      ],
+      "depends_on": [
+        "01M85DXK44AJXFZVHBBXFA2YRW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-654.md",
+      "artifact_id": "UNIT-654",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet.handleSubmit",
+          "lines": "L72-L95",
+          "action": "Check that after remaining<=0 return, prompt=text.trim() and prompt==='' calls setValidation(BLANK_MESSAGE) then returns before submitContribution; add it only if absent",
+          "code": "if (prompt === '') { setValidation(BLANK_MESSAGE); return; }",
+          "expected": "Blank text never reaches submitContribution"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet textarea and error paragraph",
+          "lines": "L113-L140",
+          "action": "Check textarea has aria-invalid when validation is defined, aria-describedby='contribution-idea-error', and <p id='contribution-idea-error' role='alert'> renders validation; add only if absent",
+          "expected": "Alert id equals the textarea aria-describedby value after a blank submit"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK44NT1RVVJZS45RK70G",
+      "kind": "unit",
+      "title": "Act: Confirm counter and over-limit guard in ContributionSheet",
+      "body": "Context: length uses Array.from(text.trim()).length and overLimit blocks submit. Expected result: guard, counter and alert present.\n\n## Acceptance criteria\n- handleSubmit returns before submitContribution when overLimit is true\n- The counter paragraph id contribution-idea-count renders `${length} / ${MAX_PROMPT_LENGTH}` and the alert id contribution-idea-limit renders when overLimit\n\n\n## Scope\n- In scope: overLimit branch and counter JSX\n- Out of scope: Tests\n- Preserve: Existing texts\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ-LEN\n\n\n## Definition of done\n- Guard and texts confirmed present, added only if missing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Check the counter paragraph and overLimit guard exist as the tests assert",
+      "description": "Context: length uses Array.from(text.trim()).length and overLimit blocks submit. Expected result: guard, counter and alert present.",
+      "acceptance_criteria": [
+        "handleSubmit returns before submitContribution when overLimit is true",
+        "The counter paragraph id contribution-idea-count renders `${length} / ${MAX_PROMPT_LENGTH}` and the alert id contribution-idea-limit renders when overLimit"
+      ],
+      "scope": {
+        "in_scope": [
+          "overLimit branch and counter JSX"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing texts"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ-LEN"
+      ],
+      "definition_of_done": [
+        "Guard and texts confirmed present, added only if missing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-655.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85DXK44727AWVMJVVMN2NH9",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85DXK44727AWVMJVVMN2NH9",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-655.md"
+      ],
+      "depends_on": [
+        "01M85DXK44727AWVMJVVMN2NH9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-655.md",
+      "artifact_id": "UNIT-655",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet.handleSubmit",
+          "lines": "L72-L95",
+          "action": "Check the line 'if (overLimit) return;' sits after the blank check and before setEntries/submitContribution; add if absent",
+          "code": "if (overLimit) return;",
+          "expected": "Over-limit text never reaches submitContribution"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet counter and limit alert",
+          "lines": "L125-L137",
+          "action": "Check <p id='contribution-idea-count'> renders `${length} / ${MAX_PROMPT_LENGTH}` and {overLimit && <p id='contribution-idea-limit' role='alert'>} renders `Too long: ${length} / ${MAX_PROMPT_LENGTH}`; add if absent",
+          "expected": "Counter and over-limit message texts match the tests"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK441207KSMBW0M2M5QR",
+      "kind": "unit",
+      "title": "Act: Confirm zero-quota gating in ContributionSheet",
+      "body": "Context: remaining = MAX_PER_PLAYER minus sent entries. Expected result: three gating points present.\n\n## Acceptance criteria\n- handleSubmit returns when remaining <= 0 before reading text\n- Send has disabled={remaining <= 0} and the alert id contribution-idea-quota renders when remaining <= 0\n\n\n## Scope\n- In scope: Quota guard, Send button, quota message\n- Out of scope: Tests\n- Preserve: Existing texts\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ-QUOTA\n\n\n## Definition of done\n- Gating confirmed present, added only if missing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Check disabled Send, quota message and handleSubmit guard exist",
+      "description": "Context: remaining = MAX_PER_PLAYER minus sent entries. Expected result: three gating points present.",
+      "acceptance_criteria": [
+        "handleSubmit returns when remaining <= 0 before reading text",
+        "Send has disabled={remaining <= 0} and the alert id contribution-idea-quota renders when remaining <= 0"
+      ],
+      "scope": {
+        "in_scope": [
+          "Quota guard, Send button, quota message"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing texts"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ-QUOTA"
+      ],
+      "definition_of_done": [
+        "Gating confirmed present, added only if missing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-656.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85DXK44ES6ZNSPW07MWT68V",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85DXK44ES6ZNSPW07MWT68V",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-656.md"
+      ],
+      "depends_on": [
+        "01M85DXK44ES6ZNSPW07MWT68V"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-656.md",
+      "artifact_id": "UNIT-656",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet.handleSubmit",
+          "lines": "L72-L74",
+          "action": "Check 'if (remaining <= 0) return;' follows event.preventDefault(); add if absent",
+          "code": "if (remaining <= 0) return;",
+          "expected": "Zero quota never reaches submitContribution"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet Send button and quota alert",
+          "lines": "L130-L138",
+          "action": "Check <button type='submit' disabled={remaining <= 0}>Send</button> and {remaining <= 0 && <p id='contribution-idea-quota' role='alert'>You have used all your suggestions this round</p>}; add if absent",
+          "expected": "Send disabled and message shown at zero quota"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK44VQX3TH3HCFBHGHYM",
+      "kind": "unit",
+      "title": "Verify: Blank-text validation tests assert real dialog behaviour",
+      "body": "Context: tests/contributionBlank.test.tsx renders the real sheet with the API client mocked. Desired behavior: every test asserts message text and submitContribution call count. Expected result: tests fail if the blank guard is removed.\n\n## Acceptance criteria\n- Empty and whitespace-only submit show 'Enter an idea first' and submitContribution is called 0 times\n- Typing clears the alert and aria-invalid; a valid trimmed idea is sent as 'hello' once\n\n\n## Scope\n- In scope: game/frontend/tests/contributionBlank.test.tsx\n- Out of scope: Product code\n- Preserve: Fixture imports from tests/fixtures/api.ts\n\n\n## Technical constraints\n- Fixture contributionFixture mirrors the Contribution type in src/api/client.ts; do not hard-code payloads\n\n\n## Dependencies\n- ACT-BLANK\n\n\n## Definition of done\n- contributionBlank.test.tsx passes and each test asserts a message or call count\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rewrite contributionBlank tests to assert alert text, aria wiring and zero submit calls",
+      "description": "Context: tests/contributionBlank.test.tsx renders the real sheet with the API client mocked. Desired behavior: every test asserts message text and submitContribution call count. Expected result: tests fail if the blank guard is removed.",
+      "acceptance_criteria": [
+        "Empty and whitespace-only submit show 'Enter an idea first' and submitContribution is called 0 times",
+        "Typing clears the alert and aria-invalid; a valid trimmed idea is sent as 'hello' once"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contributionBlank.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Fixture imports from tests/fixtures/api.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Fixture contributionFixture mirrors the Contribution type in src/api/client.ts; do not hard-code payloads"
+      ],
+      "dependencies": [
+        "ACT-BLANK"
+      ],
+      "definition_of_done": [
+        "contributionBlank.test.tsx passes and each test asserts a message or call count",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-657.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DXK44XDXYJ4R4PZ5X4Z32",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85DXK44XDXYJ4R4PZ5X4Z32",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-657.md"
+      ],
+      "depends_on": [
+        "01M85DXK44XDXYJ4R4PZ5X4Z32"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-657.md",
+      "artifact_id": "UNIT-657",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "describe('ContributionSheet blank submit')",
+          "lines": "L29-L94",
+          "action": "Keep the five tests; ensure the empty and whitespace tests use getByRole('alert').textContent toBe 'Enter an idea first' and expect(submitMock).toHaveBeenCalledTimes(0); ensure the valid test asserts toHaveBeenCalledWith('hello') and queryByText('Enter an idea first') is null",
+          "command": "npx vitest run tests/contributionBlank.test.tsx",
+          "expected": "5 tests pass; with the blank guard removed from handleSubmit the first two fail"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK447RK4X9RE56S9GVXR",
+      "kind": "unit",
+      "title": "Verify: Max-length tests assert counter text and blocked submit",
+      "body": "Context: tests/contributionMaxLength.test.tsx renders the real sheet with the client mocked. Expected result: tests fail if the counter or overLimit guard is removed.\n\n## Acceptance criteria\n- Counter shows '3 / 500' after typing 'abc'\n- 501 characters plus Send shows 'Too long: 501 / 500' and submitContribution called 0 times; exactly 500 characters is submitted\n\n\n## Scope\n- In scope: game/frontend/tests/contributionMaxLength.test.tsx\n- Out of scope: Product code\n- Preserve: Fixtures from tests/fixtures/api.ts\n\n\n## Technical constraints\n- Build long text with 'a'.repeat(MAX_PROMPT_LENGTH + 1) using the imported constant\n\n\n## Dependencies\n- ACT-LEN\n\n\n## Definition of done\n- contributionMaxLength.test.tsx passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rewrite contributionMaxLength tests to assert counter, alert and zero submit calls",
+      "description": "Context: tests/contributionMaxLength.test.tsx renders the real sheet with the client mocked. Expected result: tests fail if the counter or overLimit guard is removed.",
+      "acceptance_criteria": [
+        "Counter shows '3 / 500' after typing 'abc'",
+        "501 characters plus Send shows 'Too long: 501 / 500' and submitContribution called 0 times; exactly 500 characters is submitted"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contributionMaxLength.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Fixtures from tests/fixtures/api.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Build long text with 'a'.repeat(MAX_PROMPT_LENGTH + 1) using the imported constant"
+      ],
+      "dependencies": [
+        "ACT-LEN"
+      ],
+      "definition_of_done": [
+        "contributionMaxLength.test.tsx passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-658.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DXK44NT1RVVJZS45RK70G",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85DXK44NT1RVVJZS45RK70G",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-658.md"
+      ],
+      "depends_on": [
+        "01M85DXK44NT1RVVJZS45RK70G"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-658.md",
+      "artifact_id": "UNIT-658",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionMaxLength.test.tsx",
+          "symbol": "describe max length tests",
+          "lines": "L1-L130",
+          "action": "Ensure tests assert getByText('3 / 500') after typing 'abc', getByRole('alert').textContent toBe 'Too long: 501 / 500' after submit of 501 chars, expect(submitMock).not.toHaveBeenCalled(), and a 500-char case expects toHaveBeenCalledTimes(1)",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx",
+          "expected": "All tests pass; removing 'if (overLimit) return;' makes the 501-char test fail"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK441THTPMCREDS8WWSK",
+      "kind": "unit",
+      "title": "Verify: Zero-quota tests assert disabled Send, message and no submit",
+      "body": "Context: both test files render the real sheet with listMine mocked to return 5 contributions. Expected result: tests fail if the disabled prop, message or guard is removed.\n\n## Acceptance criteria\n- With 5 history entries Send is disabled and the quota message text is shown\n- fireEvent.submit on the form leaves submitContribution with 0 calls\n\n\n## Scope\n- In scope: game/frontend/tests/contributionQuotaGate.test.tsx\n- In scope: game/frontend/tests/contributionQuotaMessage.test.tsx\n- Out of scope: Product code\n- Preserve: tests/fixtures/api.ts\n\n\n## Technical constraints\n- Mock listMine with Array.from({length: MAX_PER_PLAYER}) of distinct contributionFixture prompts, mirroring the Contribution type in src/api/client.ts\n\n\n## Dependencies\n- ACT-QUOTA\n\n\n## Definition of done\n- Both quota test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rewrite contributionQuotaGate and contributionQuotaMessage tests to assert real gating",
+      "description": "Context: both test files render the real sheet with listMine mocked to return 5 contributions. Expected result: tests fail if the disabled prop, message or guard is removed.",
+      "acceptance_criteria": [
+        "With 5 history entries Send is disabled and the quota message text is shown",
+        "fireEvent.submit on the form leaves submitContribution with 0 calls"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contributionQuotaGate.test.tsx",
+          "game/frontend/tests/contributionQuotaMessage.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/fixtures/api.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Mock listMine with Array.from({length: MAX_PER_PLAYER}) of distinct contributionFixture prompts, mirroring the Contribution type in src/api/client.ts"
+      ],
+      "dependencies": [
+        "ACT-QUOTA"
+      ],
+      "definition_of_done": [
+        "Both quota test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-659.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DXK441207KSMBW0M2M5QR",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85DXK441207KSMBW0M2M5QR",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-659.md"
+      ],
+      "depends_on": [
+        "01M85DXK441207KSMBW0M2M5QR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-659.md",
+      "artifact_id": "UNIT-659",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionQuotaGate.test.tsx",
+          "symbol": "describe quota gate tests",
+          "lines": "L1-L78",
+          "action": "Ensure tests await the history load, assert Send button .disabled is true, call fireEvent.submit on the form with text set, and assert submitMock toHaveBeenCalledTimes(0)",
+          "command": "npx vitest run tests/contributionQuotaGate.test.tsx",
+          "expected": "Tests pass; removing disabled or the remaining guard makes them fail"
+        },
+        {
+          "file": "game/frontend/tests/contributionQuotaMessage.test.tsx",
+          "symbol": "describe quota message tests",
+          "lines": "L1-L59",
+          "action": "Ensure tests assert the alert text 'You have used all your suggestions this round' appears at zero quota and is absent when fewer than 5 entries are returned",
+          "command": "npx vitest run tests/contributionQuotaMessage.test.tsx",
+          "expected": "Tests pass; removing the quota paragraph makes them fail"
+        }
+      ]
+    },
+    {
+      "id": "01M85DXK44JA7BQA6QYNSTKYTX",
+      "kind": "evidence",
+      "title": "Evidence: Validation unit tests assert real dialog behaviour",
+      "body": "Collects the passing results of the blank, max-length and zero-quota unit test files, each asserting message text, counter text, disabled or blocked submit and zero submitContribution calls.\n\n## Acceptance criteria\n- The four contribution validation test files pass\n- Each asserts submitContribution call count and visible message or counter text\n\n\n## Scope\n- In scope: Test results of the three Verify units\n- Out of scope: Browser runs\n\n\n## Dependencies\n- VER-BLANK\n- VER-LEN\n- VER-QUOTA\n\n\n## Definition of done\n- Test run output recorded as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that blank, length and quota validation tests assert behaviour and pass",
+      "description": "Collects the passing results of the blank, max-length and zero-quota unit test files, each asserting message text, counter text, disabled or blocked submit and zero submitContribution calls.",
+      "acceptance_criteria": [
+        "The four contribution validation test files pass",
+        "Each asserts submitContribution call count and visible message or counter text"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results of the three Verify units"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER-BLANK",
+        "VER-LEN",
+        "VER-QUOTA"
+      ],
+      "definition_of_done": [
+        "Test run output recorded as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-132.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DXK44VQX3TH3HCFBHGHYM",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85DXK44VQX3TH3HCFBHGHYM",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-132.md"
+      ],
+      "depends_on": [
+        "01M85DXK44VQX3TH3HCFBHGHYM",
+        "01M85DXK447RK4X9RE56S9GVXR",
+        "01M85DXK441THTPMCREDS8WWSK"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-132.md",
+      "artifact_id": "EVD-132"
+    }
+  ],
+  "created_at": "2026-11-24T00:06:09.665579+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

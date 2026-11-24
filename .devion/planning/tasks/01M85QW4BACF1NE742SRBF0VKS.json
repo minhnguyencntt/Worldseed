@@ -1,0 +1,79 @@
+{
+  "id": "01M85QW4BACF1NE742SRBF0VKS",
+  "intent_id": "01M85QNQTKK7EEACECDG6BXKB0",
+  "title": "Act: Add buildSpriteSheet to the art module",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create game/frontend/src/art/spriteSheet.ts that lays frames out horizontally using gridToRgba.",
+  "description": "Create the pure module that validates frames, converts each with gridToRgba and copies rows into one sheet buffer, returning sheet metadata.",
+  "acceptance_criteria": [
+    "buildSpriteSheet returns width, height, frameWidth, frameHeight, frameCount and data.",
+    "Empty or mismatched frames throw."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/art/spriteSheet.ts"
+    ],
+    "out_of_scope": [
+      "tests",
+      "PNG writing"
+    ],
+    "preserve": [
+      "pixelGrid.ts exports"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse gridToRgba and the shared palette (max 48).",
+    "Phaser stays on 3.90.x.",
+    "New file: `game/frontend/src/art/spriteSheet.ts`"
+  ],
+  "dependencies": [
+    "ACT1",
+    "REQ2"
+  ],
+  "definition_of_done": [
+    "Module compiles and exports SpriteSheet and buildSpriteSheet.",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-773.md`"
+  ],
+  "non_functional": [
+    "Pure and deterministic."
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85QR7R3NAZWNSSN4ACZZYM2",
+    "trace:01M84T6537TTHDFGGZN902Z65D",
+    "artifact:.ai-dlc/units/UNIT-773.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85QW4BA3KNNXJNJS6DP117Y"
+  ],
+  "sim_node_id": "01M85QR7R33Q98QK9YT853F38G",
+  "feature_id": "01M84T6537TTHDFGGZN902Z65D",
+  "artifact_path": ".ai-dlc/units/UNIT-773.md",
+  "artifact_id": "UNIT-773",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/art/spriteSheet.ts",
+      "symbol": "new: SpriteSheet",
+      "lines": "new",
+      "action": "Create the file importing gridToRgba and PixelGrid from './pixelGrid'. Export interface SpriteSheet { width: number; height: number; frameWidth: number; frameHeight: number; frameCount: number; data: Uint8ClampedArray }.",
+      "expected": "Interface compiles."
+    },
+    {
+      "file": "game/frontend/src/art/spriteSheet.ts",
+      "symbol": "new: buildSpriteSheet",
+      "lines": "after SpriteSheet",
+      "action": "Export buildSpriteSheet(frames: readonly PixelGrid[]): SpriteSheet. Throw Error('no frames') when frames.length is 0. Convert every frame with gridToRgba; throw Error if any width/height differs from the first frame's. Set sheetWidth = frameWidth*frames.length. Allocate Uint8ClampedArray(sheetWidth*frameHeight*4). For frame k and row y, data.set(frameData.subarray(y*frameWidth*4,(y+1)*frameWidth*4), (y*sheetWidth + k*frameWidth)*4). Return the metadata and data.",
+      "code": "export function buildSpriteSheet(frames: readonly PixelGrid[]): SpriteSheet { /* as described */ }",
+      "expected": "4 frames of 32x48 give width 128, height 48, frameCount 4."
+    }
+  ],
+  "created_at": "2026-11-24T02:59:01.098725+00:00",
+  "updated_at": "2026-11-24T03:00:21.346314+00:00"
+}

@@ -1,0 +1,67 @@
+{
+  "id": "01M85J8GEAP7HCX423N8W99KND",
+  "intent_id": "01M85HZBHYFHX9NEENB8V83S80",
+  "title": "Act: Remove scene and store focus in the BootScene SHUTDOWN handler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Blur every SceneObject and set focusedObjectId to null on shutdown",
+  "description": "Extend the SHUTDOWN callback in BootScene.create so focus is cleared after the store is unsubscribed and before objects are destroyed.",
+  "acceptance_criteria": [
+    "All objects blurred",
+    "Store focus null"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/phaser/BootScene.ts"
+    ],
+    "out_of_scope": [
+      "onStateChange"
+    ],
+    "preserve": [
+      "existing cleanup"
+    ]
+  },
+  "technical_constraints": [
+    "Unsubscribe first",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "Shutdown clears focus; tsc passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-718.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85J2QP2QGWW9DYTZ6YNBHQM",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-718.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85J8GEAG40KVWN8VXBRXS0Z"
+  ],
+  "sim_node_id": "01M85J2QP2KR2D8HR5X1B611X6",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-718.md",
+  "artifact_id": "UNIT-718",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create SHUTDOWN handler",
+      "lines": "L73-L84",
+      "action": "Immediately after this.unsubscribe = null and before this.effects.forEach, add a loop calling o.blur() on every this.sceneObjects entry, then call useGameStore.getState().setFocusedObject(null).",
+      "code": "this.sceneObjects.forEach((o) => o.blur());\nuseGameStore.getState().setFocusedObject(null);",
+      "expected": "After SHUTDOWN no object is focused and the store focus id is null."
+    }
+  ],
+  "created_at": "2026-11-24T01:20:55.242156+00:00",
+  "updated_at": "2026-11-24T01:21:25.573752+00:00"
+}

@@ -1,0 +1,518 @@
+{
+  "intent_id": "01M84FAX57EP7AEAK5DCCEZWXM",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84FC8A0F4ETBSAPDHES76YV",
+      "kind": "intent",
+      "title": "SG-7.2 · Extend the worker config with work root, budget, auto-publish and provider kind",
+      "body": "Context: backend/worker/internal/config/config.go already loads worker.world_id, repo_path, poll_interval, execution_timeout and max_retries with defaults and env overrides. Desired behavior: add the work root, maximum budget, auto-publish flag and provider kind, and validate these together with the existing timeout and max retries. Expected result: LoadFS returns a fully defaulted, validated Config or a field-naming error. Why: the execution engine needs these controls before it can run supervised, budgeted executions.\n\n## Acceptance criteria\n- Given a YAML with only worker.repo_path, when LoadFS runs, then WorkRoot, MaxBudget, AutoPublish and ProviderKind hold documented defaults\n- Given an invalid timeout, retries, budget or provider kind, when LoadFS runs, then it returns a nil config and an error naming the field\n\n\n## Scope\n- In scope: backend/worker/internal/config/config.go\n- In scope: backend/worker/configs/config.example.yaml\n- Out of scope: Using the new fields in the runner or providers\n- Out of scope: Backend and frontend config\n- Preserve: Existing defaults for poll_interval, execution_timeout, max_retries, log and store\n- Preserve: Existing repo_path validation and env overrides\n\n\n## Technical constraints\n- Go, gopkg.in/yaml.v3, no new dependencies\n- Auto-publish default false (supervised publishing)\n\n\n## Definition of done\n- Config fields, defaults and validation implemented\n- Example YAML documents the new keys\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Worker config gains work_root, max_budget, auto_publish and provider_kind, and validates them",
+      "description": "Context: backend/worker/internal/config/config.go already loads worker.world_id, repo_path, poll_interval, execution_timeout and max_retries with defaults and env overrides. Desired behavior: add the work root, maximum budget, auto-publish flag and provider kind, and validate these together with the existing timeout and max retries. Expected result: LoadFS returns a fully defaulted, validated Config or a field-naming error. Why: the execution engine needs these controls before it can run supervised, budgeted executions.",
+      "acceptance_criteria": [
+        "Given a YAML with only worker.repo_path, when LoadFS runs, then WorkRoot, MaxBudget, AutoPublish and ProviderKind hold documented defaults",
+        "Given an invalid timeout, retries, budget or provider kind, when LoadFS runs, then it returns a nil config and an error naming the field"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/worker/internal/config/config.go",
+          "backend/worker/configs/config.example.yaml"
+        ],
+        "out_of_scope": [
+          "Using the new fields in the runner or providers",
+          "Backend and frontend config"
+        ],
+        "preserve": [
+          "Existing defaults for poll_interval, execution_timeout, max_retries, log and store",
+          "Existing repo_path validation and env overrides"
+        ]
+      },
+      "technical_constraints": [
+        "Go, gopkg.in/yaml.v3, no new dependencies",
+        "Auto-publish default false (supervised publishing)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Config fields, defaults and validation implemented",
+        "Example YAML documents the new keys",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-037.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84F6TVFM92WZ5NK76MMTJKG",
+      "links": [
+        "trace:01M84F6TVFM92WZ5NK76MMTJKG",
+        "artifact:.ai-dlc/intent/INT-037.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-037.md",
+      "artifact_id": "INT-037"
+    },
+    {
+      "id": "01M84FC8A0GG5J4RA6ERE3528F",
+      "kind": "requirement",
+      "title": "REQ · Worker config exposes work root, max budget, auto-publish and provider kind with defaults",
+      "body": "Context: WorkerConfig has no fields for work root, budget, publish mode or provider. Desired behavior: add WorkRoot (work_root), MaxBudget (max_budget, float USD), AutoPublish (auto_publish) and ProviderKind (provider_kind) and default them in LoadFS. Expected result: omitted keys yield work_root .storyforge/work, max_budget 5, auto_publish false, provider_kind mock. Why: safe supervised defaults.\n\n## Acceptance criteria\n- Given YAML omitting the new keys, when LoadFS runs, then WorkRoot is .storyforge/work, MaxBudget is 5, AutoPublish is false and ProviderKind is mock\n- Given YAML setting work_root, max_budget, auto_publish true and provider_kind claude, when LoadFS runs, then those values are returned unchanged\n\n\n## Scope\n- In scope: WorkerConfig fields\n- In scope: defaults in LoadFS\n- In scope: config.example.yaml keys\n- Out of scope: Validation of values\n- Preserve: Existing fields and defaults\n\n\n## Technical constraints\n- Mirror the existing default-constant pattern\n\n\n## Definition of done\n- Fields and defaults present\n- Example YAML updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "New WorkerConfig fields are parsed from YAML and defaulted",
+      "description": "Context: WorkerConfig has no fields for work root, budget, publish mode or provider. Desired behavior: add WorkRoot (work_root), MaxBudget (max_budget, float USD), AutoPublish (auto_publish) and ProviderKind (provider_kind) and default them in LoadFS. Expected result: omitted keys yield work_root .storyforge/work, max_budget 5, auto_publish false, provider_kind mock. Why: safe supervised defaults.",
+      "acceptance_criteria": [
+        "Given YAML omitting the new keys, when LoadFS runs, then WorkRoot is .storyforge/work, MaxBudget is 5, AutoPublish is false and ProviderKind is mock",
+        "Given YAML setting work_root, max_budget, auto_publish true and provider_kind claude, when LoadFS runs, then those values are returned unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "WorkerConfig fields",
+          "defaults in LoadFS",
+          "config.example.yaml keys"
+        ],
+        "out_of_scope": [
+          "Validation of values"
+        ],
+        "preserve": [
+          "Existing fields and defaults"
+        ]
+      },
+      "technical_constraints": [
+        "Mirror the existing default-constant pattern"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Fields and defaults present",
+        "Example YAML updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-090.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FC8A0F4ETBSAPDHES76YV",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M84FC8A0F4ETBSAPDHES76YV",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-090.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0F4ETBSAPDHES76YV"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-090.md",
+      "artifact_id": "REQ-090"
+    },
+    {
+      "id": "01M84FC8A0BBMD5QTZ4JVQJT3B",
+      "kind": "requirement",
+      "title": "REQ · Worker config validation rejects invalid execution settings with field-naming errors",
+      "body": "Context: LoadFS validates only repo_path. Desired behavior: after defaults, reject negative execution_timeout, negative max_retries, negative max_budget and a provider_kind other than mock or claude. Expected result: error text contains the YAML key name and config is nil. Why: fail fast on a misconfigured worker.\n\n## Acceptance criteria\n- Given execution_timeout of -1m, max_retries of -1, max_budget of -1 or provider_kind of gpt, when LoadFS runs, then it returns a nil config and an error containing execution_timeout, max_retries, max_budget or provider_kind respectively\n- Given provider_kind mock or claude with non-negative numbers, when LoadFS runs, then no error is returned\n\n\n## Scope\n- In scope: validate function called from LoadFS\n- Out of scope: Validating repo_path existence on disk\n- Preserve: repo_path empty error message\n\n\n## Technical constraints\n- Validation runs after defaults so zero values still default\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Invalid values rejected with key-naming errors\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "LoadFS validates timeout, retries, budget and provider kind",
+      "description": "Context: LoadFS validates only repo_path. Desired behavior: after defaults, reject negative execution_timeout, negative max_retries, negative max_budget and a provider_kind other than mock or claude. Expected result: error text contains the YAML key name and config is nil. Why: fail fast on a misconfigured worker.",
+      "acceptance_criteria": [
+        "Given execution_timeout of -1m, max_retries of -1, max_budget of -1 or provider_kind of gpt, when LoadFS runs, then it returns a nil config and an error containing execution_timeout, max_retries, max_budget or provider_kind respectively",
+        "Given provider_kind mock or claude with non-negative numbers, when LoadFS runs, then no error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "validate function called from LoadFS"
+        ],
+        "out_of_scope": [
+          "Validating repo_path existence on disk"
+        ],
+        "preserve": [
+          "repo_path empty error message"
+        ]
+      },
+      "technical_constraints": [
+        "Validation runs after defaults so zero values still default"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Invalid values rejected with key-naming errors",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-091.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FC8A0F4ETBSAPDHES76YV",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M84FC8A0F4ETBSAPDHES76YV",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-091.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0F4ETBSAPDHES76YV"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-091.md",
+      "artifact_id": "REQ-091"
+    },
+    {
+      "id": "01M84FC8A04C2KN2XHXFF9PNG0",
+      "kind": "unit",
+      "title": "Act: Add work root, max budget, auto-publish and provider kind fields with defaults",
+      "body": "Add four fields to WorkerConfig, default constants, default assignment in LoadFS and example YAML keys.\n\n## Acceptance criteria\n- WorkerConfig has WorkRoot, MaxBudget, AutoPublish, ProviderKind with yaml tags\n- LoadFS applies defaults for omitted keys\n\n\n## Scope\n- In scope: config.go\n- In scope: config.example.yaml\n- Out of scope: validation\n- Preserve: existing defaults\n\n\n## Technical constraints\n- Code path: `backend/worker/internal/config/config.go`\n- Code path: `backend/worker/configs/config.example.yaml`\n\n\n## Definition of done\n- Fields and defaults implemented\n- Example YAML lists new keys\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Extend WorkerConfig and LoadFS defaults",
+      "description": "Add four fields to WorkerConfig, default constants, default assignment in LoadFS and example YAML keys.",
+      "acceptance_criteria": [
+        "WorkerConfig has WorkRoot, MaxBudget, AutoPublish, ProviderKind with yaml tags",
+        "LoadFS applies defaults for omitted keys"
+      ],
+      "scope": {
+        "in_scope": [
+          "config.go",
+          "config.example.yaml"
+        ],
+        "out_of_scope": [
+          "validation"
+        ],
+        "preserve": [
+          "existing defaults"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `backend/worker/internal/config/config.go`",
+        "Code path: `backend/worker/configs/config.example.yaml`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Fields and defaults implemented",
+        "Example YAML lists new keys",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-179.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FC8A0GG5J4RA6ERE3528F",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M84FC8A0GG5J4RA6ERE3528F",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-179.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0GG5J4RA6ERE3528F"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-179.md",
+      "artifact_id": "UNIT-179",
+      "steps": [
+        {
+          "file": "backend/worker/internal/config/config.go",
+          "symbol": "const block",
+          "lines": "L14-L23",
+          "action": "Add constants defaultWorkRoot = \".storyforge/work\", defaultMaxBudget = 5.0, defaultProviderKind = \"mock\" inside the existing const block.",
+          "code": "defaultWorkRoot     = \".storyforge/work\"\ndefaultMaxBudget    = 5.0\ndefaultProviderKind = \"mock\"",
+          "expected": "Constants compile alongside the existing ones."
+        },
+        {
+          "file": "backend/worker/internal/config/config.go",
+          "symbol": "WorkerConfig",
+          "lines": "L33-L39",
+          "action": "Append four fields after MaxRetries.",
+          "code": "WorkRoot     string  `yaml:\"work_root\"`\nMaxBudget    float64 `yaml:\"max_budget\"`\nAutoPublish  bool    `yaml:\"auto_publish\"`\nProviderKind string  `yaml:\"provider_kind\"`",
+          "expected": "yaml keys work_root, max_budget, auto_publish, provider_kind unmarshal into the struct."
+        },
+        {
+          "file": "backend/worker/internal/config/config.go",
+          "symbol": "LoadFS",
+          "lines": "L74-L89",
+          "action": "After the MaxRetries default, set WorkRoot to defaultWorkRoot when empty, MaxBudget to defaultMaxBudget when 0, ProviderKind to defaultProviderKind when empty. AutoPublish stays as parsed (false default).",
+          "code": "if cfg.Worker.WorkRoot == \"\" { cfg.Worker.WorkRoot = defaultWorkRoot }\nif cfg.Worker.MaxBudget == 0 { cfg.Worker.MaxBudget = defaultMaxBudget }\nif cfg.Worker.ProviderKind == \"\" { cfg.Worker.ProviderKind = defaultProviderKind }",
+          "expected": "Omitted keys yield documented defaults."
+        },
+        {
+          "file": "backend/worker/configs/config.example.yaml",
+          "symbol": "worker",
+          "lines": "L1-L6",
+          "action": "Append under worker: work_root, max_budget, auto_publish and provider_kind lines.",
+          "code": "  work_root: \".storyforge/work\"\n  max_budget: 5\n  auto_publish: false\n  provider_kind: \"mock\"",
+          "expected": "Example config lists all new keys with defaults."
+        }
+      ]
+    },
+    {
+      "id": "01M84FC8A0WCHYPXZ1ZBC5KTR2",
+      "kind": "unit",
+      "title": "Act: Validate execution timeout, retries, budget and provider kind in LoadFS",
+      "body": "Add a validate(cfg *Config) error helper checking execution_timeout, max_retries, max_budget and provider_kind, called at the end of LoadFS.\n\n## Acceptance criteria\n- Negative timeout, retries, budget and unknown provider return key-naming errors\n- Valid values return no error\n\n\n## Scope\n- In scope: config.go validate\n- Out of scope: new fields defaults\n- Preserve: repo_path error\n\n\n## Technical constraints\n- Code path: `backend/worker/internal/config/config.go`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- validate wired into LoadFS\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add validate function rejecting invalid values",
+      "description": "Add a validate(cfg *Config) error helper checking execution_timeout, max_retries, max_budget and provider_kind, called at the end of LoadFS.",
+      "acceptance_criteria": [
+        "Negative timeout, retries, budget and unknown provider return key-naming errors",
+        "Valid values return no error"
+      ],
+      "scope": {
+        "in_scope": [
+          "config.go validate"
+        ],
+        "out_of_scope": [
+          "new fields defaults"
+        ],
+        "preserve": [
+          "repo_path error"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `backend/worker/internal/config/config.go`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "validate wired into LoadFS",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-180.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FC8A0BBMD5QTZ4JVQJT3B",
+      "matched_feature_id": "01M848ZFYJ5E173P68XH1YEFX4",
+      "links": [
+        "parent:01M84FC8A0BBMD5QTZ4JVQJT3B",
+        "trace:01M848ZFYJ5E173P68XH1YEFX4",
+        "artifact:.ai-dlc/units/UNIT-180.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0BBMD5QTZ4JVQJT3B"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-180.md",
+      "artifact_id": "UNIT-180",
+      "steps": [
+        {
+          "file": "backend/worker/internal/config/config.go",
+          "symbol": "new: validate",
+          "lines": "after L110",
+          "action": "Add func validate(cfg *Config) error returning fmt.Errorf errors that name worker.execution_timeout (<0), worker.max_retries (<0), worker.max_budget (<0) and worker.provider_kind (not mock or claude).",
+          "code": "func validate(cfg *Config) error {\n\tw := cfg.Worker\n\tif w.ExecutionTimeout < 0 { return errors.New(\"config: worker.execution_timeout must not be negative\") }\n\tif w.MaxRetries < 0 { return errors.New(\"config: worker.max_retries must not be negative\") }\n\tif w.MaxBudget < 0 { return errors.New(\"config: worker.max_budget must not be negative\") }\n\tif w.ProviderKind != \"mock\" && w.ProviderKind != \"claude\" { return fmt.Errorf(\"config: worker.provider_kind %q must be mock or claude\", w.ProviderKind) }\n\treturn nil\n}",
+          "expected": "Function compiles."
+        },
+        {
+          "file": "backend/worker/internal/config/config.go",
+          "symbol": "LoadFS",
+          "lines": "L74-L92",
+          "action": "Before `return &cfg, nil` call validate(&cfg) and return nil, err when it fails.",
+          "code": "if err := validate(&cfg); err != nil {\n\treturn nil, err\n}",
+          "expected": "Invalid configs return nil config and a key-naming error."
+        }
+      ]
+    },
+    {
+      "id": "01M84FC8A0Z6JABVNHXYT405M6",
+      "kind": "unit",
+      "title": "Verify: Worker config new-field defaults and overrides unit tests",
+      "body": "Add tests in config_test.go with fstest.MapFS proving defaults and explicit values.\n\n## Acceptance criteria\n- Defaults asserted for the four new fields\n- Explicit YAML values returned unchanged\n\n\n## Scope\n- In scope: config_test.go\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for defaults and explicit values",
+      "description": "Add tests in config_test.go with fstest.MapFS proving defaults and explicit values.",
+      "acceptance_criteria": [
+        "Defaults asserted for the four new fields",
+        "Explicit YAML values returned unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "config_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-181.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FC8A04C2KN2XHXFF9PNG0",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M84FC8A04C2KN2XHXFF9PNG0",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-181.md"
+      ],
+      "depends_on": [
+        "01M84FC8A04C2KN2XHXFF9PNG0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-181.md",
+      "artifact_id": "UNIT-181",
+      "steps": [
+        {
+          "file": "backend/worker/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_NewFieldDefaults",
+          "lines": "after L43",
+          "action": "Load YAML \"worker:\\n  repo_path: /r\\n\" via fstest.MapFS and noEnv; assert WorkRoot==\".storyforge/work\", MaxBudget==5, AutoPublish==false, ProviderKind==\"mock\".",
+          "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_NewFieldDefaults",
+          "expected": "Test passes."
+        },
+        {
+          "file": "backend/worker/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_NewFieldExplicit",
+          "lines": "new",
+          "action": "Load YAML with repo_path /r, work_root /w, max_budget 12.5, auto_publish true, provider_kind claude; assert each field equals the input.",
+          "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_NewFieldExplicit",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M84FC8A0FWZFAYTXB8EZS149",
+      "kind": "unit",
+      "title": "Verify: Worker config validation unit tests",
+      "body": "Add table-driven test asserting each invalid setting is rejected with key-naming error and valid ones are accepted.\n\n## Acceptance criteria\n- Each invalid input yields nil config and error naming the key\n- mock and claude accepted\n\n\n## Scope\n- In scope: config_test.go\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Table test for invalid values",
+      "description": "Add table-driven test asserting each invalid setting is rejected with key-naming error and valid ones are accepted.",
+      "acceptance_criteria": [
+        "Each invalid input yields nil config and error naming the key",
+        "mock and claude accepted"
+      ],
+      "scope": {
+        "in_scope": [
+          "config_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-182.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FC8A0WCHYPXZ1ZBC5KTR2",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M84FC8A0WCHYPXZ1ZBC5KTR2",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-182.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0WCHYPXZ1ZBC5KTR2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-182.md",
+      "artifact_id": "UNIT-182",
+      "steps": [
+        {
+          "file": "backend/worker/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_Validation",
+          "lines": "new",
+          "action": "Table cases, each YAML prefixed with 'worker:\\n  repo_path: /r\\n': execution_timeout: -1m -> want 'execution_timeout'; max_retries: -1 -> 'max_retries'; max_budget: -1 -> 'max_budget'; provider_kind: gpt -> 'provider_kind'. Assert err non-nil, cfg nil, err contains the key.",
+          "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_Validation",
+          "expected": "All cases pass."
+        },
+        {
+          "file": "backend/worker/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_ValidProviders",
+          "lines": "new",
+          "action": "For provider_kind mock and claude with repo_path /r, assert LoadFS returns nil error and ProviderKind equals the input.",
+          "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_ValidProviders",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M84FC8A0JXJP79YK4NABJJ5G",
+      "kind": "evidence",
+      "title": "Evidence: Worker config extension unit tests",
+      "body": "Evidence that the worker config package tests pass, covering new defaults and validation.\n\n## Acceptance criteria\n- go test ./internal/config passes\n- Defaults and validation tests are included in the run\n\n\n## Scope\n- In scope: test output\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Config unit test results",
+      "description": "Evidence that the worker config package tests pass, covering new defaults and validation.",
+      "acceptance_criteria": [
+        "go test ./internal/config passes",
+        "Defaults and validation tests are included in the run"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-037.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FC8A0Z6JABVNHXYT405M6",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M84FC8A0Z6JABVNHXYT405M6",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-037.md"
+      ],
+      "depends_on": [
+        "01M84FC8A0Z6JABVNHXYT405M6",
+        "01M84FC8A0FWZFAYTXB8EZS149"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-037.md",
+      "artifact_id": "EVD-037"
+    }
+  ],
+  "created_at": "2026-11-23T15:11:21.678736+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

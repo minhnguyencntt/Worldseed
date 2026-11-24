@@ -1,0 +1,84 @@
+{
+  "id": "01M84X7K92TPXEEZH2HNMTN6GY",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "Act: Extend RenderHandle and SceneObject with hover, label and click",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add pointer interaction to the entity",
+  "description": "Extend RenderSpriteSpec and RenderHandle, and add hover state, last-synced state and an interact listener to SceneObject.",
+  "acceptance_criteria": [
+    "RenderHandle exposes setHighlighted, setLabelVisible, onHover, onClick",
+    "SceneObject.onInteract registers a listener fired on visible clicks"
+  ],
+  "scope": {
+    "in_scope": [
+      "renderContext.ts",
+      "SceneObject.ts"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Phaser adapter"
+    ],
+    "preserve": [
+      "Constructor createSprite fields"
+    ]
+  },
+  "technical_constraints": [
+    "No Phaser import",
+    "Code path: `game/src/engine/renderContext.ts`",
+    "Code path: `game/src/entities/SceneObject.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "tsc --noEmit passes for game/src",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-483.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84X58HRPGDZDHYE2M4PMMR8",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-483.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84X7K92PA1S22437DN17SH6"
+  ],
+  "sim_node_id": "01M84X58HR7CQRBE4QRZSQEMKN",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-483.md",
+  "artifact_id": "UNIT-483",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/renderContext.ts",
+      "symbol": "RenderSpriteSpec, RenderHandle",
+      "lines": "L1-L3",
+      "action": "Add optional label?: string and bounds?: {x:number;y:number;width:number;height:number} to RenderSpriteSpec; add to RenderHandle: setHighlighted(on: boolean): void; setLabelVisible(on: boolean): void; onHover(cb: (over: boolean) => void): void; onClick(cb: () => void): void",
+      "code": "RenderHandle { setVisible; destroy; setHighlighted(on: boolean): void; setLabelVisible(on: boolean): void; onHover(cb: (over: boolean) => void): void; onClick(cb: () => void): void }",
+      "expected": "Interfaces compile with the new members"
+    },
+    {
+      "file": "game/src/entities/SceneObject.ts",
+      "symbol": "SceneObject constructor",
+      "lines": "L11-L22",
+      "action": "Pass label: spec.name and bounds: spec.interactionBounds in the createSprite argument; then register this.handle.onHover(over => { if (!this.visible) return; this.handle.setHighlighted(over); this.handle.setLabelVisible(over); }) and this.handle.onClick(() => this.activate())",
+      "expected": "Hover and click wired at construction"
+    },
+    {
+      "file": "game/src/entities/SceneObject.ts",
+      "symbol": "SceneObject.sync, onInteract, activate",
+      "lines": "L24-L26",
+      "action": "Add private visible = true, private lastState?: GameState and private listener?: (e:{objectId:string; actions:ActionSpec[]}) => void; sync stores state, sets visible = evaluateAll(...), calls setVisible(visible) and, when hidden, setHighlighted(false) and setLabelVisible(false); add onInteract(cb) setting the listener; add activate(): when visible and lastState defined, call listener with {objectId: spec.id, actions: availableActions(lastState, spec)}",
+      "expected": "Visible clicks emit, hidden clicks do not"
+    }
+  ],
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.564965+00:00"
+}

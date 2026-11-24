@@ -1,0 +1,56 @@
+{
+  "id": "01M84HRSR8FMRP4FQNBSN01RB2",
+  "intent_id": "01M84HPHE1MGZX3P6JQ38H90PF",
+  "title": "REQ · Server serves only round admin routes and the backend compiles without execution code",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "server.New no longer wires execution routes; admin routes are the round routes only.",
+  "description": "Context: backend/internal/server/server.go imports internal/execution, builds exStore and eh, and adminRoutes returns /executions, /executions/{id}/retry and /executions/{id}/approve before the round routes. Desired behavior: those imports, variables and routes are removed and New mounts adminRoundRoutes(rh) behind admin.Middleware. Expected result: remaining packages compile and tests pass. Why: nothing may import removed code.",
+  "acceptance_criteria": [
+    "Given server.New, when the router is walked, then /api/v1/admin serves exactly the five round routes and no /executions route.",
+    "Given any Go file under backend/, when imports are read, then none import internal/execution.",
+    "Given go build ./... and go test for server, then both succeed."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go",
+      "backend/internal/server/server_test.go"
+    ],
+    "out_of_scope": [
+      "Frontend admin client"
+    ],
+    "preserve": [
+      "Round admin routes and token middleware",
+      "contribution and world routes",
+      "NewScheduler"
+    ]
+  },
+  "technical_constraints": [
+    "Admin routes stay behind admin.Middleware(cfg.Admin.Token)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Server builds and its tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-118.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84HR9G33NBS99QQ0YVWNJ3D",
+    "trace:01M8457KMNQV27GGDGKH8GE5YH",
+    "artifact:.ai-dlc/requirements/REQ-118.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84HRSR8SS6WRK21566PH8RE"
+  ],
+  "sim_node_id": "01M84HR9G3VWGCMYDQY9CXTMTA",
+  "feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+  "artifact_path": ".ai-dlc/requirements/REQ-118.md",
+  "artifact_id": "REQ-118",
+  "created_at": "2026-11-23T15:53:06.056661+00:00",
+  "updated_at": "2026-11-23T15:54:56.549162+00:00"
+}

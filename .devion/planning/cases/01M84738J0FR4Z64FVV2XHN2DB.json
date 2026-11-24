@@ -1,0 +1,435 @@
+{
+  "id": "01M84738J0FR4Z64FVV2XHN2DB",
+  "trigger_node_id": "INT-018, UNIT-091 +6",
+  "node_ids": [
+    "INT-018",
+    "UNIT-091",
+    "UNIT-092",
+    "UNIT-093",
+    "UNIT-094",
+    "REQ-046",
+    "REQ-047",
+    "EVD-018"
+  ],
+  "intent_id": "INT-018",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-018",
+      "title": "SG-5.3 · Round service wired into admin routes and scheduler",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-091",
+      "title": "Act: Confirm admin round route registration in server.New",
+      "kind": "unit",
+      "task_ids": [
+        "01M84738EQ8YKQ087NTDE01AZ5"
+      ],
+      "depends_on": [
+        "REQ-046"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "from_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "started_at": "2026-11-23T12:46:35.357109+00:00",
+      "ended_at": "2026-11-23T12:46:47.184022+00:00",
+      "run_started_at": "2026-11-23T12:46:35.357109+00:00",
+      "duration_ms": 11272,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-092",
+      "title": "Act: Confirm scheduler construction and start in main",
+      "kind": "unit",
+      "task_ids": [
+        "01M84738EQYWBYZASYGQEAY475"
+      ],
+      "depends_on": [
+        "REQ-047"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "from_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "started_at": "2026-11-23T12:46:35.378166+00:00",
+      "ended_at": "2026-11-23T12:46:49.111999+00:00",
+      "run_started_at": "2026-11-23T12:46:35.378166+00:00",
+      "duration_ms": 13179,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-093",
+      "title": "Verify: Admin round route auth and mounting unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84738EQ3BXWJR0BRMYWJD8H"
+      ],
+      "depends_on": [
+        "UNIT-091",
+        "REQ-046"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "from_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "tests": [
+        {
+          "id": "TestNew_AdminRoundsRequireToken",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken",
+          "title": "Admin round endpoints reject requests without a token and accept Bearer tok",
+          "scenario": "Given a server with admin.token tok and a temp repo_path, when the five admin round endpoints are called without Authorization, then each returns 401; with Bearer tok, none returns 401",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": "All 10 subtests passed."
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds",
+          "title": "POST /api/v1/admin/rounds without a token is unauthorized and with Bearer tok is not",
+          "scenario": "Given the admin token tok, when the request has no Authorization or Bearer tok, then 401 or not 401 respectively",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds/ROUND-0000001/open",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds/ROUND-0000001/open",
+          "title": "POST open round without a token is unauthorized and with Bearer tok is not",
+          "scenario": "Given the admin token tok, when the request has no Authorization or Bearer tok, then 401 or not 401 respectively",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds/ROUND-0000001/close",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken/POST_/api/v1/admin/rounds/ROUND-0000001/close",
+          "title": "POST close round without a token is unauthorized and with Bearer tok is not",
+          "scenario": "Given the admin token tok, when the request has no Authorization or Bearer tok, then 401 or not 401 respectively",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken/GET_/api/v1/admin/rounds/ROUND-0000001",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken/GET_/api/v1/admin/rounds/ROUND-0000001",
+          "title": "GET round without a token is unauthorized and with Bearer tok is not",
+          "scenario": "Given the admin token tok, when the request has no Authorization or Bearer tok, then 401 or not 401 respectively",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken/GET_/api/v1/admin/rounds/ROUND-0000001/contributions",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken/GET_/api/v1/admin/rounds/ROUND-0000001/contributions",
+          "title": "GET round contributions without a token is unauthorized and with Bearer tok is not",
+          "scenario": "Given the admin token tok, when the request has no Authorization or Bearer tok, then 401 or not 401 respectively",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted",
+          "title": "Admin round endpoints are mounted when called with Bearer tok against a temp repo holding round-0000001",
+          "scenario": "Given a temp repo_path holding the-boys-room and round-0000001, when each of the five admin round endpoints is called with Bearer tok, then none returns 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": "All 5 subtests passed. open and close log a git add error (temp dir is not a git repo) but respond non-404, which is what the test asserts."
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds",
+          "title": "POST /api/v1/admin/rounds is mounted for Bearer tok",
+          "scenario": "Given the temp repo fixture, when called with Bearer tok, then the response is not 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds/ROUND-0000001/open",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds/ROUND-0000001/open",
+          "title": "POST open round is mounted for Bearer tok",
+          "scenario": "Given the temp repo fixture, when called with Bearer tok, then the response is not 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": "Logs git add error from non-git temp dir; not 404."
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds/ROUND-0000001/close",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted/POST_/api/v1/admin/rounds/ROUND-0000001/close",
+          "title": "POST close round is mounted for Bearer tok",
+          "scenario": "Given the temp repo fixture, when called with Bearer tok, then the response is not 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": "Logs git add error from non-git temp dir; not 404."
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted/GET_/api/v1/admin/rounds/ROUND-0000001",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted/GET_/api/v1/admin/rounds/ROUND-0000001",
+          "title": "GET round is mounted for Bearer tok",
+          "scenario": "Given the temp repo fixture holding round-0000001, when called with Bearer tok, then the response is not 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted/GET_/api/v1/admin/rounds/ROUND-0000001/contributions",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted/GET_/api/v1/admin/rounds/ROUND-0000001/contributions",
+          "title": "GET round contributions is mounted for Bearer tok",
+          "scenario": "Given the temp repo fixture holding round-0000001, when called with Bearer tok, then the response is not 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T12:46:47.193434+00:00",
+      "ended_at": "2026-11-23T12:47:11.703513+00:00",
+      "run_started_at": "2026-11-23T12:46:47.193434+00:00",
+      "duration_ms": 23989,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-094",
+      "title": "Verify: NewScheduler wiring unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84738EQZMHBEQN4PK2YD0XC"
+      ],
+      "depends_on": [
+        "UNIT-092",
+        "REQ-047"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "from_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+      "tests": [
+        {
+          "id": "TestNewScheduler_UsesConfig",
+          "kind": "unit",
+          "name": "TestNewScheduler_UsesConfig",
+          "title": "NewScheduler uses the configured interval and wires the controller and round store",
+          "scenario": "Given a config with round.scheduler_interval 7s and a temporary storage.repo_path, when NewScheduler is built from it, then the scheduler interval is 7s and both the controller and the round store are wired.",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNewScheduler_UsesConfig",
+          "status": "passed",
+          "detail": "PASS in 0.251s. Interval, Controller and Rounds assertions all hold."
+        }
+      ],
+      "started_at": "2026-11-23T12:46:49.121408+00:00",
+      "ended_at": "2026-11-23T12:47:08.714904+00:00",
+      "run_started_at": "2026-11-23T12:46:49.121408+00:00",
+      "duration_ms": 19033,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-046",
+      "title": "REQ · Admin round endpoints are mounted behind the admin token",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-018"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-047",
+      "title": "REQ · Scheduler is built from config and started in main",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-018"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-018",
+      "title": "Evidence: SG-5.3 admin round wiring unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-091",
+        "UNIT-092",
+        "UNIT-093",
+        "UNIT-094"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-092",
+      "dst": "EVD-018"
+    },
+    {
+      "src": "REQ-047",
+      "dst": "UNIT-094"
+    },
+    {
+      "src": "REQ-047",
+      "dst": "UNIT-092"
+    },
+    {
+      "src": "UNIT-092",
+      "dst": "UNIT-094"
+    },
+    {
+      "src": "UNIT-093",
+      "dst": "EVD-018"
+    },
+    {
+      "src": "REQ-046",
+      "dst": "UNIT-091"
+    },
+    {
+      "src": "UNIT-094",
+      "dst": "EVD-018"
+    },
+    {
+      "src": "UNIT-091",
+      "dst": "UNIT-093"
+    },
+    {
+      "src": "INT-018",
+      "dst": "REQ-046"
+    },
+    {
+      "src": "UNIT-091",
+      "dst": "EVD-018"
+    },
+    {
+      "src": "INT-018",
+      "dst": "REQ-047"
+    },
+    {
+      "src": "REQ-046",
+      "dst": "UNIT-093"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84738",
+  "base_sha": "f3a76428f6cfa51c6c09c5af147eb12a74422dc3",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84738J0FR4Z64FVV2XHN2DB:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T12:46:34.560480+00:00",
+  "updated_at": "2026-11-23T12:47:12.234550+00:00",
+  "completed_at": "2026-11-23T12:47:11.704542+00:00",
+  "duration_ms": 37144,
+  "usage_stats": {
+    "total_duration_ms": 67485
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-091",
+    "UNIT-092",
+    "UNIT-093",
+    "UNIT-094"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-091",
+        "title": "Act: Confirm admin round route registration in server.New",
+        "evidence_refs": [
+          {
+            "id": "EVD-018",
+            "path": ".ai-dlc/evidence/EVD-018.md",
+            "title": "Evidence: SG-5.3 admin round wiring unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-091 unless acceptance outcomes recorded in EVD-018 (.ai-dlc/evidence/EVD-018.md; \"Evidence: SG-5.3 admin round wiring unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-092",
+        "title": "Act: Confirm scheduler construction and start in main",
+        "evidence_refs": [
+          {
+            "id": "EVD-018",
+            "path": ".ai-dlc/evidence/EVD-018.md",
+            "title": "Evidence: SG-5.3 admin round wiring unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-092 unless acceptance outcomes recorded in EVD-018 (.ai-dlc/evidence/EVD-018.md; \"Evidence: SG-5.3 admin round wiring unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-093",
+        "title": "Verify: Admin round route auth and mounting unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-018",
+            "path": ".ai-dlc/evidence/EVD-018.md",
+            "title": "Evidence: SG-5.3 admin round wiring unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-093 unless acceptance outcomes recorded in EVD-018 (.ai-dlc/evidence/EVD-018.md; \"Evidence: SG-5.3 admin round wiring unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-094",
+        "title": "Verify: NewScheduler wiring unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-018",
+            "path": ".ai-dlc/evidence/EVD-018.md",
+            "title": "Evidence: SG-5.3 admin round wiring unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-094 unless acceptance outcomes recorded in EVD-018 (.ai-dlc/evidence/EVD-018.md; \"Evidence: SG-5.3 admin round wiring unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T12:46:35.276839+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-091",
+    "UNIT-092",
+    "UNIT-093",
+    "UNIT-094"
+  ]
+}

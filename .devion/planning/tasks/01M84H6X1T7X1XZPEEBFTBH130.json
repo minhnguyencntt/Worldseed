@@ -1,0 +1,75 @@
+{
+  "id": "01M84H6X1T7X1XZPEEBFTBH130",
+  "intent_id": "01M84H5BPMDDKFQ09WVB93984T",
+  "title": "Act: Validate workDir in Claude.Run before executing",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Reject empty work directory without calling Exec",
+  "description": "Add a guard at the top of Claude.Run using strings.TrimSpace.",
+  "acceptance_criteria": [
+    "Empty or whitespace workDir returns an error containing work dir",
+    "Exec is not called in that case"
+  ],
+  "scope": {
+    "in_scope": [
+      "claude.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Exec failure wrapping"
+    ]
+  },
+  "technical_constraints": [
+    "Error prefix 'provider claude:'",
+    "Code path: `backend/worker/internal/provider/claude.go`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Guard present",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-229.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H6HR9Z95277KPWAC87893",
+    "trace:01M84FCFCP7Z364HXSHWWD0S44",
+    "artifact:.ai-dlc/units/UNIT-229.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H6X1T6XJVWGGC7VPVHX0Q"
+  ],
+  "sim_node_id": "01M84H6HR9GZ0GX2XPJZ2AAXGB",
+  "feature_id": "01M84FCFCP7Z364HXSHWWD0S44",
+  "artifact_path": ".ai-dlc/units/UNIT-229.md",
+  "artifact_id": "UNIT-229",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/provider/claude.go",
+      "symbol": "import block",
+      "lines": "L4-L7",
+      "action": "Add the \"strings\" import to the import block.",
+      "code": "import (\n\t\"context\"\n\t\"fmt\"\n\t\"strings\"\n)",
+      "expected": "strings is available."
+    },
+    {
+      "file": "backend/worker/internal/provider/claude.go",
+      "symbol": "Claude.Run",
+      "lines": "L33-L38",
+      "action": "Insert a guard as the first statement of Run returning 0 and an error when strings.TrimSpace(workDir) is empty.",
+      "code": "if strings.TrimSpace(workDir) == \"\" {\n\treturn 0, fmt.Errorf(\"provider claude: work dir is empty\")\n}",
+      "expected": "Empty workDir returns an error before Exec is called."
+    }
+  ],
+  "created_at": "2026-11-23T15:43:19.610569+00:00",
+  "updated_at": "2026-11-23T15:44:06.321918+00:00"
+}

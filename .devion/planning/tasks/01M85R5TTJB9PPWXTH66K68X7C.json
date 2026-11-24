@@ -1,0 +1,73 @@
+{
+  "id": "01M85R5TTJB9PPWXTH66K68X7C",
+  "intent_id": "01M85R04Y7ESS4H737B4QA602P",
+  "title": "Verify: gridToRgba unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for gridToRgba dimensions, palette-only colours and out-of-range rejection",
+  "description": "Write TDD-style unit tests from REQ-G importing gridToRgba and PALETTE directly; no mocks needed as the function is pure.",
+  "acceptance_criteria": [
+    "Tests assert width, height and data length",
+    "Tests assert every pixel colour is in the shared palette",
+    "Tests assert out-of-range, negative, non-integer indices and ragged grids throw",
+    "Tests assert identical bytes on repeated calls"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/gridToRgba.test.ts"
+    ],
+    "out_of_scope": [
+      "product code changes"
+    ],
+    "preserve": [
+      "existing palette tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only; no browser or server",
+    "Phaser ~3.90.0 pin untouched"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test file passes with the command given",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-778.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85R1X8FQJPSA4FM1WMRGMJV",
+    "trace:01M85QW2EBH8ARAB3HWD3AX8SF",
+    "artifact:.ai-dlc/units/UNIT-778.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85R5TTJFNF6Y89G40P8FHQJ"
+  ],
+  "sim_node_id": "01M85R1X8FYFE6J51GTTGFC2HW",
+  "artifact_path": ".ai-dlc/units/UNIT-778.md",
+  "artifact_id": "UNIT-778",
+  "steps": [
+    {
+      "file": "game/frontend/tests/gridToRgba.test.ts",
+      "symbol": "new: describe('gridToRgba') dimensions and palette",
+      "lines": "new",
+      "action": "Add tests importing gridToRgba from '../src/lib/gridToRgba' and PALETTE from '../src/lib/palette'. Test 'returns size': grid [[0,1,2],[3,4,5]] gives width 3, height 2, data.length 24. Test 'palette-only colours': build a Set of '#rrggbb' strings from PALETTE, convert every pixel of a grid using indices 0..47 back to hex and assert membership and alpha 255.",
+      "code": "expect(img.width).toBe(3); expect(img.height).toBe(2); expect(img.data.length).toBe(24);",
+      "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts",
+      "expected": "Size and palette-membership tests pass"
+    },
+    {
+      "file": "game/frontend/tests/gridToRgba.test.ts",
+      "symbol": "new: describe('gridToRgba') errors and determinism",
+      "lines": "after previous test",
+      "action": "Add tests: expect(() => gridToRgba([[PALETTE.length]])).toThrow(); same for [[-1]] and [[1.5]]; ragged [[0,1],[0]] throws; [] throws; two calls on the same grid give equal arrays via expect(Array.from(a.data)).toEqual(Array.from(b.data)).",
+      "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts",
+      "expected": "All throw and determinism tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T03:04:19.026094+00:00",
+  "updated_at": "2026-11-24T03:05:28.173622+00:00"
+}

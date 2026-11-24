@@ -1,0 +1,78 @@
+{
+  "id": "01M849SGKDQ5BVFE53HJJYQDYA",
+  "intent_id": "01M849QW64DPCAKCRHQPBQ25N5",
+  "title": "Verify: Approve, Retry and Reject 401 return to the token gate without stale action error",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for 401 on all three actions and for clearing a prior action error.",
+  "description": "Add tests to the existing adminActions test file using the stubActionFetch helper and fixtures from tests/fixtures/api.ts, which mirror the backend handlers for /api/v1/admin/executions/{id}/{approve|retry|reject}.",
+  "acceptance_criteria": [
+    "Retry and reject 401 each show the Admin token field with 'Invalid token'.",
+    "A prior 500 error is not shown after a 401 and token re-entry."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/adminActions.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "fetch is stubbed; no server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-149.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M849SBHCH3XTMQG3HGSGW544",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-149.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M849SGKDZVYR3CEDQ6PJ2J0B"
+  ],
+  "sim_node_id": "01M849SBHC99W3AXW669ETD39Q",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-149.md",
+  "artifact_id": "UNIT-149",
+  "steps": [
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "new: it retry 401 returns to gate",
+      "lines": "after L205",
+      "action": "Add a test using failedExecutionFixture and stubActionFetch returning json({error:'unauthorized'},401); render AdminApp, enterToken('secret'), click the Retry button and assert findByRole('alert') has text 'Invalid token' and getByLabelText('Admin token') is present.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"retry endpoint returns 401\"",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "new: it reject 401 returns to gate",
+      "lines": "after L205",
+      "action": "Same as the retry test but with executionFixture status 'AWAITING_APPROVAL', clicking the Reject button.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"reject endpoint returns 401\"",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "new: it 401 clears prior action error",
+      "lines": "after L205",
+      "action": "Stub the approve action to return 500 {error:'boom'} on the first call and 401 on the second. Click Approve twice, enter 'secret' at the gate again, and assert that no alert with text 'boom' appears in the Execution region.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"clears prior action error\"",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T13:33:40.845622+00:00",
+  "updated_at": "2026-11-23T13:35:11.587531+00:00"
+}

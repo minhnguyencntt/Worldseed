@@ -1,0 +1,76 @@
+{
+  "id": "01M856R586X4DA9W6S8CC716WN",
+  "intent_id": "01M856K83CFVAYV4ZXQVP28ZQ8",
+  "title": "Act: Sync SceneObjects with the store and emit objectClick",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Wire sync and onInteract in BootScene",
+  "description": "After building objects, BootScene syncs them with the store state and forwards activations to phaserToReact.",
+  "acceptance_criteria": [
+    "sync runs in create and on each store change with non-null state",
+    "onInteract emits objectClick"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.create, onStateChange"
+    ],
+    "out_of_scope": [
+      "Hover events"
+    ],
+    "preserve": [
+      "readState"
+    ]
+  },
+  "technical_constraints": [
+    "No state copy in BootScene",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "R3",
+    "A2"
+  ],
+  "definition_of_done": [
+    "Store changes reach every SceneObject",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-526.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M856NGY2R46QJSMYE83ZM1QH",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-526.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M856R586A225EVDE5Z0TF98F"
+  ],
+  "sim_node_id": "01M856NGY2NZK099D2QTFTMCQX",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-526.md",
+  "artifact_id": "UNIT-526",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create",
+      "lines": "L47-L60",
+      "action": "After building sceneObjects, for each object call o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })), then call this.onStateChange().",
+      "code": "this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));\nthis.onStateChange();",
+      "expected": "Activations reach the bus and initial sync happens"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.onStateChange",
+      "lines": "L62-L64",
+      "action": "Replace the body: const state = this.readState(); if (!state) return; this.sceneObjects.forEach((o) => o.sync(state));",
+      "code": "const state = this.readState();\nif (!state) return;\nthis.sceneObjects.forEach((o) => o.sync(state));",
+      "expected": "Null state is ignored; non-null state syncs every object"
+    }
+  ],
+  "created_at": "2026-11-23T21:59:45.158149+00:00",
+  "updated_at": "2026-11-23T22:02:50.059476+00:00"
+}

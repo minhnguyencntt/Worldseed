@@ -1,0 +1,61 @@
+{
+  "id": "01M84HRSR8ZHTJ53DNK7E72PMA",
+  "intent_id": "01M84HPHE1MGZX3P6JQ38H90PF",
+  "title": "Verify: internal/execution is gone unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Filesystem unit test proving the execution package is deleted.",
+  "description": "Add a unit test that stats backend/internal/execution.",
+  "acceptance_criteria": [
+    "Given the backend tree, when ../execution is stat'ed, then it is not found.",
+    "Given the test, when run, then it passes without touching the network."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/removed_code_test.go"
+    ],
+    "out_of_scope": [
+      "server routes"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-236.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84HR9G3ZHAJBEZ4HR8VWWKM",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-236.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84HRSR8BZHAXK50PNMANCEY"
+  ],
+  "sim_node_id": "01M84HR9G3925YX3MFYRB9SQRS",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-236.md",
+  "artifact_id": "UNIT-236",
+  "steps": [
+    {
+      "file": "backend/internal/server/removed_code_test.go",
+      "symbol": "new: TestExecutionPackageRemoved",
+      "lines": "after TestWorkerModuleRemoved",
+      "action": "Add TestExecutionPackageRemoved asserting os.Stat(\"../execution\") returns an error satisfying os.IsNotExist.",
+      "code": "if _, err := os.Stat(\"../execution\"); !os.IsNotExist(err) { t.Fatalf(\"execution still exists: %v\", err) }",
+      "command": "cd backend && go test ./internal/server -run TestExecutionPackageRemoved",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T15:53:06.056661+00:00",
+  "updated_at": "2026-11-23T15:54:56.526607+00:00"
+}

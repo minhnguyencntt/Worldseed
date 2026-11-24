@@ -1,0 +1,54 @@
+{
+  "id": "01M847EQ4G2FSTW1Q6GSR22FF8",
+  "intent_id": "01M847D5C6SMCTQZMHKHW04FF3",
+  "title": "REQ · Mounted admin round routes answer with exact handler statuses for a Bearer admin token",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "server.New mounts admin round routes and they return 200, 404 and 400 as the handlers define",
+  "description": "Context: adminRoundRoutes is mounted by New behind admin.Middleware. Desired behavior: with Authorization Bearer tok, GET round answers 200, an unknown round answers 404, and POST /rounds with invalid JSON answers 400. Expected result: tests fail if a route is unmounted or middleware swallows the request. Why: != 404 does not prove the handler ran.",
+  "acceptance_criteria": [
+    "Given a server with an on-disk round-0000001, when GET /api/v1/admin/rounds/ROUND-0000001?world=the-boys-room has Bearer tok, then status is 200 and body id is ROUND-0000001",
+    "Given an unknown round id, when GET with Bearer tok, then status is 404 with body not equal to the chi default 404 page",
+    "Given invalid JSON, when POST /api/v1/admin/rounds has Bearer tok, then status is 400 with body invalid json"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go route table"
+    ],
+    "out_of_scope": [
+      "Opening or closing rounds through real Git"
+    ],
+    "preserve": [
+      "adminRoutes ordering",
+      "Middleware token check"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse adminRoundRoutes; do not add routes"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Routes confirmed mounted exactly as in adminRoundRoutes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-052.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847EMSBCM48BXBW6KXW41V8",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-052.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M847EQ4GJ9RQJM65K8XMH2QR"
+  ],
+  "sim_node_id": "01M847EMSBSCTM7QCVZSZV4DTH",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-052.md",
+  "artifact_id": "REQ-052",
+  "created_at": "2026-11-23T12:52:49.936474+00:00",
+  "updated_at": "2026-11-23T12:53:30.836051+00:00"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "01M85F83DHX0VRP9ZFC6KT5MVF",
+  "intent_id": "01M85F23G77XTZTBV1HJ0M6MAE",
+  "title": "REQ · History effect never updates state after it is cancelled",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Cancel guard covers both resolve and reject paths",
+  "description": "Context: the effect has a cancelled flag checked only in .then; .catch has no guard. Desired behavior: every state write (status and entries) in both .then and .catch is skipped once the cleanup ran. Expected result: no updates after close, roundId change or unmount. Why: avoid stale or leaked updates.",
+  "acceptance_criteria": [
+    "Given the sheet closes while listMine is pending, When it later rejects, Then no error message is rendered on reopen before the new load settles",
+    "Given roundId changes while the first request is pending, When the first resolves, Then its entries are not added",
+    "Given the component unmounts, When listMine settles, Then no React state-update warning is logged"
+  ],
+  "scope": {
+    "in_scope": [
+      "cancelled checks in then and catch"
+    ],
+    "out_of_scope": [
+      "AbortController or client changes"
+    ],
+    "preserve": [
+      "Merge of history with in-flight sent entries"
+    ]
+  },
+  "technical_constraints": [
+    "Guard by local cancelled flag set in effect cleanup"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "Both promise branches guarded",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-338.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85F3V33ZM5G5HKCFZZHC9N8",
+    "trace:01M84GAF91YHBCPRJZQFKHDMBG",
+    "artifact:.ai-dlc/requirements/REQ-338.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M85F83DHN7V6J4F0CE8AJNZY"
+  ],
+  "sim_node_id": "01M85F3V34A8049R3TMQNE00SC",
+  "feature_id": "01M84GAF91YHBCPRJZQFKHDMBG",
+  "artifact_path": ".ai-dlc/requirements/REQ-338.md",
+  "artifact_id": "REQ-338",
+  "created_at": "2026-11-24T00:28:16.177688+00:00",
+  "updated_at": "2026-11-24T00:30:32.123866+00:00"
+}

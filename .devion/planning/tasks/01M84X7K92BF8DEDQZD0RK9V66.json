@@ -1,0 +1,62 @@
+{
+  "id": "01M84X7K92BF8DEDQZD0RK9V66",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "SG-5.2 · Scene object entity with hover, label, click, actions and keyboard access",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "SceneObject gains bounds, hover highlight, name label, click event, contextual actions, visibility and keyboard focus/activation through a shared interaction helper",
+  "description": "Context: game/src/entities/SceneObject.ts only creates a sprite (key, position, scale, depth) and toggles visibility from visibleWhen. No interaction helper exists in game/src/systems yet. Desired behavior: every authored ObjectSpec becomes an interactive entity. Expected result: hover highlights the object and shows its name, a click or keyboard activation emits an event carrying the object id and its currently available actions. Why: interactive bedroom objects must be data-driven and keyboard accessible.",
+  "acceptance_criteria": [
+    "Given a pointer position inside an object's interactionBounds, When hit-tested, Then the helper reports a hit and a position outside reports a miss",
+    "Given an object with actions guarded by conditions, When the state changes, Then only actions whose conditions pass are listed",
+    "Given a pointer over the object, When hover starts and ends, Then highlight and name label toggle on and off",
+    "Given a click or Enter/Space on a focused visible object, When activated, Then an interact event with the object id and available actions is emitted"
+  ],
+  "scope": {
+    "in_scope": [
+      "New interaction helper in game/src/systems",
+      "SceneObject hover, label, click, focus and activation",
+      "RenderContext/RenderHandle interface extension",
+      "buildScene focus cycling and interact callback"
+    ],
+    "out_of_scope": [
+      "Phaser-backed RenderContext implementation",
+      "React ActionMenu changes",
+      "New content or assets"
+    ],
+    "preserve": [
+      "ObjectSpec schema",
+      "Existing SceneObject sprite creation arguments and visibility sync",
+      "buildScene layer ordering"
+    ]
+  },
+  "technical_constraints": [
+    "Engine code stays free of Phaser imports; rendering goes through RenderContext",
+    "Reuse evaluateAll from game/src/systems/conditions.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements delivered with Act and Verify units",
+    "Unit tests green with fake render context",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-097.md`"
+  ],
+  "non_functional": [
+    "Pure, deterministic helper functions"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84G51W28MN6Z7X3354EYDE3",
+    "artifact:.ai-dlc/intent/INT-097.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84X58HR1WZMW5X405HMF9CC",
+  "feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+  "artifact_path": ".ai-dlc/intent/INT-097.md",
+  "artifact_id": "INT-097",
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.613354+00:00"
+}

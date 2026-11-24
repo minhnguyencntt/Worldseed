@@ -1,0 +1,57 @@
+{
+  "id": "01M85N053JTEQD7A05N3Z4JJJZ",
+  "intent_id": "01M85MW9835357XVCB9VHZVCE4",
+  "title": "SG-11.2.1 Subscribe BootScene.create to the transitionTo event",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "BootScene.create listens for transitionTo on the React-to-Phaser bus, fades the camera out, then starts the named scene.",
+  "description": "Context: ReactToPhaserEvents already declares transitionTo { sceneId } in game/frontend/src/phaser/events.ts and BootScene.create already subscribes to playAnimation, but nothing listens for transitionTo. Desired behavior: create() subscribes to transitionTo; the handler fades the main camera out and, when the fade completes, starts the scene named in the event. Expected result: emitting transitionTo from React changes the active Phaser scene after a fade. Why: part of SG-11 so the React UI can drive scene changes. Shutdown cleanup is the separate sub-goal SG-11.2.2.",
+  "acceptance_criteria": [
+    "Given BootScene.create has run, when reactToPhaser emits transitionTo with { sceneId: 'library' }, then cameras.main.fadeOut is called once.",
+    "Given the fade-out has been requested, when the camera fires its fade-out-complete event, then scene.start is called once with 'library'.",
+    "Given the fade-out has not completed, when transitionTo is handled, then scene.start has not been called yet."
+  ],
+  "scope": {
+    "in_scope": [
+      "Subscribe to transitionTo in BootScene.create",
+      "Fade the main camera out and start the target scene on completion"
+    ],
+    "out_of_scope": [
+      "Unsubscribing on SHUTDOWN (SG-11.2.2)",
+      "Emitting transitionTo from App",
+      "Defining new scenes or changing the event payload type"
+    ],
+    "preserve": [
+      "Existing playAnimation subscription and shutdown handling",
+      "Typed event bus API in events.ts",
+      "sceneReady emission"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only (cameras.main.fadeOut, Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, scene.start)",
+    "Use the existing reactToPhaser bus; no new dependencies"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Handler subscribed in create() and behaves per the acceptance criteria",
+    "Type-check passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-153.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M85MNPTJCZY8SCT0WFZBV56X",
+    "artifact:.ai-dlc/intent/INT-153.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85MXSA1QHDGB0S06DB44SER",
+  "feature_id": "01M85MNPTJCZY8SCT0WFZBV56X",
+  "artifact_path": ".ai-dlc/intent/INT-153.md",
+  "artifact_id": "INT-153",
+  "created_at": "2026-11-24T02:08:47.218098+00:00",
+  "updated_at": "2026-11-24T02:10:50.087720+00:00"
+}

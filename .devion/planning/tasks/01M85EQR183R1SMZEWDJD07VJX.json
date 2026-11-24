@@ -1,0 +1,54 @@
+{
+  "id": "01M85EQR183R1SMZEWDJD07VJX",
+  "intent_id": "01M85EHYVNQGQZP5JZQ8KG4MWA",
+  "title": "SG-8.4 Robust, visible contribution history loading",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Contribution history shows loading, empty and error-with-retry states; remaining count derives from history",
+  "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) calls listMine(roundId) on open and silently swallows failures, so players see nothing while loading and nothing on error. Desired behavior: the history list shows explicit loading, empty and error-with-retry states, and the remaining count is derived from the loaded history. Why: players must understand what the history area is doing and recover from failures.",
+  "acceptance_criteria": [
+    "Given the sheet is open and listMine is pending, when it renders, then a loading message is shown in the history area",
+    "Given listMine resolves with an empty list, when it renders, then an empty-state message is shown and Contributions left equals MAX_PER_PLAYER",
+    "Given listMine rejects, when it renders, then an error message and a Retry button are shown, and clicking Retry calls listMine again",
+    "Given listMine resolves with N sent items, when it renders, then Contributions left equals MAX_PER_PLAYER minus N"
+  ],
+  "scope": {
+    "in_scope": [
+      "History states in ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Backend changes",
+      "Changes to submit validation or quota rules"
+    ],
+    "preserve": [
+      "Existing submit flow, validation messages and Radix dialog behavior",
+      "listMine API contract"
+    ]
+  },
+  "technical_constraints": [
+    "Use the real listMine client; no mock data in product code",
+    "Remaining stays derived from entries, not a separate counter"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements implemented and unit tested",
+    "Existing contribution tests still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-134.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84JF0K0XHTV40GE5BY6073A",
+    "artifact:.ai-dlc/intent/INT-134.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85EKHVCPR52KMYHG2PA1EH1",
+  "feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+  "artifact_path": ".ai-dlc/intent/INT-134.md",
+  "artifact_id": "INT-134",
+  "created_at": "2026-11-24T00:19:20.232730+00:00"
+}

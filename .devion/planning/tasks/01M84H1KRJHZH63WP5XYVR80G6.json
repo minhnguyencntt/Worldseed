@@ -1,0 +1,67 @@
+{
+  "id": "01M84H1KRJHZH63WP5XYVR80G6",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "Act: Implement the labelled Mock agent",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create mock.go with Mock.Run writing MOCK-EXECUTION.md",
+  "description": "Create backend/worker/internal/provider/mock.go with type Mock and Run that honours ctx and writes the marker file.",
+  "acceptance_criteria": [
+    "Mock.Run writes MOCK-EXECUTION.md containing MOCK in workDir",
+    "Mock.Run returns cost 0 and a nil error on success"
+  ],
+  "scope": {
+    "in_scope": [
+      "mock.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "runner.Agent"
+    ]
+  },
+  "technical_constraints": [
+    "Standard library only",
+    "New file: `backend/worker/internal/provider/mock.go`"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "package compiles with go build ./internal/provider",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-222.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H148VZC52YY6E3PNV76SW",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-222.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H1KRJ6N55VKQ1D6M3RBJ0"
+  ],
+  "sim_node_id": "01M84H148VBG3AVWP4D1E19ZZ3",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-222.md",
+  "artifact_id": "UNIT-222",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/provider/mock.go",
+      "symbol": "new: Mock.Run",
+      "lines": "new",
+      "action": "Create package provider with type Mock struct{}, const MockMarkerFile = \"MOCK-EXECUTION.md\", method Name() string returning \"mock\" and method Run(ctx context.Context, workDir string) (float64, error). Run returns ctx.Err() when it is already non-nil, otherwise writes MockMarkerFile in workDir with os.WriteFile mode 0o644 and returns 0 and nil, wrapping a write failure as provider mock.",
+      "code": "const mockNotice = \"# MOCK EXECUTION\\n\\nThis run used the MOCK provider. No real development happened.\\n\"",
+      "expected": "go build ./internal/provider succeeds and the file is written on Run"
+    }
+  ],
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.941732+00:00"
+}

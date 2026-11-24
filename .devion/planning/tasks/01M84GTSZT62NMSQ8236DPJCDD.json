@@ -1,0 +1,79 @@
+{
+  "id": "01M84GTSZT62NMSQ8236DPJCDD",
+  "intent_id": "01M84GQXYGEM5FW8AXNR539H4W",
+  "title": "Verify: Poll detection of SCHEDULED and CLOSED Rounds unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with fake Git and fake clock for detection",
+  "description": "Write backend/worker/internal/poller/poller_detect_test.go with fakeGit (records call order, returns configured Rounds/errors), fakeCloser (records calls) and fakeClock types shared by the other poller tests.",
+  "acceptance_criteria": [
+    "Scheduled and Closed IDs are returned as specified.",
+    "Empty list yields empty slices.",
+    "Pull is called before ListRounds once each."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/poller/poller_detect_test.go"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Product code"
+    ]
+  },
+  "technical_constraints": [
+    "All dependencies faked; no filesystem or network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-219.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GT5FNSYHM2ZGGA0XPQ8NG",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-219.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GTSZT2VR1R285P1K9QAX9"
+  ],
+  "sim_node_id": "01M84GT5FNZ39ZGAMQ5CGGQXCX",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-219.md",
+  "artifact_id": "UNIT-219",
+  "steps": [
+    {
+      "file": "backend/worker/internal/poller/poller_detect_test.go",
+      "symbol": "new: fakeGit, fakeCloser, fakeClock",
+      "lines": "new",
+      "action": "Define fakeGit{rounds []Round; pullErr, listErr error; calls []string} whose Pull appends \"pull\" and ListRounds appends \"list\"; fakeCloser{calls []string; errFor map[string]error} whose Close appends the round ID; fakeClock{now time.Time}.",
+      "command": "cd backend/worker && go test ./internal/poller -run TestPollDetectsScheduledAndClosed",
+      "expected": "Helpers compile for all poller tests."
+    },
+    {
+      "file": "backend/worker/internal/poller/poller_detect_test.go",
+      "symbol": "TestPollDetectsScheduledAndClosed",
+      "lines": "new",
+      "action": "Inputs: Rounds R1 SCHEDULED, R2 OPEN with EndsAt one hour after the fake clock, R3 CLOSED. Assert Result.Scheduled equals []string{\"R1\"}, Result.Closed equals []string{\"R3\"}, Result.ClosedNow is empty, err is nil, fakeCloser.calls is empty and fakeGit.calls equals []string{\"pull\",\"list\"}.",
+      "command": "cd backend/worker && go test ./internal/poller -run TestPollDetectsScheduledAndClosed",
+      "expected": "Test passes."
+    },
+    {
+      "file": "backend/worker/internal/poller/poller_detect_test.go",
+      "symbol": "TestPollNoRounds",
+      "lines": "new",
+      "action": "Input: fakeGit with no Rounds. Assert err is nil and all three Result slices have length 0.",
+      "command": "cd backend/worker && go test ./internal/poller -run TestPollNoRounds",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T15:36:43.257859+00:00",
+  "updated_at": "2026-11-23T15:38:54.476681+00:00"
+}

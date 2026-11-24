@@ -1,0 +1,217 @@
+{
+  "id": "01M845SB2505HHAS2BBQN78H96",
+  "trigger_node_id": "INT-013, UNIT-067 +3",
+  "node_ids": [
+    "INT-013",
+    "UNIT-067",
+    "UNIT-068",
+    "REQ-034",
+    "EVD-013"
+  ],
+  "intent_id": "INT-013",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-013",
+      "title": "SG-4.1 · Serve player contribution history at /api/v1/player/me/contributions",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-067",
+      "title": "Act: Move the Mine route to /api/v1/player/me/contributions",
+      "kind": "unit",
+      "task_ids": [
+        "01M845SAYTXAN9EAGJ52TMVQWV"
+      ],
+      "depends_on": [
+        "REQ-034"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "cfb0355a40f656667769b9203676c69904bfc4af",
+      "from_sha": "d347d06fec6e07d9af3bb5c630380c6dd0835298",
+      "started_at": "2026-11-23T12:23:41.765435+00:00",
+      "ended_at": "2026-11-23T12:23:56.816899+00:00",
+      "run_started_at": "2026-11-23T12:23:41.765435+00:00",
+      "duration_ms": 14494,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-068",
+      "title": "Verify: Player contributions route unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M845SAYT9TN4VN21PKM7Q6M6"
+      ],
+      "depends_on": [
+        "UNIT-067",
+        "REQ-034"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "f1f2cc238f4e8b1baf1839fd843c59005e37f7a5",
+      "from_sha": "cfb0355a40f656667769b9203676c69904bfc4af",
+      "tests": [
+        {
+          "id": "TestNew_PlayerContributionsRoute/GET_/api/v1/player/me/contributions_with_session_is_served_as_an_empty_list",
+          "kind": "unit",
+          "name": "TestNew_PlayerContributionsRoute/GET_/api/v1/player/me/contributions_with_session_is_served_as_an_empty_list",
+          "title": "GET /api/v1/player/me/contributions with session is served as an empty list",
+          "scenario": "Given a session cookie from POST /api/v1/player/session and an empty temp repo, when GET /api/v1/player/me/contributions?round_id=ROUND-0000001 is requested, then it responds 200 with body []",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_PlayerContributionsRoute -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_PlayerContributionsRoute/GET_/api/v1/contributions/mine_with_session_is_no_longer_served",
+          "kind": "unit",
+          "name": "TestNew_PlayerContributionsRoute/GET_/api/v1/contributions/mine_with_session_is_no_longer_served",
+          "title": "GET /api/v1/contributions/mine with session is no longer served",
+          "scenario": "Given a session cookie, when the legacy GET /api/v1/contributions/mine?round_id=ROUND-0000001 is requested, then it responds 404",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_PlayerContributionsRoute -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestNew_PlayerContributionsRoute/GET_/api/v1/player/me/contributions_without_session_is_unauthorized",
+          "kind": "unit",
+          "name": "TestNew_PlayerContributionsRoute/GET_/api/v1/player/me/contributions_without_session_is_unauthorized",
+          "title": "GET /api/v1/player/me/contributions without session is unauthorized",
+          "scenario": "Given no session cookie, when GET /api/v1/player/me/contributions?round_id=ROUND-0000001 is requested, then it responds 401",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_PlayerContributionsRoute -v",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T12:23:56.828784+00:00",
+      "ended_at": "2026-11-23T12:24:26.332040+00:00",
+      "run_started_at": "2026-11-23T12:23:56.828784+00:00",
+      "duration_ms": 28958,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-034",
+      "title": "REQ · Player contribution history is routed at GET /api/v1/player/me/contributions",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-013"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-013",
+      "title": "Evidence: Player contributions route unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-067",
+        "UNIT-068"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-034",
+      "dst": "UNIT-067"
+    },
+    {
+      "src": "REQ-034",
+      "dst": "UNIT-068"
+    },
+    {
+      "src": "UNIT-067",
+      "dst": "UNIT-068"
+    },
+    {
+      "src": "INT-013",
+      "dst": "REQ-034"
+    },
+    {
+      "src": "UNIT-068",
+      "dst": "EVD-013"
+    },
+    {
+      "src": "UNIT-067",
+      "dst": "EVD-013"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m845sb",
+  "base_sha": "d347d06fec6e07d9af3bb5c630380c6dd0835298",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M845SB2505HHAS2BBQN78H96:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T12:23:40.869596+00:00",
+  "updated_at": "2026-11-23T12:24:27.125428+00:00",
+  "completed_at": "2026-11-23T12:24:26.332938+00:00",
+  "duration_ms": 45463,
+  "usage_stats": {
+    "total_duration_ms": 43466
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 14,
+  "unit_allowlist": [
+    "UNIT-067",
+    "UNIT-068"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-067",
+        "title": "Act: Move the Mine route to /api/v1/player/me/contributions",
+        "evidence_refs": [
+          {
+            "id": "EVD-013",
+            "path": ".ai-dlc/evidence/EVD-013.md",
+            "title": "Evidence: Player contributions route unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-067 unless acceptance outcomes recorded in EVD-013 (.ai-dlc/evidence/EVD-013.md; \"Evidence: Player contributions route unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-068",
+        "title": "Verify: Player contributions route unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-013",
+            "path": ".ai-dlc/evidence/EVD-013.md",
+            "title": "Evidence: Player contributions route unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-068 unless acceptance outcomes recorded in EVD-013 (.ai-dlc/evidence/EVD-013.md; \"Evidence: Player contributions route unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T12:23:41.689882+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-067",
+    "UNIT-068"
+  ]
+}

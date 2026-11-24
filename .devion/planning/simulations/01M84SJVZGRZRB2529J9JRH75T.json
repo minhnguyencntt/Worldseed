@@ -1,0 +1,491 @@
+{
+  "intent_id": "01M84SJVZGRZRB2529J9JRH75T",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84SM8F9G2KNJVQ1904FG20Y",
+      "kind": "intent",
+      "title": "SG-4.1.4 Unit test asserts phaser resolves to 3.90.x",
+      "body": "Context: game/frontend/package.json declares phaser ~3.90.0 and package-lock.json locks 3.90.0. Existing tests check each file separately and never check that both agree or the lockfile root specifier. Desired behavior: one guard test reads both files and asserts phaser resolves to 3.90.x. Expected result: any change to 4.x in either file fails the test. Why: Phaser 3.90 is a hard stack requirement.\n\n## Acceptance criteria\n- Given package.json and package-lock.json on disk, when the guard test runs, then it passes only if phaser resolves to 3.90.x in both\n- Given a package.json or lockfile that references phaser 4.x, when the guard check runs, then it reports a problem and the test fails\n\n\n## Scope\n- In scope: Pure phaser pin check helper\n- In scope: Guard unit test reading the real files\n- Out of scope: Changing the phaser version\n- Out of scope: Phaser runtime code\n- Preserve: Existing phaserDependency.test.ts and phaserLockfile.test.ts\n\n\n## Technical constraints\n- Vitest in game/frontend/tests, jsdom environment\n- Use the aliased NodeURL import with fileURLToPath as existing tests do\n\n\n## Definition of done\n- Guard test exists and passes on the current files\n- A 4.x fixture is proven to fail\n\n\n## Non-functional requirements\n- Test runs in under a few seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A unit test reads package.json and the lockfile and fails on a regression to Phaser 4.x",
+      "description": "Context: game/frontend/package.json declares phaser ~3.90.0 and package-lock.json locks 3.90.0. Existing tests check each file separately and never check that both agree or the lockfile root specifier. Desired behavior: one guard test reads both files and asserts phaser resolves to 3.90.x. Expected result: any change to 4.x in either file fails the test. Why: Phaser 3.90 is a hard stack requirement.",
+      "acceptance_criteria": [
+        "Given package.json and package-lock.json on disk, when the guard test runs, then it passes only if phaser resolves to 3.90.x in both",
+        "Given a package.json or lockfile that references phaser 4.x, when the guard check runs, then it reports a problem and the test fails"
+      ],
+      "scope": {
+        "in_scope": [
+          "Pure phaser pin check helper",
+          "Guard unit test reading the real files"
+        ],
+        "out_of_scope": [
+          "Changing the phaser version",
+          "Phaser runtime code"
+        ],
+        "preserve": [
+          "Existing phaserDependency.test.ts and phaserLockfile.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest in game/frontend/tests, jsdom environment",
+        "Use the aliased NodeURL import with fileURLToPath as existing tests do"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Guard test exists and passes on the current files",
+        "A 4.x fixture is proven to fail",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-084.md`"
+      ],
+      "non_functional": [
+        "Test runs in under a few seconds"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-084.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-084.md",
+      "artifact_id": "INT-084"
+    },
+    {
+      "id": "01M84SM8F99A10B4NANYZ26HVX",
+      "kind": "requirement",
+      "title": "REQ · A pure helper reports phaser versions that are not 3.90.x",
+      "body": "Context: no reusable check exists for the phaser pin. Desired behavior: a pure function takes parsed package.json and lockfile objects and returns an array of human-readable problems. Expected result: empty array for 3.90.x everywhere, non-empty for any 4.x or mismatch. Why: lets a regression be proven to fail without editing real files.\n\n## Acceptance criteria\n- Given pkg.dependencies.phaser '~3.90.0' and a lock with root specifier '~3.90.0' and node_modules/phaser version '3.90.0', when called, then it returns []\n- Given pkg.dependencies.phaser '^4.2.1' or lock version '4.2.1', when called, then the returned array names the offending field\n\n\n## Scope\n- In scope: New src/lib/phaserPin.ts\n- Out of scope: Reading files from disk in the helper\n- Preserve: src/lib/utils.ts\n\n\n## Technical constraints\n- Pure TypeScript, no new dependencies\n\n\n## Definition of done\n- Helper exported and type-checks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "phaserPinProblems returns a list of problems for package.json and lockfile objects",
+      "description": "Context: no reusable check exists for the phaser pin. Desired behavior: a pure function takes parsed package.json and lockfile objects and returns an array of human-readable problems. Expected result: empty array for 3.90.x everywhere, non-empty for any 4.x or mismatch. Why: lets a regression be proven to fail without editing real files.",
+      "acceptance_criteria": [
+        "Given pkg.dependencies.phaser '~3.90.0' and a lock with root specifier '~3.90.0' and node_modules/phaser version '3.90.0', when called, then it returns []",
+        "Given pkg.dependencies.phaser '^4.2.1' or lock version '4.2.1', when called, then the returned array names the offending field"
+      ],
+      "scope": {
+        "in_scope": [
+          "New src/lib/phaserPin.ts"
+        ],
+        "out_of_scope": [
+          "Reading files from disk in the helper"
+        ],
+        "preserve": [
+          "src/lib/utils.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Pure TypeScript, no new dependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and type-checks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-209.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84SM8F9G2KNJVQ1904FG20Y",
+      "matched_feature_id": "01M84PBVRNCNBVKKNDV8Q60DX0",
+      "links": [
+        "parent:01M84SM8F9G2KNJVQ1904FG20Y",
+        "trace:01M84PBVRNCNBVKKNDV8Q60DX0",
+        "artifact:.ai-dlc/requirements/REQ-209.md"
+      ],
+      "depends_on": [
+        "01M84SM8F9G2KNJVQ1904FG20Y"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-209.md",
+      "artifact_id": "REQ-209"
+    },
+    {
+      "id": "01M84SM8F91GKR8NPVRVTEDYTN",
+      "kind": "requirement",
+      "title": "REQ · A guard test reads the real package.json and lockfile and asserts 3.90.x",
+      "body": "Context: the lockfile root specifier and the cross-file agreement are unchecked. Desired behavior: a guard test reads both real files and asserts the helper returns no problems and that the specifiers agree. Expected result: a regression to 4.x fails the test. Why: closes the SG-4.1.4 done criterion.\n\n## Acceptance criteria\n- Given the real files, when the guard test runs, then it passes\n- Given the real files, when the test reads lock.packages[''].dependencies.phaser, then it equals package.json dependencies.phaser\n\n\n## Scope\n- In scope: Script to run the guard test\n- In scope: New guard test\n- Out of scope: Changing versions\n- Preserve: Existing scripts in package.json\n\n\n## Technical constraints\n- Test file under game/frontend/tests\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Guard passes on current files\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Guard test on disk files fails if phaser regresses to 4.x",
+      "description": "Context: the lockfile root specifier and the cross-file agreement are unchecked. Desired behavior: a guard test reads both real files and asserts the helper returns no problems and that the specifiers agree. Expected result: a regression to 4.x fails the test. Why: closes the SG-4.1.4 done criterion.",
+      "acceptance_criteria": [
+        "Given the real files, when the guard test runs, then it passes",
+        "Given the real files, when the test reads lock.packages[''].dependencies.phaser, then it equals package.json dependencies.phaser"
+      ],
+      "scope": {
+        "in_scope": [
+          "Script to run the guard test",
+          "New guard test"
+        ],
+        "out_of_scope": [
+          "Changing versions"
+        ],
+        "preserve": [
+          "Existing scripts in package.json"
+        ]
+      },
+      "technical_constraints": [
+        "Test file under game/frontend/tests"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Guard passes on current files",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-210.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84SM8F9G2KNJVQ1904FG20Y",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M84SM8F9G2KNJVQ1904FG20Y",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-210.md"
+      ],
+      "depends_on": [
+        "01M84SM8F9G2KNJVQ1904FG20Y"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-210.md",
+      "artifact_id": "REQ-210"
+    },
+    {
+      "id": "01M84SM8F9E0GJERQ6096HSZ9J",
+      "kind": "unit",
+      "title": "Act: Add phaserPinProblems helper",
+      "body": "Create src/lib/phaserPin.ts exporting phaserPinProblems(pkg, lock) that validates the three phaser fields against 3.90.x.\n\n## Acceptance criteria\n- Returns [] for 3.90.x inputs\n- Returns one message per bad field for 4.x inputs\n\n\n## Scope\n- In scope: game/frontend/src/lib/phaserPin.ts\n- Out of scope: Tests\n- Preserve: cn in utils.ts\n\n\n## Technical constraints\n- No new dependencies\n- New file: `game/frontend/src/lib/phaserPin.ts`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- npm run typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create the pure phaser pin checker",
+      "description": "Create src/lib/phaserPin.ts exporting phaserPinProblems(pkg, lock) that validates the three phaser fields against 3.90.x.",
+      "acceptance_criteria": [
+        "Returns [] for 3.90.x inputs",
+        "Returns one message per bad field for 4.x inputs"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/lib/phaserPin.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "cn in utils.ts"
+        ]
+      },
+      "technical_constraints": [
+        "No new dependencies",
+        "New file: `game/frontend/src/lib/phaserPin.ts`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "npm run typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-418.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84SM8F99A10B4NANYZ26HVX",
+      "matched_feature_id": "01M84M3003ZDP3T7RWR9VZDZ0A",
+      "links": [
+        "parent:01M84SM8F99A10B4NANYZ26HVX",
+        "trace:01M84M3003ZDP3T7RWR9VZDZ0A",
+        "artifact:.ai-dlc/units/UNIT-418.md"
+      ],
+      "depends_on": [
+        "01M84SM8F99A10B4NANYZ26HVX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-418.md",
+      "artifact_id": "UNIT-418",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/phaserPin.ts",
+          "symbol": "new: phaserPinProblems",
+          "lines": "new",
+          "action": "Create the file exporting phaserPinProblems(pkg, lock) returning string[]; check pkg.dependencies.phaser, lock.packages[''].dependencies.phaser and lock.packages['node_modules/phaser'].version each match the regex, pushing a message naming the field when they do not or are missing",
+          "code": "const PIN = /^~?3\\.90\\.\\d+$/;\nexport function phaserPinProblems(pkg: any, lock: any): string[] {\n  const out: string[] = [];\n  const a = pkg?.dependencies?.phaser;\n  const b = lock?.packages?.['']?.dependencies?.phaser;\n  const c = lock?.packages?.['node_modules/phaser']?.version;\n  if (typeof a !== 'string' || !PIN.test(a)) out.push(`package.json dependencies.phaser is not 3.90.x: ${a}`);\n  if (typeof b !== 'string' || !PIN.test(b)) out.push(`lockfile root phaser specifier is not 3.90.x: ${b}`);\n  if (typeof c !== 'string' || !/^3\\.90\\.\\d+$/.test(c)) out.push(`lockfile node_modules/phaser version is not 3.90.x: ${c}`);\n  if (typeof a === 'string' && a !== b) out.push(`package.json (${a}) and lockfile root (${b}) specifiers differ`);\n  return out;\n}",
+          "expected": "Module compiles and exports phaserPinProblems"
+        }
+      ]
+    },
+    {
+      "id": "01M84SM8F9HXQY3EGAH15J3Q2M",
+      "kind": "unit",
+      "title": "Act: Add test:phaser-pin script",
+      "body": "Add a script to game/frontend/package.json so the phaser pin guard can run on its own.\n\n## Acceptance criteria\n- npm run test:phaser-pin invokes the guard test file\n- Other scripts are unchanged\n\n\n## Scope\n- In scope: game/frontend/package.json scripts\n- Out of scope: dependency versions\n- Preserve: phaser ~3.90.0\n\n\n## Technical constraints\n- Do not change dependencies\n- Code path: `game/frontend/package.json`\n\n\n## Dependencies\n- R2\n- A1\n\n\n## Definition of done\n- Script present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add an npm script that runs the guard test",
+      "description": "Add a script to game/frontend/package.json so the phaser pin guard can run on its own.",
+      "acceptance_criteria": [
+        "npm run test:phaser-pin invokes the guard test file",
+        "Other scripts are unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json scripts"
+        ],
+        "out_of_scope": [
+          "dependency versions"
+        ],
+        "preserve": [
+          "phaser ~3.90.0"
+        ]
+      },
+      "technical_constraints": [
+        "Do not change dependencies",
+        "Code path: `game/frontend/package.json`"
+      ],
+      "dependencies": [
+        "R2",
+        "A1"
+      ],
+      "definition_of_done": [
+        "Script present",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-419.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84SM8F91GKR8NPVRVTEDYTN",
+      "matched_feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+      "links": [
+        "parent:01M84SM8F91GKR8NPVRVTEDYTN",
+        "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+        "artifact:.ai-dlc/units/UNIT-419.md"
+      ],
+      "depends_on": [
+        "01M84SM8F91GKR8NPVRVTEDYTN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-419.md",
+      "artifact_id": "UNIT-419",
+      "steps": [
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "scripts",
+          "lines": "L5-L10",
+          "action": "Add the key test:phaser-pin after test",
+          "code": "\"test\": \"vitest run\", -> \"test\": \"vitest run\",\n    \"test:phaser-pin\": \"vitest run tests/phaserVersionGuard.test.ts\",",
+          "expected": "scripts contains test:phaser-pin"
+        }
+      ]
+    },
+    {
+      "id": "01M84SM8F96SY1TXDFRAG4JKVX",
+      "kind": "unit",
+      "title": "Verify: phaserPinProblems unit tests",
+      "body": "Write unit tests for phaserPinProblems with in-memory objects shaped like package.json and package-lock.json (lockfileVersion 3).\n\n## Acceptance criteria\n- 3.90.x inputs return []\n- 4.x in each field is reported\n\n\n## Scope\n- In scope: game/frontend/tests/phaserPinHelper.test.ts\n- Out of scope: Disk access\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No filesystem or network\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Prove the helper passes 3.90.x and fails 4.x",
+      "description": "Write unit tests for phaserPinProblems with in-memory objects shaped like package.json and package-lock.json (lockfileVersion 3).",
+      "acceptance_criteria": [
+        "3.90.x inputs return []",
+        "4.x in each field is reported"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/phaserPinHelper.test.ts"
+        ],
+        "out_of_scope": [
+          "Disk access"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No filesystem or network"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-420.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SM8F9E0GJERQ6096HSZ9J",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84SM8F9E0GJERQ6096HSZ9J",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-420.md"
+      ],
+      "depends_on": [
+        "01M84SM8F9E0GJERQ6096HSZ9J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-420.md",
+      "artifact_id": "UNIT-420",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserPinHelper.test.ts",
+          "symbol": "new: describe('phaserPinProblems')",
+          "lines": "new",
+          "action": "Add test 'returns no problems for 3.90.x' passing pkg {dependencies:{phaser:'~3.90.0'}} and lock {packages:{'':{dependencies:{phaser:'~3.90.0'}},'node_modules/phaser':{version:'3.90.0'}}}, asserting toEqual([]); shape mirrors game/frontend/package-lock.json lockfileVersion 3",
+          "command": "npx vitest run tests/phaserPinHelper.test.ts",
+          "expected": "Returns []"
+        },
+        {
+          "file": "game/frontend/tests/phaserPinHelper.test.ts",
+          "symbol": "it('reports 4.x in each field')",
+          "lines": "after the first test",
+          "action": "Add tests passing '^4.2.1' as pkg phaser, '^4.2.1' as lock root specifier, and '4.2.1' as lock entry version in turn; assert each result has length >= 1 and contains the field name text ('package.json', 'lockfile root', 'node_modules/phaser'); add a missing-entry case asserting a problem is returned",
+          "command": "npx vitest run tests/phaserPinHelper.test.ts",
+          "expected": "Each 4.x case returns a non-empty problem list"
+        }
+      ]
+    },
+    {
+      "id": "01M84SM8F9T9KWYA6BWSW62ENA",
+      "kind": "unit",
+      "title": "Verify: phaser version guard reads real package.json and lockfile",
+      "body": "Write tests/phaserVersionGuard.test.ts reading the real files and asserting 3.90.x agreement.\n\n## Acceptance criteria\n- Real files produce no problems\n- Root specifier equals package.json specifier\n\n\n## Scope\n- In scope: game/frontend/tests/phaserVersionGuard.test.ts\n- Out of scope: Mocking the files\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Real files read with readFileSync, no network\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Guard passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Guard test asserts 3.90.x on the real files",
+      "description": "Write tests/phaserVersionGuard.test.ts reading the real files and asserting 3.90.x agreement.",
+      "acceptance_criteria": [
+        "Real files produce no problems",
+        "Root specifier equals package.json specifier"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/phaserVersionGuard.test.ts"
+        ],
+        "out_of_scope": [
+          "Mocking the files"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Real files read with readFileSync, no network"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Guard passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-421.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SM8F9HXQY3EGAH15J3Q2M",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84SM8F9HXQY3EGAH15J3Q2M",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-421.md"
+      ],
+      "depends_on": [
+        "01M84SM8F9HXQY3EGAH15J3Q2M"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-421.md",
+      "artifact_id": "UNIT-421",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserVersionGuard.test.ts",
+          "symbol": "new: describe('phaser version guard')",
+          "lines": "new",
+          "action": "Read ../package.json and ../package-lock.json using readFileSync(fileURLToPath(new NodeURL(..., import.meta.url))) with the NodeURL alias as in tests/phaserLockfile.test.ts; add test asserting phaserPinProblems(pkg, lock) toEqual([]) imported from '../src/lib/phaserPin'",
+          "command": "npx vitest run tests/phaserVersionGuard.test.ts",
+          "expected": "Test passes on current files"
+        },
+        {
+          "file": "game/frontend/tests/phaserVersionGuard.test.ts",
+          "symbol": "it('lockfile root specifier equals package.json')",
+          "lines": "after first test",
+          "action": "Assert lock.packages[''].dependencies.phaser toBe pkg.dependencies.phaser and that the node_modules/phaser version satisfies the specifier by matching /^3\\.90\\.\\d+$/ and not /^4\\./",
+          "command": "npx vitest run tests/phaserVersionGuard.test.ts",
+          "expected": "Passes; would fail on any 4.x change"
+        }
+      ]
+    },
+    {
+      "id": "01M84SM8F90AKRX1M0JW1GRS50",
+      "kind": "evidence",
+      "title": "Evidence: Phaser 3.90 version guard unit tests",
+      "body": "Collect results of phaserPinHelper and phaserVersionGuard unit tests showing a 4.x regression fails.\n\n## Acceptance criteria\n- Both test files pass\n- 4.x fixtures are reported as problems\n\n\n## Scope\n- In scope: Test run results\n\n\n## Dependencies\n- V1\n- V2\n\n\n## Definition of done\n- Both suites green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the guard tests pass",
+      "description": "Collect results of phaserPinHelper and phaserVersionGuard unit tests showing a 4.x regression fails.",
+      "acceptance_criteria": [
+        "Both test files pass",
+        "4.x fixtures are reported as problems"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "V1",
+        "V2"
+      ],
+      "definition_of_done": [
+        "Both suites green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-084.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SM8F96SY1TXDFRAG4JKVX",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84SM8F96SY1TXDFRAG4JKVX",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-084.md"
+      ],
+      "depends_on": [
+        "01M84SM8F96SY1TXDFRAG4JKVX",
+        "01M84SM8F9T9KWYA6BWSW62ENA"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-084.md",
+      "artifact_id": "EVD-084"
+    }
+  ],
+  "created_at": "2026-11-23T18:10:45.581660+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "01M84660HR9T56QSPANN9CRQA9",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "REQ · Round model with 13 statuses, transition table and round.yaml store",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Round struct, legal transition table and atomic round.yaml persistence",
+  "description": "Context: world.Round only reads id/number/status/times. Desired behavior: a round package defines statuses SCHEDULED, OPEN, CLOSED, ANALYZING, PLANNING, DEVELOPING, TESTING, BUILDING, PUBLISHING, COMPLETED, FAILED, CANCELLED, RECOVERING, a transition table, and a FileStore reading and writing worlds/<world>/rounds/<round-lowercase>/round.yaml. Expected result: illegal transitions are rejected. Why: single source of truth for the lifecycle.",
+  "acceptance_criteria": [
+    "Given status SCHEDULED, when transitioning to OPEN, then it succeeds; to CLOSED it returns ErrIllegalTransition",
+    "Given a saved round, when Get is called, then the same fields are returned including base_release and freeze_commit",
+    "Given an unsafe world or round id, when Get or Save is called, then an error is returned and nothing is written"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/round.go",
+      "backend/internal/round/store.go"
+    ],
+    "out_of_scope": [
+      "open/close logic",
+      "HTTP"
+    ],
+    "preserve": [
+      "worlds/<world>/rounds/<round>/ path convention used by contribution.FileStore"
+    ]
+  },
+  "technical_constraints": [
+    "Validate ids with safepath.Segment",
+    "Write via temp file then os.Rename"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "round package compiles with table and store",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-036.md`"
+  ],
+  "non_functional": [
+    "Atomic writes"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD8RSC0W1JFGKG52WJM",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-036.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HRYX5H2CZWNGE3MNRV"
+  ],
+  "sim_node_id": "01M8465XD8W9ER9QA7HHPHTCN3",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-036.md",
+  "artifact_id": "REQ-036",
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.286182+00:00"
+}

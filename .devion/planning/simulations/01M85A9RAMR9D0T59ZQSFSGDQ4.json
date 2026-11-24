@@ -1,0 +1,482 @@
+{
+  "intent_id": "01M85A9RAMR9D0T59ZQSFSGDQ4",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85AB70WRNM6Y2EDXS905Z9Z",
+      "kind": "intent",
+      "title": "SG-6.1.2 · BootScene emits a typed characterClick event to React",
+      "body": "Context: BootScene.createCharacter (game/frontend/src/phaser/BootScene.ts) plays the interact animation on pointerdown but tells React nothing. The typed bus in game/frontend/src/phaser/events.ts has only objectHover, objectClick and sceneReady. Desired behavior: add a characterClick event type and emit it on NPC click without changing the animation. Expected result: React subscribers receive { id } for the clicked character. Why: dialogue and interaction for NPCs (SG-6.1) needs a typed signal from Phaser.\n\n## Acceptance criteria\n- Given the PhaserToReactEvents interface, When characterClick is emitted with { id: 'boy' }, Then a subscribed handler receives exactly that payload once.\n- Given a BootScene with a character sprite, When pointerdown fires on it, Then phaserToReact emits characterClick with the character spec id.\n- Given a character with an interact animation, When it is clicked, Then the interact animation still plays and returns to idle.\n\n\n## Scope\n- In scope: characterClick type in events.ts\n- In scope: emit in BootScene.createCharacter\n- In scope: unit tests with Phaser mocked\n- Out of scope: React-side handling of characterClick\n- Out of scope: dialogue content for NPCs\n- Out of scope: new assets\n- Preserve: objectClick, objectHover and sceneReady events\n- Preserve: existing interact-then-idle animation behavior\n- Preserve: Phaser 3.90 APIs\n\n\n## Technical constraints\n- Phaser is mocked in unit tests; no browser or live server\n- Use the existing phaserToReact bus; no new event system\n\n\n## Definition of done\n- characterClick is typed and emitted on NPC click\n- Unit tests for event type and BootScene emit pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Clicking an NPC in BootScene emits a typed characterClick event to React, alongside the existing interact animation.",
+      "description": "Context: BootScene.createCharacter (game/frontend/src/phaser/BootScene.ts) plays the interact animation on pointerdown but tells React nothing. The typed bus in game/frontend/src/phaser/events.ts has only objectHover, objectClick and sceneReady. Desired behavior: add a characterClick event type and emit it on NPC click without changing the animation. Expected result: React subscribers receive { id } for the clicked character. Why: dialogue and interaction for NPCs (SG-6.1) needs a typed signal from Phaser.",
+      "acceptance_criteria": [
+        "Given the PhaserToReactEvents interface, When characterClick is emitted with { id: 'boy' }, Then a subscribed handler receives exactly that payload once.",
+        "Given a BootScene with a character sprite, When pointerdown fires on it, Then phaserToReact emits characterClick with the character spec id.",
+        "Given a character with an interact animation, When it is clicked, Then the interact animation still plays and returns to idle."
+      ],
+      "scope": {
+        "in_scope": [
+          "characterClick type in events.ts",
+          "emit in BootScene.createCharacter",
+          "unit tests with Phaser mocked"
+        ],
+        "out_of_scope": [
+          "React-side handling of characterClick",
+          "dialogue content for NPCs",
+          "new assets"
+        ],
+        "preserve": [
+          "objectClick, objectHover and sceneReady events",
+          "existing interact-then-idle animation behavior",
+          "Phaser 3.90 APIs"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser is mocked in unit tests; no browser or live server",
+        "Use the existing phaserToReact bus; no new event system"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "characterClick is typed and emitted on NPC click",
+        "Unit tests for event type and BootScene emit pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-119.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+      "links": [
+        "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+        "artifact:.ai-dlc/intent/INT-119.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-119.md",
+      "artifact_id": "INT-119"
+    },
+    {
+      "id": "01M85AB70WV0E6HC8TEJ9HZKDX",
+      "kind": "requirement",
+      "title": "REQ · PhaserToReactEvents declares a typed characterClick event",
+      "body": "Context: events.ts defines PhaserToReactEvents with objectHover, objectClick and sceneReady. Desired behavior: add characterClick: { id: string } so emit and on are type-checked for it. Expected result: handlers subscribed to characterClick receive the payload. Why: React needs a typed NPC click signal distinct from object clicks.\n\n## Acceptance criteria\n- Given phaserToReact, When emit('characterClick', { id: 'boy' }) is called, Then a handler registered via on('characterClick') is called once with { id: 'boy' }.\n- Given the events file, When type-checked, Then characterClick payload is { id: string } and existing events are unchanged.\n\n\n## Scope\n- In scope: PhaserToReactEvents interface in events.ts\n- Out of scope: BootScene emission\n- Out of scope: React subscribers\n- Preserve: existing events and createEventBus behavior\n\n\n## Technical constraints\n- Keep events.ts dependency-free\n\n\n## Definition of done\n- characterClick present in PhaserToReactEvents\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The Phaser events file exposes characterClick with an { id: string } payload on the typed bus.",
+      "description": "Context: events.ts defines PhaserToReactEvents with objectHover, objectClick and sceneReady. Desired behavior: add characterClick: { id: string } so emit and on are type-checked for it. Expected result: handlers subscribed to characterClick receive the payload. Why: React needs a typed NPC click signal distinct from object clicks.",
+      "acceptance_criteria": [
+        "Given phaserToReact, When emit('characterClick', { id: 'boy' }) is called, Then a handler registered via on('characterClick') is called once with { id: 'boy' }.",
+        "Given the events file, When type-checked, Then characterClick payload is { id: string } and existing events are unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "PhaserToReactEvents interface in events.ts"
+        ],
+        "out_of_scope": [
+          "BootScene emission",
+          "React subscribers"
+        ],
+        "preserve": [
+          "existing events and createEventBus behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Keep events.ts dependency-free"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "characterClick present in PhaserToReactEvents",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-297.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85AB70WRNM6Y2EDXS905Z9Z",
+      "matched_feature_id": "01M84PBVRNHC06ZTRP1W0EKRQM",
+      "links": [
+        "parent:01M85AB70WRNM6Y2EDXS905Z9Z",
+        "trace:01M84PBVRNHC06ZTRP1W0EKRQM",
+        "artifact:.ai-dlc/requirements/REQ-297.md"
+      ],
+      "depends_on": [
+        "01M85AB70WRNM6Y2EDXS905Z9Z"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-297.md",
+      "artifact_id": "REQ-297"
+    },
+    {
+      "id": "01M85AB70WFCJ3R538E01G8YNY",
+      "kind": "requirement",
+      "title": "REQ · BootScene emits characterClick when an NPC is clicked and still plays interact",
+      "body": "Context: createCharacter's pointerdown handler returns early when idleKey is missing or interactKey equals idleKey, so any emit placed after those guards would be skipped for characters without a distinct interact animation. Desired behavior: emit characterClick { id: spec.id } first on every click, then run the existing animation logic. Expected result: React always learns of the click. Why: NPCs without interact animations must still be clickable.\n\n## Acceptance criteria\n- Given a character sprite, When its pointerdown listener runs, Then phaserToReact emits characterClick with { id: spec.id }.\n- Given a character whose interact animation exists, When clicked, Then sprite.play is called with the interact key after the emit.\n- Given a character with no distinct interact animation, When clicked, Then characterClick is still emitted and no animation change occurs.\n\n\n## Scope\n- In scope: createCharacter pointerdown handler in BootScene.ts\n- Out of scope: events.ts type\n- Out of scope: React handling\n- Preserve: idle animation start\n- Preserve: interact then idle via ANIMATION_COMPLETE\n- Preserve: objectClick forwarding\n\n\n## Technical constraints\n- Use phaserToReact already imported in BootScene.ts\n- Phaser 3.90 APIs only\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Emit occurs before animation guards\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The character pointerdown handler emits characterClick with the spec id in addition to the interact animation.",
+      "description": "Context: createCharacter's pointerdown handler returns early when idleKey is missing or interactKey equals idleKey, so any emit placed after those guards would be skipped for characters without a distinct interact animation. Desired behavior: emit characterClick { id: spec.id } first on every click, then run the existing animation logic. Expected result: React always learns of the click. Why: NPCs without interact animations must still be clickable.",
+      "acceptance_criteria": [
+        "Given a character sprite, When its pointerdown listener runs, Then phaserToReact emits characterClick with { id: spec.id }.",
+        "Given a character whose interact animation exists, When clicked, Then sprite.play is called with the interact key after the emit.",
+        "Given a character with no distinct interact animation, When clicked, Then characterClick is still emitted and no animation change occurs."
+      ],
+      "scope": {
+        "in_scope": [
+          "createCharacter pointerdown handler in BootScene.ts"
+        ],
+        "out_of_scope": [
+          "events.ts type",
+          "React handling"
+        ],
+        "preserve": [
+          "idle animation start",
+          "interact then idle via ANIMATION_COMPLETE",
+          "objectClick forwarding"
+        ]
+      },
+      "technical_constraints": [
+        "Use phaserToReact already imported in BootScene.ts",
+        "Phaser 3.90 APIs only"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Emit occurs before animation guards",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-298.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85AB70WRNM6Y2EDXS905Z9Z",
+      "matched_feature_id": "01M84VFDBH8B1SQYMYQMDMFYB7",
+      "links": [
+        "parent:01M85AB70WRNM6Y2EDXS905Z9Z",
+        "trace:01M84VFDBH8B1SQYMYQMDMFYB7",
+        "artifact:.ai-dlc/requirements/REQ-298.md"
+      ],
+      "depends_on": [
+        "01M85AB70WRNM6Y2EDXS905Z9Z"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-298.md",
+      "artifact_id": "REQ-298"
+    },
+    {
+      "id": "01M85AB70WRDKPJAJXFGG52RH7",
+      "kind": "unit",
+      "title": "Act: Add characterClick to PhaserToReactEvents",
+      "body": "Add characterClick: { id: string } to the PhaserToReactEvents interface so the typed bus accepts it.\n\n## Acceptance criteria\n- Given events.ts, When compiled, Then PhaserToReactEvents has characterClick with { id: string }.\n- Given the existing events, When compiled, Then objectHover, objectClick and sceneReady are unchanged.\n\n\n## Scope\n- In scope: events.ts interface\n- Out of scope: BootScene\n- Preserve: createEventBus\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/events.ts`\n\n\n## Definition of done\n- characterClick added to PhaserToReactEvents\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add the characterClick event type to events.ts.",
+      "description": "Add characterClick: { id: string } to the PhaserToReactEvents interface so the typed bus accepts it.",
+      "acceptance_criteria": [
+        "Given events.ts, When compiled, Then PhaserToReactEvents has characterClick with { id: string }.",
+        "Given the existing events, When compiled, Then objectHover, objectClick and sceneReady are unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "events.ts interface"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "createEventBus"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/events.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "characterClick added to PhaserToReactEvents",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-594.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85AB70WV0E6HC8TEJ9HZKDX",
+      "matched_feature_id": "01M85A0HWE94EEYFXYHXK4W426",
+      "links": [
+        "parent:01M85AB70WV0E6HC8TEJ9HZKDX",
+        "trace:01M85A0HWE94EEYFXYHXK4W426",
+        "artifact:.ai-dlc/units/UNIT-594.md"
+      ],
+      "depends_on": [
+        "01M85AB70WV0E6HC8TEJ9HZKDX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-594.md",
+      "artifact_id": "UNIT-594",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/events.ts",
+          "symbol": "PhaserToReactEvents",
+          "lines": "L3-L7",
+          "action": "Add a new member characterClick typed { id: string } to the PhaserToReactEvents interface directly after objectClick.",
+          "code": "objectClick: { id: string };\n+  characterClick: { id: string };",
+          "expected": "tsc accepts phaserToReact.emit('characterClick', { id: 'boy' }) and rejects other payload shapes."
+        }
+      ]
+    },
+    {
+      "id": "01M85AB70WC15EWEZ9RSTAYHSN",
+      "kind": "unit",
+      "title": "Act: Emit characterClick from the BootScene character pointerdown handler",
+      "body": "In createCharacter, the POINTER_DOWN listener first emits characterClick { id: spec.id } on phaserToReact, then runs the existing interact animation logic.\n\n## Acceptance criteria\n- Given a click on a character sprite, When the handler runs, Then characterClick { id: spec.id } is emitted.\n- Given the interact animation exists, When clicked, Then it still plays and returns to idle.\n\n\n## Scope\n- In scope: BootScene.createCharacter pointerdown handler\n- Out of scope: React subscribers\n- Preserve: animation behavior\n- Preserve: objectClick forwarding\n\n\n## Technical constraints\n- Depends on characterClick type from the events file\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Emit placed before the early-return guards\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Emit characterClick with the spec id before the animation guards in createCharacter.",
+      "description": "In createCharacter, the POINTER_DOWN listener first emits characterClick { id: spec.id } on phaserToReact, then runs the existing interact animation logic.",
+      "acceptance_criteria": [
+        "Given a click on a character sprite, When the handler runs, Then characterClick { id: spec.id } is emitted.",
+        "Given the interact animation exists, When clicked, Then it still plays and returns to idle."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.createCharacter pointerdown handler"
+        ],
+        "out_of_scope": [
+          "React subscribers"
+        ],
+        "preserve": [
+          "animation behavior",
+          "objectClick forwarding"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on characterClick type from the events file",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Emit placed before the early-return guards",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-595.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85AB70WFCJ3R538E01G8YNY",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M85AB70WFCJ3R538E01G8YNY",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-595.md"
+      ],
+      "depends_on": [
+        "01M85AB70WFCJ3R538E01G8YNY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-595.md",
+      "artifact_id": "UNIT-595",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.createCharacter",
+          "lines": "L117-L123",
+          "action": "Inside the POINTER_DOWN callback, add phaserToReact.emit('characterClick', { id: spec.id }) as the first statement, before the 'if (!idleKey) return' guard.",
+          "code": "sprite.on(Phaser.Input.Events.POINTER_DOWN, () => {\n+  phaserToReact.emit('characterClick', { id: spec.id });\n   if (!idleKey) return;",
+          "expected": "Every character click emits characterClick; interact animation behavior is unchanged."
+        }
+      ]
+    },
+    {
+      "id": "01M85AB70WYD8Q02MTJ7GV1YSR",
+      "kind": "unit",
+      "title": "Verify: characterClick event type unit tests",
+      "body": "Add tests to the existing phaserEvents suite proving characterClick delivery and isolation from objectClick.\n\n## Acceptance criteria\n- Given a characterClick handler, When emitted with { id: 'boy' }, Then it is called once with that payload.\n- Given an objectClick handler, When characterClick is emitted, Then the objectClick handler is not called.\n\n\n## Scope\n- In scope: game/frontend/tests/phaserEvents.test.ts\n- Out of scope: BootScene\n- Preserve: existing event tests\n\n\n## Technical constraints\n- No Phaser needed; pure bus\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- New tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit-test delivery of the typed characterClick event on the bus.",
+      "description": "Add tests to the existing phaserEvents suite proving characterClick delivery and isolation from objectClick.",
+      "acceptance_criteria": [
+        "Given a characterClick handler, When emitted with { id: 'boy' }, Then it is called once with that payload.",
+        "Given an objectClick handler, When characterClick is emitted, Then the objectClick handler is not called."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/phaserEvents.test.ts"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "existing event tests"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser needed; pure bus"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "New tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-596.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85AB70WRDKPJAJXFGG52RH7",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85AB70WRDKPJAJXFGG52RH7",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-596.md"
+      ],
+      "depends_on": [
+        "01M85AB70WRDKPJAJXFGG52RH7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-596.md",
+      "artifact_id": "UNIT-596",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserEvents.test.ts",
+          "symbol": "new: it('delivers characterClick payload once and not to objectClick handlers')",
+          "lines": "after L30",
+          "action": "Add a test subscribing vi.fn() handlers to phaserToReact 'characterClick' and 'objectClick', emit characterClick with { id: 'boy' }, assert characterClick handler called once with { id: 'boy' } and objectClick handler not called; then unsubscribe and call phaserToReact.clear().",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts",
+          "expected": "phaserEvents suite passes including the new characterClick test."
+        }
+      ]
+    },
+    {
+      "id": "01M85AB70W8GHWSFQYHJ6736TV",
+      "kind": "unit",
+      "title": "Verify: BootScene characterClick emission unit tests with Phaser mocked",
+      "body": "Extend bootSceneCharacters tests, which already mock phaser and content, to spy on phaserToReact.emit.\n\n## Acceptance criteria\n- Given the mocked scene, When pointerdown runs on the boy sprite, Then phaserToReact.emit is called with 'characterClick' and { id: 'boy' }.\n- Given the same click, When handled, Then sprite.play is called with the interact key.\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneCharacters.test.ts\n- Out of scope: real Phaser or browser\n- Preserve: existing character tests\n\n\n## Technical constraints\n- Reuse the existing vi.mock('phaser') and content mock and the pointerDownOn helper\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- New tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit-test that clicking an NPC sprite emits characterClick and still plays interact.",
+      "description": "Extend bootSceneCharacters tests, which already mock phaser and content, to spy on phaserToReact.emit.",
+      "acceptance_criteria": [
+        "Given the mocked scene, When pointerdown runs on the boy sprite, Then phaserToReact.emit is called with 'characterClick' and { id: 'boy' }.",
+        "Given the same click, When handled, Then sprite.play is called with the interact key."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneCharacters.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser or browser"
+        ],
+        "preserve": [
+          "existing character tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the existing vi.mock('phaser') and content mock and the pointerDownOn helper"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "New tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-597.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85AB70WC15EWEZ9RSTAYHSN",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85AB70WC15EWEZ9RSTAYHSN",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-597.md"
+      ],
+      "depends_on": [
+        "01M85AB70WC15EWEZ9RSTAYHSN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-597.md",
+      "artifact_id": "UNIT-597",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+          "symbol": "new: it('emits characterClick with the spec id and still plays interact on pointerdown')",
+          "lines": "after L140",
+          "action": "Import phaserToReact from '../src/phaser/events'. Create BootScene, set its readState as existing tests do, call create(), take the first value returned by scene.add.sprite, get its listener via pointerDownOn, vi.spyOn(phaserToReact, 'emit'), invoke the listener, then assert emit was called with ('characterClick', { id: 'boy' }) and sprite.play was called with the interact key.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts",
+          "expected": "bootSceneCharacters suite passes including the new emit test."
+        }
+      ]
+    },
+    {
+      "id": "01M85AB70WYH1D3M5GYC5T98SC",
+      "kind": "evidence",
+      "title": "Evidence: characterClick event and BootScene emit unit tests",
+      "body": "Collect the passing output of phaserEvents and bootSceneCharacters unit tests covering the typed event and NPC click emission.\n\n## Acceptance criteria\n- Given the phaserEvents suite, When run, Then it passes with the characterClick test.\n- Given the bootSceneCharacters suite, When run, Then it passes with the emit test.\n\n\n## Scope\n- In scope: test output\n- Out of scope: manual checks\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Both suites green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the characterClick type and BootScene emission are proven by unit tests.",
+      "description": "Collect the passing output of phaserEvents and bootSceneCharacters unit tests covering the typed event and NPC click emission.",
+      "acceptance_criteria": [
+        "Given the phaserEvents suite, When run, Then it passes with the characterClick test.",
+        "Given the bootSceneCharacters suite, When run, Then it passes with the emit test."
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [
+          "manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Both suites green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-119.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85AB70WYD8Q02MTJ7GV1YSR",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85AB70WYD8Q02MTJ7GV1YSR",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-119.md"
+      ],
+      "depends_on": [
+        "01M85AB70WYD8Q02MTJ7GV1YSR",
+        "01M85AB70W8GHWSFQYHJ6736TV"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-119.md",
+      "artifact_id": "EVD-119"
+    }
+  ],
+  "created_at": "2026-11-23T23:03:13.154841+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

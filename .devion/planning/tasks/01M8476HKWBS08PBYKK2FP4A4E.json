@@ -1,0 +1,76 @@
+{
+  "id": "01M8476HKWBS08PBYKK2FP4A4E",
+  "intent_id": "01M8474YGPRVPGRGG93CDACF9F",
+  "title": "Act: Register admin execution routes from the same table",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add adminExecutionRoutes(eh) and register it through a combined adminRoutes function.",
+  "description": "Move execution registrations into the table and expose one adminRoutes(eh, rh) that tests can call.",
+  "acceptance_criteria": [
+    "adminRoutes returns eight routes: five round and three execution.",
+    "Execution routes keep their paths and methods."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "execution.Handler"
+    ],
+    "preserve": [
+      "Paths and handlers"
+    ]
+  },
+  "technical_constraints": [
+    "Depends on ACT1 table",
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "go build ./... passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-096.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8476FMS6JHDEBXVQ819VV14",
+    "trace:01M847388XGWC6CEVCX9114HTE",
+    "artifact:.ai-dlc/units/UNIT-096.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8476HKWJQYZXNJP3FNAZP9Q"
+  ],
+  "sim_node_id": "01M8476FMSS6SQZ520M5CS29J8",
+  "feature_id": "01M847388XGWC6CEVCX9114HTE",
+  "artifact_path": ".ai-dlc/units/UNIT-096.md",
+  "artifact_id": "UNIT-096",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "new: adminRoutes",
+      "lines": "after adminRoundRoutes",
+      "action": "Add func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute returning GET /executions (eh.List), POST /executions/{id}/retry (eh.Retry), POST /executions/{id}/approve (eh.Approve) followed by adminRoundRoutes(rh).",
+      "code": "func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute {\n\treturn append([]adminRoute{\n\t\t{http.MethodGet, \"/executions\", eh.List},\n\t\t{http.MethodPost, \"/executions/{id}/retry\", eh.Retry},\n\t\t{http.MethodPost, \"/executions/{id}/approve\", eh.Approve},\n\t}, adminRoundRoutes(rh)...)\n}",
+      "expected": "Eight routes returned."
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New (admin route group)",
+      "lines": "L101-L111",
+      "action": "Replace the loop over adminRoundRoutes(rh) and the three inline ar.Get/ar.Post execution registrations with one loop over adminRoutes(eh, rh).",
+      "code": "for _, rt := range adminRoutes(eh, rh) {\n\tar.Method(rt.Method, rt.Pattern, rt.Handler)\n}",
+      "expected": "All eight routes still mounted behind admin.Middleware."
+    }
+  ],
+  "created_at": "2026-11-23T12:48:22.140634+00:00",
+  "updated_at": "2026-11-23T12:50:03.639011+00:00"
+}

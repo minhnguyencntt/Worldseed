@@ -1,0 +1,52 @@
+{
+  "id": "01M85HGHZDJDR4MSXV1H6SX95M",
+  "intent_id": "01M85H9KZF7E1HJM1FD88Z6EN1",
+  "title": "REQ · Store changes such as the secret door and inventory are pushed into the scene",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Every gameStore update reaches each SceneObject via sync",
+  "description": "Context: BootScene.create subscribes to useGameStore and onStateChange calls sync on every SceneObject; SceneObject visibility derives from flag and hasItem conditions. Desired behavior: confirm this path and keep it intact. Expected result: opening the secret door (flag secret_door_open) or gaining an inventory item updates scene visibility. Why: store is the single source of truth.",
+  "acceptance_criteria": [
+    "Given a created scene, when the store state gains flag secret_door_open true, then every SceneObject.sync is called with that state",
+    "Given a created scene, when the store inventory changes, then every SceneObject.sync is called with the new inventory",
+    "Given a null store state, when onStateChange runs, then no sync is called"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.onStateChange and subscription"
+    ],
+    "out_of_scope": [
+      "New content conditions"
+    ],
+    "preserve": [
+      "Subscription release on SHUTDOWN"
+    ]
+  },
+  "technical_constraints": [
+    "BootScene reads state only through useGameStore"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Store to scene sync confirmed and covered",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-354.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85HBTVZHY0X56A3E3VFWX6N",
+    "trace:01M855M826E3C405ZASCHH5B77",
+    "artifact:.ai-dlc/requirements/REQ-354.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M85HGHZDHCKHJK1VJRZJTMBY"
+  ],
+  "sim_node_id": "01M85HBTVZK8724MBD8WHSF008",
+  "feature_id": "01M855M826E3C405ZASCHH5B77",
+  "artifact_path": ".ai-dlc/requirements/REQ-354.md",
+  "artifact_id": "REQ-354",
+  "created_at": "2026-11-24T01:07:50.381689+00:00"
+}

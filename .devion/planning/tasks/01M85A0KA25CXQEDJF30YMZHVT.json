@@ -1,0 +1,55 @@
+{
+  "id": "01M85A0KA25CXQEDJF30YMZHVT",
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "title": "REQ · World validation rejects dangling scene character references",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "validateWorld reports scene characters missing from world.characters and interactions with unknown dialogue, flags, scenes or objects.",
+  "description": "Context: validateWorld checks speakers, objects and events but never inspects scene.characters. Desired behavior: every scene character id must exist in world.characters, its interaction.dialogue must be a dialogue id in that scene, and its interaction events go through checkEvents. Expected result: a bad NPC definition fails validation with a descriptive message. Why: data-only NPC additions stay safe.",
+  "acceptance_criteria": [
+    "Given a scene character id absent from world.characters, When validateWorld runs, Then errors include 'unknown character: <id>'.",
+    "Given interaction.dialogue naming a missing node, When validateWorld runs, Then errors include 'unknown dialogue: <id>'.",
+    "Given interaction events with an unknown flag, When validateWorld runs, Then errors include 'unknown flag: <flag>'.",
+    "Given a valid NPC, When validateWorld runs, Then it adds no errors."
+  ],
+  "scope": {
+    "in_scope": [
+      "validateWorld in game/src/content/loader.ts"
+    ],
+    "out_of_scope": [
+      "Manifest asset ref checks (planPreload already reports unknown refs)"
+    ],
+    "preserve": [
+      "Existing validateWorld error strings and the bedroom content validity"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse checkEvents"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Validation implemented",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-294.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859XCEVQQMKHX4BAVVZGBG9",
+    "trace:01M855M826E3C405ZASCHH5B77",
+    "artifact:.ai-dlc/requirements/REQ-294.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M85A0KA25J43BHRWCKVHG3NN"
+  ],
+  "sim_node_id": "01M859XCEVD3TDBHW9Z5MCGPZA",
+  "feature_id": "01M855M826E3C405ZASCHH5B77",
+  "artifact_path": ".ai-dlc/requirements/REQ-294.md",
+  "artifact_id": "REQ-294",
+  "created_at": "2026-11-23T22:56:47.426266+00:00"
+}

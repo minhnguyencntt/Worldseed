@@ -1,0 +1,74 @@
+{
+  "id": "01M85XYMEV49Y3Z2YFBS3MQB14",
+  "intent_id": "01M85XKWHDCXH76V1VXWACJ624",
+  "title": "Verify: Suggest button opens the contribution dialog unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests cover the header button callback and the App dialog opening.",
+  "description": "Component test for HeaderOverlay plus App test with api client and Phaser mocked.",
+  "acceptance_criteria": [
+    "onSuggest called once on click.",
+    "App opens the dialog from the header button and renders exactly one such button.",
+    "Focus returns to the header button on Escape."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/headerSuggest.test.tsx",
+      "tests/appHeaderSuggest.test.tsx"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "tests/appContributionFocus.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Mock ../src/api/client getCurrentRound and listMine; mock phaser, createGame, BootScene and ResizeObserver exactly as tests/appContributionFocus.test.tsx does."
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-842.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85XR2FKKMN19W5Z29T3M456",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-842.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XYMEVRD4EHCRVWT093ZV4"
+  ],
+  "sim_node_id": "01M85XR2FK7J8HTQ30CGGJYN67",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-842.md",
+  "artifact_id": "UNIT-842",
+  "steps": [
+    {
+      "file": "game/frontend/tests/headerSuggest.test.tsx",
+      "symbol": "new: describe('HeaderOverlay suggest button')",
+      "lines": "new",
+      "action": "Create test 'clicking the suggest button calls onSuggest once': render <HeaderOverlay worldTitle=\"W\" round={roundFixture} onSuggest={fn} /> with fn = vi.fn(); fireEvent.click(getByRole('button',{name:'Suggest What Happens Next'})); expect fn toHaveBeenCalledTimes(1); expect button text content '+ SUGGEST WHAT HAPPENS NEXT' and class sf-btn-gold. roundFixture from tests/fixtures/api.ts (mirrors backend Round JSON).",
+      "command": "cd game/frontend && npx vitest run tests/headerSuggest.test.tsx",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/appHeaderSuggest.test.tsx",
+      "symbol": "new: describe('App header suggest button')",
+      "lines": "new",
+      "action": "Copy the mocks from tests/appContributionFocus.test.tsx L1-L38. Add test: render App, click Begin, await getCurrentRound, expect getAllByRole('button',{name:'Suggest What Happens Next'}) length 1 and it is inside getByRole('banner'); click it; expect getByRole('dialog') toBeInTheDocument(). Add test: press Escape (fireEvent.keyDown on dialog, key Escape) and waitFor document.activeElement equals the button.",
+      "command": "cd game/frontend && npx vitest run tests/appHeaderSuggest.test.tsx tests/appContributionFocus.test.tsx",
+      "expected": "New and existing focus tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T04:45:14.587534+00:00",
+  "updated_at": "2026-11-24T04:47:11.499271+00:00"
+}

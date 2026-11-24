@@ -1,0 +1,81 @@
+{
+  "id": "01M84GGJMZBZGKWBACSDBHKDN9",
+  "intent_id": "01M84GCPQV4VDXPM8F6AXV18ZS",
+  "title": "Act: Implement stale lock release and Startup",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add LockFS, ReleaseStaleLock and Startup to the recovery package.",
+  "description": "Create backend/worker/internal/recovery/locks.go with the LockFS abstraction, an os implementation, ReleaseStaleLock and Startup, which releases a stale lock then runs Recover. Uses Recoverer fields from recovery.go.",
+  "acceptance_criteria": [
+    "A lock older than StaleAfter is removed",
+    "Startup runs Recover only after the lock check succeeds"
+  ],
+  "scope": {
+    "in_scope": [
+      "locks.go"
+    ],
+    "out_of_scope": [
+      "lock package changes"
+    ],
+    "preserve": [
+      "lock.Acquire"
+    ]
+  },
+  "technical_constraints": [
+    "Recoverer and Result come from recovery.go in the same package",
+    "New file: `backend/worker/internal/recovery/locks.go`"
+  ],
+  "dependencies": [
+    "recovery.go"
+  ],
+  "definition_of_done": [
+    "Package builds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-211.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GG45VZ7WEPZ7B6X422G77",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-211.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GGJMZERF3ZRHQVDC14QX8"
+  ],
+  "sim_node_id": "01M84GG45VA8WFR96CB2D5PW9B",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-211.md",
+  "artifact_id": "UNIT-211",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/recovery/locks.go",
+      "symbol": "new: LockFS, OSLockFS",
+      "lines": "new",
+      "action": "Define interface LockFS {ModTime(path string) (time.Time, error); Remove(path string) error} and struct OSLockFS implementing it with os.Stat(path).ModTime() and os.Remove(path).",
+      "code": "func (OSLockFS) ModTime(p string) (time.Time, error) { fi, err := os.Stat(p); if err != nil { return time.Time{}, err }; return fi.ModTime(), nil }",
+      "expected": "OSLockFS satisfies LockFS."
+    },
+    {
+      "file": "backend/worker/internal/recovery/locks.go",
+      "symbol": "new: (*Recoverer).ReleaseStaleLock",
+      "lines": "new",
+      "action": "Implement ReleaseStaleLock() (bool, error): call lockFS.ModTime(cfg.LockPath); if errors.Is(err, fs.ErrNotExist) return false,nil; other errors wrapped as \"recovery: stat lock: %w\"; if now().Sub(mod) <= cfg.StaleAfter return false,nil; otherwise call lockFS.Remove, wrapping errors as \"recovery: remove lock: %w\" and ignoring fs.ErrNotExist, and return true,nil. Add a comment that StaleAfter must exceed Timeout times (MaxRetries+1).",
+      "expected": "Returns true only when a stale lock was removed."
+    },
+    {
+      "file": "backend/worker/internal/recovery/locks.go",
+      "symbol": "new: (*Recoverer).Startup",
+      "lines": "new",
+      "action": "Implement Startup(ctx) (Result, error): call ReleaseStaleLock; on error return Result{} and the error; then call Recover and set Result.LockReleased to the released value before returning.",
+      "expected": "Stale lock is released before any execution is resumed."
+    }
+  ],
+  "created_at": "2026-11-23T15:31:08.063019+00:00",
+  "updated_at": "2026-11-23T15:34:49.111921+00:00"
+}

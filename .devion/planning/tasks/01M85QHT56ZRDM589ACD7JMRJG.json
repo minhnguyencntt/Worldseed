@@ -1,0 +1,77 @@
+{
+  "id": "01M85QHT56ZRDM589ACD7JMRJG",
+  "intent_id": "01M85Q9HW9N2CVSQD6BPVWCP20",
+  "title": "Act: Switch config.ts to 480x270 and guard computeZoom against invalid dpr",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Change render constants and normalise dpr",
+  "description": "Edit GAME_WIDTH/GAME_HEIGHT and make computeZoom safe for invalid dpr.",
+  "acceptance_criteria": [
+    "GAME_WIDTH is 480 and GAME_HEIGHT is 270.",
+    "computeZoom returns an integer >= 1 for NaN, 0 and negative dpr."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/phaser/config.ts"
+    ],
+    "out_of_scope": [
+      "PhaserHost, scale mode, tests"
+    ],
+    "preserve": [
+      "buildGameConfig render and scale options",
+      "computeZoom signature (w,h,dpr)"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser stays on 3.90.x.",
+    "One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.",
+    "Code path: `game/frontend/src/phaser/config.ts`"
+  ],
+  "dependencies": [
+    "REQ-RES"
+  ],
+  "definition_of_done": [
+    "tsc --noEmit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-768.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85QC21CPD2QTQJ5GP18X4S1",
+    "trace:01M84T6537DBQNPBEZT7AT0RE7",
+    "artifact:.ai-dlc/units/UNIT-768.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85QHT565VTE3MTSP72M6R7A"
+  ],
+  "sim_node_id": "01M85QC21CN6AM1N00EP43HD28",
+  "feature_id": "01M84T6537DBQNPBEZT7AT0RE7",
+  "artifact_path": ".ai-dlc/units/UNIT-768.md",
+  "artifact_id": "UNIT-768",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/config.ts",
+      "symbol": "GAME_WIDTH, GAME_HEIGHT",
+      "lines": "L3-L4",
+      "action": "Change the values from 640 and 360 to 480 and 270.",
+      "code": "export const GAME_WIDTH = 480;\nexport const GAME_HEIGHT = 270;",
+      "expected": "buildGameConfig returns width 480 and height 270."
+    },
+    {
+      "file": "game/frontend/src/phaser/config.ts",
+      "symbol": "computeZoom",
+      "lines": "L6-L8",
+      "action": "Add const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1 and use ratio instead of dpr in the formula.",
+      "code": "const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;\nreturn Math.max(1, Math.floor(Math.min((w * ratio) / GAME_WIDTH, (h * ratio) / GAME_HEIGHT)));",
+      "expected": "computeZoom(1280,720,NaN) returns 2."
+    }
+  ],
+  "created_at": "2026-11-24T02:53:22.982886+00:00",
+  "updated_at": "2026-11-24T02:55:11.998249+00:00"
+}

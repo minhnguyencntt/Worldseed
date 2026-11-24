@@ -1,0 +1,76 @@
+{
+  "id": "01M842QZ4N7G5JC4H3N390JQBG",
+  "intent_id": "01M842N0PAB8ZNGFNQNRV0TC13",
+  "title": "Verify: Config loader and health endpoint unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for LoadFS and /healthz",
+  "description": "Write offline tests using fstest.MapFS and httptest covering config loading, env overrides, missing secret and health response.",
+  "acceptance_criteria": [
+    "Config tests pass",
+    "Health test passes"
+  ],
+  "scope": {
+    "in_scope": [
+      "config and server tests"
+    ],
+    "out_of_scope": [
+      "player tests"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "fstest.MapFS, fake getenv map, httptest"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass offline",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-014.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M842QZ118AWGPRTTDEDDRC0A",
+    "trace:01M8414WGSCHK40XTRCR8BKCX3",
+    "artifact:.ai-dlc/units/UNIT-014.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M842QZ4NFNK410GKGX8R7ZN7"
+  ],
+  "sim_node_id": "01M842QZ115PXKBESKMYVZ34NH",
+  "feature_id": "01M8414WGSCHK40XTRCR8BKCX3",
+  "artifact_path": ".ai-dlc/units/UNIT-014.md",
+  "artifact_id": "UNIT-014",
+  "steps": [
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_EnvOverrides",
+      "lines": "new",
+      "action": "Build fstest.MapFS with config.yaml containing auth.token_secret 'yaml-secret' and git.token 'yaml-git'; call LoadFS with getenv map returning STORYFORGE_TOKEN_SECRET='env-secret', STORYFORGE_GIT_TOKEN='env-git', STORYFORGE_HOSTING_PROVIDER='cloudflare'; assert fields equal env values",
+      "command": "cd backend && go test ./internal/config -run TestLoadFS_EnvOverrides",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_MissingSecretAndDefaults",
+      "lines": "new",
+      "action": "With YAML lacking token_secret and no env, assert LoadFS returns non-nil error; with secret present and no cookie_name/ttl, assert CookieName 'sf_session' and TokenTTL 720h",
+      "command": "cd backend && go test ./internal/config -run TestLoadFS_MissingSecretAndDefaults",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestHealthz",
+      "lines": "new",
+      "action": "Create handler via New with config having a secret and discard slog logger; httptest GET /healthz; assert 200, Content-Type application/json and body status ok",
+      "command": "cd backend && go test ./internal/server -run TestHealthz",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T11:30:30.165836+00:00",
+  "updated_at": "2026-11-23T11:33:56.102514+00:00"
+}

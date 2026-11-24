@@ -1,0 +1,92 @@
+{
+  "id": "01M85VQB53S6X8TZ9A2WMMRCT0",
+  "intent_id": "01M85V8DJ1E8EVGVFR4YDYKYK2",
+  "title": "Act: Delete placeholder SVGs, stale frontend/public assets and SceneView",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Remove all svg files and the unused hotspot-over-image code",
+  "description": "git rm all svg files under both asset roots, the duplicate README, frontend/src/components/SceneView.tsx and frontend/src/runtime/assets.ts.",
+  "acceptance_criteria": [
+    "No .svg under the asset roots",
+    "SceneView and ASSET_PATHS are gone"
+  ],
+  "scope": {
+    "in_scope": [
+      "Deletions"
+    ],
+    "out_of_scope": [
+      "Other files"
+    ],
+    "preserve": [
+      "audio, PNGs"
+    ]
+  },
+  "technical_constraints": [
+    "Run only after content and manifest are switched",
+    "Code path: `game/frontend/public/assets/bedroom.svg`",
+    "Code path: `game/frontend/public/assets/README.md`",
+    "Code path: `game/frontend/public/assets/ui/icons/sound.svg`",
+    "Code path: `game/frontend/public/assets/worlds/the-boys-room/backgrounds/bedroom-room.svg`",
+    "Code path: `game/public/assets/ui/icons/sound.svg`",
+    "Code path: `game/public/assets/worlds/the-boys-room/backgrounds/bedroom-room.svg`",
+    "Code path: `game/public/assets/worlds/the-boys-room/characters/boy-sheet.svg`",
+    "Code path: `game/frontend/src/components/SceneView.tsx`",
+    "Code path: `game/frontend/src/runtime/assets.ts`"
+  ],
+  "dependencies": [
+    "R4",
+    "A3"
+  ],
+  "definition_of_done": [
+    "git ls-files shows no svg under public",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-815.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85VF91FK6XXSBDFJJ8WFB4P",
+    "trace:01M85SD77W8DXXVTY7JMY24R7N",
+    "artifact:.ai-dlc/units/UNIT-815.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85VQB53Z7Q3W6FYVSNAT4W5"
+  ],
+  "sim_node_id": "01M85VF91FS3S8Q8RT9A2TEAPH",
+  "feature_id": "01M85SD77W8DXXVTY7JMY24R7N",
+  "artifact_path": ".ai-dlc/units/UNIT-815.md",
+  "artifact_id": "UNIT-815",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/public/assets/bedroom.svg",
+      "symbol": "all svg files under game/public/assets and game/frontend/public/assets",
+      "lines": "whole files",
+      "action": "Run git rm on every tracked .svg under both roots plus game/frontend/public/assets/README.md (its file table lists only SVGs).",
+      "command": "cd game && git rm $(git ls-files 'public/*.svg' 'frontend/public/*.svg' frontend/public/assets/README.md)",
+      "expected": "git ls-files 'public/*.svg' 'frontend/public/*.svg' prints nothing"
+    },
+    {
+      "file": "game/frontend/src/components/SceneView.tsx",
+      "symbol": "SceneView",
+      "lines": "whole file",
+      "action": "Delete the file; nothing in App imports it.",
+      "command": "cd game && git rm frontend/src/components/SceneView.tsx",
+      "expected": "File removed"
+    },
+    {
+      "file": "game/frontend/src/runtime/assets.ts",
+      "symbol": "ASSET_PATHS, HOTSPOTS",
+      "lines": "L1-L19",
+      "action": "Delete the file; it only serves SceneView and names bedroom.svg.",
+      "command": "cd game && git rm frontend/src/runtime/assets.ts && grep -rn \"runtime/assets\" frontend/src",
+      "expected": "grep prints nothing"
+    }
+  ],
+  "created_at": "2026-11-24T04:06:18.531751+00:00",
+  "updated_at": "2026-11-24T04:09:46.355982+00:00"
+}

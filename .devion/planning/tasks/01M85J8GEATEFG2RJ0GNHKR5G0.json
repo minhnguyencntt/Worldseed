@@ -1,0 +1,60 @@
+{
+  "id": "01M85J8GEATEFG2RJ0GNHKR5G0",
+  "intent_id": "01M85HZBHYFHX9NEENB8V83S80",
+  "title": "SG-10.2 Push the keyboard-focused object into the scene",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "A store focus change shows the same highlight and label in the scene as hover, and focus is removed on shutdown",
+  "description": "Context: BootScene already maps Tab and arrow keys to moveFocus and emits focusChange, and SceneObject.focus() already shows the hover highlight and label. The shared game store has no focus field, so React cannot push focus into the scene. Desired behavior: the store owns the focused object id, BootScene applies it to its SceneObjects, and shutdown removes focus. Expected result: a store focus change highlights the matching object with its label. Why: keyboard focus must look the same as hover.",
+  "acceptance_criteria": [
+    "Given a scene with objects, when the store focus id changes to an object id, then that SceneObject is focused and the others are blurred",
+    "Given a focused object, when the scene shuts down, then every SceneObject is blurred and the store focus id is null",
+    "Given the store focus id is null, when the store changes, then no SceneObject stays focused"
+  ],
+  "scope": {
+    "in_scope": [
+      "game store focus field and setter",
+      "BootScene focus sync from the store",
+      "BootScene shutdown focus removal",
+      "unit tests for all three"
+    ],
+    "out_of_scope": [
+      "React App or ActionMenu changes",
+      "new events",
+      "backend or API changes",
+      "new visual styles for highlight"
+    ],
+    "preserve": [
+      "existing focusChange and menuClose emissions",
+      "SceneObject.focus and blur behavior",
+      "existing BootScene sync and shutdown cleanup"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 and zustand; no new dependencies",
+    "Phaser is mocked in unit tests",
+    "Reuse SceneObject.focus and blur"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements have Act and Verify units done",
+    "Unit tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-144.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M857STNX1YWBTW0H0K7DRF3M",
+    "artifact:.ai-dlc/intent/INT-144.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85J2QP25TH68W50KCCXZ6YY",
+  "feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+  "artifact_path": ".ai-dlc/intent/INT-144.md",
+  "artifact_id": "INT-144",
+  "created_at": "2026-11-24T01:20:55.242156+00:00"
+}

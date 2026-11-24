@@ -1,0 +1,499 @@
+{
+  "intent_id": "01M85JNHV7YEGSWAECMZEFSTYC",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85JQZJPXVVT425YSM4G28CN",
+      "kind": "intent",
+      "title": "SG-10.2.2 Scene applies the store's focused object as hover highlight and label",
+      "body": "Context: gameStore already holds focusedObjectId and setFocusedObject (SG-10.2.1), and SceneObject.focus()/blur() already draw the same highlight and label as hover. BootScene does not read focusedObjectId yet. Desired behavior: the scene reads the store focus value on each store change, focuses the matching SceneObject, and clears focus when the value is null. Expected result: a unit test with Phaser mocked proves it. Why: so keyboard focus held in the store appears on the canvas.\n\n## Acceptance criteria\n- Given focusedObjectId is 'bookshelf' when the store changes then the SceneObject with spec.id 'bookshelf' has focus() called\n- Given focusedObjectId becomes null then every focused SceneObject has blur() called\n- A unit test with Phaser mocked covers both cases\n\n\n## Scope\n- In scope: BootScene store subscription applies focusedObjectId to SceneObjects\n- In scope: Unit test with Phaser mocked\n- Out of scope: Writing focusedObjectId from the keyboard handler\n- Out of scope: Changing gameStore\n- Out of scope: Changing SceneObject or the engine\n- Preserve: Existing hover behavior\n- Preserve: Existing keyboard handling and focusChange event\n- Preserve: BootScene shutdown cleanup\n\n\n## Technical constraints\n- Reuse SceneObject.focus() and blur(); do not add new highlight code\n- Phaser 3.90; Phaser is mocked in unit tests\n\n\n## Definition of done\n- Both requirements verified by passing unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene subscribes to the game store focus value and shows it like hover",
+      "description": "Context: gameStore already holds focusedObjectId and setFocusedObject (SG-10.2.1), and SceneObject.focus()/blur() already draw the same highlight and label as hover. BootScene does not read focusedObjectId yet. Desired behavior: the scene reads the store focus value on each store change, focuses the matching SceneObject, and clears focus when the value is null. Expected result: a unit test with Phaser mocked proves it. Why: so keyboard focus held in the store appears on the canvas.",
+      "acceptance_criteria": [
+        "Given focusedObjectId is 'bookshelf' when the store changes then the SceneObject with spec.id 'bookshelf' has focus() called",
+        "Given focusedObjectId becomes null then every focused SceneObject has blur() called",
+        "A unit test with Phaser mocked covers both cases"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene store subscription applies focusedObjectId to SceneObjects",
+          "Unit test with Phaser mocked"
+        ],
+        "out_of_scope": [
+          "Writing focusedObjectId from the keyboard handler",
+          "Changing gameStore",
+          "Changing SceneObject or the engine"
+        ],
+        "preserve": [
+          "Existing hover behavior",
+          "Existing keyboard handling and focusChange event",
+          "BootScene shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse SceneObject.focus() and blur(); do not add new highlight code",
+        "Phaser 3.90; Phaser is mocked in unit tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements verified by passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-146.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-146.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-146.md",
+      "artifact_id": "INT-146"
+    },
+    {
+      "id": "01M85JQZJPCVTRNEG9YF4DAX2A",
+      "kind": "requirement",
+      "title": "REQ · Scene focuses the object matching the store focusedObjectId",
+      "body": "Context: BootScene.onStateChange only syncs objects with GameState. Desired behavior: on each store change it reads focusedObjectId and calls focus() on the SceneObject whose spec.id equals it. Expected result: that object shows the hover highlight and label. Why: store-driven focus must reach the canvas.\n\n## Acceptance criteria\n- Given focusedObjectId 'bookshelf' and a SceneObject with spec.id 'bookshelf' when the store notifies then that object's focus() is called\n- Given focusedObjectId names a different object then the 'bookshelf' object's focus() is not called\n\n\n## Scope\n- In scope: BootScene focus application\n- Out of scope: Keyboard handler writes\n- Preserve: sceneObjects sync(state) calls\n\n\n## Technical constraints\n- Match by SceneObject.spec.id\n\n\n## Dependencies\n- INT-1\n\n\n## Definition of done\n- BootScene focuses the matching object on store change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Store focus value highlights the matching scene object",
+      "description": "Context: BootScene.onStateChange only syncs objects with GameState. Desired behavior: on each store change it reads focusedObjectId and calls focus() on the SceneObject whose spec.id equals it. Expected result: that object shows the hover highlight and label. Why: store-driven focus must reach the canvas.",
+      "acceptance_criteria": [
+        "Given focusedObjectId 'bookshelf' and a SceneObject with spec.id 'bookshelf' when the store notifies then that object's focus() is called",
+        "Given focusedObjectId names a different object then the 'bookshelf' object's focus() is not called"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene focus application"
+        ],
+        "out_of_scope": [
+          "Keyboard handler writes"
+        ],
+        "preserve": [
+          "sceneObjects sync(state) calls"
+        ]
+      },
+      "technical_constraints": [
+        "Match by SceneObject.spec.id"
+      ],
+      "dependencies": [
+        "INT-1"
+      ],
+      "definition_of_done": [
+        "BootScene focuses the matching object on store change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-363.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85JQZJPXVVT425YSM4G28CN",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85JQZJPXVVT425YSM4G28CN",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-363.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPXVVT425YSM4G28CN"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-363.md",
+      "artifact_id": "REQ-363"
+    },
+    {
+      "id": "01M85JQZJPP221J06J9RAYWZC0",
+      "kind": "requirement",
+      "title": "REQ · Scene clears focus when the store focusedObjectId is null",
+      "body": "Context: SceneObject.blur() removes highlight and label. Desired behavior: when focusedObjectId is null (or matches no object), every currently focused SceneObject is blurred, and this runs even before GameState is initialised. Expected result: no object stays highlighted. Why: clearing focus in the store must clear the canvas.\n\n## Acceptance criteria\n- Given a focused SceneObject and focusedObjectId set to null when the store notifies then its blur() is called\n- Given focusedObjectId is null and no object is focused then neither focus() nor blur() is called\n\n\n## Scope\n- In scope: BootScene clearing logic and wiring into onStateChange\n- Out of scope: SceneObject changes\n- Preserve: Early return when GameState is null must not skip focus application\n\n\n## Technical constraints\n- Use SceneObject.isFocused to decide whether to blur\n\n\n## Dependencies\n- INT-1\n- REQ-1\n\n\n## Definition of done\n- Null focus clears all highlighted objects\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Null store focus removes highlight and label from all objects",
+      "description": "Context: SceneObject.blur() removes highlight and label. Desired behavior: when focusedObjectId is null (or matches no object), every currently focused SceneObject is blurred, and this runs even before GameState is initialised. Expected result: no object stays highlighted. Why: clearing focus in the store must clear the canvas.",
+      "acceptance_criteria": [
+        "Given a focused SceneObject and focusedObjectId set to null when the store notifies then its blur() is called",
+        "Given focusedObjectId is null and no object is focused then neither focus() nor blur() is called"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene clearing logic and wiring into onStateChange"
+        ],
+        "out_of_scope": [
+          "SceneObject changes"
+        ],
+        "preserve": [
+          "Early return when GameState is null must not skip focus application"
+        ]
+      },
+      "technical_constraints": [
+        "Use SceneObject.isFocused to decide whether to blur"
+      ],
+      "dependencies": [
+        "INT-1",
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Null focus clears all highlighted objects",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-364.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85JQZJPXVVT425YSM4G28CN",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85JQZJPXVVT425YSM4G28CN",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-364.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPXVVT425YSM4G28CN"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-364.md",
+      "artifact_id": "REQ-364"
+    },
+    {
+      "id": "01M85JQZJP61SH6BQA75B7BDT7",
+      "kind": "unit",
+      "title": "Act: Add applyFocusedObject to BootScene to focus the matching object",
+      "body": "Add a private method to BootScene that focuses the SceneObject whose spec.id equals the given id, reusing SceneObject.focus().\n\n## Acceptance criteria\n- applyFocusedObject('bookshelf') calls focus() on the object with spec.id 'bookshelf'\n- Objects with other ids are not focused by it\n\n\n## Scope\n- In scope: New private method in BootScene.ts\n- Out of scope: Wiring into onStateChange\n- Out of scope: Tests\n- Preserve: All existing BootScene methods\n\n\n## Technical constraints\n- No new Phaser API use\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Method exists and type-checks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add private applyFocusedObject(id) that focuses the matching SceneObject",
+      "description": "Add a private method to BootScene that focuses the SceneObject whose spec.id equals the given id, reusing SceneObject.focus().",
+      "acceptance_criteria": [
+        "applyFocusedObject('bookshelf') calls focus() on the object with spec.id 'bookshelf'",
+        "Objects with other ids are not focused by it"
+      ],
+      "scope": {
+        "in_scope": [
+          "New private method in BootScene.ts"
+        ],
+        "out_of_scope": [
+          "Wiring into onStateChange",
+          "Tests"
+        ],
+        "preserve": [
+          "All existing BootScene methods"
+        ]
+      },
+      "technical_constraints": [
+        "No new Phaser API use",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Method exists and type-checks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-726.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85JQZJPCVTRNEG9YF4DAX2A",
+      "matched_feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+      "links": [
+        "parent:01M85JQZJPCVTRNEG9YF4DAX2A",
+        "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+        "artifact:.ai-dlc/units/UNIT-726.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPCVTRNEG9YF4DAX2A"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-726.md",
+      "artifact_id": "UNIT-726",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "new: BootScene.applyFocusedObject",
+          "lines": "after L134",
+          "action": "Add a private method applyFocusedObject(id: string | null): void that loops over this.sceneObjects and, for the object whose spec.id === id and that is not already isFocused, calls o.focus().",
+          "code": "private applyFocusedObject(id: string | null): void {\n  this.sceneObjects.forEach((o) => {\n    if (id !== null && o.spec.id === id && !o.isFocused) o.focus();\n  });\n}",
+          "expected": "BootScene compiles and the method focuses only the object with the given id"
+        }
+      ]
+    },
+    {
+      "id": "01M85JQZJPMWVM5EY268R01JTG",
+      "kind": "unit",
+      "title": "Act: Clear non-matching focus and call applyFocusedObject from onStateChange",
+      "body": "Extend applyFocusedObject to blur focused objects that do not match (all of them when id is null) and call it from onStateChange with useGameStore.getState().focusedObjectId before the null-state early return.\n\n## Acceptance criteria\n- With focusedObjectId null, focused objects get blur() on store change\n- Focus application still runs when GameState is null\n\n\n## Scope\n- In scope: applyFocusedObject blur branch\n- In scope: onStateChange wiring\n- Out of scope: Tests\n- Out of scope: Keyboard handler\n- Preserve: sceneObjects.forEach sync(state) behavior\n\n\n## Technical constraints\n- Read focus from useGameStore.getState().focusedObjectId; do not copy it into a scene field\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-2\n- ACT-1\n\n\n## Definition of done\n- Store focus changes drive highlight and clear on null\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Blur other focused objects and apply store focus on every store change",
+      "description": "Extend applyFocusedObject to blur focused objects that do not match (all of them when id is null) and call it from onStateChange with useGameStore.getState().focusedObjectId before the null-state early return.",
+      "acceptance_criteria": [
+        "With focusedObjectId null, focused objects get blur() on store change",
+        "Focus application still runs when GameState is null"
+      ],
+      "scope": {
+        "in_scope": [
+          "applyFocusedObject blur branch",
+          "onStateChange wiring"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Keyboard handler"
+        ],
+        "preserve": [
+          "sceneObjects.forEach sync(state) behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Read focus from useGameStore.getState().focusedObjectId; do not copy it into a scene field",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-2",
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Store focus changes drive highlight and clear on null",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-727.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85JQZJPP221J06J9RAYWZC0",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M85JQZJPP221J06J9RAYWZC0",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-727.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPP221J06J9RAYWZC0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-727.md",
+      "artifact_id": "UNIT-727",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.applyFocusedObject",
+          "lines": "after L134",
+          "action": "Add an else-if branch inside the forEach so that an object that isFocused and whose spec.id !== id gets blur() called.",
+          "code": "if (id !== null && o.spec.id === id) { if (!o.isFocused) o.focus(); }\nelse if (o.isFocused) o.blur();",
+          "expected": "Null or non-matching id blurs previously focused objects"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onStateChange",
+          "lines": "L130-L134",
+          "action": "Insert this.applyFocusedObject(useGameStore.getState().focusedObjectId) as the first statement, before const state = this.readState() and its early return.",
+          "code": "onStateChange(): void {\n  this.applyFocusedObject(useGameStore.getState().focusedObjectId);\n  const state = this.readState();\n  if (!state) return;\n  this.sceneObjects.forEach((o) => o.sync(state));\n}",
+          "expected": "Every store notification applies the store focus to the scene objects"
+        }
+      ]
+    },
+    {
+      "id": "01M85JQZJPK4AH43BRDZ4N1P2G",
+      "kind": "unit",
+      "title": "Verify: Store focus focuses the matching scene object unit tests",
+      "body": "Write a Phaser-mocked unit test proving REQ-1.\n\n## Acceptance criteria\n- Setting focusedObjectId 'bookshelf' calls focus() on the bookshelf fake only\n- The 'bed' fake's focus() is not called when focusedObjectId is 'bookshelf'\n\n\n## Scope\n- In scope: New test file game/frontend/tests/bootSceneFocus.test.ts\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock phaser, ../src/runtime/content, @game/engine/buildScene, buildEffects, playSceneTransition, phaser renderContext and effectContext the same way tests/bootSceneKeyboard.test.ts does\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test that a store focus value focuses the matching object",
+      "description": "Write a Phaser-mocked unit test proving REQ-1.",
+      "acceptance_criteria": [
+        "Setting focusedObjectId 'bookshelf' calls focus() on the bookshelf fake only",
+        "The 'bed' fake's focus() is not called when focusedObjectId is 'bookshelf'"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file game/frontend/tests/bootSceneFocus.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock phaser, ../src/runtime/content, @game/engine/buildScene, buildEffects, playSceneTransition, phaser renderContext and effectContext the same way tests/bootSceneKeyboard.test.ts does"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-728.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85JQZJP61SH6BQA75B7BDT7",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85JQZJP61SH6BQA75B7BDT7",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-728.md"
+      ],
+      "depends_on": [
+        "01M85JQZJP61SH6BQA75B7BDT7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-728.md",
+      "artifact_id": "UNIT-728",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFocus.test.ts",
+          "symbol": "new: describe('BootScene store focus') it('focuses the object matching focusedObjectId')",
+          "lines": "new",
+          "action": "Copy the vi.mock block and BootScene create() setup from tests/bootSceneKeyboard.test.ts. Build two fake objects {spec:{id:'bookshelf'}, isFocused:false, focus, blur, sync, destroy, onInteract, handleKey} and {spec:{id:'bed'}, ...}. Return both from the mocked buildScene, call create(), then call useGameStore.getState().setFocusedObject('bookshelf'). Assert bookshelf.focus toHaveBeenCalledTimes(1) and bed.focus not.toHaveBeenCalled().",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFocus.test.ts -t 'focuses the object matching'",
+          "expected": "Test passes: only the bookshelf fake is focused"
+        }
+      ]
+    },
+    {
+      "id": "01M85JQZJPB9AP50XG1AGAVK67",
+      "kind": "unit",
+      "title": "Verify: Null store focus clears scene focus unit tests",
+      "body": "Write Phaser-mocked unit tests proving REQ-2.\n\n## Acceptance criteria\n- Setting focusedObjectId null blurs a focused object\n- No focus or blur call when nothing is focused and id is null\n\n\n## Scope\n- In scope: Add tests to game/frontend/tests/bootSceneFocus.test.ts\n- Out of scope: Product code\n- Preserve: Test from VER-1\n\n\n## Technical constraints\n- Same mocks as VER-1\n\n\n## Dependencies\n- ACT-2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test that null store focus blurs focused objects",
+      "description": "Write Phaser-mocked unit tests proving REQ-2.",
+      "acceptance_criteria": [
+        "Setting focusedObjectId null blurs a focused object",
+        "No focus or blur call when nothing is focused and id is null"
+      ],
+      "scope": {
+        "in_scope": [
+          "Add tests to game/frontend/tests/bootSceneFocus.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Test from VER-1"
+        ]
+      },
+      "technical_constraints": [
+        "Same mocks as VER-1"
+      ],
+      "dependencies": [
+        "ACT-2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-729.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85JQZJPMWVM5EY268R01JTG",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85JQZJPMWVM5EY268R01JTG",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-729.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPMWVM5EY268R01JTG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-729.md",
+      "artifact_id": "UNIT-729",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFocus.test.ts",
+          "symbol": "new: it('blurs focused objects when focusedObjectId is null')",
+          "lines": "after the VER-1 test",
+          "action": "Create a fake bookshelf with isFocused:true, call create(), set the store focus to 'bookshelf' then to null via setFocusedObject(null). Assert bookshelf.blur toHaveBeenCalledTimes(1).",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFocus.test.ts -t 'blurs focused objects'",
+          "expected": "Test passes: blur called once after null"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneFocus.test.ts",
+          "symbol": "new: it('does nothing when no object is focused and focus is null')",
+          "lines": "after the previous test",
+          "action": "Create a fake with isFocused:false, call create(), call setFocusedObject(null) on a store whose focusedObjectId is already null plus a call via setState. Assert focus and blur are not called.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFocus.test.ts -t 'does nothing when no object'",
+          "expected": "Test passes: neither focus nor blur called"
+        }
+      ]
+    },
+    {
+      "id": "01M85JQZJP0BF5V5W7A4Q7Y21H",
+      "kind": "evidence",
+      "title": "Evidence: BootScene store focus unit tests pass",
+      "body": "Record the passing bootSceneFocus unit test run covering focus on match and clear on null.\n\n## Acceptance criteria\n- bootSceneFocus.test.ts passes with all three tests\n- Existing bootSceneKeyboard tests still pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: New code\n\n\n## Dependencies\n- VER-1\n- VER-2\n\n\n## Definition of done\n- Test output captured as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that store focus drives the scene highlight",
+      "description": "Record the passing bootSceneFocus unit test run covering focus on match and clear on null.",
+      "acceptance_criteria": [
+        "bootSceneFocus.test.ts passes with all three tests",
+        "Existing bootSceneKeyboard tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER-1",
+        "VER-2"
+      ],
+      "definition_of_done": [
+        "Test output captured as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-146.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85JQZJPK4AH43BRDZ4N1P2G",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85JQZJPK4AH43BRDZ4N1P2G",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-146.md"
+      ],
+      "depends_on": [
+        "01M85JQZJPK4AH43BRDZ4N1P2G",
+        "01M85JQZJPB9AP50XG1AGAVK67"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-146.md",
+      "artifact_id": "EVD-146"
+    }
+  ],
+  "created_at": "2026-11-24T01:30:18.162523+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

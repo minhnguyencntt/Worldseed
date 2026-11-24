@@ -1,0 +1,901 @@
+{
+  "intent_id": "01M85G7DCQB00J87WR5V991XJ8",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85GCN8C10GT6WH48EVAKSKZ",
+      "kind": "intent",
+      "title": "SG-8.5 Unit tests for ContributionSheet with the API client mocked",
+      "body": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already implements submit, history, validation and Radix dialog focus behaviour, with many partial suites in game/frontend/tests. Desired behavior: four focused test files exist and pass, covering submit success, API error, quota exhausted, history loading/empty/error/list, empty and over-length validation, Escape, focus trap and focus restore. Expected result: each behaviour is asserted by a named test. Why: SG-8.5 requires the test files to actually exist and pass.\n\n## Acceptance criteria\n- Given the API is mocked, when a submit succeeds, fails with 500 or fails with 409, then each outcome is asserted by a test that passes\n- Given the history endpoint is mocked, when it is pending, empty, failing or returns entries, then each state is asserted by a test that passes\n- Given empty and 501-character text, when Send is attempted, then the validation tests assert no POST is made\n- Given an open dialog, when Escape is pressed, focus moves outside or the dialog closes, then the Escape, focus trap and focus restore tests pass\n\n\n## Scope\n- In scope: Test ids on existing ContributionSheet elements\n- In scope: Four new vitest files under game/frontend/tests\n- Out of scope: Backend changes\n- Out of scope: Browser or e2e tests\n- Out of scope: Changing user-visible text or behaviour\n- Preserve: Existing contribution tests\n- Preserve: API client contracts in game/frontend/src/api/client.ts\n\n\n## Technical constraints\n- vitest with jsdom and mocked fetch\n- No real network\n\n\n## Definition of done\n- All four new test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Contribution modal behaviours are proven by passing unit tests with the API mocked",
+      "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already implements submit, history, validation and Radix dialog focus behaviour, with many partial suites in game/frontend/tests. Desired behavior: four focused test files exist and pass, covering submit success, API error, quota exhausted, history loading/empty/error/list, empty and over-length validation, Escape, focus trap and focus restore. Expected result: each behaviour is asserted by a named test. Why: SG-8.5 requires the test files to actually exist and pass.",
+      "acceptance_criteria": [
+        "Given the API is mocked, when a submit succeeds, fails with 500 or fails with 409, then each outcome is asserted by a test that passes",
+        "Given the history endpoint is mocked, when it is pending, empty, failing or returns entries, then each state is asserted by a test that passes",
+        "Given empty and 501-character text, when Send is attempted, then the validation tests assert no POST is made",
+        "Given an open dialog, when Escape is pressed, focus moves outside or the dialog closes, then the Escape, focus trap and focus restore tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test ids on existing ContributionSheet elements",
+          "Four new vitest files under game/frontend/tests"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Browser or e2e tests",
+          "Changing user-visible text or behaviour"
+        ],
+        "preserve": [
+          "Existing contribution tests",
+          "API client contracts in game/frontend/src/api/client.ts"
+        ]
+      },
+      "technical_constraints": [
+        "vitest with jsdom and mocked fetch",
+        "No real network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All four new test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-140.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85FWFYE6T0BGGMNHZ3BZKFR",
+      "links": [
+        "trace:01M85FWFYE6T0BGGMNHZ3BZKFR",
+        "artifact:.ai-dlc/intent/INT-140.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-140.md",
+      "artifact_id": "INT-140"
+    },
+    {
+      "id": "01M85GCN8CC7SYYWW36HNDF6S7",
+      "kind": "requirement",
+      "title": "REQ · Submit success, API error and quota exhausted outcomes are individually identifiable",
+      "body": "Context: ContributionSheet shows success via data-testid contribution-success, but the error alert and the quota-used message have no test ids. Desired behavior: the error alert and zero-quota message carry test ids. Expected result: tests assert success, 500 error, 409 error and quota exhausted separately. Why: SG-8.5 submit coverage.\n\n## Acceptance criteria\n- Given a 201 response, when Send is clicked, then contribution-success shows 'Suggestion sent'\n- Given a 500 response, when Send is clicked, then contribution-error shows 'Could not send'\n- Given a 409 response, when Send is clicked, then contribution-error shows 'Limit reached or duplicate idea'\n- Given 5 sent contributions in history, when the sheet opens, then contribution-quota is shown and Send is disabled\n\n\n## Scope\n- In scope: Test ids for error and quota alerts\n- Out of scope: Message wording changes\n- Preserve: Existing text, roles and ids\n\n\n## Technical constraints\n- Keep role=alert on both elements\n\n\n## Definition of done\n- Test ids present and submit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Each submit outcome has its own element that tests can target",
+      "description": "Context: ContributionSheet shows success via data-testid contribution-success, but the error alert and the quota-used message have no test ids. Desired behavior: the error alert and zero-quota message carry test ids. Expected result: tests assert success, 500 error, 409 error and quota exhausted separately. Why: SG-8.5 submit coverage.",
+      "acceptance_criteria": [
+        "Given a 201 response, when Send is clicked, then contribution-success shows 'Suggestion sent'",
+        "Given a 500 response, when Send is clicked, then contribution-error shows 'Could not send'",
+        "Given a 409 response, when Send is clicked, then contribution-error shows 'Limit reached or duplicate idea'",
+        "Given 5 sent contributions in history, when the sheet opens, then contribution-quota is shown and Send is disabled"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test ids for error and quota alerts"
+        ],
+        "out_of_scope": [
+          "Message wording changes"
+        ],
+        "preserve": [
+          "Existing text, roles and ids"
+        ]
+      },
+      "technical_constraints": [
+        "Keep role=alert on both elements"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test ids present and submit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-346.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85GCN8C10GT6WH48EVAKSKZ",
+      "matched_feature_id": "01M85BP7N1KYP1XAPXSZBNPXM2",
+      "links": [
+        "parent:01M85GCN8C10GT6WH48EVAKSKZ",
+        "trace:01M85BP7N1KYP1XAPXSZBNPXM2",
+        "artifact:.ai-dlc/requirements/REQ-346.md"
+      ],
+      "depends_on": [
+        "01M85GCN8C10GT6WH48EVAKSKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-346.md",
+      "artifact_id": "REQ-346"
+    },
+    {
+      "id": "01M85GCN8CQPR6QP3S6S9XFX51",
+      "kind": "requirement",
+      "title": "REQ · History loading, empty, error and list states are identifiable and asserted",
+      "body": "Context: loading, empty and error messages have test ids; the list does not. Desired behavior: the history list carries a test id. Expected result: tests assert loading, empty, error with Retry and populated list. Why: SG-8.5 history coverage.\n\n## Acceptance criteria\n- Given a pending history request, when the sheet opens, then contribution-history-loading is shown\n- Given an empty history, when it loads, then contribution-history-empty is shown\n- Given a failing history request, when it settles, then contribution-history-error and a Retry button are shown\n- Given two past suggestions, when history loads, then contribution-history-list contains both prompts marked Sent\n\n\n## Scope\n- In scope: Test id on the suggestions list\n- Out of scope: Changes to loading logic\n- Preserve: aria-label 'Your suggestions'\n\n\n## Definition of done\n- History tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "History states each have a test id and a test",
+      "description": "Context: loading, empty and error messages have test ids; the list does not. Desired behavior: the history list carries a test id. Expected result: tests assert loading, empty, error with Retry and populated list. Why: SG-8.5 history coverage.",
+      "acceptance_criteria": [
+        "Given a pending history request, when the sheet opens, then contribution-history-loading is shown",
+        "Given an empty history, when it loads, then contribution-history-empty is shown",
+        "Given a failing history request, when it settles, then contribution-history-error and a Retry button are shown",
+        "Given two past suggestions, when history loads, then contribution-history-list contains both prompts marked Sent"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test id on the suggestions list"
+        ],
+        "out_of_scope": [
+          "Changes to loading logic"
+        ],
+        "preserve": [
+          "aria-label 'Your suggestions'"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "History tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-347.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85GCN8C10GT6WH48EVAKSKZ",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85GCN8C10GT6WH48EVAKSKZ",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-347.md"
+      ],
+      "depends_on": [
+        "01M85GCN8C10GT6WH48EVAKSKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-347.md",
+      "artifact_id": "REQ-347"
+    },
+    {
+      "id": "01M85GCN8CKAEZKWR90CDYJYW7",
+      "kind": "requirement",
+      "title": "REQ · Empty and over-length text are rejected with identifiable messages",
+      "body": "Context: blank and over-limit alerts exist with ids but no test ids. Desired behavior: add test ids; tests assert messages and absence of POST. Why: SG-8.5 validation coverage.\n\n## Acceptance criteria\n- Given empty text, when the form is submitted, then contribution-validation-blank shows 'Enter an idea first' and no POST is made\n- Given 501 characters, when typed, then contribution-validation-limit shows 'Too long: 501 / 500', Send is disabled and no POST is made\n- Given exactly 500 characters, when sent, then contribution-validation-limit is absent and POST is made\n\n\n## Scope\n- In scope: Test ids on validation alerts\n- Out of scope: Limit changes\n- Preserve: MAX_PROMPT_LENGTH 500\n\n\n## Definition of done\n- Validation tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Validation alerts have test ids and tests prove no POST is sent",
+      "description": "Context: blank and over-limit alerts exist with ids but no test ids. Desired behavior: add test ids; tests assert messages and absence of POST. Why: SG-8.5 validation coverage.",
+      "acceptance_criteria": [
+        "Given empty text, when the form is submitted, then contribution-validation-blank shows 'Enter an idea first' and no POST is made",
+        "Given 501 characters, when typed, then contribution-validation-limit shows 'Too long: 501 / 500', Send is disabled and no POST is made",
+        "Given exactly 500 characters, when sent, then contribution-validation-limit is absent and POST is made"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test ids on validation alerts"
+        ],
+        "out_of_scope": [
+          "Limit changes"
+        ],
+        "preserve": [
+          "MAX_PROMPT_LENGTH 500"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Validation tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-348.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85GCN8C10GT6WH48EVAKSKZ",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85GCN8C10GT6WH48EVAKSKZ",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-348.md"
+      ],
+      "depends_on": [
+        "01M85GCN8C10GT6WH48EVAKSKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-348.md",
+      "artifact_id": "REQ-348"
+    },
+    {
+      "id": "01M85GCN8CDM52JWXHQHR3ESPM",
+      "kind": "requirement",
+      "title": "REQ · Escape, focus trap and focus restore are asserted for the dialog",
+      "body": "Context: Radix Dialog supplies Escape and focus trap; onCloseAutoFocus restores focus to returnFocusRef. Desired behavior: Close button has a test id; tests assert the three behaviours directly on ContributionSheet. Why: SG-8.5 keyboard coverage.\n\n## Acceptance criteria\n- Given an open sheet, when Escape is pressed, then onClose is called once\n- Given a button outside the dialog, when it is focused while the sheet is open, then focus returns inside the dialog\n- Given returnFocusRef points at a trigger, when the sheet closes, then the trigger has focus\n\n\n## Scope\n- In scope: Test id on Close button\n- Out of scope: Changing Radix behaviour\n- Preserve: onCloseAutoFocus logic\n\n\n## Definition of done\n- Keyboard tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Close button gets a test id and keyboard tests prove Escape, trap and restore",
+      "description": "Context: Radix Dialog supplies Escape and focus trap; onCloseAutoFocus restores focus to returnFocusRef. Desired behavior: Close button has a test id; tests assert the three behaviours directly on ContributionSheet. Why: SG-8.5 keyboard coverage.",
+      "acceptance_criteria": [
+        "Given an open sheet, when Escape is pressed, then onClose is called once",
+        "Given a button outside the dialog, when it is focused while the sheet is open, then focus returns inside the dialog",
+        "Given returnFocusRef points at a trigger, when the sheet closes, then the trigger has focus"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test id on Close button"
+        ],
+        "out_of_scope": [
+          "Changing Radix behaviour"
+        ],
+        "preserve": [
+          "onCloseAutoFocus logic"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Keyboard tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-349.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85GCN8C10GT6WH48EVAKSKZ",
+      "matched_feature_id": "01M84MX32EE5F4KTCDSKMVYBD9",
+      "links": [
+        "parent:01M85GCN8C10GT6WH48EVAKSKZ",
+        "trace:01M84MX32EE5F4KTCDSKMVYBD9",
+        "artifact:.ai-dlc/requirements/REQ-349.md"
+      ],
+      "depends_on": [
+        "01M85GCN8C10GT6WH48EVAKSKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-349.md",
+      "artifact_id": "REQ-349"
+    },
+    {
+      "id": "01M85GCN8CHZV46V9HTA2C870E",
+      "kind": "unit",
+      "title": "Act: Add test ids to the submit error and quota alerts",
+      "body": "Add data-testid=contribution-error to the submit error paragraph and data-testid=contribution-quota to the zero-quota paragraph without changing text or roles.\n\n## Acceptance criteria\n- The error paragraph renders data-testid contribution-error\n- The quota paragraph renders data-testid contribution-quota\n\n\n## Scope\n- In scope: ContributionSheet.tsx alerts\n- Out of scope: Tests\n- Preserve: Alert text and role\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Both attributes present in the JSX\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to two alerts in ContributionSheet",
+      "description": "Add data-testid=contribution-error to the submit error paragraph and data-testid=contribution-quota to the zero-quota paragraph without changing text or roles.",
+      "acceptance_criteria": [
+        "The error paragraph renders data-testid contribution-error",
+        "The quota paragraph renders data-testid contribution-quota"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx alerts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Alert text and role"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both attributes present in the JSX",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-692.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85GCN8CC7SYYWW36HNDF6S7",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85GCN8CC7SYYWW36HNDF6S7",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-692.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CC7SYYWW36HNDF6S7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-692.md",
+      "artifact_id": "UNIT-692",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (quota paragraph)",
+          "lines": "L150",
+          "action": "Add the attribute data-testid=\"contribution-quota\" to the <p id=\"contribution-idea-quota\"> element.",
+          "code": "<p id=\"contribution-idea-quota\" role=\"alert\" data-testid=\"contribution-quota\">",
+          "expected": "Zero-quota message is queryable by test id contribution-quota"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (error paragraph)",
+          "lines": "L152",
+          "action": "Add the attribute data-testid=\"contribution-error\" to the <p role=\"alert\">{error}</p> element.",
+          "code": "{error && <p role=\"alert\" data-testid=\"contribution-error\">{error}</p>}",
+          "expected": "Submit failure message is queryable by test id contribution-error"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8C2968R1QRCZ03W8BK",
+      "kind": "unit",
+      "title": "Act: Add a test id to the contribution history list",
+      "body": "Add data-testid=contribution-history-list to the ul labelled Your suggestions.\n\n## Acceptance criteria\n- The ul renders data-testid contribution-history-list\n- The aria-label is unchanged\n\n\n## Scope\n- In scope: ContributionSheet.tsx list\n- Out of scope: Tests\n- Preserve: List markup\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attribute present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to the suggestions ul",
+      "description": "Add data-testid=contribution-history-list to the ul labelled Your suggestions.",
+      "acceptance_criteria": [
+        "The ul renders data-testid contribution-history-list",
+        "The aria-label is unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx list"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "List markup"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attribute present",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-693.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85GCN8CQPR6QP3S6S9XFX51",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85GCN8CQPR6QP3S6S9XFX51",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-693.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CQPR6QP3S6S9XFX51"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-693.md",
+      "artifact_id": "UNIT-693",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (suggestions list)",
+          "lines": "L161",
+          "action": "Add data-testid=\"contribution-history-list\" to the <ul aria-label=\"Your suggestions\"> element.",
+          "code": "<ul aria-label=\"Your suggestions\" data-testid=\"contribution-history-list\">",
+          "expected": "List is queryable by test id"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8CY9F0KYH2GZFAGZ73",
+      "kind": "unit",
+      "title": "Act: Add test ids to the blank and over-limit validation alerts",
+      "body": "Add data-testid contribution-validation-blank and contribution-validation-limit to the validation paragraphs.\n\n## Acceptance criteria\n- Blank alert has contribution-validation-blank\n- Limit alert has contribution-validation-limit\n\n\n## Scope\n- In scope: ContributionSheet.tsx validation alerts\n- Out of scope: Tests\n- Preserve: Ids used by aria-describedby\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attributes present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to two validation paragraphs",
+      "description": "Add data-testid contribution-validation-blank and contribution-validation-limit to the validation paragraphs.",
+      "acceptance_criteria": [
+        "Blank alert has contribution-validation-blank",
+        "Limit alert has contribution-validation-limit"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx validation alerts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Ids used by aria-describedby"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attributes present",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-694.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85GCN8CKAEZKWR90CDYJYW7",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85GCN8CKAEZKWR90CDYJYW7",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-694.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CKAEZKWR90CDYJYW7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-694.md",
+      "artifact_id": "UNIT-694",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (blank alert)",
+          "lines": "L148",
+          "action": "Add data-testid=\"contribution-validation-blank\" to <p id=\"contribution-idea-error\">.",
+          "code": "<p id=\"contribution-idea-error\" role=\"alert\" data-testid=\"contribution-validation-blank\">",
+          "expected": "Blank message queryable"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (limit alert)",
+          "lines": "L149",
+          "action": "Add data-testid=\"contribution-validation-limit\" to <p id=\"contribution-idea-limit\">.",
+          "code": "<p id=\"contribution-idea-limit\" role=\"alert\" data-testid=\"contribution-validation-limit\">",
+          "expected": "Limit message queryable"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8CZ4Z38R9GHM7MYKWS",
+      "kind": "unit",
+      "title": "Act: Add a test id to the contribution Close button",
+      "body": "Add data-testid=contribution-close to the Close button in ContributionSheet.\n\n## Acceptance criteria\n- Close button renders data-testid contribution-close\n- Its onClick still calls onClose\n\n\n## Scope\n- In scope: ContributionSheet.tsx Close button\n- Out of scope: Tests\n- Preserve: Button label\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attribute present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to the Close button",
+      "description": "Add data-testid=contribution-close to the Close button in ContributionSheet.",
+      "acceptance_criteria": [
+        "Close button renders data-testid contribution-close",
+        "Its onClick still calls onClose"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx Close button"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Button label"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attribute present",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-695.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85GCN8CDM52JWXHQHR3ESPM",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85GCN8CDM52JWXHQHR3ESPM",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-695.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CDM52JWXHQHR3ESPM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-695.md",
+      "artifact_id": "UNIT-695",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (Close button)",
+          "lines": "L169-L171",
+          "action": "Add data-testid=\"contribution-close\" to the <button type=\"button\" onClick={onClose}> element.",
+          "code": "<button type=\"button\" onClick={onClose} data-testid=\"contribution-close\">",
+          "expected": "Close button queryable by test id"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8CKVR6K93SA8B0GVPP",
+      "kind": "unit",
+      "title": "Verify: Submit success, API error and quota exhausted unit tests",
+      "body": "Write game/frontend/tests/contributionSheetSubmit.test.tsx with fetch stubbed, covering success, 500, 409 and quota exhausted.\n\n## Acceptance criteria\n- Success, 500, 409 and quota tests pass\n- No real network is used\n\n\n## Scope\n- In scope: One new test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- Reuse the stubFetch and json helper pattern from game/frontend/tests/contributionDialog.test.tsx\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New test file asserting the three submit outcomes with fetch mocked",
+      "description": "Write game/frontend/tests/contributionSheetSubmit.test.tsx with fetch stubbed, covering success, 500, 409 and quota exhausted.",
+      "acceptance_criteria": [
+        "Success, 500, 409 and quota tests pass",
+        "No real network is used"
+      ],
+      "scope": {
+        "in_scope": [
+          "One new test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the stubFetch and json helper pattern from game/frontend/tests/contributionDialog.test.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-696.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85GCN8CHZV46V9HTA2C870E",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85GCN8CHZV46V9HTA2C870E",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-696.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CHZV46V9HTA2C870E"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-696.md",
+      "artifact_id": "UNIT-696",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionSheetSubmit.test.tsx",
+          "symbol": "new: describe('ContributionSheet submit outcomes')",
+          "lines": "new",
+          "action": "Create the file with the jsdom pragma, the json/stubFetch helpers copied from contributionDialog.test.tsx, and a render helper for <ContributionSheet open onClose={vi.fn()} roundId=\"round-1\" />. GET routes return json(200, []). Fixture: contributionFixture from game/frontend/tests/fixtures/api.ts, which mirrors contributionJSON in backend/internal/contribution/handler.go.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx",
+          "expected": "File is collected by vitest"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetSubmit.test.tsx",
+          "symbol": "it('success shows contribution-success')",
+          "lines": "new",
+          "action": "POST route returns json(201, contributionFixture). Type 'Look behind the shelf' into label 'Your idea', click Send, assert findByTestId('contribution-success') has text 'Suggestion sent' and queryByTestId('contribution-error') is null.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx -t success",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetSubmit.test.tsx",
+          "symbol": "it('500 and 409 show contribution-error')",
+          "lines": "new",
+          "action": "Two tests: POST returns json(500,{error:'boom'}) and asserts contribution-error text 'Could not send'; POST returns json(409,{error:'limit'}) and asserts text 'Limit reached or duplicate idea'; both assert contribution-success is absent.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx -t error",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetSubmit.test.tsx",
+          "symbol": "it('quota exhausted')",
+          "lines": "new",
+          "action": "GET returns json(200, five contributions built by spreading contributionFixture with distinct id and prompt). Assert findByTestId('contribution-quota') has text 'You have used all your suggestions this round', 'Send' button is disabled and no POST was made on the fetch mock.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8C921P9RCAD623KCKT",
+      "kind": "unit",
+      "title": "Verify: History loading, empty, error and list unit tests",
+      "body": "Write game/frontend/tests/contributionSheetHistory.test.tsx covering loading, empty, error with Retry and populated list.\n\n## Acceptance criteria\n- Four state tests pass\n- No real network is used\n\n\n## Scope\n- In scope: One new test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- fetch stubbed; GET url is /api/v1/player/me/contributions?round_id=round-1 per listMine in game/frontend/src/api/client.ts\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New test file for the four history states with fetch mocked",
+      "description": "Write game/frontend/tests/contributionSheetHistory.test.tsx covering loading, empty, error with Retry and populated list.",
+      "acceptance_criteria": [
+        "Four state tests pass",
+        "No real network is used"
+      ],
+      "scope": {
+        "in_scope": [
+          "One new test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed; GET url is /api/v1/player/me/contributions?round_id=round-1 per listMine in game/frontend/src/api/client.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-697.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85GCN8C2968R1QRCZ03W8BK",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85GCN8C2968R1QRCZ03W8BK",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-697.md"
+      ],
+      "depends_on": [
+        "01M85GCN8C2968R1QRCZ03W8BK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-697.md",
+      "artifact_id": "UNIT-697",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+          "symbol": "new: describe('ContributionSheet history states')",
+          "lines": "new",
+          "action": "Create the file with jsdom pragma and json/stubFetch helpers as in contributionDialog.test.tsx. Fixture contributionFixture from game/frontend/tests/fixtures/api.ts mirrors contributionJSON in backend/internal/contribution/handler.go.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx",
+          "expected": "File collected"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+          "symbol": "it('loading and empty')",
+          "lines": "new",
+          "action": "Test 1: fetch stub returns a never-resolving promise; assert getByTestId('contribution-history-loading') present. Test 2: GET returns json(200, []); assert findByTestId('contribution-history-empty') has 'No suggestions yet this round' and loading is gone.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx -t \"loading and empty\"",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+          "symbol": "it('error then Retry recovers')",
+          "lines": "new",
+          "action": "First GET returns json(500,{error:'x'}), the second json(200,[contributionFixture]). Assert findByTestId('contribution-history-error') has 'Could not load your suggestions', click Retry, then assert the error id disappears and the list shows the fixture prompt.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx -t Retry",
+          "expected": "Retry test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetHistory.test.tsx",
+          "symbol": "it('list renders entries as Sent')",
+          "lines": "new",
+          "action": "GET returns two contributions with prompts 'A' and 'B'. Within findByTestId('contribution-history-list') assert both texts and two 'Sent' labels, and that contribution-history-empty is absent.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetHistory.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8CMA4RRJ2XVD4TAH1D",
+      "kind": "unit",
+      "title": "Verify: Empty and over-length validation unit tests",
+      "body": "Write game/frontend/tests/contributionSheetValidation.test.tsx.\n\n## Acceptance criteria\n- Blank, 501 and 500 tests pass\n- No POST is made for blank or 501-character text\n\n\n## Scope\n- In scope: One new test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- fetch stubbed\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New test file for validation with fetch mocked",
+      "description": "Write game/frontend/tests/contributionSheetValidation.test.tsx.",
+      "acceptance_criteria": [
+        "Blank, 501 and 500 tests pass",
+        "No POST is made for blank or 501-character text"
+      ],
+      "scope": {
+        "in_scope": [
+          "One new test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-698.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85GCN8CY9F0KYH2GZFAGZ73",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85GCN8CY9F0KYH2GZFAGZ73",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-698.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CY9F0KYH2GZFAGZ73"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-698.md",
+      "artifact_id": "UNIT-698",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionSheetValidation.test.tsx",
+          "symbol": "new: describe('ContributionSheet validation')",
+          "lines": "new",
+          "action": "Create the file with jsdom pragma and json/stubFetch helpers as in contributionDialog.test.tsx; GET returns json(200, []), POST returns json(201, contributionFixture) from game/frontend/tests/fixtures/api.ts (mirrors contributionJSON in backend/internal/contribution/handler.go). Add helper postCalls(fetchMock) filtering calls to /api/v1/contributions.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetValidation.test.tsx",
+          "expected": "File collected"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetValidation.test.tsx",
+          "symbol": "it('empty text is rejected')",
+          "lines": "new",
+          "action": "Submit the form via fireEvent.submit on the form containing 'Your idea' with empty value; assert contribution-validation-blank text 'Enter an idea first' and postCalls length 0.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetValidation.test.tsx -t empty",
+          "expected": "Empty text test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetValidation.test.tsx",
+          "symbol": "it('501 chars blocked, 500 sent')",
+          "lines": "new",
+          "action": "Type 'a'.repeat(501): assert contribution-validation-limit text 'Too long: 501 / 500', Send disabled, submit form, postCalls length 0. Change to 'a'.repeat(500): limit element absent, click Send, waitFor postCalls length 1.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetValidation.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8CSY8HHCD5WRR4E65Y",
+      "kind": "unit",
+      "title": "Verify: Escape, focus trap and focus restore unit tests",
+      "body": "Write game/frontend/tests/contributionSheetKeyboard.test.tsx.\n\n## Acceptance criteria\n- Escape, trap and restore tests pass\n- No real network is used\n\n\n## Scope\n- In scope: One new test file\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- fetch stubbed to return json(200, []) for history\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New test file for keyboard and focus behaviour",
+      "description": "Write game/frontend/tests/contributionSheetKeyboard.test.tsx.",
+      "acceptance_criteria": [
+        "Escape, trap and restore tests pass",
+        "No real network is used"
+      ],
+      "scope": {
+        "in_scope": [
+          "One new test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed to return json(200, []) for history"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-699.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85GCN8CZ4Z38R9GHM7MYKWS",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85GCN8CZ4Z38R9GHM7MYKWS",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-699.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CZ4Z38R9GHM7MYKWS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-699.md",
+      "artifact_id": "UNIT-699",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionSheetKeyboard.test.tsx",
+          "symbol": "new: describe('ContributionSheet keyboard and focus')",
+          "lines": "new",
+          "action": "Create the file with jsdom pragma, json/stubFetch helpers as in contributionDialog.test.tsx, and a Harness component holding open state with a trigger <button ref={ref}>Trigger</button>, an outside <button>Outside</button>, and <ContributionSheet open={open} onClose={() => setOpen(false)} roundId=\"round-1\" returnFocusRef={ref} />.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetKeyboard.test.tsx",
+          "expected": "File collected"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetKeyboard.test.tsx",
+          "symbol": "it('Escape closes')",
+          "lines": "new",
+          "action": "Render ContributionSheet directly with onClose=vi.fn(); fireEvent.keyDown(getByRole('dialog'), {key:'Escape'}); waitFor onClose called once.",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetKeyboard.test.tsx -t Escape",
+          "expected": "Escape test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetKeyboard.test.tsx",
+          "symbol": "it('focus trap pulls focus back inside')",
+          "lines": "new",
+          "action": "Render Harness open; call getByText('Outside').focus(); waitFor expect(getByRole('dialog').contains(document.activeElement)).toBe(true).",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetKeyboard.test.tsx -t trap",
+          "expected": "Focus trap test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionSheetKeyboard.test.tsx",
+          "symbol": "it('focus restores to trigger')",
+          "lines": "new",
+          "action": "Render Harness closed, focus Trigger, open it, click getByTestId('contribution-close'), waitFor expect(document.activeElement).toBe(trigger).",
+          "command": "cd game/frontend && npx vitest run tests/contributionSheetKeyboard.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85GCN8C5SN8JY7THQ654NVG",
+      "kind": "evidence",
+      "title": "Evidence: ContributionSheet unit tests with mocked API pass",
+      "body": "Run the four new test files and record that they pass: submit, history, validation and keyboard.\n\n## Acceptance criteria\n- Given the four files exist, when vitest runs them, then all tests pass\n- Given the run, then no real network was used\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: Browser runs\n\n\n## Definition of done\n- Command exits 0: cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx tests/contributionSheetHistory.test.tsx tests/contributionSheetValidation.test.tsx tests/contributionSheetKeyboard.test.tsx\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the four new test files exist and pass",
+      "description": "Run the four new test files and record that they pass: submit, history, validation and keyboard.",
+      "acceptance_criteria": [
+        "Given the four files exist, when vitest runs them, then all tests pass",
+        "Given the run, then no real network was used"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command exits 0: cd game/frontend && npx vitest run tests/contributionSheetSubmit.test.tsx tests/contributionSheetHistory.test.tsx tests/contributionSheetValidation.test.tsx tests/contributionSheetKeyboard.test.tsx",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-140.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85GCN8CKVR6K93SA8B0GVPP",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85GCN8CKVR6K93SA8B0GVPP",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-140.md"
+      ],
+      "depends_on": [
+        "01M85GCN8CKVR6K93SA8B0GVPP",
+        "01M85GCN8C921P9RCAD623KCKT",
+        "01M85GCN8CMA4RRJ2XVD4TAH1D",
+        "01M85GCN8CSY8HHCD5WRR4E65Y"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-140.md",
+      "artifact_id": "EVD-140"
+    }
+  ],
+  "created_at": "2026-11-24T00:49:50.682532+00:00",
+  "summary": "AI · 0 NEW · 14 UPDATE · 0 UNCHANGED · 14/14 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

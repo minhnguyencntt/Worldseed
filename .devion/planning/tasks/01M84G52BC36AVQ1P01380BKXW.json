@@ -1,0 +1,53 @@
+{
+  "id": "01M84G52BC36AVQ1P01380BKXW",
+  "intent_id": "01M84G0SGVRTS10AHNW40X86RM",
+  "title": "SG-7.5 · Runner unit tests pass with Git, provider and clock mocked",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Runner unit tests for lock held, timeout, retry limit, budget, approval gate and report all pass using only fakes",
+  "description": "Context: backend/worker/internal/runner has tests for each area but TestRunCleanup currently fails because it runs with AutoPublish false, so the approval gate keeps the worktree. Desired behavior: every runner unit test passes, and the six areas (lock held, timeout, retry limit, budget, approval gate, report) are covered including edge paths, with Git (fakeTrees), provider (fakeAgent) and clock (injected now) mocked. Expected result: go test ./internal/runner is green. Why: it proves the execution engine without Git, Claude or real time.",
+  "acceptance_criteria": [
+    "Given the runner package, When go test ./internal/runner runs, Then all tests pass",
+    "Given each of lock held, timeout, retry limit, budget, approval gate and report, When tests run, Then at least one test asserts its behavior using only fakes"
+  ],
+  "scope": {
+    "in_scope": [
+      "Runner unit tests and the stale TestRunCleanup expectation"
+    ],
+    "out_of_scope": [
+      "Real Git worktrees",
+      "Real Claude CLI",
+      "Backend and game modules"
+    ],
+    "preserve": [
+      "runner.go public API and behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Go tests only; no network, no real Git, no real clock sleeps beyond 20ms timeouts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go test ./internal/runner passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-040.md`"
+  ],
+  "non_functional": [
+    "Tests finish in seconds"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84F6TVFM92WZ5NK76MMTJKG",
+    "artifact:.ai-dlc/intent/INT-040.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84G4KBB7SVC6XJHF5VFNX6W",
+  "feature_id": "01M84F6TVFM92WZ5NK76MMTJKG",
+  "artifact_path": ".ai-dlc/intent/INT-040.md",
+  "artifact_id": "INT-040",
+  "created_at": "2026-11-23T15:24:50.923969+00:00",
+  "updated_at": "2026-11-23T15:26:09.416087+00:00"
+}

@@ -1,0 +1,489 @@
+{
+  "intent_id": "01M85DDEYZSC2A83NN4WEWTV3N",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85DESAQ15WBV4MXM8P0XPJ5",
+      "kind": "intent",
+      "title": "SG-8.2.3 Block submit and disable Send at zero quota",
+      "body": "Context: ContributionSheet derives `remaining` from MAX_PER_PLAYER minus sent entries and shows 'Contributions left: n', but nothing stops a submit at 0. Desired behavior: at remaining 0 the Send button is disabled, submit is blocked, and an inline message 'You have used all your suggestions this round' is shown. Expected result: the player cannot send past the quota and knows why. Why: avoids guaranteed 409 errors from the backend.\n\n## Acceptance criteria\n- Given remaining quota is 0 When the sheet renders Then the text 'You have used all your suggestions this round' is visible\n- Given remaining quota is 0 When the sheet renders Then the Send button is disabled\n- Given remaining quota is 0 When the form is submitted Then submitContribution is not called\n- Given remaining quota is above 0 When the sheet renders Then Send is enabled and no quota message is shown\n\n\n## Scope\n- In scope: ContributionSheet quota message, disabled Send, submit guard\n- Out of scope: Backend limit logic\n- Out of scope: Blank and max-length validation changes\n- Out of scope: Other components\n- Preserve: Contributions left counter\n- Preserve: Blank-text and over-limit behavior\n- Preserve: Dialog focus behavior\n- Preserve: API contracts in src/api/client.ts\n\n\n## Technical constraints\n- React + TypeScript in game/frontend/src/components/ContributionSheet.tsx\n- Use existing MAX_PER_PLAYER and `remaining` value; no new API\n\n\n## Definition of done\n- Both requirements implemented and verified by unit tests\n\n\n## Non-functional requirements\n- Message is exposed with role=alert for assistive tech\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "When remaining quota is 0 the contribution sheet blocks submit, disables Send and explains why",
+      "description": "Context: ContributionSheet derives `remaining` from MAX_PER_PLAYER minus sent entries and shows 'Contributions left: n', but nothing stops a submit at 0. Desired behavior: at remaining 0 the Send button is disabled, submit is blocked, and an inline message 'You have used all your suggestions this round' is shown. Expected result: the player cannot send past the quota and knows why. Why: avoids guaranteed 409 errors from the backend.",
+      "acceptance_criteria": [
+        "Given remaining quota is 0 When the sheet renders Then the text 'You have used all your suggestions this round' is visible",
+        "Given remaining quota is 0 When the sheet renders Then the Send button is disabled",
+        "Given remaining quota is 0 When the form is submitted Then submitContribution is not called",
+        "Given remaining quota is above 0 When the sheet renders Then Send is enabled and no quota message is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet quota message, disabled Send, submit guard"
+        ],
+        "out_of_scope": [
+          "Backend limit logic",
+          "Blank and max-length validation changes",
+          "Other components"
+        ],
+        "preserve": [
+          "Contributions left counter",
+          "Blank-text and over-limit behavior",
+          "Dialog focus behavior",
+          "API contracts in src/api/client.ts"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript in game/frontend/src/components/ContributionSheet.tsx",
+        "Use existing MAX_PER_PLAYER and `remaining` value; no new API"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements implemented and verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-130.md`"
+      ],
+      "non_functional": [
+        "Message is exposed with role=alert for assistive tech"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85D83WFMMFR5VZMGGJNBMS2",
+      "links": [
+        "trace:01M85D83WFMMFR5VZMGGJNBMS2",
+        "artifact:.ai-dlc/intent/INT-130.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-130.md",
+      "artifact_id": "INT-130"
+    },
+    {
+      "id": "01M85DESAQFT0646BQQY6Q4TJV",
+      "kind": "requirement",
+      "title": "REQ · Zero remaining quota shows an inline 'used all your suggestions' message",
+      "body": "Context: remaining is computed at ContributionSheet.tsx L67 from sent entries. Desired behavior: when remaining is 0 the sheet renders 'You have used all your suggestions this round' inline. Expected result: the player sees why sending is unavailable. Why: clear feedback.\n\n## Acceptance criteria\n- Given 5 sent contributions loaded from history When the sheet opens Then 'You have used all your suggestions this round' is visible with role alert\n- Given fewer than 5 sent contributions When the sheet opens Then the message is absent\n\n\n## Scope\n- In scope: Quota message rendering\n- Out of scope: Disabling Send\n- Preserve: Existing counter text and validation messages\n\n\n## Technical constraints\n- Message text must match exactly\n\n\n## Definition of done\n- Message renders only at zero quota\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Inline message appears when remaining quota is 0",
+      "description": "Context: remaining is computed at ContributionSheet.tsx L67 from sent entries. Desired behavior: when remaining is 0 the sheet renders 'You have used all your suggestions this round' inline. Expected result: the player sees why sending is unavailable. Why: clear feedback.",
+      "acceptance_criteria": [
+        "Given 5 sent contributions loaded from history When the sheet opens Then 'You have used all your suggestions this round' is visible with role alert",
+        "Given fewer than 5 sent contributions When the sheet opens Then the message is absent"
+      ],
+      "scope": {
+        "in_scope": [
+          "Quota message rendering"
+        ],
+        "out_of_scope": [
+          "Disabling Send"
+        ],
+        "preserve": [
+          "Existing counter text and validation messages"
+        ]
+      },
+      "technical_constraints": [
+        "Message text must match exactly"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Message renders only at zero quota",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-323.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85DESAQ15WBV4MXM8P0XPJ5",
+      "matched_feature_id": "01M85BP7N1EDCKTVQD6N8K2G7C",
+      "links": [
+        "parent:01M85DESAQ15WBV4MXM8P0XPJ5",
+        "trace:01M85BP7N1EDCKTVQD6N8K2G7C",
+        "artifact:.ai-dlc/requirements/REQ-323.md"
+      ],
+      "depends_on": [
+        "01M85DESAQ15WBV4MXM8P0XPJ5"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-323.md",
+      "artifact_id": "REQ-323"
+    },
+    {
+      "id": "01M85DESAQX1RW4EYDPW1XYS9Q",
+      "kind": "requirement",
+      "title": "REQ · Send is disabled and submit is blocked when remaining quota is 0",
+      "body": "Context: handleSubmit (L71-93) only guards blank and over-limit. Desired behavior: at remaining 0 the Send button is disabled and handleSubmit returns before calling submitContribution. Expected result: no request is made past the quota. Why: prevents wasted requests and 409 errors.\n\n## Acceptance criteria\n- Given remaining is 0 When the sheet renders Then the Send button has the disabled attribute\n- Given remaining is 0 When the form is submitted programmatically Then submitContribution is not called and no entry is added\n- Given remaining is 1 When valid text is submitted Then submitContribution is called once\n\n\n## Scope\n- In scope: Disabled attribute on Send\n- In scope: Guard in handleSubmit\n- Out of scope: Message text\n- Preserve: Valid submit flow\n- Preserve: Blank and over-limit guards\n\n\n## Technical constraints\n- Guard must work even if the button is bypassed via form submit event\n\n\n## Definition of done\n- Send disabled and submit blocked at zero quota\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Send button disabled and submit guarded at zero quota",
+      "description": "Context: handleSubmit (L71-93) only guards blank and over-limit. Desired behavior: at remaining 0 the Send button is disabled and handleSubmit returns before calling submitContribution. Expected result: no request is made past the quota. Why: prevents wasted requests and 409 errors.",
+      "acceptance_criteria": [
+        "Given remaining is 0 When the sheet renders Then the Send button has the disabled attribute",
+        "Given remaining is 0 When the form is submitted programmatically Then submitContribution is not called and no entry is added",
+        "Given remaining is 1 When valid text is submitted Then submitContribution is called once"
+      ],
+      "scope": {
+        "in_scope": [
+          "Disabled attribute on Send",
+          "Guard in handleSubmit"
+        ],
+        "out_of_scope": [
+          "Message text"
+        ],
+        "preserve": [
+          "Valid submit flow",
+          "Blank and over-limit guards"
+        ]
+      },
+      "technical_constraints": [
+        "Guard must work even if the button is bypassed via form submit event"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Send disabled and submit blocked at zero quota",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-324.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85DESAQ15WBV4MXM8P0XPJ5",
+      "matched_feature_id": "01M84VFDBH8B1SQYMYQMDMFYB7",
+      "links": [
+        "parent:01M85DESAQ15WBV4MXM8P0XPJ5",
+        "trace:01M84VFDBH8B1SQYMYQMDMFYB7",
+        "artifact:.ai-dlc/requirements/REQ-324.md"
+      ],
+      "depends_on": [
+        "01M85DESAQ15WBV4MXM8P0XPJ5"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-324.md",
+      "artifact_id": "REQ-324"
+    },
+    {
+      "id": "01M85DESAQ5VM85PR112NGFZXP",
+      "kind": "unit",
+      "title": "Act: Render the zero-quota inline message in ContributionSheet",
+      "body": "Add a QUOTA_MESSAGE constant and render it as an alert paragraph when remaining <= 0, in game/frontend/src/components/ContributionSheet.tsx.\n\n## Acceptance criteria\n- The paragraph with text 'You have used all your suggestions this round' renders when remaining <= 0\n- The paragraph is absent when remaining > 0\n\n\n## Scope\n- In scope: ContributionSheet.tsx message\n- Out of scope: Tests\n- Out of scope: Send disabling\n- Preserve: Existing alerts and counter\n\n\n## Technical constraints\n- Reuse the existing `remaining` const\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Message renders only at zero quota\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add quota message element to ContributionSheet",
+      "description": "Add a QUOTA_MESSAGE constant and render it as an alert paragraph when remaining <= 0, in game/frontend/src/components/ContributionSheet.tsx.",
+      "acceptance_criteria": [
+        "The paragraph with text 'You have used all your suggestions this round' renders when remaining <= 0",
+        "The paragraph is absent when remaining > 0"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx message"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Send disabling"
+        ],
+        "preserve": [
+          "Existing alerts and counter"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the existing `remaining` const",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Message renders only at zero quota",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-646.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85DESAQFT0646BQQY6Q4TJV",
+      "matched_feature_id": "01M85CR1JW0B6AWF2VBGRS207Q",
+      "links": [
+        "parent:01M85DESAQFT0646BQQY6Q4TJV",
+        "trace:01M85CR1JW0B6AWF2VBGRS207Q",
+        "artifact:.ai-dlc/units/UNIT-646.md"
+      ],
+      "depends_on": [
+        "01M85DESAQFT0646BQQY6Q4TJV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-646.md",
+      "artifact_id": "UNIT-646",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "QUOTA_MESSAGE",
+          "lines": "after L26",
+          "action": "Add a module constant QUOTA_MESSAGE holding the exact message text next to BLANK_MESSAGE.",
+          "code": "const QUOTA_MESSAGE = 'You have used all your suggestions this round';",
+          "expected": "Constant exists and is used by the component."
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet",
+          "lines": "L130-L131",
+          "action": "After the overLimit alert paragraph add a paragraph with id contribution-idea-quota and role alert, rendered only when `remaining <= 0`, containing QUOTA_MESSAGE.",
+          "code": "{remaining <= 0 && <p id=\"contribution-idea-quota\" role=\"alert\">{QUOTA_MESSAGE}</p>}",
+          "expected": "With 5 sent entries the message is in the DOM; with fewer it is not."
+        }
+      ]
+    },
+    {
+      "id": "01M85DESAQVR82FH7RMXMJCCP8",
+      "kind": "unit",
+      "title": "Act: Disable Send and guard handleSubmit at zero quota",
+      "body": "In ContributionSheet.tsx add a disabled attribute on the Send button and an early return in handleSubmit when remaining is 0 or less.\n\n## Acceptance criteria\n- Send button is disabled when remaining <= 0\n- handleSubmit makes no submitContribution call when remaining <= 0\n\n\n## Scope\n- In scope: Send button disabled prop\n- In scope: handleSubmit guard\n- Out of scope: Tests\n- Out of scope: Message rendering\n- Preserve: Blank and over-limit guards order and behavior\n\n\n## Technical constraints\n- Guard placed before the blank check clears nothing; do not reset text\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Send disabled and submit blocked at zero quota\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Disable Send button and early-return in handleSubmit when remaining <= 0",
+      "description": "In ContributionSheet.tsx add a disabled attribute on the Send button and an early return in handleSubmit when remaining is 0 or less.",
+      "acceptance_criteria": [
+        "Send button is disabled when remaining <= 0",
+        "handleSubmit makes no submitContribution call when remaining <= 0"
+      ],
+      "scope": {
+        "in_scope": [
+          "Send button disabled prop",
+          "handleSubmit guard"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Message rendering"
+        ],
+        "preserve": [
+          "Blank and over-limit guards order and behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Guard placed before the blank check clears nothing; do not reset text",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Send disabled and submit blocked at zero quota",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-647.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85DESAQX1RW4EYDPW1XYS9Q",
+      "matched_feature_id": "01M84T6537DBQNPBEZT7AT0RE7",
+      "links": [
+        "parent:01M85DESAQX1RW4EYDPW1XYS9Q",
+        "trace:01M84T6537DBQNPBEZT7AT0RE7",
+        "artifact:.ai-dlc/units/UNIT-647.md"
+      ],
+      "depends_on": [
+        "01M85DESAQX1RW4EYDPW1XYS9Q"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-647.md",
+      "artifact_id": "UNIT-647",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "handleSubmit",
+          "lines": "L71-L73",
+          "action": "After event.preventDefault() add an early return when remaining is 0 or less so nothing is submitted, no entry added and text is kept.",
+          "code": "if (remaining <= 0) return;",
+          "expected": "Submitting at zero quota never calls submitContribution."
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet Send button",
+          "lines": "L128",
+          "action": "Add the disabled attribute bound to remaining <= 0 on the submit button.",
+          "code": "<button type=\"submit\">Send</button> -> <button type=\"submit\" disabled={remaining <= 0}>Send</button>",
+          "expected": "Send is disabled with 5 sent entries and enabled otherwise."
+        }
+      ]
+    },
+    {
+      "id": "01M85DESAQPCWPZZMRHDBQZZCB",
+      "kind": "unit",
+      "title": "Verify: Zero-quota inline message unit tests",
+      "body": "Write unit tests from REQ1 using mocked listMine and submitContribution.\n\n## Acceptance criteria\n- Message visible with 5 history entries\n- Message absent with 1 history entry\n\n\n## Scope\n- In scope: New test file contributionQuota.test.tsx\n- Out of scope: Product code\n- Preserve: Existing contribution tests\n\n\n## Technical constraints\n- Mock ../src/api/client like tests/contributionMaxLength.test.tsx; no network\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the quota message",
+      "description": "Write unit tests from REQ1 using mocked listMine and submitContribution.",
+      "acceptance_criteria": [
+        "Message visible with 5 history entries",
+        "Message absent with 1 history entry"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file contributionQuota.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing contribution tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client like tests/contributionMaxLength.test.tsx; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-648.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DESAQ5VM85PR112NGFZXP",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85DESAQ5VM85PR112NGFZXP",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-648.md"
+      ],
+      "depends_on": [
+        "01M85DESAQ5VM85PR112NGFZXP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-648.md",
+      "artifact_id": "UNIT-648",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionQuota.test.tsx",
+          "symbol": "new: ContributionSheet quota message",
+          "lines": "new",
+          "action": "Create the test file with the vi.mock setup copied from contributionMaxLength.test.tsx, mocking listMine and submitContribution. Add test 'shows the quota message at zero remaining': listMineMock resolves 5 copies of contributionFixture with distinct prompt values, render the sheet, await screen.findByText('You have used all your suggestions this round') and assert it. Add test 'hides the message with quota left': listMineMock resolves [contributionFixture], render, wait for the 'Sent' label, assert queryByText of the message is null. Import contributionFixture from tests/fixtures/api.ts, which mirrors the Contribution type in src/api/client.ts.",
+          "command": "cd game/frontend && npx vitest run tests/contributionQuota.test.tsx -t \"quota message\"",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85DESAQZJ0W4MXCNF3BNQVS",
+      "kind": "unit",
+      "title": "Verify: Zero-quota Send disabled and submit blocked unit tests",
+      "body": "Write unit tests from REQ2 with mocked client.\n\n## Acceptance criteria\n- Send disabled at 0 remaining\n- submitContribution not called on form submit at 0 remaining\n- submit works with 1 remaining\n\n\n## Scope\n- In scope: Tests in contributionQuota.test.tsx\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Same mocks as VER1; fixtures from tests/fixtures/api.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for disabled Send and blocked submit",
+      "description": "Write unit tests from REQ2 with mocked client.",
+      "acceptance_criteria": [
+        "Send disabled at 0 remaining",
+        "submitContribution not called on form submit at 0 remaining",
+        "submit works with 1 remaining"
+      ],
+      "scope": {
+        "in_scope": [
+          "Tests in contributionQuota.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Same mocks as VER1; fixtures from tests/fixtures/api.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-649.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DESAQVR82FH7RMXMJCCP8",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85DESAQVR82FH7RMXMJCCP8",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-649.md"
+      ],
+      "depends_on": [
+        "01M85DESAQVR82FH7RMXMJCCP8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-649.md",
+      "artifact_id": "UNIT-649",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionQuota.test.tsx",
+          "symbol": "describe: ContributionSheet zero-quota gating",
+          "lines": "new",
+          "action": "Add a describe block with three tests. (1) listMineMock resolves 5 distinct contributions; await the message, then assert screen.getByRole('button', {name: 'Send'}) has disabled true. (2) Same setup, type 'hello' via fireEvent.change on label 'Your idea', fireEvent.submit the form (closest('form') of the textarea), assert submitMock not called. (3) listMineMock resolves 4 contributions, submitMock resolves contributionFixture, type 'hello', click Send, assert submitMock called once with 'hello'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionQuota.test.tsx -t \"zero-quota gating\"",
+          "expected": "All three tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85DESAQF9SDM9A16FBD9X12",
+      "kind": "evidence",
+      "title": "Evidence: Zero-quota gating unit tests pass",
+      "body": "Record the passing run of tests/contributionQuota.test.tsx covering the message, disabled Send and blocked submit.\n\n## Acceptance criteria\n- All tests in contributionQuota.test.tsx pass\n- Each intent acceptance criterion maps to a passing test\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser checks\n\n\n## Definition of done\n- Passing vitest output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that quota message and gating tests pass",
+      "description": "Record the passing run of tests/contributionQuota.test.tsx covering the message, disabled Send and blocked submit.",
+      "acceptance_criteria": [
+        "All tests in contributionQuota.test.tsx pass",
+        "Each intent acceptance criterion maps to a passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing vitest output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-130.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85DESAQPCWPZZMRHDBQZZCB",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85DESAQPCWPZZMRHDBQZZCB",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-130.md"
+      ],
+      "depends_on": [
+        "01M85DESAQPCWPZZMRHDBQZZCB",
+        "01M85DESAQZJ0W4MXCNF3BNQVS"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-130.md",
+      "artifact_id": "EVD-130"
+    }
+  ],
+  "created_at": "2026-11-23T23:57:43.120406+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

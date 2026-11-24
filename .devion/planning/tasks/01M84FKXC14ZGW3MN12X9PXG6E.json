@@ -1,0 +1,54 @@
+{
+  "id": "01M84FKXC14ZGW3MN12X9PXG6E",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "REQ · Run takes the per-World lock, runs the agent in an isolated worktree under a timeout",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Run acquires the lock, returns a locked error when held, creates a worktree, applies a context timeout",
+  "description": "Context: lock.Acquire returns an error wrapping lock.ErrLocked when the lock file exists. Desired behavior: Run acquires cfg.LockPath first, persists a RUNNING execution, creates a worktree under WorkRoot/<id>, runs the agent with context.WithTimeout(cfg.Timeout), then removes the worktree on completion or failure. Expected result: a held lock yields a locked error with no side effects. Why: one execution per World and isolation from production files.",
+  "acceptance_criteria": [
+    "Given the lock file already exists, when Run is called, then the returned error satisfies errors.Is(err, lock.ErrLocked) and Worktrees.Create is never called",
+    "Given a successful agent, when Run returns, then the lock file no longer exists and Worktrees.Remove was called with the worktree directory",
+    "Given an agent that waits for ctx.Done and Timeout 20ms, when Run is called, then the error satisfies errors.Is(err, context.DeadlineExceeded) and the stored status is FAILED"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner.go with types, New and Run"
+    ],
+    "out_of_scope": [
+      "retry and budget",
+      "approval gate"
+    ],
+    "preserve": [
+      "lock.Acquire semantics"
+    ]
+  },
+  "technical_constraints": [
+    "Worktree directory is filepath.Join(cfg.WorkRoot, id)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Run locks, isolates and times out as specified",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-092.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FKHRASKJH02BCCVVHV99Y",
+    "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+    "artifact:.ai-dlc/requirements/REQ-092.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FKXC1JJEMCVEYCCPG5BCQ"
+  ],
+  "sim_node_id": "01M84FKHRAEN1YMP5GHN5XVDJM",
+  "feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+  "artifact_path": ".ai-dlc/requirements/REQ-092.md",
+  "artifact_id": "REQ-092",
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.980026+00:00"
+}

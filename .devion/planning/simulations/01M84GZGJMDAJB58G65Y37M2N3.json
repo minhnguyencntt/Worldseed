@@ -1,0 +1,668 @@
+{
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84H148VVZZEX7HD5CATP1FV",
+      "kind": "intent",
+      "title": "SG-7.9 Coding agent provider with a labelled mock, chosen by provider kind",
+      "body": "Context: the worker runner (backend/worker/internal/runner/runner.go) defines the Agent interface, and config already validates provider_kind as mock or claude. No implementation of Agent exists. Desired behavior: a provider package supplies a mock agent that says it is a mock, a Claude CLI adapter, and a factory that picks one from provider_kind. Expected result: the runner can be built with an Agent chosen from config. Why: mock runs must never be mistaken for real development.\n\n## Acceptance criteria\n- Given provider_kind is mock, When the factory is called, Then it returns the mock agent, which satisfies runner.Agent\n- Given the mock agent runs, When it finishes, Then the work dir holds a file that states it is a MOCK run and the cost is 0\n- Given provider_kind is claude, When the factory is called, Then it returns the Claude adapter\n- Given an unknown provider_kind, When the factory is called, Then it returns an error naming the kind\n\n\n## Scope\n- In scope: new package backend/worker/internal/provider\n- In scope: mock agent\n- In scope: Claude CLI adapter behind an Exec interface\n- In scope: factory keyed by provider kind\n- Out of scope: changes to the runner retry logic\n- Out of scope: real Claude invocation in tests\n- Out of scope: analysis, requirements and task generation\n- Preserve: runner.Agent signature\n- Preserve: config validation of provider_kind\n\n\n## Technical constraints\n- Go module github.com/worldseed/storyforge/worker at backend/worker\n- Never interpolate player text into a shell\n- The agent is passed arguments as a slice, not a shell string\n\n\n## Definition of done\n- All requirements are met and their Verify units pass\n\n\n## Non-functional requirements\n- Mock output must be unmistakably labelled\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add a provider package whose mock is clearly labelled, wired to runner.Agent and selected by worker.provider_kind",
+      "description": "Context: the worker runner (backend/worker/internal/runner/runner.go) defines the Agent interface, and config already validates provider_kind as mock or claude. No implementation of Agent exists. Desired behavior: a provider package supplies a mock agent that says it is a mock, a Claude CLI adapter, and a factory that picks one from provider_kind. Expected result: the runner can be built with an Agent chosen from config. Why: mock runs must never be mistaken for real development.",
+      "acceptance_criteria": [
+        "Given provider_kind is mock, When the factory is called, Then it returns the mock agent, which satisfies runner.Agent",
+        "Given the mock agent runs, When it finishes, Then the work dir holds a file that states it is a MOCK run and the cost is 0",
+        "Given provider_kind is claude, When the factory is called, Then it returns the Claude adapter",
+        "Given an unknown provider_kind, When the factory is called, Then it returns an error naming the kind"
+      ],
+      "scope": {
+        "in_scope": [
+          "new package backend/worker/internal/provider",
+          "mock agent",
+          "Claude CLI adapter behind an Exec interface",
+          "factory keyed by provider kind"
+        ],
+        "out_of_scope": [
+          "changes to the runner retry logic",
+          "real Claude invocation in tests",
+          "analysis, requirements and task generation"
+        ],
+        "preserve": [
+          "runner.Agent signature",
+          "config validation of provider_kind"
+        ]
+      },
+      "technical_constraints": [
+        "Go module github.com/worldseed/storyforge/worker at backend/worker",
+        "Never interpolate player text into a shell",
+        "The agent is passed arguments as a slice, not a shell string"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements are met and their Verify units pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-044.md`"
+      ],
+      "non_functional": [
+        "Mock output must be unmistakably labelled"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+      "links": [
+        "trace:01M84G51W28MN6Z7X3354EYDE3",
+        "artifact:.ai-dlc/intent/INT-044.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-044.md",
+      "artifact_id": "INT-044"
+    },
+    {
+      "id": "01M84H148VZC52YY6E3PNV76SW",
+      "kind": "requirement",
+      "title": "REQ · Mock provider runs as a runner.Agent and labels its output as mock",
+      "body": "Context: no Agent implementation exists. Desired behavior: Mock.Run(ctx, workDir) writes MOCK-EXECUTION.md saying no real development happened and returns cost 0. Expected result: mock runs are distinguishable from real ones. Why: the master prompt requires mock execution to be clearly distinguished.\n\n## Acceptance criteria\n- Given a temp work dir, When Mock.Run is called, Then MOCK-EXECUTION.md exists and contains the text MOCK\n- Given Mock.Run succeeds, When the cost is read, Then it equals 0 and the error is nil\n- Given a cancelled context, When Mock.Run is called, Then it returns the context error and writes no file\n\n\n## Scope\n- In scope: Mock type and Run\n- In scope: Mock.Name returning mock\n- Out of scope: editing game source\n- Preserve: runner.Agent signature\n\n\n## Technical constraints\n- Write only inside workDir\n\n\n## Definition of done\n- Mock satisfies runner.Agent\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Mock agent writes a MOCK marker file and costs 0",
+      "description": "Context: no Agent implementation exists. Desired behavior: Mock.Run(ctx, workDir) writes MOCK-EXECUTION.md saying no real development happened and returns cost 0. Expected result: mock runs are distinguishable from real ones. Why: the master prompt requires mock execution to be clearly distinguished.",
+      "acceptance_criteria": [
+        "Given a temp work dir, When Mock.Run is called, Then MOCK-EXECUTION.md exists and contains the text MOCK",
+        "Given Mock.Run succeeds, When the cost is read, Then it equals 0 and the error is nil",
+        "Given a cancelled context, When Mock.Run is called, Then it returns the context error and writes no file"
+      ],
+      "scope": {
+        "in_scope": [
+          "Mock type and Run",
+          "Mock.Name returning mock"
+        ],
+        "out_of_scope": [
+          "editing game source"
+        ],
+        "preserve": [
+          "runner.Agent signature"
+        ]
+      },
+      "technical_constraints": [
+        "Write only inside workDir"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Mock satisfies runner.Agent",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-111.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84H148VVZZEX7HD5CATP1FV",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M84H148VVZZEX7HD5CATP1FV",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-111.md"
+      ],
+      "depends_on": [
+        "01M84H148VVZZEX7HD5CATP1FV"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-111.md",
+      "artifact_id": "REQ-111"
+    },
+    {
+      "id": "01M84H148V713Y7GRZDSCWCRBK",
+      "kind": "requirement",
+      "title": "REQ · Claude adapter runs the CLI through an Exec interface with a fixed argument list",
+      "body": "Context: provider_kind claude is accepted by config but has no agent. Desired behavior: Claude.Run calls Exec.Run(ctx, workDir, \"claude\", args) with args built from a constant prompt telling it to implement the structured tasks, never player text, and returns cost 0 or the wrapped error. Expected result: a real adapter that tests can fake. Why: community prompts are untrusted.\n\n## Acceptance criteria\n- Given a fake Exec, When Claude.Run is called with workDir W, Then Exec receives dir W, name claude and a non-empty args slice\n- Given Exec returns an error, When Claude.Run is called, Then the error is returned wrapped with provider claude\n- Given a nil Exec, When NewClaude is called, Then it returns an error\n\n\n## Scope\n- In scope: Exec interface\n- In scope: Claude type, NewClaude, Run\n- Out of scope: a real os/exec implementation of Exec\n- Out of scope: parsing agent cost\n- Preserve: runner.Agent signature\n\n\n## Technical constraints\n- No sh -c\n- Prompt is a package constant\n\n\n## Definition of done\n- Claude satisfies runner.Agent\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Claude adapter invokes claude with a fixed prompt and no shell",
+      "description": "Context: provider_kind claude is accepted by config but has no agent. Desired behavior: Claude.Run calls Exec.Run(ctx, workDir, \"claude\", args) with args built from a constant prompt telling it to implement the structured tasks, never player text, and returns cost 0 or the wrapped error. Expected result: a real adapter that tests can fake. Why: community prompts are untrusted.",
+      "acceptance_criteria": [
+        "Given a fake Exec, When Claude.Run is called with workDir W, Then Exec receives dir W, name claude and a non-empty args slice",
+        "Given Exec returns an error, When Claude.Run is called, Then the error is returned wrapped with provider claude",
+        "Given a nil Exec, When NewClaude is called, Then it returns an error"
+      ],
+      "scope": {
+        "in_scope": [
+          "Exec interface",
+          "Claude type, NewClaude, Run"
+        ],
+        "out_of_scope": [
+          "a real os/exec implementation of Exec",
+          "parsing agent cost"
+        ],
+        "preserve": [
+          "runner.Agent signature"
+        ]
+      },
+      "technical_constraints": [
+        "No sh -c",
+        "Prompt is a package constant"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Claude satisfies runner.Agent",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-112.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84H148VVZZEX7HD5CATP1FV",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84H148VVZZEX7HD5CATP1FV",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-112.md"
+      ],
+      "depends_on": [
+        "01M84H148VVZZEX7HD5CATP1FV"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-112.md",
+      "artifact_id": "REQ-112"
+    },
+    {
+      "id": "01M84H148VTGZM54F839F9WYMV",
+      "kind": "requirement",
+      "title": "REQ · Factory selects the agent from the configured provider kind",
+      "body": "Context: config.Worker.ProviderKind holds mock or claude. Desired behavior: provider.New(kind, exec) returns the Mock for mock, the Claude adapter for claude and an error for any other value. Expected result: the runner can be built from config. Why: selection must be driven by config.\n\n## Acceptance criteria\n- Given kind mock, When New is called, Then the result is a Mock\n- Given kind claude and a fake Exec, When New is called, Then the result is a Claude\n- Given kind gpt, When New is called, Then the error text contains gpt\n- Given kind claude and a nil Exec, When New is called, Then it returns an error\n\n\n## Scope\n- In scope: New factory\n- Out of scope: editing cmd wiring, which does not exist yet\n- Preserve: config constants\n\n\n## Technical constraints\n- Kind strings match config: mock and claude\n\n\n## Dependencies\n- R1\n- R2\n\n\n## Definition of done\n- Factory covers both kinds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "provider.New maps mock and claude to agents and rejects other kinds",
+      "description": "Context: config.Worker.ProviderKind holds mock or claude. Desired behavior: provider.New(kind, exec) returns the Mock for mock, the Claude adapter for claude and an error for any other value. Expected result: the runner can be built from config. Why: selection must be driven by config.",
+      "acceptance_criteria": [
+        "Given kind mock, When New is called, Then the result is a Mock",
+        "Given kind claude and a fake Exec, When New is called, Then the result is a Claude",
+        "Given kind gpt, When New is called, Then the error text contains gpt",
+        "Given kind claude and a nil Exec, When New is called, Then it returns an error"
+      ],
+      "scope": {
+        "in_scope": [
+          "New factory"
+        ],
+        "out_of_scope": [
+          "editing cmd wiring, which does not exist yet"
+        ],
+        "preserve": [
+          "config constants"
+        ]
+      },
+      "technical_constraints": [
+        "Kind strings match config: mock and claude"
+      ],
+      "dependencies": [
+        "R1",
+        "R2"
+      ],
+      "definition_of_done": [
+        "Factory covers both kinds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-113.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84H148VVZZEX7HD5CATP1FV",
+      "matched_feature_id": "01M84GAF91Y0QK308WA23FXPDX",
+      "links": [
+        "parent:01M84H148VVZZEX7HD5CATP1FV",
+        "trace:01M84GAF91Y0QK308WA23FXPDX",
+        "artifact:.ai-dlc/requirements/REQ-113.md"
+      ],
+      "depends_on": [
+        "01M84H148VVZZEX7HD5CATP1FV"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-113.md",
+      "artifact_id": "REQ-113"
+    },
+    {
+      "id": "01M84H148VBG3AVWP4D1E19ZZ3",
+      "kind": "unit",
+      "title": "Act: Implement the labelled Mock agent",
+      "body": "Create backend/worker/internal/provider/mock.go with type Mock and Run that honours ctx and writes the marker file.\n\n## Acceptance criteria\n- Mock.Run writes MOCK-EXECUTION.md containing MOCK in workDir\n- Mock.Run returns cost 0 and a nil error on success\n\n\n## Scope\n- In scope: mock.go\n- Out of scope: tests\n- Preserve: runner.Agent\n\n\n## Technical constraints\n- Standard library only\n- New file: `backend/worker/internal/provider/mock.go`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- package compiles with go build ./internal/provider\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create mock.go with Mock.Run writing MOCK-EXECUTION.md",
+      "description": "Create backend/worker/internal/provider/mock.go with type Mock and Run that honours ctx and writes the marker file.",
+      "acceptance_criteria": [
+        "Mock.Run writes MOCK-EXECUTION.md containing MOCK in workDir",
+        "Mock.Run returns cost 0 and a nil error on success"
+      ],
+      "scope": {
+        "in_scope": [
+          "mock.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "runner.Agent"
+        ]
+      },
+      "technical_constraints": [
+        "Standard library only",
+        "New file: `backend/worker/internal/provider/mock.go`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "package compiles with go build ./internal/provider",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-222.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84H148VZC52YY6E3PNV76SW",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M84H148VZC52YY6E3PNV76SW",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-222.md"
+      ],
+      "depends_on": [
+        "01M84H148VZC52YY6E3PNV76SW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-222.md",
+      "artifact_id": "UNIT-222",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/mock.go",
+          "symbol": "new: Mock.Run",
+          "lines": "new",
+          "action": "Create package provider with type Mock struct{}, const MockMarkerFile = \"MOCK-EXECUTION.md\", method Name() string returning \"mock\" and method Run(ctx context.Context, workDir string) (float64, error). Run returns ctx.Err() when it is already non-nil, otherwise writes MockMarkerFile in workDir with os.WriteFile mode 0o644 and returns 0 and nil, wrapping a write failure as provider mock.",
+          "code": "const mockNotice = \"# MOCK EXECUTION\\n\\nThis run used the MOCK provider. No real development happened.\\n\"",
+          "expected": "go build ./internal/provider succeeds and the file is written on Run"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148VTMNEAHXGSTBCJJG5",
+      "kind": "unit",
+      "title": "Act: Implement the Claude CLI adapter",
+      "body": "Create backend/worker/internal/provider/claude.go with Exec, Claude, NewClaude and Run that calls Exec with fixed args.\n\n## Acceptance criteria\n- Claude.Run calls Exec with name claude and constant args\n- Exec errors are wrapped\n\n\n## Scope\n- In scope: claude.go\n- Out of scope: tests\n- Out of scope: a real Exec\n- Preserve: runner.Agent\n\n\n## Technical constraints\n- No shell\n- No player text in args\n- New file: `backend/worker/internal/provider/claude.go`\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- package compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create claude.go with Exec interface and Claude.Run",
+      "description": "Create backend/worker/internal/provider/claude.go with Exec, Claude, NewClaude and Run that calls Exec with fixed args.",
+      "acceptance_criteria": [
+        "Claude.Run calls Exec with name claude and constant args",
+        "Exec errors are wrapped"
+      ],
+      "scope": {
+        "in_scope": [
+          "claude.go"
+        ],
+        "out_of_scope": [
+          "tests",
+          "a real Exec"
+        ],
+        "preserve": [
+          "runner.Agent"
+        ]
+      },
+      "technical_constraints": [
+        "No shell",
+        "No player text in args",
+        "New file: `backend/worker/internal/provider/claude.go`"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "package compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-223.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84H148V713Y7GRZDSCWCRBK",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M84H148V713Y7GRZDSCWCRBK",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-223.md"
+      ],
+      "depends_on": [
+        "01M84H148V713Y7GRZDSCWCRBK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-223.md",
+      "artifact_id": "UNIT-223",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/claude.go",
+          "symbol": "new: Exec, Claude, NewClaude, Claude.Run",
+          "lines": "new",
+          "action": "Declare interface Exec with Run(ctx context.Context, dir, name string, args []string) error. Declare const claudePrompt as a fixed instruction to implement the structured tasks in development/tasks. Declare type Claude struct{exec Exec}, NewClaude(e Exec) (*Claude, error) returning an error when e is nil, and (*Claude).Run(ctx, workDir) that calls exec.Run(ctx, workDir, \"claude\", []string{\"-p\", claudePrompt}) and returns 0 with the error wrapped as provider claude, or 0 and nil.",
+          "code": "args := []string{\"-p\", claudePrompt}",
+          "expected": "go build ./internal/provider succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148VRQMQACEETB7RFPWB",
+      "kind": "unit",
+      "title": "Act: Implement the provider factory New",
+      "body": "Create backend/worker/internal/provider/provider.go with New(kind string, e Exec) (Agent-compatible, error).\n\n## Acceptance criteria\n- New returns Mock for mock\n- New returns Claude for claude and an error for unknown kinds\n\n\n## Scope\n- In scope: provider.go\n- Out of scope: tests\n- Preserve: config kind strings\n\n\n## Technical constraints\n- Return type is an Agent interface declared in the provider package with the same Run signature as runner.Agent\n- New file: `backend/worker/internal/provider/provider.go`\n\n\n## Dependencies\n- R3\n- A1\n- A2\n\n\n## Definition of done\n- package compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create provider.go with New selecting by kind",
+      "description": "Create backend/worker/internal/provider/provider.go with New(kind string, e Exec) (Agent-compatible, error).",
+      "acceptance_criteria": [
+        "New returns Mock for mock",
+        "New returns Claude for claude and an error for unknown kinds"
+      ],
+      "scope": {
+        "in_scope": [
+          "provider.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "config kind strings"
+        ]
+      },
+      "technical_constraints": [
+        "Return type is an Agent interface declared in the provider package with the same Run signature as runner.Agent",
+        "New file: `backend/worker/internal/provider/provider.go`"
+      ],
+      "dependencies": [
+        "R3",
+        "A1",
+        "A2"
+      ],
+      "definition_of_done": [
+        "package compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-224.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84H148VTGZM54F839F9WYMV",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M84H148VTGZM54F839F9WYMV",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-224.md"
+      ],
+      "depends_on": [
+        "01M84H148VTGZM54F839F9WYMV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-224.md",
+      "artifact_id": "UNIT-224",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/provider.go",
+          "symbol": "new: Agent, New",
+          "lines": "new",
+          "action": "Declare interface Agent with Run(ctx context.Context, workDir string) (float64, error). Declare func New(kind string, e Exec) (Agent, error) with a switch: \"mock\" returns Mock{}, nil; \"claude\" returns NewClaude(e); default returns fmt.Errorf with text provider: unknown kind %q.",
+          "code": "default: return nil, fmt.Errorf(\"provider: unknown kind %q\", kind)",
+          "expected": "go build ./internal/provider succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148VQSP3TSTNJJSBHDGG",
+      "kind": "unit",
+      "title": "Verify: Mock agent unit tests",
+      "body": "Test the Mock marker file, cost and context handling using t.TempDir.\n\n## Acceptance criteria\n- Marker file contains MOCK\n- Cancelled context returns an error and writes nothing\n\n\n## Scope\n- In scope: mock_test.go\n- Out of scope: product code\n\n\n## Technical constraints\n- Only a temp dir\n- New file: `backend/worker/internal/provider/mock_test.go`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Mock.Run",
+      "description": "Test the Mock marker file, cost and context handling using t.TempDir.",
+      "acceptance_criteria": [
+        "Marker file contains MOCK",
+        "Cancelled context returns an error and writes nothing"
+      ],
+      "scope": {
+        "in_scope": [
+          "mock_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Only a temp dir",
+        "New file: `backend/worker/internal/provider/mock_test.go`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-225.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84H148VBG3AVWP4D1E19ZZ3",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84H148VBG3AVWP4D1E19ZZ3",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-225.md"
+      ],
+      "depends_on": [
+        "01M84H148VBG3AVWP4D1E19ZZ3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-225.md",
+      "artifact_id": "UNIT-225",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/mock_test.go",
+          "symbol": "new: TestMockRunWritesMarker",
+          "lines": "new",
+          "action": "Call Mock{}.Run(context.Background(), t.TempDir()); assert cost 0, nil error, and that MOCK-EXECUTION.md read from the dir contains the text MOCK. Add TestMockRunCancelled with an already cancelled context asserting errors.Is(err, context.Canceled) and that the file does not exist. Add a compile-time check var _ runner.Agent = Mock{} importing the runner package.",
+          "command": "cd backend/worker && go test ./internal/provider -run 'TestMockRun'",
+          "expected": "both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148VR029RM3G1PRRQPQJ",
+      "kind": "unit",
+      "title": "Verify: Claude adapter unit tests with a fake Exec",
+      "body": "Use a fake Exec recording its call.\n\n## Acceptance criteria\n- Exec receives dir, name claude and non-empty args\n- Exec error is wrapped\n- nil Exec is rejected\n\n\n## Scope\n- In scope: claude_test.go\n- Out of scope: product code\n\n\n## Technical constraints\n- No real process\n- New file: `backend/worker/internal/provider/claude_test.go`\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Claude.Run",
+      "description": "Use a fake Exec recording its call.",
+      "acceptance_criteria": [
+        "Exec receives dir, name claude and non-empty args",
+        "Exec error is wrapped",
+        "nil Exec is rejected"
+      ],
+      "scope": {
+        "in_scope": [
+          "claude_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No real process",
+        "New file: `backend/worker/internal/provider/claude_test.go`"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-226.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84H148VTMNEAHXGSTBCJJG5",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84H148VTMNEAHXGSTBCJJG5",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-226.md"
+      ],
+      "depends_on": [
+        "01M84H148VTMNEAHXGSTBCJJG5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-226.md",
+      "artifact_id": "UNIT-226",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/claude_test.go",
+          "symbol": "new: TestClaudeRun",
+          "lines": "new",
+          "action": "Define fakeExec recording dir, name, args and returning a configurable error. TestClaudeRunCallsExec: NewClaude(fake), Run with dir D, assert name claude, dir D, len(args)>0, cost 0. TestClaudeRunWrapsError: fake returns errBoom, assert errors.Is(err, errBoom) and text contains claude. TestNewClaudeNilExec asserts an error.",
+          "command": "cd backend/worker && go test ./internal/provider -run 'TestClaude|TestNewClaude'",
+          "expected": "all three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148VQVGK899JVKBT7KTH",
+      "kind": "unit",
+      "title": "Verify: Provider factory unit tests",
+      "body": "Assert kind selection and errors.\n\n## Acceptance criteria\n- mock gives Mock\n- claude gives Claude\n- unknown kind errors naming it\n- claude with nil Exec errors\n\n\n## Scope\n- In scope: provider_test.go\n- Out of scope: product code\n\n\n## Technical constraints\n- Reuse fakeExec from claude_test.go\n- New file: `backend/worker/internal/provider/provider_test.go`\n\n\n## Dependencies\n- A3\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for provider.New",
+      "description": "Assert kind selection and errors.",
+      "acceptance_criteria": [
+        "mock gives Mock",
+        "claude gives Claude",
+        "unknown kind errors naming it",
+        "claude with nil Exec errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "provider_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Reuse fakeExec from claude_test.go",
+        "New file: `backend/worker/internal/provider/provider_test.go`"
+      ],
+      "dependencies": [
+        "A3"
+      ],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-227.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84H148VRQMQACEETB7RFPWB",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84H148VRQMQACEETB7RFPWB",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-227.md"
+      ],
+      "depends_on": [
+        "01M84H148VRQMQACEETB7RFPWB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-227.md",
+      "artifact_id": "UNIT-227",
+      "steps": [
+        {
+          "file": "backend/worker/internal/provider/provider_test.go",
+          "symbol": "new: TestNew",
+          "lines": "new",
+          "action": "Table test over kinds: New(\"mock\", nil) returns a value of type Mock; New(\"claude\", &fakeExec{}) returns *Claude; New(\"gpt\", nil) returns an error whose text contains gpt; New(\"claude\", nil) returns an error. Use type assertions.",
+          "command": "cd backend/worker && go test ./internal/provider -run 'TestNew$'",
+          "expected": "TestNew passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84H148V4XJX9BW3G476BPKQ",
+      "kind": "evidence",
+      "title": "Evidence: Provider package unit tests",
+      "body": "Evidence that mock, Claude adapter and factory unit tests pass.\n\n## Acceptance criteria\n- go test ./internal/provider passes\n- Tests cover mock label, claude adapter and kind selection\n\n\n## Scope\n- In scope: test output\n- Out of scope: live Claude runs\n\n\n## Dependencies\n- V1\n- V2\n- V3\n\n\n## Definition of done\n- test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record provider unit test results",
+      "description": "Evidence that mock, Claude adapter and factory unit tests pass.",
+      "acceptance_criteria": [
+        "go test ./internal/provider passes",
+        "Tests cover mock label, claude adapter and kind selection"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [
+          "live Claude runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "definition_of_done": [
+        "test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-044.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84H148VQSP3TSTNJJSBHDGG",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84H148VQSP3TSTNJJSBHDGG",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-044.md"
+      ],
+      "depends_on": [
+        "01M84H148VQSP3TSTNJJSBHDGG",
+        "01M84H148VR029RM3G1PRRQPQJ",
+        "01M84H148VQVGK899JVKBT7KTH"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-044.md",
+      "artifact_id": "EVD-044"
+    }
+  ],
+  "created_at": "2026-11-23T15:40:18.100688+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

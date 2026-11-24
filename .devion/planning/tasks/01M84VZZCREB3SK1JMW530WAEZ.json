@@ -1,0 +1,70 @@
+{
+  "id": "01M84VZZCREB3SK1JMW530WAEZ",
+  "intent_id": "01M84VX84TKXG64C5YNP1V4Q4T",
+  "title": "Verify: Config and createGame pass zoom unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Phaser-mocked tests for zoom in config",
+  "description": "Unit tests with Phaser mocked prove that zoom is put into the config and forwarded by createGame.",
+  "acceptance_criteria": [
+    "Config zoom set and defaults to 1",
+    "createGame forwards zoom"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/phaserConfig.test.ts"
+    ],
+    "out_of_scope": [
+      "PhaserHost tests"
+    ],
+    "preserve": [
+      "Existing config tests"
+    ]
+  },
+  "technical_constraints": [
+    "No real Phaser canvas"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-466.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VYFYCPHFNBF49R024D8DS",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-466.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VZZCRCKTWPSCFT8R3DA2W"
+  ],
+  "sim_node_id": "01M84VYFYC0YAHGMSFDR04ZAK0",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-466.md",
+  "artifact_id": "UNIT-466",
+  "steps": [
+    {
+      "file": "game/frontend/tests/phaserConfig.test.ts",
+      "symbol": "new: it('buildGameConfig sets scale.zoom and defaults to 1')",
+      "lines": "after existing tests",
+      "action": "Add a test calling buildGameConfig(document.createElement('div'), [], 3) and asserting scale.zoom is 3, then without the third argument asserting scale.zoom is 1. Follow the file's existing Phaser import or mock approach.",
+      "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/phaserConfig.test.ts",
+      "symbol": "new: it('createGame forwards zoom to the Phaser.Game config')",
+      "lines": "after previous test",
+      "action": "Use vi.mock('phaser') with a fake Game class capturing its config argument; call createGame(div, [], 2) and assert captured config.scale.zoom equals 2.",
+      "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts -t 'forwards zoom'",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T18:51:46.968698+00:00",
+  "updated_at": "2026-11-23T18:53:35.513195+00:00"
+}

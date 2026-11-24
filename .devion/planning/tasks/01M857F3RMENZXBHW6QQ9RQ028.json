@@ -1,0 +1,72 @@
+{
+  "id": "01M857F3RMENZXBHW6QQ9RQ028",
+  "intent_id": "01M857A93XADX044DZJ6R66BZM",
+  "title": "Verify: Fallback and preload tests mock sceneSpec and pass",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Update mocks and run the two test files",
+  "description": "Add sceneSpec to the content mocks of the two test files and confirm they pass.",
+  "acceptance_criteria": [
+    "Given the mocks, When BootScene loads, Then sceneSpec is defined",
+    "Given both files, When run, Then they pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "two test files"
+    ],
+    "out_of_scope": [
+      "app code"
+    ],
+    "preserve": [
+      "existing assertions"
+    ]
+  },
+  "technical_constraints": [
+    "Everything mocked; phaser mocked"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both files pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-541.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M857CBAMM4S43GW1RK36QTWP",
+    "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+    "artifact:.ai-dlc/units/UNIT-541.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M857F3RMNDZ13Z0086YEQ4TF"
+  ],
+  "sim_node_id": "01M857CBAMNE8B00MHNAPBQDEE",
+  "feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+  "artifact_path": ".ai-dlc/units/UNIT-541.md",
+  "artifact_id": "UNIT-541",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneFallback.test.ts",
+      "symbol": "vi.mock('../src/runtime/content')",
+      "lines": "L17-L28",
+      "action": "Add a sceneSpec property to the returned mock object with id 'bedroom' and objects [{ id: 'bed', asset: 'objects/bed' }] mirroring the SceneSpec type.",
+      "code": "sceneSpec: { id: 'bedroom', objects: [{ id: 'bed', asset: 'objects/bed' }] },",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneFallback.test.ts",
+      "expected": "All tests in the file pass"
+    },
+    {
+      "file": "game/frontend/tests/bootScenePreload.test.ts",
+      "symbol": "vi.mock('../src/runtime/content')",
+      "lines": "L16-L40",
+      "action": "Add sceneSpec with id 'bedroom' and objects listing bed and ghost with their asset ids to the mock return value.",
+      "code": "sceneSpec: { id: 'bedroom', objects: [{ id: 'bed', asset: 'objects/bed' }, { id: 'ghost', asset: 'objects/ghost' }] },",
+      "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+      "expected": "All tests in the file pass"
+    }
+  ],
+  "created_at": "2026-11-23T22:12:17.300485+00:00",
+  "updated_at": "2026-11-23T22:14:51.727961+00:00"
+}

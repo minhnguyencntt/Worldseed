@@ -1,0 +1,79 @@
+{
+  "id": "01M85C049DGNJKP46Y2KD07PZB",
+  "intent_id": "01M85BT8V5PEXWT9XD06WGJ0HQ",
+  "title": "Verify: Radix dialog open, Escape and focus behavior unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for dialog semantics and keyboard/focus",
+  "description": "Test the Radix dialog shell with fetch mocked.",
+  "acceptance_criteria": [
+    "Dialog role and name asserted",
+    "Escape calls onClose",
+    "Focus enters dialog and returns to trigger"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/contributionDialog.test.tsx"
+    ],
+    "out_of_scope": [
+      "Real network"
+    ],
+    "preserve": [
+      "tests/contribution.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "jsdom, vitest, fetch stubbed with vi.stubGlobal"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New test file passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-623.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85BWFWR5ZHDC28MT2DVQGZK",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-623.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85C049DR1A801VXAM13HVH8"
+  ],
+  "sim_node_id": "01M85BWFWR7PZXJAKP2XJ07BJF",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-623.md",
+  "artifact_id": "UNIT-623",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionDialog.test.tsx",
+      "symbol": "new: contributionDialog suite",
+      "lines": "new",
+      "action": "Create the test file with `// @vitest-environment jsdom`. Stub fetch to return the JSON of an empty array (history route mirrors listMine in src/api/client.ts; payload entries come from contributionFixture in tests/fixtures/api.ts, mirroring contributionJSON in backend/internal/contribution/handler.go). Test 'exposes a named dialog': render a harness with a trigger button that toggles ContributionSheet open; click it; assert screen.getByRole('dialog', {name: 'Suggest What Happens Next'}) is present and window.location.pathname is unchanged.",
+      "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"named dialog\"",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/contributionDialog.test.tsx",
+      "symbol": "test: escape closes",
+      "lines": "new",
+      "action": "With the harness open and onClose a vi.fn, fire keyDown Escape on the dialog; assert onClose called once.",
+      "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"escape\"",
+      "expected": "onClose called once"
+    },
+    {
+      "file": "game/frontend/tests/contributionDialog.test.tsx",
+      "symbol": "test: focus management",
+      "lines": "new",
+      "action": "Focus the trigger, click it, assert document.activeElement is inside the dialog (dialog.contains), then close via the Close button and assert document.activeElement is the trigger button (await waitFor).",
+      "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"focus\"",
+      "expected": "Focus enters dialog and returns to trigger"
+    }
+  ],
+  "created_at": "2026-11-23T23:31:29.197514+00:00",
+  "updated_at": "2026-11-23T23:35:18.791198+00:00"
+}

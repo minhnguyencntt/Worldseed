@@ -1,0 +1,64 @@
+{
+  "id": "01M85E1MYWAVPE3Z8ADQS10FWY",
+  "intent_id": "01M85DVS0S49NMJFR6Q9K4AB6W",
+  "title": "Verify: Max-length tests assert counter text and blocked submit",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Rewrite contributionMaxLength tests to assert counter, alert and zero submit calls",
+  "description": "Context: tests/contributionMaxLength.test.tsx renders the real sheet with the client mocked. Expected result: tests fail if the counter or overLimit guard is removed.",
+  "acceptance_criteria": [
+    "Counter shows '3 / 500' after typing 'abc'",
+    "501 characters plus Send shows 'Too long: 501 / 500' and submitContribution called 0 times; exactly 500 characters is submitted"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/contributionMaxLength.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Fixtures from tests/fixtures/api.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Build long text with 'a'.repeat(MAX_PROMPT_LENGTH + 1) using the imported constant"
+  ],
+  "dependencies": [
+    "ACT-LEN"
+  ],
+  "definition_of_done": [
+    "contributionMaxLength.test.tsx passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-658.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85DXK44NT1RVVJZS45RK70G",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-658.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85E1MYW8P2BJZPEM91W4SSF"
+  ],
+  "sim_node_id": "01M85DXK447RK4X9RE56S9GVXR",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-658.md",
+  "artifact_id": "UNIT-658",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionMaxLength.test.tsx",
+      "symbol": "describe max length tests",
+      "lines": "L1-L130",
+      "action": "Ensure tests assert getByText('3 / 500') after typing 'abc', getByRole('alert').textContent toBe 'Too long: 501 / 500' after submit of 501 chars, expect(submitMock).not.toHaveBeenCalled(), and a 500-char case expects toHaveBeenCalledTimes(1)",
+      "command": "npx vitest run tests/contributionMaxLength.test.tsx",
+      "expected": "All tests pass; removing 'if (overLimit) return;' makes the 501-char test fail"
+    }
+  ],
+  "created_at": "2026-11-24T00:07:16.188112+00:00",
+  "updated_at": "2026-11-24T00:08:00.709235+00:00"
+}

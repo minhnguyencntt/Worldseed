@@ -1,0 +1,654 @@
+{
+  "intent_id": "01M84NTACFKP3XP1PWVBPDHNCT",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84NWMXSKE97TM38XP450JC5",
+      "kind": "intent",
+      "title": "SG-1.4.2 · Render HeaderOverlay from App through the GameLayout header slot",
+      "body": "Context: HeaderOverlay exists (game/frontend/src/components/HeaderOverlay.tsx) with props worldTitle, round, loading, error, but App.tsx still renders RoundBadge and Countdown inside the scene and GameLayout has no header slot. Desired behavior: App fetches the current round, tracks loading and error, and passes a HeaderOverlay into a new GameLayout header slot. Expected result: the header shows round ID, status and countdown, or a loading or an explained error state, and the old RoundBadge and Countdown usage in App is gone. Why: the header must be a compact overlay with explained failure states.\n\n## Acceptance criteria\n- Given App is playing and getCurrentRound resolves, when it renders, then the header shows the round id, status and countdown from the HeaderOverlay.\n- Given getCurrentRound is pending, when App renders, then the header shows 'Loading round…'.\n- Given getCurrentRound rejects with an Error, when App renders, then the header alert shows 'Round unavailable: <message>'.\n- Given App is playing, when it renders, then no standalone RoundBadge or Countdown element is rendered outside the header.\n\n\n## Scope\n- In scope: GameLayout header slot\n- In scope: App round loading/error state and HeaderOverlay wiring\n- In scope: Removal of RoundBadge and Countdown usage from App\n- In scope: Unit tests with api client mocked\n- Out of scope: Changing HeaderOverlay internals\n- Out of scope: Backend or API changes\n- Out of scope: Deleting RoundBadge.tsx or Countdown.tsx files\n- Preserve: ContributionSheet flow\n- Preserve: SceneView, ActionMenu and StoryPanel behavior\n- Preserve: Existing drawer behavior of GameLayout\n\n\n## Technical constraints\n- React + TypeScript + Tailwind; use the existing getCurrentRound client and HeaderOverlay component\n- Unit tests use vitest with dependencies mocked\n\n\n## Definition of done\n- All requirements implemented and unit tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App renders HeaderOverlay via a GameLayout header slot using round loading/error state; old RoundBadge and Countdown usage is removed from the layout.",
+      "description": "Context: HeaderOverlay exists (game/frontend/src/components/HeaderOverlay.tsx) with props worldTitle, round, loading, error, but App.tsx still renders RoundBadge and Countdown inside the scene and GameLayout has no header slot. Desired behavior: App fetches the current round, tracks loading and error, and passes a HeaderOverlay into a new GameLayout header slot. Expected result: the header shows round ID, status and countdown, or a loading or an explained error state, and the old RoundBadge and Countdown usage in App is gone. Why: the header must be a compact overlay with explained failure states.",
+      "acceptance_criteria": [
+        "Given App is playing and getCurrentRound resolves, when it renders, then the header shows the round id, status and countdown from the HeaderOverlay.",
+        "Given getCurrentRound is pending, when App renders, then the header shows 'Loading round…'.",
+        "Given getCurrentRound rejects with an Error, when App renders, then the header alert shows 'Round unavailable: <message>'.",
+        "Given App is playing, when it renders, then no standalone RoundBadge or Countdown element is rendered outside the header."
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout header slot",
+          "App round loading/error state and HeaderOverlay wiring",
+          "Removal of RoundBadge and Countdown usage from App",
+          "Unit tests with api client mocked"
+        ],
+        "out_of_scope": [
+          "Changing HeaderOverlay internals",
+          "Backend or API changes",
+          "Deleting RoundBadge.tsx or Countdown.tsx files"
+        ],
+        "preserve": [
+          "ContributionSheet flow",
+          "SceneView, ActionMenu and StoryPanel behavior",
+          "Existing drawer behavior of GameLayout"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript + Tailwind; use the existing getCurrentRound client and HeaderOverlay component",
+        "Unit tests use vitest with dependencies mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements implemented and unit tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-066.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M843NJMCH5NMK1PNJ4293CEP",
+      "links": [
+        "trace:01M843NJMCH5NMK1PNJ4293CEP",
+        "artifact:.ai-dlc/intent/INT-066.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-066.md",
+      "artifact_id": "INT-066"
+    },
+    {
+      "id": "01M84NWMXSC0622MHG5QS9HVC5",
+      "kind": "requirement",
+      "title": "REQ · GameLayout exposes an optional header slot",
+      "body": "Context: GameLayout takes only scene and story. Desired behavior: an optional header prop is rendered inside the relative main element before the scene so HeaderOverlay's absolute positioning anchors to the game area. Expected result: header content appears in main; omitting it changes nothing. Why: App needs to place the header without custom markup.\n\n## Acceptance criteria\n- Given a header node is passed, when GameLayout renders, then the node is inside the main element together with the scene.\n- Given no header prop, when GameLayout renders, then the layout renders as before with the scene and Story toggle.\n\n\n## Scope\n- In scope: GameLayout header prop\n- Out of scope: Layout class changes\n- Preserve: 80/20 grid, drawer toggle and overflow classes\n\n\n## Technical constraints\n- Prop must be optional\n\n\n## Definition of done\n- Header slot renders in main\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "GameLayout accepts a header ReactNode and renders it over the scene area.",
+      "description": "Context: GameLayout takes only scene and story. Desired behavior: an optional header prop is rendered inside the relative main element before the scene so HeaderOverlay's absolute positioning anchors to the game area. Expected result: header content appears in main; omitting it changes nothing. Why: App needs to place the header without custom markup.",
+      "acceptance_criteria": [
+        "Given a header node is passed, when GameLayout renders, then the node is inside the main element together with the scene.",
+        "Given no header prop, when GameLayout renders, then the layout renders as before with the scene and Story toggle."
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout header prop"
+        ],
+        "out_of_scope": [
+          "Layout class changes"
+        ],
+        "preserve": [
+          "80/20 grid, drawer toggle and overflow classes"
+        ]
+      },
+      "technical_constraints": [
+        "Prop must be optional"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Header slot renders in main",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-165.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NWMXSKE97TM38XP450JC5",
+      "matched_feature_id": "01M84N2BMB0A9J37ENYEPPEGFS",
+      "links": [
+        "parent:01M84NWMXSKE97TM38XP450JC5",
+        "trace:01M84N2BMB0A9J37ENYEPPEGFS",
+        "artifact:.ai-dlc/requirements/REQ-165.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSKE97TM38XP450JC5"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-165.md",
+      "artifact_id": "REQ-165"
+    },
+    {
+      "id": "01M84NWMXSX9K5MGQBFPZECFJW",
+      "kind": "requirement",
+      "title": "REQ · App tracks round loading/error and renders HeaderOverlay in the header slot",
+      "body": "Context: App calls getCurrentRound and swallows errors. Desired behavior: track loading and error message state, render <HeaderOverlay worldTitle round loading error /> as the header prop. Expected result: loaded, loading and error states visible in header. Why: explain API failures instead of silent fallback.\n\n## Acceptance criteria\n- Given the round resolves, then the header shows round id and status.\n- Given the request is pending, then the header shows Loading round….\n- Given the request rejects with Error('boom'), then the header alert shows 'Round unavailable: boom'.\n\n\n## Scope\n- In scope: App.tsx round state and header wiring\n- Out of scope: HeaderOverlay changes\n- Preserve: ContributionSheet roundId use\n- Preserve: Intro gate\n\n\n## Technical constraints\n- Use getCurrentRound from api/client; world title from world in runtime/content\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Header wired with all states\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App passes world title, round, loading and error to HeaderOverlay via GameLayout header.",
+      "description": "Context: App calls getCurrentRound and swallows errors. Desired behavior: track loading and error message state, render <HeaderOverlay worldTitle round loading error /> as the header prop. Expected result: loaded, loading and error states visible in header. Why: explain API failures instead of silent fallback.",
+      "acceptance_criteria": [
+        "Given the round resolves, then the header shows round id and status.",
+        "Given the request is pending, then the header shows Loading round….",
+        "Given the request rejects with Error('boom'), then the header alert shows 'Round unavailable: boom'."
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx round state and header wiring"
+        ],
+        "out_of_scope": [
+          "HeaderOverlay changes"
+        ],
+        "preserve": [
+          "ContributionSheet roundId use",
+          "Intro gate"
+        ]
+      },
+      "technical_constraints": [
+        "Use getCurrentRound from api/client; world title from world in runtime/content"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Header wired with all states",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-166.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NWMXSKE97TM38XP450JC5",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84NWMXSKE97TM38XP450JC5",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-166.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSKE97TM38XP450JC5"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-166.md",
+      "artifact_id": "REQ-166"
+    },
+    {
+      "id": "01M84NWMXSR5NHHJAH7PHCZSBZ",
+      "kind": "requirement",
+      "title": "REQ · Old RoundBadge and Countdown usage is removed from the App layout",
+      "body": "Context: App renders RoundBadge and Countdown inside the scene slot, duplicating the header. Desired behavior: remove those imports and JSX from App. Expected result: round status and countdown appear only once, in the header. Why: avoid duplicate round UI.\n\n## Acceptance criteria\n- Given the playing view, then exactly one element shows the round status and one countdown, both within the header.\n- Given the source of App.tsx, then it does not import RoundBadge or Countdown.\n\n\n## Scope\n- In scope: App.tsx imports and JSX\n- Out of scope: Deleting RoundBadge.tsx / Countdown.tsx\n- Out of scope: Their own tests\n- Preserve: HeaderOverlay's internal Countdown use\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- No RoundBadge or Countdown in App\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App no longer renders RoundBadge or Countdown directly.",
+      "description": "Context: App renders RoundBadge and Countdown inside the scene slot, duplicating the header. Desired behavior: remove those imports and JSX from App. Expected result: round status and countdown appear only once, in the header. Why: avoid duplicate round UI.",
+      "acceptance_criteria": [
+        "Given the playing view, then exactly one element shows the round status and one countdown, both within the header.",
+        "Given the source of App.tsx, then it does not import RoundBadge or Countdown."
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx imports and JSX"
+        ],
+        "out_of_scope": [
+          "Deleting RoundBadge.tsx / Countdown.tsx",
+          "Their own tests"
+        ],
+        "preserve": [
+          "HeaderOverlay's internal Countdown use"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "No RoundBadge or Countdown in App",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-167.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NWMXSKE97TM38XP450JC5",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84NWMXSKE97TM38XP450JC5",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-167.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSKE97TM38XP450JC5"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-167.md",
+      "artifact_id": "REQ-167"
+    },
+    {
+      "id": "01M84NWMXSHS0X1X13FAD1B8F6",
+      "kind": "unit",
+      "title": "Act: Add header slot prop to GameLayout",
+      "body": "Edit GameLayout to accept and render an optional header ReactNode inside main before the scene.\n\n## Acceptance criteria\n- GameLayout renders the header node inside main when provided.\n- GameLayout without header renders unchanged.\n\n\n## Scope\n- In scope: GameLayout.tsx\n- Out of scope: Tests\n- Preserve: Existing classes\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/GameLayout.tsx`\n\n\n## Definition of done\n- header prop typed and rendered\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add optional header prop rendered in main.",
+      "description": "Edit GameLayout to accept and render an optional header ReactNode inside main before the scene.",
+      "acceptance_criteria": [
+        "GameLayout renders the header node inside main when provided.",
+        "GameLayout without header renders unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing classes"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/GameLayout.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "header prop typed and rendered",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-330.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NWMXSC0622MHG5QS9HVC5",
+      "matched_feature_id": "01M848ZFYJ5E173P68XH1YEFX4",
+      "links": [
+        "parent:01M84NWMXSC0622MHG5QS9HVC5",
+        "trace:01M848ZFYJ5E173P68XH1YEFX4",
+        "artifact:.ai-dlc/units/UNIT-330.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSC0622MHG5QS9HVC5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-330.md",
+      "artifact_id": "UNIT-330",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/GameLayout.tsx",
+          "symbol": "GameLayout",
+          "lines": "L7-L19",
+          "action": "Change the signature to accept an optional header: ReactNode prop and render {header} as the first child of the <main> element, before {scene}.",
+          "code": "export function GameLayout({ header, scene, story }: { header?: ReactNode; scene: ReactNode; story: ReactNode }) {\n ...\n <main className=\"relative min-w-0 overflow-hidden pb-12 md:pb-0\">{header}{scene}</main>",
+          "expected": "GameLayout compiles and renders header inside main when given."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSTNFNCSWYNJSREN8T",
+      "kind": "unit",
+      "title": "Act: Wire round loading/error state and HeaderOverlay into App",
+      "body": "Track loading and error, pass HeaderOverlay to GameLayout header.\n\n## Acceptance criteria\n- Header receives round, loading and error.\n- ContributionSheet still gets round id.\n\n\n## Scope\n- In scope: App.tsx\n- Out of scope: Tests\n- Preserve: Existing flow\n\n\n## Technical constraints\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- App renders HeaderOverlay in header slot\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add loading/error state and header prop in App.",
+      "description": "Track loading and error, pass HeaderOverlay to GameLayout header.",
+      "acceptance_criteria": [
+        "Header receives round, loading and error.",
+        "ContributionSheet still gets round id."
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing flow"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "App renders HeaderOverlay in header slot",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-331.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NWMXSX9K5MGQBFPZECFJW",
+      "matched_feature_id": "01M84JF0K1DC68QPCZ6V752H5C",
+      "links": [
+        "parent:01M84NWMXSX9K5MGQBFPZECFJW",
+        "trace:01M84JF0K1DC68QPCZ6V752H5C",
+        "artifact:.ai-dlc/units/UNIT-331.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSX9K5MGQBFPZECFJW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-331.md",
+      "artifact_id": "UNIT-331",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App state and effect",
+          "lines": "L14-L24",
+          "action": "Add useState<boolean> loading initialised true and useState<string|undefined> error. Replace the effect body so it calls getCurrentRound().then(setRound).catch((e) => setError(e instanceof Error ? e.message : String(e))).finally(() => setLoading(false)). Import HeaderOverlay from './components/HeaderOverlay' and world from './runtime/content'.",
+          "code": "getCurrentRound().then(setRound).catch((e) => setError(e instanceof Error ? e.message : String(e))).finally(() => setLoading(false));",
+          "expected": "State tracks loading and error."
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "GameLayout usage",
+          "lines": "L32-L33",
+          "action": "Pass header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={error} />} to GameLayout.",
+          "code": "<GameLayout header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={error} />} scene={...}",
+          "expected": "Header renders through the slot."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSB76FP6EDN24BPTFD",
+      "kind": "unit",
+      "title": "Act: Remove RoundBadge and Countdown usage from App",
+      "body": "Remove RoundBadge and Countdown from App scene slot.\n\n## Acceptance criteria\n- App.tsx has no RoundBadge or Countdown references.\n- The scene fragment in App.tsx begins with SceneView.\n\n\n## Scope\n- In scope: App.tsx\n- Out of scope: Component files\n- Preserve: Rest of scene\n\n\n## Technical constraints\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Imports and JSX removed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Delete the imports and JSX in App.",
+      "description": "Remove RoundBadge and Countdown from App scene slot.",
+      "acceptance_criteria": [
+        "App.tsx has no RoundBadge or Countdown references.",
+        "The scene fragment in App.tsx begins with SceneView."
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "Component files"
+        ],
+        "preserve": [
+          "Rest of scene"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Imports and JSX removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-332.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NWMXSR5NHHJAH7PHCZSBZ",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NWMXSR5NHHJAH7PHCZSBZ",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-332.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSR5NHHJAH7PHCZSBZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-332.md",
+      "artifact_id": "UNIT-332",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "imports",
+          "lines": "L5,L7",
+          "action": "Delete the import lines for Countdown from './components/Countdown' and RoundBadge from './components/RoundBadge'.",
+          "expected": "No unused imports."
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "scene fragment",
+          "lines": "L36-L37",
+          "action": "Delete the JSX lines <RoundBadge status={round?.status} /> and {round && <Countdown endsAt={round.ends_at} />} from the scene fragment.",
+          "expected": "Scene fragment begins with SceneView."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSGA5Y1RKM6RDKQBT3",
+      "kind": "unit",
+      "title": "Verify: GameLayout header slot unit tests",
+      "body": "Add tests asserting header placement and absence.\n\n## Acceptance criteria\n- Header is inside main when passed.\n- No header leaves layout intact.\n\n\n## Scope\n- In scope: tests/layout.test.tsx\n- Out of scope: Product code\n- Preserve: Existing layout tests\n\n\n## Technical constraints\n- Real GameLayout with real store; no network\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for header slot.",
+      "description": "Add tests asserting header placement and absence.",
+      "acceptance_criteria": [
+        "Header is inside main when passed.",
+        "No header leaves layout intact."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/layout.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing layout tests"
+        ]
+      },
+      "technical_constraints": [
+        "Real GameLayout with real store; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-333.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NWMXSHS0X1X13FAD1B8F6",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NWMXSHS0X1X13FAD1B8F6",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-333.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSHS0X1X13FAD1B8F6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-333.md",
+      "artifact_id": "UNIT-333",
+      "steps": [
+        {
+          "file": "game/frontend/tests/layout.test.tsx",
+          "symbol": "describe('GameLayout header slot')",
+          "lines": "after L1",
+          "action": "Add a test rendering GameLayout with header=<div data-testid=\"hdr\"/>, scene and story nodes; assert screen.getByTestId('hdr').closest('main') is non-null and contains getByTestId of the scene node. Add a second test rendering without header and asserting the Story button and scene node render.",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+          "expected": "Both new tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSMN7K93ZBYFAX21Y2",
+      "kind": "unit",
+      "title": "Verify: App header round states unit tests",
+      "body": "Mock api client and assert header states.\n\n## Acceptance criteria\n- Loaded, loading and error states asserted.\n- World title shown in the header is asserted.\n\n\n## Scope\n- In scope: tests/appHeader.test.tsx\n- Out of scope: Product code\n- Preserve: Existing app tests\n\n\n## Technical constraints\n- vi.mock('../src/api/client') for getCurrentRound; fixture shape matches Round in game/frontend/src/api/client.ts (served by backend GET /api/v1/worlds/{id}/round/current)\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for loaded, loading and error header states.",
+      "description": "Mock api client and assert header states.",
+      "acceptance_criteria": [
+        "Loaded, loading and error states asserted.",
+        "World title shown in the header is asserted."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/appHeader.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing app tests"
+        ]
+      },
+      "technical_constraints": [
+        "vi.mock('../src/api/client') for getCurrentRound; fixture shape matches Round in game/frontend/src/api/client.ts (served by backend GET /api/v1/worlds/{id}/round/current)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-334.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M84NWMXSTNFNCSWYNJSREN8T",
+      "links": [
+        "parent:01M84NWMXSTNFNCSWYNJSREN8T",
+        "trace:01M84NCYC0BNQ9HVE61H6AX2Y5",
+        "artifact:.ai-dlc/units/UNIT-334.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSTNFNCSWYNJSREN8T"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-334.md",
+      "artifact_id": "UNIT-334",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appHeader.test.tsx",
+          "symbol": "new: describe('App header round states')",
+          "lines": "new",
+          "action": "Create jsdom test file; mock ../src/api/client getCurrentRound with a Round-typed object built per the Round interface (fixture constant in the file). Render App, click Begin. Tests: (1) resolved -> await findByText of round id and status; (2) never-resolving promise -> getByText('Loading round…'); (3) rejects Error('boom') -> findByRole('alert') has text 'Round unavailable: boom'; (4) world title \"The Boy's Room\" shown in header.",
+          "command": "cd game/frontend && npx vitest run tests/appHeader.test.tsx",
+          "expected": "All four tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSZ7TDXBGGWVG9B9BJ",
+      "kind": "unit",
+      "title": "Verify: No standalone RoundBadge or Countdown in App unit tests",
+      "body": "Assert round status renders once within header and App source lacks the imports.\n\n## Acceptance criteria\n- Status appears once inside header.\n- App.tsx source has no RoundBadge/Countdown.\n\n\n## Scope\n- In scope: tests/appNoLegacyRound.test.tsx\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock ../src/api/client getCurrentRound with Round-typed fixture matching game/frontend/src/api/client.ts Round\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests assert single header round UI and source cleanliness.",
+      "description": "Assert round status renders once within header and App source lacks the imports.",
+      "acceptance_criteria": [
+        "Status appears once inside header.",
+        "App.tsx source has no RoundBadge/Countdown."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/appNoLegacyRound.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client getCurrentRound with Round-typed fixture matching game/frontend/src/api/client.ts Round"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-335.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NWMXSB76FP6EDN24BPTFD",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NWMXSB76FP6EDN24BPTFD",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-335.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSB76FP6EDN24BPTFD"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-335.md",
+      "artifact_id": "UNIT-335",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appNoLegacyRound.test.tsx",
+          "symbol": "new: describe('App legacy round UI removed')",
+          "lines": "new",
+          "action": "Create jsdom test. Mock getCurrentRound with a Round fixture status 'OPEN'. Render App, click Begin, await the header. Assert screen.getAllByText('OPEN') has length 1 and its closest('header') is non-null. Add a test that reads src/App.tsx with node:fs and expects it not to match /RoundBadge|Countdown/.",
+          "command": "cd game/frontend && npx vitest run tests/appNoLegacyRound.test.tsx",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84NWMXSNF9Y4ZNTPZXN2S2M",
+      "kind": "evidence",
+      "title": "Evidence: App header slot unit tests",
+      "body": "Collect passing results from the three new test files as proof.\n\n## Acceptance criteria\n- layout, appHeader and appNoLegacyRound tests pass.\n- Existing app.test.tsx still passes.\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: Code changes\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that header slot, states and legacy removal tests pass.",
+      "description": "Collect passing results from the three new test files as proof.",
+      "acceptance_criteria": [
+        "layout, appHeader and appNoLegacyRound tests pass.",
+        "Existing app.test.tsx still passes."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "Code changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-066.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NWMXSGA5Y1RKM6RDKQBT3",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84NWMXSGA5Y1RKM6RDKQBT3",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-066.md"
+      ],
+      "depends_on": [
+        "01M84NWMXSGA5Y1RKM6RDKQBT3",
+        "01M84NWMXSMN7K93ZBYFAX21Y2",
+        "01M84NWMXSZ7TDXBGGWVG9B9BJ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-066.md",
+      "artifact_id": "EVD-066"
+    }
+  ],
+  "created_at": "2026-11-23T17:05:23.454661+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 10/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

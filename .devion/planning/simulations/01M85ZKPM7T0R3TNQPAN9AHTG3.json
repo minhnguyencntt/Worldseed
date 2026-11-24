@@ -1,0 +1,1083 @@
+{
+  "intent_id": "01M85ZKPM7T0R3TNQPAN9AHTG3",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "kind": "intent",
+      "title": "SG-7 Integrate the game screen, behaviours and responsive layout",
+      "body": "Context: header, 480x270 scene and story panel already exist, but GameLayout splits 4fr/1fr (80/20), App never emits playAnimation or transitionTo to Phaser, BootScene.transitionTo does not ignore empty or unknown scene ids, and styles.css still holds placeholder .contribution-sheet styling. Desired behaviour: the delivered game screen matches the SG-7 Done when. Expected result: layout, behaviours and styles are wired to the real entry point and unit tested. Why: the visual overhaul needs one integrated screen.\n\n## Acceptance criteria\n- Given a wide viewport, when the game screen renders, then the grid is about three quarters scene and one quarter panel\n- Given a narrow viewport, when the Story button is clicked, then the panel drawer toggles via uiStore\n- Given a game action, when it runs, then playAnimation interact is emitted for the boy\n- Given a valid scene change, when state.currentScene changes, then transitionTo is emitted and the camera fades\n- Given an empty or unknown scene id, when transitionTo arrives, then the scene is ignored\n- Given styles.css, when read, then no placeholder styling remains\n\n\n## Scope\n- In scope: GameLayout split\n- In scope: App action emissions\n- In scope: BootScene transitionTo guard\n- In scope: styles.css placeholder removal\n- In scope: unit tests\n- Out of scope: new rooms\n- Out of scope: story content\n- Out of scope: backend changes\n- Out of scope: audio\n- Out of scope: deployment\n- Out of scope: repository clean-up\n- Preserve: Phaser 3.90.x\n- Preserve: Go API contracts and contribution flow\n- Preserve: data-driven scenes\n- Preserve: 480x270 whole-number scale\n- Preserve: 48-colour palette\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay\n- Tests are unit tests with all dependencies mocked\n- Do not read .devion/worktrees\n\n\n## Definition of done\n- All requirements delivered with passing unit tests\n\n\n## Non-functional requirements\n- Layout holds from 1280x720 up\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Game screen uses a 3/4 scene and 1/4 panel layout, a bottom drawer on narrow screens, interact animation, fade transitions and no placeholder styling",
+      "description": "Context: header, 480x270 scene and story panel already exist, but GameLayout splits 4fr/1fr (80/20), App never emits playAnimation or transitionTo to Phaser, BootScene.transitionTo does not ignore empty or unknown scene ids, and styles.css still holds placeholder .contribution-sheet styling. Desired behaviour: the delivered game screen matches the SG-7 Done when. Expected result: layout, behaviours and styles are wired to the real entry point and unit tested. Why: the visual overhaul needs one integrated screen.",
+      "acceptance_criteria": [
+        "Given a wide viewport, when the game screen renders, then the grid is about three quarters scene and one quarter panel",
+        "Given a narrow viewport, when the Story button is clicked, then the panel drawer toggles via uiStore",
+        "Given a game action, when it runs, then playAnimation interact is emitted for the boy",
+        "Given a valid scene change, when state.currentScene changes, then transitionTo is emitted and the camera fades",
+        "Given an empty or unknown scene id, when transitionTo arrives, then the scene is ignored",
+        "Given styles.css, when read, then no placeholder styling remains"
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout split",
+          "App action emissions",
+          "BootScene transitionTo guard",
+          "styles.css placeholder removal",
+          "unit tests"
+        ],
+        "out_of_scope": [
+          "new rooms",
+          "story content",
+          "backend changes",
+          "audio",
+          "deployment",
+          "repository clean-up"
+        ],
+        "preserve": [
+          "Phaser 3.90.x",
+          "Go API contracts and contribution flow",
+          "data-driven scenes",
+          "480x270 whole-number scale",
+          "48-colour palette"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay",
+        "Tests are unit tests with all dependencies mocked",
+        "Do not read .devion/worktrees"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered with passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-172.md`"
+      ],
+      "non_functional": [
+        "Layout holds from 1280x720 up"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84T653733GNHNR148NM3TA2",
+      "links": [
+        "trace:01M84T653733GNHNR148NM3TA2",
+        "artifact:.ai-dlc/intent/INT-172.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-172.md",
+      "artifact_id": "INT-172"
+    },
+    {
+      "id": "01M85ZPR8YCZD5BE06SP1K8532",
+      "kind": "requirement",
+      "title": "REQ · GameLayout gives about 3/4 width to the game area and drops to a store-driven bottom drawer when narrow",
+      "body": "Context: GameLayout.tsx L19 uses md:grid-cols-[4fr_1fr]. Desired: 3fr/1fr so the panel gets a quarter, holding from 1280x720 up; below md the aside is a fixed bottom drawer driven by useUiStore.drawerOpen (already implemented). Expected: classes updated. Why: matches the reference.\n\n## Acceptance criteria\n- Given the root grid, when rendered, then it has class md:grid-cols-[3fr_1fr] and not md:grid-cols-[4fr_1fr]\n- Given the aside, when rendered, then it keeps max-md fixed bottom drawer classes and data-state from drawerOpen\n\n\n## Scope\n- In scope: GameLayout grid class\n- Out of scope: drawer redesign\n- Preserve: Story toggle button\n- Preserve: uiStore drawer state\n\n\n## Technical constraints\n- Tailwind and Zustand stay\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Grid class changed; narrow drawer unchanged\n\n\n## Non-functional requirements\n- Holds from 1280x720 up\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Change desktop split from 4fr/1fr to 3fr/1fr, keep the md drawer behaviour",
+      "description": "Context: GameLayout.tsx L19 uses md:grid-cols-[4fr_1fr]. Desired: 3fr/1fr so the panel gets a quarter, holding from 1280x720 up; below md the aside is a fixed bottom drawer driven by useUiStore.drawerOpen (already implemented). Expected: classes updated. Why: matches the reference.",
+      "acceptance_criteria": [
+        "Given the root grid, when rendered, then it has class md:grid-cols-[3fr_1fr] and not md:grid-cols-[4fr_1fr]",
+        "Given the aside, when rendered, then it keeps max-md fixed bottom drawer classes and data-state from drawerOpen"
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout grid class"
+        ],
+        "out_of_scope": [
+          "drawer redesign"
+        ],
+        "preserve": [
+          "Story toggle button",
+          "uiStore drawer state"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind and Zustand stay"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Grid class changed; narrow drawer unchanged",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-429.md`"
+      ],
+      "non_functional": [
+        "Holds from 1280x720 up"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "matched_feature_id": "01M85MNPTJN2Z2441YTP0WZR6S",
+      "links": [
+        "parent:01M85ZPR8YS0EWP23Y5H8MYAKG",
+        "trace:01M85MNPTJN2Z2441YTP0WZR6S",
+        "artifact:.ai-dlc/requirements/REQ-429.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YS0EWP23Y5H8MYAKG"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-429.md",
+      "artifact_id": "REQ-429"
+    },
+    {
+      "id": "01M85ZPR8YF94RDBEN0PQ3NF2D",
+      "kind": "requirement",
+      "title": "REQ · Game actions emit playAnimation interact so the boy plays the interact animation",
+      "body": "Context: App passes game.act directly to ObjectOverlay.onAction, so reactToPhaser.playAnimation is never emitted although BootScene handles it. Desired: wrapped handler runs the action then emits playAnimation for the boy. Why: carry-over behaviour 3.9.\n\n## Acceptance criteria\n- Given an object action is chosen, when onAction fires, then reactToPhaser emits playAnimation with target boy and name interact\n- Given the action, when it runs, then game state still updates through game.act\n\n\n## Scope\n- In scope: App action handler\n- Out of scope: BootScene animation code\n- Preserve: game.act behaviour\n\n\n## Technical constraints\n- Use typed reactToPhaser bus\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Emission wired\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App emits playAnimation {target:'boy', name:'interact'} on every action",
+      "description": "Context: App passes game.act directly to ObjectOverlay.onAction, so reactToPhaser.playAnimation is never emitted although BootScene handles it. Desired: wrapped handler runs the action then emits playAnimation for the boy. Why: carry-over behaviour 3.9.",
+      "acceptance_criteria": [
+        "Given an object action is chosen, when onAction fires, then reactToPhaser emits playAnimation with target boy and name interact",
+        "Given the action, when it runs, then game state still updates through game.act"
+      ],
+      "scope": {
+        "in_scope": [
+          "App action handler"
+        ],
+        "out_of_scope": [
+          "BootScene animation code"
+        ],
+        "preserve": [
+          "game.act behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "Use typed reactToPhaser bus"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Emission wired",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-430.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "matched_feature_id": "01M85SD77WCS9424A173AC7BP2",
+      "links": [
+        "parent:01M85ZPR8YS0EWP23Y5H8MYAKG",
+        "trace:01M85SD77WCS9424A173AC7BP2",
+        "artifact:.ai-dlc/requirements/REQ-430.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YS0EWP23Y5H8MYAKG"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-430.md",
+      "artifact_id": "REQ-430"
+    },
+    {
+      "id": "01M85ZPR8YRTVPZBQ0F4KAP60Y",
+      "kind": "requirement",
+      "title": "REQ · A scene change from a game action emits transitionTo so the scene fades",
+      "body": "Context: goto_scene events set state.currentScene but nothing emits transitionTo; BootScene already fades out and starts the scene on that event. Desired: App emits transitionTo with the new id after an action changes currentScene.\n\n## Acceptance criteria\n- Given an action that changes currentScene, when it runs, then transitionTo is emitted with the new scene id\n- Given an action that keeps currentScene, when it runs, then transitionTo is not emitted\n\n\n## Scope\n- In scope: App handleAction\n- Out of scope: BootScene fade code\n- Preserve: playAnimation emission\n\n\n## Technical constraints\n- Use useGameStore state for before/after comparison\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Emission wired\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App emits transitionTo when state.currentScene changes",
+      "description": "Context: goto_scene events set state.currentScene but nothing emits transitionTo; BootScene already fades out and starts the scene on that event. Desired: App emits transitionTo with the new id after an action changes currentScene.",
+      "acceptance_criteria": [
+        "Given an action that changes currentScene, when it runs, then transitionTo is emitted with the new scene id",
+        "Given an action that keeps currentScene, when it runs, then transitionTo is not emitted"
+      ],
+      "scope": {
+        "in_scope": [
+          "App handleAction"
+        ],
+        "out_of_scope": [
+          "BootScene fade code"
+        ],
+        "preserve": [
+          "playAnimation emission"
+        ]
+      },
+      "technical_constraints": [
+        "Use useGameStore state for before/after comparison"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Emission wired",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-431.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85ZPR8YS0EWP23Y5H8MYAKG",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-431.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YS0EWP23Y5H8MYAKG"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-431.md",
+      "artifact_id": "REQ-431"
+    },
+    {
+      "id": "01M85ZPR8YE703C3BDE0TE7KFT",
+      "kind": "requirement",
+      "title": "REQ · A transition to an empty or unknown scene id is ignored",
+      "body": "Context: BootScene.ts L77-81 fades out and starts any sceneId. Desired: return early when sceneId is empty or this.scene.get(sceneId) is falsy, so no fade or start happens.\n\n## Acceptance criteria\n- Given sceneId '', when transitionTo is emitted, then no fadeOut and no scene.start\n- Given an unregistered id, when emitted, then no fadeOut and no scene.start\n\n\n## Scope\n- In scope: BootScene transitionTo handler\n- Out of scope: App emission\n- Preserve: valid fade behaviour\n- Preserve: unsubscribe on shutdown\n\n\n## Technical constraints\n- Phaser 3.90 ScenePlugin.get(key)\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Guard added\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene transitionTo handler guards empty and unregistered ids",
+      "description": "Context: BootScene.ts L77-81 fades out and starts any sceneId. Desired: return early when sceneId is empty or this.scene.get(sceneId) is falsy, so no fade or start happens.",
+      "acceptance_criteria": [
+        "Given sceneId '', when transitionTo is emitted, then no fadeOut and no scene.start",
+        "Given an unregistered id, when emitted, then no fadeOut and no scene.start"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene transitionTo handler"
+        ],
+        "out_of_scope": [
+          "App emission"
+        ],
+        "preserve": [
+          "valid fade behaviour",
+          "unsubscribe on shutdown"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 ScenePlugin.get(key)"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Guard added",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-432.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M85ZPR8YS0EWP23Y5H8MYAKG",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-432.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YS0EWP23Y5H8MYAKG"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-432.md",
+      "artifact_id": "REQ-432"
+    },
+    {
+      "id": "01M85ZPR8YQY65Y1Z15CFTX2PM",
+      "kind": "requirement",
+      "title": "REQ · Old placeholder styling is removed from styles.css",
+      "body": "Context: styles.css L9-26 defines .contribution-sheet (white background, shadow) and ContributionSheet.tsx L115 uses it. Desired: dialog uses the frame kit Tailwind classes and the placeholder CSS is deleted.\n\n## Acceptance criteria\n- Given styles.css, when read, then .contribution-sheet is absent\n- Given ContributionSheet, when rendered, then DialogContent has sf-frame-parchment and no contribution-sheet class\n\n\n## Scope\n- In scope: styles.css\n- In scope: ContributionSheet className\n- Out of scope: dialog logic\n- Preserve: frame kit rules\n- Preserve: html/body/#root overflow rule\n\n\n## Technical constraints\n- Shared palette tokens only\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Placeholder CSS gone\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Replace .contribution-sheet white-box CSS with kit classes",
+      "description": "Context: styles.css L9-26 defines .contribution-sheet (white background, shadow) and ContributionSheet.tsx L115 uses it. Desired: dialog uses the frame kit Tailwind classes and the placeholder CSS is deleted.",
+      "acceptance_criteria": [
+        "Given styles.css, when read, then .contribution-sheet is absent",
+        "Given ContributionSheet, when rendered, then DialogContent has sf-frame-parchment and no contribution-sheet class"
+      ],
+      "scope": {
+        "in_scope": [
+          "styles.css",
+          "ContributionSheet className"
+        ],
+        "out_of_scope": [
+          "dialog logic"
+        ],
+        "preserve": [
+          "frame kit rules",
+          "html/body/#root overflow rule"
+        ]
+      },
+      "technical_constraints": [
+        "Shared palette tokens only"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Placeholder CSS gone",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-433.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85ZPR8YS0EWP23Y5H8MYAKG",
+      "matched_feature_id": "01M85BP7N1KYP1XAPXSZBNPXM2",
+      "links": [
+        "parent:01M85ZPR8YS0EWP23Y5H8MYAKG",
+        "trace:01M85BP7N1KYP1XAPXSZBNPXM2",
+        "artifact:.ai-dlc/requirements/REQ-433.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YS0EWP23Y5H8MYAKG"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-433.md",
+      "artifact_id": "REQ-433"
+    },
+    {
+      "id": "01M85ZPR8YSABPDBAE6YYYFQAY",
+      "kind": "unit",
+      "title": "Act: Switch GameLayout to a 3fr/1fr split",
+      "body": "Change the md grid template in GameLayout so the scene gets three quarters of the width, keeping every other class.\n\n## Acceptance criteria\n- Given GameLayout, when rendered, then the root has md:grid-cols-[3fr_1fr]\n- Given narrow classes, when inspected, then max-md drawer classes are unchanged\n\n\n## Scope\n- In scope: GameLayout.tsx\n- Out of scope: other components\n- Preserve: drawer classes\n\n\n## Technical constraints\n- Tailwind stays\n- Code path: `game/frontend/src/components/GameLayout.tsx`\n\n\n## Dependencies\n- REQ-LAYOUT\n\n\n## Definition of done\n- Class swapped\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Edit the root grid class in GameLayout",
+      "description": "Change the md grid template in GameLayout so the scene gets three quarters of the width, keeping every other class.",
+      "acceptance_criteria": [
+        "Given GameLayout, when rendered, then the root has md:grid-cols-[3fr_1fr]",
+        "Given narrow classes, when inspected, then max-md drawer classes are unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout.tsx"
+        ],
+        "out_of_scope": [
+          "other components"
+        ],
+        "preserve": [
+          "drawer classes"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind stays",
+        "Code path: `game/frontend/src/components/GameLayout.tsx`"
+      ],
+      "dependencies": [
+        "REQ-LAYOUT"
+      ],
+      "definition_of_done": [
+        "Class swapped",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-858.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85ZPR8YCZD5BE06SP1K8532",
+      "matched_feature_id": "01M84N2BMB65JWRM757H0EJ85E",
+      "links": [
+        "parent:01M85ZPR8YCZD5BE06SP1K8532",
+        "trace:01M84N2BMB65JWRM757H0EJ85E",
+        "artifact:.ai-dlc/units/UNIT-858.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YCZD5BE06SP1K8532"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-858.md",
+      "artifact_id": "UNIT-858",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/GameLayout.tsx",
+          "symbol": "GameLayout",
+          "lines": "L19",
+          "action": "Replace the root div class token md:grid-cols-[4fr_1fr] with md:grid-cols-[3fr_1fr], leaving grid, h-screen, w-full, grid-cols-1 and overflow-hidden unchanged.",
+          "code": "md:grid-cols-[4fr_1fr] -> md:grid-cols-[3fr_1fr]",
+          "expected": "Root grid renders a 3:1 split from md up"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YPGHVD6RTPVPJ18TV",
+      "kind": "unit",
+      "title": "Act: Emit playAnimation interact from the App action handler",
+      "body": "Create handleAction that calls game.act then emits playAnimation for the boy.\n\n## Acceptance criteria\n- Given handleAction, when called, then game.act runs and playAnimation interact is emitted\n- Given ObjectOverlay, when rendered, then onAction is handleAction\n\n\n## Scope\n- In scope: App.tsx\n- Out of scope: BootScene\n- Preserve: overlay props\n\n\n## Technical constraints\n- React stays\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- REQ-INTERACT\n\n\n## Definition of done\n- Overlay uses handleAction\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add handleAction in App and pass it to ObjectOverlay",
+      "description": "Create handleAction that calls game.act then emits playAnimation for the boy.",
+      "acceptance_criteria": [
+        "Given handleAction, when called, then game.act runs and playAnimation interact is emitted",
+        "Given ObjectOverlay, when rendered, then onAction is handleAction"
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "overlay props"
+        ]
+      },
+      "technical_constraints": [
+        "React stays",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "REQ-INTERACT"
+      ],
+      "definition_of_done": [
+        "Overlay uses handleAction",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-859.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85ZPR8YF94RDBEN0PQ3NF2D",
+      "matched_feature_id": "01M85MNPTK7BTHK8EDH1RQS65R",
+      "links": [
+        "parent:01M85ZPR8YF94RDBEN0PQ3NF2D",
+        "trace:01M85MNPTK7BTHK8EDH1RQS65R",
+        "artifact:.ai-dlc/units/UNIT-859.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YF94RDBEN0PQ3NF2D"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-859.md",
+      "artifact_id": "UNIT-859",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "import { phaserToReact }",
+          "lines": "L16",
+          "action": "Change the events import to also import reactToPhaser.",
+          "code": "import { phaserToReact } from './phaser/events'; -> import { phaserToReact, reactToPhaser } from './phaser/events';",
+          "expected": "reactToPhaser is available in App"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App.handleAction",
+          "lines": "after L68",
+          "action": "Add const handleAction = (objectId: string, actionId: string) => { game.act(objectId, actionId); reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' }); }; placed before the return of the playing view (after the !begun early return).",
+          "code": "const handleAction = (objectId: string, actionId: string) => { game.act(objectId, actionId); reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' }); };",
+          "expected": "Handler defined"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "ObjectOverlay onAction prop",
+          "lines": "L98",
+          "action": "Replace onAction={game.act} with onAction={handleAction}.",
+          "code": "onAction={game.act} -> onAction={handleAction}",
+          "expected": "Actions emit the animation event"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YV8JQE2JX8HZWBYSG",
+      "kind": "unit",
+      "title": "Act: Emit transitionTo from handleAction when currentScene changes",
+      "body": "Extend handleAction (added by the interact Act) to read the store scene id before and after and emit transitionTo on change.\n\n## Acceptance criteria\n- Given a changed currentScene, when handleAction runs, then transitionTo is emitted with it\n- Given no change, when it runs, then no transitionTo\n\n\n## Scope\n- In scope: App.tsx\n- Out of scope: BootScene\n- Preserve: playAnimation emission\n\n\n## Technical constraints\n- Run after the interact Act\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- REQ-FADE\n\n\n## Definition of done\n- Emission conditional\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Compare currentScene before and after game.act",
+      "description": "Extend handleAction (added by the interact Act) to read the store scene id before and after and emit transitionTo on change.",
+      "acceptance_criteria": [
+        "Given a changed currentScene, when handleAction runs, then transitionTo is emitted with it",
+        "Given no change, when it runs, then no transitionTo"
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "playAnimation emission"
+        ]
+      },
+      "technical_constraints": [
+        "Run after the interact Act",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "REQ-FADE"
+      ],
+      "definition_of_done": [
+        "Emission conditional",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-860.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85ZPR8YRTVPZBQ0F4KAP60Y",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M85ZPR8YRTVPZBQ0F4KAP60Y",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-860.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YRTVPZBQ0F4KAP60Y"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-860.md",
+      "artifact_id": "UNIT-860",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App.handleAction",
+          "lines": "handleAction body",
+          "action": "Read const before = useGameStore.getState().state.currentScene before game.act, and after the playAnimation emit read const after the same way; when after !== before emit reactToPhaser.emit('transitionTo', { sceneId: after }).",
+          "code": "const before = useGameStore.getState().state.currentScene; game.act(objectId, actionId); reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' }); const after = useGameStore.getState().state.currentScene; if (after !== before) reactToPhaser.emit('transitionTo', { sceneId: after });",
+          "expected": "transitionTo emitted only on a scene change"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YCXR35PR54PPA5ZDN",
+      "kind": "unit",
+      "title": "Act: Guard the BootScene transitionTo handler",
+      "body": "Add an early return in the transitionTo subscriber.\n\n## Acceptance criteria\n- Given empty or unknown id, when handled, then nothing happens\n- Given a known id, when handled, then fade and start occur\n\n\n## Scope\n- In scope: BootScene.ts\n- Out of scope: others\n- Preserve: Phaser 3.90.x\n\n\n## Technical constraints\n- Phaser stays on 3.90.x\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-IGNORE\n\n\n## Definition of done\n- Guard in place\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Ignore empty or unknown sceneId",
+      "description": "Add an early return in the transitionTo subscriber.",
+      "acceptance_criteria": [
+        "Given empty or unknown id, when handled, then nothing happens",
+        "Given a known id, when handled, then fade and start occur"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "others"
+        ],
+        "preserve": [
+          "Phaser 3.90.x"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-IGNORE"
+      ],
+      "definition_of_done": [
+        "Guard in place",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-861.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85ZPR8YE703C3BDE0TE7KFT",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M85ZPR8YE703C3BDE0TE7KFT",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-861.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YE703C3BDE0TE7KFT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-861.md",
+      "artifact_id": "UNIT-861",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create transitionTo handler",
+          "lines": "L77-L81",
+          "action": "At the top of the reactToPhaser.on('transitionTo') callback add a guard returning when sceneId is empty or this.scene.get(sceneId) is falsy, before the camera lines.",
+          "code": "if (!sceneId || !this.scene.get(sceneId)) return;",
+          "expected": "Empty and unknown ids do nothing"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8Y057R3PVZTM2N5CXN",
+      "kind": "unit",
+      "title": "Act: Delete placeholder CSS and restyle the contribution dialog with the kit",
+      "body": "Switch DialogContent className and delete the two rule blocks.\n\n## Acceptance criteria\n- Given styles.css, then no .contribution-sheet\n- Given the dialog, then it uses kit classes\n\n\n## Scope\n- In scope: styles.css\n- In scope: ContributionSheet.tsx\n- Out of scope: logic\n- Preserve: dialog behaviour\n\n\n## Technical constraints\n- Palette tokens only\n- Code path: `game/frontend/src/styles.css`\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ-STYLES\n\n\n## Definition of done\n- Placeholder removed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Remove .contribution-sheet rules",
+      "description": "Switch DialogContent className and delete the two rule blocks.",
+      "acceptance_criteria": [
+        "Given styles.css, then no .contribution-sheet",
+        "Given the dialog, then it uses kit classes"
+      ],
+      "scope": {
+        "in_scope": [
+          "styles.css",
+          "ContributionSheet.tsx"
+        ],
+        "out_of_scope": [
+          "logic"
+        ],
+        "preserve": [
+          "dialog behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "Palette tokens only",
+        "Code path: `game/frontend/src/styles.css`",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ-STYLES"
+      ],
+      "definition_of_done": [
+        "Placeholder removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-862.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85ZPR8YQY65Y1Z15CFTX2PM",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85ZPR8YQY65Y1Z15CFTX2PM",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-862.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YQY65Y1Z15CFTX2PM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-862.md",
+      "artifact_id": "UNIT-862",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet DialogContent",
+          "lines": "L115",
+          "action": "Replace className=\"contribution-sheet\" with Tailwind plus kit classes keeping the bottom sheet position.",
+          "code": "className=\"sf-frame-parchment fixed inset-x-0 bottom-0 z-10 max-h-[70vh] overflow-y-auto p-sf-4 text-sf-md\"",
+          "expected": "Dialog styled by the kit"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": ".contribution-sheet rules",
+          "lines": "L9-L26",
+          "action": "Delete the .contribution-sheet block and the .contribution-sheet textarea block.",
+          "code": "remove lines 9-26",
+          "expected": "No placeholder styling remains"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8Y95J698SX06YE1CHP",
+      "kind": "unit",
+      "title": "Verify: GameLayout wide split and narrow drawer unit tests",
+      "body": "Update existing layout tests to the new split and cover wide and narrow class sets and the drawer toggle.\n\n## Acceptance criteria\n- Given a wide layout, when rendered, then md:grid-cols-[3fr_1fr] is present\n- Given the narrow classes, when inspected, then the aside has max-md:fixed and data-state toggles with the store\n\n\n## Scope\n- In scope: tests/layoutDesktop.test.tsx\n- In scope: tests/layoutSplit.test.tsx\n- Out of scope: browser checks\n- Preserve: existing drawer toggle test in layout.test.tsx\n\n\n## Technical constraints\n- Unit tests only, jsdom, no browser\n\n\n## Dependencies\n- ACT-LAYOUT\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Assert 3fr/1fr class, narrow drawer classes and toggle",
+      "description": "Update existing layout tests to the new split and cover wide and narrow class sets and the drawer toggle.",
+      "acceptance_criteria": [
+        "Given a wide layout, when rendered, then md:grid-cols-[3fr_1fr] is present",
+        "Given the narrow classes, when inspected, then the aside has max-md:fixed and data-state toggles with the store"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/layoutDesktop.test.tsx",
+          "tests/layoutSplit.test.tsx"
+        ],
+        "out_of_scope": [
+          "browser checks"
+        ],
+        "preserve": [
+          "existing drawer toggle test in layout.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, jsdom, no browser"
+      ],
+      "dependencies": [
+        "ACT-LAYOUT"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-863.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8YSABPDBAE6YYYFQAY",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85ZPR8YSABPDBAE6YYYFQAY",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-863.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YSABPDBAE6YYYFQAY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-863.md",
+      "artifact_id": "UNIT-863",
+      "steps": [
+        {
+          "file": "game/frontend/tests/layoutDesktop.test.tsx",
+          "symbol": "root grid classes test",
+          "lines": "L22-L30",
+          "action": "Change the expected class md:grid-cols-[4fr_1fr] in toHaveClass to md:grid-cols-[3fr_1fr].",
+          "code": "'md:grid-cols-[4fr_1fr]' -> 'md:grid-cols-[3fr_1fr]'",
+          "command": "cd game/frontend && npx vitest run tests/layoutDesktop.test.tsx",
+          "expected": "Wide-width test passes with 3fr/1fr"
+        },
+        {
+          "file": "game/frontend/tests/layoutSplit.test.tsx",
+          "symbol": "new: narrow drawer classes and toggle",
+          "lines": "new",
+          "action": "Add a test rendering GameLayout with scene and story nodes; assert the aside has classes max-md:fixed, max-md:bottom-0 and data-state closed, click the Story button, assert data-state open and useUiStore.getState().drawerOpen is true, reset store in beforeEach.",
+          "command": "cd game/frontend && npx vitest run tests/layoutSplit.test.tsx",
+          "expected": "Narrow and toggle assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8Y7QW9R67CCAV1GGY2",
+      "kind": "unit",
+      "title": "Verify: interact animation emitted on an action unit tests",
+      "body": "Render App with Phaser mocked, spy on reactToPhaser.emit.\n\n## Acceptance criteria\n- Given a selected bookshelf, when Inspect is clicked, then playAnimation boy interact is emitted once\n- Given the action, when clicked, then the story history grows\n\n\n## Scope\n- In scope: tests/appInteract.test.tsx\n- Out of scope: real Phaser\n- Preserve: existing App tests\n\n\n## Technical constraints\n- Mock createGame, BootScene, phaser and ResizeObserver as tests/appObjectClick.test.tsx does\n\n\n## Dependencies\n- ACT-INTERACT\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test App emits playAnimation on action",
+      "description": "Render App with Phaser mocked, spy on reactToPhaser.emit.",
+      "acceptance_criteria": [
+        "Given a selected bookshelf, when Inspect is clicked, then playAnimation boy interact is emitted once",
+        "Given the action, when clicked, then the story history grows"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/appInteract.test.tsx"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing App tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock createGame, BootScene, phaser and ResizeObserver as tests/appObjectClick.test.tsx does"
+      ],
+      "dependencies": [
+        "ACT-INTERACT"
+      ],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-864.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8YPGHVD6RTPVPJ18TV",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85ZPR8YPGHVD6RTPVPJ18TV",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-864.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YPGHVD6RTPVPJ18TV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-864.md",
+      "artifact_id": "UNIT-864",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appInteract.test.tsx",
+          "symbol": "new: App emits playAnimation on action",
+          "lines": "new",
+          "action": "Copy the mock header of tests/appObjectClick.test.tsx; vi.spyOn(reactToPhaser,'emit'); render App, click Begin, emit phaserToReact objectClick for 'bookshelf' inside act(), click the Inspect button, assert emit was called with 'playAnimation', { target: 'boy', name: 'interact' }.",
+          "command": "cd game/frontend && npx vitest run tests/appInteract.test.tsx",
+          "expected": "Spy assertion passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YERZQQKYHW0HV8WVE",
+      "kind": "unit",
+      "title": "Verify: transitionTo emitted on scene change and fade on a valid scene unit tests",
+      "body": "App test with a mocked performAction scene change; BootScene test for the fade of a registered scene.\n\n## Acceptance criteria\n- Given an action moving currentScene, when run, then transitionTo is emitted\n- Given a registered scene id, when transitionTo arrives, then cameras.main.fadeOut runs and scene.start follows the FADE_OUT_COMPLETE callback\n\n\n## Scope\n- In scope: tests/appTransition.test.tsx\n- In scope: tests/bootSceneTransition.test.ts\n- Out of scope: real Phaser\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Mock @game/engine/scene performAction to return a state with another currentScene\n\n\n## Dependencies\n- ACT-FADE\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test App emission and BootScene fade",
+      "description": "App test with a mocked performAction scene change; BootScene test for the fade of a registered scene.",
+      "acceptance_criteria": [
+        "Given an action moving currentScene, when run, then transitionTo is emitted",
+        "Given a registered scene id, when transitionTo arrives, then cameras.main.fadeOut runs and scene.start follows the FADE_OUT_COMPLETE callback"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/appTransition.test.tsx",
+          "tests/bootSceneTransition.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Mock @game/engine/scene performAction to return a state with another currentScene"
+      ],
+      "dependencies": [
+        "ACT-FADE"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-865.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8YV8JQE2JX8HZWBYSG",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85ZPR8YV8JQE2JX8HZWBYSG",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-865.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YV8JQE2JX8HZWBYSG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-865.md",
+      "artifact_id": "UNIT-865",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appTransition.test.tsx",
+          "symbol": "new: App emits transitionTo",
+          "lines": "new",
+          "action": "Use the mock header of appObjectClick.test.tsx; vi.mock('@game/engine/scene') keeping getSceneView real via importActual and replacing performAction to return {...prev, currentScene:'hallway'}; spy reactToPhaser.emit; click Inspect on bookshelf; assert emit called with 'transitionTo', { sceneId: 'hallway' }; add a second test where performAction returns prev and assert no transitionTo call.",
+          "command": "cd game/frontend && npx vitest run tests/appTransition.test.tsx",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneTransition.test.ts",
+          "symbol": "transitionTo fade test",
+          "lines": "existing test",
+          "action": "Make the fake scene expose scene.get returning an object for the requested id (add get: vi.fn(() => ({})) to the Object.assign scene stub) and keep the assertion that fadeOut is called with TRANSITION_FADE_MS and scene.start fires after the captured callback runs.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts",
+          "expected": "Fade on valid scene passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8Y3QHPRDKMF5WDM4B0",
+      "kind": "unit",
+      "title": "Verify: empty and unknown scene transition ignored unit tests",
+      "body": "With Phaser faked, emit transitionTo with '' and an unknown id.\n\n## Acceptance criteria\n- Given '' emitted, then fadeOut and scene.start are not called\n- Given an unknown id with scene.get returning null, then they are not called\n\n\n## Scope\n- In scope: tests/bootSceneTransitionIgnore.test.ts\n- Out of scope: real Phaser\n- Preserve: bootSceneTransition tests\n\n\n## Technical constraints\n- Copy the phaser vi.mock of bootSceneTransition.test.ts with scene.get as vi.fn\n\n\n## Dependencies\n- ACT-IGNORE\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test BootScene guard",
+      "description": "With Phaser faked, emit transitionTo with '' and an unknown id.",
+      "acceptance_criteria": [
+        "Given '' emitted, then fadeOut and scene.start are not called",
+        "Given an unknown id with scene.get returning null, then they are not called"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/bootSceneTransitionIgnore.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "bootSceneTransition tests"
+        ]
+      },
+      "technical_constraints": [
+        "Copy the phaser vi.mock of bootSceneTransition.test.ts with scene.get as vi.fn"
+      ],
+      "dependencies": [
+        "ACT-IGNORE"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-866.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8YCXR35PR54PPA5ZDN",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85ZPR8YCXR35PR54PPA5ZDN",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-866.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8YCXR35PR54PPA5ZDN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-866.md",
+      "artifact_id": "UNIT-866",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionIgnore.test.ts",
+          "symbol": "new: transitionTo ignored",
+          "lines": "new",
+          "action": "Create the scene as bootSceneTransition.test.ts does with scene.get returning null; call create(); reactToPhaser.emit('transitionTo',{sceneId:''}) then {sceneId:'nope'}; assert cameras.main.fadeOut and scene.start were never called.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionIgnore.test.ts",
+          "expected": "Both ignored assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YJ9RGY12QTBF1AK8T",
+      "kind": "unit",
+      "title": "Verify: placeholder styling removed unit tests",
+      "body": "Read styles.css from disk and render the dialog.\n\n## Acceptance criteria\n- Given styles.css, then it does not contain contribution-sheet\n- Given the open dialog, then its content has class sf-frame-parchment\n\n\n## Scope\n- In scope: tests/noPlaceholderStyles.test.tsx\n- In scope: tests/layout.test.tsx\n- Out of scope: browser\n- Preserve: frame kit selectors assertions\n\n\n## Technical constraints\n- Mock api client as contribution tests do via tests/fixtures/api.ts\n\n\n## Dependencies\n- ACT-STYLES\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test CSS and dialog classes",
+      "description": "Read styles.css from disk and render the dialog.",
+      "acceptance_criteria": [
+        "Given styles.css, then it does not contain contribution-sheet",
+        "Given the open dialog, then its content has class sf-frame-parchment"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/noPlaceholderStyles.test.tsx",
+          "tests/layout.test.tsx"
+        ],
+        "out_of_scope": [
+          "browser"
+        ],
+        "preserve": [
+          "frame kit selectors assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Mock api client as contribution tests do via tests/fixtures/api.ts"
+      ],
+      "dependencies": [
+        "ACT-STYLES"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-867.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8Y057R3PVZTM2N5CXN",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85ZPR8Y057R3PVZTM2N5CXN",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-867.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8Y057R3PVZTM2N5CXN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-867.md",
+      "artifact_id": "UNIT-867",
+      "steps": [
+        {
+          "file": "game/frontend/tests/layout.test.tsx",
+          "symbol": "stylesheet test",
+          "lines": "L47-L56",
+          "action": "Change the last assertion expect(css).toContain('.contribution-sheet') to expect(css).not.toContain('.contribution-sheet').",
+          "code": "toContain -> not.toContain",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+          "expected": "Stylesheet test passes"
+        },
+        {
+          "file": "game/frontend/tests/noPlaceholderStyles.test.tsx",
+          "symbol": "new: dialog uses kit class",
+          "lines": "new",
+          "action": "Render ContributionSheet open=true with the client mocked as tests/contributionDialog.test.tsx does; assert screen.getByRole('dialog') has class sf-frame-parchment and not contribution-sheet.",
+          "command": "cd game/frontend && npx vitest run tests/noPlaceholderStyles.test.tsx",
+          "expected": "Dialog class assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85ZPR8YY68XTKB6W1REGPVY",
+      "kind": "evidence",
+      "title": "Evidence: SG-7 layout, interact, fade, ignore and styles unit tests pass",
+      "body": "Evidence of the passing targeted vitest runs for layout, interact animation, scene fade, ignored scene ids and styles removal.\n\n## Acceptance criteria\n- Given the verify tests, when run, then all pass\n- Given the results, when reviewed, then every Done when item maps to a test\n\n\n## Scope\n- In scope: test results\n- Out of scope: manual checks\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- VER-LAYOUT\n- VER-INTERACT\n- VER-FADE\n- VER-IGNORE\n- VER-STYLES\n\n\n## Definition of done\n- All verify units green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing unit test results for all SG-7 verify units",
+      "description": "Evidence of the passing targeted vitest runs for layout, interact animation, scene fade, ignored scene ids and styles removal.",
+      "acceptance_criteria": [
+        "Given the verify tests, when run, then all pass",
+        "Given the results, when reviewed, then every Done when item maps to a test"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "VER-LAYOUT",
+        "VER-INTERACT",
+        "VER-FADE",
+        "VER-IGNORE",
+        "VER-STYLES"
+      ],
+      "definition_of_done": [
+        "All verify units green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-172.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85ZPR8Y95J698SX06YE1CHP",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85ZPR8Y95J698SX06YE1CHP",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-172.md"
+      ],
+      "depends_on": [
+        "01M85ZPR8Y95J698SX06YE1CHP",
+        "01M85ZPR8Y7QW9R67CCAV1GGY2",
+        "01M85ZPR8YERZQQKYHW0HV8WVE",
+        "01M85ZPR8Y3QHPRDKMF5WDM4B0",
+        "01M85ZPR8YJ9RGY12QTBF1AK8T"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-172.md",
+      "artifact_id": "EVD-172"
+    }
+  ],
+  "created_at": "2026-11-24T05:18:54.032230+00:00",
+  "summary": "AI · 0 NEW · 17 UPDATE · 0 UNCHANGED · 17/17 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

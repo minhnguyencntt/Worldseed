@@ -1,0 +1,82 @@
+{
+  "id": "01M85STRXC7HS7RWM7D5RN8ZER",
+  "intent_id": "01M85SHYJTCGKNGQ56NSZS65QJ",
+  "title": "Act: Author wall, wainscot, floor and window grids",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create src/art/roomBackground.ts",
+  "description": "Build four ArtSource entries using the draw helpers and ROOM_ART_SIZES.",
+  "acceptance_criteria": [
+    "BACKGROUND_SOURCES has ids room/wall, room/wainscot, room/floor and room/window",
+    "Each has one frame at its ROOM_ART_SIZES size"
+  ],
+  "scope": {
+    "in_scope": [
+      "One new file"
+    ],
+    "out_of_scope": [
+      "Registering in ART_SOURCES"
+    ],
+    "preserve": [
+      "sources.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Shared palette of at most 48 colours, referenced via rampIndex",
+    "Native 480x270",
+    "New file: `game/frontend/src/art/roomBackground.ts`"
+  ],
+  "dependencies": [
+    "R2",
+    "A1"
+  ],
+  "definition_of_done": [
+    "File compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-793.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SMTB5MBBGCVCB0T08JQJK",
+    "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+    "artifact:.ai-dlc/units/UNIT-793.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85STRXC47DK7EKA5H3DZ2J3"
+  ],
+  "sim_node_id": "01M85SMTB5GVFV8BYG3VA9BT6J",
+  "feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+  "artifact_path": ".ai-dlc/units/UNIT-793.md",
+  "artifact_id": "UNIT-793",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/art/roomBackground.ts",
+      "symbol": "new: wallGrid, wainscotGrid",
+      "lines": "new",
+      "action": "Import ArtSource from './sources', helpers from './draw', ROOM_ART_SIZES. wallGrid(): createGrid at wall size filled with rampIndex('plum',2); for every x where Math.floor(x/12)%2===0 fillRect a full-height column of rampIndex('plum',3); shade the top 8 rows with indigo step 1 via dither with plum 2; outline nothing. wainscotGrid(): shadeRect full area wood step 3 to 2, fillRect a 3-row top trim at y 0 with brass step 3, a 1-row shadow at y 3 with wood 0, and panel outlines every 60px (outlineRect y 8, h 28, w 52) using wood step 1 plus a wood step 4 highlight row inside the top edge.",
+      "expected": "Both functions return grids of 150 and 40 rows by 480 columns"
+    },
+    {
+      "file": "game/frontend/src/art/roomBackground.ts",
+      "symbol": "new: floorGrid, windowGrid",
+      "lines": "after wainscotGrid",
+      "action": "floorGrid(): createGrid 480x80 with wood step 3; every 16 rows a fillRect seam row of wood 1; vertical plank joints at x multiples of 48 offset by (row band index*16)%48 using wood 1; dither wood 3/4 on every fourth plank for grain. windowGrid(): createGrid 64x56 with indigo 1 sky, dither indigo 2/indigo 1 in the lower half as stars-free haze, fillRect a 3x3 star cells using moon 5 at (10,8),(40,14),(24,30); draw crescent by filling a 14x14 area at (36,6) with moon 5 then overpainting an offset 12x12 area at (40,4) with indigo 1; frame via outlineRect whole area with brass 1, a second inner outlineRect with brass 4, and a centre cross fillRect of width 2 using brass 3; add curtain strips of plum 3 at x 0-5 and x 58-63 with plum 1 shade columns.",
+      "expected": "floorGrid is 80x480 and windowGrid is 56x64 containing moon and brass indices"
+    },
+    {
+      "file": "game/frontend/src/art/roomBackground.ts",
+      "symbol": "new: BACKGROUND_SOURCES",
+      "lines": "after windowGrid",
+      "action": "Export BACKGROUND_SOURCES: ArtSource[] with four entries {id:'room/wall',path:'worlds/the-boys-room/room/wall.png',frames:[wallGrid()]} and the same for wainscot, floor, window.",
+      "expected": "Array length 4, each frames.length 1"
+    }
+  ],
+  "created_at": "2026-11-24T03:33:13.772213+00:00",
+  "updated_at": "2026-11-24T03:38:50.013431+00:00"
+}

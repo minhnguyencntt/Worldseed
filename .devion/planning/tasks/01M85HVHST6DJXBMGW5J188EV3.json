@@ -1,0 +1,71 @@
+{
+  "id": "01M85HVHST6DJXBMGW5J188EV3",
+  "intent_id": "01M85HMP0R2J46QE3KJGEPR2AH",
+  "title": "Verify: BootScene keyboard unit tests for each key with Phaser mocked",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Mocked tests for Tab, arrows, Enter, Space, Escape and cleanup",
+  "description": "New test file with Phaser mocked so Scene exposes input.keyboard {on, off} spies and events.once; buildScene mocked to return fake objects.",
+  "acceptance_criteria": [
+    "Tab, Shift+Tab, ArrowRight, ArrowLeft, Enter, Space and Escape each have a test.",
+    "Shutdown removes the listener."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootSceneKeyboard.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Other bootScene tests"
+    ]
+  },
+  "technical_constraints": [
+    "Mirror the mocks in game/frontend/tests/bootSceneSync.test.ts; add input.keyboard to the mocked Scene; mock @game/engine/buildScene with buildScene and moveFocus as vi.fn"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-714.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85HPRN8QBR3CRBRZ0WY94XD",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-714.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85HVHSTZ98FVSFFFNJ58VWN"
+  ],
+  "sim_node_id": "01M85HPRN8SVCRAQ32D3ZB5N2P",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-714.md",
+  "artifact_id": "UNIT-714",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneKeyboard.test.ts",
+      "symbol": "new: describe('BootScene keyboard')",
+      "lines": "new",
+      "action": "Copy the vi.mock blocks from bootSceneSync.test.ts, extending the mocked Scene with input = { keyboard: { on: vi.fn(), off: vi.fn() } } and mocking buildScene returning one fake object {sync,destroy,onInteract,handleKey:vi.fn(),isFocused:true,spec:{id:'bookshelf'}} and moveFocus as vi.fn. In beforeEach create BootScene and call create(); grab the keydown handler from input.keyboard.on.mock.calls.",
+      "code": "const press = (key: string, shiftKey = false) => handler({ key, shiftKey, preventDefault: vi.fn() } as unknown as KeyboardEvent);",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneKeyboard.test.ts",
+      "expected": "Setup yields a callable handler."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneKeyboard.test.ts",
+      "symbol": "it blocks",
+      "lines": "new",
+      "action": "Add tests: Tab -> moveFocus called with (objects, 1) and focusChange emitted {id:'bookshelf'}; Shift+Tab and ArrowLeft -> -1; ArrowRight -> 1; Enter and ' ' -> fake.handleKey called with the key; Escape -> menuClose emitted via a phaserToReact.on spy; running the SHUTDOWN callback from events.once calls input.keyboard.off('keydown', handler).",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneKeyboard.test.ts",
+      "expected": "All key tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T01:13:50.650619+00:00",
+  "updated_at": "2026-11-24T01:15:27.925795+00:00"
+}

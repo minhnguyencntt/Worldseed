@@ -1,0 +1,73 @@
+{
+  "id": "01M85XAF1PWWE6H8DY72R40FRN",
+  "intent_id": "01M85WY6FJYG6CP4WV6SDZB9VM",
+  "title": "Verify: Frame grids, generated PNGs and removal of old SVGs",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for frame sources, manifest match and no legacy SVG",
+  "description": "Test grid size, palette use, slice rules, manifest/PNG sizes and absence of old SVGs.",
+  "acceptance_criteria": [
+    "Grid sizes and palette indices valid",
+    "Manifest ids match PNG header sizes",
+    "No panel-frame, sound or pointer svg"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/uiFrames.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "tests/assetFolders.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only; reads committed files with node fs"
+  ],
+  "dependencies": [
+    "A3"
+  ],
+  "definition_of_done": [
+    "uiFrames.test.ts passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-836.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85X219HX1MGF0SGE39TFD1J",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-836.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XAF1PY4G4DYAYYQ3M7BZR"
+  ],
+  "sim_node_id": "01M85X219H4KY5YBQTQPZX81EG",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-836.md",
+  "artifact_id": "UNIT-836",
+  "steps": [
+    {
+      "file": "game/frontend/tests/uiFrames.test.ts",
+      "symbol": "new: describe('interface frame kit art')",
+      "lines": "new",
+      "action": "Test 'grids': for each FRAME_KIT entry assert buildFrameGrid has h rows of w cells, every value is an integer in [0, PALETTE.length), and slice*2 < min(w,h). Test 'ids': assert ids include bar, panel, plaque, parchment, slot and the four button states. Test 'determinism': two calls give toEqual grids.",
+      "command": "npx vitest run tests/uiFrames.test.ts",
+      "expected": "Grid tests pass"
+    },
+    {
+      "file": "game/frontend/tests/uiFrames.test.ts",
+      "symbol": "it('manifest and files match')",
+      "lines": "after grid tests",
+      "action": "Read game/public/assets/worlds/the-boys-room/manifest.json, for each FRAME_KIT id find the entry, assert dimensions equal {w,h}, and use readPngSize from src/lib/pngEncode on the file bytes at public/assets/<path> to assert it equals the dimensions. Assert ui/cursor-hand is still present. Walk game/public recursively and assert no file name matches /panel-frame|sound|pointer/ with .svg extension.",
+      "command": "npx vitest run tests/uiFrames.test.ts",
+      "expected": "Manifest, PNG sizes and no-SVG assertions pass"
+    }
+  ],
+  "created_at": "2026-11-24T04:34:13.686310+00:00",
+  "updated_at": "2026-11-24T04:38:49.492432+00:00"
+}

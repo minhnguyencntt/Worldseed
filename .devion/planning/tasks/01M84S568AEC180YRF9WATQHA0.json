@@ -1,0 +1,56 @@
+{
+  "id": "01M84S568AEC180YRF9WATQHA0",
+  "intent_id": "01M84S2TEPYC0P34BRPTXJNPP5",
+  "title": "SG-4.1.2 Lock phaser to 3.90.x in package-lock.json",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Make package-lock.json resolve phaser to 3.90.0 in both lockfile entries",
+  "description": "Context: game/frontend/package.json declares phaser ~3.90.0, but game/frontend/package-lock.json still records phaser ^4.2.1 in the root dependencies entry (L15) and version 4.2.1 under node_modules/phaser (L3445-L3453). Desired behavior: both entries use the resolved 3.90.0 release with its registry URL and integrity. Expected result: npm ci installs phaser 3.90.0. Why: the SG-4 Phaser 3.90 integration needs a reproducible install.",
+  "acceptance_criteria": [
+    "Given package-lock.json, when packages[\"\"].dependencies.phaser is read, then it equals ~3.90.0 and matches package.json",
+    "Given package-lock.json, when packages[\"node_modules/phaser\"] is read, then version is 3.90.0 with the 3.90.0 tarball URL and integrity"
+  ],
+  "scope": {
+    "in_scope": [
+      "phaser root dependency entry in game/frontend/package-lock.json",
+      "node_modules/phaser entry in game/frontend/package-lock.json"
+    ],
+    "out_of_scope": [
+      "package.json changes (already ~3.90.0)",
+      "Phaser source code changes",
+      "other dependencies"
+    ],
+    "preserve": [
+      "all other lockfile entries, including eventemitter3 5.0.4"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser must stay on the 3.90.x line",
+    "No network or Git credentials in the browser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both lockfile entries point to phaser 3.90.0",
+    "Lockfile unit tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-081.md`"
+  ],
+  "non_functional": [
+    "Lockfile stays valid JSON, lockfileVersion 3"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-081.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84S418QJAQR9TF1THFTNDH7",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-081.md",
+  "artifact_id": "INT-081",
+  "created_at": "2026-11-23T18:02:12.106942+00:00",
+  "updated_at": "2026-11-23T18:03:27.882502+00:00"
+}

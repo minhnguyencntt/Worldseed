@@ -1,0 +1,698 @@
+{
+  "intent_id": "01M84HPHE1MGZX3P6JQ38H90PF",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84HR9G33NBS99QQ0YVWNJ3D",
+      "kind": "intent",
+      "title": "SG-1 · Remove worker module and execution backend",
+      "body": "Context: Worldseed is a game and contribution project, not a development platform. The separate Go module backend/worker (with its own go.mod) and the package backend/internal/execution (imported by backend/internal/server/server.go) are development automation. Desired behavior: both are deleted, nothing under backend/ imports them, and the remaining packages (contribution, round, player, world, admin, gitrepo, safepath) still compile. Why: devion project workseed owns development automation.\n\n## Acceptance criteria\n- Given the repo after the change, when backend/worker is looked up, then the directory and its go.mod do not exist.\n- Given the repo after the change, when backend/internal/execution is looked up, then the directory does not exist.\n- Given the remaining backend packages, when they are built and tested, then they compile and pass, and no Go file under backend/ imports the worker module or internal/execution.\n\n\n## Scope\n- In scope: Delete backend/worker\n- In scope: Delete backend/internal/execution and its handler\n- In scope: Remove execution wiring and execution admin routes from backend/internal/server\n- Out of scope: Frontend ExecutionPanel and admin UI removal\n- Out of scope: Config key cleanup beyond what compiles\n- Out of scope: Contribution handoff export format\n- Preserve: backend/internal/contribution, round, player, world, admin, gitrepo, safepath\n- Preserve: game/src, game/frontend, game/content\n\n\n## Technical constraints\n- Go module github.com/worldseed/storyforge/backend must keep building with go build ./...\n\n\n## Definition of done\n- All acceptance criteria are met\n- Backend unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Delete backend/worker, backend/internal/execution and its server wiring so the remaining backend compiles without them.",
+      "description": "Context: Worldseed is a game and contribution project, not a development platform. The separate Go module backend/worker (with its own go.mod) and the package backend/internal/execution (imported by backend/internal/server/server.go) are development automation. Desired behavior: both are deleted, nothing under backend/ imports them, and the remaining packages (contribution, round, player, world, admin, gitrepo, safepath) still compile. Why: devion project workseed owns development automation.",
+      "acceptance_criteria": [
+        "Given the repo after the change, when backend/worker is looked up, then the directory and its go.mod do not exist.",
+        "Given the repo after the change, when backend/internal/execution is looked up, then the directory does not exist.",
+        "Given the remaining backend packages, when they are built and tested, then they compile and pass, and no Go file under backend/ imports the worker module or internal/execution."
+      ],
+      "scope": {
+        "in_scope": [
+          "Delete backend/worker",
+          "Delete backend/internal/execution and its handler",
+          "Remove execution wiring and execution admin routes from backend/internal/server"
+        ],
+        "out_of_scope": [
+          "Frontend ExecutionPanel and admin UI removal",
+          "Config key cleanup beyond what compiles",
+          "Contribution handoff export format"
+        ],
+        "preserve": [
+          "backend/internal/contribution, round, player, world, admin, gitrepo, safepath",
+          "game/src, game/frontend, game/content"
+        ]
+      },
+      "technical_constraints": [
+        "Go module github.com/worldseed/storyforge/backend must keep building with go build ./..."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria are met",
+        "Backend unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-046.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+      "links": [
+        "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+        "artifact:.ai-dlc/intent/INT-046.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-046.md",
+      "artifact_id": "INT-046"
+    },
+    {
+      "id": "01M84HR9G3SZPBG5MDDS5FE8PF",
+      "kind": "requirement",
+      "title": "REQ · The worker Go module is deleted from backend/",
+      "body": "Context: backend/worker is a separate module (module github.com/worldseed/storyforge/worker) holding poller, config, recovery, runner, lock, provider, report, logging and store packages plus configs/config.example.yaml. Desired behavior: the whole directory is removed with its tests. Expected result: no worker files remain. Why: development automation must not live here.\n\n## Acceptance criteria\n- Given the repo, when backend/worker is stat'ed, then it does not exist.\n- Given backend/go.mod, when read, then it does not reference the worker module.\n\n\n## Scope\n- In scope: All files under backend/worker including tests\n- Out of scope: backend/internal packages\n- Preserve: backend/go.mod\n- Preserve: backend/go.sum\n\n\n## Definition of done\n- backend/worker is gone\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "backend/worker and its go.mod no longer exist.",
+      "description": "Context: backend/worker is a separate module (module github.com/worldseed/storyforge/worker) holding poller, config, recovery, runner, lock, provider, report, logging and store packages plus configs/config.example.yaml. Desired behavior: the whole directory is removed with its tests. Expected result: no worker files remain. Why: development automation must not live here.",
+      "acceptance_criteria": [
+        "Given the repo, when backend/worker is stat'ed, then it does not exist.",
+        "Given backend/go.mod, when read, then it does not reference the worker module."
+      ],
+      "scope": {
+        "in_scope": [
+          "All files under backend/worker including tests"
+        ],
+        "out_of_scope": [
+          "backend/internal packages"
+        ],
+        "preserve": [
+          "backend/go.mod",
+          "backend/go.sum"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "backend/worker is gone",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-116.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84HR9G33NBS99QQ0YVWNJ3D",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84HR9G33NBS99QQ0YVWNJ3D",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-116.md"
+      ],
+      "depends_on": [
+        "01M84HR9G33NBS99QQ0YVWNJ3D"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-116.md",
+      "artifact_id": "REQ-116"
+    },
+    {
+      "id": "01M84HR9G3MPKBZTTNPSHF8DVZ",
+      "kind": "requirement",
+      "title": "REQ · The internal/execution package and handler are deleted",
+      "body": "Context: backend/internal/execution holds execution.go, handler.go and their tests, importing gitrepo and safepath. Desired behavior: the package is deleted entirely. Expected result: no execution package remains. Why: execution runs belong to development automation.\n\n## Acceptance criteria\n- Given the repo, when backend/internal/execution is stat'ed, then it does not exist.\n- Given gitrepo and safepath, when still imported by contribution and other packages, then they remain untouched.\n\n\n## Scope\n- In scope: backend/internal/execution/*.go including tests\n- Out of scope: server wiring\n- Preserve: backend/internal/gitrepo\n- Preserve: backend/internal/safepath\n\n\n## Definition of done\n- backend/internal/execution is gone\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "backend/internal/execution with its handler and tests no longer exists.",
+      "description": "Context: backend/internal/execution holds execution.go, handler.go and their tests, importing gitrepo and safepath. Desired behavior: the package is deleted entirely. Expected result: no execution package remains. Why: execution runs belong to development automation.",
+      "acceptance_criteria": [
+        "Given the repo, when backend/internal/execution is stat'ed, then it does not exist.",
+        "Given gitrepo and safepath, when still imported by contribution and other packages, then they remain untouched."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/execution/*.go including tests"
+        ],
+        "out_of_scope": [
+          "server wiring"
+        ],
+        "preserve": [
+          "backend/internal/gitrepo",
+          "backend/internal/safepath"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "backend/internal/execution is gone",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-117.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84HR9G33NBS99QQ0YVWNJ3D",
+      "matched_feature_id": "01M84993RD65SCSHFVRRFFV5HA",
+      "links": [
+        "parent:01M84HR9G33NBS99QQ0YVWNJ3D",
+        "trace:01M84993RD65SCSHFVRRFFV5HA",
+        "artifact:.ai-dlc/requirements/REQ-117.md"
+      ],
+      "depends_on": [
+        "01M84HR9G33NBS99QQ0YVWNJ3D"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-117.md",
+      "artifact_id": "REQ-117"
+    },
+    {
+      "id": "01M84HR9G3VWGCMYDQY9CXTMTA",
+      "kind": "requirement",
+      "title": "REQ · Server serves only round admin routes and the backend compiles without execution code",
+      "body": "Context: backend/internal/server/server.go imports internal/execution, builds exStore and eh, and adminRoutes returns /executions, /executions/{id}/retry and /executions/{id}/approve before the round routes. Desired behavior: those imports, variables and routes are removed and New mounts adminRoundRoutes(rh) behind admin.Middleware. Expected result: remaining packages compile and tests pass. Why: nothing may import removed code.\n\n## Acceptance criteria\n- Given server.New, when the router is walked, then /api/v1/admin serves exactly the five round routes and no /executions route.\n- Given any Go file under backend/, when imports are read, then none import internal/execution.\n- Given go build ./... and go test for server, then both succeed.\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- In scope: backend/internal/server/server_test.go\n- Out of scope: Frontend admin client\n- Preserve: Round admin routes and token middleware\n- Preserve: contribution and world routes\n- Preserve: NewScheduler\n\n\n## Technical constraints\n- Admin routes stay behind admin.Middleware(cfg.Admin.Token)\n\n\n## Definition of done\n- Server builds and its tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "server.New no longer wires execution routes; admin routes are the round routes only.",
+      "description": "Context: backend/internal/server/server.go imports internal/execution, builds exStore and eh, and adminRoutes returns /executions, /executions/{id}/retry and /executions/{id}/approve before the round routes. Desired behavior: those imports, variables and routes are removed and New mounts adminRoundRoutes(rh) behind admin.Middleware. Expected result: remaining packages compile and tests pass. Why: nothing may import removed code.",
+      "acceptance_criteria": [
+        "Given server.New, when the router is walked, then /api/v1/admin serves exactly the five round routes and no /executions route.",
+        "Given any Go file under backend/, when imports are read, then none import internal/execution.",
+        "Given go build ./... and go test for server, then both succeed."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go",
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "Frontend admin client"
+        ],
+        "preserve": [
+          "Round admin routes and token middleware",
+          "contribution and world routes",
+          "NewScheduler"
+        ]
+      },
+      "technical_constraints": [
+        "Admin routes stay behind admin.Middleware(cfg.Admin.Token)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Server builds and its tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-118.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84HR9G33NBS99QQ0YVWNJ3D",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84HR9G33NBS99QQ0YVWNJ3D",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-118.md"
+      ],
+      "depends_on": [
+        "01M84HR9G33NBS99QQ0YVWNJ3D"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-118.md",
+      "artifact_id": "REQ-118"
+    },
+    {
+      "id": "01M84HR9G3QBP7TTWT5PRWKGAM",
+      "kind": "unit",
+      "title": "Act: Delete the backend/worker module",
+      "body": "Delete the entire backend/worker directory: go.mod, go.sum, configs/config.example.yaml and internal/{poller,config,recovery,runner,lock,provider,report,logging,store}.\n\n## Acceptance criteria\n- Given the change, when backend/worker is listed, then it does not exist.\n- Given backend/, when searched for the worker go.mod, then none is found.\n\n\n## Scope\n- In scope: backend/worker\n- Out of scope: backend/internal\n- Preserve: backend/go.mod\n\n\n## Technical constraints\n- Code path: `backend/worker/go.mod`\n- Code path: `backend/worker/go.sum`\n- Code path: `backend/worker/configs/config.example.yaml`\n- Code path: `backend/worker/internal/runner/runner.go`\n- Code path: `backend/worker/internal/poller/poller.go`\n- Code path: `backend/worker/internal/config/config.go`\n- Code path: `backend/worker/internal/recovery/recovery.go`\n- Code path: `backend/worker/internal/recovery/locks.go`\n- Code path: `backend/worker/internal/lock/lock.go`\n- Code path: `backend/worker/internal/provider/provider.go`\n- Code path: `backend/worker/internal/provider/claude.go`\n- Code path: `backend/worker/internal/provider/mock.go`\n- Code path: `backend/worker/internal/report/report.go`\n- Code path: `backend/worker/internal/logging/logging.go`\n- Code path: `backend/worker/internal/store/store.go`\n\n\n## Definition of done\n- Directory deleted\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Remove every file under backend/worker.",
+      "description": "Delete the entire backend/worker directory: go.mod, go.sum, configs/config.example.yaml and internal/{poller,config,recovery,runner,lock,provider,report,logging,store}.",
+      "acceptance_criteria": [
+        "Given the change, when backend/worker is listed, then it does not exist.",
+        "Given backend/, when searched for the worker go.mod, then none is found."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/worker"
+        ],
+        "out_of_scope": [
+          "backend/internal"
+        ],
+        "preserve": [
+          "backend/go.mod"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `backend/worker/go.mod`",
+        "Code path: `backend/worker/go.sum`",
+        "Code path: `backend/worker/configs/config.example.yaml`",
+        "Code path: `backend/worker/internal/runner/runner.go`",
+        "Code path: `backend/worker/internal/poller/poller.go`",
+        "Code path: `backend/worker/internal/config/config.go`",
+        "Code path: `backend/worker/internal/recovery/recovery.go`",
+        "Code path: `backend/worker/internal/recovery/locks.go`",
+        "Code path: `backend/worker/internal/lock/lock.go`",
+        "Code path: `backend/worker/internal/provider/provider.go`",
+        "Code path: `backend/worker/internal/provider/claude.go`",
+        "Code path: `backend/worker/internal/provider/mock.go`",
+        "Code path: `backend/worker/internal/report/report.go`",
+        "Code path: `backend/worker/internal/logging/logging.go`",
+        "Code path: `backend/worker/internal/store/store.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Directory deleted",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-232.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84HR9G3SZPBG5MDDS5FE8PF",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M84HR9G3SZPBG5MDDS5FE8PF",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-232.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3SZPBG5MDDS5FE8PF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-232.md",
+      "artifact_id": "UNIT-232",
+      "steps": [
+        {
+          "file": "backend/worker",
+          "symbol": "directory backend/worker",
+          "lines": "L1-end",
+          "action": "Run git rm -r backend/worker to delete the module, all its packages and every *_test.go file inside it.",
+          "command": "cd backend && git rm -r -q worker && test ! -e worker",
+          "expected": "backend/worker no longer exists on disk or in the git index."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G3ZHAJBEZ4HR8VWWKM",
+      "kind": "unit",
+      "title": "Act: Delete the internal/execution package",
+      "body": "Delete execution.go and handler.go (and their test files) from backend/internal/execution.\n\n## Acceptance criteria\n- Given the change, when backend/internal/execution is listed, then it does not exist.\n- Given gitrepo and safepath, when inspected, then they are unchanged.\n\n\n## Scope\n- In scope: backend/internal/execution\n- Out of scope: backend/internal/server\n- Preserve: backend/internal/gitrepo\n- Preserve: backend/internal/safepath\n\n\n## Technical constraints\n- Code path: `backend/internal/execution/execution.go`\n- Code path: `backend/internal/execution/handler.go`\n\n\n## Definition of done\n- Package deleted\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Remove backend/internal/execution including handler.",
+      "description": "Delete execution.go and handler.go (and their test files) from backend/internal/execution.",
+      "acceptance_criteria": [
+        "Given the change, when backend/internal/execution is listed, then it does not exist.",
+        "Given gitrepo and safepath, when inspected, then they are unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/execution"
+        ],
+        "out_of_scope": [
+          "backend/internal/server"
+        ],
+        "preserve": [
+          "backend/internal/gitrepo",
+          "backend/internal/safepath"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `backend/internal/execution/execution.go`",
+        "Code path: `backend/internal/execution/handler.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Package deleted",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-233.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84HR9G3MPKBZTTNPSHF8DVZ",
+      "matched_feature_id": "01M84GTRQQE223EPQ0KYN1GD1W",
+      "links": [
+        "parent:01M84HR9G3MPKBZTTNPSHF8DVZ",
+        "trace:01M84GTRQQE223EPQ0KYN1GD1W",
+        "artifact:.ai-dlc/units/UNIT-233.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3MPKBZTTNPSHF8DVZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-233.md",
+      "artifact_id": "UNIT-233",
+      "steps": [
+        {
+          "file": "backend/internal/execution",
+          "symbol": "package execution",
+          "lines": "L1-end",
+          "action": "Run git rm -r backend/internal/execution to delete execution.go, handler.go, execution_test.go and handler_test.go.",
+          "command": "cd backend && git rm -r -q internal/execution && test ! -e internal/execution",
+          "expected": "backend/internal/execution does not exist."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G3137J7N0REXYMV7EZ",
+      "kind": "unit",
+      "title": "Act: Remove execution wiring and routes from server.New",
+      "body": "Edit backend/internal/server/server.go so it no longer references the execution package and mounts only round admin routes.\n\n## Acceptance criteria\n- Given server.go, when read, then it has no execution import, exStore, eh or /executions routes.\n- Given New, when mounting admin routes, then it iterates adminRoundRoutes(rh).\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- Out of scope: round admin handler behavior\n- Preserve: gitCLI and contribution store wiring\n- Preserve: NewScheduler\n\n\n## Technical constraints\n- gitCLI is still used by contribution.FileStore, so keep it\n- Code path: `backend/internal/server/server.go`\n\n\n## Definition of done\n- server.go compiles without internal/execution\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Drop the execution import, store, handler and routes from server.go.",
+      "description": "Edit backend/internal/server/server.go so it no longer references the execution package and mounts only round admin routes.",
+      "acceptance_criteria": [
+        "Given server.go, when read, then it has no execution import, exStore, eh or /executions routes.",
+        "Given New, when mounting admin routes, then it iterates adminRoundRoutes(rh)."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go"
+        ],
+        "out_of_scope": [
+          "round admin handler behavior"
+        ],
+        "preserve": [
+          "gitCLI and contribution store wiring",
+          "NewScheduler"
+        ]
+      },
+      "technical_constraints": [
+        "gitCLI is still used by contribution.FileStore, so keep it",
+        "Code path: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "server.go compiles without internal/execution",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-234.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84HR9G3VWGCMYDQY9CXTMTA",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84HR9G3VWGCMYDQY9CXTMTA",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-234.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3VWGCMYDQY9CXTMTA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-234.md",
+      "artifact_id": "UNIT-234",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "import block",
+          "lines": "L17",
+          "action": "Remove the import line of github.com/worldseed/storyforge/backend/internal/execution.",
+          "code": "- \"github.com/worldseed/storyforge/backend/internal/execution\"",
+          "expected": "No execution import remains."
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "L85-L90",
+          "action": "Delete the exStore := &execution.FileStore{...} literal and the eh := &execution.Handler{Service: exStore} line.",
+          "expected": "New has no exStore or eh variables."
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "L106-L110",
+          "action": "Change the loop to range adminRoundRoutes(rh) instead of adminRoutes(eh, rh).",
+          "code": "for _, rt := range adminRoutes(eh, rh) -> for _, rt := range adminRoundRoutes(rh)",
+          "expected": "Admin group mounts only the five round routes."
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "adminRoutes",
+          "lines": "L129-L139",
+          "action": "Delete the whole adminRoutes function and its doc comment, which only existed to prepend the /executions routes.",
+          "expected": "adminRoutes no longer exists; go build ./... succeeds."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G3Q1A5D35WX5X88WQH",
+      "kind": "unit",
+      "title": "Verify: backend/worker is gone and not imported unit tests",
+      "body": "Add a unit test that stats backend/worker and scans backend Go files for worker imports.\n\n## Acceptance criteria\n- Given the backend tree, when ../../worker is stat'ed, then it is not found.\n- Given backend Go files, when scanned, then none contain storyforge/worker.\n\n\n## Scope\n- In scope: backend/internal/server/removed_code_test.go\n- Out of scope: live server\n- Preserve: existing server tests\n\n\n## Technical constraints\n- Use only os and filepath.WalkDir, no network\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Filesystem unit test proving the worker module is deleted and unreferenced.",
+      "description": "Add a unit test that stats backend/worker and scans backend Go files for worker imports.",
+      "acceptance_criteria": [
+        "Given the backend tree, when ../../worker is stat'ed, then it is not found.",
+        "Given backend Go files, when scanned, then none contain storyforge/worker."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/removed_code_test.go"
+        ],
+        "out_of_scope": [
+          "live server"
+        ],
+        "preserve": [
+          "existing server tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use only os and filepath.WalkDir, no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-235.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84HR9G3QBP7TTWT5PRWKGAM",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84HR9G3QBP7TTWT5PRWKGAM",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-235.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3QBP7TTWT5PRWKGAM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-235.md",
+      "artifact_id": "UNIT-235",
+      "steps": [
+        {
+          "file": "backend/internal/server/removed_code_test.go",
+          "symbol": "new: TestWorkerModuleRemoved",
+          "lines": "new",
+          "action": "Create the file with package server and TestWorkerModuleRemoved: os.Stat(\"../../worker\") must return os.IsNotExist; then filepath.WalkDir(\"../..\") over *.go files and fail if any file content contains \"storyforge/worker\" (skip removed_code_test.go itself).",
+          "code": "if _, err := os.Stat(\"../../worker\"); !os.IsNotExist(err) { t.Fatalf(\"worker still exists: %v\", err) }",
+          "command": "cd backend && go test ./internal/server -run TestWorkerModuleRemoved",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G3925YX3MFYRB9SQRS",
+      "kind": "unit",
+      "title": "Verify: internal/execution is gone unit tests",
+      "body": "Add a unit test that stats backend/internal/execution.\n\n## Acceptance criteria\n- Given the backend tree, when ../execution is stat'ed, then it is not found.\n- Given the test, when run, then it passes without touching the network.\n\n\n## Scope\n- In scope: backend/internal/server/removed_code_test.go\n- Out of scope: server routes\n- Preserve: existing tests\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Filesystem unit test proving the execution package is deleted.",
+      "description": "Add a unit test that stats backend/internal/execution.",
+      "acceptance_criteria": [
+        "Given the backend tree, when ../execution is stat'ed, then it is not found.",
+        "Given the test, when run, then it passes without touching the network."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/removed_code_test.go"
+        ],
+        "out_of_scope": [
+          "server routes"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-236.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84HR9G3ZHAJBEZ4HR8VWWKM",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84HR9G3ZHAJBEZ4HR8VWWKM",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-236.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3ZHAJBEZ4HR8VWWKM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-236.md",
+      "artifact_id": "UNIT-236",
+      "steps": [
+        {
+          "file": "backend/internal/server/removed_code_test.go",
+          "symbol": "new: TestExecutionPackageRemoved",
+          "lines": "after TestWorkerModuleRemoved",
+          "action": "Add TestExecutionPackageRemoved asserting os.Stat(\"../execution\") returns an error satisfying os.IsNotExist.",
+          "code": "if _, err := os.Stat(\"../execution\"); !os.IsNotExist(err) { t.Fatalf(\"execution still exists: %v\", err) }",
+          "command": "cd backend && go test ./internal/server -run TestExecutionPackageRemoved",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G37VK21ZCGYF886QYT",
+      "kind": "unit",
+      "title": "Verify: Admin routes are round-only and no execution import remains unit tests",
+      "body": "server_test.go imports internal/execution and calls adminRoutes; update it to adminRoundRoutes and drop execution token cases.\n\n## Acceptance criteria\n- Given server.New, when walked with chi.Walk, then admin routes equal adminRoundRoutes exactly.\n- Given all round admin routes, when called without or with wrong token, then 401.\n- Given backend Go files, when scanned, then none import internal/execution.\n\n\n## Scope\n- In scope: backend/internal/server/server_test.go\n- In scope: backend/internal/server/removed_code_test.go\n- Out of scope: live server\n- Preserve: TestAdminRoundRoutes_Table\n\n\n## Technical constraints\n- Server built with httptest and t.TempDir() repo path\n\n\n## Definition of done\n- Server package tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update server tests to the round-only route table and assert no execution import.",
+      "description": "server_test.go imports internal/execution and calls adminRoutes; update it to adminRoundRoutes and drop execution token cases.",
+      "acceptance_criteria": [
+        "Given server.New, when walked with chi.Walk, then admin routes equal adminRoundRoutes exactly.",
+        "Given all round admin routes, when called without or with wrong token, then 401.",
+        "Given backend Go files, when scanned, then none import internal/execution."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server_test.go",
+          "backend/internal/server/removed_code_test.go"
+        ],
+        "out_of_scope": [
+          "live server"
+        ],
+        "preserve": [
+          "TestAdminRoundRoutes_Table"
+        ]
+      },
+      "technical_constraints": [
+        "Server built with httptest and t.TempDir() repo path"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Server package tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-237.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84HR9G3137J7N0REXYMV7EZ",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84HR9G3137J7N0REXYMV7EZ",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-237.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3137J7N0REXYMV7EZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-237.md",
+      "artifact_id": "UNIT-237",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "import block",
+          "lines": "L19",
+          "action": "Remove the internal/execution import.",
+          "command": "cd backend && go test ./internal/server -run 'TestNew_AllAdminRoutesRejectMissingAndWrongToken|TestNew_AdminRoutesMatchTable|TestNoExecutionImports'",
+          "expected": "No execution import in tests."
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AllAdminRoutesRejectMissingAndWrongToken",
+          "lines": "L452-L502",
+          "action": "Replace adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) with adminRoundRoutes(&admin.RoundHandler{}) and delete the trailing loop over the /executions/ID-1/retry and approve paths; update the doc comment to say round routes.",
+          "code": "adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) -> adminRoundRoutes(&admin.RoundHandler{})",
+          "command": "cd backend && go test ./internal/server -run 'TestNew_AllAdminRoutesRejectMissingAndWrongToken|TestNew_AdminRoutesMatchTable|TestNoExecutionImports'",
+          "expected": "Every round route returns 401 without or with a wrong token."
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AdminRoutesMatchTable",
+          "lines": "L506-L545",
+          "action": "Replace adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) with adminRoundRoutes(&admin.RoundHandler{}) and rename mentions of adminRoutes to adminRoundRoutes.",
+          "command": "cd backend && go test ./internal/server -run 'TestNew_AllAdminRoutesRejectMissingAndWrongToken|TestNew_AdminRoutesMatchTable|TestNoExecutionImports'",
+          "expected": "Walked routes equal the five round routes."
+        },
+        {
+          "file": "backend/internal/server/removed_code_test.go",
+          "symbol": "new: TestNoExecutionImports",
+          "lines": "after TestExecutionPackageRemoved",
+          "action": "Add TestNoExecutionImports that walks ../.. for *.go files (skipping this file) and fails if any contains \"internal/execution\".",
+          "command": "cd backend && go test ./internal/server -run 'TestNew_AllAdminRoutesRejectMissingAndWrongToken|TestNew_AdminRoutesMatchTable|TestNoExecutionImports'",
+          "expected": "All three tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84HR9G34B7J0VG47H56NB18",
+      "kind": "evidence",
+      "title": "Evidence: Worker and execution removal unit tests pass",
+      "body": "Collect output of the server removal tests proving worker and execution are deleted, unimported, and admin routes are round-only.\n\n## Acceptance criteria\n- Given the verify commands, when run, then each test passes.\n- Given the backend tests, when run, then the remaining packages pass.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: New code\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results show removed code is gone and backend still passes.",
+      "description": "Collect output of the server removal tests proving worker and execution are deleted, unimported, and admin routes are round-only.",
+      "acceptance_criteria": [
+        "Given the verify commands, when run, then each test passes.",
+        "Given the backend tests, when run, then the remaining packages pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-046.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84HR9G3Q1A5D35WX5X88WQH",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84HR9G3Q1A5D35WX5X88WQH",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-046.md"
+      ],
+      "depends_on": [
+        "01M84HR9G3Q1A5D35WX5X88WQH",
+        "01M84HR9G3925YX3MFYRB9SQRS",
+        "01M84HR9G37VK21ZCGYF886QYT"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-046.md",
+      "artifact_id": "EVD-046"
+    }
+  ],
+  "created_at": "2026-11-23T15:52:57.385116+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

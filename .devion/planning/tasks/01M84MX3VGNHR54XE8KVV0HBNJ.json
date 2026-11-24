@@ -1,0 +1,71 @@
+{
+  "id": "01M84MX3VGNHR54XE8KVV0HBNJ",
+  "intent_id": "01M84MV35DSFZ4HARZNBW2S7YM",
+  "title": "Verify: Tests import the actual store and never mock it",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Guard tests prove the real module is used",
+  "description": "Add guard tests to game/frontend/tests/uiStoreRealGuard.test.ts asserting no mock functions, the module exports useUiStore, and no vi.mock appears in the store test sources.",
+  "acceptance_criteria": [
+    "Given the imports, when vi.isMockFunction is called on useUiStore and its actions, then false.",
+    "Given the namespace import, when keys are read, then useUiStore is present.",
+    "Given store test sources read from disk, when searched for vi.mock, then none found."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/uiStoreRealGuard.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code edits"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Read files with node:fs and node:path relative to import.meta.url; no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Guard test file passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-313.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84MWESEV2S4C3D4ACSRRHJD",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-313.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84MX3VG4ZZQ7VC018DJW9NT"
+  ],
+  "sim_node_id": "01M84MWESE0PQ1CXWX0KEAX3S8",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-313.md",
+  "artifact_id": "UNIT-313",
+  "steps": [
+    {
+      "file": "game/frontend/tests/uiStoreRealGuard.test.ts",
+      "symbol": "new: it('store is not a mock')",
+      "lines": "new",
+      "action": "Create the file importing * as mod from '../src/store/uiStore' and { vi, describe, it, expect } from 'vitest'. Assert Object.keys(mod) contains 'useUiStore', vi.isMockFunction(mod.useUiStore) is false, and vi.isMockFunction is false for toggleDrawer, openModal, closeModal, toggleSound and toggleSettings on getState().",
+      "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts -t 'not a mock'",
+      "expected": "The guard test passes."
+    },
+    {
+      "file": "game/frontend/tests/uiStoreRealGuard.test.ts",
+      "symbol": "new: it('no vi.mock in store tests')",
+      "lines": "new",
+      "action": "Read uiStoreReal.test.ts, uiStoreDrawerModal.test.ts, uiStoreSoundSettings.test.ts and uiStoreHook.test.tsx with readFileSync from the same directory (fileURLToPath of import.meta.url) and assert none matches /vi\\.mock\\(/ while each contains \"../src/store/uiStore\".",
+      "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts",
+      "expected": "All guard tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T16:47:53.200649+00:00",
+  "updated_at": "2026-11-23T16:49:13.566991+00:00"
+}

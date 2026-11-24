@@ -1,0 +1,61 @@
+{
+  "id": "01M85CF9Q9P8J575THYWVJ2K29",
+  "intent_id": "01M85C88YPMM9MTW94HY29EE7T",
+  "title": "SG-8.1 Rebuild the contribution sheet on the Radix dialog",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Contribution sheet uses a shadcn-style Radix dialog wrapper with focus trap, Escape, focus restoration and accessible title and description",
+  "description": "Context: game/frontend/src/components/ContributionSheet.tsx renders a hand-made div with role=dialog, so it has no focus trap, no Escape handling and no focus restoration. @radix-ui/react-dialog is already a dependency but no wrapper exists under src/components/ui. Desired behavior: the sheet is built on the Radix dialog through a shadcn-style wrapper. Expected result: Tab stays inside the sheet, Escape closes it, focus returns to the Suggest What Happens Next trigger and the dialog exposes a title and description. Why: keyboard and screen-reader accessibility.",
+  "acceptance_criteria": [
+    "Given the sheet is open, when the player presses Escape, then onClose is called",
+    "Given the sheet is open, when the player tabs past the last control, then focus stays inside the dialog",
+    "Given the sheet closes, when the dialog unmounts, then focus returns to the Suggest What Happens Next trigger",
+    "Given the sheet is open, then the dialog is labelled by a title and described by a description"
+  ],
+  "scope": {
+    "in_scope": [
+      "Dialog wrapper in src/components/ui",
+      "ContributionSheet rebuilt on it",
+      "App trigger focus restoration"
+    ],
+    "out_of_scope": [
+      "Backend or API changes",
+      "Changes to submission, quota or history logic"
+    ],
+    "preserve": [
+      "ContributionSheetProps open, onClose and roundId",
+      "POST /api/v1/contributions and listMine behavior",
+      "Existing labels Your idea, Send, Your suggestions"
+    ]
+  },
+  "technical_constraints": [
+    "Use the existing @radix-ui/react-dialog dependency",
+    "Use cn from src/lib/utils",
+    "No new dependencies"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements implemented and verified by unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-126.md`"
+  ],
+  "non_functional": [
+    "Keyboard accessible",
+    "WAI-ARIA dialog semantics"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84JF0K0XHTV40GE5BY6073A",
+    "artifact:.ai-dlc/intent/INT-126.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85CBK3QSWGAMNWMSQBA8K99",
+  "feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+  "artifact_path": ".ai-dlc/intent/INT-126.md",
+  "artifact_id": "INT-126",
+  "created_at": "2026-11-23T23:39:46.281326+00:00",
+  "updated_at": "2026-11-23T23:41:16.922817+00:00"
+}

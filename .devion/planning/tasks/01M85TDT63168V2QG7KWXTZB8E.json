@@ -1,0 +1,61 @@
+{
+  "id": "01M85TDT63168V2QG7KWXTZB8E",
+  "intent_id": "01M85T5P15743S6JQA0Z7VVGGD",
+  "title": "Verify: Boy manifest animations, sizes and generator unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for generated entries and manifest declaration",
+  "description": "Test generateAssets copies animations, PNG sizes via readPngSize, and ART_SOURCES entries are manifest-valid.",
+  "acceptance_criteria": [
+    "entry carries animations/origin",
+    "sheet PNG 448x48, portrait 32x32",
+    "ranges 0-3, 4-9, 10-13 with rates"
+  ],
+  "scope": {
+    "in_scope": [
+      "new tests/boyManifest.test.ts"
+    ],
+    "out_of_scope": [
+      "disk I/O"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Unit tests only; no filesystem, generator run in memory"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-803.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85T7S500S6GAY0JDSJZ8HSV",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-803.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85TDT63G0Z4H3WF71EBSQQK"
+  ],
+  "sim_node_id": "01M85T7S500K6QBNEX2VFCWESH",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-803.md",
+  "artifact_id": "UNIT-803",
+  "steps": [
+    {
+      "file": "game/frontend/tests/boyManifest.test.ts",
+      "symbol": "new: boy generated entries",
+      "lines": "new",
+      "action": "Call generateAssets(ART_SOURCES). Find entries character:boy-art and character:boy-portrait. Assert boy-art dimensions {448,48}, frames {32,48,14}, animations idle.frames [0,1,2,3], walk.frames length 6 starting 4, interact.frames [10..13], each with numeric frameRate, origin {0.5,1}; portrait dimensions {32,32}; readPngSize of each file bytes equals dimensions; parseManifest({version:1, assets: entries}) is ok; add a case with a source lacking animations producing an entry with no animations key.",
+      "command": "cd game/frontend && npx vitest run tests/boyManifest.test.ts",
+      "expected": "all boy manifest tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T03:43:37.667817+00:00",
+  "updated_at": "2026-11-24T03:47:34.533643+00:00"
+}

@@ -1,0 +1,60 @@
+{
+  "id": "01M847PSB9NFBZ9FY295DTETKX",
+  "intent_id": "01M847H43ZBM8SEWC3A33AWNS1",
+  "title": "SG-6 · Add contribution UI and admin console",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Players suggest ideas through a sheet and see the Round countdown; admins operate Rounds behind a token entry",
+  "description": "Context: the game frontend in game/frontend has a playable 80/20 App but no API client, contribution UI, countdown or admin routes. The backend already serves POST /api/v1/player/session, POST /api/v1/contributions, GET /api/v1/player/me/contributions, GET /api/v1/worlds/{id}/round/current and the Bearer-protected /api/v1/admin/* round and execution routes. Desired behavior: a Suggest What Happens Next sheet, a Round countdown and badge, and a token-gated admin console with lifecycle stepper and approve/retry controls. Expected result: all of it works against the existing API with Vitest tests using mocked fetch. Why: players feed the story and the admin runs the cycle without a terminal.",
+  "acceptance_criteria": [
+    "Given the playing view, when the player opens the sheet and submits a prompt, then POST /api/v1/contributions is called and the entry appears in history",
+    "Given a current Round, then the countdown shows time left and a status badge with the Round status",
+    "Given no admin token entered, then admin routes render only the token form and make no admin request",
+    "Given an admin Round, then the stepper marks the current stage among OPEN to COMPLETED",
+    "Given a FAILED execution or AWAITING_APPROVAL execution, when Retry or Approve is clicked, then the matching admin endpoint is called with the Bearer token"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend React components, API client and Vitest tests"
+    ],
+    "out_of_scope": [
+      "Backend changes",
+      "New backend endpoints such as reject, logs or test results",
+      "New runtime dependencies"
+    ],
+    "preserve": [
+      "Existing App intro gate, GameLayout, StoryPanel behavior and tests",
+      "Only the typed admin token is used as a secret"
+    ]
+  },
+  "technical_constraints": [
+    "Frontend lives in game/frontend (no top-level frontend/ exists)",
+    "fetch only, no secrets in env or bundle",
+    "Vitest with mocked fetch"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All five requirements delivered with passing unit tests",
+    "npm test and tsc --noEmit pass in game/frontend",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-022.md`"
+  ],
+  "non_functional": [
+    "Accessible roles and labels on controls"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M8457KMMMN7NH1RGW812T7ZD",
+    "artifact:.ai-dlc/intent/INT-022.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M847PKPAN16XY59HSTF7AK6Q",
+  "feature_id": "01M8457KMMMN7NH1RGW812T7ZD",
+  "artifact_path": ".ai-dlc/intent/INT-022.md",
+  "artifact_id": "INT-022",
+  "created_at": "2026-11-23T12:57:14.345775+00:00",
+  "updated_at": "2026-11-23T13:04:06.179933+00:00"
+}

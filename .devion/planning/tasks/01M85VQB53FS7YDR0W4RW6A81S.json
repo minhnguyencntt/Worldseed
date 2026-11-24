@@ -1,0 +1,93 @@
+{
+  "id": "01M85VQB53FS7YDR0W4RW6A81S",
+  "intent_id": "01M85V8DJ1E8EVGVFR4YDYKYK2",
+  "title": "Act: Add secret door and dust sources, register room sources and run art:generate",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "New sceneExtras sources, ART_SOURCES registration, regenerated PNGs and manifest",
+  "description": "Create secret-door and dust grids with draw.ts helpers, add ROOM_SOURCES and the extras to ART_SOURCES, then run the generator so PNGs and manifest entries are committed.",
+  "acceptance_criteria": [
+    "ART_SOURCES contains room, boy, extras and cursor sources",
+    "npm run art:generate completes and writes room/*.png, secret-door and dust PNGs"
+  ],
+  "scope": {
+    "in_scope": [
+      "frontend/src/art",
+      "generated PNGs",
+      "manifest entries"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Deleting SVGs"
+    ],
+    "preserve": [
+      "Existing manifest entries not produced by sources until Act A2"
+    ]
+  },
+  "technical_constraints": [
+    "Palette ramps only via rampIndex",
+    "Deterministic output",
+    "New file: `game/frontend/src/art/sceneExtras.ts`",
+    "Code path: `game/frontend/src/art/sources.ts`",
+    "Code path: `game/public/assets/worlds/the-boys-room/manifest.json`",
+    "New file: `game/public/assets/worlds/the-boys-room/objects/secret-door-open.png`",
+    "New file: `game/public/assets/worlds/the-boys-room/effects/dust.png`",
+    "New file: `game/public/assets/worlds/the-boys-room/room/wall.png`"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "Generated files committed",
+    "Manifest passes parseManifest",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-812.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85VF91F0CJJVJQ7WAA1VKKA",
+    "trace:01M84PBVRN0HH1NJD4MGWMZJ41",
+    "artifact:.ai-dlc/units/UNIT-812.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85VQB53EW88T5CBJEZFRNBJ"
+  ],
+  "sim_node_id": "01M85VF91F46J9S02PGPNX5T0J",
+  "feature_id": "01M84PBVRN0HH1NJD4MGWMZJ41",
+  "artifact_path": ".ai-dlc/units/UNIT-812.md",
+  "artifact_id": "UNIT-812",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/art/sceneExtras.ts",
+      "symbol": "new: secretDoorGrid, dustGrid, SCENE_EXTRA_SOURCES",
+      "lines": "new",
+      "action": "Create the file. Import createGrid, fillRect, outlineRect, shadeRect, rampIndex from './draw' and type ArtSource from './sources'. secretDoorGrid returns a 32x64 Grid: shadeRect indigo interior, outlineRect brass frame, fillRect a lamp-ramp strip on the bottom row. dustGrid returns a 4x4 Grid of moon ramp step 4 with transparent corners (index 0). Export SCENE_EXTRA_SOURCES with ids 'objects/secret-door-open' (path worlds/the-boys-room/objects/secret-door-open.png) and 'effect:dust' (path worlds/the-boys-room/effects/dust.png).",
+      "code": "export const SCENE_EXTRA_SOURCES: ArtSource[] = [\n  { id: 'objects/secret-door-open', path: 'worlds/the-boys-room/objects/secret-door-open.png', frames: [secretDoorGrid()] },\n  { id: 'effect:dust', path: 'worlds/the-boys-room/effects/dust.png', frames: [dustGrid()] },\n];",
+      "expected": "The module exports two single-frame sources of 32x64 and 4x4"
+    },
+    {
+      "file": "game/frontend/src/art/sources.ts",
+      "symbol": "ART_SOURCES",
+      "lines": "L6, L66-L72",
+      "action": "Add imports of ROOM_SOURCES from './roomSources' and SCENE_EXTRA_SOURCES from './sceneExtras'. Change the ART_SOURCES array to spread them after BOY_SOURCES. Make the ArtSource import in roomBackground/roomFurniture stay type-only to avoid a runtime cycle.",
+      "code": "...BOY_SOURCES,  ->  ...BOY_SOURCES,\n  ...ROOM_SOURCES,\n  ...SCENE_EXTRA_SOURCES,",
+      "expected": "ART_SOURCES has 1 + 2 + 13 + 2 sources"
+    },
+    {
+      "file": "game/public/assets/worlds/the-boys-room/manifest.json",
+      "symbol": "assets",
+      "lines": "whole file",
+      "action": "From game/frontend run the generator so every source is written as a PNG and merged into manifest.json (existing ids replaced in place, new ids appended).",
+      "command": "cd game/frontend && npm run art:generate",
+      "expected": "room/*.png, secret-door-open.png and dust.png exist and manifest.json contains the room/* ids"
+    }
+  ],
+  "created_at": "2026-11-24T04:06:18.531751+00:00",
+  "updated_at": "2026-11-24T04:09:46.355250+00:00"
+}

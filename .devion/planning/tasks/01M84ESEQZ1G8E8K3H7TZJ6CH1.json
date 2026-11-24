@@ -1,0 +1,72 @@
+{
+  "id": "01M84ESEQZ1G8E8K3H7TZJ6CH1",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "Verify: Round poller and expired-Round closer unit tests with mocked Git and clock",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for detection, closing, snapshot immutability",
+  "description": "Tests use a fake Git recording calls, a fixed clock and t.TempDir.",
+  "acceptance_criteria": [
+    "Detection split asserted",
+    "Snapshot mode 0444 and CLOSED round.yaml asserted",
+    "Existing snapshot not overwritten",
+    "Non-expired Round untouched"
+  ],
+  "scope": {
+    "in_scope": [
+      "worker/internal/rounds/rounds_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Act code"
+    ]
+  },
+  "technical_constraints": [
+    "Fixture shape mirrors backend/internal/round/snapshot.go and backend/internal/round/round.go yaml tags"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass in seconds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-168.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14S3SFZE8R4X3D83WMC",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-168.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZND0PE3VQJB6FG4QW"
+  ],
+  "sim_node_id": "01M84ES14SDR48EEPWY5NE6FST",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-168.md",
+  "artifact_id": "UNIT-168",
+  "steps": [
+    {
+      "file": "worker/internal/rounds/rounds_test.go",
+      "symbol": "new: TestDetect_ScheduledAndClosed",
+      "lines": "new",
+      "action": "Write round.yaml files (fixture written by a helper that marshals rounds.Round, whose tags mirror backend round.Round) for SCHEDULED, OPEN, CLOSED; with fakeGit counting Pull, assert scheduled has 1 and closed has 1 entry and Pull was called once",
+      "command": "cd worker && go test ./internal/rounds -run TestDetect",
+      "expected": "Test passes"
+    },
+    {
+      "file": "worker/internal/rounds/rounds_test.go",
+      "symbol": "new: TestCloseExpired_FreezesSnapshot, TestCloseExpired_NotExpired, TestCloseExpired_ExistingSnapshot",
+      "lines": "new",
+      "action": "With Now fixed after EndsAt and fakeGit returning one Contribution and Head 'abc123': assert snapshot.yaml exists with Mode().Perm()==0o444, its prompt_sha256 equals sha256 of the prompt, round.yaml has status CLOSED, freeze_commit abc123 and closed_at set, and fakeGit.Commit received the snapshot path; with Now before EndsAt assert no files change; with a pre-existing snapshot.yaml assert error and contents unchanged",
+      "command": "cd worker && go test ./internal/rounds -run TestCloseExpired",
+      "expected": "All three tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.151152+00:00"
+}

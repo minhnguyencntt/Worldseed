@@ -1,0 +1,82 @@
+{
+  "id": "01M85GXWBGY0S7JK021Y0HAPW7",
+  "intent_id": "01M85GR7583MAZARA7PCZ2GT1K",
+  "title": "Verify: App mounts PhaserHost once with BootScene and cleans up",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with createGame and BootScene mocked prove the host replaces the flat image.",
+  "description": "Write tests/appPhaserHost.test.tsx and migrate existing App-rendering tests so they mock Phaser.",
+  "acceptance_criteria": [
+    "Given Begin is clicked, when App renders, then phaser-host exists and no scene image exists.",
+    "Given the App re-renders and unmounts, when createGame calls are counted, then it was called once and destroy(true) once."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/appPhaserHost.test.tsx",
+      "mock updates in existing App-rendering tests"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing assertions on dialogue, history, inventory and header"
+    ]
+  },
+  "technical_constraints": [
+    "Never create a real Phaser game; mock ../src/phaser/createGame and ../src/phaser/BootScene"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "New test file passes",
+    "Existing App tests pass with mocks and with Bookshelf selection driven via phaserToReact.emit('objectClick')",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-702.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85GTKHE1VQFPX6X4EGG6G6S",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-702.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85GXWBGCGF1PSR6BGT74MVB"
+  ],
+  "sim_node_id": "01M85GTKHEFZZ432Y2DDJKGKQR",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-702.md",
+  "artifact_id": "UNIT-702",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appPhaserHost.test.tsx",
+      "symbol": "new: App PhaserHost integration tests",
+      "lines": "new",
+      "action": "Create a test file that vi.mock's '../src/phaser/createGame' (returning a fake {destroy, scale:{setZoom, refresh}}) and '../src/phaser/BootScene' (exporting class BootScene {}), stubs ResizeObserver, renders <App/>, clicks Begin, and adds tests: (1) getByTestId('phaser-host') exists and queryByRole('img') is null; (2) createGame mock called once and its second argument contains BootScene; (3) after rerender, still one call; after unmount destroy called once with true.",
+      "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx tests/app.test.tsx tests/appFlow.test.tsx tests/appContributionFocus.test.tsx tests/appHeader.test.tsx tests/appNoLegacyHeader.test.tsx tests/appRound.test.tsx tests/secretDoorPersistence.test.tsx",
+      "expected": "Three tests pass asserting host presence, BootScene passing, and single create/destroy."
+    },
+    {
+      "file": "game/frontend/tests/app.test.tsx",
+      "symbol": "App tests (also appFlow, appContributionFocus, appHeader, appNoLegacyHeader, appRound, secretDoorPersistence)",
+      "lines": "L1-L10",
+      "action": "In each of these seven files add the same vi.mock for createGame and BootScene plus a ResizeObserver stub, and replace getByRole('button',{name:'Bookshelf'}) / 'Bedroom' img assertions with act(() => phaserToReact.emit('objectClick',{id:'bookshelf'})) and ActionMenu assertions; drop data-open hotspot assertions in favor of history text.",
+      "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx tests/app.test.tsx tests/appFlow.test.tsx tests/appContributionFocus.test.tsx tests/appHeader.test.tsx tests/appNoLegacyHeader.test.tsx tests/appRound.test.tsx tests/secretDoorPersistence.test.tsx",
+      "expected": "All seven files run without creating real Phaser and keep their non-scene assertions green."
+    },
+    {
+      "file": "game/frontend/tests/appPhaserHost.test.tsx",
+      "symbol": "run",
+      "lines": "new",
+      "action": "Run the new file and the seven migrated files only.",
+      "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx tests/app.test.tsx tests/appFlow.test.tsx tests/appContributionFocus.test.tsx tests/appHeader.test.tsx tests/appNoLegacyHeader.test.tsx tests/appRound.test.tsx tests/secretDoorPersistence.test.tsx",
+      "expected": "All listed test files pass."
+    }
+  ],
+  "created_at": "2026-11-24T00:57:38.416384+00:00",
+  "updated_at": "2026-11-24T01:03:42.708666+00:00"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "01M84G52BCN1YP55VQKGGJ917Y",
+  "intent_id": "01M84G0SGVRTS10AHNW40X86RM",
+  "title": "REQ · Approval gate and worktree cleanup tests are correct and green",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "TestRunCleanup uses AutoPublish true and worktree failure and cleanup paths are covered",
+  "description": "Context: with AutoPublish false run returns AWAITING_APPROVAL and keeps the worktree, so TestRunCleanup (Config{}) fails expecting a removal. Desired behavior: the cleanup test sets AutoPublish true; failure of Worktrees.Create stops the run before the agent; an agent failure removes the worktree without publishing. Why: the suite must be green and cover the gate and cleanup.",
+  "acceptance_criteria": [
+    "Given AutoPublish true and a succeeding agent, When Run is called, Then the worktree is created and removed once and the lock file is gone",
+    "Given Worktrees.Create fails, When Run is called, Then the error wraps it, the agent never ran and the stored status is RUNNING",
+    "Given the agent fails, When Run is called, Then the worktree is removed once and the publisher is not called"
+  ],
+  "scope": {
+    "in_scope": [
+      "Gate and cleanup tests"
+    ],
+    "out_of_scope": [
+      "Changing gate semantics"
+    ],
+    "preserve": [
+      "Gate tests in runner_gate_test.go"
+    ]
+  },
+  "technical_constraints": [
+    "Gate behavior in runner.go stays as is"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go test ./internal/runner passes including TestRunCleanup",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-100.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84G4KBB7SVC6XJHF5VFNX6W",
+    "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+    "artifact:.ai-dlc/requirements/REQ-100.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84G52BC36AVQ1P01380BKXW"
+  ],
+  "sim_node_id": "01M84G4KBBBKCRX0676Y3KH6TH",
+  "feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+  "artifact_path": ".ai-dlc/requirements/REQ-100.md",
+  "artifact_id": "REQ-100",
+  "created_at": "2026-11-23T15:24:50.923969+00:00",
+  "updated_at": "2026-11-23T15:26:09.416504+00:00"
+}

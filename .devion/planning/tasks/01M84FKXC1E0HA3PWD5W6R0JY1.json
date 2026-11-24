@@ -1,0 +1,88 @@
+{
+  "id": "01M84FKXC1E0HA3PWD5W6R0JY1",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "Verify: Runner lock, worktree and timeout unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with fakes for lock, worktree and timeout",
+  "description": "Write runner_test.go with fake Agent, Worktrees and Publisher plus a temp dir for lock and store, proving Act A1 against R1 criteria.",
+  "acceptance_criteria": [
+    "Locked, cleanup and timeout cases each have a passing test",
+    "Tests use only fakes and t.TempDir"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner_test.go"
+    ],
+    "out_of_scope": [
+      "real git or agent"
+    ],
+    "preserve": [
+      "product code"
+    ]
+  },
+  "technical_constraints": [
+    "fake Agent counts calls and records workDir; fake Worktrees records Create and Remove"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "go test ./internal/runner -run 'TestRun(Locked|Cleanup|Timeout)' passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-186.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FKHRAFGM600DRQ668KP5R",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-186.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FKXC1GR5R7ZHRP0PDFYEW"
+  ],
+  "sim_node_id": "01M84FKHRAFYRRYKJA9VV5ZTWZ",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-186.md",
+  "artifact_id": "UNIT-186",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_test.go",
+      "symbol": "new: fakeAgent, fakeTrees, fakePublisher, newRunner helper",
+      "lines": "new",
+      "action": "Create package runner test file. fakeAgent has fields cost float64, errs []error, block bool, calls int; Run increments calls, if block waits on <-ctx.Done() and returns ctx.Err(), else pops errs. fakeTrees records created, removed []string. fakePublisher records calls. newRunner(t, cfg, agent) builds Config with LockPath and WorkRoot under t.TempDir(), store.New(t.TempDir()), fixed now.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunLocked",
+      "expected": "Helpers compile"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_test.go",
+      "symbol": "TestRunLocked",
+      "lines": "new",
+      "action": "Pre-create the file cfg.LockPath with os.WriteFile; call Run(ctx,\"EXEC-1\",\"ROUND-0000001\"); assert errors.Is(err, lock.ErrLocked), agent.calls==0 and len(trees.created)==0.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunLocked",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_test.go",
+      "symbol": "TestRunCleanup",
+      "lines": "new",
+      "action": "AutoPublish irrelevant; agent succeeds; call Run; assert lock file path does not exist (os.Stat gives fs.ErrNotExist), trees.created equals trees.removed equal to filepath.Join(WorkRoot,\"EXEC-1\") and agent.workDir equals the same.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunCleanup",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_test.go",
+      "symbol": "TestRunTimeout",
+      "lines": "new",
+      "action": "agent.block=true, Timeout 20ms; call Run; assert errors.Is(err, context.DeadlineExceeded) and st.Get(\"EXEC-1\").Status == store.StatusFailed.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunTimeout",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.961147+00:00"
+}

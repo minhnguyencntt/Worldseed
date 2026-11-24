@@ -1,0 +1,52 @@
+{
+  "id": "01M849SGKDTZXN3MY30KD6AF6H",
+  "intent_id": "01M849QW64DPCAKCRHQPBQ25N5",
+  "title": "SG-6.4.4 · A 401 from Approve, Retry or Reject returns to the token gate",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "A 401 from any of the three execution actions clears the admin token and shows the token gate, as the load path does.",
+  "description": "Context: game/frontend/src/components/AdminApp.tsx already routes a 401 from runExecutionAction into handleError, which clears the token and sets gateError 'Invalid token'. Only the approve 401 path is tested, and handleError leaves earlier error and action-error state behind. Desired behavior: Approve, Retry and Reject each return to the token gate on 401, with no stale action error. Why: the admin must never see leftover errors or data after re-entering a token.",
+  "acceptance_criteria": [
+    "Given an authenticated admin, when approve, retry or reject returns 401, then the Admin token field is shown with 'Invalid token'.",
+    "Given an earlier action error is displayed, when a later 401 occurs and the token is re-entered, then the old action error is not shown."
+  ],
+  "scope": {
+    "in_scope": [
+      "AdminApp handleError 401 branch"
+    ],
+    "out_of_scope": [
+      "Backend changes",
+      "New UI components"
+    ],
+    "preserve": [
+      "Existing load-path 401 behavior",
+      "Non-401 action errors shown through actionError"
+    ]
+  },
+  "technical_constraints": [
+    "UI-only change",
+    "Token stays in memory only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three actions verified by unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-032.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+    "artifact:.ai-dlc/intent/INT-032.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M849SBHCQ7185FZBQ5GTFHJ8",
+  "feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+  "artifact_path": ".ai-dlc/intent/INT-032.md",
+  "artifact_id": "INT-032",
+  "created_at": "2026-11-23T13:33:40.845622+00:00",
+  "updated_at": "2026-11-23T13:35:11.601006+00:00"
+}

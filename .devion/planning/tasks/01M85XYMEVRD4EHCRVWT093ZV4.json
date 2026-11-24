@@ -1,0 +1,94 @@
+{
+  "id": "01M85XYMEVRD4EHCRVWT093ZV4",
+  "intent_id": "01M85XKWHDCXH76V1VXWACJ624",
+  "title": "Act: Add gold button variant, header suggest button and App wiring",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add the gold variant, render it in the header, and remove the old App button.",
+  "description": "Wire onSuggest and suggestRef through HeaderOverlay from App.",
+  "acceptance_criteria": [
+    "Header shows the gold suggest button with the accessible name Suggest What Happens Next.",
+    "App has no other suggest button."
+  ],
+  "scope": {
+    "in_scope": [
+      "button.tsx",
+      "styles.css",
+      "HeaderOverlay.tsx",
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "ContributionSheet props"
+    ]
+  },
+  "technical_constraints": [
+    "Palette tokens only; Tailwind and React stay.",
+    "Code path: `game/frontend/src/components/ui/button.tsx`",
+    "Code path: `game/frontend/src/styles.css`",
+    "Code path: `game/frontend/src/components/HeaderOverlay.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "REQ2"
+  ],
+  "definition_of_done": [
+    "Button lives in header only",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-839.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85XR2FKKED7ZHEBF5ADG3ZD",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-839.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XYMEVJVVB7M05NFZQER43"
+  ],
+  "sim_node_id": "01M85XR2FKKMN19W5Z29T3M456",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-839.md",
+  "artifact_id": "UNIT-839",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ui/button.tsx",
+      "symbol": "ButtonVariant, variantClasses",
+      "lines": "L6, L16-L20",
+      "action": "Extend ButtonVariant to 'default' | 'ghost' | 'frame' | 'gold'. Add to variantClasses the entry gold: 'sf-btn sf-btn-gold inline-flex items-center gap-2 font-pixel text-sf-sm'. In Button, treat variant 'gold' like 'frame' when building frameProps (condition variant === 'frame' || variant === 'gold').",
+      "code": "gold: 'sf-btn sf-btn-gold inline-flex items-center gap-2 font-pixel text-sf-sm'",
+      "expected": "<Button variant=\"gold\"> renders with class sf-btn-gold and data-state."
+    },
+    {
+      "file": "game/frontend/src/styles.css",
+      "symbol": "new: .sf-btn-gold",
+      "lines": "after L45",
+      "action": "Append .sf-btn-gold { background: var(--sf-color-brass-5); color: var(--sf-color-wood-1); text-transform: uppercase; }",
+      "expected": "Gold styling uses brass and wood tokens."
+    },
+    {
+      "file": "game/frontend/src/components/HeaderOverlay.tsx",
+      "symbol": "HeaderOverlayProps, HeaderOverlay",
+      "lines": "L7-L13, before the sound button",
+      "action": "Import type Ref from react. Add props onSuggest?: () => void and suggestRef?: Ref<HTMLButtonElement>. Before the sound Button render <Button type=\"button\" variant=\"gold\" ref={suggestRef} aria-label=\"Suggest What Happens Next\" onClick={onSuggest}>+ SUGGEST WHAT HAPPENS NEXT</Button>.",
+      "expected": "Header shows the gold button and calls onSuggest on click."
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App return, import Button",
+      "lines": "L11, L68-L81",
+      "action": "Pass onSuggest={() => setSheetOpen(true)} and suggestRef={triggerRef} to <HeaderOverlay>. Delete the <Button ...>Suggest What Happens Next</Button> element in the scene fragment and the now-unused Button import.",
+      "expected": "Only the header holds the suggest button; ContributionSheet still receives returnFocusRef={triggerRef}."
+    }
+  ],
+  "created_at": "2026-11-24T04:45:14.587534+00:00",
+  "updated_at": "2026-11-24T04:47:11.498461+00:00"
+}

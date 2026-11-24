@@ -1,0 +1,70 @@
+{
+  "id": "01M84TJ8RH4F2M3XDPR9Z360KB",
+  "intent_id": "01M84TFPNY5VY9MHWBPJ876B18",
+  "title": "Verify: tracked dependency helpers unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for trackedDependencyPaths, parseGitLsFiles and checkTrackedFiles",
+  "description": "Prove the helpers with a fake git runner.",
+  "acceptance_criteria": [
+    "Flags node_modules and .vite paths, ignores look-alikes",
+    "checkTrackedFiles throws with a tracked path and passes on clean output"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/trackedDependencyGuard.test.ts"
+    ],
+    "out_of_scope": [
+      "real git"
+    ],
+    "preserve": [
+      "tests/trackedNodeModules.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Fake GitRunner via vi.fn"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-444.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84TGXN3RS4YAQG55HJFEY31",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-444.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84TJ8RH1RVH8W29K7M7CQ1C"
+  ],
+  "sim_node_id": "01M84TGXN3MCTTD7R290QKDH41",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-444.md",
+  "artifact_id": "UNIT-444",
+  "steps": [
+    {
+      "file": "game/frontend/tests/trackedDependencyGuard.test.ts",
+      "symbol": "new: trackedDependencyPaths tests",
+      "lines": "new",
+      "action": "Create the test file; test that ['node_modules/phaser/a.js','src/.vite/r.json','src/a.ts','src/my_node_modules_note.ts'] yields the first two only, and [] yields [].",
+      "command": "cd game/frontend && npx vitest run tests/trackedDependencyGuard.test.ts -t trackedDependencyPaths",
+      "expected": "Filter tests pass"
+    },
+    {
+      "file": "game/frontend/tests/trackedDependencyGuard.test.ts",
+      "symbol": "new: parseGitLsFiles and checkTrackedFiles tests",
+      "lines": "new",
+      "action": "Test parseGitLsFiles('a\\0b\\0') equals ['a','b']; test checkTrackedFiles with fake run returning 'src/a.ts\\0node_modules/x.js\\0' throws matching /node_modules\\/x.js/ and that run was called with ['ls-files','-z']; test clean output 'src/a.ts\\0' does not throw.",
+      "command": "cd game/frontend && npx vitest run tests/trackedDependencyGuard.test.ts",
+      "expected": "All tests in the file pass"
+    }
+  ],
+  "created_at": "2026-11-23T18:26:49.233652+00:00",
+  "updated_at": "2026-11-23T18:28:06.955441+00:00"
+}

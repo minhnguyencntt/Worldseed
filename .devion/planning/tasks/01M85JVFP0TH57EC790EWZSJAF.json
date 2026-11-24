@@ -1,0 +1,68 @@
+{
+  "id": "01M85JVFP0TH57EC790EWZSJAF",
+  "intent_id": "01M85JNHV7YEGSWAECMZEFSTYC",
+  "title": "Act: Add applyFocusedObject to BootScene to focus the matching object",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add private applyFocusedObject(id) that focuses the matching SceneObject",
+  "description": "Add a private method to BootScene that focuses the SceneObject whose spec.id equals the given id, reusing SceneObject.focus().",
+  "acceptance_criteria": [
+    "applyFocusedObject('bookshelf') calls focus() on the object with spec.id 'bookshelf'",
+    "Objects with other ids are not focused by it"
+  ],
+  "scope": {
+    "in_scope": [
+      "New private method in BootScene.ts"
+    ],
+    "out_of_scope": [
+      "Wiring into onStateChange",
+      "Tests"
+    ],
+    "preserve": [
+      "All existing BootScene methods"
+    ]
+  },
+  "technical_constraints": [
+    "No new Phaser API use",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "REQ-1"
+  ],
+  "definition_of_done": [
+    "Method exists and type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-726.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85JQZJPCVTRNEG9YF4DAX2A",
+    "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+    "artifact:.ai-dlc/units/UNIT-726.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85JVFP04JFRXATEANK2XXYE"
+  ],
+  "sim_node_id": "01M85JQZJP61SH6BQA75B7BDT7",
+  "feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+  "artifact_path": ".ai-dlc/units/UNIT-726.md",
+  "artifact_id": "UNIT-726",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "new: BootScene.applyFocusedObject",
+      "lines": "after L134",
+      "action": "Add a private method applyFocusedObject(id: string | null): void that loops over this.sceneObjects and, for the object whose spec.id === id and that is not already isFocused, calls o.focus().",
+      "code": "private applyFocusedObject(id: string | null): void {\n  this.sceneObjects.forEach((o) => {\n    if (id !== null && o.spec.id === id && !o.isFocused) o.focus();\n  });\n}",
+      "expected": "BootScene compiles and the method focuses only the object with the given id"
+    }
+  ],
+  "created_at": "2026-11-24T01:31:17.055955+00:00",
+  "updated_at": "2026-11-24T01:32:09.589905+00:00"
+}

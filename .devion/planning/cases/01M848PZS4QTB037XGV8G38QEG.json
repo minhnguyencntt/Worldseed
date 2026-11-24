@@ -1,0 +1,522 @@
+{
+  "id": "01M848PZS4QTB037XGV8G38QEG",
+  "trigger_node_id": "INT-026, UNIT-127 +9",
+  "node_ids": [
+    "INT-026",
+    "UNIT-127",
+    "UNIT-128",
+    "UNIT-129",
+    "UNIT-130",
+    "UNIT-131",
+    "UNIT-132",
+    "REQ-064",
+    "REQ-065",
+    "REQ-066",
+    "EVD-026"
+  ],
+  "intent_id": "INT-026",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-026",
+      "title": "SG-6.4 · Wire Approve, Retry and Reject in AdminApp",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-127",
+      "title": "Act: Add rejectExecution to the admin client",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM34DD647WXM2HZY2XM"
+      ],
+      "depends_on": [
+        "REQ-064"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "from_sha": "da173efa5acc6a842501a16d1963224b32e19b4e",
+      "started_at": "2026-11-23T13:14:50.430825+00:00",
+      "ended_at": "2026-11-23T13:15:11.153304+00:00",
+      "run_started_at": "2026-11-23T13:14:50.430825+00:00",
+      "duration_ms": 19408,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-128",
+      "title": "Act: Add Reject control to ExecutionPanel",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM3G266YVAACRMZN0P5"
+      ],
+      "depends_on": [
+        "REQ-065"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "from_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "started_at": "2026-11-23T13:14:50.453831+00:00",
+      "ended_at": "2026-11-23T13:15:16.643457+00:00",
+      "run_started_at": "2026-11-23T13:14:50.453831+00:00",
+      "duration_ms": 25617,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-129",
+      "title": "Act: Wire execution actions in AdminApp",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM3YE64Y8F8V35TGA8P"
+      ],
+      "depends_on": [
+        "REQ-066"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "from_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "started_at": "2026-11-23T13:14:50.465632+00:00",
+      "ended_at": "2026-11-23T13:15:15.871259+00:00",
+      "run_started_at": "2026-11-23T13:14:50.465632+00:00",
+      "duration_ms": 24855,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-130",
+      "title": "Verify: rejectExecution unit tests with mocked fetch",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM3HFZ4D6RD8NBMGJVM"
+      ],
+      "depends_on": [
+        "UNIT-127",
+        "REQ-064"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "22d7146edf66017e3d979bcdab2e2d99370211b5",
+      "from_sha": "a40909c8e4b1c5f0e9904b5a1a20b88c3b9c7169",
+      "tests": [
+        {
+          "id": "executions.test.ts > rejectExecution > POSTs to the reject endpoint with Bearer token and returns the execution",
+          "kind": "unit",
+          "name": "rejectExecution sends POST with Bearer token and returns the execution",
+          "title": "POSTs to the reject endpoint with Bearer token and returns the execution",
+          "scenario": "Given fetch is stubbed to return executionFixture with status 200, When rejectExecution('secret', 'exec-1') is called, Then fetch is called once with '/api/v1/admin/executions/exec-1/reject', method 'POST', Authorization 'Bearer secret', and the result equals executionFixture",
+          "command": "npx vitest run tests/executions.test.ts -t rejectExecution --testTimeout=10000",
+          "file": "tests/executions.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "executions.test.ts > rejectExecution > rejects with ApiError 401",
+          "kind": "unit",
+          "name": "rejectExecution rejects with ApiError 401",
+          "title": "rejects with ApiError 401",
+          "scenario": "Given fetch is stubbed to return status 401, When rejectExecution('bad', 'exec-1') is called, Then the promise rejects with an ApiError whose status is 401",
+          "command": "npx vitest run tests/executions.test.ts -t rejectExecution --testTimeout=10000",
+          "file": "tests/executions.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T13:15:11.164972+00:00",
+      "ended_at": "2026-11-23T13:15:29.903824+00:00",
+      "run_started_at": "2026-11-23T13:15:11.164972+00:00",
+      "duration_ms": 18179,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-131",
+      "title": "Verify: ExecutionPanel Reject control unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM36R1BMGX4N3MSYJC3"
+      ],
+      "depends_on": [
+        "UNIT-128",
+        "REQ-065"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "1ea21a08af88a65b1e130c14042acae0598c27e2",
+      "from_sha": "22d7146edf66017e3d979bcdab2e2d99370211b5",
+      "tests": [
+        {
+          "id": "actions.test.tsx::shows a Reject button for an AWAITING_APPROVAL execution and calls onReject once with its id",
+          "kind": "unit",
+          "name": "shows a Reject button for an AWAITING_APPROVAL execution and calls onReject once with its id",
+          "title": "Shows a Reject button for an AWAITING_APPROVAL execution and calls onReject once with its id",
+          "scenario": "Given an ExecutionPanel with status AWAITING_APPROVAL, id EX1, and an onReject mock, When the user clicks the Reject button, Then onReject is called exactly once with 'EX1'.",
+          "command": "npx vitest run tests/actions.test.tsx -t Reject --testTimeout=10000",
+          "file": "tests/actions.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "actions.test.tsx::shows no Reject button for a FAILED execution even when onReject is provided",
+          "kind": "unit",
+          "name": "shows no Reject button for a FAILED execution even when onReject is provided",
+          "title": "Shows no Reject button for a FAILED execution even when onReject is provided",
+          "scenario": "Given an ExecutionPanel with status FAILED and an onReject handler provided, When the panel renders, Then no button named Reject is in the document.",
+          "command": "npx vitest run tests/actions.test.tsx -t Reject --testTimeout=10000",
+          "file": "tests/actions.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T13:15:16.654454+00:00",
+      "ended_at": "2026-11-23T13:15:36.685716+00:00",
+      "run_started_at": "2026-11-23T13:15:16.654454+00:00",
+      "duration_ms": 19460,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-132",
+      "title": "Verify: AdminApp approve, retry, reject and 401 unit tests with mocked fetch",
+      "kind": "unit",
+      "task_ids": [
+        "01M848PZM3YR5VHCXW83Q25MTP"
+      ],
+      "depends_on": [
+        "UNIT-129",
+        "REQ-066"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "56581c5bf63c6f57949cb54ebb51af08588784be",
+      "from_sha": "1ea21a08af88a65b1e130c14042acae0598c27e2",
+      "tests": [
+        {
+          "id": "adminExecution.test.tsx > AdminApp execution actions > approve",
+          "kind": "unit",
+          "name": "approve POSTs with Bearer token and refetches executions",
+          "title": "Approve POSTs to approve with the bearer token and refetches executions",
+          "scenario": "Given an AWAITING_APPROVAL execution, when Approve is clicked, then it POSTs to approve with the bearer token and refetches executions",
+          "command": "npx vitest run tests/adminExecution.test.tsx --testTimeout=10000",
+          "file": "tests/adminExecution.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminExecution.test.tsx > AdminApp execution actions > retry",
+          "kind": "unit",
+          "name": "retry POSTs with Bearer token and refetches executions",
+          "title": "Retry POSTs to retry with the bearer token and refetches executions",
+          "scenario": "Given a FAILED execution, when Retry is clicked, then it POSTs to retry with the bearer token and refetches executions",
+          "command": "npx vitest run tests/adminExecution.test.tsx --testTimeout=10000",
+          "file": "tests/adminExecution.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminExecution.test.tsx > AdminApp execution actions > reject",
+          "kind": "unit",
+          "name": "reject POSTs with Bearer token and refetches executions",
+          "title": "Reject POSTs to reject and refetches executions",
+          "scenario": "Given an AWAITING_APPROVAL execution, when Reject is clicked, then it POSTs to reject and refetches executions",
+          "command": "npx vitest run tests/adminExecution.test.tsx --testTimeout=10000",
+          "file": "tests/adminExecution.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminExecution.test.tsx > AdminApp execution actions > 401",
+          "kind": "unit",
+          "name": "action 401 returns to token gate with Invalid token",
+          "title": "A 401 from an execution action returns to the token gate with Invalid token",
+          "scenario": "Given an action responds 401, when it is clicked, then the token gate returns with Invalid token",
+          "command": "npx vitest run tests/adminExecution.test.tsx --testTimeout=10000",
+          "file": "tests/adminExecution.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminExecution.test.tsx > AdminApp execution actions > 500",
+          "kind": "unit",
+          "name": "action 500 shows the status in the alert",
+          "title": "A 500 from an execution action shows the status in the alert",
+          "scenario": "Given an action responds 500, when it is clicked, then the alert shows the 500 status",
+          "command": "npx vitest run tests/adminExecution.test.tsx --testTimeout=10000",
+          "file": "tests/adminExecution.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T13:15:15.881803+00:00",
+      "ended_at": "2026-11-23T13:15:58.675940+00:00",
+      "run_started_at": "2026-11-23T13:15:15.881803+00:00",
+      "duration_ms": 41130,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-064",
+      "title": "REQ · rejectExecution client call POSTs to the reject endpoint",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-026"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-065",
+      "title": "REQ · ExecutionPanel shows a Reject control for executions awaiting approval",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-026"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-066",
+      "title": "REQ · AdminApp runs execution actions, reloads, shows errors and returns to the token gate on 401",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-026"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-026",
+      "title": "Evidence: Admin execution actions unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-127",
+        "UNIT-128",
+        "UNIT-129",
+        "UNIT-130",
+        "UNIT-131",
+        "UNIT-132"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-066",
+      "dst": "UNIT-129"
+    },
+    {
+      "src": "REQ-065",
+      "dst": "UNIT-131"
+    },
+    {
+      "src": "UNIT-129",
+      "dst": "EVD-026"
+    },
+    {
+      "src": "REQ-065",
+      "dst": "UNIT-128"
+    },
+    {
+      "src": "REQ-066",
+      "dst": "UNIT-132"
+    },
+    {
+      "src": "UNIT-128",
+      "dst": "UNIT-131"
+    },
+    {
+      "src": "UNIT-129",
+      "dst": "UNIT-132"
+    },
+    {
+      "src": "UNIT-132",
+      "dst": "EVD-026"
+    },
+    {
+      "src": "INT-026",
+      "dst": "REQ-065"
+    },
+    {
+      "src": "REQ-064",
+      "dst": "UNIT-130"
+    },
+    {
+      "src": "UNIT-130",
+      "dst": "EVD-026"
+    },
+    {
+      "src": "UNIT-127",
+      "dst": "EVD-026"
+    },
+    {
+      "src": "UNIT-131",
+      "dst": "EVD-026"
+    },
+    {
+      "src": "REQ-064",
+      "dst": "UNIT-127"
+    },
+    {
+      "src": "INT-026",
+      "dst": "REQ-066"
+    },
+    {
+      "src": "INT-026",
+      "dst": "REQ-064"
+    },
+    {
+      "src": "UNIT-127",
+      "dst": "UNIT-130"
+    },
+    {
+      "src": "UNIT-128",
+      "dst": "EVD-026"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m848pz",
+  "base_sha": "da173efa5acc6a842501a16d1963224b32e19b4e",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M848PZS4QTB037XGV8G38QEG:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T13:14:49.508798+00:00",
+  "updated_at": "2026-11-23T13:16:11.722338+00:00",
+  "completed_at": "2026-11-23T13:15:58.678329+00:00",
+  "duration_ms": 69170,
+  "usage_stats": {
+    "total_duration_ms": 148663
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 14,
+  "unit_allowlist": [
+    "UNIT-127",
+    "UNIT-128",
+    "UNIT-129",
+    "UNIT-130",
+    "UNIT-131",
+    "UNIT-132"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-127",
+        "title": "Act: Add rejectExecution to the admin client",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-127 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-128",
+        "title": "Act: Add Reject control to ExecutionPanel",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-128 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-129",
+        "title": "Act: Wire execution actions in AdminApp",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-129 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-130",
+        "title": "Verify: rejectExecution unit tests with mocked fetch",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-130 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-131",
+        "title": "Verify: ExecutionPanel Reject control unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-131 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-132",
+        "title": "Verify: AdminApp approve, retry, reject and 401 unit tests with mocked fetch",
+        "evidence_refs": [
+          {
+            "id": "EVD-026",
+            "path": ".ai-dlc/evidence/EVD-026.md",
+            "title": "Evidence: Admin execution actions unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-132 unless acceptance outcomes recorded in EVD-026 (.ai-dlc/evidence/EVD-026.md; \"Evidence: Admin execution actions unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T13:14:50.319934+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-127",
+    "UNIT-128",
+    "UNIT-129",
+    "UNIT-130",
+    "UNIT-131",
+    "UNIT-132"
+  ]
+}

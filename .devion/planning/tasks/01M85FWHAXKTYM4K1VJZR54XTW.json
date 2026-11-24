@@ -1,0 +1,63 @@
+{
+  "id": "01M85FWHAXKTYM4K1VJZR54XTW",
+  "intent_id": "01M85FR0WWK6S9G6P5579YTBZV",
+  "title": "Verify: Retry returns to the loading state and reloads unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Retry loading state and refetch",
+  "description": "Test that after Retry the loading message shows while pending, listMine is called twice, and a second failure shows the error again.",
+  "acceptance_criteria": [
+    "Pending retry shows loading and hides error and Retry",
+    "listMine called twice",
+    "Second rejection shows error and Retry again"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use a manually controlled promise for the second listMine call; no real network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-685.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FSDYWKA4V0PVS7VER1EW3",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-685.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85FWHAXBKAMA6HKZYRAE5WC"
+  ],
+  "sim_node_id": "01M85FSDYWZSVXVYC8A7NJW84H",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-685.md",
+  "artifact_id": "UNIT-685",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionHistoryRetryLoading.test.tsx",
+      "symbol": "new: describe('retry returns to loading')",
+      "lines": "new",
+      "action": "Create jsdom test file with the same vi.mock of ../src/api/client as tests/contributionHistoryRetry.test.tsx. Test 'shows loading while retry pending': first listMine rejects, second returns a never-resolving promise; click Retry; assert getByText('Loading your suggestions…') present, queryByText('Could not load your suggestions') null, queryByRole('button',{name:'Retry'}) null, listMine called 2 times. Test 'second failure shows error again': mockRejectedValueOnce twice; click Retry; assert findByRole('alert') has the error text and Retry button is present again.",
+      "command": "npx vitest run tests/contributionHistoryRetryLoading.test.tsx",
+      "expected": "Both tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T00:39:25.789687+00:00",
+  "updated_at": "2026-11-24T00:40:08.591885+00:00"
+}

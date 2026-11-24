@@ -1,0 +1,518 @@
+{
+  "id": "01M849946QKVB5D5BZW6ZSJMZD",
+  "trigger_node_id": "INT-030, UNIT-139 +6",
+  "node_ids": [
+    "INT-030",
+    "UNIT-139",
+    "UNIT-140",
+    "UNIT-141",
+    "UNIT-142",
+    "REQ-070",
+    "REQ-071",
+    "EVD-030"
+  ],
+  "intent_id": "INT-030",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-030",
+      "title": "SG-6.4.3 · Wire approve, retry and reject handlers into AdminApp's ExecutionPanel",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-139",
+      "title": "Act: Add execution action handlers to AdminApp",
+      "kind": "unit",
+      "task_ids": [
+        "01M849941JRX08T1AH5GC2HMSE"
+      ],
+      "depends_on": [
+        "REQ-070"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "12922c03abda7bd6c383cbf23dc6160080e820a9",
+      "from_sha": "f52e026425f7f8708f5d65e53e7c2b56e33c5cc9",
+      "started_at": "2026-11-23T13:24:44.767118+00:00",
+      "ended_at": "2026-11-23T13:25:26.803732+00:00",
+      "run_started_at": "2026-11-23T13:24:44.767118+00:00",
+      "duration_ms": 41005,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 5742,
+      "estimated_cost_usd": 0.022984,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED. My Act edits to game/frontend/src/components/AdminApp.tsx applied cleanly (imports approveExecution/rejectExecution/retryExecution; type ExecutionAction; runExecutionAction helper; onApprove/onRetry/onReject passed to ExecutionPanel). After that, the file changed on disk without my involvement: a second `type ExecutionAction` declaration (L24 and L25), a second `runExecutionAction` function (L105 and L116) that uses a different version with `actionError` state and error handling, and an added `useState` for `actionError` (L39). `npx tsc --noEmit` now fails with TS2300 and TS2393 on those duplicates. I did not revert or pick between the two versions, since the other writer's change is not mine to undo. Step 3 adapted: the ExecutionPanel call is at L123 in the original file, not L130. To finish, whoever owns the concurrent edit should keep one `ExecutionAction` type and one `runExecutionAction` and confirm which error handling is wanted. Then the typecheck should pass. Tests were not run, per the Verify ownership rules."
+    },
+    {
+      "unit_id": "UNIT-140",
+      "title": "Act: Show execution action failures through actionError",
+      "kind": "unit",
+      "task_ids": [
+        "01M849941JQQMP9BXSV23Q2V6P"
+      ],
+      "depends_on": [
+        "REQ-071"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "12922c03abda7bd6c383cbf23dc6160080e820a9",
+      "from_sha": "12922c03abda7bd6c383cbf23dc6160080e820a9",
+      "started_at": "2026-11-23T13:24:44.789114+00:00",
+      "ended_at": "2026-11-23T13:25:27.285208+00:00",
+      "run_started_at": "2026-11-23T13:24:44.789114+00:00",
+      "duration_ms": 41394,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 6275,
+      "estimated_cost_usd": 0.025114,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED: UNIT-140 is not complete. Two problems:\n\n1) Concurrent writer in the same worktree. AdminApp.tsx changed on disk between my read and my edits. The file now contains a second copy of the `ExecutionAction` type alias (lines 24-25), and a second `runExecutionAction` function (lines 105 and 116). The second copy is the older helper without actionError handling, and it is what wires onApprove/onRetry/onReject. Duplicate identifiers will not compile, so `tsc` would fail. Another session or agent (probably the handlers unit) is editing this file in this worktree. I did not revert or overwrite its changes, because that could clobber work in progress. Someone needs to decide which helper to keep, then remove the duplicates.\n\n2) Step 2 assumed a `runExecutionAction` helper from the handlers unit. Before the concurrent edits, that helper did not exist in the code (only runRoundAction). My intended version: a `ExecutionAction` type; `runExecutionAction(action, id)` with setActionError(undefined) plus reload on success, and in catch: 401 goes to handleError, otherwise setActionError(message or 'Request failed'). Step 3's `actionError={actionError}` prop was not applied, because the ExecutionPanel JSX edit failed on the changed file. The actionError state (Step 1) is present at line 39.\n\nNot done: typecheck and tests were not run. The UNIT-140 .md brief files were not found under .ai-dlc (grep for UNIT-140/139/137 returned nothing), so acceptance criteria come from the ticket text only.\n\nBaseline: scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa (case HEAD f52e026)."
+    },
+    {
+      "unit_id": "UNIT-141",
+      "title": "Verify: AdminApp execution handlers call the client and reload unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M849941JF2CH687C98KWQ7CJ"
+      ],
+      "depends_on": [
+        "UNIT-139",
+        "REQ-070"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "0776e68daf808102a42b0f2fcd6e13812058e828",
+      "from_sha": "0776e68daf808102a42b0f2fcd6e13812058e828",
+      "tests": [
+        {
+          "id": "adminActions-approve-posts-and-reloads",
+          "kind": "unit",
+          "name": "Approve posts and reloads",
+          "title": "AdminApp execution action reloads > Approve posts and reloads",
+          "scenario": "Given an AWAITING_APPROVAL execution and an approve call that succeeds, when Approve is clicked, then POST approve is sent with the bearer token and the executions GET runs a second time",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000 -t Approve",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminActions-reject-posts-and-reloads",
+          "kind": "unit",
+          "name": "Reject posts and reloads",
+          "title": "AdminApp execution action reloads > Reject posts and reloads",
+          "scenario": "Given an AWAITING_APPROVAL execution and a reject call that succeeds, when Reject is clicked, then POST reject is sent with the bearer token and the executions GET runs a second time",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000 -t Reject",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminActions-retry-posts-and-reloads",
+          "kind": "unit",
+          "name": "Retry posts and reloads",
+          "title": "AdminApp execution action reloads > Retry posts and reloads",
+          "scenario": "Given a FAILED execution and a retry call that succeeds, when Retry is clicked, then POST retry is sent with the bearer token and the executions GET runs a second time",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000 -t Retry",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminActions-approve-error-alert",
+          "kind": "unit",
+          "name": "shows an alert when the action fails",
+          "title": "AdminApp execution action errors > shows an alert when the action fails",
+          "scenario": "Given an execution awaiting approval and an approve call that fails with 500, when Approve is clicked, then an alert in the Execution region reports the 500",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Written by another writer to this file; kept unchanged."
+        },
+        {
+          "id": "adminActions-401-token-gate",
+          "kind": "unit",
+          "name": "returns to the token gate on 401",
+          "title": "AdminApp execution action errors > returns to the token gate on 401",
+          "scenario": "Given an approve call that is unauthorized, when Approve is clicked, then the token gate shows Invalid token",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Written by another writer to this file; kept unchanged."
+        },
+        {
+          "id": "adminActions-clear-error-on-success",
+          "kind": "unit",
+          "name": "clears the action error after a successful action",
+          "title": "AdminApp execution action errors > clears the action error after a successful action",
+          "scenario": "Given an approve call that fails then succeeds, when Approve is clicked twice, then the alert is removed",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Written by another writer to this file; kept unchanged."
+        }
+      ],
+      "started_at": "2026-11-23T13:25:27.430807+00:00",
+      "ended_at": "2026-11-23T13:27:29.893659+00:00",
+      "run_started_at": "2026-11-23T13:25:27.430807+00:00",
+      "duration_ms": 121903,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-142",
+      "title": "Verify: AdminApp execution action error display unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M849941J4JGXEHG06RG0JPMC"
+      ],
+      "depends_on": [
+        "UNIT-140",
+        "REQ-071"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "c766a5e9dc6d4178185281fe5d95663c919aedf4",
+      "from_sha": "0776e68daf808102a42b0f2fcd6e13812058e828",
+      "tests": [
+        {
+          "id": "adminActions.test.tsx > shows an alert when the action fails",
+          "kind": "unit",
+          "name": "AdminApp execution action errors > shows an alert when the action fails",
+          "title": "shows an alert when the action fails",
+          "scenario": "Given an awaiting-approval execution and an approve call returning 500, when Approve is clicked, then an alert inside the Execution region contains '500'",
+          "command": "npx vitest run tests/adminActions.test.tsx -t \"action fails\" --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Passes in the full-file run; the step's name filter 'action fails' was not run separately."
+        },
+        {
+          "id": "adminActions.test.tsx > returns to the token gate on 401",
+          "kind": "unit",
+          "name": "AdminApp execution action errors > returns to the token gate on 401",
+          "title": "returns to the token gate on 401",
+          "scenario": "Given an awaiting-approval execution and an approve call returning 401, when Approve is clicked, then the Admin token field and 'Invalid token' are shown",
+          "command": "npx vitest run tests/adminActions.test.tsx -t 401 --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Passes in the full-file run."
+        },
+        {
+          "id": "adminActions.test.tsx > clears the action error after a successful action",
+          "kind": "unit",
+          "name": "AdminApp execution action errors > clears the action error after a successful action",
+          "title": "clears the action error after a successful action",
+          "scenario": "Given the first approve returns 500 and the second succeeds, when Approve is clicked twice, then the alert is removed from the Execution region",
+          "command": "npx vitest run tests/adminActions.test.tsx -t clears --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Passes in the full-file run."
+        },
+        {
+          "id": "adminActions.test.tsx > Approve posts and reloads",
+          "kind": "unit",
+          "name": "AdminApp execution action reloads > Approve posts and reloads",
+          "title": "Approve posts and reloads",
+          "scenario": "Given an awaiting-approval execution and a successful approve, when Approve is clicked, then the approve URL is POSTed with the bearer token and executions are refetched",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Pre-existing test; passes in the full-file run."
+        },
+        {
+          "id": "adminActions.test.tsx > Reject posts and reloads",
+          "kind": "unit",
+          "name": "AdminApp execution action reloads > Reject posts and reloads",
+          "title": "Reject posts and reloads",
+          "scenario": "Given an awaiting-approval execution and a successful reject, when Reject is clicked, then the reject URL is POSTed with the bearer token and executions are refetched",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Pre-existing test; passes in the full-file run."
+        },
+        {
+          "id": "adminActions.test.tsx > Retry posts and reloads",
+          "kind": "unit",
+          "name": "AdminApp execution action reloads > Retry posts and reloads",
+          "title": "Retry posts and reloads",
+          "scenario": "Given a failed execution and a successful retry, when Retry is clicked, then the retry URL is POSTed with the bearer token and executions are refetched",
+          "command": "npx vitest run tests/adminActions.test.tsx --testTimeout=10000",
+          "file": "tests/adminActions.test.tsx",
+          "status": "passed",
+          "detail": "Pre-existing test; passes in the full-file run."
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (2): AdminApp execution action errors > shows an alert when the action fails, AdminApp execution action errors > clears the action error after a successful action",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "278b54f3f0f41cb8264d8920ad06fe592340deab",
+          "from_sha": "12922c03abda7bd6c383cbf23dc6160080e820a9",
+          "tests": [
+            {
+              "id": "shows-an-alert-when-the-action-fails",
+              "kind": "unit",
+              "name": "AdminApp execution action errors > shows an alert when the action fails",
+              "title": "shows an alert when the action fails",
+              "scenario": "Given an AWAITING_APPROVAL execution and an approve POST answered 500, when the admin clicks Approve, then an alert inside the Execution region contains 500",
+              "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"action fails\" --testTimeout=10000",
+              "file": "tests/adminActions.test.tsx",
+              "status": "failed",
+              "detail": "TestingLibraryElementError: Unable to find role=\"alert\" within the Execution region. AdminApp does not pass actionError to ExecutionPanel in the working tree; the failure is not rendered in the region."
+            },
+            {
+              "id": "returns-to-the-token-gate-on-401",
+              "kind": "unit",
+              "name": "AdminApp execution action errors > returns to the token gate on 401",
+              "title": "returns to the token gate on 401",
+              "scenario": "Given an AWAITING_APPROVAL execution and an approve POST answered 401, when the admin clicks Approve, then the Admin token field and the text Invalid token are shown",
+              "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t 401 --testTimeout=10000",
+              "file": "tests/adminActions.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "clears-the-action-error-after-a-successful-action",
+              "kind": "unit",
+              "name": "AdminApp execution action errors > clears the action error after a successful action",
+              "title": "clears the action error after a successful action",
+              "scenario": "Given an approve POST that answers 500 and then succeeds, when the admin clicks Approve twice, then the alert is removed from the Execution region",
+              "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t clears --testTimeout=10000",
+              "file": "tests/adminActions.test.tsx",
+              "status": "failed",
+              "detail": "The first click's alert never appeared (Unable to find role=\"alert\" at adminActions.test.tsx:116), so the clearing assertion was not reached. Same root cause as the action-fails test."
+            }
+          ],
+          "started_at": "2026-11-23T13:25:27.453275+00:00",
+          "ended_at": "2026-11-23T13:26:52.255090+00:00",
+          "duration_ms": 84260,
+          "model": "claude-haiku-5-5"
+        }
+      ],
+      "started_at": "2026-11-23T13:25:27.453275+00:00",
+      "ended_at": "2026-11-23T13:27:45.466194+00:00",
+      "run_started_at": "2026-11-23T13:27:18.478122+00:00",
+      "duration_ms": 26439,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-070",
+      "title": "REQ · AdminApp passes approve, retry and reject handlers that call the client and reload",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-030"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-071",
+      "title": "REQ · AdminApp shows an error message when an execution action fails",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-030"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-030",
+      "title": "Evidence: AdminApp execution action handler unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-139",
+        "UNIT-140",
+        "UNIT-141",
+        "UNIT-142"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-142",
+      "title": "Act: Fix Verify failure — AdminApp execution action error display unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "0776e68daf808102a42b0f2fcd6e13812058e828",
+      "from_sha": "278b54f3f0f41cb8264d8920ad06fe592340deab",
+      "started_at": "2026-11-23T13:26:52.265550+00:00",
+      "ended_at": "2026-11-23T13:27:18.445261+00:00",
+      "run_started_at": "2026-11-23T13:26:52.265550+00:00",
+      "duration_ms": 25643,
+      "model": "claude-haiku-5-5"
+    }
+  ],
+  "edges": [
+    {
+      "src": "INT-030",
+      "dst": "REQ-071"
+    },
+    {
+      "src": "REQ-070",
+      "dst": "UNIT-139"
+    },
+    {
+      "src": "UNIT-141",
+      "dst": "EVD-030"
+    },
+    {
+      "src": "UNIT-140",
+      "dst": "EVD-030"
+    },
+    {
+      "src": "UNIT-142",
+      "dst": "EVD-030"
+    },
+    {
+      "src": "REQ-070",
+      "dst": "UNIT-141"
+    },
+    {
+      "src": "REQ-071",
+      "dst": "UNIT-140"
+    },
+    {
+      "src": "UNIT-140",
+      "dst": "UNIT-142"
+    },
+    {
+      "src": "UNIT-139",
+      "dst": "UNIT-141"
+    },
+    {
+      "src": "INT-030",
+      "dst": "REQ-070"
+    },
+    {
+      "src": "REQ-071",
+      "dst": "UNIT-142"
+    },
+    {
+      "src": "UNIT-139",
+      "dst": "EVD-030"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84994",
+  "base_sha": "f52e026425f7f8708f5d65e53e7c2b56e33c5cc9",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M849946QKVB5D5BZW6ZSJMZD:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T13:24:43.863131+00:00",
+  "updated_at": "2026-11-23T13:27:57.505906+00:00",
+  "completed_at": "2026-11-23T13:27:45.467393+00:00",
+  "duration_ms": 181604,
+  "usage_stats": {
+    "total_duration_ms": 340656,
+    "total_tokens_in": 38,
+    "total_tokens_out": 12017,
+    "total_estimated_cost_usd": 0.048098
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-139",
+    "UNIT-140",
+    "UNIT-141",
+    "UNIT-142"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-139",
+        "title": "Act: Add execution action handlers to AdminApp",
+        "evidence_refs": [
+          {
+            "id": "EVD-030",
+            "path": ".ai-dlc/evidence/EVD-030.md",
+            "title": "Evidence: AdminApp execution action handler unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-139 unless acceptance outcomes recorded in EVD-030 (.ai-dlc/evidence/EVD-030.md; \"Evidence: AdminApp execution action handler unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-140",
+        "title": "Act: Show execution action failures through actionError",
+        "evidence_refs": [
+          {
+            "id": "EVD-030",
+            "path": ".ai-dlc/evidence/EVD-030.md",
+            "title": "Evidence: AdminApp execution action handler unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-140 unless acceptance outcomes recorded in EVD-030 (.ai-dlc/evidence/EVD-030.md; \"Evidence: AdminApp execution action handler unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-141",
+        "title": "Verify: AdminApp execution handlers call the client and reload unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-030",
+            "path": ".ai-dlc/evidence/EVD-030.md",
+            "title": "Evidence: AdminApp execution action handler unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-141 unless acceptance outcomes recorded in EVD-030 (.ai-dlc/evidence/EVD-030.md; \"Evidence: AdminApp execution action handler unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-142",
+        "title": "Verify: AdminApp execution action error display unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-030",
+            "path": ".ai-dlc/evidence/EVD-030.md",
+            "title": "Evidence: AdminApp execution action handler unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-142 unless acceptance outcomes recorded in EVD-030 (.ai-dlc/evidence/EVD-030.md; \"Evidence: AdminApp execution action handler unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T13:24:44.657277+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-139",
+    "UNIT-140",
+    "UNIT-141",
+    "UNIT-142"
+  ]
+}

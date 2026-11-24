@@ -1,0 +1,516 @@
+{
+  "intent_id": "01M8474YGPRVPGRGG93CDACF9F",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8476FMSD3F01H1J6XPZEMB1",
+      "kind": "intent",
+      "title": "SG-5.4 · Admin route tests prove every admin endpoint rejects missing and wrong tokens",
+      "body": "Context: server.New mounts /api/v1/admin behind admin.Middleware(cfg.Admin.Token). TestNew_AdminRoundsRequireToken in backend/internal/server/server_test.go covers only the five round endpoints and only the missing-token case; GET /executions, POST /executions/{id}/retry and POST /executions/{id}/approve and the wrong-token case are untested. Desired behavior: one route table feeds both registration and the tests, so no admin endpoint can be added unprotected or untested. Expected result: missing and wrong tokens give 401 on all 8 admin endpoints. Why: admin APIs must be protected.\n\n## Acceptance criteria\n- Given a server with admin.token 'tok', when any of the 8 admin endpoints is called without an Authorization header, then the response is 401.\n- Given the same server, when any of the 8 admin endpoints is called with 'Authorization: Bearer wrong', then the response is 401.\n- Given the same server, when POST /executions/{id}/retry and POST /executions/{id}/approve carry 'Bearer tok', then the response is not 401.\n- Given the admin route table, when the chi router is walked, then every registered /api/v1/admin route appears in the table.\n\n\n## Scope\n- In scope: Admin route table in server.go\n- In scope: Server-level auth unit tests for round and execution endpoints\n- Out of scope: Changing admin.Middleware behavior\n- Out of scope: Frontend or worker changes\n- Out of scope: Running a live server\n- Preserve: Existing admin route paths and handlers\n- Preserve: Existing server tests passing\n\n\n## Technical constraints\n- Go, chi router, no database\n- Tests use httptest with temp dir repo, no network\n\n\n## Definition of done\n- All acceptance criteria asserted by passing unit tests\n- go test ./internal/server passes\n\n\n## Non-functional requirements\n- Tests finish in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Unit tests with mocked dependencies show that every admin round and execution endpoint, including retry and approve, rejects missing and wrong tokens.",
+      "description": "Context: server.New mounts /api/v1/admin behind admin.Middleware(cfg.Admin.Token). TestNew_AdminRoundsRequireToken in backend/internal/server/server_test.go covers only the five round endpoints and only the missing-token case; GET /executions, POST /executions/{id}/retry and POST /executions/{id}/approve and the wrong-token case are untested. Desired behavior: one route table feeds both registration and the tests, so no admin endpoint can be added unprotected or untested. Expected result: missing and wrong tokens give 401 on all 8 admin endpoints. Why: admin APIs must be protected.",
+      "acceptance_criteria": [
+        "Given a server with admin.token 'tok', when any of the 8 admin endpoints is called without an Authorization header, then the response is 401.",
+        "Given the same server, when any of the 8 admin endpoints is called with 'Authorization: Bearer wrong', then the response is 401.",
+        "Given the same server, when POST /executions/{id}/retry and POST /executions/{id}/approve carry 'Bearer tok', then the response is not 401.",
+        "Given the admin route table, when the chi router is walked, then every registered /api/v1/admin route appears in the table."
+      ],
+      "scope": {
+        "in_scope": [
+          "Admin route table in server.go",
+          "Server-level auth unit tests for round and execution endpoints"
+        ],
+        "out_of_scope": [
+          "Changing admin.Middleware behavior",
+          "Frontend or worker changes",
+          "Running a live server"
+        ],
+        "preserve": [
+          "Existing admin route paths and handlers",
+          "Existing server tests passing"
+        ]
+      },
+      "technical_constraints": [
+        "Go, chi router, no database",
+        "Tests use httptest with temp dir repo, no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria asserted by passing unit tests",
+        "go test ./internal/server passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-019.md`"
+      ],
+      "non_functional": [
+        "Tests finish in seconds"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M844GYQHQVB6ZB4VWCQENPDN",
+      "links": [
+        "trace:01M844GYQHQVB6ZB4VWCQENPDN",
+        "artifact:.ai-dlc/intent/INT-019.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-019.md",
+      "artifact_id": "INT-019"
+    },
+    {
+      "id": "01M8476FMSC7HHE44ZT54WY74J",
+      "kind": "requirement",
+      "title": "REQ · Admin round endpoints are registered from a route table and reject missing and wrong tokens",
+      "body": "Context: round routes are registered inline in server.New (server.go L101-L111). Desired behavior: a table of adminRoute{Method, Pattern, Handler} drives registration so tests can iterate the same list. Expected result: missing and wrong bearer tokens yield 401 on every round route.\n\n## Acceptance criteria\n- Given the round route table, when built, then it lists POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions.\n- Given a server with token 'tok', when a round route is called with no token or 'Bearer wrong', then the response is 401.\n\n\n## Scope\n- In scope: adminRoute type and round entries in server.go\n- Out of scope: Execution routes\n- Out of scope: Middleware changes\n- Preserve: Route paths and handler behavior\n\n\n## Technical constraints\n- Keep admin.Middleware applied to the /api/v1/admin group\n\n\n## Definition of done\n- Round routes registered from the table\n- Unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The five admin round routes are declared in one table used for registration, and each returns 401 for missing or wrong tokens.",
+      "description": "Context: round routes are registered inline in server.New (server.go L101-L111). Desired behavior: a table of adminRoute{Method, Pattern, Handler} drives registration so tests can iterate the same list. Expected result: missing and wrong bearer tokens yield 401 on every round route.",
+      "acceptance_criteria": [
+        "Given the round route table, when built, then it lists POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions.",
+        "Given a server with token 'tok', when a round route is called with no token or 'Bearer wrong', then the response is 401."
+      ],
+      "scope": {
+        "in_scope": [
+          "adminRoute type and round entries in server.go"
+        ],
+        "out_of_scope": [
+          "Execution routes",
+          "Middleware changes"
+        ],
+        "preserve": [
+          "Route paths and handler behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Keep admin.Middleware applied to the /api/v1/admin group"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Round routes registered from the table",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-048.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8476FMSD3F01H1J6XPZEMB1",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M8476FMSD3F01H1J6XPZEMB1",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-048.md"
+      ],
+      "depends_on": [
+        "01M8476FMSD3F01H1J6XPZEMB1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-048.md",
+      "artifact_id": "REQ-048"
+    },
+    {
+      "id": "01M8476FMS6JHDEBXVQ819VV14",
+      "kind": "requirement",
+      "title": "REQ · Admin execution endpoints incl. retry and approve are registered from the table and reject missing and wrong tokens",
+      "body": "Context: execution routes (list, retry, approve) are registered inline in server.go L103-L105 and have no server-level auth test. Desired behavior: they are entries in the same table. Expected result: 401 for missing and wrong tokens, not 401 for the correct token.\n\n## Acceptance criteria\n- Given the route table, when built, then it also lists GET /executions, POST /executions/{id}/retry, POST /executions/{id}/approve.\n- Given a server with token 'tok', when an execution route is called with no token or 'Bearer wrong', then the response is 401.\n- Given the same server, when retry and approve are called with 'Bearer tok', then the response is not 401.\n\n\n## Scope\n- In scope: Execution entries in the route table\n- Out of scope: Execution handler logic\n- Preserve: execution.Handler behavior\n\n\n## Technical constraints\n- Reuse the table from REQ1\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Execution routes registered from the table\n- Unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The three admin execution routes join the route table, and each returns 401 for missing or wrong tokens.",
+      "description": "Context: execution routes (list, retry, approve) are registered inline in server.go L103-L105 and have no server-level auth test. Desired behavior: they are entries in the same table. Expected result: 401 for missing and wrong tokens, not 401 for the correct token.",
+      "acceptance_criteria": [
+        "Given the route table, when built, then it also lists GET /executions, POST /executions/{id}/retry, POST /executions/{id}/approve.",
+        "Given a server with token 'tok', when an execution route is called with no token or 'Bearer wrong', then the response is 401.",
+        "Given the same server, when retry and approve are called with 'Bearer tok', then the response is not 401."
+      ],
+      "scope": {
+        "in_scope": [
+          "Execution entries in the route table"
+        ],
+        "out_of_scope": [
+          "Execution handler logic"
+        ],
+        "preserve": [
+          "execution.Handler behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the table from REQ1"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Execution routes registered from the table",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-049.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8476FMSD3F01H1J6XPZEMB1",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M8476FMSD3F01H1J6XPZEMB1",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-049.md"
+      ],
+      "depends_on": [
+        "01M8476FMSD3F01H1J6XPZEMB1"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-049.md",
+      "artifact_id": "REQ-049"
+    },
+    {
+      "id": "01M8476FMSX7GRKGT46ARHY971",
+      "kind": "unit",
+      "title": "Act: Register admin round routes from an adminRoute table",
+      "body": "Replace inline round registrations in server.New with a loop over a table so tests can reuse the same list.\n\n## Acceptance criteria\n- Round routes are registered via the table with unchanged paths and methods.\n- adminRoutes returns the five round routes.\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- Out of scope: Tests\n- Preserve: Existing paths and handlers\n\n\n## Technical constraints\n- Same package server\n- Code path: `backend/internal/server/server.go`\n\n\n## Definition of done\n- go build ./... passes\n- Behavior unchanged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Introduce adminRoute and adminRoutes(rh) for round routes and register via loop.",
+      "description": "Replace inline round registrations in server.New with a loop over a table so tests can reuse the same list.",
+      "acceptance_criteria": [
+        "Round routes are registered via the table with unchanged paths and methods.",
+        "adminRoutes returns the five round routes."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing paths and handlers"
+        ]
+      },
+      "technical_constraints": [
+        "Same package server",
+        "Code path: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./... passes",
+        "Behavior unchanged",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-095.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8476FMSC7HHE44ZT54WY74J",
+      "matched_feature_id": "01M8470M8THDHMM041AZFSGBHQ",
+      "links": [
+        "parent:01M8476FMSC7HHE44ZT54WY74J",
+        "trace:01M8470M8THDHMM041AZFSGBHQ",
+        "artifact:.ai-dlc/units/UNIT-095.md"
+      ],
+      "depends_on": [
+        "01M8476FMSC7HHE44ZT54WY74J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-095.md",
+      "artifact_id": "UNIT-095",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "new: adminRoute, adminRoundRoutes",
+          "lines": "after L116",
+          "action": "Add type adminRoute struct{Method, Pattern string; Handler http.HandlerFunc} and func adminRoundRoutes(rh *admin.RoundHandler) []adminRoute returning the five round routes using rh.Create, rh.Open, rh.Close, rh.Get, rh.Contributions.",
+          "code": "func adminRoundRoutes(rh *admin.RoundHandler) []adminRoute {\n\treturn []adminRoute{\n\t\t{http.MethodPost, \"/rounds\", rh.Create},\n\t\t{http.MethodPost, \"/rounds/{id}/open\", rh.Open},\n\t\t{http.MethodPost, \"/rounds/{id}/close\", rh.Close},\n\t\t{http.MethodGet, \"/rounds/{id}\", rh.Get},\n\t\t{http.MethodGet, \"/rounds/{id}/contributions\", rh.Contributions},\n\t}\n}",
+          "expected": "Package compiles with the new table function."
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New (admin route group)",
+          "lines": "L101-L111",
+          "action": "Remove the five inline ar.Post/ar.Get round registrations and add a loop over adminRoundRoutes(rh) calling ar.Method(route.Method, route.Pattern, route.Handler); keep the three execution registrations and ar.Use(admin.Middleware(...)).",
+          "code": "for _, rt := range adminRoundRoutes(rh) {\n\tar.Method(rt.Method, rt.Pattern, rt.Handler)\n}",
+          "expected": "Existing TestNew_AdminRoundsAreMounted still passes."
+        }
+      ]
+    },
+    {
+      "id": "01M8476FMSS6SQZ520M5CS29J8",
+      "kind": "unit",
+      "title": "Act: Register admin execution routes from the same table",
+      "body": "Move execution registrations into the table and expose one adminRoutes(eh, rh) that tests can call.\n\n## Acceptance criteria\n- adminRoutes returns eight routes: five round and three execution.\n- Execution routes keep their paths and methods.\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- Out of scope: Tests\n- Out of scope: execution.Handler\n- Preserve: Paths and handlers\n\n\n## Technical constraints\n- Depends on ACT1 table\n- Code path: `backend/internal/server/server.go`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- go build ./... passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add adminExecutionRoutes(eh) and register it through a combined adminRoutes function.",
+      "description": "Move execution registrations into the table and expose one adminRoutes(eh, rh) that tests can call.",
+      "acceptance_criteria": [
+        "adminRoutes returns eight routes: five round and three execution.",
+        "Execution routes keep their paths and methods."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "execution.Handler"
+        ],
+        "preserve": [
+          "Paths and handlers"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on ACT1 table",
+        "Code path: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "go build ./... passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-096.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8476FMS6JHDEBXVQ819VV14",
+      "matched_feature_id": "01M847388XGWC6CEVCX9114HTE",
+      "links": [
+        "parent:01M8476FMS6JHDEBXVQ819VV14",
+        "trace:01M847388XGWC6CEVCX9114HTE",
+        "artifact:.ai-dlc/units/UNIT-096.md"
+      ],
+      "depends_on": [
+        "01M8476FMS6JHDEBXVQ819VV14"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-096.md",
+      "artifact_id": "UNIT-096",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "new: adminRoutes",
+          "lines": "after adminRoundRoutes",
+          "action": "Add func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute returning GET /executions (eh.List), POST /executions/{id}/retry (eh.Retry), POST /executions/{id}/approve (eh.Approve) followed by adminRoundRoutes(rh).",
+          "code": "func adminRoutes(eh *execution.Handler, rh *admin.RoundHandler) []adminRoute {\n\treturn append([]adminRoute{\n\t\t{http.MethodGet, \"/executions\", eh.List},\n\t\t{http.MethodPost, \"/executions/{id}/retry\", eh.Retry},\n\t\t{http.MethodPost, \"/executions/{id}/approve\", eh.Approve},\n\t}, adminRoundRoutes(rh)...)\n}",
+          "expected": "Eight routes returned."
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New (admin route group)",
+          "lines": "L101-L111",
+          "action": "Replace the loop over adminRoundRoutes(rh) and the three inline ar.Get/ar.Post execution registrations with one loop over adminRoutes(eh, rh).",
+          "code": "for _, rt := range adminRoutes(eh, rh) {\n\tar.Method(rt.Method, rt.Pattern, rt.Handler)\n}",
+          "expected": "All eight routes still mounted behind admin.Middleware."
+        }
+      ]
+    },
+    {
+      "id": "01M8476FMSP7K58VRJV8J1R11H",
+      "kind": "unit",
+      "title": "Verify: Admin round routes reject missing and wrong tokens unit tests",
+      "body": "Extend server_test.go with wrong-token coverage for the round routes using httptest and a temp dir.\n\n## Acceptance criteria\n- Round routes return 401 without a token.\n- Round routes return 401 with 'Bearer wrong'.\n\n\n## Scope\n- In scope: backend/internal/server/server_test.go\n- Out of scope: Live server\n- Preserve: Existing tests\n\n\n## Technical constraints\n- httptest only\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Server-level tests for round routes with missing and wrong tokens.",
+      "description": "Extend server_test.go with wrong-token coverage for the round routes using httptest and a temp dir.",
+      "acceptance_criteria": [
+        "Round routes return 401 without a token.",
+        "Round routes return 401 with 'Bearer wrong'."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "Live server"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "httptest only"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-097.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8476FMSX7GRKGT46ARHY971",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8476FMSX7GRKGT46ARHY971",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-097.md"
+      ],
+      "depends_on": [
+        "01M8476FMSX7GRKGT46ARHY971"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-097.md",
+      "artifact_id": "UNIT-097",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestNew_AdminRoundRoutesRejectMissingAndWrongToken",
+          "lines": "after L286",
+          "action": "Build the server as in TestNew_AdminRoundsRequireToken (token 'tok', t.TempDir repo). Iterate adminRoundRoutes(&admin.RoundHandler{}) replacing {id} with ROUND-0000001; for each, request with no Authorization header and with 'Bearer wrong'; assert rec.Code == 401. Import the admin package.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundRoutesRejectMissingAndWrongToken",
+          "expected": "Test passes with 5 routes x 2 cases all 401."
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestAdminRoundRoutes_Table",
+          "lines": "after the new test",
+          "action": "Assert adminRoundRoutes returns exactly the five method+pattern pairs: POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions.",
+          "command": "cd backend && go test ./internal/server -run TestAdminRoundRoutes_Table",
+          "expected": "Table matches the five pairs."
+        }
+      ]
+    },
+    {
+      "id": "01M8476FMS5W435KZXN7A85AP7",
+      "kind": "unit",
+      "title": "Verify: Admin execution routes reject missing and wrong tokens unit tests",
+      "body": "Walk the real router and the route table to prove every admin route is protected and listed.\n\n## Acceptance criteria\n- All eight admin routes return 401 for missing and wrong tokens.\n- retry and approve with 'Bearer tok' are not 401.\n- Every /api/v1/admin route in the chi router is in adminRoutes.\n\n\n## Scope\n- In scope: backend/internal/server/server_test.go\n- Out of scope: Live server\n- Preserve: Existing tests\n\n\n## Technical constraints\n- httptest, chi.Walk, temp dir\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Server-level tests that all eight admin routes, including retry and approve, reject missing and wrong tokens.",
+      "description": "Walk the real router and the route table to prove every admin route is protected and listed.",
+      "acceptance_criteria": [
+        "All eight admin routes return 401 for missing and wrong tokens.",
+        "retry and approve with 'Bearer tok' are not 401.",
+        "Every /api/v1/admin route in the chi router is in adminRoutes."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "Live server"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "httptest, chi.Walk, temp dir"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-098.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8476FMSS6SQZ520M5CS29J8",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8476FMSS6SQZ520M5CS29J8",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-098.md"
+      ],
+      "depends_on": [
+        "01M8476FMSS6SQZ520M5CS29J8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-098.md",
+      "artifact_id": "UNIT-098",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestNew_AllAdminRoutesRejectMissingAndWrongToken",
+          "lines": "after L286",
+          "action": "Build server with token 'tok'. For each route in adminRoutes(&execution.Handler{}, &admin.RoundHandler{}) with {id} replaced by ID-1, assert 401 with no header and with 'Bearer wrong'; assert not 401 with 'Bearer tok' for POST /executions/ID-1/retry and /approve.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AllAdminRoutesRejectMissingAndWrongToken",
+          "expected": "All 8 routes yield 401 unauthenticated; retry and approve are not 401 with tok."
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestNew_AdminRoutesMatchTable",
+          "lines": "after the new test",
+          "action": "Type-assert New(cfg, log) to chi.Routes, chi.Walk it collecting method+route for routes starting with /api/v1/admin, and assert the set equals adminRoutes entries prefixed with /api/v1/admin.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoutesMatchTable",
+          "expected": "Walked routes equal the table; no unlisted admin route."
+        }
+      ]
+    },
+    {
+      "id": "01M8476FMSSDFAWEAYPYK2F0PN",
+      "kind": "evidence",
+      "title": "Evidence: Admin routes reject missing and wrong tokens unit tests",
+      "body": "Collect the passing results of the verify tests for the admin route table and token rejection.\n\n## Acceptance criteria\n- go test output shows the round and all-route token tests passing.\n- Output shows the route-table match test passing.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Live environment\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Passing server unit tests prove all admin endpoints reject missing and wrong tokens.",
+      "description": "Collect the passing results of the verify tests for the admin route table and token rejection.",
+      "acceptance_criteria": [
+        "go test output shows the round and all-route token tests passing.",
+        "Output shows the route-table match test passing."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Live environment"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-019.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8476FMSP7K58VRJV8J1R11H",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M8476FMSP7K58VRJV8J1R11H",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-019.md"
+      ],
+      "depends_on": [
+        "01M8476FMSP7K58VRJV8J1R11H",
+        "01M8476FMS5W435KZXN7A85AP7"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-019.md",
+      "artifact_id": "EVD-019"
+    }
+  ],
+  "created_at": "2026-11-23T12:48:21.051425+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

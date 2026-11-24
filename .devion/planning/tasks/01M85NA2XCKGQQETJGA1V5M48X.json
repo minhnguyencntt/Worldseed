@@ -1,0 +1,78 @@
+{
+  "id": "01M85NA2XCKGQQETJGA1V5M48X",
+  "intent_id": "01M85N4CM4V0AVGP3FWEM1KQ9J",
+  "title": "Verify: transitionTo unsubscribe is stored and restart yields one handler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for single fade after create and after restart",
+  "description": "Add tests with Phaser mocked, copying the vi.mock setup from tests/bootSceneTransition.test.ts (camera with fadeOut and once spies, scene.start spy).",
+  "acceptance_criteria": [
+    "One emit after create gives one fadeOut",
+    "One emit after shutdown plus re-create gives one fadeOut on the new scene"
+  ],
+  "scope": {
+    "in_scope": [
+      "new test file"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Everything external mocked; no browser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-758.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85N66P50QVNQG8F2DQ4MSZ4",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-758.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85NA2XCT05Z4HKW3YX4G40T"
+  ],
+  "sim_node_id": "01M85N66P51ZDY279JYN5V1QKS",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-758.md",
+  "artifact_id": "UNIT-758",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+      "symbol": "new: describe('BootScene transitionTo subscription handle')",
+      "lines": "new",
+      "action": "Create the file reusing the phaser and content vi.mock blocks from bootSceneTransition.test.ts; in beforeEach call reactToPhaser.clear(), set useGameStore state with createInitialState, then new BootScene().create()",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts",
+      "expected": "File loads with the mocks"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+      "symbol": "it('fades out exactly once per transitionTo after create')",
+      "lines": "new",
+      "action": "Emit reactToPhaser.emit('transitionTo', { sceneId: 'library' }) once and assert boot.cameras.main.fadeOut toHaveBeenCalledTimes(1)",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 'exactly once per transitionTo'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+      "symbol": "it('fades out once on the new scene after shutdown and re-create')",
+      "lines": "new",
+      "action": "Run the SHUTDOWN callback found in boot.events.once.mock.calls (name 'shutdown'), create a second BootScene and call create(), emit transitionTo { sceneId: 'library' } once, assert the second scene's fadeOut was called once and the first scene's fadeOut was not called again",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 're-create'",
+      "expected": "Test passes: no duplicate handler"
+    }
+  ],
+  "created_at": "2026-11-24T02:14:12.652136+00:00",
+  "updated_at": "2026-11-24T02:15:34.920441+00:00"
+}

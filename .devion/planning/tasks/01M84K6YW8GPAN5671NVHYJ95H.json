@@ -1,0 +1,59 @@
+{
+  "id": "01M84K6YW8GPAN5671NVHYJ95H",
+  "intent_id": "01M84K165FF9YSHNCQRV5BN7RC",
+  "title": "SG-6 · Clean up leftover references to removed code",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Remove the last references to worker, execution and coding-agent code, and document the handoff to devion workseed",
+  "description": "Context: the worker, execution backend, config keys, routes and ExecutionPanel are already deleted. Two leftovers remain. game/frontend/src/components/LifecycleStepper.tsx still exports deriveStage and an EXECUTION_STAGES map that only served the removed execution flow, and nothing in src imports deriveStage. The docs say nothing about the handoff: backend/README.md contains only 'hello Worldseed', there is no docs/ folder, and nothing describes the frozen-contribution export. Desired behavior: no code or docs refer to execution state, and the docs describe the handoff to devion workseed. Expected result: backend and frontend tests pass with game/src, the game UI, game/content, backend/internal/contribution and the round lifecycle unchanged. Why: Worldseed is a game and contribution project, not a development platform.",
+  "acceptance_criteria": [
+    "Given LifecycleStepper.tsx, when it is read, then it has no deriveStage export and no execution-status mapping, and AdminApp still renders LifecycleStepper from round.status",
+    "Given the backend README and the handoff doc, when they are read, then they describe the handoff of frozen contributions to devion workseed using the Export JSON format",
+    "Given the backend and game/frontend unit test suites, when they run, then they pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "LifecycleStepper execution helpers",
+      "Handoff documentation under backend/"
+    ],
+    "out_of_scope": [
+      "game/src",
+      "game UI components",
+      "game/content",
+      "round lifecycle logic",
+      "contribution package behavior"
+    ],
+    "preserve": [
+      "Export JSON format v1",
+      "Existing guard tests for removed code",
+      "STAGES and stageIndex behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Go backend module and Vitest frontend must stay green",
+    "Do not modify game/src, game/content or backend/internal/contribution non-test code"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both requirements are implemented and verified by unit tests",
+    "No execution references remain in LifecycleStepper or docs",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-055.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84H6WGG4G7BAC3XPPPAYVN9",
+    "artifact:.ai-dlc/intent/INT-055.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84K6FJ9W1QDS290MV80TA84",
+  "feature_id": "01M84H6WGG4G7BAC3XPPPAYVN9",
+  "artifact_path": ".ai-dlc/intent/INT-055.md",
+  "artifact_id": "INT-055",
+  "created_at": "2026-11-23T16:18:18.632246+00:00",
+  "updated_at": "2026-11-23T16:19:11.678443+00:00"
+}

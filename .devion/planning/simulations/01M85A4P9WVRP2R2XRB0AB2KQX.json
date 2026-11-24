@@ -1,0 +1,315 @@
+{
+  "intent_id": "01M85A4P9WVRP2R2XRB0AB2KQX",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85A5TC458GXXRTEW3GNGD3V",
+      "kind": "intent",
+      "title": "SG-6.1.1 Optional interaction field on the character schema",
+      "body": "Context: characterSchema in game/src/content/schema.ts has id, name, position, scale, layer and animations only, so an NPC cannot declare what happens when it is clicked. Desired behavior: add an optional interaction field holding a dialogue reference and/or a list of actions, reusing the existing actionSchema. Expected result: scene content with and without the field parses, and malformed interactions are rejected. Why: SG-6.1 data-driven NPCs need content-authored interaction.\n\n## Acceptance criteria\n- Given a character without interaction, When parsed with characterSchema, Then it still succeeds and interaction is undefined\n- Given a character with interaction.dialogue 'npc-greeting', When parsed, Then interaction.dialogue equals 'npc-greeting'\n- Given a character with an interaction actions list of valid actions, When parsed, Then the actions are preserved\n- Given an interaction with an action whose id is not allowed or with a non-string dialogue, When parsed, Then parsing fails\n\n\n## Scope\n- In scope: characterSchema optional interaction field\n- In scope: CharacterSpec type inference\n- In scope: unit tests in game/tests\n- Out of scope: Phaser rendering of NPC clicks\n- Out of scope: bedroom.yaml content changes\n- Out of scope: validateWorld cross-reference checks\n- Preserve: Existing character fields and defaults\n- Preserve: bedroom.yaml still parses\n- Preserve: actionSchema behavior\n\n\n## Technical constraints\n- Use zod in game/src/content/schema.ts\n- Reuse actionSchema; do not invent new action ids\n\n\n## Definition of done\n- characterSchema accepts optional interaction\n- Unit tests for it pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Characters can carry an optional interaction (dialogue reference or action list) validated by characterSchema",
+      "description": "Context: characterSchema in game/src/content/schema.ts has id, name, position, scale, layer and animations only, so an NPC cannot declare what happens when it is clicked. Desired behavior: add an optional interaction field holding a dialogue reference and/or a list of actions, reusing the existing actionSchema. Expected result: scene content with and without the field parses, and malformed interactions are rejected. Why: SG-6.1 data-driven NPCs need content-authored interaction.",
+      "acceptance_criteria": [
+        "Given a character without interaction, When parsed with characterSchema, Then it still succeeds and interaction is undefined",
+        "Given a character with interaction.dialogue 'npc-greeting', When parsed, Then interaction.dialogue equals 'npc-greeting'",
+        "Given a character with an interaction actions list of valid actions, When parsed, Then the actions are preserved",
+        "Given an interaction with an action whose id is not allowed or with a non-string dialogue, When parsed, Then parsing fails"
+      ],
+      "scope": {
+        "in_scope": [
+          "characterSchema optional interaction field",
+          "CharacterSpec type inference",
+          "unit tests in game/tests"
+        ],
+        "out_of_scope": [
+          "Phaser rendering of NPC clicks",
+          "bedroom.yaml content changes",
+          "validateWorld cross-reference checks"
+        ],
+        "preserve": [
+          "Existing character fields and defaults",
+          "bedroom.yaml still parses",
+          "actionSchema behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Use zod in game/src/content/schema.ts",
+        "Reuse actionSchema; do not invent new action ids"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "characterSchema accepts optional interaction",
+        "Unit tests for it pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-118.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+      "links": [
+        "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+        "artifact:.ai-dlc/intent/INT-118.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-118.md",
+      "artifact_id": "INT-118"
+    },
+    {
+      "id": "01M85A5TC4F37NSQM5YHQAPRJ2",
+      "kind": "requirement",
+      "title": "REQ · characterSchema accepts an optional interaction with a dialogue reference or actions",
+      "body": "Context: characterSchema lacks any interaction data. Desired behavior: interaction is optional, with an optional string dialogue reference and an optional array of actionSchema items. Expected result: valid shapes parse, invalid ones are rejected, and existing characters are unaffected. Why: lets content authors define NPC interaction without engine changes.\n\n## Acceptance criteria\n- Given a character with no interaction, When characterSchema.parse runs, Then it succeeds with interaction undefined\n- Given interaction { dialogue: 'npc-greeting' }, When parsed, Then the dialogue reference is retained\n- Given interaction { actions: [valid inspect action] }, When parsed, Then actions are retained\n- Given interaction { dialogue: 5 }, When parsed, Then a ZodError is thrown\n\n\n## Scope\n- In scope: characterInteractionSchema and optional field on characterSchema\n- Out of scope: Runtime handling of the interaction\n- Preserve: Existing characterSchema fields and defaults\n\n\n## Technical constraints\n- Reuse actionSchema defined above characterSchema\n\n\n## Definition of done\n- Schema change merged\n- Types infer interaction on CharacterSpec\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "characterSchema gains an optional interaction object with dialogue and/or actions",
+      "description": "Context: characterSchema lacks any interaction data. Desired behavior: interaction is optional, with an optional string dialogue reference and an optional array of actionSchema items. Expected result: valid shapes parse, invalid ones are rejected, and existing characters are unaffected. Why: lets content authors define NPC interaction without engine changes.",
+      "acceptance_criteria": [
+        "Given a character with no interaction, When characterSchema.parse runs, Then it succeeds with interaction undefined",
+        "Given interaction { dialogue: 'npc-greeting' }, When parsed, Then the dialogue reference is retained",
+        "Given interaction { actions: [valid inspect action] }, When parsed, Then actions are retained",
+        "Given interaction { dialogue: 5 }, When parsed, Then a ZodError is thrown"
+      ],
+      "scope": {
+        "in_scope": [
+          "characterInteractionSchema and optional field on characterSchema"
+        ],
+        "out_of_scope": [
+          "Runtime handling of the interaction"
+        ],
+        "preserve": [
+          "Existing characterSchema fields and defaults"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse actionSchema defined above characterSchema"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema change merged",
+        "Types infer interaction on CharacterSpec",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-296.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85A5TC458GXXRTEW3GNGD3V",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85A5TC458GXXRTEW3GNGD3V",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-296.md"
+      ],
+      "depends_on": [
+        "01M85A5TC458GXXRTEW3GNGD3V"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-296.md",
+      "artifact_id": "REQ-296"
+    },
+    {
+      "id": "01M85A5TC4MZP8R5WD42YBR59X",
+      "kind": "unit",
+      "title": "Act: Add optional interaction to characterSchema",
+      "body": "Edit game/src/content/schema.ts: define an interaction object schema with optional dialogue string and optional actions array of actionSchema, and add it as an optional field of characterSchema.\n\n## Acceptance criteria\n- characterSchema has an optional interaction field\n- CharacterSpec infers interaction with optional dialogue and actions\n\n\n## Scope\n- In scope: game/src/content/schema.ts\n- Out of scope: Tests\n- Out of scope: bedroom.yaml\n- Preserve: Existing exports and defaults\n\n\n## Technical constraints\n- zod\n- Code path: `game/src/content/schema.ts`\n\n\n## Definition of done\n- Field added and project type-checks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add characterInteractionSchema and optional interaction field",
+      "description": "Edit game/src/content/schema.ts: define an interaction object schema with optional dialogue string and optional actions array of actionSchema, and add it as an optional field of characterSchema.",
+      "acceptance_criteria": [
+        "characterSchema has an optional interaction field",
+        "CharacterSpec infers interaction with optional dialogue and actions"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/content/schema.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "bedroom.yaml"
+        ],
+        "preserve": [
+          "Existing exports and defaults"
+        ]
+      },
+      "technical_constraints": [
+        "zod",
+        "Code path: `game/src/content/schema.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Field added and project type-checks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-592.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85A5TC4F37NSQM5YHQAPRJ2",
+      "links": [
+        "parent:01M85A5TC4F37NSQM5YHQAPRJ2",
+        "trace:01M85A0HWEA6J9HC1H2NRH48XW",
+        "artifact:.ai-dlc/units/UNIT-592.md"
+      ],
+      "depends_on": [
+        "01M85A5TC4F37NSQM5YHQAPRJ2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-592.md",
+      "artifact_id": "UNIT-592",
+      "steps": [
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "new: characterInteractionSchema",
+          "lines": "after L45",
+          "action": "Add an exported zod object schema characterInteractionSchema with optional dialogue (z.string()) and optional actions (z.array(actionSchema)), placed before characterSchema.",
+          "code": "export const characterInteractionSchema = z.object({\n  dialogue: z.string().optional(),\n  actions: z.array(actionSchema).optional(),\n});",
+          "expected": "characterInteractionSchema is exported and compiles"
+        },
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "characterSchema",
+          "lines": "L47-L54",
+          "action": "Add the field interaction: characterInteractionSchema.optional() after the animations field.",
+          "code": "animations: z.object({...}),\n+ interaction: characterInteractionSchema.optional(),",
+          "expected": "CharacterSpec includes optional interaction"
+        }
+      ]
+    },
+    {
+      "id": "01M85A5TC45R220TXNNB6KQHFR",
+      "kind": "unit",
+      "title": "Verify: characterSchema interaction unit tests",
+      "body": "Add game/tests/characterSchema.test.ts testing characterSchema with and without interaction, using pure in-memory inputs and no I/O.\n\n## Acceptance criteria\n- Tests assert absent, dialogue, actions and invalid cases\n- Tests pass with the command below\n\n\n## Scope\n- In scope: game/tests/characterSchema.test.ts\n- Out of scope: Product code\n- Preserve: Other tests\n\n\n## Technical constraints\n- vitest, in-memory data only\n\n\n## Definition of done\n- All characterSchema tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the optional character interaction field",
+      "description": "Add game/tests/characterSchema.test.ts testing characterSchema with and without interaction, using pure in-memory inputs and no I/O.",
+      "acceptance_criteria": [
+        "Tests assert absent, dialogue, actions and invalid cases",
+        "Tests pass with the command below"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/characterSchema.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "vitest, in-memory data only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All characterSchema tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-593.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M85A5TC4MZP8R5WD42YBR59X",
+      "links": [
+        "parent:01M85A5TC4MZP8R5WD42YBR59X",
+        "trace:01M85A0HWE8BS8GCVX8EKAX1GQ",
+        "artifact:.ai-dlc/units/UNIT-593.md"
+      ],
+      "depends_on": [
+        "01M85A5TC4MZP8R5WD42YBR59X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-593.md",
+      "artifact_id": "UNIT-593",
+      "steps": [
+        {
+          "file": "game/tests/characterSchema.test.ts",
+          "symbol": "new: characterSchema interaction",
+          "lines": "new",
+          "action": "Create a describe block with a base character fixture (id 'boy', name 'Boy', position {x:1,y:2}, animations.idle {asset:'character:boy', animation:'idle'}). Test 1: parse base without interaction, expect interaction undefined. Test 2: add interaction {dialogue:'npc-greeting'}, expect result.interaction.dialogue toBe 'npc-greeting'. Test 3: add interaction {actions:[{id:'inspect',label:'Talk',events:[]}]}, expect actions length 1 and id 'inspect'.",
+          "command": "cd game && npx vitest run tests/characterSchema.test.ts",
+          "expected": "Three tests pass"
+        },
+        {
+          "file": "game/tests/characterSchema.test.ts",
+          "symbol": "rejects invalid interaction",
+          "lines": "new",
+          "action": "Add tests: interaction {dialogue:5} throws via expect(() => characterSchema.parse(...)).toThrow(); interaction {actions:[{id:'dance',label:'x',events:[]}]} also throws.",
+          "command": "cd game && npx vitest run tests/characterSchema.test.ts",
+          "expected": "Both rejection tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85A5TC4DYGJ0FZPWZK3THD9",
+      "kind": "evidence",
+      "title": "Evidence: characterSchema interaction unit tests pass",
+      "body": "Record the passing output of game/tests/characterSchema.test.ts covering the optional character interaction field.\n\n## Acceptance criteria\n- The test file runs green\n- All four intent acceptance criteria are covered by named tests\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser checks\n\n\n## Definition of done\n- Passing run captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the characterSchema interaction unit tests pass",
+      "description": "Record the passing output of game/tests/characterSchema.test.ts covering the optional character interaction field.",
+      "acceptance_criteria": [
+        "The test file runs green",
+        "All four intent acceptance criteria are covered by named tests"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing run captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-118.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85A5TC45R220TXNNB6KQHFR",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85A5TC45R220TXNNB6KQHFR",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-118.md"
+      ],
+      "depends_on": [
+        "01M85A5TC45R220TXNNB6KQHFR"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-118.md",
+      "artifact_id": "EVD-118"
+    }
+  ],
+  "created_at": "2026-11-23T22:59:59.809091+00:00",
+  "summary": "AI · 2 NEW · 3 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

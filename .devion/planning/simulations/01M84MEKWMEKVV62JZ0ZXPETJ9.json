@@ -1,0 +1,319 @@
+{
+  "intent_id": "01M84MEKWMEKVV62JZ0ZXPETJ9",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84MFBRH42W7AEJBZ81CYFEA",
+      "kind": "intent",
+      "title": "SG-1.2.1 · Add the zustand dependency to the frontend package.json and lockfile",
+      "body": "Context: game/frontend/package.json lists react, motion, lucide-react and radix packages but no zustand, and node_modules/zustand is absent. Desired behavior: zustand is a declared runtime dependency and package-lock.json resolves it. Expected result: `import { create } from 'zustand'` resolves in the frontend. Why: the Zustand UI store in SG-1.2 needs it.\n\n## Acceptance criteria\n- Given game/frontend/package.json, when parsed, then dependencies.zustand is a semver range string\n- Given package-lock.json, when parsed, then packages[''].dependencies.zustand equals the package.json range and packages['node_modules/zustand'] exists with a version\n- Given the frontend, when 'zustand' is imported, then create is a function\n\n\n## Scope\n- In scope: game/frontend/package.json\n- In scope: game/frontend/package-lock.json\n- Out of scope: Creating useUiStore\n- Out of scope: Other dependency changes\n- Out of scope: Backend modules\n- Preserve: Existing dependency ranges\n- Preserve: lockfileVersion 3\n\n\n## Technical constraints\n- Use npm so the lockfile stays lockfileVersion 3\n- zustand goes in dependencies, not devDependencies\n\n\n## Definition of done\n- zustand is declared and locked\n- Unit test for the dependency passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Declare zustand as a runtime dependency of game/frontend and record it in package-lock.json.",
+      "description": "Context: game/frontend/package.json lists react, motion, lucide-react and radix packages but no zustand, and node_modules/zustand is absent. Desired behavior: zustand is a declared runtime dependency and package-lock.json resolves it. Expected result: `import { create } from 'zustand'` resolves in the frontend. Why: the Zustand UI store in SG-1.2 needs it.",
+      "acceptance_criteria": [
+        "Given game/frontend/package.json, when parsed, then dependencies.zustand is a semver range string",
+        "Given package-lock.json, when parsed, then packages[''].dependencies.zustand equals the package.json range and packages['node_modules/zustand'] exists with a version",
+        "Given the frontend, when 'zustand' is imported, then create is a function"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json",
+          "game/frontend/package-lock.json"
+        ],
+        "out_of_scope": [
+          "Creating useUiStore",
+          "Other dependency changes",
+          "Backend modules"
+        ],
+        "preserve": [
+          "Existing dependency ranges",
+          "lockfileVersion 3"
+        ]
+      },
+      "technical_constraints": [
+        "Use npm so the lockfile stays lockfileVersion 3",
+        "zustand goes in dependencies, not devDependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "zustand is declared and locked",
+        "Unit test for the dependency passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-059.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M844Z5BYSQ03SPD4YVSF3YEC",
+      "links": [
+        "trace:01M844Z5BYSQ03SPD4YVSF3YEC",
+        "artifact:.ai-dlc/intent/INT-059.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-059.md",
+      "artifact_id": "INT-059"
+    },
+    {
+      "id": "01M84MFBRHJVSHCCATPQ2JY5VT",
+      "kind": "requirement",
+      "title": "REQ · zustand is declared in package.json and locked in package-lock.json",
+      "body": "Context: no zustand entry in game/frontend/package.json or package-lock.json. Desired behavior: add the dependency with npm so both files agree. Expected result: manifest range matches the lockfile root entry and a resolved node_modules/zustand package exists. Why: later store work imports it.\n\n## Acceptance criteria\n- Given package.json, when read, then dependencies.zustand matches ^\\d+\\.\\d+\\.\\d+\n- Given package-lock.json, when read, then the root package dependency range equals package.json and node_modules/zustand has a version\n- Given the frontend, when zustand is imported, then create is exported as a function\n\n\n## Scope\n- In scope: zustand entry in package.json and package-lock.json\n- Out of scope: Store code\n- Preserve: Other dependencies unchanged\n\n\n## Technical constraints\n- Run npm install from game/frontend\n\n\n## Definition of done\n- Both files contain zustand\n- Verify unit passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The frontend manifest and lockfile both include zustand as a runtime dependency.",
+      "description": "Context: no zustand entry in game/frontend/package.json or package-lock.json. Desired behavior: add the dependency with npm so both files agree. Expected result: manifest range matches the lockfile root entry and a resolved node_modules/zustand package exists. Why: later store work imports it.",
+      "acceptance_criteria": [
+        "Given package.json, when read, then dependencies.zustand matches ^\\d+\\.\\d+\\.\\d+",
+        "Given package-lock.json, when read, then the root package dependency range equals package.json and node_modules/zustand has a version",
+        "Given the frontend, when zustand is imported, then create is exported as a function"
+      ],
+      "scope": {
+        "in_scope": [
+          "zustand entry in package.json and package-lock.json"
+        ],
+        "out_of_scope": [
+          "Store code"
+        ],
+        "preserve": [
+          "Other dependencies unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Run npm install from game/frontend"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both files contain zustand",
+        "Verify unit passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-148.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84MFBRH42W7AEJBZ81CYFEA",
+      "matched_feature_id": "01M84KNPXBTJTMK9Y6AKKFC9R3",
+      "links": [
+        "parent:01M84MFBRH42W7AEJBZ81CYFEA",
+        "trace:01M84KNPXBTJTMK9Y6AKKFC9R3",
+        "artifact:.ai-dlc/requirements/REQ-148.md"
+      ],
+      "depends_on": [
+        "01M84MFBRH42W7AEJBZ81CYFEA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-148.md",
+      "artifact_id": "REQ-148"
+    },
+    {
+      "id": "01M84MFBRHQ5QDPP5GH4RQDD41",
+      "kind": "unit",
+      "title": "Act: Add zustand to game/frontend package.json and package-lock.json",
+      "body": "Run npm install zustand in game/frontend so package.json dependencies and package-lock.json are updated together. No other dependency changes.\n\n## Acceptance criteria\n- Given the change, when package.json is read, then dependencies.zustand exists\n- Given the change, when package-lock.json is read, then node_modules/zustand is resolved\n\n\n## Scope\n- In scope: game/frontend/package.json\n- In scope: game/frontend/package-lock.json\n- Out of scope: Store implementation\n- Out of scope: Tests\n- Preserve: Existing dependencies and lockfileVersion 3\n\n\n## Technical constraints\n- Use npm, not yarn or pnpm\n- Code path: `game/frontend/package.json`\n- Code path: `game/frontend/package-lock.json`\n\n\n## Definition of done\n- zustand present in dependencies and lockfile\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Install zustand as a runtime dependency with npm.",
+      "description": "Run npm install zustand in game/frontend so package.json dependencies and package-lock.json are updated together. No other dependency changes.",
+      "acceptance_criteria": [
+        "Given the change, when package.json is read, then dependencies.zustand exists",
+        "Given the change, when package-lock.json is read, then node_modules/zustand is resolved"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json",
+          "game/frontend/package-lock.json"
+        ],
+        "out_of_scope": [
+          "Store implementation",
+          "Tests"
+        ],
+        "preserve": [
+          "Existing dependencies and lockfileVersion 3"
+        ]
+      },
+      "technical_constraints": [
+        "Use npm, not yarn or pnpm",
+        "Code path: `game/frontend/package.json`",
+        "Code path: `game/frontend/package-lock.json`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "zustand present in dependencies and lockfile",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-296.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84MFBRHJVSHCCATPQ2JY5VT",
+      "matched_feature_id": "01M84KNPXBJWXQBKC3G7CYRWWD",
+      "links": [
+        "parent:01M84MFBRHJVSHCCATPQ2JY5VT",
+        "trace:01M84KNPXBJWXQBKC3G7CYRWWD",
+        "artifact:.ai-dlc/units/UNIT-296.md"
+      ],
+      "depends_on": [
+        "01M84MFBRHJVSHCCATPQ2JY5VT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-296.md",
+      "artifact_id": "UNIT-296",
+      "steps": [
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "dependencies",
+          "lines": "L10-L21",
+          "action": "Add the zustand runtime dependency by running npm install zustand inside game/frontend, which adds the entry to the dependencies object (not devDependencies).",
+          "code": "cd game/frontend && npm install zustand",
+          "expected": "package.json dependencies contains \"zustand\": \"^<version>\"."
+        },
+        {
+          "file": "game/frontend/package-lock.json",
+          "symbol": "packages[\"\"].dependencies and packages[\"node_modules/zustand\"]",
+          "lines": "L8-L22",
+          "action": "Confirm npm added zustand to the root package dependencies and created a node_modules/zustand entry; lockfileVersion stays 3 and no unrelated packages change.",
+          "code": "git diff --stat game/frontend/package-lock.json",
+          "expected": "Lockfile diff only adds zustand entries."
+        }
+      ]
+    },
+    {
+      "id": "01M84MFBRHFQBCABH8DV93ZRBJ",
+      "kind": "unit",
+      "title": "Verify: zustand dependency declaration and resolution unit tests",
+      "body": "Write a vitest test reading package.json and package-lock.json from disk and importing zustand. No network or app start.\n\n## Acceptance criteria\n- Given package.json, when read, then dependencies.zustand matches a semver range\n- Given package-lock.json, when read, then root range equals package.json and node_modules/zustand has a version\n- Given the import, when evaluated, then create is a function\n\n\n## Scope\n- In scope: game/frontend/tests/zustandDependency.test.ts\n- Out of scope: Store behavior\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Read files with node:fs relative to the test file\n- No fixture payloads from network\n\n\n## Definition of done\n- Test passes via the filtered command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests assert package.json, lockfile and import resolution for zustand.",
+      "description": "Write a vitest test reading package.json and package-lock.json from disk and importing zustand. No network or app start.",
+      "acceptance_criteria": [
+        "Given package.json, when read, then dependencies.zustand matches a semver range",
+        "Given package-lock.json, when read, then root range equals package.json and node_modules/zustand has a version",
+        "Given the import, when evaluated, then create is a function"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/zustandDependency.test.ts"
+        ],
+        "out_of_scope": [
+          "Store behavior"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Read files with node:fs relative to the test file",
+        "No fixture payloads from network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes via the filtered command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-297.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84MFBRHQ5QDPP5GH4RQDD41",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84MFBRHQ5QDPP5GH4RQDD41",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-297.md"
+      ],
+      "depends_on": [
+        "01M84MFBRHQ5QDPP5GH4RQDD41"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-297.md",
+      "artifact_id": "UNIT-297",
+      "steps": [
+        {
+          "file": "game/frontend/tests/zustandDependency.test.ts",
+          "symbol": "new: zustand dependency declaration",
+          "lines": "new",
+          "action": "Create the test file. Read ../package.json with fs.readFileSync and JSON.parse; assert dependencies.zustand matches /^[\\^~]?\\d+\\.\\d+\\.\\d+/. Read ../package-lock.json; assert packages[''].dependencies.zustand equals the package.json value and packages['node_modules/zustand'].version is a non-empty string.",
+          "code": "expect(pkg.dependencies.zustand).toMatch(/^[\\^~]?\\d+\\.\\d+\\.\\d+/); expect(lock.packages['node_modules/zustand'].version).toBeTruthy();",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts",
+          "expected": "Declaration and lockfile assertions pass."
+        },
+        {
+          "file": "game/frontend/tests/zustandDependency.test.ts",
+          "symbol": "it('resolves the zustand import')",
+          "lines": "after the declaration tests",
+          "action": "Add a test that does `const mod = await import('zustand')` and asserts typeof mod.create === 'function'.",
+          "code": "const mod = await import('zustand'); expect(typeof mod.create).toBe('function');",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts",
+          "expected": "Import test passes; all tests in the file green."
+        }
+      ]
+    },
+    {
+      "id": "01M84MFBRHGKYTDSXHA55EY1RK",
+      "kind": "evidence",
+      "title": "Evidence: zustand dependency unit tests",
+      "body": "Capture the output of the zustandDependency vitest run showing the declaration, lockfile and import tests passing.\n\n## Acceptance criteria\n- Given the test file, when run, then all tests pass\n- Given the output, when reviewed, then it covers package.json, lockfile and import\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Full suite\n\n\n## Definition of done\n- Passing output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record the passing zustand dependency unit test run.",
+      "description": "Capture the output of the zustandDependency vitest run showing the declaration, lockfile and import tests passing.",
+      "acceptance_criteria": [
+        "Given the test file, when run, then all tests pass",
+        "Given the output, when reviewed, then it covers package.json, lockfile and import"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Full suite"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-059.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84MFBRHFQBCABH8DV93ZRBJ",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84MFBRHFQBCABH8DV93ZRBJ",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-059.md"
+      ],
+      "depends_on": [
+        "01M84MFBRHFQBCABH8DV93ZRBJ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-059.md",
+      "artifact_id": "EVD-059"
+    }
+  ],
+  "created_at": "2026-11-23T16:40:28.231309+00:00",
+  "summary": "AI · 0 NEW · 5 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

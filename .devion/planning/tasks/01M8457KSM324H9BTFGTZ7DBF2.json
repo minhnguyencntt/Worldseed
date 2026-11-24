@@ -1,0 +1,85 @@
+{
+  "id": "01M8457KSM324H9BTFGTZ7DBF2",
+  "intent_id": "01M84522HNMQHD166PMNC6CKQ8",
+  "title": "Verify: Contribution service validation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests proving the service rejects invalid submissions before anything is written.",
+  "description": "Unit tests written from the requirement spec with mocked Git, clock and temp-dir filesystem only. Context: the service rejects invalid submissions before anything is written. Expected result: all listed tests pass.",
+  "acceptance_criteria": [
+    "Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned",
+    "Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned",
+    "Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned",
+    "Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned",
+    "Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned",
+    "Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned"
+  ],
+  "scope": {
+    "in_scope": [
+      "Unit tests with fakes"
+    ],
+    "out_of_scope": [
+      "Running the server",
+      "Browser or e2e checks"
+    ],
+    "preserve": [
+      "Existing player session handlers in backend/internal/player",
+      "GET /healthz"
+    ]
+  },
+  "technical_constraints": [
+    "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+    "Git writes go through an interface wrapping the Git CLI"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Listed tests pass via the unit command",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-062.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8457J1JWYRMDTRQFZMET35M",
+    "trace:01M844GYQJ55B1RVZJXYYRYX24",
+    "artifact:.ai-dlc/units/UNIT-062.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8457KSMQ4281XE4VPWZPYE0"
+  ],
+  "sim_node_id": "01M8457J1JQT5C2C3Z570GPMX1",
+  "feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+  "artifact_path": ".ai-dlc/units/UNIT-062.md",
+  "artifact_id": "UNIT-062",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/service_test.go",
+      "symbol": "TestSubmit_Rejects",
+      "lines": "new",
+      "action": "Write test TestSubmit_Rejects: table test with fake RoundSource, fake Store and fixed clock: prompt of 2 and 501 runes -> ErrPromptLength; unknown world -> ErrWorldNotFound; round Status CLOSED -> ErrRoundNotOpen; CountByPlayer returns 5 -> ErrLimitReached; HasPrompt true -> ErrDuplicate; prompt with 11 'a' -> ErrSpam; assert Store.Save call count is 0 each time.",
+      "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/contribution/service_test.go",
+      "symbol": "TestSubmit_RateLimit",
+      "lines": "new",
+      "action": "Write test TestSubmit_RateLimit: fixed clock; 4th submit within RateWindow -> ErrRateLimited; advance clock past window -> success.",
+      "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/contribution/service_test.go",
+      "symbol": "TestSubmit_OK",
+      "lines": "new",
+      "action": "Write test TestSubmit_OK: valid input returns Contribution with CreatedAt equal to the fixed clock and Save called once.",
+      "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T12:13:59.988368+00:00",
+  "updated_at": "2026-11-23T12:22:20.022867+00:00"
+}

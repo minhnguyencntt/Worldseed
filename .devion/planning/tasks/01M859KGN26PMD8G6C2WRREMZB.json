@@ -1,0 +1,72 @@
+{
+  "id": "01M859KGN26PMD8G6C2WRREMZB",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Verify: Character schema, animation resolver and preload unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for characters",
+  "description": "Test schema, resolver, planPreload and BootScene with Phaser mocked.",
+  "acceptance_criteria": [
+    "Resolver returns manifest animation or idle",
+    "Schema validates characters",
+    "BootScene plays idle then interact with mocked Phaser"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/characterAnimation.test.ts",
+      "game/frontend/tests/bootSceneCharacters.test.ts"
+    ],
+    "out_of_scope": [
+      "Browser runs"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Phaser mocked via the @game alias pattern in bootScene.test.ts"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-582.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1BWRY29WA3TJ6VGSN0",
+    "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+    "artifact:.ai-dlc/units/UNIT-582.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN2V58NHB8NNAC340XG"
+  ],
+  "sim_node_id": "01M859FE1B948D1CHAJC49SFPB",
+  "feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+  "artifact_path": ".ai-dlc/units/UNIT-582.md",
+  "artifact_id": "UNIT-582",
+  "steps": [
+    {
+      "file": "game/tests/characterAnimation.test.ts",
+      "symbol": "new: describe resolveCharacterAnimation and sceneSchema characters",
+      "lines": "new",
+      "action": "Add tests: walk resolves to {asset: character:boy-walk, animation: walk}; interact resolves to boy-interact; spec lacking walk returns idle; unknown asset returns idle; sceneSchema.parse accepts the boy; parse without animations.idle throws a ZodError whose issue path includes characters.0.animations.idle; planPreload load includes all three boy asset ids once. Build the manifest from game/public/assets/worlds/the-boys-room/manifest.json via parseManifest.",
+      "command": "cd game && npx vitest run tests/characterAnimation.test.ts",
+      "expected": "All tests pass"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+      "symbol": "new: BootScene character wiring",
+      "lines": "new",
+      "action": "Following bootScene.test.ts mocking, mock phaser Scene with fake add.sprite and anims.create spies; run create(); assert one sprite per scene.characters entry played with key character:boy:idle; emit phaserToReact objectClick and assert play called with character:boy-interact:interact.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.621944+00:00"
+}

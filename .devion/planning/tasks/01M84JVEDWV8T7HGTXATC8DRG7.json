@@ -1,0 +1,62 @@
+{
+  "id": "01M84JVEDWV8T7HGTXATC8DRG7",
+  "intent_id": "01M84JSSMB017K29PX57X7B2KQ",
+  "title": "Verify: Exporter frozen-only filtering unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for frozen-only export",
+  "description": "Tests with the in-memory fakeSource from export_source_test.go.",
+  "acceptance_criteria": [
+    "Only frozen ids appear in snapshot order",
+    "Fields map correctly"
+  ],
+  "scope": {
+    "in_scope": [
+      "exporter_test.go"
+    ],
+    "out_of_scope": [
+      "real filesystem"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse fakeSource (fields contributions, frozen)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-268.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JTWM3BGBBRG43SPSZ30A4",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-268.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JVEDWSHA688M2P7JKMDD3"
+  ],
+  "sim_node_id": "01M84JTWM3A7H794W8JFTJVRME",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-268.md",
+  "artifact_id": "UNIT-268",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/exporter_test.go",
+      "symbol": "new: TestExporter_OnlyFrozen",
+      "lines": "new",
+      "action": "Build fakeSource with contributions A,B,C (PlayerID p1, Prompt text, fixed CreatedAt) and frozen [C,A]; call NewExporter(src).Export(ctx,\"w\",\"ROUND-0000001\"); assert Contributions IDs equal [C,A], B absent, Author==PlayerID, Content==Prompt, Version==ExportVersion, WorldID and RoundID set",
+      "command": "cd backend && go test ./internal/contribution -run TestExporter_OnlyFrozen",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:12:01.340053+00:00",
+  "updated_at": "2026-11-23T16:13:20.114564+00:00"
+}

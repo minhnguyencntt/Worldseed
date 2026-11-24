@@ -1,0 +1,82 @@
+{
+  "id": "01M849941JRX08T1AH5GC2HMSE",
+  "intent_id": "01M84965YYKGGNFFABT1YYSSX6",
+  "title": "Act: Add execution action handlers to AdminApp",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "runExecutionAction calls the client function, reloads and is passed to ExecutionPanel",
+  "description": "Import approveExecution, retryExecution, rejectExecution in AdminApp.tsx. Add a runExecutionAction helper modelled on runRoundAction, and pass onApprove, onRetry and onReject to ExecutionPanel.",
+  "acceptance_criteria": [
+    "ExecutionPanel receives onApprove, onRetry and onReject from AdminApp",
+    "Each handler awaits the client call and then increments reloads"
+  ],
+  "scope": {
+    "in_scope": [
+      "AdminApp.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "runRoundAction"
+    ]
+  },
+  "technical_constraints": [
+    "Types: (token: string, id: string) => Promise<ExecutionInfo>",
+    "Code path: `game/frontend/src/components/AdminApp.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Handlers passed to ExecutionPanel",
+    "npm run typecheck passes in game/frontend",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-139.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8498ZM2PWF2Z3V7JG300DMC",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-139.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M849941JE2GV0G4X97MNB1J7"
+  ],
+  "sim_node_id": "01M8498ZM2HEKP5F4415HP9H95",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-139.md",
+  "artifact_id": "UNIT-139",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "import block from '../api/client'",
+      "lines": "L2-L15",
+      "action": "Add approveExecution, rejectExecution and retryExecution to the value imports from '../api/client' in alphabetical position.",
+      "code": "import { ApiError, approveExecution, closeRound, ..., openRound, rejectExecution, retryExecution, WORLD_ID, ... }",
+      "expected": "The three client functions are importable in AdminApp.tsx"
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "type ExecutionAction and AdminApp.runExecutionAction",
+      "lines": "after L17 (type) and after runRoundAction L90-L98",
+      "action": "Add type ExecutionAction = (token: string, id: string) => Promise<ExecutionInfo>. Inside AdminApp, after runRoundAction, add async function runExecutionAction(action: ExecutionAction, id: string) that awaits action(token, id) in try and then calls setReloads((n) => n + 1); in catch it calls handleError(err).",
+      "code": "async function runExecutionAction(action: ExecutionAction, id: string) {\n  try {\n    await action(token, id);\n    setReloads((n) => n + 1);\n  } catch (err) {\n    handleError(err);\n  }\n}",
+      "expected": "Calling it posts to the endpoint and triggers a reload"
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp return: <ExecutionPanel>",
+      "lines": "L130",
+      "action": "Pass onApprove={(id) => runExecutionAction(approveExecution, id)}, onRetry={(id) => runExecutionAction(retryExecution, id)} and onReject={(id) => runExecutionAction(rejectExecution, id)} to ExecutionPanel.",
+      "code": "<ExecutionPanel execution={execution} contributionCount={contributions.length} onApprove={...} onRetry={...} onReject={...} />",
+      "expected": "Approve/Reject buttons render for AWAITING_APPROVAL and Retry for FAILED"
+    }
+  ],
+  "created_at": "2026-11-23T13:24:43.698639+00:00",
+  "updated_at": "2026-11-23T13:27:57.099542+00:00"
+}

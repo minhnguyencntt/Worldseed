@@ -1,0 +1,69 @@
+{
+  "id": "01M85A753WH015N0FPGS1E6FHG",
+  "intent_id": "01M85A4P9WVRP2R2XRB0AB2KQX",
+  "title": "Verify: characterSchema interaction unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the optional character interaction field",
+  "description": "Add game/tests/characterSchema.test.ts testing characterSchema with and without interaction, using pure in-memory inputs and no I/O.",
+  "acceptance_criteria": [
+    "Tests assert absent, dialogue, actions and invalid cases",
+    "Tests pass with the command below"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/characterSchema.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "vitest, in-memory data only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All characterSchema tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-593.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85A5TC4MZP8R5WD42YBR59X",
+    "trace:01M85A0HWE8BS8GCVX8EKAX1GQ",
+    "artifact:.ai-dlc/units/UNIT-593.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85A753WGZKPCA2PVPY97DHR"
+  ],
+  "sim_node_id": "01M85A5TC45R220TXNNB6KQHFR",
+  "artifact_path": ".ai-dlc/units/UNIT-593.md",
+  "artifact_id": "UNIT-593",
+  "steps": [
+    {
+      "file": "game/tests/characterSchema.test.ts",
+      "symbol": "new: characterSchema interaction",
+      "lines": "new",
+      "action": "Create a describe block with a base character fixture (id 'boy', name 'Boy', position {x:1,y:2}, animations.idle {asset:'character:boy', animation:'idle'}). Test 1: parse base without interaction, expect interaction undefined. Test 2: add interaction {dialogue:'npc-greeting'}, expect result.interaction.dialogue toBe 'npc-greeting'. Test 3: add interaction {actions:[{id:'inspect',label:'Talk',events:[]}]}, expect actions length 1 and id 'inspect'.",
+      "command": "cd game && npx vitest run tests/characterSchema.test.ts",
+      "expected": "Three tests pass"
+    },
+    {
+      "file": "game/tests/characterSchema.test.ts",
+      "symbol": "rejects invalid interaction",
+      "lines": "new",
+      "action": "Add tests: interaction {dialogue:5} throws via expect(() => characterSchema.parse(...)).toThrow(); interaction {actions:[{id:'dance',label:'x',events:[]}]} also throws.",
+      "command": "cd game && npx vitest run tests/characterSchema.test.ts",
+      "expected": "Both rejection tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T23:00:22.268640+00:00",
+  "updated_at": "2026-11-23T23:01:27.696128+00:00"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "01M84H6X1TV4QQTJRZ9W085929",
+  "intent_id": "01M84H5BPMDDKFQ09WVB93984T",
+  "title": "SG-7.10 Claude Code CLI adapter with restricted permissions and no raw community text",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Claude adapter runs with restricted permissions, takes only structured input, and is unit tested with a mocked executor",
+  "description": "Context: backend/worker/internal/provider/claude.go already has a Claude adapter that calls an Exec interface with `claude -p <fixed prompt>`, with unit tests using a recording fake Exec. It passes no permission restrictions. Desired behavior: the adapter limits what the CLI may do, never uses a shell, and receives only a constant instruction that points at structured tasks under development/tasks, never raw community text. Expected result: unit tests with a fake Exec prove all of this. Why: community prompts are untrusted and the coding agent must run restricted.",
+  "acceptance_criteria": [
+    "Given the Claude adapter, when Run is called, then the Exec receives permission-restricting flags that exclude shell and network tools",
+    "Given the Claude adapter, when Run is called, then the args contain only a fixed prompt naming development/tasks and no caller-supplied text",
+    "Given an empty work directory, when Run is called, then it returns an error and Exec is not called"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/provider/claude.go",
+      "backend/worker/internal/provider/claude_test.go"
+    ],
+    "out_of_scope": [
+      "Real command executor implementation",
+      "Runner changes",
+      "Mock provider"
+    ],
+    "preserve": [
+      "Exec interface signature",
+      "NewClaude nil-Exec error",
+      "Cost 0 return and error wrapping with the 'provider claude' prefix",
+      "provider.New factory behavior"
+    ]
+  },
+  "technical_constraints": [
+    "No shell: command name and args are passed to Exec as a list",
+    "Tests use a fake Exec only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Adapter restricted and unit tests pass with go test ./internal/provider",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-045.md`"
+  ],
+  "non_functional": [
+    "Security: untrusted community text never reaches the agent command line"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84G51W28MN6Z7X3354EYDE3",
+    "artifact:.ai-dlc/intent/INT-045.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84H6HR9CZTV0P50JT3C1V7K",
+  "feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+  "artifact_path": ".ai-dlc/intent/INT-045.md",
+  "artifact_id": "INT-045",
+  "created_at": "2026-11-23T15:43:19.610569+00:00",
+  "updated_at": "2026-11-23T15:44:06.344017+00:00"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "01M84QJA915Q7GB66FB6MJ3K83",
+  "intent_id": "01M84QGDC7G1SSDXBGSFJKSGWR",
+  "title": "Verify: Mocked-fs dangling reference unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "New tests/manifestDanglingMocked.test.ts",
+  "description": "Chain the mocked fallback loader into checkAssetRefs to prove dangling references are reported.",
+  "acceptance_criteria": [
+    "Dropped and unknown ids are reported",
+    "All-present refs yield no issues"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/manifestDanglingMocked.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('node:fs')"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-373.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QHEF56YD6D2XCWZDTF912",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-373.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QJA91DKBKEFECAYA3TV0B"
+  ],
+  "sim_node_id": "01M84QHEF5AVTB63P1GYDXCZCQ",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-373.md",
+  "artifact_id": "UNIT-373",
+  "steps": [
+    {
+      "file": "game/tests/manifestDanglingMocked.test.ts",
+      "symbol": "new: dangling refs after fallback load",
+      "lines": "new",
+      "action": "Mock node:fs; readFileSync returns a manifest with assets 'a' and 'b'; existsSync returns false only for b's path; load via loadManifestWithFallback; assert checkAssetRefs(result.manifest, ['a','b','ghost']) has 2 issues whose messages contain 'b' and 'ghost'; assert refs ['a'] returns []",
+      "command": "npx vitest run tests/manifestDanglingMocked.test.ts",
+      "expected": "Both tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T17:34:25.057745+00:00",
+  "updated_at": "2026-11-23T17:35:11.131564+00:00"
+}

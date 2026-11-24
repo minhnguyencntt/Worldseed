@@ -1,0 +1,55 @@
+{
+  "id": "01M85KECM070KS1BPK2SP6HKAP",
+  "intent_id": "01M85K9F2Z1HDMTP8XNSKJEWFA",
+  "title": "SG-10.2.3 Remove store-driven focus and unsubscribe on scene shutdown",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "On BootScene shutdown, clear scene and store focus and release the store subscription, covered by a unit test.",
+  "description": "Context: BootScene.create registers a SHUTDOWN handler (game/frontend/src/phaser/BootScene.ts) that removes the keydown listener, unsubscribes from useGameStore, and destroys effects, scene objects and characters. It does not blur focused objects or reset gameStore.focusedObjectId. Desired behavior: on shutdown the focus is removed and the subscription is released. Expected result: after shutdown no scene object stays focused, the store focusedObjectId is null, and later store changes do not reach the scene. Why: a stale focus id would re-highlight objects when the scene restarts.",
+  "acceptance_criteria": [
+    "Given a focused object, when the scene shuts down, then the object is blurred and focusedObjectId is null.",
+    "Given the scene has shut down, when the store changes, then onStateChange is not invoked and no object is focused.",
+    "A unit test asserts both behaviors."
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene SHUTDOWN handler",
+      "Unit test for shutdown focus removal"
+    ],
+    "out_of_scope": [
+      "Keyboard handler logic",
+      "Store schema changes",
+      "Backend"
+    ],
+    "preserve": [
+      "Existing shutdown cleanup of keyboard listener, effects, objects and characters",
+      "applyFocusedObject behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only",
+    "Unit tests mock Phaser as in tests/bootSceneFocusClear.test.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Shutdown removes focus and unsubscribes",
+    "Unit test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-148.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M857STNX1YWBTW0H0K7DRF3M",
+    "artifact:.ai-dlc/intent/INT-148.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85KATM0BVTDW9TF37MJGJV9",
+  "feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+  "artifact_path": ".ai-dlc/intent/INT-148.md",
+  "artifact_id": "INT-148",
+  "created_at": "2026-11-24T01:41:36.512693+00:00"
+}

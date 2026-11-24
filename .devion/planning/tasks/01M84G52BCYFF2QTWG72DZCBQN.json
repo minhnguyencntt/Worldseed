@@ -1,0 +1,80 @@
+{
+  "id": "01M84G52BCYFF2QTWG72DZCBQN",
+  "intent_id": "01M84G0SGVRTS10AHNW40X86RM",
+  "title": "Verify: Approval gate and worktree cleanup unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Fix TestRunCleanup and cover worktree create failure and failure cleanup",
+  "description": "Correct the stale TestRunCleanup config and add tests with a failing Worktrees fake; Git is fully mocked.",
+  "acceptance_criteria": [
+    "TestRunCleanup passes with AutoPublish true",
+    "Create failure never runs the agent",
+    "Agent failure removes worktree and skips publish"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner_test.go TestRunCleanup, runner_cleanup_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Gate tests"
+    ]
+  },
+  "technical_constraints": [
+    "Same package runner"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go test ./internal/runner -run 'TestRunCleanup|TestRunCreateWorktreeError|TestRunFailureRemovesWorktree' passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-201.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84G4KBB506CCXKVX46829TN",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-201.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84G52BC6C8WTJWPX3T2ZB0Q"
+  ],
+  "sim_node_id": "01M84G4KBBD8N6CP0D4T39WEEH",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-201.md",
+  "artifact_id": "UNIT-201",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_test.go",
+      "symbol": "TestRunCleanup",
+      "lines": "L132-L158",
+      "action": "Change 'newRunner(t, Config{}, agent)' to 'newRunner(t, Config{AutoPublish: true}, agent)' and update the doc comment to say AutoPublish is true so the gate does not hold the worktree.",
+      "code": "newRunner(t, Config{}, agent) -> newRunner(t, Config{AutoPublish: true}, agent)",
+      "command": "cd backend/worker && go test ./internal/runner -run '^TestRunCleanup$'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_cleanup_test.go",
+      "symbol": "new: TestRunCreateWorktreeError",
+      "lines": "new",
+      "action": "Define type createFailTrees embedding fakeTrees whose Create returns errors.New(\"no git\"); set h.r.trees = &createFailTrees{}; call Run; assert error contains \"no git\", agent.calls == 0 and h.st.Get(\"EXEC-1\").Status == store.StatusRunning.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunCreateWorktreeError",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_cleanup_test.go",
+      "symbol": "new: TestRunFailureRemovesWorktree",
+      "lines": "new",
+      "action": "fakeAgent{errs: one error}, Config{MaxRetries:0}; call Run; assert len(h.trees.removed) == 1 and len(h.pub.calls) == 0.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunFailureRemovesWorktree",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:24:50.923969+00:00",
+  "updated_at": "2026-11-23T15:26:09.396805+00:00"
+}

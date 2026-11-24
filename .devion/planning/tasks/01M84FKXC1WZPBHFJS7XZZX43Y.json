@@ -1,0 +1,81 @@
+{
+  "id": "01M84FKXC1WZPBHFJS7XZZX43Y",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "Verify: Runner approval gate unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the gate with fake publisher",
+  "description": "Write runner_gate_test.go reusing fakes to prove A3 against R3 criteria.",
+  "acceptance_criteria": [
+    "Gate closed, so Publish is never called and status is AWAITING_APPROVAL",
+    "Auto-publish success and publish failure each have a passing test"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner_gate_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "fakes"
+    ]
+  },
+  "technical_constraints": [
+    "fakePublisher has err field and calls counter"
+  ],
+  "dependencies": [
+    "A3",
+    "V1"
+  ],
+  "definition_of_done": [
+    "go test ./internal/runner -run TestRunGate passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-188.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FKHRAZDXS49982PXPKFQ9",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-188.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FKXC1GW6RR8CT3NYZDM1Y"
+  ],
+  "sim_node_id": "01M84FKHRAGD08S3DZ2JQG1XYX",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-188.md",
+  "artifact_id": "UNIT-188",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_gate_test.go",
+      "symbol": "TestRunGateBlocksPublish",
+      "lines": "new",
+      "action": "AutoPublish false, agent succeeds; Run; assert returned and stored Status == store.StatusAwaitingApproval, pub.calls==0, len(trees.removed)==0.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunGateBlocksPublish",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_gate_test.go",
+      "symbol": "TestRunGateAutoPublish",
+      "lines": "new",
+      "action": "AutoPublish true; Run; assert Status COMPLETED, pub.calls==1 with workDir equal to filepath.Join(WorkRoot,\"EXEC-1\").",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunGateAutoPublish",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_gate_test.go",
+      "symbol": "TestRunGatePublishError",
+      "lines": "new",
+      "action": "AutoPublish true, pub.err=errors.New(\"boom\"); Run; assert err contains boom via errors.Is and stored Status FAILED.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunGatePublishError",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.961486+00:00"
+}

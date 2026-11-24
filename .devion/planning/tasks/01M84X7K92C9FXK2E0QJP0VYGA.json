@@ -1,0 +1,72 @@
+{
+  "id": "01M84X7K92C9FXK2E0QJP0VYGA",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "Verify: Keyboard focus and activation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for focus, handleKey and moveFocus",
+  "description": "Add tests to tests/sceneObject.test.ts and tests/buildScene.test.ts using fake render contexts.",
+  "acceptance_criteria": [
+    "Enter/Space emit only when focused",
+    "moveFocus skips hidden and wraps",
+    "blur clears highlight"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/sceneObject.test.ts",
+      "game/tests/buildScene.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Fake contexts only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both test files pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-487.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84X58HR630D30C5H3KVFWXE",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-487.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84X7K92231J7JD4BXSSJ026"
+  ],
+  "sim_node_id": "01M84X58HRWT13KV1JK5SPKMAZ",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-487.md",
+  "artifact_id": "UNIT-487",
+  "steps": [
+    {
+      "file": "game/tests/sceneObject.test.ts",
+      "symbol": "new: it('activates with Enter and Space only when focused')",
+      "lines": "after the last it()",
+      "action": "Using the extended fake context, sync a visible state, register onInteract mock; handleKey('Enter') -> 0 calls; focus(); handleKey('Enter'), handleKey(' ') -> 2 calls; handleKey('a') -> still 2; blur() then assert last setHighlighted call is [false] and last setLabelVisible call is [false]",
+      "command": "cd game && npx vitest run tests/sceneObject.test.ts -t 'Enter and Space'",
+      "expected": "Call counts as stated"
+    },
+    {
+      "file": "game/tests/buildScene.test.ts",
+      "symbol": "new: it('moveFocus skips hidden objects and wraps')",
+      "lines": "after the last it()",
+      "action": "Build three SceneObjects with a fake context, sync a state where the second is hidden via visibleWhen; call moveFocus(objs,1) twice and assert isFocused on objs[0] then objs[2]; a third call wraps to objs[0]; moveFocus(objs,-1) from objs[0] focuses objs[2]",
+      "command": "cd game && npx vitest run tests/buildScene.test.ts -t 'moveFocus'",
+      "expected": "Focus order 0,2,0 and reverse wrap to 2"
+    }
+  ],
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.565728+00:00"
+}

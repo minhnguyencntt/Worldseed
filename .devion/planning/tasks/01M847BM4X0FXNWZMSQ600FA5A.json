@@ -1,0 +1,64 @@
+{
+  "id": "01M847BM4X0FXNWZMSQ600FA5A",
+  "intent_id": "01M847A84P3F0A9BH7JBTPZMQ5",
+  "title": "Act: Confirm Tick open and close dispatch against the injected clock",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm Tick dispatches Open and Close by clock boundary and fix only if it deviates",
+  "description": "scheduler.go already contains the switch in Tick. Read it and make it match the requirement; change nothing if it already does. Result: Tick opens due SCHEDULED rounds, closes expired OPEN rounds and ignores other states before their boundary.",
+  "acceptance_criteria": [
+    "Tick calls Open only for SCHEDULED rounds where !now.Before(StartsAt)",
+    "Tick calls Close only for OPEN rounds where !now.Before(EndsAt)"
+  ],
+  "scope": {
+    "in_scope": [
+      "Scheduler.Tick switch in scheduler.go"
+    ],
+    "out_of_scope": [
+      "Run loop"
+    ],
+    "preserve": [
+      "Public signatures of Scheduler, Clock, Controller, Lister"
+    ]
+  },
+  "technical_constraints": [
+    "Read time through s.clock() only",
+    "Code path: `backend/internal/round/scheduler.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tick dispatch matches REQ1 with no behavior beyond it",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-099.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847BJ0018XA4QH8FXQY54XE",
+    "trace:01M8470M8T9BC85XFQSVAAYGZG",
+    "artifact:.ai-dlc/units/UNIT-099.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M847BM4XYYYBKHPTDSMD9245"
+  ],
+  "sim_node_id": "01M847BJ007H0T216JVMXP38RR",
+  "artifact_path": ".ai-dlc/units/UNIT-099.md",
+  "artifact_id": "UNIT-099",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/round/scheduler.go",
+      "symbol": "Scheduler.Tick",
+      "lines": "L48-L82",
+      "action": "Read the switch inside the rounds loop and confirm the SCHEDULED case uses !now.Before(rd.StartsAt) calling s.Controller.Open and the OPEN case uses !now.Before(rd.EndsAt) calling s.Controller.Close, with now taken from clock.Now(); edit only if a condition differs",
+      "code": "case rd.Status == StatusScheduled && !now.Before(rd.StartsAt): ... case rd.Status == StatusOpen && !now.Before(rd.EndsAt): ...",
+      "expected": "Tick dispatches Open and Close exactly at the boundary instant and ignores COMPLETED and future rounds"
+    }
+  ],
+  "created_at": "2026-11-23T12:51:08.573458+00:00",
+  "updated_at": "2026-11-23T12:51:39.597925+00:00"
+}

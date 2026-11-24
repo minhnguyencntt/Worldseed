@@ -1,0 +1,680 @@
+{
+  "id": "01M84FKXRXQNHGFJNMP15P3BQP",
+  "trigger_node_id": "INT-038, UNIT-183 +9",
+  "node_ids": [
+    "INT-038",
+    "UNIT-183",
+    "UNIT-184",
+    "UNIT-185",
+    "UNIT-186",
+    "UNIT-187",
+    "UNIT-188",
+    "REQ-092",
+    "REQ-093",
+    "REQ-094",
+    "EVD-038"
+  ],
+  "intent_id": "INT-038",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-038",
+      "title": "SG-7.3 · Implement the execution runner in worker/internal",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-183",
+      "title": "Act: Create the runner package with lock, worktree and timeout",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1GR5R7ZHRP0PDFYEW"
+      ],
+      "depends_on": [
+        "REQ-092"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "from_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "started_at": "2026-11-23T15:15:30.585143+00:00",
+      "ended_at": "2026-11-23T15:15:55.633938+00:00",
+      "run_started_at": "2026-11-23T15:15:30.585143+00:00",
+      "duration_ms": 23618,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 4258,
+      "estimated_cost_usd": 0.01704
+    },
+    {
+      "unit_id": "UNIT-184",
+      "title": "Act: Add the retry loop and budget stop to Run",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1ZGANW8ZY62D1HDS6"
+      ],
+      "depends_on": [
+        "REQ-093"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "from_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "started_at": "2026-11-23T15:15:30.605596+00:00",
+      "ended_at": "2026-11-23T15:15:55.016617+00:00",
+      "run_started_at": "2026-11-23T15:15:30.605596+00:00",
+      "duration_ms": 23349,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 3060,
+      "estimated_cost_usd": 0.012253,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED, no changes made. The target file backend/worker/internal/runner/runner.go does not exist in this worktree (HEAD a2e0674). There is no runner package in git ls-files or git history, no Runner type, and no agent.Run call under backend/. Steps 1 and 2 name symbols (the Config declaration, Runner.Run step 5, r.cfg.MaxRetries/MaxBudget, r.agent) that are not present. The only pieces that exist are the config fields MaxRetries and MaxBudget (backend/worker/internal/config/config.go) and store.Execution.Attempt (backend/worker/internal/store/store.go:45). Writing a whole Runner would invent an approach the brief does not specify, so I stopped. To proceed, the runner package must land in this worktree first, or the brief needs correcting to the right path."
+    },
+    {
+      "unit_id": "UNIT-185",
+      "title": "Act: Add the approval gate before publishing",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1GW6RR8CT3NYZDM1Y"
+      ],
+      "depends_on": [
+        "REQ-094"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "from_sha": "a2e06747fd9bdc9b5630758a24a4dd870172af9f",
+      "started_at": "2026-11-23T15:15:30.613382+00:00",
+      "ended_at": "2026-11-23T15:15:53.803293+00:00",
+      "run_started_at": "2026-11-23T15:15:30.613382+00:00",
+      "duration_ms": 21744,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 2805,
+      "estimated_cost_usd": 0.011231,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Blocked: Step 1 targets `backend/worker/internal/runner/runner.go` (`Runner.Run`, step 7 success path), but that file does not exist in worktree 01M84FKXRXQNHGFJNMP15P3BQP at a2e0674. There is no `runner` directory under `backend/worker/internal/`, and no `Runner`, `Publisher`/`Publish`, `trees.Remove`, or `r.cfg` symbol anywhere under `backend/` or `.ai-dlc/`. UNIT-185 is also not in `.ai-dlc/units/` (only UNIT-001 to UNIT-010 exist), so the brief's linked Files to read are not present either. The pieces that do exist are `StatusAwaitingApproval` in `backend/worker/internal/store/store.go:25` and `AutoPublish` in `backend/worker/internal/config/config.go:44`, but no code reads AutoPublish to gate publishing. Writing a new Runner from scratch would invent an approach the brief does not specify, so I made no edits. Next step: confirm the runner package is on another branch or commit, or send a corrected brief that points at the existing publish-handling code."
+    },
+    {
+      "unit_id": "UNIT-186",
+      "title": "Verify: Runner lock, worktree and timeout unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1E0HA3PWD5W6R0JY1"
+      ],
+      "depends_on": [
+        "UNIT-183",
+        "REQ-092"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "a8ffefa6eb113f373c23ef2e454741a17028fa56",
+      "from_sha": "bf59abc65c57e1dd9dbd0dcc6a3d911107e5f83b",
+      "tests": [
+        {
+          "id": "TestRunLocked",
+          "kind": "unit",
+          "name": "TestRunLocked",
+          "title": "Run does not start when the World lock is already held",
+          "scenario": "Given the lock file exists, When Run is called, Then it returns an error wrapping lock.ErrLocked, the agent is not called and no worktree is created",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunLocked",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunCleanup",
+          "kind": "unit",
+          "name": "TestRunCleanup",
+          "title": "A successful run releases the lock and removes its worktree",
+          "scenario": "Given the agent succeeds, When Run completes, Then the lock file is gone, the worktree WorkRoot/EXEC-1 is created and removed once, and the agent works in that directory",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunCleanup",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunTimeout",
+          "kind": "unit",
+          "name": "TestRunTimeout",
+          "title": "An agent that exceeds the timeout fails the execution",
+          "scenario": "Given the agent blocks and the timeout is 20ms, When Run is called, Then it returns an error wrapping context.DeadlineExceeded and the stored EXEC-1 record is FAILED",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunTimeout",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T15:15:55.642992+00:00",
+      "ended_at": "2026-11-23T15:16:43.428821+00:00",
+      "run_started_at": "2026-11-23T15:15:55.642992+00:00",
+      "duration_ms": 46849,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 9839,
+      "estimated_cost_usd": 0.039369
+    },
+    {
+      "unit_id": "UNIT-187",
+      "title": "Verify: Runner retry and budget unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1M90PY1NGP003XN65"
+      ],
+      "depends_on": [
+        "UNIT-184",
+        "REQ-093"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "b2f9420f989546ccdfbdd729abacfca6ac8a3c91",
+      "from_sha": "b2f9420f989546ccdfbdd729abacfca6ac8a3c91",
+      "tests": [
+        {
+          "id": "TestRunRetriesThenSucceeds",
+          "kind": "unit",
+          "name": "TestRunRetriesThenSucceeds",
+          "title": "retries a failing agent until it succeeds",
+          "scenario": "Given MaxRetries is 2 and the agent fails twice before succeeding, When Run is called, Then it returns no error, the agent ran three times and the stored Attempt is 3.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run '^TestRunRetriesThenSucceeds$' -v -count=1",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunRetryExhausted",
+          "kind": "unit",
+          "name": "TestRunRetryExhausted",
+          "title": "fails the execution once retries are exhausted",
+          "scenario": "Given MaxRetries is 1 and the agent fails on every call, When Run is called, Then the agent ran twice, the stored status is FAILED and the stored error contains the second error text.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run '^TestRunRetryExhausted$' -v -count=1",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunBudgetExceeded",
+          "kind": "unit",
+          "name": "TestRunBudgetExceeded",
+          "title": "stops retrying once the accumulated cost exceeds the budget",
+          "scenario": "Given each agent call costs 3.0, MaxBudget is 5.0, MaxRetries is 5 and every call fails, When Run is called, Then it returns an error wrapping ErrBudgetExceeded and the agent ran exactly twice.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run '^TestRunBudgetExceeded$' -v -count=1",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (3): TestRunRetriesThenSucceeds, TestRunRetryExhausted, TestRunBudgetExceeded",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "a896e37198e75ec14014a0138be3534d11fe005a",
+          "from_sha": "a8ffefa6eb113f373c23ef2e454741a17028fa56",
+          "tests": [
+            {
+              "id": "TestRunRetriesThenSucceeds",
+              "kind": "unit",
+              "name": "TestRunRetriesThenSucceeds",
+              "title": "retries a failing agent until it succeeds",
+              "scenario": "Given MaxRetries 2 and the agent fails twice then succeeds, When Run is called, Then err is nil, agent.calls is 3 and stored Attempt is 3",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunRetriesThenSucceeds",
+              "status": "failed",
+              "detail": "Package does not build (undefined ErrBudgetExceeded). In a copy without the budget test: Run returned error 'x' after one call; retries not implemented."
+            },
+            {
+              "id": "TestRunRetryExhausted",
+              "kind": "unit",
+              "name": "TestRunRetryExhausted",
+              "title": "fails the execution once retries are exhausted",
+              "scenario": "Given MaxRetries 1 and the agent fails on every call, When Run is called, Then agent.calls is 2, stored status is FAILED and stored error contains the second error text",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunRetryExhausted",
+              "status": "failed",
+              "detail": "Package does not build (undefined ErrBudgetExceeded). In a copy without the budget test: agent.calls = 1 (want 2); stored error is 'first failure' (want 'second failure'); retries not implemented."
+            },
+            {
+              "id": "TestRunBudgetExceeded",
+              "kind": "unit",
+              "name": "TestRunBudgetExceeded",
+              "title": "stops retrying once the cost budget is exceeded",
+              "scenario": "Given each call costs 3.0, MaxBudget 5.0, MaxRetries 5 and every call fails, When Run is called, Then err wraps ErrBudgetExceeded and agent.calls is 2",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/runner -run TestRunBudgetExceeded",
+              "status": "failed",
+              "detail": "Build failed: undefined ErrBudgetExceeded in runner package. Budget enforcement and the ErrBudgetExceeded sentinel are not implemented in runner.go."
+            }
+          ],
+          "started_at": "2026-11-23T15:16:43.746259+00:00",
+          "ended_at": "2026-11-23T15:17:22.785472+00:00",
+          "duration_ms": 37346,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 18,
+          "tokens_out": 6947,
+          "estimated_cost_usd": 0.027802
+        }
+      ],
+      "started_at": "2026-11-23T15:16:43.746259+00:00",
+      "ended_at": "2026-11-23T15:18:27.858150+00:00",
+      "run_started_at": "2026-11-23T15:18:10.739427+00:00",
+      "duration_ms": 16091,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2302,
+      "estimated_cost_usd": 0.009214
+    },
+    {
+      "unit_id": "UNIT-188",
+      "title": "Verify: Runner approval gate unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84FKXC1WZPBHFJS7XZZX43Y"
+      ],
+      "depends_on": [
+        "UNIT-185",
+        "REQ-094"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "b2f9420f989546ccdfbdd729abacfca6ac8a3c91",
+      "from_sha": "b2f9420f989546ccdfbdd729abacfca6ac8a3c91",
+      "tests": [
+        {
+          "id": "TestRunGateBlocksPublish",
+          "kind": "unit",
+          "name": "TestRunGateBlocksPublish",
+          "title": "Run keeps the execution awaiting approval and does not publish when AutoPublish is off",
+          "scenario": "Given the agent succeeds and AutoPublish is false, When Run is called, Then the returned and stored status is AWAITING_APPROVAL, the publisher is never called and no worktree is removed",
+          "command": "cd backend/worker && go test -timeout 2m -count=1 ./internal/runner -run TestRunGateBlocksPublish",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunGateAutoPublish",
+          "kind": "unit",
+          "name": "TestRunGateAutoPublish",
+          "title": "Run publishes the work directory once and completes when AutoPublish is on",
+          "scenario": "Given the agent succeeds and AutoPublish is true, When Run is called, Then the publisher is called exactly once with WorkRoot/EXEC-1 and the stored status is COMPLETED",
+          "command": "cd backend/worker && go test -timeout 2m -count=1 ./internal/runner -run TestRunGateAutoPublish",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRunGatePublishError",
+          "kind": "unit",
+          "name": "TestRunGatePublishError",
+          "title": "Run fails the execution and returns the error when publishing fails",
+          "scenario": "Given the agent succeeds, AutoPublish is true and the publisher fails with boom, When Run is called, Then it returns an error that wraps boom and the stored status is FAILED",
+          "command": "cd backend/worker && go test -timeout 2m -count=1 ./internal/runner -run TestRunGatePublishError",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (3): TestRunGateBlocksPublish, TestRunGateAutoPublish, TestRunGatePublishError",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "a896e37198e75ec14014a0138be3534d11fe005a",
+          "from_sha": "a896e37198e75ec14014a0138be3534d11fe005a",
+          "tests": [
+            {
+              "id": "TestRunGateBlocksPublish",
+              "kind": "unit",
+              "name": "TestRunGateBlocksPublish",
+              "title": "Runner keeps a successful run awaiting approval and does not publish when AutoPublish is off",
+              "scenario": "Given the agent succeeds and AutoPublish is false, When Run is called, Then the returned and stored status is AWAITING_APPROVAL, the publisher is never called and no worktree is removed.",
+              "command": "cd backend/worker && go test -timeout 2m -overlay <tmp-overlay masking runner_retry_test.go> ./internal/runner -run TestRunGateBlocksPublish -v",
+              "status": "failed",
+              "detail": "returned status = \"COMPLETED\"; want \"AWAITING_APPROVAL\". stored status = \"COMPLETED\". worktrees removed = [WorkRoot/EXEC-1]; want none. Cause: no approval gate in runner.go (Act step)."
+            },
+            {
+              "id": "TestRunGateAutoPublish",
+              "kind": "unit",
+              "name": "TestRunGateAutoPublish",
+              "title": "Runner publishes the work directory and completes when AutoPublish is on",
+              "scenario": "Given the agent succeeds and AutoPublish is true, When Run is called, Then the publisher is called exactly once with WorkRoot/EXEC-1 and the status is COMPLETED.",
+              "command": "cd backend/worker && go test -timeout 2m -overlay <tmp-overlay masking runner_retry_test.go> ./internal/runner -run TestRunGateAutoPublish -v",
+              "status": "failed",
+              "detail": "publish calls = []; want exactly one call. Cause: runner.go never calls Publish."
+            },
+            {
+              "id": "TestRunGatePublishError",
+              "kind": "unit",
+              "name": "TestRunGatePublishError",
+              "title": "Runner fails the execution and returns the error when publishing fails",
+              "scenario": "Given the agent succeeds, AutoPublish is true and the publisher fails with boom, When Run is called, Then it returns an error wrapping boom and the stored status is FAILED.",
+              "command": "cd backend/worker && go test -timeout 2m -overlay <tmp-overlay masking runner_retry_test.go> ./internal/runner -run TestRunGatePublishError -v",
+              "status": "failed",
+              "detail": "Run error = <nil>; want errors.Is(err, boom). Cause: runner.go never calls Publish, so the publish error is never produced."
+            }
+          ],
+          "started_at": "2026-11-23T15:16:43.768860+00:00",
+          "ended_at": "2026-11-23T15:17:42.241988+00:00",
+          "duration_ms": 57073,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 20,
+          "tokens_out": 10473,
+          "estimated_cost_usd": 0.041908
+        }
+      ],
+      "started_at": "2026-11-23T15:16:43.768860+00:00",
+      "ended_at": "2026-11-23T15:18:46.577772+00:00",
+      "run_started_at": "2026-11-23T15:18:21.936508+00:00",
+      "duration_ms": 23721,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3779,
+      "estimated_cost_usd": 0.015126
+    },
+    {
+      "unit_id": "REQ-092",
+      "title": "REQ · Run takes the per-World lock, runs the agent in an isolated worktree under a timeout",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-038"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-093",
+      "title": "REQ · Run retries up to the configured limit and stops when the budget is exceeded",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-038"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-094",
+      "title": "REQ · Run blocks at the approval gate before publishing unless auto-publish is on",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-038"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-038",
+      "title": "Evidence: Execution runner unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-183",
+        "UNIT-184",
+        "UNIT-185",
+        "UNIT-186",
+        "UNIT-187",
+        "UNIT-188"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-187",
+      "title": "Act: Fix Verify failure — Runner retry and budget unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "61d476b15e2891ec5a027b71bffef5123e2f530b",
+      "from_sha": "a896e37198e75ec14014a0138be3534d11fe005a",
+      "started_at": "2026-11-23T15:17:22.794286+00:00",
+      "ended_at": "2026-11-23T15:18:10.642283+00:00",
+      "run_started_at": "2026-11-23T15:17:22.794286+00:00",
+      "duration_ms": 46950,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 7896,
+      "estimated_cost_usd": 0.031598
+    },
+    {
+      "unit_id": "FIX-UNIT-188",
+      "title": "Act: Fix Verify failure — Runner approval gate unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "b2f9420f989546ccdfbdd729abacfca6ac8a3c91",
+      "from_sha": "61d476b15e2891ec5a027b71bffef5123e2f530b",
+      "started_at": "2026-11-23T15:17:42.249097+00:00",
+      "ended_at": "2026-11-23T15:18:21.832599+00:00",
+      "run_started_at": "2026-11-23T15:17:42.249097+00:00",
+      "duration_ms": 38537,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 6318,
+      "estimated_cost_usd": 0.025285
+    }
+  ],
+  "edges": [
+    {
+      "src": "INT-038",
+      "dst": "REQ-094"
+    },
+    {
+      "src": "REQ-093",
+      "dst": "UNIT-187"
+    },
+    {
+      "src": "REQ-092",
+      "dst": "UNIT-183"
+    },
+    {
+      "src": "UNIT-184",
+      "dst": "UNIT-187"
+    },
+    {
+      "src": "REQ-093",
+      "dst": "UNIT-184"
+    },
+    {
+      "src": "REQ-094",
+      "dst": "UNIT-185"
+    },
+    {
+      "src": "UNIT-183",
+      "dst": "UNIT-186"
+    },
+    {
+      "src": "UNIT-188",
+      "dst": "EVD-038"
+    },
+    {
+      "src": "UNIT-185",
+      "dst": "EVD-038"
+    },
+    {
+      "src": "REQ-094",
+      "dst": "UNIT-188"
+    },
+    {
+      "src": "UNIT-187",
+      "dst": "EVD-038"
+    },
+    {
+      "src": "UNIT-185",
+      "dst": "UNIT-188"
+    },
+    {
+      "src": "UNIT-186",
+      "dst": "EVD-038"
+    },
+    {
+      "src": "INT-038",
+      "dst": "REQ-093"
+    },
+    {
+      "src": "UNIT-184",
+      "dst": "EVD-038"
+    },
+    {
+      "src": "REQ-092",
+      "dst": "UNIT-186"
+    },
+    {
+      "src": "INT-038",
+      "dst": "REQ-092"
+    },
+    {
+      "src": "UNIT-183",
+      "dst": "EVD-038"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84fkx",
+  "base_sha": "a2e06747fd9bdc9b5630758a24a4dd870172af9f",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84FKXRXQNHGFJNMP15P3BQP:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T15:15:29.181511+00:00",
+  "updated_at": "2026-11-23T15:18:47.465793+00:00",
+  "completed_at": "2026-11-23T15:18:46.579251+00:00",
+  "duration_ms": 197398,
+  "usage_stats": {
+    "total_duration_ms": 335288,
+    "total_tokens_in": 148,
+    "total_tokens_out": 57677,
+    "total_estimated_cost_usd": 0.230826
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 10,
+  "unit_allowlist": [
+    "UNIT-183",
+    "UNIT-184",
+    "UNIT-185",
+    "UNIT-186",
+    "UNIT-187",
+    "UNIT-188"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-183",
+        "title": "Act: Create the runner package with lock, worktree and timeout",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-183 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-184",
+        "title": "Act: Add the retry loop and budget stop to Run",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-184 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-185",
+        "title": "Act: Add the approval gate before publishing",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-185 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-186",
+        "title": "Verify: Runner lock, worktree and timeout unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-186 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-187",
+        "title": "Verify: Runner retry and budget unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-187 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-188",
+        "title": "Verify: Runner approval gate unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-038",
+            "path": ".ai-dlc/evidence/EVD-038.md",
+            "title": "Evidence: Execution runner unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-188 unless acceptance outcomes recorded in EVD-038 (.ai-dlc/evidence/EVD-038.md; \"Evidence: Execution runner unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T15:15:30.443735+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-183",
+    "UNIT-184",
+    "UNIT-185",
+    "UNIT-186",
+    "UNIT-187",
+    "UNIT-188"
+  ]
+}

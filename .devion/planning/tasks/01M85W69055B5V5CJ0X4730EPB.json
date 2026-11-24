@@ -1,0 +1,81 @@
+{
+  "id": "01M85W69055B5V5CJ0X4730EPB",
+  "intent_id": "01M85VZRSMWJ59VE4P4369DJ4X",
+  "title": "Verify: Manifest palette and size test covers the item icons and no svg",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend sceneArtSources.test.ts to assert item icons in manifest",
+  "description": "Extend game/frontend/tests/sceneArtSources.test.ts, which already imports generateAssets, readPngSize and the committed manifest, with item icon assertions.",
+  "acceptance_criteria": [
+    "Test asserts at least six item/ ids are generated and committed.",
+    "Test asserts each item PNG size equals 16x16 and the declared dimensions.",
+    "Test asserts no committed manifest path ends in .svg."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/sceneArtSources.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing assertions in the file"
+    ]
+  },
+  "technical_constraints": [
+    "Unit test reading the committed manifest JSON import only; no app or browser."
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "sceneArtSources.test.ts passes.",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-823.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85W1TAVNGNEV0ND7K56H8C5",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-823.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85W69059BNT0KR4FEJGHW7T"
+  ],
+  "sim_node_id": "01M85W1TAV3SDSFP2YHW30BAVG",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-823.md",
+  "artifact_id": "UNIT-823",
+  "steps": [
+    {
+      "file": "game/frontend/tests/sceneArtSources.test.ts",
+      "symbol": "describe('item icons')",
+      "lines": "after L28 ids block",
+      "action": "Add a describe block with it('includes at least six item/ icons in generated and committed manifests') filtering generated.entries and committed by id.startsWith('item/'), expecting length >= 6 and that every generated id is in the committed ids.",
+      "command": "cd game/frontend && npx vitest run tests/sceneArtSources.test.ts -t 'item'",
+      "expected": "The item inclusion test passes."
+    },
+    {
+      "file": "game/frontend/tests/sceneArtSources.test.ts",
+      "symbol": "it('renders each item icon at 16x16')",
+      "lines": "within the item describe",
+      "action": "For each generated entry with id starting item/, find its file in generated.files by path, assert readPngSize(file.bytes) toEqual {width:16,height:16} and entry.dimensions toEqual the same, and entry.path endsWith '.png'.",
+      "command": "cd game/frontend && npx vitest run tests/sceneArtSources.test.ts -t 'item icon'",
+      "expected": "All item icons are 16x16 PNGs matching their declared size."
+    },
+    {
+      "file": "game/frontend/tests/sceneArtSources.test.ts",
+      "symbol": "it('references no svg')",
+      "lines": "within the committed manifest describe",
+      "action": "Assert committed.every(e => !e.path.endsWith('.svg')) is true.",
+      "command": "cd game/frontend && npx vitest run tests/sceneArtSources.test.ts",
+      "expected": "The whole file passes, including palette and committed-manifest match for the item icons."
+    }
+  ],
+  "created_at": "2026-11-24T04:14:27.845012+00:00",
+  "updated_at": "2026-11-24T04:19:01.299310+00:00"
+}

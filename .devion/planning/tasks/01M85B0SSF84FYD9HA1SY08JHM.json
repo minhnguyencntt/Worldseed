@@ -1,0 +1,72 @@
+{
+  "id": "01M85B0SSF84FYD9HA1SY08JHM",
+  "intent_id": "01M85ATKCA4JPNPQZD365VQEFV",
+  "title": "Verify: characterSchema defaults and rejection unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add tests that fail when characterSchema defaults or rejection rules are removed.",
+  "description": "Extend game/tests/characterSchema.test.ts with tests using the real characterSchema and in-memory input.",
+  "acceptance_criteria": [
+    "Default scale and layer are asserted",
+    "Missing idle and non-positive scale throw"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/characterSchema.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing interaction tests"
+    ]
+  },
+  "technical_constraints": [
+    "No I/O, pure zod parsing"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass and fail if the schema rule is removed",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-605.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85AXB9MTRYKJ1WF9Y43DAYY",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-605.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85B0SSFSCA1YG59P51KY2MT"
+  ],
+  "sim_node_id": "01M85AXB9MN20055QPZGP6FQKC",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-605.md",
+  "artifact_id": "UNIT-605",
+  "steps": [
+    {
+      "file": "game/tests/characterSchema.test.ts",
+      "symbol": "new: describe('characterSchema defaults')",
+      "lines": "after L65",
+      "action": "Add test 'applies default scale and layer': parse baseCharacter() and assert result.scale is 1 and result.layer is 'characters'.",
+      "code": "expect(result.scale).toBe(1); expect(result.layer).toBe('characters');",
+      "command": "cd game && npx vitest run tests/characterSchema.test.ts -t \"default scale and layer\"",
+      "expected": "Test passes; it fails if the defaults are removed from characterSchema."
+    },
+    {
+      "file": "game/tests/characterSchema.test.ts",
+      "symbol": "new: describe('characterSchema rejects invalid base fields')",
+      "lines": "after L65",
+      "action": "Add test 'throws when animations.idle is missing' using baseCharacter({ animations: {} }) and test 'throws when scale is 0 and when scale is -1'; each expects characterSchema.parse to throw.",
+      "code": "expect(() => characterSchema.parse(baseCharacter({ animations: {} }))).toThrow();",
+      "command": "cd game && npx vitest run tests/characterSchema.test.ts",
+      "expected": "All tests in the file pass."
+    }
+  ],
+  "created_at": "2026-11-23T23:14:22.639602+00:00",
+  "updated_at": "2026-11-23T23:16:13.758254+00:00"
+}

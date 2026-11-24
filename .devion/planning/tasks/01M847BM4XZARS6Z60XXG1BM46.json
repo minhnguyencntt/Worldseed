@@ -1,0 +1,62 @@
+{
+  "id": "01M847BM4XZARS6Z60XXG1BM46",
+  "intent_id": "01M847A84P3F0A9BH7JBTPZMQ5",
+  "title": "Verify: Tick open failure is returned and Close still runs unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test for Open error propagation while another round is still closed",
+  "description": "A fakeController with openErr set is used with a due SCHEDULED round and an expired OPEN round in one world.",
+  "acceptance_criteria": [
+    "Tick error satisfies errors.Is(err, openErr)",
+    "Calls are open due-scheduled then close expired-open"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/scheduler_test.go"
+    ],
+    "out_of_scope": [
+      "Run loop"
+    ],
+    "preserve": [
+      "Existing fakes"
+    ]
+  },
+  "technical_constraints": [
+    "Fakes only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "The test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-102.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847BJ006M8EP7V2E07D4ZGE",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-102.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M847BM4XEV20YG21DCHPMV4B"
+  ],
+  "sim_node_id": "01M847BJ002C47HCG1VQCFV0Y0",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-102.md",
+  "artifact_id": "UNIT-102",
+  "steps": [
+    {
+      "file": "backend/internal/round/scheduler_test.go",
+      "symbol": "TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+      "lines": "L160-L187",
+      "action": "Keep or add the test: ctrl := &fakeController{openErr: errors.New(\"boom\")}; world w1 has due-scheduled (SCHEDULED, StartsAt 11:00) and expired-open (OPEN, EndsAt 11:59); assert errors.Is(err, openErr) and ctrl.calls equals open due-scheduled then close expired-open",
+      "command": "cd backend && go test ./internal/round -run 'TestTick_OpenErrorIsReturnedAndCloseStillRuns$'",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T12:51:08.573458+00:00",
+  "updated_at": "2026-11-23T12:51:39.598499+00:00"
+}

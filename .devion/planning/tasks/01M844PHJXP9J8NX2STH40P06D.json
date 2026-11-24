@@ -1,0 +1,74 @@
+{
+  "id": "01M844PHJXP9J8NX2STH40P06D",
+  "intent_id": "01M844NGP950K1Z8RGGSQA5CF2",
+  "title": "Verify: Single story-panel class unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests proving story-panel appears once in the composed layout",
+  "description": "Add Testing Library tests in the existing layout test file that render GameLayout with StoryPanel and assert class uniqueness and drawer-open placement.",
+  "acceptance_criteria": [
+    "Given GameLayout with StoryPanel, when rendered, then container.querySelectorAll('.story-panel') has length 1",
+    "Given the Story button clicked, when open, then the single .story-panel has class drawer-open and .story-content does not",
+    "Given StoryPanel alone, when rendered, then the root has story-content and not story-panel"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/layout.test.tsx new tests"
+    ],
+    "out_of_scope": [
+      "Product code changes",
+      "Browser or e2e tests"
+    ],
+    "preserve": [
+      "Existing two tests in layout.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "jsdom environment already declared in the file; no network or server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass and fail against the old StoryPanel class",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-046.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M844PH6HPY2YD4NKQVH51T67",
+    "trace:01M844GYQJ55B1RVZJXYYRYX24",
+    "artifact:.ai-dlc/units/UNIT-046.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M844PHJXDM2PQ9404RD7XTB5"
+  ],
+  "sim_node_id": "01M844PH6HHSJHFWZ3C7T0J64M",
+  "feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+  "artifact_path": ".ai-dlc/units/UNIT-046.md",
+  "artifact_id": "UNIT-046",
+  "steps": [
+    {
+      "file": "game/frontend/tests/layout.test.tsx",
+      "symbol": "new: it('Given GameLayout wrapping StoryPanel, when rendered, then exactly one .story-panel exists')",
+      "lines": "after L41",
+      "action": "Add imports of StoryPanel from '../src/components/StoryPanel' at the top. Inside the describe block add a test rendering <GameLayout scene={<div/>} story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />} /> and assert container.querySelectorAll('.story-panel').length toBe 1.",
+      "code": "const { container } = render(<GameLayout scene={<div />} story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />} />);\nexpect(container.querySelectorAll('.story-panel')).toHaveLength(1);",
+      "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+      "expected": "Test passes with ACT1 applied and fails if StoryPanel root is story-panel."
+    },
+    {
+      "file": "game/frontend/tests/layout.test.tsx",
+      "symbol": "new: it('Given the Story button clicked, when open, then only the aside has drawer-open and StoryPanel root is story-content')",
+      "lines": "after the previous new test",
+      "action": "Render the same composed layout, click the button named 'Story', then assert the single .story-panel element has class drawer-open, that container.querySelector('.story-content') is not null and does not have class story-panel.",
+      "code": "fireEvent.click(screen.getByRole('button', { name: 'Story' }));\nconst panel = container.querySelector('.story-panel');\nexpect(panel).toHaveClass('drawer-open');\nconst content = container.querySelector('.story-content');\nexpect(content).not.toBeNull();\nexpect(content).not.toHaveClass('story-panel');",
+      "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+      "expected": "All layout tests pass, including both new ones."
+    }
+  ],
+  "created_at": "2026-11-23T12:04:40.669858+00:00",
+  "updated_at": "2026-11-23T12:05:46.172185+00:00"
+}

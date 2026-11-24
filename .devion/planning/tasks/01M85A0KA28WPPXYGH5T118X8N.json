@@ -1,0 +1,68 @@
+{
+  "id": "01M85A0KA28WPPXYGH5T118X8N",
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "title": "Act: Validate scene characters in validateWorld",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Check scene character ids, interaction dialogue and events in validateWorld.",
+  "description": "In validateWorld's per-scene loop add a pass over scene.characters.",
+  "acceptance_criteria": [
+    "Unknown character id reported.",
+    "Unknown interaction dialogue reported.",
+    "Interaction events checked via checkEvents."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/content/loader.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Existing error messages"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse checkEvents and the existing ctx object",
+    "Code path: `game/src/content/loader.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "validateWorld extended",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-587.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859XCEVD3TDBHW9Z5MCGPZA",
+    "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+    "artifact:.ai-dlc/units/UNIT-587.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85A0KA25CXQEDJF30YMZHVT"
+  ],
+  "sim_node_id": "01M859XCEVB51D87K08435RXYA",
+  "feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+  "artifact_path": ".ai-dlc/units/UNIT-587.md",
+  "artifact_id": "UNIT-587",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/loader.ts",
+      "symbol": "validateWorld",
+      "lines": "after the `for (const node of scene.dialogue)` loop (about L141)",
+      "action": "Insert a loop over scene.characters ?? [] that pushes `unknown character: ${c.id}` when !characters.has(c.id), pushes `unknown dialogue: ${d}` when c.interaction?.dialogue is set and not in dialogueIds, and calls checkEvents(c.interaction?.events, ctx, errors).",
+      "code": "for (const c of scene.characters ?? []) {\n  if (!characters.has(c.id)) errors.push(`unknown character: ${c.id}`);\n  const d = c.interaction?.dialogue;\n  if (d !== undefined && !dialogueIds.has(d)) errors.push(`unknown dialogue: ${d}`);\n  checkEvents(c.interaction?.events as GameEvent[] | undefined, ctx, errors);\n}",
+      "expected": "validateWorld returns the new errors for bad NPCs and none for valid ones."
+    }
+  ],
+  "created_at": "2026-11-23T22:56:47.426266+00:00",
+  "updated_at": "2026-11-23T22:57:26.931873+00:00"
+}

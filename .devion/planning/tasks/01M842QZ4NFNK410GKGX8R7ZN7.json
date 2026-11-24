@@ -1,0 +1,97 @@
+{
+  "id": "01M842QZ4NFNK410GKGX8R7ZN7",
+  "intent_id": "01M842N0PAB8ZNGFNQNRV0TC13",
+  "title": "Act: Create backend module, config loader, logger and health router",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Implement go.mod, config, example YAML, router, main",
+  "description": "Create the backend Go module and the config loader with env overrides, slog logger setup, Chi router with /healthz, and main entrypoint.",
+  "acceptance_criteria": [
+    "Config.Load returns populated Config from YAML with env overrides",
+    "GET /healthz returns 200 ok"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend module files"
+    ],
+    "out_of_scope": [
+      "player code"
+    ],
+    "preserve": [
+      "backend/README.md"
+    ]
+  },
+  "technical_constraints": [
+    "yaml.v3, chi v5, slog",
+    "New file: `backend/go.mod`",
+    "New file: `backend/configs/config.example.yaml`",
+    "New file: `backend/internal/config/config.go`",
+    "New file: `backend/internal/server/server.go`",
+    "New file: `backend/cmd/server/main.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "`go build ./...` succeeds in backend/",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-011.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M842QZ11PNSW5PQXFWKNNQCV",
+    "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+    "artifact:.ai-dlc/units/UNIT-011.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M842QZ4NC7WG3AD91RDVKX68"
+  ],
+  "sim_node_id": "01M842QZ118AWGPRTTDEDDRC0A",
+  "feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+  "artifact_path": ".ai-dlc/units/UNIT-011.md",
+  "artifact_id": "UNIT-011",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/go.mod",
+      "symbol": "new: module",
+      "lines": "new",
+      "action": "Create module github.com/worldseed/storyforge/backend with go 1.22 requiring github.com/go-chi/chi/v5 and gopkg.in/yaml.v3",
+      "code": "module github.com/worldseed/storyforge/backend\n\ngo 1.22",
+      "expected": "go.mod exists; `go mod tidy` resolves deps"
+    },
+    {
+      "file": "backend/configs/config.example.yaml",
+      "symbol": "new: example config",
+      "lines": "new",
+      "action": "Add keys server.addr (\":8080\"), auth.token_secret (\"change-me-32-bytes-minimum\"), auth.cookie_name (\"sf_session\"), auth.token_ttl (\"720h\"), auth.cookie_secure (true), git.remote_url, git.branch (\"main\"), git.bot_name, git.bot_email, git.token, hosting.provider, hosting.base_url",
+      "expected": "File parses as YAML with all listed keys"
+    },
+    {
+      "file": "backend/internal/config/config.go",
+      "symbol": "new: Config, Load, LoadFS",
+      "lines": "new",
+      "action": "Define Config structs with yaml tags (TokenTTL as time.Duration parsed from string). Implement LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error): read file, yaml.Unmarshal, then override from env STORYFORGE_ADDR, STORYFORGE_TOKEN_SECRET, STORYFORGE_GIT_REMOTE_URL, STORYFORGE_GIT_TOKEN, STORYFORGE_HOSTING_PROVIDER, STORYFORGE_HOSTING_BASE_URL when non-empty; default cookie_name to sf_session and ttl to 720h; return error if token_secret is empty. Implement Load(path string) that calls LoadFS(os.DirFS(filepath.Dir(path)), filepath.Base(path), os.Getenv)",
+      "expected": "Loader returns overrides and error on empty secret"
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "new: New",
+      "lines": "new",
+      "action": "Implement New(cfg *config.Config, log *slog.Logger) http.Handler building chi.NewRouter with a request-logging middleware using log.Info (method, path, status) and GET /healthz writing JSON {\"status\":\"ok\"} with Content-Type application/json",
+      "expected": "Router answers /healthz with 200"
+    },
+    {
+      "file": "backend/cmd/server/main.go",
+      "symbol": "main",
+      "lines": "new",
+      "action": "Parse -config flag (default configs/config.example.yaml), build slog.NewJSONHandler logger on stdout, call config.Load, then http.ListenAndServe(cfg.Server.Addr, server.New(cfg, logger)); on error log and os.Exit(1)",
+      "expected": "`go build ./cmd/server` succeeds"
+    }
+  ],
+  "created_at": "2026-11-23T11:30:30.165836+00:00",
+  "updated_at": "2026-11-23T11:33:56.101629+00:00"
+}

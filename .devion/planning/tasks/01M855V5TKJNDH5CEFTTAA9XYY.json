@@ -1,0 +1,75 @@
+{
+  "id": "01M855V5TKJNDH5CEFTTAA9XYY",
+  "intent_id": "01M855QJJNCNNP0Q6JYBYQ71MB",
+  "title": "Act: Add BootScene.preload driven by planPreload",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export manifest and implement preload",
+  "description": "Bundle manifest.json into runtime/content.ts, validate with parseManifest, and add BootScene.preload that loads planned ids.",
+  "acceptance_criteria": [
+    "preload calls this.load.image(id, 'assets/'+path) only for planned image ids",
+    "unknown ids are warned, not loaded"
+  ],
+  "scope": {
+    "in_scope": [
+      "content.ts",
+      "BootScene.ts"
+    ],
+    "out_of_scope": [
+      "effectContext"
+    ],
+    "preserve": [
+      "create()"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90",
+    "Code path: `game/frontend/src/runtime/content.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "BootScene has preload using planPreload",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-510.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855SDV0DCPRQGJWVP0XA3WX",
+    "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+    "artifact:.ai-dlc/units/UNIT-510.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M855V5TKV3SZNSQTSKSYZXRB"
+  ],
+  "sim_node_id": "01M855SDV0M397RX82AT4FN42T",
+  "feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+  "artifact_path": ".ai-dlc/units/UNIT-510.md",
+  "artifact_id": "UNIT-510",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/runtime/content.ts",
+      "symbol": "new: manifest",
+      "lines": "after L32",
+      "action": "Import manifest.json from public/assets/worlds/the-boys-room and export `manifest` as the data of parseManifest(json); throw an Error listing errors when ok is false.",
+      "code": "import manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json';\nimport { parseManifest } from '@game/assets/manifest';\nconst parsed = parseManifest(manifestJson);\nif (!parsed.ok) throw new Error('invalid manifest: ' + JSON.stringify(parsed.errors));\nexport const manifest = parsed.data;",
+      "expected": "content.ts exports a validated manifest"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.preload",
+      "lines": "after L22",
+      "action": "Add preload(): compute plan = planPreload(scene, manifest); console.warn for each plan.unknown id; for each id in plan.load find the manifest entry and call this.load.image(entry.id, `assets/${entry.path}`) when entry.type is 'image'; skip other types.",
+      "code": "preload(): void {\n  const plan = planPreload(scene, manifest);\n  plan.unknown.forEach((id) => console.warn(`unknown asset ref: ${id}`));\n  for (const id of plan.load) {\n    const entry = manifest.assets.find((a) => a.id === id);\n    if (entry && entry.type === 'image') this.load.image(entry.id, `assets/${entry.path}`);\n  }\n}",
+      "expected": "Only planned images are queued"
+    }
+  ],
+  "created_at": "2026-11-23T21:43:55.475408+00:00",
+  "updated_at": "2026-11-23T21:46:42.313009+00:00"
+}

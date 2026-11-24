@@ -1,0 +1,56 @@
+{
+  "id": "01M8583QAD4PRXPNJ0F78TFZ4W",
+  "intent_id": "01M857XR5TYA3VZXC4Z7AESJY5",
+  "title": "SG-5.5.2 Make BootScene tests type-check and pass with sceneSpec mock",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "BootScene suites mock sceneSpec and tsc reports no errors in the four named places",
+  "description": "Context: bootScene*.test.ts mock '../src/runtime/content', and tsc still reports constructor-arity, implicit-any and tuple errors in tests/bootSceneEffects, tests/bootSceneBuild, tests/bootSceneFallback and src/phaser/BootScene.ts. Desired behavior: mocks include sceneSpec and the four errors disappear. Expected result: the BootScene suites pass and tsc reports none of those errors. Why: the thin-wrapper refactor (SG-5.5) must stay verifiably typed.",
+  "acceptance_criteria": [
+    "Given tsc --noEmit in game/frontend, When it runs, Then no error is reported at BootScene.ts line 42 or in bootSceneEffects, bootSceneBuild or bootSceneFallback tests",
+    "Given the bootScene*.test.ts suites, When run with vitest, Then every suite mocks sceneSpec in the content mock and passes"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/phaser/BootScene.ts typing",
+      "game/frontend/src/phaser/effectContext.ts",
+      "game/frontend/src/runtime/content.ts type export",
+      "bootScene*.test.ts typing"
+    ],
+    "out_of_scope": [
+      "zod or manifestLoader type errors",
+      "postcss.config.js and phaserHost.test.tsx errors",
+      "new gameplay behavior"
+    ],
+    "preserve": [
+      "BootScene runtime behavior",
+      "existing test assertions"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only",
+    "No any casts to silence errors except existing 'as never' fakes"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All four unmet errors are gone from tsc output",
+    "BootScene suites pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-111.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-111.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M858002XAQD3STARH60E361H",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-111.md",
+  "artifact_id": "INT-111",
+  "created_at": "2026-11-23T22:23:32.685439+00:00"
+}

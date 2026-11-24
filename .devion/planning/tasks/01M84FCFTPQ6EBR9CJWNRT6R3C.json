@@ -1,0 +1,74 @@
+{
+  "id": "01M84FCFTPQ6EBR9CJWNRT6R3C",
+  "intent_id": "01M84FAX57EP7AEAK5DCCEZWXM",
+  "title": "Act: Validate execution timeout, retries, budget and provider kind in LoadFS",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add validate function rejecting invalid values",
+  "description": "Add a validate(cfg *Config) error helper checking execution_timeout, max_retries, max_budget and provider_kind, called at the end of LoadFS.",
+  "acceptance_criteria": [
+    "Negative timeout, retries, budget and unknown provider return key-naming errors",
+    "Valid values return no error"
+  ],
+  "scope": {
+    "in_scope": [
+      "config.go validate"
+    ],
+    "out_of_scope": [
+      "new fields defaults"
+    ],
+    "preserve": [
+      "repo_path error"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/worker/internal/config/config.go`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "validate wired into LoadFS",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-180.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FC8A0BBMD5QTZ4JVQJT3B",
+    "trace:01M848ZFYJ5E173P68XH1YEFX4",
+    "artifact:.ai-dlc/units/UNIT-180.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FCFTPX1EGBY9K6H36B3XV"
+  ],
+  "sim_node_id": "01M84FC8A0WCHYPXZ1ZBC5KTR2",
+  "feature_id": "01M848ZFYJ5E173P68XH1YEFX4",
+  "artifact_path": ".ai-dlc/units/UNIT-180.md",
+  "artifact_id": "UNIT-180",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "new: validate",
+      "lines": "after L110",
+      "action": "Add func validate(cfg *Config) error returning fmt.Errorf errors that name worker.execution_timeout (<0), worker.max_retries (<0), worker.max_budget (<0) and worker.provider_kind (not mock or claude).",
+      "code": "func validate(cfg *Config) error {\n\tw := cfg.Worker\n\tif w.ExecutionTimeout < 0 { return errors.New(\"config: worker.execution_timeout must not be negative\") }\n\tif w.MaxRetries < 0 { return errors.New(\"config: worker.max_retries must not be negative\") }\n\tif w.MaxBudget < 0 { return errors.New(\"config: worker.max_budget must not be negative\") }\n\tif w.ProviderKind != \"mock\" && w.ProviderKind != \"claude\" { return fmt.Errorf(\"config: worker.provider_kind %q must be mock or claude\", w.ProviderKind) }\n\treturn nil\n}",
+      "expected": "Function compiles."
+    },
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "LoadFS",
+      "lines": "L74-L92",
+      "action": "Before `return &cfg, nil` call validate(&cfg) and return nil, err when it fails.",
+      "code": "if err := validate(&cfg); err != nil {\n\treturn nil, err\n}",
+      "expected": "Invalid configs return nil config and a key-naming error."
+    }
+  ],
+  "created_at": "2026-11-23T15:11:25.526520+00:00",
+  "updated_at": "2026-11-23T15:12:19.731261+00:00"
+}

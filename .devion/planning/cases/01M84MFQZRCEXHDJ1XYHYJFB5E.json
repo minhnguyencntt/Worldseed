@@ -1,0 +1,240 @@
+{
+  "id": "01M84MFQZRCEXHDJ1XYHYJFB5E",
+  "trigger_node_id": "INT-059, UNIT-296 +3",
+  "node_ids": [
+    "INT-059",
+    "UNIT-296",
+    "UNIT-297",
+    "REQ-148",
+    "EVD-059"
+  ],
+  "intent_id": "INT-059",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-059",
+      "title": "SG-1.2.1 · Add the zustand dependency to the frontend package.json and lockfile",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-296",
+      "title": "Act: Add zustand to game/frontend package.json and package-lock.json",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MFQM3C7VSRWPFPV0E9TAS"
+      ],
+      "depends_on": [
+        "REQ-148"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "6c44d14f5a86fff7bef58079f510cbdb04e85c78",
+      "from_sha": "7777d6f3d66ce0998c3f994cfdd6c1aa26099952",
+      "started_at": "2026-11-23T16:40:36.915301+00:00",
+      "ended_at": "2026-11-23T16:40:59.027431+00:00",
+      "run_started_at": "2026-11-23T16:40:36.915301+00:00",
+      "duration_ms": 20810,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 2452,
+      "estimated_cost_usd": 0.009818
+    },
+    {
+      "unit_id": "UNIT-297",
+      "title": "Verify: zustand dependency declaration and resolution unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84MFQM3V85P7RRR1R8ZDB9A"
+      ],
+      "depends_on": [
+        "UNIT-296",
+        "REQ-148"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "65d23adcedaf39fca7cbaf3969ad4d8f6d448fd4",
+      "from_sha": "6c44d14f5a86fff7bef58079f510cbdb04e85c78",
+      "tests": [
+        {
+          "id": "zustandDependency.declares-semver-range",
+          "kind": "unit",
+          "name": "declares a semver-pinned zustand version in package.json",
+          "title": "declares a semver-pinned zustand version in package.json",
+          "scenario": "Given the frontend package.json on disk, when the zustand dependency is read, then it is declared with a major.minor.patch range (optionally ^ or ~).",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts --testTimeout=20000",
+          "file": "tests/zustandDependency.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "zustandDependency.lockfile-root-matches",
+          "kind": "unit",
+          "name": "records the same zustand range in package-lock.json root entry",
+          "title": "records the same zustand range in package-lock.json root entry",
+          "scenario": "Given the package-lock.json root package entry, when its zustand dependency is read, then it equals the range declared in package.json.",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts --testTimeout=20000",
+          "file": "tests/zustandDependency.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "zustandDependency.lockfile-resolves-version",
+          "kind": "unit",
+          "name": "resolves zustand to a concrete version in package-lock.json",
+          "title": "resolves zustand to a concrete version in package-lock.json",
+          "scenario": "Given the package-lock.json node_modules/zustand entry, when its version is read, then it is a non-empty string.",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts --testTimeout=20000",
+          "file": "tests/zustandDependency.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "zustandDependency.resolves-zustand-import",
+          "kind": "unit",
+          "name": "resolves the zustand import",
+          "title": "resolves the zustand import",
+          "scenario": "Given the zustand package installed in node_modules, when the module is dynamically imported, then its create export is a function.",
+          "command": "cd game/frontend && npx vitest run tests/zustandDependency.test.ts --testTimeout=20000",
+          "file": "tests/zustandDependency.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T16:40:59.035113+00:00",
+      "ended_at": "2026-11-23T16:41:21.403893+00:00",
+      "run_started_at": "2026-11-23T16:40:59.035113+00:00",
+      "duration_ms": 20881,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3380,
+      "estimated_cost_usd": 0.013528
+    },
+    {
+      "unit_id": "REQ-148",
+      "title": "REQ · zustand is declared in package.json and locked in package-lock.json",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-059"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-059",
+      "title": "Evidence: zustand dependency unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-296",
+        "UNIT-297"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "INT-059",
+      "dst": "REQ-148"
+    },
+    {
+      "src": "UNIT-296",
+      "dst": "UNIT-297"
+    },
+    {
+      "src": "UNIT-296",
+      "dst": "EVD-059"
+    },
+    {
+      "src": "REQ-148",
+      "dst": "UNIT-296"
+    },
+    {
+      "src": "REQ-148",
+      "dst": "UNIT-297"
+    },
+    {
+      "src": "UNIT-297",
+      "dst": "EVD-059"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84mfq",
+  "base_sha": "7777d6f3d66ce0998c3f994cfdd6c1aa26099952",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84MFQZRCEXHDJ1XYHYJFB5E:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T16:40:35.064386+00:00",
+  "updated_at": "2026-11-23T16:41:22.803888+00:00",
+  "completed_at": "2026-11-23T16:41:21.404802+00:00",
+  "duration_ms": 46340,
+  "usage_stats": {
+    "total_duration_ms": 41702,
+    "total_tokens_in": 22,
+    "total_tokens_out": 5832,
+    "total_estimated_cost_usd": 0.023346
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-296",
+    "UNIT-297"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-296",
+        "title": "Act: Add zustand to game/frontend package.json and package-lock.json",
+        "evidence_refs": [
+          {
+            "id": "EVD-059",
+            "path": ".ai-dlc/evidence/EVD-059.md",
+            "title": "Evidence: zustand dependency unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-296 unless acceptance outcomes recorded in EVD-059 (.ai-dlc/evidence/EVD-059.md; \"Evidence: zustand dependency unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-297",
+        "title": "Verify: zustand dependency declaration and resolution unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-059",
+            "path": ".ai-dlc/evidence/EVD-059.md",
+            "title": "Evidence: zustand dependency unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-297 unless acceptance outcomes recorded in EVD-059 (.ai-dlc/evidence/EVD-059.md; \"Evidence: zustand dependency unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T16:40:36.706877+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-296",
+    "UNIT-297"
+  ]
+}

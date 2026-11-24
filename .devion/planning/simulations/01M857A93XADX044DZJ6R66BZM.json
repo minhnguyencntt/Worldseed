@@ -1,0 +1,660 @@
+{
+  "intent_id": "01M857A93XADX044DZJ6R66BZM",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M857CBAKN74938S5CZW047N8",
+      "kind": "intent",
+      "title": "SG-5.5.2 Update BootScene tests for sceneSpec mock and constructor arity",
+      "body": "Context: BootScene.create now calls buildScene(..., sceneSpec) and createPhaserEffectContext(scene, resolveKey), but some bootScene*.test.ts files mock '../src/runtime/content' without sceneSpec and call the effect context factory with one argument. Desired behavior: every bootScene*.test.ts mock includes sceneSpec and passes the right arguments. Expected result: the tests pass and have no type errors. Why: keeps the thin-wrapper BootScene refactor covered by green, type-safe tests.\n\n## Acceptance criteria\n- Given bootSceneFallback.test.ts and bootScenePreload.test.ts, When they mock '../src/runtime/content', Then the mock exposes scene, manifest and sceneSpec\n- Given bootSceneEffects.test.ts, When it calls createPhaserEffectContext, Then it passes the scene and a resolveKey function and tsc reports no arity error\n- Given the bootScene*.test.ts files, When they run under vitest, Then all pass\n\n\n## Scope\n- In scope: game/frontend/tests/bootScene*.test.ts\n- In scope: type-only fixes in BootScene.ts, effectContext.ts, content.ts\n- Out of scope: BootScene behavior changes\n- Out of scope: backend\n- Preserve: BootScene runtime behavior\n- Preserve: existing passing assertions\n\n\n## Technical constraints\n- Vitest and phaser mocked; no browser\n- Tests live in game/frontend/tests\n\n\n## Definition of done\n- Updated bootScene tests pass\n- No type errors in bootScene*.test.ts\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene tests mock runtime/content with sceneSpec and type-check cleanly",
+      "description": "Context: BootScene.create now calls buildScene(..., sceneSpec) and createPhaserEffectContext(scene, resolveKey), but some bootScene*.test.ts files mock '../src/runtime/content' without sceneSpec and call the effect context factory with one argument. Desired behavior: every bootScene*.test.ts mock includes sceneSpec and passes the right arguments. Expected result: the tests pass and have no type errors. Why: keeps the thin-wrapper BootScene refactor covered by green, type-safe tests.",
+      "acceptance_criteria": [
+        "Given bootSceneFallback.test.ts and bootScenePreload.test.ts, When they mock '../src/runtime/content', Then the mock exposes scene, manifest and sceneSpec",
+        "Given bootSceneEffects.test.ts, When it calls createPhaserEffectContext, Then it passes the scene and a resolveKey function and tsc reports no arity error",
+        "Given the bootScene*.test.ts files, When they run under vitest, Then all pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootScene*.test.ts",
+          "type-only fixes in BootScene.ts, effectContext.ts, content.ts"
+        ],
+        "out_of_scope": [
+          "BootScene behavior changes",
+          "backend"
+        ],
+        "preserve": [
+          "BootScene runtime behavior",
+          "existing passing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest and phaser mocked; no browser",
+        "Tests live in game/frontend/tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Updated bootScene tests pass",
+        "No type errors in bootScene*.test.ts",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-109.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-109.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-109.md",
+      "artifact_id": "INT-109"
+    },
+    {
+      "id": "01M857CBAK97G6XMA7MRQ0A0Z6",
+      "kind": "requirement",
+      "title": "REQ · Content mocks in BootScene tests include sceneSpec",
+      "body": "Context: bootSceneFallback and bootScenePreload mock content with only scene and manifest, while BootScene imports sceneSpec. Desired: the mocks include sceneSpec so create() works. Expected: both files pass. Why: matches the real module shape.\n\n## Acceptance criteria\n- Given the mocked content module, When BootScene imports sceneSpec, Then it is defined with an objects array\n- Given the two test files, When run, Then they pass\n\n\n## Scope\n- In scope: bootSceneFallback.test.ts\n- In scope: bootScenePreload.test.ts\n- Out of scope: other tests\n- Preserve: fallback and preload assertions\n\n\n## Technical constraints\n- Mock shape must match SceneSpec: id and objects\n\n\n## Definition of done\n- Mocks include sceneSpec\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "runtime/content mocks expose sceneSpec alongside scene and manifest",
+      "description": "Context: bootSceneFallback and bootScenePreload mock content with only scene and manifest, while BootScene imports sceneSpec. Desired: the mocks include sceneSpec so create() works. Expected: both files pass. Why: matches the real module shape.",
+      "acceptance_criteria": [
+        "Given the mocked content module, When BootScene imports sceneSpec, Then it is defined with an objects array",
+        "Given the two test files, When run, Then they pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneFallback.test.ts",
+          "bootScenePreload.test.ts"
+        ],
+        "out_of_scope": [
+          "other tests"
+        ],
+        "preserve": [
+          "fallback and preload assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Mock shape must match SceneSpec: id and objects"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Mocks include sceneSpec",
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-269.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M857CBAKN74938S5CZW047N8",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M857CBAKN74938S5CZW047N8",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-269.md"
+      ],
+      "depends_on": [
+        "01M857CBAKN74938S5CZW047N8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-269.md",
+      "artifact_id": "REQ-269"
+    },
+    {
+      "id": "01M857CBAK4TD6JZRZFHS1BH24",
+      "kind": "requirement",
+      "title": "REQ · Effect context tests use the two-argument constructor",
+      "body": "Context: createPhaserEffectContext(scene, resolveKey) requires two arguments but bootSceneEffects.test.ts passes one, and bootSceneFallback.test.ts indexes particles.mock.calls[0][2] on an untyped mock. Desired: typed correct calls. Expected: no TS2554 or TS2493. Why: type-safe tests.\n\n## Acceptance criteria\n- Given bootSceneEffects.test.ts, When createPhaserEffectContext is called, Then two arguments are passed\n- Given the particles mock in bootSceneFallback.test.ts, When calls[0][2] is read, Then it type-checks and equals the fallback key\n\n\n## Scope\n- In scope: bootSceneEffects.test.ts\n- In scope: bootSceneFallback.test.ts\n- In scope: effectContext.ts type alias\n- Out of scope: effect behavior\n- Preserve: effect assertions\n\n\n## Technical constraints\n- Signature stays (scene, resolveKey)\n\n\n## Definition of done\n- No arity or tuple type errors\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "createPhaserEffectContext callers pass scene and resolveKey",
+      "description": "Context: createPhaserEffectContext(scene, resolveKey) requires two arguments but bootSceneEffects.test.ts passes one, and bootSceneFallback.test.ts indexes particles.mock.calls[0][2] on an untyped mock. Desired: typed correct calls. Expected: no TS2554 or TS2493. Why: type-safe tests.",
+      "acceptance_criteria": [
+        "Given bootSceneEffects.test.ts, When createPhaserEffectContext is called, Then two arguments are passed",
+        "Given the particles mock in bootSceneFallback.test.ts, When calls[0][2] is read, Then it type-checks and equals the fallback key"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneEffects.test.ts",
+          "bootSceneFallback.test.ts",
+          "effectContext.ts type alias"
+        ],
+        "out_of_scope": [
+          "effect behavior"
+        ],
+        "preserve": [
+          "effect assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Signature stays (scene, resolveKey)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "No arity or tuple type errors",
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-270.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M857CBAKN74938S5CZW047N8",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M857CBAKN74938S5CZW047N8",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-270.md"
+      ],
+      "depends_on": [
+        "01M857CBAKN74938S5CZW047N8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-270.md",
+      "artifact_id": "REQ-270"
+    },
+    {
+      "id": "01M857CBAK3BZYXG3GBHMBT6YP",
+      "kind": "requirement",
+      "title": "REQ · BootScene tests and sources have no implicit-any errors",
+      "body": "Context: tsc reports TS7006 for the 'a' parameter in BootScene.preload and the 'o' parameter in bootSceneBuild.test.ts. Desired: explicit types. Expected: tsc clean for these files. Why: tests compile under strict mode.\n\n## Acceptance criteria\n- Given BootScene.preload, When manifest.assets.find is called, Then the parameter has an explicit type\n- Given bootSceneBuild.test.ts, When it maps sceneSpec.objects, Then the parameter is typed and the test passes\n\n\n## Scope\n- In scope: BootScene.ts preload\n- In scope: content.ts type export\n- In scope: bootSceneBuild.test.ts\n- Out of scope: behavior changes\n- Preserve: preload loading logic\n\n\n## Technical constraints\n- Types come from @game/content/schema\n\n\n## Definition of done\n- No TS7006 in these files\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Type the object and asset callbacks used by BootScene and its build test",
+      "description": "Context: tsc reports TS7006 for the 'a' parameter in BootScene.preload and the 'o' parameter in bootSceneBuild.test.ts. Desired: explicit types. Expected: tsc clean for these files. Why: tests compile under strict mode.",
+      "acceptance_criteria": [
+        "Given BootScene.preload, When manifest.assets.find is called, Then the parameter has an explicit type",
+        "Given bootSceneBuild.test.ts, When it maps sceneSpec.objects, Then the parameter is typed and the test passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts preload",
+          "content.ts type export",
+          "bootSceneBuild.test.ts"
+        ],
+        "out_of_scope": [
+          "behavior changes"
+        ],
+        "preserve": [
+          "preload loading logic"
+        ]
+      },
+      "technical_constraints": [
+        "Types come from @game/content/schema"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "No TS7006 in these files",
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-271.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M857CBAKN74938S5CZW047N8",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M857CBAKN74938S5CZW047N8",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-271.md"
+      ],
+      "depends_on": [
+        "01M857CBAKN74938S5CZW047N8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-271.md",
+      "artifact_id": "REQ-271"
+    },
+    {
+      "id": "01M857CBAMM4S43GW1RK36QTWP",
+      "kind": "unit",
+      "title": "Act: Type the manifest asset callback in BootScene.preload",
+      "body": "BootScene.preload uses manifest.assets.find((a) => ...) which is implicitly any under mocks; give it an explicit type so mocked content shapes compile.\n\n## Acceptance criteria\n- Given BootScene.preload, When compiled, Then no implicit any on a\n- Given preload runs, When an image asset is planned, Then it is loaded as before\n\n\n## Scope\n- In scope: BootScene.ts preload\n- Out of scope: logic changes\n- Preserve: load.image calls\n\n\n## Technical constraints\n- Use the AssetEntry type from @game/content/schema\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Callback parameter typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Annotate parameter a in manifest.assets.find",
+      "description": "BootScene.preload uses manifest.assets.find((a) => ...) which is implicitly any under mocks; give it an explicit type so mocked content shapes compile.",
+      "acceptance_criteria": [
+        "Given BootScene.preload, When compiled, Then no implicit any on a",
+        "Given preload runs, When an image asset is planned, Then it is loaded as before"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts preload"
+        ],
+        "out_of_scope": [
+          "logic changes"
+        ],
+        "preserve": [
+          "load.image calls"
+        ]
+      },
+      "technical_constraints": [
+        "Use the AssetEntry type from @game/content/schema",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Callback parameter typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-538.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M857CBAK97G6XMA7MRQ0A0Z6",
+      "matched_feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+      "links": [
+        "parent:01M857CBAK97G6XMA7MRQ0A0Z6",
+        "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+        "artifact:.ai-dlc/units/UNIT-538.md"
+      ],
+      "depends_on": [
+        "01M857CBAK97G6XMA7MRQ0A0Z6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-538.md",
+      "artifact_id": "UNIT-538",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.preload",
+          "lines": "L35-L40",
+          "action": "Import type AssetEntry from '@game/content/schema' at the top and annotate the find callback parameter as (a: AssetEntry).",
+          "code": "manifest.assets.find((a) -> manifest.assets.find((a: AssetEntry)",
+          "expected": "The line has an explicit parameter type and behavior is unchanged"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAMM755SV1XYH49R2KN",
+      "kind": "unit",
+      "title": "Act: Name the resolveKey type in effectContext",
+      "body": "Export a ResolveKey type alias so tests and BootScene share the second-argument contract of createPhaserEffectContext.\n\n## Acceptance criteria\n- Given effectContext.ts, When imported, Then ResolveKey is exported as (id: string) => string\n- Given createPhaserEffectContext, When called, Then it still takes (scene, resolveKey)\n\n\n## Scope\n- In scope: effectContext.ts\n- Out of scope: runtime changes\n- Preserve: function signature\n\n\n## Technical constraints\n- Type-only change\n- Code path: `game/frontend/src/phaser/effectContext.ts`\n\n\n## Definition of done\n- ResolveKey exported and used in the signature\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export ResolveKey alias used by createPhaserEffectContext",
+      "description": "Export a ResolveKey type alias so tests and BootScene share the second-argument contract of createPhaserEffectContext.",
+      "acceptance_criteria": [
+        "Given effectContext.ts, When imported, Then ResolveKey is exported as (id: string) => string",
+        "Given createPhaserEffectContext, When called, Then it still takes (scene, resolveKey)"
+      ],
+      "scope": {
+        "in_scope": [
+          "effectContext.ts"
+        ],
+        "out_of_scope": [
+          "runtime changes"
+        ],
+        "preserve": [
+          "function signature"
+        ]
+      },
+      "technical_constraints": [
+        "Type-only change",
+        "Code path: `game/frontend/src/phaser/effectContext.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "ResolveKey exported and used in the signature",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-539.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M857CBAK4TD6JZRZFHS1BH24",
+      "matched_feature_id": "01M84MX32EFQ6PM2RZMGQ7P1S3",
+      "links": [
+        "parent:01M857CBAK4TD6JZRZFHS1BH24",
+        "trace:01M84MX32EFQ6PM2RZMGQ7P1S3",
+        "artifact:.ai-dlc/units/UNIT-539.md"
+      ],
+      "depends_on": [
+        "01M857CBAK4TD6JZRZFHS1BH24"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-539.md",
+      "artifact_id": "UNIT-539",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "new: ResolveKey",
+          "lines": "L5-L9",
+          "action": "Add an exported type alias ResolveKey above createPhaserEffectContext and use it for the resolveKey parameter.",
+          "code": "export type ResolveKey = (id: string) => string;\nresolveKey: (id: string) => string, -> resolveKey: ResolveKey,",
+          "expected": "The signature is unchanged in shape and the alias is exported"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAM610FTX7366N2S923",
+      "kind": "unit",
+      "title": "Act: Export SceneObjectSpec type from runtime content",
+      "body": "Export a SceneObjectSpec type derived from SceneSpec so callers can type object callbacks.\n\n## Acceptance criteria\n- Given content.ts, When imported, Then SceneObjectSpec equals SceneSpec['objects'][number]\n- Given runtime, When loaded, Then sceneSpec is unchanged\n\n\n## Scope\n- In scope: content.ts\n- Out of scope: parsing\n- Preserve: exports scene, sceneSpec, manifest, world\n\n\n## Technical constraints\n- Type-only export\n- Code path: `game/frontend/src/runtime/content.ts`\n\n\n## Definition of done\n- Alias exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add SceneObjectSpec alias for sceneSpec objects",
+      "description": "Export a SceneObjectSpec type derived from SceneSpec so callers can type object callbacks.",
+      "acceptance_criteria": [
+        "Given content.ts, When imported, Then SceneObjectSpec equals SceneSpec['objects'][number]",
+        "Given runtime, When loaded, Then sceneSpec is unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "content.ts"
+        ],
+        "out_of_scope": [
+          "parsing"
+        ],
+        "preserve": [
+          "exports scene, sceneSpec, manifest, world"
+        ]
+      },
+      "technical_constraints": [
+        "Type-only export",
+        "Code path: `game/frontend/src/runtime/content.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Alias exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-540.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M857CBAK3BZYXG3GBHMBT6YP",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M857CBAK3BZYXG3GBHMBT6YP",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-540.md"
+      ],
+      "depends_on": [
+        "01M857CBAK3BZYXG3GBHMBT6YP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-540.md",
+      "artifact_id": "UNIT-540",
+      "steps": [
+        {
+          "file": "game/frontend/src/runtime/content.ts",
+          "symbol": "new: SceneObjectSpec",
+          "lines": "after L38",
+          "action": "Add the exported type alias directly after the sceneSpec export.",
+          "code": "export type SceneObjectSpec = SceneSpec['objects'][number];",
+          "expected": "The alias compiles and is importable"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAMNE8B00MHNAPBQDEE",
+      "kind": "unit",
+      "title": "Verify: Fallback and preload tests mock sceneSpec and pass",
+      "body": "Add sceneSpec to the content mocks of the two test files and confirm they pass.\n\n## Acceptance criteria\n- Given the mocks, When BootScene loads, Then sceneSpec is defined\n- Given both files, When run, Then they pass\n\n\n## Scope\n- In scope: two test files\n- Out of scope: app code\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Everything mocked; phaser mocked\n\n\n## Definition of done\n- Both files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update mocks and run the two test files",
+      "description": "Add sceneSpec to the content mocks of the two test files and confirm they pass.",
+      "acceptance_criteria": [
+        "Given the mocks, When BootScene loads, Then sceneSpec is defined",
+        "Given both files, When run, Then they pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "two test files"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Everything mocked; phaser mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-541.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M857CBAMM4S43GW1RK36QTWP",
+      "matched_feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+      "links": [
+        "parent:01M857CBAMM4S43GW1RK36QTWP",
+        "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+        "artifact:.ai-dlc/units/UNIT-541.md"
+      ],
+      "depends_on": [
+        "01M857CBAMM4S43GW1RK36QTWP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-541.md",
+      "artifact_id": "UNIT-541",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFallback.test.ts",
+          "symbol": "vi.mock('../src/runtime/content')",
+          "lines": "L17-L28",
+          "action": "Add a sceneSpec property to the returned mock object with id 'bedroom' and objects [{ id: 'bed', asset: 'objects/bed' }] mirroring the SceneSpec type.",
+          "code": "sceneSpec: { id: 'bedroom', objects: [{ id: 'bed', asset: 'objects/bed' }] },",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFallback.test.ts",
+          "expected": "All tests in the file pass"
+        },
+        {
+          "file": "game/frontend/tests/bootScenePreload.test.ts",
+          "symbol": "vi.mock('../src/runtime/content')",
+          "lines": "L16-L40",
+          "action": "Add sceneSpec with id 'bedroom' and objects listing bed and ghost with their asset ids to the mock return value.",
+          "code": "sceneSpec: { id: 'bedroom', objects: [{ id: 'bed', asset: 'objects/bed' }, { id: 'ghost', asset: 'objects/ghost' }] },",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAMRBF1GKGWXZ3X76CV",
+      "kind": "unit",
+      "title": "Verify: Effect context tests use two arguments and typed mocks",
+      "body": "Pass a resolveKey to createPhaserEffectContext in the effects tests and type the particles mock.\n\n## Acceptance criteria\n- Given the effects tests, When called with (scene, resolveKey), Then fadeIn and rectangle assertions pass\n- Given the typed particles mock, When calls[0][2] is read, Then it equals the fallback key\n\n\n## Scope\n- In scope: two test files\n- Out of scope: app code\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Phaser scene faked\n\n\n## Definition of done\n- Both files pass and type-check\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Fix arity and tuple typing in tests",
+      "description": "Pass a resolveKey to createPhaserEffectContext in the effects tests and type the particles mock.",
+      "acceptance_criteria": [
+        "Given the effects tests, When called with (scene, resolveKey), Then fadeIn and rectangle assertions pass",
+        "Given the typed particles mock, When calls[0][2] is read, Then it equals the fallback key"
+      ],
+      "scope": {
+        "in_scope": [
+          "two test files"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser scene faked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both files pass and type-check",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-542.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M857CBAMM755SV1XYH49R2KN",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M857CBAMM755SV1XYH49R2KN",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-542.md"
+      ],
+      "depends_on": [
+        "01M857CBAMM755SV1XYH49R2KN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-542.md",
+      "artifact_id": "UNIT-542",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "describe('playTransition: fade-in and ambient layer on the Phaser scene')",
+          "lines": "L106-L115",
+          "action": "In both createPhaserEffectContext calls add the second argument (id: string) => id.",
+          "code": "createPhaserEffectContext(fakeScene as never) -> createPhaserEffectContext(fakeScene as never, (id: string) => id)",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+          "expected": "All tests pass and no TS2554 remains"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneFallback.test.ts",
+          "symbol": "describe('createPhaserEffectContext fallback key usage')",
+          "lines": "L71-L75",
+          "action": "Declare the particles mock with a rest-args signature so calls[0][2] is typed, and keep the FALLBACK assertion.",
+          "code": "vi.fn(() => emitter) -> vi.fn((..._args: unknown[]) => emitter)",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFallback.test.ts",
+          "expected": "Test passes and no TS2493 remains"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAM7D4VPW6DGWF51TM6",
+      "kind": "unit",
+      "title": "Verify: Build test types scene object callback",
+      "body": "Use SceneObjectSpec for the flatMap callback in the hardcoded-ids test.\n\n## Acceptance criteria\n- Given the build test, When mapping sceneSpec.objects, Then the parameter is typed\n- Given the file, When run, Then it passes\n\n\n## Scope\n- In scope: bootSceneBuild.test.ts\n- Out of scope: app code\n- Preserve: assertions\n\n\n## Technical constraints\n- Import type only\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Type the object callback in bootSceneBuild test",
+      "description": "Use SceneObjectSpec for the flatMap callback in the hardcoded-ids test.",
+      "acceptance_criteria": [
+        "Given the build test, When mapping sceneSpec.objects, Then the parameter is typed",
+        "Given the file, When run, Then it passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneBuild.test.ts"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": [
+          "assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Import type only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-543.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M857CBAM610FTX7366N2S923",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M857CBAM610FTX7366N2S923",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-543.md"
+      ],
+      "depends_on": [
+        "01M857CBAM610FTX7366N2S923"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-543.md",
+      "artifact_id": "UNIT-543",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneBuild.test.ts",
+          "symbol": "describe('BootScene source has no hardcoded scene content')",
+          "lines": "L9 and L90",
+          "action": "Import type SceneObjectSpec from '../src/runtime/content' and annotate the flatMap parameter.",
+          "code": "sceneSpec.objects.flatMap((o) => -> sceneSpec.objects.flatMap((o: SceneObjectSpec) =>",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneBuild.test.ts",
+          "expected": "All tests in the file pass with no TS7006"
+        }
+      ]
+    },
+    {
+      "id": "01M857CBAMAS8B66ZTV81PEVCE",
+      "kind": "evidence",
+      "title": "Evidence: BootScene tests pass with sceneSpec mocks and typed calls",
+      "body": "Collect passing unit test results for the updated bootScene test files.\n\n## Acceptance criteria\n- Given the updated files, When run, Then all pass\n- Given the same files, When type-checked, Then no errors remain\n\n\n## Scope\n- In scope: test results\n- Out of scope: new behavior\n\n\n## Definition of done\n- Results recorded from Verify units\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that updated bootScene tests pass",
+      "description": "Collect passing unit test results for the updated bootScene test files.",
+      "acceptance_criteria": [
+        "Given the updated files, When run, Then all pass",
+        "Given the same files, When type-checked, Then no errors remain"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "new behavior"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Results recorded from Verify units",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-109.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M857CBAMNE8B00MHNAPBQDEE",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M857CBAMNE8B00MHNAPBQDEE",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-109.md"
+      ],
+      "depends_on": [
+        "01M857CBAMNE8B00MHNAPBQDEE",
+        "01M857CBAMRBF1GKGWXZ3X76CV",
+        "01M857CBAM7D4VPW6DGWF51TM6"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-109.md",
+      "artifact_id": "EVD-109"
+    }
+  ],
+  "created_at": "2026-11-23T22:11:31.758366+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

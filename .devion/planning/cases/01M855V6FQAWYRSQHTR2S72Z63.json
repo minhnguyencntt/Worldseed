@@ -1,0 +1,408 @@
+{
+  "id": "01M855V6FQAWYRSQHTR2S72Z63",
+  "trigger_node_id": "INT-103, UNIT-510 +6",
+  "node_ids": [
+    "INT-103",
+    "UNIT-510",
+    "UNIT-511",
+    "UNIT-512",
+    "UNIT-513",
+    "REQ-255",
+    "REQ-256",
+    "EVD-103"
+  ],
+  "intent_id": "INT-103",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-103",
+      "title": "SG-5.4.2 BootScene preloads only planned assets with fallback texture",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-510",
+      "title": "Act: Add BootScene.preload driven by planPreload",
+      "kind": "unit",
+      "task_ids": [
+        "01M855V5TKJNDH5CEFTTAA9XYY"
+      ],
+      "depends_on": [
+        "REQ-255"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "0775b4643234a3cd0e1a7aa395aec29e000c1255",
+      "from_sha": "de561201c1cd4b6be08081bda59c1c4631b5d073",
+      "started_at": "2026-11-23T21:43:58.553447+00:00",
+      "ended_at": "2026-11-23T21:45:04.267333+00:00",
+      "run_started_at": "2026-11-23T21:43:58.553447+00:00",
+      "duration_ms": 63343,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 8372,
+      "estimated_cost_usd": 0.033506
+    },
+    {
+      "unit_id": "UNIT-511",
+      "title": "Act: Resolve texture keys and generate fallback in BootScene",
+      "kind": "unit",
+      "task_ids": [
+        "01M855V5TKN59NEQE475PPZB87"
+      ],
+      "depends_on": [
+        "REQ-256"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "aeae11cb119f4c73e42c4e03a43aba9ec0909d33",
+      "from_sha": "aeae11cb119f4c73e42c4e03a43aba9ec0909d33",
+      "started_at": "2026-11-23T21:43:58.571733+00:00",
+      "ended_at": "2026-11-23T21:46:09.757707+00:00",
+      "run_started_at": "2026-11-23T21:43:58.571733+00:00",
+      "duration_ms": 129614,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 44,
+      "tokens_out": 17023,
+      "estimated_cost_usd": 0.068127
+    },
+    {
+      "unit_id": "UNIT-512",
+      "title": "Verify: BootScene.preload loads only planned assets",
+      "kind": "unit",
+      "task_ids": [
+        "01M855V5TKEA4NNTXPMM9EYCQN"
+      ],
+      "depends_on": [
+        "UNIT-510",
+        "REQ-255"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "aeae11cb119f4c73e42c4e03a43aba9ec0909d33",
+      "from_sha": "0775b4643234a3cd0e1a7aa395aec29e000c1255",
+      "tests": [
+        {
+          "id": "bootScenePreload.loads-referenced-asset",
+          "kind": "unit",
+          "name": "loads the referenced, manifest-known asset with its manifest path",
+          "title": "BootScene.preload loads the referenced asset once with its manifest path",
+          "scenario": "Given a scene referencing objects/bed and a manifest that declares it, When preload() runs, Then load.image is called once with ('objects/bed', 'assets/worlds/the-boys-room/furniture/bed.svg')",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "file": "tests/bootScenePreload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootScenePreload.skips-unreferenced-manifest-asset",
+          "kind": "unit",
+          "name": "never loads a manifest asset that the scene does not reference",
+          "title": "BootScene.preload does not load a manifest asset the scene never references",
+          "scenario": "Given a manifest declaring objects/desk that the scene does not reference, When preload() runs, Then load.image is never called with objects/desk",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "file": "tests/bootScenePreload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootScenePreload.skips-missing-manifest-asset",
+          "kind": "unit",
+          "name": "never loads a referenced asset that is missing from the manifest",
+          "title": "BootScene.preload does not load a referenced asset that is missing from the manifest",
+          "scenario": "Given a scene referencing objects/ghost that the manifest does not declare, When preload() runs, Then load.image is never called with objects/ghost",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "file": "tests/bootScenePreload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootScenePreload.warns-unknown-ref",
+          "kind": "unit",
+          "name": "warns about the unknown asset reference by id",
+          "title": "BootScene.preload warns with the id of an unknown asset reference",
+          "scenario": "Given a scene referencing objects/ghost that the manifest does not declare, When preload() runs, Then console.warn is called with a message containing objects/ghost",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "file": "tests/bootScenePreload.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T21:45:04.276707+00:00",
+      "ended_at": "2026-11-23T21:45:59.544711+00:00",
+      "run_started_at": "2026-11-23T21:45:04.276707+00:00",
+      "duration_ms": 52121,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 24,
+      "tokens_out": 7615,
+      "estimated_cost_usd": 0.030479
+    },
+    {
+      "unit_id": "UNIT-513",
+      "title": "Verify: Fallback texture and key resolution",
+      "kind": "unit",
+      "task_ids": [
+        "01M855V5TK1GZEXJFVVCYWXA3F"
+      ],
+      "depends_on": [
+        "UNIT-511",
+        "REQ-256"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "4e9205dcdcd96b3afaf958c4dc515e902b0df9de",
+      "from_sha": "aeae11cb119f4c73e42c4e03a43aba9ec0909d33",
+      "tests": [
+        {
+          "id": "bootSceneFallback > resolveKey returns asset id when known and not failed",
+          "kind": "unit",
+          "name": "BootScene resolveKey fallback > returns the asset id itself when the manifest knows it and it has not failed",
+          "title": "BootScene resolveKey returns the asset id itself when the manifest knows it and it has not failed",
+          "scenario": "Given a BootScene preloaded with objects/bed in the manifest, When resolveKey('objects/bed') is called, Then it returns 'objects/bed'",
+          "command": "npx vitest run tests/bootSceneFallback.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneFallback > resolveKey returns fallback for unknown id",
+          "kind": "unit",
+          "name": "BootScene resolveKey fallback > returns the fallback key for an id the manifest does not know",
+          "title": "BootScene resolveKey returns the fallback key for an id the manifest does not know",
+          "scenario": "Given a BootScene preloaded with the manifest, When resolveKey('nope') is called, Then it returns 'fallback:missing'",
+          "command": "npx vitest run tests/bootSceneFallback.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneFallback > resolveKey returns fallback after loaderror",
+          "kind": "unit",
+          "name": "BootScene resolveKey fallback > returns the fallback key once the loader reports the asset as failed",
+          "title": "BootScene resolveKey returns the fallback key once the loader reports the asset as failed",
+          "scenario": "Given the loaderror handler registered via load.on has reported 'objects/bed' as failed, When resolveKey('objects/bed') is called, Then it returns 'fallback:missing'",
+          "command": "npx vitest run tests/bootSceneFallback.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneFallback > effectContext dust particles use fallback key",
+          "kind": "unit",
+          "name": "createPhaserEffectContext fallback key usage > passes the resolved fallback key as the dust particle texture",
+          "title": "Phaser effect context passes the resolved fallback key as the dust particle texture",
+          "scenario": "Given an effect context whose key resolver returns 'fallback:missing' and a fake scene whose add.particles returns a chainable setDepth, When a dust effect is created, Then the particles factory receives 'fallback:missing' as its texture key and the emitter depth is set",
+          "command": "npx vitest run tests/bootSceneFallback.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneFallback.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T21:46:09.766594+00:00",
+      "ended_at": "2026-11-23T21:46:41.855998+00:00",
+      "run_started_at": "2026-11-23T21:46:09.766594+00:00",
+      "duration_ms": 30609,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 5118,
+      "estimated_cost_usd": 0.020486
+    },
+    {
+      "unit_id": "REQ-255",
+      "title": "REQ · BootScene preloads only the planned assets",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-103"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-256",
+      "title": "REQ · Texture keys resolve through resolveTextureKey with a fallback texture",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-103"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-103",
+      "title": "Evidence: BootScene preload and fallback unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-510",
+        "UNIT-511",
+        "UNIT-512",
+        "UNIT-513"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-510",
+      "dst": "EVD-103"
+    },
+    {
+      "src": "UNIT-510",
+      "dst": "UNIT-512"
+    },
+    {
+      "src": "UNIT-511",
+      "dst": "UNIT-513"
+    },
+    {
+      "src": "UNIT-512",
+      "dst": "EVD-103"
+    },
+    {
+      "src": "REQ-255",
+      "dst": "UNIT-510"
+    },
+    {
+      "src": "REQ-255",
+      "dst": "UNIT-512"
+    },
+    {
+      "src": "REQ-256",
+      "dst": "UNIT-511"
+    },
+    {
+      "src": "UNIT-513",
+      "dst": "EVD-103"
+    },
+    {
+      "src": "INT-103",
+      "dst": "REQ-255"
+    },
+    {
+      "src": "INT-103",
+      "dst": "REQ-256"
+    },
+    {
+      "src": "REQ-256",
+      "dst": "UNIT-513"
+    },
+    {
+      "src": "UNIT-511",
+      "dst": "EVD-103"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m855v6",
+  "base_sha": "de561201c1cd4b6be08081bda59c1c4631b5d073",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M855V6FQAWYRSQHTR2S72Z63:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T21:43:56.151680+00:00",
+  "updated_at": "2026-11-23T21:46:43.597537+00:00",
+  "completed_at": "2026-11-23T21:46:41.857186+00:00",
+  "duration_ms": 165706,
+  "usage_stats": {
+    "total_duration_ms": 275700,
+    "total_tokens_in": 108,
+    "total_tokens_out": 38128,
+    "total_estimated_cost_usd": 0.152598
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 13,
+  "unit_allowlist": [
+    "UNIT-510",
+    "UNIT-511",
+    "UNIT-512",
+    "UNIT-513"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-510",
+        "title": "Act: Add BootScene.preload driven by planPreload",
+        "evidence_refs": [
+          {
+            "id": "EVD-103",
+            "path": ".ai-dlc/evidence/EVD-103.md",
+            "title": "Evidence: BootScene preload and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-510 unless acceptance outcomes recorded in EVD-103 (.ai-dlc/evidence/EVD-103.md; \"Evidence: BootScene preload and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-511",
+        "title": "Act: Resolve texture keys and generate fallback in BootScene",
+        "evidence_refs": [
+          {
+            "id": "EVD-103",
+            "path": ".ai-dlc/evidence/EVD-103.md",
+            "title": "Evidence: BootScene preload and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-511 unless acceptance outcomes recorded in EVD-103 (.ai-dlc/evidence/EVD-103.md; \"Evidence: BootScene preload and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-512",
+        "title": "Verify: BootScene.preload loads only planned assets",
+        "evidence_refs": [
+          {
+            "id": "EVD-103",
+            "path": ".ai-dlc/evidence/EVD-103.md",
+            "title": "Evidence: BootScene preload and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-512 unless acceptance outcomes recorded in EVD-103 (.ai-dlc/evidence/EVD-103.md; \"Evidence: BootScene preload and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-513",
+        "title": "Verify: Fallback texture and key resolution",
+        "evidence_refs": [
+          {
+            "id": "EVD-103",
+            "path": ".ai-dlc/evidence/EVD-103.md",
+            "title": "Evidence: BootScene preload and fallback unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-513 unless acceptance outcomes recorded in EVD-103 (.ai-dlc/evidence/EVD-103.md; \"Evidence: BootScene preload and fallback unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T21:43:58.197453+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-510",
+    "UNIT-511",
+    "UNIT-512",
+    "UNIT-513"
+  ]
+}

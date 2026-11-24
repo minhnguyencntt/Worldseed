@@ -1,0 +1,500 @@
+{
+  "intent_id": "01M84SD74FR4S7415AGVJFAZRJ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84SEJ7G6VMGGWTGSE9QZ0JS",
+      "kind": "intent",
+      "title": "SG-4.1.3 · Replace Phaser 4-only APIs with 3.90 equivalents in the Phaser modules",
+      "body": "Context: package.json pins phaser ~3.90.0. The files game/frontend/src/phaser/BootScene.ts, config.ts, createGame.ts, events.ts and game/frontend/src/components/PhaserHost.tsx were read. They use Phaser.AUTO, Phaser.Scale.FIT, Phaser.Scale.CENTER_BOTH, render.pixelArt/roundPixels/antialias, Phaser.Scenes.Events.SHUTDOWN, game.scale.refresh() and game.destroy(true). All of these exist in 3.90. No Phaser 4-only API was found. Desired behavior: the audit is recorded as the code stays on 3.90-only APIs, and mocked unit tests fail if a Phaser 4-only API is introduced. Why: Phaser is pinned to 3.90 and Phaser 4-only APIs would break at runtime.\n\n## Acceptance criteria\n- Given the five files, when they are scanned, then none references a Phaser 4-only API such as Phaser.Renderer.WebGL.Renderer.Filters, Phaser.GameObjects.Filters or the setFilter/enableFilters family.\n- Given buildGameConfig with a mocked phaser module, when called, then it returns the 3.90 config shape (type AUTO, 640x360, pixelArt, roundPixels, FIT scaling).\n- Given BootScene and PhaserHost with phaser mocked, when mounted and unmounted, then only 3.90 methods are called (events.once, scale.refresh, destroy(true)) and the scene unsubscribes on shutdown.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- In scope: game/frontend/src/phaser/config.ts\n- In scope: game/frontend/src/phaser/createGame.ts\n- In scope: game/frontend/src/phaser/events.ts\n- In scope: game/frontend/src/components/PhaserHost.tsx\n- Out of scope: Upgrading Phaser\n- Out of scope: Changing the package.json or lockfile pin\n- Out of scope: Adding new scenes\n- Preserve: Typed event bus contract\n- Preserve: Single Phaser instance per host\n- Preserve: Pixel-art render settings\n\n\n## Technical constraints\n- Phaser stays at ~3.90.0\n- Tests use vitest with phaser mocked and no browser\n\n\n## Definition of done\n- Each requirement has Act and Verify units completed\n- All new unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene, config, createGame, events and PhaserHost use only Phaser 3.90 APIs, proven by mocked unit tests",
+      "description": "Context: package.json pins phaser ~3.90.0. The files game/frontend/src/phaser/BootScene.ts, config.ts, createGame.ts, events.ts and game/frontend/src/components/PhaserHost.tsx were read. They use Phaser.AUTO, Phaser.Scale.FIT, Phaser.Scale.CENTER_BOTH, render.pixelArt/roundPixels/antialias, Phaser.Scenes.Events.SHUTDOWN, game.scale.refresh() and game.destroy(true). All of these exist in 3.90. No Phaser 4-only API was found. Desired behavior: the audit is recorded as the code stays on 3.90-only APIs, and mocked unit tests fail if a Phaser 4-only API is introduced. Why: Phaser is pinned to 3.90 and Phaser 4-only APIs would break at runtime.",
+      "acceptance_criteria": [
+        "Given the five files, when they are scanned, then none references a Phaser 4-only API such as Phaser.Renderer.WebGL.Renderer.Filters, Phaser.GameObjects.Filters or the setFilter/enableFilters family.",
+        "Given buildGameConfig with a mocked phaser module, when called, then it returns the 3.90 config shape (type AUTO, 640x360, pixelArt, roundPixels, FIT scaling).",
+        "Given BootScene and PhaserHost with phaser mocked, when mounted and unmounted, then only 3.90 methods are called (events.once, scale.refresh, destroy(true)) and the scene unsubscribes on shutdown."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts",
+          "game/frontend/src/phaser/config.ts",
+          "game/frontend/src/phaser/createGame.ts",
+          "game/frontend/src/phaser/events.ts",
+          "game/frontend/src/components/PhaserHost.tsx"
+        ],
+        "out_of_scope": [
+          "Upgrading Phaser",
+          "Changing the package.json or lockfile pin",
+          "Adding new scenes"
+        ],
+        "preserve": [
+          "Typed event bus contract",
+          "Single Phaser instance per host",
+          "Pixel-art render settings"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays at ~3.90.0",
+        "Tests use vitest with phaser mocked and no browser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Each requirement has Act and Verify units completed",
+        "All new unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-083.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+      "links": [
+        "trace:01M84G51W28MN6Z7X3354EYDE3",
+        "artifact:.ai-dlc/intent/INT-083.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-083.md",
+      "artifact_id": "INT-083"
+    },
+    {
+      "id": "01M84SEJ7G9QN2R4H1SD0AGRFE",
+      "kind": "requirement",
+      "title": "REQ · config.ts, createGame.ts and events.ts use only Phaser 3.90 APIs",
+      "body": "Context: config.ts builds GameConfig with Phaser.AUTO, Phaser.Scale.FIT and render options. createGame.ts calls new Phaser.Game. events.ts has no Phaser dependency. Desired behavior: these modules use 3.90 equivalents only and state the 3.90 target. Expected result: no Phaser 4-only symbol appears in them. Why: protects the 3.90 pin.\n\n## Acceptance criteria\n- Given buildGameConfig, when called with a parent element and scenes, then it returns type Phaser.AUTO, width 640, height 360 and render.pixelArt true.\n- Given createGame, when called with phaser mocked, then new Phaser.Game receives the config from buildGameConfig.\n- Given events.ts, when its imports are read, then it imports nothing from phaser.\n\n\n## Scope\n- In scope: config.ts\n- In scope: createGame.ts\n- In scope: events.ts\n- Out of scope: BootScene.ts\n- Out of scope: PhaserHost.tsx\n- Preserve: GAME_WIDTH and GAME_HEIGHT exports\n- Preserve: computeZoom behavior\n- Preserve: createGame signature\n\n\n## Technical constraints\n- Phaser ~3.90.0\n\n\n## Definition of done\n- Modules carry a 3.90 target comment and use only 3.90 APIs\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Game config, factory and event bus are 3.90-compatible and documented as such",
+      "description": "Context: config.ts builds GameConfig with Phaser.AUTO, Phaser.Scale.FIT and render options. createGame.ts calls new Phaser.Game. events.ts has no Phaser dependency. Desired behavior: these modules use 3.90 equivalents only and state the 3.90 target. Expected result: no Phaser 4-only symbol appears in them. Why: protects the 3.90 pin.",
+      "acceptance_criteria": [
+        "Given buildGameConfig, when called with a parent element and scenes, then it returns type Phaser.AUTO, width 640, height 360 and render.pixelArt true.",
+        "Given createGame, when called with phaser mocked, then new Phaser.Game receives the config from buildGameConfig.",
+        "Given events.ts, when its imports are read, then it imports nothing from phaser."
+      ],
+      "scope": {
+        "in_scope": [
+          "config.ts",
+          "createGame.ts",
+          "events.ts"
+        ],
+        "out_of_scope": [
+          "BootScene.ts",
+          "PhaserHost.tsx"
+        ],
+        "preserve": [
+          "GAME_WIDTH and GAME_HEIGHT exports",
+          "computeZoom behavior",
+          "createGame signature"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Modules carry a 3.90 target comment and use only 3.90 APIs",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-207.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84SEJ7G6VMGGWTGSE9QZ0JS",
+      "matched_feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+      "links": [
+        "parent:01M84SEJ7G6VMGGWTGSE9QZ0JS",
+        "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+        "artifact:.ai-dlc/requirements/REQ-207.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7G6VMGGWTGSE9QZ0JS"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-207.md",
+      "artifact_id": "REQ-207"
+    },
+    {
+      "id": "01M84SEJ7G81AN7XY1SHFCHYY1",
+      "kind": "requirement",
+      "title": "REQ · BootScene.ts and PhaserHost.tsx use only Phaser 3.90 APIs",
+      "body": "Context: BootScene uses Phaser.Scenes.Events.SHUTDOWN and this.events.once; PhaserHost uses game.scale.refresh() and game.destroy(true). Desired behavior: these remain 3.90 APIs, documented, and covered by mocked tests. Why: guards the lifecycle on the pinned version.\n\n## Acceptance criteria\n- Given BootScene.create with phaser mocked, when SHUTDOWN is emitted, then the store subscription is removed.\n- Given PhaserHost mounted and unmounted with createGame mocked, then scale.refresh is called on resize and destroy(true) is called once on unmount.\n- Given the two source files, when scanned, then no Phaser 4-only API is referenced.\n\n\n## Scope\n- In scope: BootScene.ts\n- In scope: PhaserHost.tsx\n- Out of scope: config.ts\n- Out of scope: New scenes\n- Preserve: sceneReady emission\n- Preserve: Single instance per host\n\n\n## Technical constraints\n- Phaser ~3.90.0\n\n\n## Definition of done\n- Comments added and tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Scene and React host use 3.90 lifecycle APIs and clean up",
+      "description": "Context: BootScene uses Phaser.Scenes.Events.SHUTDOWN and this.events.once; PhaserHost uses game.scale.refresh() and game.destroy(true). Desired behavior: these remain 3.90 APIs, documented, and covered by mocked tests. Why: guards the lifecycle on the pinned version.",
+      "acceptance_criteria": [
+        "Given BootScene.create with phaser mocked, when SHUTDOWN is emitted, then the store subscription is removed.",
+        "Given PhaserHost mounted and unmounted with createGame mocked, then scale.refresh is called on resize and destroy(true) is called once on unmount.",
+        "Given the two source files, when scanned, then no Phaser 4-only API is referenced."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts",
+          "PhaserHost.tsx"
+        ],
+        "out_of_scope": [
+          "config.ts",
+          "New scenes"
+        ],
+        "preserve": [
+          "sceneReady emission",
+          "Single instance per host"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Comments added and tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-208.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84SEJ7G6VMGGWTGSE9QZ0JS",
+      "matched_feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+      "links": [
+        "parent:01M84SEJ7G6VMGGWTGSE9QZ0JS",
+        "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+        "artifact:.ai-dlc/requirements/REQ-208.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7G6VMGGWTGSE9QZ0JS"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-208.md",
+      "artifact_id": "REQ-208"
+    },
+    {
+      "id": "01M84SEJ7G2160WPCM34JEHCBK",
+      "kind": "unit",
+      "title": "Act: Document the 3.90 API targets in config.ts and createGame.ts",
+      "body": "The audit found only 3.90 APIs in config.ts and createGame.ts. Add a comment naming the 3.90 constants used so a later change to a 4-only API is visible. Do not change behavior.\n\n## Acceptance criteria\n- Given config.ts, when read, then a comment states that Phaser.AUTO, Phaser.Scale.FIT and render.pixelArt are the 3.90 APIs in use.\n- Given createGame.ts, when read, then it still returns new Phaser.Game(buildGameConfig(parent, scenes)).\n\n\n## Scope\n- In scope: config.ts\n- In scope: createGame.ts\n- Out of scope: Behavior changes\n- Preserve: Exports and signatures\n\n\n## Technical constraints\n- Comments only; no behavior change\n- Code path: `game/frontend/src/phaser/config.ts`\n- Code path: `game/frontend/src/phaser/createGame.ts`\n\n\n## Definition of done\n- Comments added and the existing tests/phaserConfig.test.ts still passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Keep 3.90 APIs in config and factory and state the target",
+      "description": "The audit found only 3.90 APIs in config.ts and createGame.ts. Add a comment naming the 3.90 constants used so a later change to a 4-only API is visible. Do not change behavior.",
+      "acceptance_criteria": [
+        "Given config.ts, when read, then a comment states that Phaser.AUTO, Phaser.Scale.FIT and render.pixelArt are the 3.90 APIs in use.",
+        "Given createGame.ts, when read, then it still returns new Phaser.Game(buildGameConfig(parent, scenes))."
+      ],
+      "scope": {
+        "in_scope": [
+          "config.ts",
+          "createGame.ts"
+        ],
+        "out_of_scope": [
+          "Behavior changes"
+        ],
+        "preserve": [
+          "Exports and signatures"
+        ]
+      },
+      "technical_constraints": [
+        "Comments only; no behavior change",
+        "Code path: `game/frontend/src/phaser/config.ts`",
+        "Code path: `game/frontend/src/phaser/createGame.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Comments added and the existing tests/phaserConfig.test.ts still passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-414.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84SEJ7G9QN2R4H1SD0AGRFE",
+      "matched_feature_id": "01M84R6BDEPWK3D4QWR9A18JVX",
+      "links": [
+        "parent:01M84SEJ7G9QN2R4H1SD0AGRFE",
+        "trace:01M84R6BDEPWK3D4QWR9A18JVX",
+        "artifact:.ai-dlc/units/UNIT-414.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7G9QN2R4H1SD0AGRFE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-414.md",
+      "artifact_id": "UNIT-414",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/config.ts",
+          "symbol": "buildGameConfig",
+          "lines": "L11-L30",
+          "action": "Add a comment above buildGameConfig stating that Phaser 3.90 APIs are used: Phaser.AUTO, Phaser.Scale.FIT, Phaser.Scale.CENTER_BOTH and render.pixelArt/roundPixels/antialias.",
+          "code": "// Phaser 3.90 target: Phaser.AUTO, Phaser.Scale.FIT, Phaser.Scale.CENTER_BOTH, render.pixelArt/roundPixels/antialias.",
+          "expected": "Comment present; config object unchanged."
+        },
+        {
+          "file": "game/frontend/src/phaser/createGame.ts",
+          "symbol": "createGame",
+          "lines": "L4-L10",
+          "action": "Change the existing comment above createGame to also say it constructs a Phaser 3.90 Phaser.Game and uses no Phaser 4-only API.",
+          "code": "// Single seam for constructing the Phaser 3.90 game (no Phaser 4-only APIs); tests mock this module.",
+          "expected": "createGame body unchanged."
+        }
+      ]
+    },
+    {
+      "id": "01M84SEJ7GJB66ZP78PHWYHDV2",
+      "kind": "unit",
+      "title": "Act: Document the 3.90 lifecycle APIs in BootScene and PhaserHost",
+      "body": "The audit found BootScene and PhaserHost use only 3.90 APIs. Add comments naming them. Do not change behavior.\n\n## Acceptance criteria\n- Given BootScene.ts, when read, then a comment states it uses Phaser.Scenes.Events.SHUTDOWN and this.events.once from 3.90.\n- Given PhaserHost.tsx, when read, then a comment states it uses game.scale.refresh and game.destroy(true) from 3.90.\n\n\n## Scope\n- In scope: BootScene.ts\n- In scope: PhaserHost.tsx\n- Out of scope: Behavior changes\n- Preserve: Lifecycle behavior\n\n\n## Technical constraints\n- Comments only\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n- Code path: `game/frontend/src/components/PhaserHost.tsx`\n\n\n## Definition of done\n- Comments added; tests/bootScene.test.ts and tests/phaserHost.test.tsx still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Keep 3.90 lifecycle APIs and state the target",
+      "description": "The audit found BootScene and PhaserHost use only 3.90 APIs. Add comments naming them. Do not change behavior.",
+      "acceptance_criteria": [
+        "Given BootScene.ts, when read, then a comment states it uses Phaser.Scenes.Events.SHUTDOWN and this.events.once from 3.90.",
+        "Given PhaserHost.tsx, when read, then a comment states it uses game.scale.refresh and game.destroy(true) from 3.90."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts",
+          "PhaserHost.tsx"
+        ],
+        "out_of_scope": [
+          "Behavior changes"
+        ],
+        "preserve": [
+          "Lifecycle behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Comments only",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`",
+        "Code path: `game/frontend/src/components/PhaserHost.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Comments added; tests/bootScene.test.ts and tests/phaserHost.test.tsx still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-415.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84SEJ7G81AN7XY1SHFCHYY1",
+      "matched_feature_id": "01M847PS3S92ZKV8MN9QEWHYN2",
+      "links": [
+        "parent:01M84SEJ7G81AN7XY1SHFCHYY1",
+        "trace:01M847PS3S92ZKV8MN9QEWHYN2",
+        "artifact:.ai-dlc/units/UNIT-415.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7G81AN7XY1SHFCHYY1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-415.md",
+      "artifact_id": "UNIT-415",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L18-L25",
+          "action": "Add a comment above this.events.once stating that Phaser.Scenes.Events.SHUTDOWN and Scene.events.once are 3.90 APIs.",
+          "code": "// Phaser 3.90: Scenes.Events.SHUTDOWN via this.events.once.",
+          "expected": "Method body otherwise unchanged."
+        },
+        {
+          "file": "game/frontend/src/components/PhaserHost.tsx",
+          "symbol": "PhaserHost",
+          "lines": "L12-L28",
+          "action": "Add a comment above the ResizeObserver stating that game.scale.refresh() and game.destroy(true) are the Phaser 3.90 resize and cleanup APIs.",
+          "code": "// Phaser 3.90: scale.refresh() on resize, destroy(true) on unmount.",
+          "expected": "Effect body unchanged."
+        }
+      ]
+    },
+    {
+      "id": "01M84SEJ7GJ0BTMMG4NVX2RRKN",
+      "kind": "unit",
+      "title": "Verify: config, createGame and events use only 3.90 APIs unit tests",
+      "body": "Write tests/phaser390Config.test.ts with phaser mocked via vi.mock. Assert the config shape, the createGame wiring and that the source files reference no Phaser 4-only symbols.\n\n## Acceptance criteria\n- Given the mocked phaser, when buildGameConfig is called, then type is AUTO, size is 640x360 and pixelArt is true.\n- Given source text of config.ts, createGame.ts and events.ts read with node:fs, when scanned, then none matches /Filters|enableFilters|setFilter|Phaser\\.Renderer\\.WebGL\\.Renderer\\.Filters/.\n- Given events.ts source, when scanned, then it has no import from 'phaser'.\n\n\n## Scope\n- In scope: tests/phaser390Config.test.ts\n- Out of scope: Real browser rendering\n- Preserve: Existing phaser tests\n\n\n## Technical constraints\n- phaser mocked; fs reads of repo source files only\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked-phaser tests for config, factory and event bus imports",
+      "description": "Write tests/phaser390Config.test.ts with phaser mocked via vi.mock. Assert the config shape, the createGame wiring and that the source files reference no Phaser 4-only symbols.",
+      "acceptance_criteria": [
+        "Given the mocked phaser, when buildGameConfig is called, then type is AUTO, size is 640x360 and pixelArt is true.",
+        "Given source text of config.ts, createGame.ts and events.ts read with node:fs, when scanned, then none matches /Filters|enableFilters|setFilter|Phaser\\.Renderer\\.WebGL\\.Renderer\\.Filters/.",
+        "Given events.ts source, when scanned, then it has no import from 'phaser'."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/phaser390Config.test.ts"
+        ],
+        "out_of_scope": [
+          "Real browser rendering"
+        ],
+        "preserve": [
+          "Existing phaser tests"
+        ]
+      },
+      "technical_constraints": [
+        "phaser mocked; fs reads of repo source files only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-416.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SEJ7G2160WPCM34JEHCBK",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84SEJ7G2160WPCM34JEHCBK",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-416.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7G2160WPCM34JEHCBK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-416.md",
+      "artifact_id": "UNIT-416",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaser390Config.test.ts",
+          "symbol": "new: phaser 3.90 config tests",
+          "lines": "new",
+          "action": "Create the test file. vi.mock('phaser') returning default {AUTO:0, Scale:{FIT:3, CENTER_BOTH:1}, Game: vi.fn()}. Test 1: buildGameConfig(document.createElement('div'), []) gives type 0, width 640, height 360, render.pixelArt true, scale.mode 3. Test 2: createGame passes buildGameConfig output to the mocked Game constructor. Test 3: read src/phaser/config.ts, createGame.ts and events.ts with readFileSync and expect no match for the Phaser 4 filter regex; expect events.ts not to contain \"from 'phaser'\".",
+          "command": "cd game/frontend && npx vitest run tests/phaser390Config.test.ts",
+          "expected": "All three tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84SEJ7G7YF4RYGSYA9PG7AJ",
+      "kind": "unit",
+      "title": "Verify: BootScene and PhaserHost 3.90 lifecycle unit tests",
+      "body": "Write tests/phaser390Lifecycle.test.tsx with phaser and createGame mocked. Assert BootScene shutdown unsubscribes, PhaserHost calls scale.refresh and destroy(true), and the sources contain no Phaser 4-only API.\n\n## Acceptance criteria\n- Given BootScene.create run with a fake events emitter, when SHUTDOWN fires, then the zustand unsubscribe is called.\n- Given PhaserHost rendered with createGame mocked returning {scale:{refresh},destroy}, when unmounted, then destroy is called once with true.\n- Given a mocked ResizeObserver callback, when invoked, then scale.refresh is called.\n- Given BootScene.ts and PhaserHost.tsx source, when scanned, then no Phaser 4 filter API matches.\n\n\n## Scope\n- In scope: tests/phaser390Lifecycle.test.tsx\n- Out of scope: Browser rendering\n- Preserve: Existing tests\n\n\n## Technical constraints\n- phaser, createGame and ResizeObserver mocked\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked tests for shutdown cleanup, resize and destroy",
+      "description": "Write tests/phaser390Lifecycle.test.tsx with phaser and createGame mocked. Assert BootScene shutdown unsubscribes, PhaserHost calls scale.refresh and destroy(true), and the sources contain no Phaser 4-only API.",
+      "acceptance_criteria": [
+        "Given BootScene.create run with a fake events emitter, when SHUTDOWN fires, then the zustand unsubscribe is called.",
+        "Given PhaserHost rendered with createGame mocked returning {scale:{refresh},destroy}, when unmounted, then destroy is called once with true.",
+        "Given a mocked ResizeObserver callback, when invoked, then scale.refresh is called.",
+        "Given BootScene.ts and PhaserHost.tsx source, when scanned, then no Phaser 4 filter API matches."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/phaser390Lifecycle.test.tsx"
+        ],
+        "out_of_scope": [
+          "Browser rendering"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "phaser, createGame and ResizeObserver mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-417.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SEJ7GJB66ZP78PHWYHDV2",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84SEJ7GJB66ZP78PHWYHDV2",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-417.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7GJB66ZP78PHWYHDV2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-417.md",
+      "artifact_id": "UNIT-417",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaser390Lifecycle.test.tsx",
+          "symbol": "new: phaser 3.90 lifecycle tests",
+          "lines": "new",
+          "action": "Create the test file, mirroring mocking from tests/bootScene.test.ts and tests/phaserHost.test.tsx. Test 1: stub phaser Scene and Scenes.Events.SHUTDOWN, call create(), fire SHUTDOWN, assert the zustand unsubscribe spy ran. Test 2: vi.mock('../src/phaser/createGame') returning {scale:{refresh: vi.fn()}, destroy: vi.fn()}; render PhaserHost, trigger the captured ResizeObserver callback, assert refresh called; unmount, assert destroy toHaveBeenCalledWith(true) once. Test 3: read both source files and expect no match for /Filters|enableFilters|setFilter/.",
+          "command": "cd game/frontend && npx vitest run tests/phaser390Lifecycle.test.tsx",
+          "expected": "All tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84SEJ7GB3GX8EFNFF7SV2SC",
+      "kind": "evidence",
+      "title": "Evidence: Phaser 3.90 API compatibility unit tests",
+      "body": "Collect the passing results of tests/phaser390Config.test.ts and tests/phaser390Lifecycle.test.tsx as evidence that the five files use only Phaser 3.90 APIs.\n\n## Acceptance criteria\n- Given both new test files, when run, then all tests pass.\n- Given the existing phaserConfig, bootScene, phaserHost and phaserEvents tests, when run, then they still pass.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: New code\n\n\n## Definition of done\n- Test outputs recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving 3.90-only API use in the Phaser modules",
+      "description": "Collect the passing results of tests/phaser390Config.test.ts and tests/phaser390Lifecycle.test.tsx as evidence that the five files use only Phaser 3.90 APIs.",
+      "acceptance_criteria": [
+        "Given both new test files, when run, then all tests pass.",
+        "Given the existing phaserConfig, bootScene, phaserHost and phaserEvents tests, when run, then they still pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test outputs recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-083.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84SEJ7GJ0BTMMG4NVX2RRKN",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84SEJ7GJ0BTMMG4NVX2RRKN",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-083.md"
+      ],
+      "depends_on": [
+        "01M84SEJ7GJ0BTMMG4NVX2RRKN",
+        "01M84SEJ7G7YF4RYGSYA9PG7AJ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-083.md",
+      "artifact_id": "EVD-083"
+    }
+  ],
+  "created_at": "2026-11-23T18:07:38.714885+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

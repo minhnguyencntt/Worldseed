@@ -1,0 +1,72 @@
+{
+  "id": "01M85QHT561WKZKH7VNV6NRBE8",
+  "intent_id": "01M85Q9HW9N2CVSQD6BPVWCP20",
+  "title": "Verify: Palette Tailwind colour export unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for paletteTailwindColors and tailwind.config pal",
+  "description": "Test the Tailwind export against the palette.",
+  "acceptance_criteria": [
+    "Tests assert every palette colour appears once in paletteTailwindColors.",
+    "Tests assert tailwind config exposes pal and keeps old tokens."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/paletteTailwind.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code edits"
+    ],
+    "preserve": [
+      "tailwindConfig.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only."
+  ],
+  "dependencies": [
+    "ACT-TW"
+  ],
+  "definition_of_done": [
+    "tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-770.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85QC21CVCTMF6A9RKHRNATR",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-770.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85QHT5604M8SMRV5KPMR7G7"
+  ],
+  "sim_node_id": "01M85QC21CX9C20D35AVF2QS5P",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-770.md",
+  "artifact_id": "UNIT-770",
+  "steps": [
+    {
+      "file": "game/frontend/tests/paletteTailwind.test.ts",
+      "symbol": "new: paletteTailwindColors",
+      "lines": "new",
+      "action": "Create the file importing PALETTE and paletteTailwindColors from '../src/lib/palette'. Add test 'flattens to every palette colour once' asserting Object.values(paletteTailwindColors).flatMap(Object.values) sorted equals [...PALETTE] sorted.",
+      "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/paletteTailwind.test.ts",
+      "symbol": "tailwind.config pal",
+      "lines": "after first test",
+      "action": "Import tailwindConfig from '../tailwind.config'. Add test asserting tailwindConfig.theme?.extend?.colors?.pal toEqual paletteTailwindColors and colors.background toBe 'hsl(var(--background))'.",
+      "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T02:53:22.982886+00:00",
+  "updated_at": "2026-11-24T02:55:11.998684+00:00"
+}

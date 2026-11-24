@@ -1,0 +1,64 @@
+{
+  "id": "01M85962H3DR9R27WTJ9JYQB6M",
+  "intent_id": "01M85900YQHG388J06E5XY0PR4",
+  "title": "Verify: game tsconfig @game alias unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test reads tsconfig.json and vitest.config.ts and asserts the alias agrees.",
+  "description": "Context: ACT-A added the @game path to game/tsconfig.json. Desired behavior: a unit test asserts tsconfig and the vitest alias agree. Expected result: the test passes. Why: proves REQ-A from the spec before relying on the alias.",
+  "acceptance_criteria": [
+    "paths['@game/*'] equals ['./src/*']",
+    "vitest alias @game resolves to the same src folder"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/tsconfigAlias.test.ts"
+    ],
+    "out_of_scope": [
+      "running tsc"
+    ],
+    "preserve": [
+      "vitestPhaserAlias.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Read files with node:fs only"
+  ],
+  "dependencies": [
+    "ACT-A"
+  ],
+  "definition_of_done": [
+    "test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-575.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8592ZTS96128M8EDKQ12QYK",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-575.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85962H3V9J5X0NXZSPQ1028"
+  ],
+  "sim_node_id": "01M8592ZTSFWZX67EAWHTSTMHY",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-575.md",
+  "artifact_id": "UNIT-575",
+  "steps": [
+    {
+      "file": "game/tests/tsconfigAlias.test.ts",
+      "symbol": "new: tsconfig @game alias",
+      "lines": "new",
+      "action": "Add test 'maps @game/* to ./src/*': readFileSync game/tsconfig.json, JSON.parse, expect compilerOptions.paths['@game/*'] toEqual ['./src/*']; add test that the resolved ./src dir exists via existsSync",
+      "command": "cd game && npx vitest run tests/tsconfigAlias.test.ts",
+      "expected": "Both tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T22:42:18.275159+00:00",
+  "updated_at": "2026-11-23T22:43:13.373129+00:00"
+}

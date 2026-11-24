@@ -1,0 +1,65 @@
+{
+  "id": "01M84738EQ8YKQ087NTDE01AZ5",
+  "intent_id": "01M8471WDMNZZFD9PS77RZ5FV4",
+  "title": "Act: Confirm admin round route registration in server.New",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Verify the five admin round routes are registered behind the middleware and fix any gap",
+  "description": "Read server.New admin group and confirm POST /rounds, open, close, GET /rounds/{id} and contributions map to rh.Create, Open, Close, Get, Contributions; correct any missing route.",
+  "acceptance_criteria": [
+    "All five round routes registered in the admin group",
+    "go build ./... succeeds"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go"
+    ],
+    "out_of_scope": [
+      "admin handlers"
+    ],
+    "preserve": [
+      "executions routes"
+    ]
+  },
+  "technical_constraints": [
+    "Routes stay inside r.Route admin group using ar.Use(admin.Middleware)",
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Routes registered; build passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-091.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84736MHXKQGT1Z2G5BR27X1",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-091.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84738EQS5JYDQ91V7WB2YCY"
+  ],
+  "sim_node_id": "01M84736MHBY7W9Z3XBW9V60YE",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-091.md",
+  "artifact_id": "UNIT-091",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New (admin r.Route block)",
+      "lines": "L103-L115",
+      "action": "Confirm ar.Post(\"/rounds\", rh.Create), ar.Post(\"/rounds/{id}/open\", rh.Open), ar.Post(\"/rounds/{id}/close\", rh.Close), ar.Get(\"/rounds/{id}\", rh.Get) and ar.Get(\"/rounds/{id}/contributions\", rh.Contributions) exist after ar.Use(admin.Middleware(cfg.Admin.Token)); add any that is missing.",
+      "code": "ar.Post(\"/rounds/{id}/open\", rh.Open)",
+      "expected": "All five routes present; go build ./... succeeds"
+    }
+  ],
+  "created_at": "2026-11-23T12:46:34.455447+00:00",
+  "updated_at": "2026-11-23T12:47:11.818655+00:00"
+}

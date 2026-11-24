@@ -1,0 +1,61 @@
+{
+  "id": "01M84SA6836NCBHP5SBPZPP40Y",
+  "intent_id": "01M84S7T91JAJD14MQP4PH8B69",
+  "title": "Verify: Lockfile node_modules/phaser entry unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test asserts 3.90.x version, URL and integrity in the real lockfile",
+  "description": "Add tests to the lockfile test file that read the real lockfile and assert the node_modules/phaser entry.",
+  "acceptance_criteria": [
+    "Fails while the entry is 4.2.1.",
+    "Passes with 3.90.0, matching URL, integrity and eventemitter3 range."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/phaserLockfile.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Root specifier tests"
+    ]
+  },
+  "technical_constraints": [
+    "No network access"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-413.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84S8TV6G2X64YB1HF8NN0V7",
+    "trace:01M84S559P3YJG3JX9KE0STMM0",
+    "artifact:.ai-dlc/units/UNIT-413.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84SA68305FJ08864P12H5Q0"
+  ],
+  "sim_node_id": "01M84S8TV6N0WXCP0DQVS3N2V7",
+  "artifact_path": ".ai-dlc/units/UNIT-413.md",
+  "artifact_id": "UNIT-413",
+  "steps": [
+    {
+      "file": "game/frontend/tests/phaserLockfile.test.ts",
+      "symbol": "new: describe('lockfile node_modules/phaser entry')",
+      "lines": "after the root specifier describe",
+      "action": "Add tests reading lock.packages['node_modules/phaser']: version matches /^3\\.90\\.\\d+$/; resolved equals `https://registry.npmjs.org/phaser/-/phaser-${version}.tgz`; integrity matches /^sha512-[A-Za-z0-9+/]+=*$/ and is not the 4.2.1 hash; dependencies.eventemitter3 toBe '^5.0.1'.",
+      "command": "cd game/frontend && npx vitest run tests/phaserLockfile.test.ts -t 'node_modules/phaser entry'",
+      "expected": "All four assertions pass; they fail against the 4.2.1 entry"
+    }
+  ],
+  "created_at": "2026-11-23T18:04:55.939210+00:00",
+  "updated_at": "2026-11-23T18:06:24.978359+00:00"
+}

@@ -1,0 +1,64 @@
+{
+  "id": "01M85MC5WNQ87MQFF4Z2FMF86P",
+  "intent_id": "01M85M6TB0FXBH96WEK6JRZR6H",
+  "title": "Verify: BootScene plays character animation on playAnimation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for playAnimation dispatch with Phaser mocked",
+  "description": "Test that playAnimation drives sprite.play for known targets and is ignored for unknown targets.",
+  "acceptance_criteria": [
+    "interact and idle emit tests assert play keys",
+    "Unknown target test asserts no extra play"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootScenePlayAnimation.test.ts"
+    ],
+    "out_of_scope": [
+      "Real Phaser or browser"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Mock phaser and ../src/runtime/content as in tests/bootSceneCharacters.test.ts"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-748.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85M8HCDPMZ81MXZGESKXGWB",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-748.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85MC5WNVCKEDRG7183TZSSJ"
+  ],
+  "sim_node_id": "01M85M8HCDT9ZZZMVZMFZ55EGX",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-748.md",
+  "artifact_id": "UNIT-748",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootScenePlayAnimation.test.ts",
+      "symbol": "new: describe('BootScene playAnimation')",
+      "lines": "new",
+      "action": "Copy the phaser and content vi.mock setup from tests/bootSceneCharacters.test.ts; capture the sprite returned by scene.add.sprite; call create(); then reactToPhaser.emit('playAnimation', {target:'boy', name:'interact'}) and assert sprite.play was last called with 'boy-sheet:interact' style key from the mocked manifest; emit name 'idle' and assert idle key; emit target 'ghost' and assert play call count unchanged. Reset with reactToPhaser.clear() in beforeEach.",
+      "command": "cd game/frontend && npx vitest run tests/bootScenePlayAnimation.test.ts",
+      "expected": "All three tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T01:57:52.661770+00:00",
+  "updated_at": "2026-11-24T01:59:48.543427+00:00"
+}

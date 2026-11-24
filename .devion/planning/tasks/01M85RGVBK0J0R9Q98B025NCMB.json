@@ -1,0 +1,82 @@
+{
+  "id": "01M85RGVBK0J0R9Q98B025NCMB",
+  "intent_id": "01M85R8JBW6142XFS73H2QC7VQ",
+  "title": "Verify: encodePng determinism and readPngSize unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the PNG encoder",
+  "description": "Tests for encodePng and readPngSize written from REQ-1.",
+  "acceptance_criteria": [
+    "Two encodes are equal",
+    "Header size matches",
+    "Only IHDR, IDAT, IEND chunks exist"
+  ],
+  "scope": {
+    "in_scope": [
+      "pngEncode.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, no fs beyond memory",
+    "Phaser pin untouched"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-783.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85RB4DDXR6XVQMAEMTS9NTB",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-783.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85RGVBK3Y9RRQPBJ9W2SDQW"
+  ],
+  "sim_node_id": "01M85RB4DD54NM26AXTJVQ836A",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-783.md",
+  "artifact_id": "UNIT-783",
+  "steps": [
+    {
+      "file": "game/frontend/tests/pngEncode.test.ts",
+      "symbol": "new: encodePng is deterministic",
+      "lines": "new",
+      "action": "Build a 4x3 RgbaImage with gridToRgba of indices 0..11; call encodePng twice and assert Buffer.from(a).equals(Buffer.from(b)).",
+      "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/pngEncode.test.ts",
+      "symbol": "new: readPngSize reads IHDR",
+      "lines": "new",
+      "action": "Assert readPngSize(encodePng(img)) equals {width:4,height:3} and that readPngSize(new Uint8Array(30)) throws 'not a png'.",
+      "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/pngEncode.test.ts",
+      "symbol": "new: only IHDR IDAT IEND chunks",
+      "lines": "new",
+      "action": "Walk chunks from byte 8 reading length and 4-char type; assert types equal ['IHDR','IDAT','IEND'].",
+      "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-24T03:10:20.019231+00:00",
+  "updated_at": "2026-11-24T03:16:53.046831+00:00"
+}

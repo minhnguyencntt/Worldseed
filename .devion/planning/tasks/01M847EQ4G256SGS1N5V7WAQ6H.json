@@ -1,0 +1,63 @@
+{
+  "id": "01M847EQ4G256SGS1N5V7WAQ6H",
+  "intent_id": "01M847D5C6SMCTQZMHKHW04FF3",
+  "title": "Verify: Mounted admin round routes return exact statuses with the admin token unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add exact-status mount test to server_test.go",
+  "description": "Add a test that builds New with a temp repo and checks exact statuses through the real router with Bearer tok.",
+  "acceptance_criteria": [
+    "Given the on-disk round, when GET round has Bearer tok, then 200 and id ROUND-0000001",
+    "Given an unknown round id, then 404 from the handler",
+    "Given invalid JSON on POST /rounds, then 400"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "TestNew_AdminRoundsAreMounted"
+    ]
+  },
+  "technical_constraints": [
+    "httptest recorder only; temp dir via t.TempDir; no real Git calls (do not call open or close)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test passes with go test -run filter",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-105.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847EMSBAB02CA1KZTD3XRWT",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-105.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M847EQ4G184EGTEZ8E4SAAZ4"
+  ],
+  "sim_node_id": "01M847EMSBN9T5A6D9BBK0XJXQ",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-105.md",
+  "artifact_id": "UNIT-105",
+  "steps": [
+    {
+      "file": "backend/internal/server/server_test.go",
+      "symbol": "new: TestNew_AdminRoundRoutesReturnHandlerStatuses",
+      "lines": "after L334",
+      "action": "Build the same temp repo and cfg as TestNew_AdminRoundsAreMounted (world.yaml, round-0000001/round.yaml via writeTestFile, Admin.Token tok), call New, and table-test: GET /api/v1/admin/rounds/ROUND-0000001?world=the-boys-room expects 200 and JSON id ROUND-0000001; GET /api/v1/admin/rounds/ROUND-9999999?world=the-boys-room expects 404; POST /api/v1/admin/rounds with body {bad expects 400; all with header Authorization Bearer tok.",
+      "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundRoutesReturnHandlerStatuses",
+      "expected": "Test passes with statuses 200, 404, 400"
+    }
+  ],
+  "created_at": "2026-11-23T12:52:49.936474+00:00",
+  "updated_at": "2026-11-23T12:53:30.825686+00:00"
+}

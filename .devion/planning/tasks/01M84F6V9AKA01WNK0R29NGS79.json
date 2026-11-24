@@ -1,0 +1,85 @@
+{
+  "id": "01M84F6V9AKA01WNK0R29NGS79",
+  "intent_id": "01M84F2Y7B1BMD41PYYF9Y78WM",
+  "title": "Act: Create worker module and config loader",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add backend/worker go.mod, config package and example YAML",
+  "description": "Create the module and the config LoadFS mirroring backend/internal/config/config.go.",
+  "acceptance_criteria": [
+    "config.LoadFS fills defaults and applies env overrides",
+    "Empty repo_path returns an error"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/go.mod",
+      "backend/worker/internal/config/config.go",
+      "backend/worker/configs/config.example.yaml"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "backend module"
+    ]
+  },
+  "technical_constraints": [
+    "go 1.22, yaml.v3 v3.0.1",
+    "New file: `backend/worker/go.mod`",
+    "New file: `backend/worker/go.sum`",
+    "New file: `backend/worker/internal/config/config.go`",
+    "New file: `backend/worker/configs/config.example.yaml`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go build ./... passes in backend/worker",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-171.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84F6ECBVXTWKN6W86QH1YG9",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-171.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84F6V9ANHCEB267HG3TAMFP"
+  ],
+  "sim_node_id": "01M84F6ECB940AD9ZCSAK5GGWZ",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-171.md",
+  "artifact_id": "UNIT-171",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/go.mod",
+      "symbol": "new: module github.com/worldseed/storyforge/worker",
+      "lines": "new",
+      "action": "Create go.mod declaring module github.com/worldseed/storyforge/worker, go 1.22, requiring gopkg.in/yaml.v3 v3.0.1; copy the yaml.v3 and gopkg.in/check.v1 lines from backend/go.sum into backend/worker/go.sum.",
+      "code": "module github.com/worldseed/storyforge/worker\n\ngo 1.22\n\nrequire gopkg.in/yaml.v3 v3.0.1",
+      "expected": "go list ./... in backend/worker resolves the module"
+    },
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "new: Config, WorkerConfig, LogConfig, StoreConfig, Load, LoadFS, applyEnv",
+      "lines": "new",
+      "action": "Define Config{Worker WorkerConfig `yaml:\"worker\"`; Log LogConfig `yaml:\"log\"`; Store StoreConfig `yaml:\"store\"`}; WorkerConfig{WorldID, RepoPath string; PollInterval, ExecutionTimeout time.Duration; MaxRetries int}; LogConfig{Level string}; StoreConfig{Dir, LockPath string}. LoadFS(fsys fs.FS, name string, getenv func(string) string) reads with fs.ReadFile, yaml.Unmarshal, applyEnv (STORYFORGE_WORKER_REPO_PATH -> Worker.RepoPath, STORYFORGE_WORKER_WORLD_ID -> Worker.WorldID), returns error 'config: worker.repo_path must not be empty' when RepoPath is empty, then defaults: PollInterval 30s, ExecutionTimeout 30m, MaxRetries 2 (when 0), Log.Level 'info', Store.Dir '.storyforge/executions', Store.LockPath '.storyforge/worker.lock', WorldID 'the-boys-room'. Load(path) calls LoadFS(os.DirFS(filepath.Dir(path)), filepath.Base(path), os.Getenv).",
+      "code": "func LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error)",
+      "expected": "Package compiles and mirrors the backend loader"
+    },
+    {
+      "file": "backend/worker/configs/config.example.yaml",
+      "symbol": "new: example config",
+      "lines": "new",
+      "action": "Add YAML with worker.world_id the-boys-room, worker.repo_path '.', poll_interval 30s, execution_timeout 30m, max_retries 2, log.level info, store.dir .storyforge/executions, store.lock_path .storyforge/worker.lock.",
+      "expected": "File parses through config.LoadFS"
+    }
+  ],
+  "created_at": "2026-11-23T15:08:20.650605+00:00",
+  "updated_at": "2026-11-23T15:10:14.906186+00:00"
+}

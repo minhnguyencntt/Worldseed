@@ -1,0 +1,75 @@
+{
+  "id": "01M84HZP3CHQC8ZXER4YMF846M",
+  "intent_id": "01M84HWKHFJ1GPYXND4WWA7V9V",
+  "title": "Act: Confirm no execution or worker config or dependency is used by the server package",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Server package reads no execution or worker config keys",
+  "description": "Confirm server.go and rounds_adapter.go use only config sections Auth, Storage, Git, Contribution, Round and Admin so tests need only mocked Git and temp dirs.",
+  "acceptance_criteria": [
+    "Server code reads no execution or worker config field",
+    "Round service is built from cfg.Storage and cfg.Git only"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go",
+      "backend/internal/server/rounds_adapter.go"
+    ],
+    "out_of_scope": [
+      "backend/internal/config"
+    ],
+    "preserve": [
+      "newRoundService and NewScheduler"
+    ]
+  },
+  "technical_constraints": [
+    "Do not modify config package",
+    "Code path: `backend/internal/server/server.go`",
+    "Code path: `backend/internal/server/rounds_adapter.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "No execution or worker config referenced",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-240.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84HZ5N21JE0B8TR0D4VQ7TM",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-240.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84HZP3CKQVHBWAXAHZT43VF"
+  ],
+  "sim_node_id": "01M84HZ5N2041H3H4KNPMM4BTN",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-240.md",
+  "artifact_id": "UNIT-240",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/rounds_adapter.go",
+      "symbol": "roundAdmin",
+      "lines": "L1-L69",
+      "action": "Check the adapter imports only admin, round and world packages and remove any execution reference found",
+      "code": "no change expected",
+      "expected": "No execution import"
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "newRoundService",
+      "lines": "L134-L148",
+      "action": "Check that it builds round.Service from cfg.Storage and cfg.Git only, with no execution or worker field",
+      "code": "no change expected",
+      "expected": "Service built from Storage and Git config only"
+    }
+  ],
+  "created_at": "2026-11-23T15:56:51.692264+00:00",
+  "updated_at": "2026-11-23T15:57:47.478263+00:00"
+}

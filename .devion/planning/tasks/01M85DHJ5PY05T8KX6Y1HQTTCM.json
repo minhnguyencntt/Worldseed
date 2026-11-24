@@ -1,0 +1,58 @@
+{
+  "id": "01M85DHJ5PY05T8KX6Y1HQTTCM",
+  "intent_id": "01M85DDEYZSC2A83NN4WEWTV3N",
+  "title": "SG-8.2.3 Block submit and disable Send at zero quota",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "When remaining quota is 0 the contribution sheet blocks submit, disables Send and explains why",
+  "description": "Context: ContributionSheet derives `remaining` from MAX_PER_PLAYER minus sent entries and shows 'Contributions left: n', but nothing stops a submit at 0. Desired behavior: at remaining 0 the Send button is disabled, submit is blocked, and an inline message 'You have used all your suggestions this round' is shown. Expected result: the player cannot send past the quota and knows why. Why: avoids guaranteed 409 errors from the backend.",
+  "acceptance_criteria": [
+    "Given remaining quota is 0 When the sheet renders Then the text 'You have used all your suggestions this round' is visible",
+    "Given remaining quota is 0 When the sheet renders Then the Send button is disabled",
+    "Given remaining quota is 0 When the form is submitted Then submitContribution is not called",
+    "Given remaining quota is above 0 When the sheet renders Then Send is enabled and no quota message is shown"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet quota message, disabled Send, submit guard"
+    ],
+    "out_of_scope": [
+      "Backend limit logic",
+      "Blank and max-length validation changes",
+      "Other components"
+    ],
+    "preserve": [
+      "Contributions left counter",
+      "Blank-text and over-limit behavior",
+      "Dialog focus behavior",
+      "API contracts in src/api/client.ts"
+    ]
+  },
+  "technical_constraints": [
+    "React + TypeScript in game/frontend/src/components/ContributionSheet.tsx",
+    "Use existing MAX_PER_PLAYER and `remaining` value; no new API"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both requirements implemented and verified by unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-130.md`"
+  ],
+  "non_functional": [
+    "Message is exposed with role=alert for assistive tech"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M85D83WFMMFR5VZMGGJNBMS2",
+    "artifact:.ai-dlc/intent/INT-130.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85DESAQ15WBV4MXM8P0XPJ5",
+  "feature_id": "01M85D83WFMMFR5VZMGGJNBMS2",
+  "artifact_path": ".ai-dlc/intent/INT-130.md",
+  "artifact_id": "INT-130",
+  "created_at": "2026-11-23T23:58:29.046229+00:00"
+}

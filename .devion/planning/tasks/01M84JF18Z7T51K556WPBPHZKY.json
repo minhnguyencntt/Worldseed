@@ -1,0 +1,72 @@
+{
+  "id": "01M84JF18Z7T51K556WPBPHZKY",
+  "intent_id": "01M84JCPB7H80A4R8DA1NY7VXA",
+  "title": "Act: Add Exporter, Export format and ErrNotFrozen",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create export.go with the documented export",
+  "description": "New file export.go implementing the Exporter over ExportSource.",
+  "acceptance_criteria": [
+    "Export returns only frozen contributions in stable order",
+    "Not-frozen round returns ErrNotFrozen"
+  ],
+  "scope": {
+    "in_scope": [
+      "export.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "model.go"
+    ]
+  },
+  "technical_constraints": [
+    "New file: `backend/internal/contribution/export.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go build ./internal/contribution succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-254.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JEKH5DFWWPDMY5GSJBA36",
+    "trace:01M84GAF91STPB09PZYJSX9XTF",
+    "artifact:.ai-dlc/units/UNIT-254.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JF18ZKQXKYZACXFY5WACA"
+  ],
+  "sim_node_id": "01M84JEKH5WZ9VSHZ1MEDYDY2T",
+  "feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+  "artifact_path": ".ai-dlc/units/UNIT-254.md",
+  "artifact_id": "UNIT-254",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/export.go",
+      "symbol": "new: package doc, ExportSource, Export, ExportEntry, ErrNotFrozen",
+      "lines": "new",
+      "action": "Create the file with a package-level doc comment describing the JSON format and that only snapshot-frozen contributions are exported; declare ExportSource interface, Export and ExportEntry structs with the json tags and ErrNotFrozen.",
+      "code": "type ExportSource interface {\n\tListByRound(ctx context.Context, worldID, roundID string) ([]Contribution, error)\n\tFrozenIDs(ctx context.Context, worldID, roundID string) ([]string, bool, error)\n}\ntype ExportEntry struct {\n\tID string `json:\"id\"`\n\tAuthor string `json:\"author\"`\n\tContent string `json:\"content\"`\n\tCreatedAt time.Time `json:\"created_at\"`\n}\ntype Export struct {\n\tVersion int `json:\"version\"`\n\tWorld string `json:\"world\"`\n\tRound string `json:\"round\"`\n\tContributions []ExportEntry `json:\"contributions\"`\n}\nvar ErrNotFrozen = errors.New(\"contribution: round is not frozen\")",
+      "expected": "Types compile"
+    },
+    {
+      "file": "backend/internal/contribution/export.go",
+      "symbol": "new: Exporter.Export",
+      "lines": "new",
+      "action": "Add type Exporter{Source ExportSource} and method Export(ctx, worldID, roundID) (Export, error): call FrozenIDs (return ErrNotFrozen if frozen=false), call ListByRound, keep only contributions whose ID is in the frozen set, convert to ExportEntry with CreatedAt.UTC(), initialise Contributions to an empty non-nil slice, set Version 1.",
+      "code": "func (e Exporter) Export(ctx context.Context, worldID, roundID string) (Export, error)",
+      "expected": "Returns Export with Contributions [] when none are frozen"
+    }
+  ],
+  "created_at": "2026-11-23T16:05:14.655121+00:00",
+  "updated_at": "2026-11-23T16:06:54.797779+00:00"
+}

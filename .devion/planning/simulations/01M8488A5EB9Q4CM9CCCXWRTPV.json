@@ -1,0 +1,498 @@
+{
+  "intent_id": "01M8488A5EB9Q4CM9CCCXWRTPV",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M848A5WARVRGRFVR6QT6PM23",
+      "kind": "intent",
+      "title": "SG-6.2 · Render LifecycleStepper in AdminApp with derived current stage",
+      "body": "Context: LifecycleStepper exists (game/frontend/src/components/LifecycleStepper.tsx) but AdminApp does not render it. Desired behavior: after the admin token is accepted, AdminApp shows the stepper with the current stage derived from the Round status and the current Round's execution status. Expected result: the admin sees where the Round is in OPEN → COMPLETED. Why: the admin needs a live lifecycle view.\n\n## Acceptance criteria\n- Given an authenticated admin and an OPEN Round, when AdminApp loads, then the Round lifecycle stepper marks OPEN as the current step.\n- Given a CLOSED Round whose execution is RUNNING, when AdminApp loads, then DEVELOPING is the current step.\n- Given a unit test with mocked fetch, when it runs, then no real network is used.\n\n\n## Scope\n- In scope: Stage derivation helper\n- In scope: AdminApp renders LifecycleStepper\n- In scope: Unit tests with mocked fetch\n- Out of scope: Backend changes\n- Out of scope: ExecutionPanel wiring\n- Out of scope: Approve/Retry wiring\n- Preserve: Existing AdminApp token gate, round controls and contributions list\n- Preserve: listExecutions, findExecutionForRound client functions\n\n\n## Technical constraints\n- Frontend only, game/frontend\n- Reuse existing STAGES, stageIndex and listExecutions/findExecutionForRound\n\n\n## Definition of done\n- Stepper rendered in AdminApp and tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "AdminApp shows the lifecycle stepper with the current stage derived from the Round and execution status",
+      "description": "Context: LifecycleStepper exists (game/frontend/src/components/LifecycleStepper.tsx) but AdminApp does not render it. Desired behavior: after the admin token is accepted, AdminApp shows the stepper with the current stage derived from the Round status and the current Round's execution status. Expected result: the admin sees where the Round is in OPEN → COMPLETED. Why: the admin needs a live lifecycle view.",
+      "acceptance_criteria": [
+        "Given an authenticated admin and an OPEN Round, when AdminApp loads, then the Round lifecycle stepper marks OPEN as the current step.",
+        "Given a CLOSED Round whose execution is RUNNING, when AdminApp loads, then DEVELOPING is the current step.",
+        "Given a unit test with mocked fetch, when it runs, then no real network is used."
+      ],
+      "scope": {
+        "in_scope": [
+          "Stage derivation helper",
+          "AdminApp renders LifecycleStepper",
+          "Unit tests with mocked fetch"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "ExecutionPanel wiring",
+          "Approve/Retry wiring"
+        ],
+        "preserve": [
+          "Existing AdminApp token gate, round controls and contributions list",
+          "listExecutions, findExecutionForRound client functions"
+        ]
+      },
+      "technical_constraints": [
+        "Frontend only, game/frontend",
+        "Reuse existing STAGES, stageIndex and listExecutions/findExecutionForRound"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Stepper rendered in AdminApp and tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-024.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M845WDCWPKE3DX0JEY7MF1GB",
+      "links": [
+        "trace:01M845WDCWPKE3DX0JEY7MF1GB",
+        "artifact:.ai-dlc/intent/INT-024.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-024.md",
+      "artifact_id": "INT-024"
+    },
+    {
+      "id": "01M848A5WAYHB82XABKARPT3MZ",
+      "kind": "requirement",
+      "title": "REQ · A deriveStage helper maps Round and execution status to a lifecycle stage",
+      "body": "Context: stageIndex maps only Round status. Desired behavior: deriveStage(roundStatus, executionStatus?) returns the later of the Round-derived stage and the execution-derived stage (RUNNING→DEVELOPING, AWAITING_APPROVAL or APPROVED→PUBLISHING, COMPLETED→COMPLETED; QUEUED/FAILED add nothing). Expected result: a stage string usable as LifecycleStepper status. Why: Round status alone lags execution progress.\n\n## Acceptance criteria\n- Given roundStatus CLOSED and executionStatus RUNNING, when deriveStage is called, then it returns DEVELOPING.\n- Given roundStatus OPEN and no execution status, when deriveStage is called, then it returns OPEN.\n- Given roundStatus PUBLISHING and executionStatus RUNNING, when deriveStage is called, then it returns PUBLISHING (never moves backwards).\n\n\n## Scope\n- In scope: deriveStage export in LifecycleStepper.tsx\n- Out of scope: Backend status changes\n- Preserve: STAGES, stageIndex, LifecycleStepper behavior\n\n\n## Technical constraints\n- Execution statuses per backend/internal/execution/execution.go\n\n\n## Definition of done\n- deriveStage exported and typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pure function returns the current stage from Round status and optional execution status",
+      "description": "Context: stageIndex maps only Round status. Desired behavior: deriveStage(roundStatus, executionStatus?) returns the later of the Round-derived stage and the execution-derived stage (RUNNING→DEVELOPING, AWAITING_APPROVAL or APPROVED→PUBLISHING, COMPLETED→COMPLETED; QUEUED/FAILED add nothing). Expected result: a stage string usable as LifecycleStepper status. Why: Round status alone lags execution progress.",
+      "acceptance_criteria": [
+        "Given roundStatus CLOSED and executionStatus RUNNING, when deriveStage is called, then it returns DEVELOPING.",
+        "Given roundStatus OPEN and no execution status, when deriveStage is called, then it returns OPEN.",
+        "Given roundStatus PUBLISHING and executionStatus RUNNING, when deriveStage is called, then it returns PUBLISHING (never moves backwards)."
+      ],
+      "scope": {
+        "in_scope": [
+          "deriveStage export in LifecycleStepper.tsx"
+        ],
+        "out_of_scope": [
+          "Backend status changes"
+        ],
+        "preserve": [
+          "STAGES, stageIndex, LifecycleStepper behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Execution statuses per backend/internal/execution/execution.go"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "deriveStage exported and typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-061.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M848A5WARVRGRFVR6QT6PM23",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M848A5WARVRGRFVR6QT6PM23",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-061.md"
+      ],
+      "depends_on": [
+        "01M848A5WARVRGRFVR6QT6PM23"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-061.md",
+      "artifact_id": "REQ-061"
+    },
+    {
+      "id": "01M848A5WA37MNPBHD33BZH6BT",
+      "kind": "requirement",
+      "title": "REQ · AdminApp renders LifecycleStepper for the current Round",
+      "body": "Context: AdminApp loads the admin Round and contributions after the token is entered. Desired behavior: it also lists executions, picks the one for the Round, and renders LifecycleStepper with deriveStage(round.status, execution?.status). Expected result: the stepper is visible with the right current step; a non-401 failure of the executions call leaves the stepper on the Round status. Why: live lifecycle view for the admin.\n\n## Acceptance criteria\n- Given token secret and an OPEN Round, when AdminApp loads, then list 'Round lifecycle' has exactly one aria-current step reading OPEN.\n- Given a CLOSED Round and a RUNNING execution for that Round, when AdminApp loads, then the current step reads DEVELOPING.\n- Given the executions endpoint returns 404, when AdminApp loads, then the stepper still shows the Round status stage and no error alert appears.\n- Given the executions endpoint returns 401, when AdminApp loads, then the token gate shows Invalid token.\n\n\n## Scope\n- In scope: AdminApp.tsx load effect and render\n- Out of scope: ExecutionPanel\n- Out of scope: Backend\n- Preserve: Token gate, Open/Close round, contributions list, existing admin tests\n\n\n## Technical constraints\n- Use listExecutions and findExecutionForRound from api/client.ts\n- No new API\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Stepper rendered in AdminApp\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "AdminApp loads the Round's execution and shows the stepper at the derived stage",
+      "description": "Context: AdminApp loads the admin Round and contributions after the token is entered. Desired behavior: it also lists executions, picks the one for the Round, and renders LifecycleStepper with deriveStage(round.status, execution?.status). Expected result: the stepper is visible with the right current step; a non-401 failure of the executions call leaves the stepper on the Round status. Why: live lifecycle view for the admin.",
+      "acceptance_criteria": [
+        "Given token secret and an OPEN Round, when AdminApp loads, then list 'Round lifecycle' has exactly one aria-current step reading OPEN.",
+        "Given a CLOSED Round and a RUNNING execution for that Round, when AdminApp loads, then the current step reads DEVELOPING.",
+        "Given the executions endpoint returns 404, when AdminApp loads, then the stepper still shows the Round status stage and no error alert appears.",
+        "Given the executions endpoint returns 401, when AdminApp loads, then the token gate shows Invalid token."
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp.tsx load effect and render"
+        ],
+        "out_of_scope": [
+          "ExecutionPanel",
+          "Backend"
+        ],
+        "preserve": [
+          "Token gate, Open/Close round, contributions list, existing admin tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use listExecutions and findExecutionForRound from api/client.ts",
+        "No new API"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Stepper rendered in AdminApp",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-062.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M848A5WARVRGRFVR6QT6PM23",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M848A5WARVRGRFVR6QT6PM23",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-062.md"
+      ],
+      "depends_on": [
+        "01M848A5WARVRGRFVR6QT6PM23"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-062.md",
+      "artifact_id": "REQ-062"
+    },
+    {
+      "id": "01M848A5WAS3RK5K3R7VH056XZ",
+      "kind": "unit",
+      "title": "Act: Add deriveStage to LifecycleStepper module",
+      "body": "Add a pure exported function deriveStage in LifecycleStepper.tsx that returns the later of the Round stage and the execution stage.\n\n## Acceptance criteria\n- deriveStage('CLOSED','RUNNING') returns 'DEVELOPING'\n- deriveStage('OPEN') returns 'OPEN'\n\n\n## Scope\n- In scope: LifecycleStepper.tsx\n- Out of scope: AdminApp\n- Preserve: STAGES\n- Preserve: stageIndex\n- Preserve: LifecycleStepper component\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/LifecycleStepper.tsx`\n\n\n## Definition of done\n- deriveStage exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export deriveStage combining Round and execution status",
+      "description": "Add a pure exported function deriveStage in LifecycleStepper.tsx that returns the later of the Round stage and the execution stage.",
+      "acceptance_criteria": [
+        "deriveStage('CLOSED','RUNNING') returns 'DEVELOPING'",
+        "deriveStage('OPEN') returns 'OPEN'"
+      ],
+      "scope": {
+        "in_scope": [
+          "LifecycleStepper.tsx"
+        ],
+        "out_of_scope": [
+          "AdminApp"
+        ],
+        "preserve": [
+          "STAGES",
+          "stageIndex",
+          "LifecycleStepper component"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/LifecycleStepper.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "deriveStage exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-121.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M848A5WAYHB82XABKARPT3MZ",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M848A5WAYHB82XABKARPT3MZ",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-121.md"
+      ],
+      "depends_on": [
+        "01M848A5WAYHB82XABKARPT3MZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-121.md",
+      "artifact_id": "UNIT-121",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/LifecycleStepper.tsx",
+          "symbol": "new: EXECUTION_STAGES",
+          "lines": "after L13",
+          "action": "Add a Record<string,string> constant mapping execution statuses to stages: RUNNING→DEVELOPING, AWAITING_APPROVAL→PUBLISHING, APPROVED→PUBLISHING, COMPLETED→COMPLETED.",
+          "code": "const EXECUTION_STAGES: Record<string, string> = {\n  RUNNING: 'DEVELOPING',\n  AWAITING_APPROVAL: 'PUBLISHING',\n  APPROVED: 'PUBLISHING',\n  COMPLETED: 'COMPLETED',\n};",
+          "expected": "Constant exists; QUEUED and FAILED are absent so they add nothing."
+        },
+        {
+          "file": "game/frontend/src/components/LifecycleStepper.tsx",
+          "symbol": "new: deriveStage",
+          "lines": "after L19",
+          "action": "Add exported function deriveStage(roundStatus: string, executionStatus?: string): string. Compute execStage = executionStatus ? EXECUTION_STAGES[executionStatus] : undefined. If execStage is undefined return roundStatus. If stageIndex(execStage) > stageIndex(roundStatus) return execStage; otherwise return roundStatus.",
+          "code": "export function deriveStage(roundStatus: string, executionStatus?: string): string {\n  const execStage = executionStatus ? EXECUTION_STAGES[executionStatus] : undefined;\n  if (!execStage) return roundStatus;\n  return stageIndex(execStage) > stageIndex(roundStatus) ? execStage : roundStatus;\n}",
+          "expected": "deriveStage('CLOSED','RUNNING') === 'DEVELOPING'; deriveStage('PUBLISHING','RUNNING') === 'PUBLISHING'; deriveStage('OPEN') === 'OPEN'."
+        }
+      ]
+    },
+    {
+      "id": "01M848A5WA8KHY9G80DK1PGYBB",
+      "kind": "unit",
+      "title": "Act: Render LifecycleStepper in AdminApp from Round and execution",
+      "body": "Extend AdminApp's load effect to list executions and render LifecycleStepper with deriveStage.\n\n## Acceptance criteria\n- Stepper visible after token entry\n- Executions 404 does not raise an error alert\n\n\n## Scope\n- In scope: AdminApp.tsx\n- Out of scope: ExecutionPanel\n- Preserve: Token gate and round controls\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/AdminApp.tsx`\n\n\n## Definition of done\n- Stepper rendered\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Load the Round's execution and render the stepper at the derived stage",
+      "description": "Extend AdminApp's load effect to list executions and render LifecycleStepper with deriveStage.",
+      "acceptance_criteria": [
+        "Stepper visible after token entry",
+        "Executions 404 does not raise an error alert"
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "ExecutionPanel"
+        ],
+        "preserve": [
+          "Token gate and round controls"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/AdminApp.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Stepper rendered",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-122.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M848A5WA37MNPBHD33BZH6BT",
+      "matched_feature_id": "01M8470M8THDHMM041AZFSGBHQ",
+      "links": [
+        "parent:01M848A5WA37MNPBHD33BZH6BT",
+        "trace:01M8470M8THDHMM041AZFSGBHQ",
+        "artifact:.ai-dlc/units/UNIT-122.md"
+      ],
+      "depends_on": [
+        "01M848A5WA37MNPBHD33BZH6BT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-122.md",
+      "artifact_id": "UNIT-122",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "imports",
+          "lines": "L1-L13",
+          "action": "Add listExecutions, findExecutionForRound and type ExecutionInfo to the '../api/client' import, and add `import { LifecycleStepper, deriveStage } from './LifecycleStepper';` after the TokenGate import.",
+          "expected": "Imports resolve under tsc."
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp state",
+          "lines": "after L25 (near the contributions useState)",
+          "action": "Add `const [execution, setExecution] = useState<ExecutionInfo | undefined>(undefined);`.",
+          "expected": "State available."
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp load useEffect",
+          "lines": "L44-L61",
+          "action": "Replace the Promise.all with three entries; the third is listExecutions(token).then(list => findExecutionForRound(list, roundId), err => { if (err instanceof ApiError && err.status === 401) throw err; return undefined; }). Destructure as [loaded, list, exec] and call setExecution(exec) next to setContributions(list).",
+          "code": "Promise.all([getAdminRound(token, roundId), listRoundContributions(token, roundId), listExecutions(token).then((all) => findExecutionForRound(all, roundId), (err: unknown) => { if (err instanceof ApiError && err.status === 401) throw err; return undefined; })]).then(([loaded, list, exec]) => { ...; setExecution(exec); ... })",
+          "expected": "Execution failure other than 401 yields undefined; 401 reaches handleError."
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp render",
+          "lines": "L98-L104",
+          "action": "After the closing of the `round ? ... : ...` block, render `{round ? <LifecycleStepper status={deriveStage(round.status, execution?.status)} /> : null}`.",
+          "expected": "List with aria-label 'Round lifecycle' appears once the round loads."
+        }
+      ]
+    },
+    {
+      "id": "01M848A5WA1ZJPZYWB5675QCBP",
+      "kind": "unit",
+      "title": "Verify: deriveStage unit tests",
+      "body": "Pure-function tests for deriveStage written from R1's acceptance criteria.\n\n## Acceptance criteria\n- CLOSED+RUNNING→DEVELOPING\n- OPEN without execution→OPEN\n- PUBLISHING+RUNNING→PUBLISHING\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: tests/stepper.test.tsx\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for deriveStage mapping and no-regression rule",
+      "description": "Pure-function tests for deriveStage written from R1's acceptance criteria.",
+      "acceptance_criteria": [
+        "CLOSED+RUNNING→DEVELOPING",
+        "OPEN without execution→OPEN",
+        "PUBLISHING+RUNNING→PUBLISHING"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/stepper.test.tsx"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-123.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848A5WAS3RK5K3R7VH056XZ",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M848A5WAS3RK5K3R7VH056XZ",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-123.md"
+      ],
+      "depends_on": [
+        "01M848A5WAS3RK5K3R7VH056XZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-123.md",
+      "artifact_id": "UNIT-123",
+      "steps": [
+        {
+          "file": "game/frontend/tests/deriveStage.test.ts",
+          "symbol": "new: describe('deriveStage')",
+          "lines": "new",
+          "action": "Create the test file importing deriveStage from '../src/components/LifecycleStepper' and executionFixture from './fixtures/api' (mirrors execution.Execution JSON in backend/internal/execution/execution.go). Add it.each cases (roundStatus, executionStatus, expected): ('OPEN',undefined,'OPEN'), ('CLOSED','RUNNING','DEVELOPING'), ('CLOSED','AWAITING_APPROVAL','PUBLISHING'), ('CLOSED','APPROVED','PUBLISHING'), ('CLOSED','COMPLETED','COMPLETED'), ('CLOSED','FAILED','CLOSED'), ('CLOSED','QUEUED','CLOSED'), ('PUBLISHING','RUNNING','PUBLISHING'), ('BUILDING','RUNNING','BUILDING'). Add one test calling deriveStage('CLOSED', executionFixture.status) expecting 'DEVELOPING'.",
+          "command": "cd game/frontend && npx vitest run tests/deriveStage.test.ts",
+          "expected": "All deriveStage cases pass."
+        }
+      ]
+    },
+    {
+      "id": "01M848A5WAWF6TNSMGG2MY4PE4",
+      "kind": "unit",
+      "title": "Verify: AdminApp lifecycle stepper unit tests with mocked fetch",
+      "body": "Component tests written from R2's acceptance criteria; fetch is a vi.fn stub, no network.\n\n## Acceptance criteria\n- OPEN current step\n- DEVELOPING for RUNNING execution\n- 404 tolerated\n- 401 shows Invalid token\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: tests/admin.test.tsx\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests AdminApp stepper stage for OPEN, RUNNING execution, 404 and 401 with a stubbed fetch",
+      "description": "Component tests written from R2's acceptance criteria; fetch is a vi.fn stub, no network.",
+      "acceptance_criteria": [
+        "OPEN current step",
+        "DEVELOPING for RUNNING execution",
+        "404 tolerated",
+        "401 shows Invalid token"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/admin.test.tsx"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-124.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848A5WA8KHY9G80DK1PGYBB",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M848A5WA8KHY9G80DK1PGYBB",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-124.md"
+      ],
+      "depends_on": [
+        "01M848A5WA8KHY9G80DK1PGYBB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-124.md",
+      "artifact_id": "UNIT-124",
+      "steps": [
+        {
+          "file": "game/frontend/tests/adminStepper.test.tsx",
+          "symbol": "new: describe('AdminApp lifecycle stepper')",
+          "lines": "new",
+          "action": "Create the file with `// @vitest-environment jsdom`, modelled on tests/admin.test.tsx (json helper, enterToken helper, vi.stubGlobal('fetch')). Import roundFixture, adminContributionFixture, executionFixture from './fixtures/api' (round shape mirrors world.Round JSON; execution shape mirrors execution.Execution in backend/internal/execution/execution.go). Stub routes: current round URL → roundFixture; with Bearer secret: admin round URL → round under test, contributions URL → [adminContributionFixture], '/api/v1/admin/executions' → configurable response. Tests: (1) round OPEN, executions [] → within list 'Round lifecycle' the single [aria-current=step] text is 'OPEN'; (2) round {…roundFixture,status:'CLOSED'}, executions [executionFixture with status RUNNING] → current step 'DEVELOPING'; (3) executions responds 404, round OPEN → current step 'OPEN' and screen.queryByRole('alert') is null; (4) executions responds 401 → findByRole('alert') has text 'Invalid token'.",
+          "command": "cd game/frontend && npx vitest run tests/adminStepper.test.tsx",
+          "expected": "All four tests pass without network."
+        }
+      ]
+    },
+    {
+      "id": "01M848A5WAYB3QSE86X55PN6W3",
+      "kind": "evidence",
+      "title": "Evidence: AdminApp lifecycle stepper unit test results",
+      "body": "Evidence that deriveStage and AdminApp stepper unit tests pass with mocked fetch.\n\n## Acceptance criteria\n- deriveStage tests pass\n- adminStepper tests pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Live environment\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Passing unit tests for deriveStage and the AdminApp stepper",
+      "description": "Evidence that deriveStage and AdminApp stepper unit tests pass with mocked fetch.",
+      "acceptance_criteria": [
+        "deriveStage tests pass",
+        "adminStepper tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Live environment"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-024.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848A5WA1ZJPZYWB5675QCBP",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M848A5WA1ZJPZYWB5675QCBP",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-024.md"
+      ],
+      "depends_on": [
+        "01M848A5WA1ZJPZYWB5675QCBP",
+        "01M848A5WAWF6TNSMGG2MY4PE4"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-024.md",
+      "artifact_id": "EVD-024"
+    }
+  ],
+  "created_at": "2026-11-23T13:07:51.292412+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 7/8 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "01M843NJPKBTAQQR04QNRK0TBQ",
+  "intent_id": "01M843M47NXN7ZRX51D3ZFX1AY",
+  "title": "Verify: game/ layout and content load unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests prove the module layout and that the world loads from game/content",
+  "description": "Context: loader.loadWorld(worldDir) validates world.yaml and scenes. Desired behavior: tests prove the moved layout exists and the real world loads. Expected result: tests pass from game/.",
+  "acceptance_criteria": [
+    "Given game/, when the layout test runs, then required directories exist and backend/game does not",
+    "Given game/content/worlds/the-boys-room, when loadWorld is called, then it returns without throwing",
+    "Given the existing suite files, when run from game/, then they pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "new layout.test.ts",
+      "existing tests run"
+    ],
+    "out_of_scope": [
+      "e2e or live servers"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Vitest only, filesystem reads of repo files only, no network"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "layout.test.ts passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-031.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M843NJE0P033R6BFFW75PRM2",
+    "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+    "artifact:.ai-dlc/units/UNIT-031.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M843NJPKJZRBEF2DDGA1X69D"
+  ],
+  "sim_node_id": "01M843NJE0NS937SHX64DSHSXT",
+  "feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+  "artifact_path": ".ai-dlc/units/UNIT-031.md",
+  "artifact_id": "UNIT-031",
+  "steps": [
+    {
+      "file": "backend/game/tests/layout.test.ts",
+      "symbol": "new: describe('game layout') / it('has runtime dirs and no backend/game')",
+      "lines": "new",
+      "action": "Create the test using fileURLToPath(new URL('..', import.meta.url)) as gameDir; assert existsSync for src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room/world.yaml and tests, and assert existsSync(join(gameDir,'../backend/game')) is false.",
+      "code": "expect(existsSync(join(gameDir,'../backend/game'))).toBe(false)",
+      "command": "cd game && npx vitest run tests/layout.test.ts",
+      "expected": "layout test passes"
+    },
+    {
+      "file": "backend/game/tests/layout.test.ts",
+      "symbol": "it('loads the-boys-room from game/content')",
+      "lines": "after the first it",
+      "action": "Import loadWorld from '../src/content/loader'; call it with join(gameDir,'content/worlds/the-boys-room') and assert the result is defined and does not throw.",
+      "command": "cd game && npx vitest run tests/layout.test.ts tests/content.test.ts tests/loader.test.ts",
+      "expected": "all three files pass"
+    }
+  ],
+  "created_at": "2026-11-23T11:46:40.467832+00:00",
+  "updated_at": "2026-11-23T11:47:28.987489+00:00"
+}

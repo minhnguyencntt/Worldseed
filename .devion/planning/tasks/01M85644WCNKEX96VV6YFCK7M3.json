@@ -1,0 +1,65 @@
+{
+  "id": "01M85644WCNKEX96VV6YFCK7M3",
+  "intent_id": "01M8560PVSPK3BJS1C30JXENCT",
+  "title": "Act: Add @game alias to game/vitest.config.ts",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Let game/tests import frontend BootScene which uses '@game/*' imports",
+  "description": "BootScene imports '@game/engine/planPreload' etc. The game vitest config has no alias, so importing it from game/tests fails. Add the alias mirroring game/frontend/vitest.config.ts.",
+  "acceptance_criteria": [
+    "'@game/engine/planPreload' resolves to game/src/engine/planPreload under game's vitest",
+    "Include pattern tests/**/*.test.ts stays unchanged"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/vitest.config.ts"
+    ],
+    "out_of_scope": [
+      "Frontend config"
+    ],
+    "preserve": [
+      "test.include value"
+    ]
+  },
+  "technical_constraints": [
+    "Keep node environment",
+    "Code path: `game/vitest.config.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Alias present and existing game tests unaffected",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-515.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8562BYKJVGBVD49WBCG1X9G",
+    "trace:01M84MFPVV8H5BJSSV1HW9NJ50",
+    "artifact:.ai-dlc/units/UNIT-515.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85644WC5BN2KQ8Z6F7N6BGB"
+  ],
+  "sim_node_id": "01M8562BYK7KXW4R54ERZ6RJM5",
+  "feature_id": "01M84MFPVV8H5BJSSV1HW9NJ50",
+  "artifact_path": ".ai-dlc/units/UNIT-515.md",
+  "artifact_id": "UNIT-515",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/vitest.config.ts",
+      "symbol": "default export defineConfig",
+      "lines": "L1-L2",
+      "action": "Add import { fileURLToPath, URL } from 'node:url' and add resolve.alias '@game' pointing to fileURLToPath(new URL('./src', import.meta.url)) beside the existing test block.",
+      "code": "import { fileURLToPath, URL } from 'node:url';\nimport { defineConfig } from 'vitest/config';\n\nexport default defineConfig({\n  resolve: { alias: { '@game': fileURLToPath(new URL('./src', import.meta.url)) } },\n  test: { include: ['tests/**/*.test.ts'] },\n});",
+      "expected": "'@game/...' imports resolve in game/tests"
+    }
+  ],
+  "created_at": "2026-11-23T21:48:49.420649+00:00",
+  "updated_at": "2026-11-23T21:49:12.109665+00:00"
+}

@@ -1,0 +1,64 @@
+{
+  "id": "01M84H1KRJY7SXCFQGHGH1EB2J",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "Verify: Claude adapter unit tests with a fake Exec",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Claude.Run",
+  "description": "Use a fake Exec recording its call.",
+  "acceptance_criteria": [
+    "Exec receives dir, name claude and non-empty args",
+    "Exec error is wrapped",
+    "nil Exec is rejected"
+  ],
+  "scope": {
+    "in_scope": [
+      "claude_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "No real process",
+    "New file: `backend/worker/internal/provider/claude_test.go`"
+  ],
+  "dependencies": [
+    "A2"
+  ],
+  "definition_of_done": [
+    "tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-226.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H148VTMNEAHXGSTBCJJG5",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-226.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H1KRJCE1XCRREMNS7AZAY"
+  ],
+  "sim_node_id": "01M84H148VR029RM3G1PRRQPQJ",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-226.md",
+  "artifact_id": "UNIT-226",
+  "steps": [
+    {
+      "file": "backend/worker/internal/provider/claude_test.go",
+      "symbol": "new: TestClaudeRun",
+      "lines": "new",
+      "action": "Define fakeExec recording dir, name, args and returning a configurable error. TestClaudeRunCallsExec: NewClaude(fake), Run with dir D, assert name claude, dir D, len(args)>0, cost 0. TestClaudeRunWrapsError: fake returns errBoom, assert errors.Is(err, errBoom) and text contains claude. TestNewClaudeNilExec asserts an error.",
+      "command": "cd backend/worker && go test ./internal/provider -run 'TestClaude|TestNewClaude'",
+      "expected": "all three tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.942331+00:00"
+}

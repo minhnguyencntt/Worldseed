@@ -1,0 +1,70 @@
+{
+  "id": "01M85780PC2QP9R0AHKG6DNZ2S",
+  "intent_id": "01M8574W4967RN5DER6APN05P0",
+  "title": "Verify: BootScene single sceneObjects field and unchanged sync unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests fail while a duplicate sceneObjects field exists and sync still works",
+  "description": "Add a vitest unit test counting sceneObjects declarations in BootScene.ts, and re-run the existing sync tests to prove behavior is unchanged.",
+  "acceptance_criteria": [
+    "Given the duplicate field is present, when the test runs, then it fails.",
+    "Given ACT2 is applied, when the test runs, then it passes and bootSceneSync tests still pass."
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file game/frontend/tests/bootSceneSingleField.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "tests/bootSceneSync.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Reads the source file only; no app, server or browser started"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test added and passing after ACT2; sync tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-537.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M857636B4X2BA763F3WQZ0QC",
+    "trace:01M8571BG2N4KF5FF1V20TFHJ3",
+    "artifact:.ai-dlc/units/UNIT-537.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85780PCB1VSC4NJKYB9N5Y5"
+  ],
+  "sim_node_id": "01M857636B0AXP4MQWKXB4BPF0",
+  "artifact_path": ".ai-dlc/units/UNIT-537.md",
+  "artifact_id": "UNIT-537",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneSingleField.test.ts",
+      "symbol": "new: describe('BootScene fields')",
+      "lines": "new",
+      "action": "Create the test file. Read ../src/phaser/BootScene.ts with readFileSync (node:fs, utf8). Test 'declares sceneObjects exactly once': count matches of /^\\s*private sceneObjects:/gm and expect length toBe(1).",
+      "code": "const matches = src.match(/^\\s*private sceneObjects:/gm) ?? [];\nexpect(matches).toHaveLength(1);",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneSingleField.test.ts",
+      "expected": "Test passes after ACT2; fails with length 2 if the duplicate field is restored."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneSync.test.ts",
+      "symbol": "existing suite (no edits)",
+      "lines": "new",
+      "action": "Run the existing bootSceneSync suite unchanged to confirm sync and objectClick forwarding still pass after the field removal.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneSync.test.ts",
+      "expected": "All existing bootSceneSync tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T22:08:24.780414+00:00",
+  "updated_at": "2026-11-23T22:09:26.006416+00:00"
+}

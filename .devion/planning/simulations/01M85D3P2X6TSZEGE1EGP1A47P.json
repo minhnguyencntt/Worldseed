@@ -1,0 +1,536 @@
+{
+  "intent_id": "01M85D3P2X6TSZEGE1EGP1A47P",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85D5DFA446ZXA82SM4B8MRF",
+      "kind": "intent",
+      "title": "SG-8.2.2 Max-length constant, counter and over-limit block",
+      "body": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already blocks blank submits but has no maximum length. The backend rejects prompts over cfg.Contribution.MaxPromptLen (default 500, counted with utf8.RuneCountInString on the trimmed prompt). Desired behavior: a shared max-length constant, a visible 'n / max' counter, an inline over-limit message, and submit blocked while over the limit. Expected result: players see the limit before the backend rejects them. Why: avoids a wasted round trip and a generic 'Could not send' error.\n\n## Acceptance criteria\n- Given the sheet is open, When the player types text, Then a counter reads 'n / 500' where n is the character count of the trimmed text\n- Given the text is longer than the maximum, When the player looks at the form, Then an inline over-limit message is visible and the textarea is marked invalid\n- Given the text is over the limit, When the player clicks Send, Then submitContribution is not called\n- Given the text is within the limit, When the player clicks Send, Then submitContribution is called as before\n\n\n## Scope\n- In scope: Max-length constant in the API client module\n- In scope: Counter and over-limit message in ContributionSheet\n- In scope: Submit blocked while over the limit\n- Out of scope: Backend changes\n- Out of scope: Quota gating\n- Out of scope: Blank-text validation changes\n- Preserve: Blank-text 'Enter an idea first' behavior\n- Preserve: History list and submit states\n- Preserve: Radix Dialog behavior\n\n\n## Technical constraints\n- React + TypeScript only; no new dependencies\n- Constant value must match the backend default of 500\n- Count Unicode characters of the trimmed text, as the backend does\n\n\n## Definition of done\n- All requirements delivered and their unit tests pass\n\n\n## Non-functional requirements\n- Counter and message are exposed to assistive tech via aria-describedby\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Contribution textarea enforces a maximum length with a visible n / max counter and an inline over-limit message",
+      "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already blocks blank submits but has no maximum length. The backend rejects prompts over cfg.Contribution.MaxPromptLen (default 500, counted with utf8.RuneCountInString on the trimmed prompt). Desired behavior: a shared max-length constant, a visible 'n / max' counter, an inline over-limit message, and submit blocked while over the limit. Expected result: players see the limit before the backend rejects them. Why: avoids a wasted round trip and a generic 'Could not send' error.",
+      "acceptance_criteria": [
+        "Given the sheet is open, When the player types text, Then a counter reads 'n / 500' where n is the character count of the trimmed text",
+        "Given the text is longer than the maximum, When the player looks at the form, Then an inline over-limit message is visible and the textarea is marked invalid",
+        "Given the text is over the limit, When the player clicks Send, Then submitContribution is not called",
+        "Given the text is within the limit, When the player clicks Send, Then submitContribution is called as before"
+      ],
+      "scope": {
+        "in_scope": [
+          "Max-length constant in the API client module",
+          "Counter and over-limit message in ContributionSheet",
+          "Submit blocked while over the limit"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Quota gating",
+          "Blank-text validation changes"
+        ],
+        "preserve": [
+          "Blank-text 'Enter an idea first' behavior",
+          "History list and submit states",
+          "Radix Dialog behavior"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript only; no new dependencies",
+        "Constant value must match the backend default of 500",
+        "Count Unicode characters of the trimmed text, as the backend does"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered and their unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-129.md`"
+      ],
+      "non_functional": [
+        "Counter and message are exposed to assistive tech via aria-describedby"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85D0J7QZ95G5TP4P90XH1ZC",
+      "links": [
+        "trace:01M85D0J7QZ95G5TP4P90XH1ZC",
+        "artifact:.ai-dlc/intent/INT-129.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-129.md",
+      "artifact_id": "INT-129"
+    },
+    {
+      "id": "01M85D5DFAPJMYN3CJ3RG1CA00",
+      "kind": "requirement",
+      "title": "REQ · Shared max-length constant drives a visible n / max counter",
+      "body": "Context: client.ts exports MAX_PER_PLAYER but no length constant. Desired behavior: export MAX_PROMPT_LENGTH = 500 and render a counter beside the textarea that updates on every change. Expected result: the player always sees how much room is left. Why: the limit must be visible before it is exceeded.\n\n## Acceptance criteria\n- Given the sheet is open with empty text, Then the counter reads '0 / 500'\n- Given the text 'hello', Then the counter reads '5 / 500'\n- Given the text '  hi  ', Then the counter reads '2 / 500' because it counts trimmed characters\n- Given the textarea, Then it is described by the counter via aria-describedby\n\n\n## Scope\n- In scope: MAX_PROMPT_LENGTH export\n- In scope: Counter element in ContributionSheet\n- Out of scope: Over-limit message\n- Out of scope: Submit blocking\n- Preserve: Existing aria-describedby for the blank message\n\n\n## Technical constraints\n- Constant lives next to MAX_PER_PLAYER in game/frontend/src/api/client.ts\n\n\n## Definition of done\n- Counter renders and updates; constant exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A MAX_PROMPT_LENGTH constant is exported and the sheet shows a live 'n / max' counter",
+      "description": "Context: client.ts exports MAX_PER_PLAYER but no length constant. Desired behavior: export MAX_PROMPT_LENGTH = 500 and render a counter beside the textarea that updates on every change. Expected result: the player always sees how much room is left. Why: the limit must be visible before it is exceeded.",
+      "acceptance_criteria": [
+        "Given the sheet is open with empty text, Then the counter reads '0 / 500'",
+        "Given the text 'hello', Then the counter reads '5 / 500'",
+        "Given the text '  hi  ', Then the counter reads '2 / 500' because it counts trimmed characters",
+        "Given the textarea, Then it is described by the counter via aria-describedby"
+      ],
+      "scope": {
+        "in_scope": [
+          "MAX_PROMPT_LENGTH export",
+          "Counter element in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "Over-limit message",
+          "Submit blocking"
+        ],
+        "preserve": [
+          "Existing aria-describedby for the blank message"
+        ]
+      },
+      "technical_constraints": [
+        "Constant lives next to MAX_PER_PLAYER in game/frontend/src/api/client.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Counter renders and updates; constant exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-321.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85D5DFA446ZXA82SM4B8MRF",
+      "matched_feature_id": "01M85CR1JVKS7A94PP3ZPJ1BV7",
+      "links": [
+        "parent:01M85D5DFA446ZXA82SM4B8MRF",
+        "trace:01M85CR1JVKS7A94PP3ZPJ1BV7",
+        "artifact:.ai-dlc/requirements/REQ-321.md"
+      ],
+      "depends_on": [
+        "01M85D5DFA446ZXA82SM4B8MRF"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-321.md",
+      "artifact_id": "REQ-321"
+    },
+    {
+      "id": "01M85D5DFACG689A67KP4BEX1S",
+      "kind": "requirement",
+      "title": "REQ · Over-limit text shows an inline message and blocks submit",
+      "body": "Context: handleSubmit only blocks blank text. Desired behavior: compute over-limit from trimmed character count; show an inline message, set aria-invalid, and refuse to submit. Expected result: over-limit ideas are never sent. Why: backend would reject them anyway.\n\n## Acceptance criteria\n- Given 501 characters, Then the message 'Too long: 501 / 500' is visible in a role=alert element\n- Given 501 characters, When Send is clicked, Then submitContribution is not called and the text is kept\n- Given 500 characters, Then no over-limit message shows and Send submits\n- Given over-limit text is edited down to 500 characters, Then the message disappears\n\n\n## Scope\n- In scope: Over-limit message\n- In scope: Guard in handleSubmit\n- In scope: aria-invalid on over-limit\n- Out of scope: Counter\n- Out of scope: Backend validation\n- Preserve: Blank message behavior\n- Preserve: Textarea is not hard-truncated so the message is reachable\n\n\n## Technical constraints\n- Do not set the maxLength attribute, because it would make the over-limit state unreachable\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Over-limit blocks submit and shows message\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "When trimmed text exceeds MAX_PROMPT_LENGTH an inline message shows and Send does nothing",
+      "description": "Context: handleSubmit only blocks blank text. Desired behavior: compute over-limit from trimmed character count; show an inline message, set aria-invalid, and refuse to submit. Expected result: over-limit ideas are never sent. Why: backend would reject them anyway.",
+      "acceptance_criteria": [
+        "Given 501 characters, Then the message 'Too long: 501 / 500' is visible in a role=alert element",
+        "Given 501 characters, When Send is clicked, Then submitContribution is not called and the text is kept",
+        "Given 500 characters, Then no over-limit message shows and Send submits",
+        "Given over-limit text is edited down to 500 characters, Then the message disappears"
+      ],
+      "scope": {
+        "in_scope": [
+          "Over-limit message",
+          "Guard in handleSubmit",
+          "aria-invalid on over-limit"
+        ],
+        "out_of_scope": [
+          "Counter",
+          "Backend validation"
+        ],
+        "preserve": [
+          "Blank message behavior",
+          "Textarea is not hard-truncated so the message is reachable"
+        ]
+      },
+      "technical_constraints": [
+        "Do not set the maxLength attribute, because it would make the over-limit state unreachable"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Over-limit blocks submit and shows message",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-322.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85D5DFA446ZXA82SM4B8MRF",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M85D5DFA446ZXA82SM4B8MRF",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-322.md"
+      ],
+      "depends_on": [
+        "01M85D5DFA446ZXA82SM4B8MRF"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-322.md",
+      "artifact_id": "REQ-322"
+    },
+    {
+      "id": "01M85D5DFAVE4YEKTCB89ZXDD4",
+      "kind": "unit",
+      "title": "Act: Add MAX_PROMPT_LENGTH and the n / max counter",
+      "body": "Add MAX_PROMPT_LENGTH = 500 to the API client and render a counter derived from the trimmed text length in ContributionSheet.\n\n## Acceptance criteria\n- Counter reads 'n / 500' for the trimmed text length\n- Textarea aria-describedby includes the counter id\n\n\n## Scope\n- In scope: client.ts constant\n- In scope: ContributionSheet counter\n- Out of scope: Tests\n- Out of scope: Over-limit logic\n- Preserve: Existing blank validation\n\n\n## Technical constraints\n- Count with Array.from(text.trim()).length\n- Code path: `game/frontend/src/api/client.ts`\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Constant exported and counter rendered\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export the constant and render the counter in ContributionSheet",
+      "description": "Add MAX_PROMPT_LENGTH = 500 to the API client and render a counter derived from the trimmed text length in ContributionSheet.",
+      "acceptance_criteria": [
+        "Counter reads 'n / 500' for the trimmed text length",
+        "Textarea aria-describedby includes the counter id"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts constant",
+          "ContributionSheet counter"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Over-limit logic"
+        ],
+        "preserve": [
+          "Existing blank validation"
+        ]
+      },
+      "technical_constraints": [
+        "Count with Array.from(text.trim()).length",
+        "Code path: `game/frontend/src/api/client.ts`",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Constant exported and counter rendered",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-642.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85D5DFAPJMYN3CJ3RG1CA00",
+      "matched_feature_id": "01M85CR1JW3XTV6FJ9ER5GQS84",
+      "links": [
+        "parent:01M85D5DFAPJMYN3CJ3RG1CA00",
+        "trace:01M85CR1JW3XTV6FJ9ER5GQS84",
+        "artifact:.ai-dlc/units/UNIT-642.md"
+      ],
+      "depends_on": [
+        "01M85D5DFAPJMYN3CJ3RG1CA00"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-642.md",
+      "artifact_id": "UNIT-642",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "MAX_PER_PLAYER",
+          "lines": "after L2",
+          "action": "Add an exported constant MAX_PROMPT_LENGTH with value 500 directly below MAX_PER_PLAYER",
+          "code": "export const MAX_PROMPT_LENGTH = 500;",
+          "expected": "MAX_PROMPT_LENGTH is importable and equals 500"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet",
+          "lines": "L2 and L67",
+          "action": "Import MAX_PROMPT_LENGTH from '../api/client' in the existing import on L2, then after the 'remaining' const on L67 add const length = Array.from(text.trim()).length;",
+          "code": "const length = Array.from(text.trim()).length;",
+          "expected": "length holds the trimmed character count on every render"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet textarea JSX",
+          "lines": "L112-L127",
+          "action": "After the textarea add <p id=\"contribution-idea-count\">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>; change aria-describedby on the textarea to join the ids 'contribution-idea-count' and, when validation is set, 'contribution-idea-error' with a space",
+          "code": "aria-describedby={validation ? 'contribution-idea-count contribution-idea-error' : 'contribution-idea-count'}",
+          "expected": "Counter text is visible and referenced by the textarea"
+        }
+      ]
+    },
+    {
+      "id": "01M85D5DFANTEFD294TA2ET3HT",
+      "kind": "unit",
+      "title": "Act: Block over-limit submit with an inline message",
+      "body": "Derive overLimit from the trimmed length, render an inline alert, mark the textarea invalid and return early from handleSubmit.\n\n## Acceptance criteria\n- Message 'Too long: n / 500' shows when over\n- submitContribution not called when over\n\n\n## Scope\n- In scope: ContributionSheet only\n- Out of scope: Tests\n- Out of scope: Backend\n- Preserve: Blank message\n- Preserve: Text kept when blocked\n\n\n## Technical constraints\n- No maxLength attribute\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Over-limit blocked with message\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add over-limit state, message and guard to ContributionSheet",
+      "description": "Derive overLimit from the trimmed length, render an inline alert, mark the textarea invalid and return early from handleSubmit.",
+      "acceptance_criteria": [
+        "Message 'Too long: n / 500' shows when over",
+        "submitContribution not called when over"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet only"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Backend"
+        ],
+        "preserve": [
+          "Blank message",
+          "Text kept when blocked"
+        ]
+      },
+      "technical_constraints": [
+        "No maxLength attribute",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Over-limit blocked with message",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-643.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85D5DFACG689A67KP4BEX1S",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M85D5DFACG689A67KP4BEX1S",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-643.md"
+      ],
+      "depends_on": [
+        "01M85D5DFACG689A67KP4BEX1S"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-643.md",
+      "artifact_id": "UNIT-643",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (derived value)",
+          "lines": "after the length const added by the counter unit",
+          "action": "Add const overLimit = length > MAX_PROMPT_LENGTH;",
+          "code": "const overLimit = length > MAX_PROMPT_LENGTH;",
+          "expected": "overLimit is true only above 500 trimmed characters"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "handleSubmit",
+          "lines": "L69-L78",
+          "action": "After the blank check (prompt === '') add an early return when overLimit so text, entries and error are untouched",
+          "code": "if (overLimit) return;",
+          "expected": "submitContribution is never called while over the limit"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "textarea JSX and message",
+          "lines": "L112-L128",
+          "action": "Set aria-invalid={validation !== undefined || overLimit}; add 'contribution-idea-limit' to aria-describedby when overLimit; after the form render {overLimit && <p id=\"contribution-idea-limit\" role=\"alert\">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}",
+          "code": "{overLimit && <p id=\"contribution-idea-limit\" role=\"alert\">{`Too long: ${length} / ${MAX_PROMPT_LENGTH}`}</p>}",
+          "expected": "Message appears at 501 characters and disappears at 500"
+        }
+      ]
+    },
+    {
+      "id": "01M85D5DFABA13A521MRBNS5YC",
+      "kind": "unit",
+      "title": "Verify: Max-length counter unit tests",
+      "body": "Write unit tests for the counter using the mocked API client, mirroring the setup in tests/contributionBlank.test.tsx.\n\n## Acceptance criteria\n- Counter reads '0 / 500' initially\n- Counter counts trimmed characters\n- aria-describedby references the counter\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests stay green\n\n\n## Technical constraints\n- Mock ../src/api/client with vi.mock keeping the actual exports; no network\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove the counter text and constant",
+      "description": "Write unit tests for the counter using the mocked API client, mirroring the setup in tests/contributionBlank.test.tsx.",
+      "acceptance_criteria": [
+        "Counter reads '0 / 500' initially",
+        "Counter counts trimmed characters",
+        "aria-describedby references the counter"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests stay green"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client with vi.mock keeping the actual exports; no network"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-644.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85D5DFAVE4YEKTCB89ZXDD4",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85D5DFAVE4YEKTCB89ZXDD4",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-644.md"
+      ],
+      "depends_on": [
+        "01M85D5DFAVE4YEKTCB89ZXDD4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-644.md",
+      "artifact_id": "UNIT-644",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionMaxLength.test.tsx",
+          "symbol": "new: ContributionSheet max length counter",
+          "lines": "new",
+          "action": "Create the file with the jsdom pragma and the vi.mock of submitContribution and listMine copied from tests/contributionBlank.test.tsx L1-L26; listMine resolves [contributionFixture] from tests/fixtures/api (mirrors the Contribution type in src/api/client.ts and backend contribution list handler response). Add tests: (1) initial render shows '0 / 500'; (2) fireEvent.change to 'hello' shows '5 / 500'; (3) value '  hi  ' shows '2 / 500'; (4) textarea getAttribute('aria-describedby') contains 'contribution-idea-count'; (5) MAX_PROMPT_LENGTH equals 500",
+          "command": "cd game/frontend && npx vitest run tests/contributionMaxLength.test.tsx -t counter",
+          "expected": "All counter tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85D5DFB19WFNVTNKAJTWRZP",
+      "kind": "unit",
+      "title": "Verify: Over-limit message and submit block unit tests",
+      "body": "Extend the max-length test file with over-limit cases using the mocked client.\n\n## Acceptance criteria\n- 501 chars shows message and blocks submit\n- 500 chars submits\n\n\n## Scope\n- In scope: Test file\n- Out of scope: Product code\n- Preserve: Blank tests stay green\n\n\n## Technical constraints\n- Mock the client; no network\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove the over-limit message and blocked submit",
+      "description": "Extend the max-length test file with over-limit cases using the mocked client.",
+      "acceptance_criteria": [
+        "501 chars shows message and blocks submit",
+        "500 chars submits"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Blank tests stay green"
+        ]
+      },
+      "technical_constraints": [
+        "Mock the client; no network"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-645.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85D5DFANTEFD294TA2ET3HT",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85D5DFANTEFD294TA2ET3HT",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-645.md"
+      ],
+      "depends_on": [
+        "01M85D5DFANTEFD294TA2ET3HT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-645.md",
+      "artifact_id": "UNIT-645",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionMaxLength.test.tsx",
+          "symbol": "describe: over limit",
+          "lines": "after the counter tests",
+          "action": "Add tests with 'a'.repeat(n): (1) n=501 and Send click -> getByRole('alert').textContent is 'Too long: 501 / 500', textarea aria-invalid is 'true', submitMock not called, textarea value still 501 chars; (2) n=500 -> queryByText(/Too long/) is null and, after Send click with submitMock resolving contributionFixture, submitMock called once with the 500-char string; (3) change from 501 to 500 chars removes the message; (4) 500 characters plus surrounding spaces still submits",
+          "command": "cd game/frontend && npx vitest run tests/contributionMaxLength.test.tsx -t over",
+          "expected": "All over-limit tests pass"
+        },
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "existing suite",
+          "lines": "L1-L60",
+          "action": "Run unchanged to confirm blank behavior is preserved",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx",
+          "expected": "Existing blank tests still pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85D5DFBZEYKQ2X2K1JMZ16N",
+      "kind": "evidence",
+      "title": "Evidence: Max length counter and over-limit unit tests",
+      "body": "Collect results from tests/contributionMaxLength.test.tsx and tests/contributionBlank.test.tsx as proof the intent is met.\n\n## Acceptance criteria\n- Counter tests pass\n- Over-limit tests pass\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Manual checks\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results prove counter, message and blocked submit",
+      "description": "Collect results from tests/contributionMaxLength.test.tsx and tests/contributionBlank.test.tsx as proof the intent is met.",
+      "acceptance_criteria": [
+        "Counter tests pass",
+        "Over-limit tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-129.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M85D5DFABA13A521MRBNS5YC",
+      "links": [
+        "parent:01M85D5DFABA13A521MRBNS5YC",
+        "trace:01M85CR1JWZZW04JGXZ5EPBXK2",
+        "artifact:.ai-dlc/evidence/EVD-129.md"
+      ],
+      "depends_on": [
+        "01M85D5DFABA13A521MRBNS5YC",
+        "01M85D5DFB19WFNVTNKAJTWRZP"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-129.md",
+      "artifact_id": "EVD-129"
+    }
+  ],
+  "created_at": "2026-11-23T23:52:35.653914+00:00",
+  "summary": "AI · 1 NEW · 7 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

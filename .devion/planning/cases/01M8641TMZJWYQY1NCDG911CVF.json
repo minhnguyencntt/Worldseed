@@ -1,0 +1,386 @@
+{
+  "id": "01M8641TMZJWYQY1NCDG911CVF",
+  "trigger_node_id": "INT-173, UNIT-868 +6",
+  "node_ids": [
+    "INT-173",
+    "UNIT-868",
+    "UNIT-869",
+    "UNIT-870",
+    "UNIT-871",
+    "REQ-434",
+    "REQ-435",
+    "EVD-173"
+  ],
+  "intent_id": "INT-173",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-173",
+      "title": "Fix 'Round unavailable: Unexpected token <' error in the UI",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-868",
+      "title": "Act: Add /api proxy to vite.config.ts",
+      "kind": "unit",
+      "task_ids": [
+        "01M8641RZTZY4DQNH1NG6JVJ4M"
+      ],
+      "depends_on": [
+        "REQ-434"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "forge",
+      "commit_sha": "99c7b6c67c0b3866dd222fc304a7ba897c7ae39f",
+      "from_sha": "99c7b6c67c0b3866dd222fc304a7ba897c7ae39f",
+      "started_at": "2026-11-24T06:32:49.564321+00:00",
+      "ended_at": "2026-11-24T06:33:22.565163+00:00",
+      "run_started_at": "2026-11-24T06:32:49.564321+00:00",
+      "duration_ms": 29167,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3403,
+      "estimated_cost_usd": 0.01362
+    },
+    {
+      "unit_id": "UNIT-869",
+      "title": "Act: Handle SyntaxError in describeRoundError",
+      "kind": "unit",
+      "task_ids": [
+        "01M8641RZT0F4P1Z7DCEC6SJHF"
+      ],
+      "depends_on": [
+        "REQ-435"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "forge",
+      "commit_sha": "99c7b6c67c0b3866dd222fc304a7ba897c7ae39f",
+      "from_sha": "f2897197774706db54d50f903a79a3768c154ba9",
+      "started_at": "2026-11-24T06:32:49.585574+00:00",
+      "ended_at": "2026-11-24T06:33:21.519237+00:00",
+      "run_started_at": "2026-11-24T06:32:49.585574+00:00",
+      "duration_ms": 28305,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 2533,
+      "estimated_cost_usd": 0.010145
+    },
+    {
+      "unit_id": "UNIT-870",
+      "title": "Verify: Vite config proxies /api to the backend unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8641RZTP4EAMT66MV1NZ0F3"
+      ],
+      "depends_on": [
+        "UNIT-868",
+        "REQ-434"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sentinel",
+      "commit_sha": "81ce6092428e607d14791d1878b155967fba6549",
+      "from_sha": "99c7b6c67c0b3866dd222fc304a7ba897c7ae39f",
+      "tests": [
+        {
+          "id": "viteConfig-proxy-api-target",
+          "kind": "unit",
+          "name": "Vite dev proxy > proxies /api to the backend on http://localhost:8080",
+          "title": "Vite dev proxy proxies /api to the backend on http://localhost:8080",
+          "scenario": "Given the Vite config, when the dev server proxy is read, then the '/api' entry targets http://localhost:8080",
+          "command": "npx vitest run tests/viteConfig.test.ts --testTimeout=20000",
+          "file": "tests/viteConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "viteConfig-fs-allow-kept",
+          "kind": "unit",
+          "name": "Vite dev proxy > keeps the dev server fs.allow setting of [\"..\"]",
+          "title": "Vite dev proxy keeps the dev server fs.allow setting of [\"..\"]",
+          "scenario": "Given the Vite config, when server.fs.allow is read, then it equals ['..']",
+          "command": "npx vitest run tests/viteConfig.test.ts --testTimeout=20000",
+          "file": "tests/viteConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "viteConfig-publicDir-serves-public",
+          "kind": "unit",
+          "name": "Vite publicDir > serves game/public",
+          "title": "Vite publicDir serves game/public",
+          "scenario": "Given the Vite config, when publicDir is read, then it ends with /game/public",
+          "command": "npx vitest run tests/viteConfig.test.ts --testTimeout=20000",
+          "file": "tests/viteConfig.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T06:33:22.573661+00:00",
+      "ended_at": "2026-11-24T06:33:45.074899+00:00",
+      "run_started_at": "2026-11-24T06:33:22.573661+00:00",
+      "duration_ms": 20915,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3174,
+      "estimated_cost_usd": 0.012706
+    },
+    {
+      "unit_id": "UNIT-871",
+      "title": "Verify: describeRoundError SyntaxError unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M8641RZTYT616EMWMW6TZ6DQ"
+      ],
+      "depends_on": [
+        "UNIT-869",
+        "REQ-435"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sentinel",
+      "commit_sha": "733a4011fd58e93ff68cc3bdcfb0191e149ac1cd",
+      "from_sha": "81ce6092428e607d14791d1878b155967fba6549",
+      "tests": [
+        {
+          "id": "appRound.describeRoundError.syntaxError",
+          "kind": "unit",
+          "name": "describeRoundError: Given a SyntaxError from parsing a non-JSON body, then the message says the round service returned an unexpected response",
+          "title": "describeRoundError returns the not-JSON explanation for a SyntaxError",
+          "scenario": "Given a SyntaxError(\"Unexpected token '<'\"), when describeRoundError is called, then it returns 'Round service returned an unexpected response (not JSON)'",
+          "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx -t describeRoundError --testTimeout=20000",
+          "file": "tests/appRound.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appRound.describeRoundError.existingFour",
+          "kind": "unit",
+          "name": "describeRoundError existing four tests",
+          "title": "describeRoundError keeps its existing ApiError, TypeError, and string messages",
+          "scenario": "Given the four pre-existing describeRoundError cases, then they still pass",
+          "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx -t describeRoundError --testTimeout=20000",
+          "file": "tests/appRound.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appRound.app.syntaxErrorHeader",
+          "kind": "unit",
+          "name": "App round states: Given the round response is not JSON, when the player begins, then the header shows the explained message and no parser text",
+          "title": "Header shows the not-JSON explanation and no parser text when getCurrentRound rejects with a SyntaxError",
+          "scenario": "Given getCurrentRound rejects with SyntaxError('Unexpected token <'), when the player clicks Begin, then the alert shows 'Round service returned an unexpected response (not JSON)' and no text matches /Unexpected token/",
+          "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx --testTimeout=20000",
+          "file": "tests/appRound.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T06:33:21.527964+00:00",
+      "ended_at": "2026-11-24T06:34:25.373648+00:00",
+      "run_started_at": "2026-11-24T06:33:21.527964+00:00",
+      "duration_ms": 61256,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 30,
+      "tokens_out": 8116,
+      "estimated_cost_usd": 0.032488
+    },
+    {
+      "unit_id": "REQ-434",
+      "title": "Vite dev server proxies /api to the Go backend",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-173"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-435",
+      "title": "Non-JSON round responses show an explained message",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-173"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-173",
+      "title": "Evidence: Dev proxy and non-JSON round error unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-868",
+        "UNIT-869",
+        "UNIT-870",
+        "UNIT-871"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-868",
+      "dst": "UNIT-870"
+    },
+    {
+      "src": "UNIT-871",
+      "dst": "EVD-173"
+    },
+    {
+      "src": "INT-173",
+      "dst": "REQ-435"
+    },
+    {
+      "src": "REQ-434",
+      "dst": "UNIT-870"
+    },
+    {
+      "src": "REQ-435",
+      "dst": "UNIT-871"
+    },
+    {
+      "src": "UNIT-869",
+      "dst": "UNIT-871"
+    },
+    {
+      "src": "UNIT-868",
+      "dst": "EVD-173"
+    },
+    {
+      "src": "REQ-434",
+      "dst": "UNIT-868"
+    },
+    {
+      "src": "REQ-435",
+      "dst": "UNIT-869"
+    },
+    {
+      "src": "INT-173",
+      "dst": "REQ-434"
+    },
+    {
+      "src": "UNIT-869",
+      "dst": "EVD-173"
+    },
+    {
+      "src": "UNIT-870",
+      "dst": "EVD-173"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m8641t",
+  "base_sha": "f2897197774706db54d50f903a79a3768c154ba9",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M8641TMZJWYQY1NCDG911CVF:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T06:31:50.687628+00:00",
+  "updated_at": "2026-11-24T06:34:27.412027+00:00",
+  "completed_at": "2026-11-24T06:34:25.374664+00:00",
+  "duration_ms": 154687,
+  "usage_stats": {
+    "total_duration_ms": 139661,
+    "total_tokens_in": 68,
+    "total_tokens_out": 17226,
+    "total_estimated_cost_usd": 0.068959
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 18,
+  "unit_allowlist": [
+    "UNIT-868",
+    "UNIT-869",
+    "UNIT-870",
+    "UNIT-871"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-868",
+        "title": "Act: Add /api proxy to vite.config.ts",
+        "evidence_refs": [
+          {
+            "id": "EVD-173",
+            "path": ".ai-dlc/evidence/EVD-173.md",
+            "title": "Evidence: Dev proxy and non-JSON round error unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-868 unless acceptance outcomes recorded in EVD-173 (.ai-dlc/evidence/EVD-173.md; \"Evidence: Dev proxy and non-JSON round error unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-869",
+        "title": "Act: Handle SyntaxError in describeRoundError",
+        "evidence_refs": [
+          {
+            "id": "EVD-173",
+            "path": ".ai-dlc/evidence/EVD-173.md",
+            "title": "Evidence: Dev proxy and non-JSON round error unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-869 unless acceptance outcomes recorded in EVD-173 (.ai-dlc/evidence/EVD-173.md; \"Evidence: Dev proxy and non-JSON round error unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-870",
+        "title": "Verify: Vite config proxies /api to the backend unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-173",
+            "path": ".ai-dlc/evidence/EVD-173.md",
+            "title": "Evidence: Dev proxy and non-JSON round error unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-870 unless acceptance outcomes recorded in EVD-173 (.ai-dlc/evidence/EVD-173.md; \"Evidence: Dev proxy and non-JSON round error unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-871",
+        "title": "Verify: describeRoundError SyntaxError unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-173",
+            "path": ".ai-dlc/evidence/EVD-173.md",
+            "title": "Evidence: Dev proxy and non-JSON round error unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-871 unless acceptance outcomes recorded in EVD-173 (.ai-dlc/evidence/EVD-173.md; \"Evidence: Dev proxy and non-JSON round error unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T06:32:48.925133+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-868",
+    "UNIT-869",
+    "UNIT-870",
+    "UNIT-871"
+  ]
+}

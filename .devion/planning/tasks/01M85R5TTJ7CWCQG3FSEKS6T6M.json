@@ -1,0 +1,56 @@
+{
+  "id": "01M85R5TTJ7CWCQG3FSEKS6T6M",
+  "intent_id": "01M85R04Y7ESS4H737B4QA602P",
+  "title": "REQ · buildSpriteSheet lays equal-size frames into one horizontal sheet with size and frame metadata",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Pure buildSpriteSheet concatenates frames left to right and reports width, height, frame size and count",
+  "description": "Context: no buildSpriteSheet exists under game/. Desired behaviour: buildSpriteSheet(frames) takes RGBA frames {width,height,data} of identical size and returns {width, height, frameWidth, frameHeight, frameCount, data} with frames placed left to right. Expected result: width = frameWidth*frameCount, height = frameHeight, pixels copied unchanged so palette colours are preserved. Empty input or mismatched frame sizes throw. Why: sprite sheets feed the PNG script and manifest in SG-1.3.",
+  "acceptance_criteria": [
+    "Given 4 frames of 32x48, when buildSpriteSheet runs, then width is 128, height is 48, frameWidth is 32, frameHeight is 48 and frameCount is 4",
+    "Given frames with distinct pixels, when the sheet is read, then frame i occupies columns i*frameWidth to (i+1)*frameWidth-1 with unchanged pixel values",
+    "Given frames of different sizes or an empty list, when buildSpriteSheet runs, then it throws",
+    "Given sheets built from gridToRgba frames, when every sheet pixel is read, then its colour is in the shared palette"
+  ],
+  "scope": {
+    "in_scope": [
+      "buildSpriteSheet function and SpriteSheet type"
+    ],
+    "out_of_scope": [
+      "multi-row layouts",
+      "PNG encoding",
+      "manifest writing"
+    ],
+    "preserve": [
+      "gridToRgba behaviour"
+    ]
+  },
+  "technical_constraints": [
+    "Pure function; input frames are not mutated",
+    "Deterministic byte output"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "buildSpriteSheet exported from game/frontend/src/lib/spriteSheet.ts",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-389.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85R1X8F6E5E7NBVNWGZ4FQ9",
+    "trace:01M85QW2EBW6GYCE277YZ8F9FK",
+    "artifact:.ai-dlc/requirements/REQ-389.md"
+  ],
+  "change": "NEW",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M85R5TTJETSZFZG0BB34C1NC"
+  ],
+  "sim_node_id": "01M85R1X8FTYQZA7ZMT7QT1CM6",
+  "artifact_path": ".ai-dlc/requirements/REQ-389.md",
+  "artifact_id": "REQ-389",
+  "created_at": "2026-11-24T03:04:19.026094+00:00",
+  "updated_at": "2026-11-24T03:05:28.415468+00:00"
+}

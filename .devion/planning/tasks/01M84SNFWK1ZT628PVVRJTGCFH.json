@@ -1,0 +1,72 @@
+{
+  "id": "01M84SNFWK1ZT628PVVRJTGCFH",
+  "intent_id": "01M84SJVZGRZRB2529J9JRH75T",
+  "title": "Verify: phaser version guard reads real package.json and lockfile",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Guard test asserts 3.90.x on the real files",
+  "description": "Write tests/phaserVersionGuard.test.ts reading the real files and asserting 3.90.x agreement.",
+  "acceptance_criteria": [
+    "Real files produce no problems",
+    "Root specifier equals package.json specifier"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/phaserVersionGuard.test.ts"
+    ],
+    "out_of_scope": [
+      "Mocking the files"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Real files read with readFileSync, no network"
+  ],
+  "dependencies": [
+    "A2"
+  ],
+  "definition_of_done": [
+    "Guard passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-421.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84SM8F9HXQY3EGAH15J3Q2M",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-421.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84SNFWK7M9WYMZGRZF28DZ7"
+  ],
+  "sim_node_id": "01M84SM8F9T9KWYA6BWSW62ENA",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-421.md",
+  "artifact_id": "UNIT-421",
+  "steps": [
+    {
+      "file": "game/frontend/tests/phaserVersionGuard.test.ts",
+      "symbol": "new: describe('phaser version guard')",
+      "lines": "new",
+      "action": "Read ../package.json and ../package-lock.json using readFileSync(fileURLToPath(new NodeURL(..., import.meta.url))) with the NodeURL alias as in tests/phaserLockfile.test.ts; add test asserting phaserPinProblems(pkg, lock) toEqual([]) imported from '../src/lib/phaserPin'",
+      "command": "npx vitest run tests/phaserVersionGuard.test.ts",
+      "expected": "Test passes on current files"
+    },
+    {
+      "file": "game/frontend/tests/phaserVersionGuard.test.ts",
+      "symbol": "it('lockfile root specifier equals package.json')",
+      "lines": "after first test",
+      "action": "Assert lock.packages[''].dependencies.phaser toBe pkg.dependencies.phaser and that the node_modules/phaser version satisfies the specifier by matching /^3\\.90\\.\\d+$/ and not /^4\\./",
+      "command": "npx vitest run tests/phaserVersionGuard.test.ts",
+      "expected": "Passes; would fail on any 4.x change"
+    }
+  ],
+  "created_at": "2026-11-23T18:11:06.259080+00:00",
+  "updated_at": "2026-11-23T18:12:00.607356+00:00"
+}

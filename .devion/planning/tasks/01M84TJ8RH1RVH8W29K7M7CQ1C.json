@@ -1,0 +1,81 @@
+{
+  "id": "01M84TJ8RH1RVH8W29K7M7CQ1C",
+  "intent_id": "01M84TFPNY5VY9MHWBPJ876B18",
+  "title": "Act: Add trackedDependencyPaths and parseGitLsFiles helpers",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend trackedNodeModules.ts with cache-aware filter, parser and checker",
+  "description": "Add helpers so the guard can flag node_modules and .vite paths and read git ls-files -z output.",
+  "acceptance_criteria": [
+    "trackedDependencyPaths flags node_modules and .vite segments only",
+    "checkTrackedFiles(run) throws via assertion when git lists such paths"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/lib/trackedNodeModules.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "existing three exports"
+    ]
+  },
+  "technical_constraints": [
+    "Keep GitRunner signature",
+    "Code path: `game/frontend/src/lib/trackedNodeModules.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Helpers exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-442.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84TGXN3856JS03384J9K4HB",
+    "trace:01M84K6YA89P4HMDHNY8H7SSJ9",
+    "artifact:.ai-dlc/units/UNIT-442.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84TJ8RHY6X77A099SQYVJGB"
+  ],
+  "sim_node_id": "01M84TGXN3RS4YAQG55HJFEY31",
+  "feature_id": "01M84K6YA89P4HMDHNY8H7SSJ9",
+  "artifact_path": ".ai-dlc/units/UNIT-442.md",
+  "artifact_id": "UNIT-442",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/trackedNodeModules.ts",
+      "symbol": "new: trackedDependencyPaths",
+      "lines": "after L3",
+      "action": "Add exported function trackedDependencyPaths(paths: string[]) returning paths whose '/'-split segments include 'node_modules' or '.vite'.",
+      "code": "export function trackedDependencyPaths(paths: string[]): string[] {\n  return paths.filter((p) => p.split('/').some((s) => s === 'node_modules' || s === '.vite'));\n}",
+      "expected": "Function returns only dependency or cache paths"
+    },
+    {
+      "file": "game/frontend/src/lib/trackedNodeModules.ts",
+      "symbol": "new: parseGitLsFiles",
+      "lines": "after L3",
+      "action": "Add exported parseGitLsFiles(output: string): string[] that splits on '\\0' and drops empty strings.",
+      "code": "export function parseGitLsFiles(output: string): string[] {\n  return output.split('\\0').filter((p) => p.length > 0);\n}",
+      "expected": "NUL output becomes a path list"
+    },
+    {
+      "file": "game/frontend/src/lib/trackedNodeModules.ts",
+      "symbol": "assertNoTrackedNodeModules",
+      "lines": "L13-L16",
+      "action": "Add exported checkTrackedFiles(run: GitRunner): void that calls run(['ls-files','-z']), parses it, and throws Error with count and first 10 paths when trackedDependencyPaths is non-empty.",
+      "code": "export function checkTrackedFiles(run: GitRunner): void {\n  const bad = trackedDependencyPaths(parseGitLsFiles(run(['ls-files', '-z'])));\n  if (bad.length > 0) throw new Error(`${bad.length} tracked dependency or cache paths: ${bad.slice(0, 10).join(', ')}`);\n}",
+      "expected": "Throws only when a dependency/cache path is tracked"
+    }
+  ],
+  "created_at": "2026-11-23T18:26:49.233652+00:00",
+  "updated_at": "2026-11-23T18:27:37.171806+00:00"
+}

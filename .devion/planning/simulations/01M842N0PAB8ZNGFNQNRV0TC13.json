@@ -1,0 +1,747 @@
+{
+  "intent_id": "01M842N0PAB8ZNGFNQNRV0TC13",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M842QZ113TGVEJJXCED3Z86P",
+      "kind": "intent",
+      "title": "SG-1 · Bootstrap Go backend with player sessions",
+      "body": "Context: backend/ currently holds only README.md; there is no go.mod or Go source. Desired behavior: a Go module with Chi router, YAML config loader with env overrides, slog logging, GET health endpoint, POST /api/v1/player/session creating an anonymous player with a Secure HttpOnly cookie token, and GET /api/v1/player/me returning the player or 401. Expected result: all of it covered by httptest unit tests that run offline. Why: this is the foundation for later contribution and admin APIs, with no database or external store.\n\n## Acceptance criteria\n- Given the backend module, when `go test ./...` runs in backend/ with no network, then all tests pass\n- Given a valid config YAML, when it is loaded, then env vars override secrets and Git/hosting settings\n- Given POST /api/v1/player/session, when called, then a random player ID is returned and a Secure HttpOnly cookie is set\n- Given GET /api/v1/player/me, when the cookie is valid it returns 200 with the player, otherwise 401\n\n\n## Scope\n- In scope: backend/ Go module\n- In scope: configs example YAML\n- In scope: slog logging\n- In scope: health endpoint\n- In scope: player session and me endpoints\n- Out of scope: database or external store\n- Out of scope: contribution, world, admin APIs\n- Out of scope: frontend, game, worker\n- Preserve: backend/README.md\n\n\n## Technical constraints\n- Go with Chi router\n- HMAC secret from config verifies tokens\n- No database or external store\n- Tests must not use the network\n\n\n## Definition of done\n- All requirements delivered and unit tests pass offline\n\n\n## Non-functional requirements\n- Secrets never logged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Go/Chi backend in backend/ with YAML config, slog logging, health endpoint and anonymous HMAC-token player sessions",
+      "description": "Context: backend/ currently holds only README.md; there is no go.mod or Go source. Desired behavior: a Go module with Chi router, YAML config loader with env overrides, slog logging, GET health endpoint, POST /api/v1/player/session creating an anonymous player with a Secure HttpOnly cookie token, and GET /api/v1/player/me returning the player or 401. Expected result: all of it covered by httptest unit tests that run offline. Why: this is the foundation for later contribution and admin APIs, with no database or external store.",
+      "acceptance_criteria": [
+        "Given the backend module, when `go test ./...` runs in backend/ with no network, then all tests pass",
+        "Given a valid config YAML, when it is loaded, then env vars override secrets and Git/hosting settings",
+        "Given POST /api/v1/player/session, when called, then a random player ID is returned and a Secure HttpOnly cookie is set",
+        "Given GET /api/v1/player/me, when the cookie is valid it returns 200 with the player, otherwise 401"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/ Go module",
+          "configs example YAML",
+          "slog logging",
+          "health endpoint",
+          "player session and me endpoints"
+        ],
+        "out_of_scope": [
+          "database or external store",
+          "contribution, world, admin APIs",
+          "frontend, game, worker"
+        ],
+        "preserve": [
+          "backend/README.md"
+        ]
+      },
+      "technical_constraints": [
+        "Go with Chi router",
+        "HMAC secret from config verifies tokens",
+        "No database or external store",
+        "Tests must not use the network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered and unit tests pass offline",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-003.md`"
+      ],
+      "non_functional": [
+        "Secrets never logged"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8414WGQ1RMYSRBG9KKP4J3W",
+      "links": [
+        "trace:01M8414WGQ1RMYSRBG9KKP4J3W",
+        "artifact:.ai-dlc/intent/INT-003.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-003.md",
+      "artifact_id": "INT-003"
+    },
+    {
+      "id": "01M842QZ11PNSW5PQXFWKNNQCV",
+      "kind": "requirement",
+      "title": "REQ · Backend module with YAML config, slog logging and health endpoint",
+      "body": "Context: no Go module exists in backend/. Desired behavior: backend/go.mod (Chi, yaml.v3), configs/config.example.yaml, a loader applying env overrides for token secret and Git/hosting settings, slog JSON logger, and a Chi router exposing GET /healthz. Expected result: the server can be constructed from a config and answers health checks. Why: every later endpoint needs config and routing.\n\n## Acceptance criteria\n- Given configs/config.example.yaml, when loaded, then server address, auth and git fields are populated\n- Given env STORYFORGE_TOKEN_SECRET and STORYFORGE_GIT_TOKEN, when loading, then they override YAML values\n- Given GET /healthz, when called, then status 200 and JSON {\"status\":\"ok\"} are returned\n- Given a config missing auth.token_secret, when loaded, then an error is returned\n\n\n## Scope\n- In scope: config package\n- In scope: example config\n- In scope: router and health\n- In scope: main entrypoint\n- Out of scope: player endpoints\n\n\n## Technical constraints\n- gopkg.in/yaml.v3 and github.com/go-chi/chi/v5\n- stdlib log/slog\n\n\n## Definition of done\n- Config, logger and health implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Go module, config loader with env overrides, slog logger, Chi router with health endpoint",
+      "description": "Context: no Go module exists in backend/. Desired behavior: backend/go.mod (Chi, yaml.v3), configs/config.example.yaml, a loader applying env overrides for token secret and Git/hosting settings, slog JSON logger, and a Chi router exposing GET /healthz. Expected result: the server can be constructed from a config and answers health checks. Why: every later endpoint needs config and routing.",
+      "acceptance_criteria": [
+        "Given configs/config.example.yaml, when loaded, then server address, auth and git fields are populated",
+        "Given env STORYFORGE_TOKEN_SECRET and STORYFORGE_GIT_TOKEN, when loading, then they override YAML values",
+        "Given GET /healthz, when called, then status 200 and JSON {\"status\":\"ok\"} are returned",
+        "Given a config missing auth.token_secret, when loaded, then an error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "config package",
+          "example config",
+          "router and health",
+          "main entrypoint"
+        ],
+        "out_of_scope": [
+          "player endpoints"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "gopkg.in/yaml.v3 and github.com/go-chi/chi/v5",
+        "stdlib log/slog"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Config, logger and health implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-006.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M842QZ113TGVEJJXCED3Z86P",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M842QZ113TGVEJJXCED3Z86P",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-006.md"
+      ],
+      "depends_on": [
+        "01M842QZ113TGVEJJXCED3Z86P"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-006.md",
+      "artifact_id": "REQ-006"
+    },
+    {
+      "id": "01M842QZ11FGKJH827M62YXMFH",
+      "kind": "requirement",
+      "title": "REQ · Anonymous player session creation with HMAC token cookie",
+      "body": "Context: no player code exists. Desired behavior: a token package that signs and verifies tokens as base64url(playerID.issuedUnix).base64url(HMAC-SHA256) using the config secret, and a handler that creates a random 128-bit hex player ID and sets a cookie. Expected result: response JSON contains the player ID and the cookie is HttpOnly, Secure, SameSite=Lax, Path=/. Why: players need identity without accounts.\n\n## Acceptance criteria\n- Given POST /api/v1/player/session, when called, then status 201 and body contains a 32-char hex id\n- Given the response, when inspecting Set-Cookie, then HttpOnly, Secure and Path=/ are set with Max-Age from config ttl\n- Given two calls, when compared, then the player IDs differ\n- Given a token signed with the secret, when verified, then the player ID is returned\n\n\n## Scope\n- In scope: player token sign/verify\n- In scope: session handler\n- In scope: route registration\n- Out of scope: me endpoint\n- Out of scope: persistence\n- Preserve: health endpoint\n\n\n## Technical constraints\n- crypto/hmac sha256 with hmac.Equal\n- no storage\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Session endpoint returns cookie\n\n\n## Non-functional requirements\n- Constant-time signature comparison\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "POST /api/v1/player/session issues random player ID and signed token cookie",
+      "description": "Context: no player code exists. Desired behavior: a token package that signs and verifies tokens as base64url(playerID.issuedUnix).base64url(HMAC-SHA256) using the config secret, and a handler that creates a random 128-bit hex player ID and sets a cookie. Expected result: response JSON contains the player ID and the cookie is HttpOnly, Secure, SameSite=Lax, Path=/. Why: players need identity without accounts.",
+      "acceptance_criteria": [
+        "Given POST /api/v1/player/session, when called, then status 201 and body contains a 32-char hex id",
+        "Given the response, when inspecting Set-Cookie, then HttpOnly, Secure and Path=/ are set with Max-Age from config ttl",
+        "Given two calls, when compared, then the player IDs differ",
+        "Given a token signed with the secret, when verified, then the player ID is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "player token sign/verify",
+          "session handler",
+          "route registration"
+        ],
+        "out_of_scope": [
+          "me endpoint",
+          "persistence"
+        ],
+        "preserve": [
+          "health endpoint"
+        ]
+      },
+      "technical_constraints": [
+        "crypto/hmac sha256 with hmac.Equal",
+        "no storage"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Session endpoint returns cookie",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-007.md`"
+      ],
+      "non_functional": [
+        "Constant-time signature comparison"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M842QZ113TGVEJJXCED3Z86P",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M842QZ113TGVEJJXCED3Z86P",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-007.md"
+      ],
+      "depends_on": [
+        "01M842QZ113TGVEJJXCED3Z86P"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-007.md",
+      "artifact_id": "REQ-007"
+    },
+    {
+      "id": "01M842QZ11P5RVDT6R0MBFDVST",
+      "kind": "requirement",
+      "title": "REQ · Player me endpoint validating session cookie",
+      "body": "Context: tokens are issued by the session endpoint. Desired behavior: GET /api/v1/player/me reads the cookie, verifies HMAC and expiry, and returns the player JSON, or 401 JSON error for missing, tampered, malformed or expired tokens. Expected result: deterministic auth behavior. Why: later APIs reuse the same check.\n\n## Acceptance criteria\n- Given a valid cookie, when GET /api/v1/player/me, then 200 and {\"id\":<playerID>}\n- Given no cookie, when requested, then 401\n- Given a token with altered signature or signed with another secret, when requested, then 401\n- Given an expired token, when requested, then 401\n\n\n## Scope\n- In scope: me handler\n- In scope: expiry check using injected clock\n- Out of scope: contributions listing\n- Preserve: session endpoint behavior\n\n\n## Technical constraints\n- clock injected for testability\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- Me endpoint returns 200 or 401 correctly\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "GET /api/v1/player/me returns player for valid token and 401 otherwise",
+      "description": "Context: tokens are issued by the session endpoint. Desired behavior: GET /api/v1/player/me reads the cookie, verifies HMAC and expiry, and returns the player JSON, or 401 JSON error for missing, tampered, malformed or expired tokens. Expected result: deterministic auth behavior. Why: later APIs reuse the same check.",
+      "acceptance_criteria": [
+        "Given a valid cookie, when GET /api/v1/player/me, then 200 and {\"id\":<playerID>}",
+        "Given no cookie, when requested, then 401",
+        "Given a token with altered signature or signed with another secret, when requested, then 401",
+        "Given an expired token, when requested, then 401"
+      ],
+      "scope": {
+        "in_scope": [
+          "me handler",
+          "expiry check using injected clock"
+        ],
+        "out_of_scope": [
+          "contributions listing"
+        ],
+        "preserve": [
+          "session endpoint behavior"
+        ]
+      },
+      "technical_constraints": [
+        "clock injected for testability"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "Me endpoint returns 200 or 401 correctly",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-008.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M842QZ113TGVEJJXCED3Z86P",
+      "links": [
+        "parent:01M842QZ113TGVEJJXCED3Z86P",
+        "artifact:.ai-dlc/requirements/REQ-008.md"
+      ],
+      "depends_on": [
+        "01M842QZ113TGVEJJXCED3Z86P"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-008.md",
+      "artifact_id": "REQ-008"
+    },
+    {
+      "id": "01M842QZ118AWGPRTTDEDDRC0A",
+      "kind": "unit",
+      "title": "Act: Create backend module, config loader, logger and health router",
+      "body": "Create the backend Go module and the config loader with env overrides, slog logger setup, Chi router with /healthz, and main entrypoint.\n\n## Acceptance criteria\n- Config.Load returns populated Config from YAML with env overrides\n- GET /healthz returns 200 ok\n\n\n## Scope\n- In scope: backend module files\n- Out of scope: player code\n- Preserve: backend/README.md\n\n\n## Technical constraints\n- yaml.v3, chi v5, slog\n- New file: `backend/go.mod`\n- New file: `backend/configs/config.example.yaml`\n- New file: `backend/internal/config/config.go`\n- New file: `backend/internal/server/server.go`\n- New file: `backend/cmd/server/main.go`\n\n\n## Definition of done\n- `go build ./...` succeeds in backend/\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Implement go.mod, config, example YAML, router, main",
+      "description": "Create the backend Go module and the config loader with env overrides, slog logger setup, Chi router with /healthz, and main entrypoint.",
+      "acceptance_criteria": [
+        "Config.Load returns populated Config from YAML with env overrides",
+        "GET /healthz returns 200 ok"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend module files"
+        ],
+        "out_of_scope": [
+          "player code"
+        ],
+        "preserve": [
+          "backend/README.md"
+        ]
+      },
+      "technical_constraints": [
+        "yaml.v3, chi v5, slog",
+        "New file: `backend/go.mod`",
+        "New file: `backend/configs/config.example.yaml`",
+        "New file: `backend/internal/config/config.go`",
+        "New file: `backend/internal/server/server.go`",
+        "New file: `backend/cmd/server/main.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "`go build ./...` succeeds in backend/",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-011.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M842QZ11PNSW5PQXFWKNNQCV",
+      "matched_feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+      "links": [
+        "parent:01M842QZ11PNSW5PQXFWKNNQCV",
+        "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+        "artifact:.ai-dlc/units/UNIT-011.md"
+      ],
+      "depends_on": [
+        "01M842QZ11PNSW5PQXFWKNNQCV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-011.md",
+      "artifact_id": "UNIT-011",
+      "steps": [
+        {
+          "file": "backend/go.mod",
+          "symbol": "new: module",
+          "lines": "new",
+          "action": "Create module github.com/worldseed/storyforge/backend with go 1.22 requiring github.com/go-chi/chi/v5 and gopkg.in/yaml.v3",
+          "code": "module github.com/worldseed/storyforge/backend\n\ngo 1.22",
+          "expected": "go.mod exists; `go mod tidy` resolves deps"
+        },
+        {
+          "file": "backend/configs/config.example.yaml",
+          "symbol": "new: example config",
+          "lines": "new",
+          "action": "Add keys server.addr (\":8080\"), auth.token_secret (\"change-me-32-bytes-minimum\"), auth.cookie_name (\"sf_session\"), auth.token_ttl (\"720h\"), auth.cookie_secure (true), git.remote_url, git.branch (\"main\"), git.bot_name, git.bot_email, git.token, hosting.provider, hosting.base_url",
+          "expected": "File parses as YAML with all listed keys"
+        },
+        {
+          "file": "backend/internal/config/config.go",
+          "symbol": "new: Config, Load, LoadFS",
+          "lines": "new",
+          "action": "Define Config structs with yaml tags (TokenTTL as time.Duration parsed from string). Implement LoadFS(fsys fs.FS, name string, getenv func(string) string) (*Config, error): read file, yaml.Unmarshal, then override from env STORYFORGE_ADDR, STORYFORGE_TOKEN_SECRET, STORYFORGE_GIT_REMOTE_URL, STORYFORGE_GIT_TOKEN, STORYFORGE_HOSTING_PROVIDER, STORYFORGE_HOSTING_BASE_URL when non-empty; default cookie_name to sf_session and ttl to 720h; return error if token_secret is empty. Implement Load(path string) that calls LoadFS(os.DirFS(filepath.Dir(path)), filepath.Base(path), os.Getenv)",
+          "expected": "Loader returns overrides and error on empty secret"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "new: New",
+          "lines": "new",
+          "action": "Implement New(cfg *config.Config, log *slog.Logger) http.Handler building chi.NewRouter with a request-logging middleware using log.Info (method, path, status) and GET /healthz writing JSON {\"status\":\"ok\"} with Content-Type application/json",
+          "expected": "Router answers /healthz with 200"
+        },
+        {
+          "file": "backend/cmd/server/main.go",
+          "symbol": "main",
+          "lines": "new",
+          "action": "Parse -config flag (default configs/config.example.yaml), build slog.NewJSONHandler logger on stdout, call config.Load, then http.ListenAndServe(cfg.Server.Addr, server.New(cfg, logger)); on error log and os.Exit(1)",
+          "expected": "`go build ./cmd/server` succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ116XG3Z20DZY53NXQ6",
+      "kind": "unit",
+      "title": "Act: Implement player token signing and session endpoint",
+      "body": "Add the player package with HMAC token Sign/Verify and the session handler setting a Secure HttpOnly cookie, and register the route.\n\n## Acceptance criteria\n- Session returns 201 with id and cookie\n- Token verifies with same secret\n\n\n## Scope\n- In scope: player package\n- In scope: route\n- Out of scope: me endpoint\n- Preserve: healthz\n\n\n## Technical constraints\n- no storage\n- New file: `backend/internal/player/token.go`\n- New file: `backend/internal/player/handler.go`\n- New file: `backend/internal/server/server.go`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Build succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Token sign/verify and POST /api/v1/player/session",
+      "description": "Add the player package with HMAC token Sign/Verify and the session handler setting a Secure HttpOnly cookie, and register the route.",
+      "acceptance_criteria": [
+        "Session returns 201 with id and cookie",
+        "Token verifies with same secret"
+      ],
+      "scope": {
+        "in_scope": [
+          "player package",
+          "route"
+        ],
+        "out_of_scope": [
+          "me endpoint"
+        ],
+        "preserve": [
+          "healthz"
+        ]
+      },
+      "technical_constraints": [
+        "no storage",
+        "New file: `backend/internal/player/token.go`",
+        "New file: `backend/internal/player/handler.go`",
+        "New file: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Build succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-012.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M842QZ11FGKJH827M62YXMFH",
+      "links": [
+        "parent:01M842QZ11FGKJH827M62YXMFH",
+        "artifact:.ai-dlc/units/UNIT-012.md"
+      ],
+      "depends_on": [
+        "01M842QZ11FGKJH827M62YXMFH"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-012.md",
+      "artifact_id": "UNIT-012",
+      "steps": [
+        {
+          "file": "backend/internal/player/token.go",
+          "symbol": "new: Sign, Verify, NewID",
+          "lines": "new",
+          "action": "Implement NewID() using crypto/rand 16 bytes hex-encoded; Sign(secret []byte, id string, issued time.Time) string returning base64.RawURLEncoding(id+\".\"+unix) + \".\" + base64url(HMAC-SHA256 of the first part); Verify(secret []byte, token string, now time.Time, ttl time.Duration) (string, error) splitting on '.', checking hmac.Equal, parsing issued unix, rejecting when now.Sub(issued) > ttl, returning the id; export ErrInvalidToken",
+          "expected": "Round trip returns id; tampering returns ErrInvalidToken"
+        },
+        {
+          "file": "backend/internal/player/handler.go",
+          "symbol": "new: Handler, NewHandler, CreateSession",
+          "lines": "new",
+          "action": "Define Handler{Secret []byte; CookieName string; TTL time.Duration; Secure bool; Now func() time.Time}. CreateSession generates NewID, signs token, sets http.Cookie{Name, Value, Path '/', MaxAge int(TTL.Seconds()), HttpOnly true, Secure h.Secure, SameSite Lax} and writes 201 JSON {\"id\":id}",
+          "expected": "201 with Set-Cookie"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "after the /healthz route",
+          "action": "Construct player.Handler from cfg (Secret []byte(cfg.Auth.TokenSecret), CookieName, TTL, Secure cfg.Auth.CookieSecure, Now time.Now) and register r.Post(\"/api/v1/player/session\", ph.CreateSession)",
+          "code": "r.Post(\"/api/v1/player/session\", ph.CreateSession)",
+          "expected": "Route reachable"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ11C5A3SZWNY1Y9RPA5",
+      "kind": "unit",
+      "title": "Act: Implement player me endpoint",
+      "body": "Add Me handler to player.Handler verifying cookie and register route.\n\n## Acceptance criteria\n- Given a valid session cookie, when GET /api/v1/player/me, then 200 is returned\n- Given a missing or invalid cookie, when requested, then 401 is returned\n\n\n## Scope\n- In scope: Me handler\n- In scope: route\n- Preserve: session endpoint\n\n\n## Technical constraints\n- injected clock\n- New file: `backend/internal/player/handler.go`\n- New file: `backend/internal/server/server.go`\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Build succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "GET /api/v1/player/me with cookie verification",
+      "description": "Add Me handler to player.Handler verifying cookie and register route.",
+      "acceptance_criteria": [
+        "Given a valid session cookie, when GET /api/v1/player/me, then 200 is returned",
+        "Given a missing or invalid cookie, when requested, then 401 is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "Me handler",
+          "route"
+        ],
+        "out_of_scope": [],
+        "preserve": [
+          "session endpoint"
+        ]
+      },
+      "technical_constraints": [
+        "injected clock",
+        "New file: `backend/internal/player/handler.go`",
+        "New file: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Build succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-013.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M842QZ11P5RVDT6R0MBFDVST",
+      "links": [
+        "parent:01M842QZ11P5RVDT6R0MBFDVST",
+        "artifact:.ai-dlc/units/UNIT-013.md"
+      ],
+      "depends_on": [
+        "01M842QZ11P5RVDT6R0MBFDVST"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-013.md",
+      "artifact_id": "UNIT-013",
+      "steps": [
+        {
+          "file": "backend/internal/player/handler.go",
+          "symbol": "Handler.Me",
+          "lines": "after CreateSession",
+          "action": "Add method Me(w, r): read cookie h.CookieName; if missing or player.Verify(h.Secret, value, h.Now(), h.TTL) errors, write 401 JSON {\"error\":\"unauthorized\"}; else write 200 JSON {\"id\":id}",
+          "expected": "Valid cookie gives 200; others 401"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "after the session route",
+          "action": "Register r.Get(\"/api/v1/player/me\", ph.Me)",
+          "code": "r.Get(\"/api/v1/player/me\", ph.Me)",
+          "expected": "Route reachable"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ115PXKBESKMYVZ34NH",
+      "kind": "unit",
+      "title": "Verify: Config loader and health endpoint unit tests",
+      "body": "Write offline tests using fstest.MapFS and httptest covering config loading, env overrides, missing secret and health response.\n\n## Acceptance criteria\n- Config tests pass\n- Health test passes\n\n\n## Scope\n- In scope: config and server tests\n- Out of scope: player tests\n\n\n## Technical constraints\n- fstest.MapFS, fake getenv map, httptest\n\n\n## Definition of done\n- Tests pass offline\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for LoadFS and /healthz",
+      "description": "Write offline tests using fstest.MapFS and httptest covering config loading, env overrides, missing secret and health response.",
+      "acceptance_criteria": [
+        "Config tests pass",
+        "Health test passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "config and server tests"
+        ],
+        "out_of_scope": [
+          "player tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "fstest.MapFS, fake getenv map, httptest"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass offline",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-014.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M842QZ118AWGPRTTDEDDRC0A",
+      "matched_feature_id": "01M8414WGSCHK40XTRCR8BKCX3",
+      "links": [
+        "parent:01M842QZ118AWGPRTTDEDDRC0A",
+        "trace:01M8414WGSCHK40XTRCR8BKCX3",
+        "artifact:.ai-dlc/units/UNIT-014.md"
+      ],
+      "depends_on": [
+        "01M842QZ118AWGPRTTDEDDRC0A"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-014.md",
+      "artifact_id": "UNIT-014",
+      "steps": [
+        {
+          "file": "backend/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_EnvOverrides",
+          "lines": "new",
+          "action": "Build fstest.MapFS with config.yaml containing auth.token_secret 'yaml-secret' and git.token 'yaml-git'; call LoadFS with getenv map returning STORYFORGE_TOKEN_SECRET='env-secret', STORYFORGE_GIT_TOKEN='env-git', STORYFORGE_HOSTING_PROVIDER='cloudflare'; assert fields equal env values",
+          "command": "cd backend && go test ./internal/config -run TestLoadFS_EnvOverrides",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/config/config_test.go",
+          "symbol": "new: TestLoadFS_MissingSecretAndDefaults",
+          "lines": "new",
+          "action": "With YAML lacking token_secret and no env, assert LoadFS returns non-nil error; with secret present and no cookie_name/ttl, assert CookieName 'sf_session' and TokenTTL 720h",
+          "command": "cd backend && go test ./internal/config -run TestLoadFS_MissingSecretAndDefaults",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestHealthz",
+          "lines": "new",
+          "action": "Create handler via New with config having a secret and discard slog logger; httptest GET /healthz; assert 200, Content-Type application/json and body status ok",
+          "command": "cd backend && go test ./internal/server -run TestHealthz",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ11T65DA5CYJVA7XYWV",
+      "kind": "unit",
+      "title": "Verify: Session endpoint and token unit tests",
+      "body": "Offline httptest and pure-function tests for token Sign/Verify and cookie attributes.\n\n## Acceptance criteria\n- Cookie attributes asserted\n- Unique ids asserted\n\n\n## Scope\n- In scope: player tests\n\n\n## Technical constraints\n- httptest only\n\n\n## Definition of done\n- Tests pass offline\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for token and session cookie attributes",
+      "description": "Offline httptest and pure-function tests for token Sign/Verify and cookie attributes.",
+      "acceptance_criteria": [
+        "Cookie attributes asserted",
+        "Unique ids asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "player tests"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "httptest only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass offline",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-015.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M842QZ116XG3Z20DZY53NXQ6",
+      "matched_feature_id": "01M8414WGS5H96JYKP42Z167W8",
+      "links": [
+        "parent:01M842QZ116XG3Z20DZY53NXQ6",
+        "trace:01M8414WGS5H96JYKP42Z167W8",
+        "artifact:.ai-dlc/units/UNIT-015.md"
+      ],
+      "depends_on": [
+        "01M842QZ116XG3Z20DZY53NXQ6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-015.md",
+      "artifact_id": "UNIT-015",
+      "steps": [
+        {
+          "file": "backend/internal/player/token_test.go",
+          "symbol": "new: TestSignVerifyRoundTrip",
+          "lines": "new",
+          "action": "Sign with secret 's1' id 'abc' at fixed time T; Verify at T+1m with ttl 1h; assert returned id 'abc' and nil error",
+          "command": "cd backend && go test ./internal/player -run TestSignVerifyRoundTrip",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/player/handler_test.go",
+          "symbol": "new: TestCreateSession_CookieAndID",
+          "lines": "new",
+          "action": "Build Handler{Secret 's1', CookieName 'sf_session', TTL 1h, Secure true}; httptest POST to CreateSession; assert status 201, id matches ^[0-9a-f]{32}$, cookie named sf_session has HttpOnly, Secure, Path '/', MaxAge 3600, SameSite Lax, and cookie value verifies to the body id",
+          "command": "cd backend && go test ./internal/player -run TestCreateSession_CookieAndID",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/player/handler_test.go",
+          "symbol": "new: TestCreateSession_UniqueIDs",
+          "lines": "new",
+          "action": "Call CreateSession twice and assert the two ids differ",
+          "command": "cd backend && go test ./internal/player -run TestCreateSession_UniqueIDs",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ11WVE34QZ5T5A9YSAK",
+      "kind": "unit",
+      "title": "Verify: Me endpoint 401 and 200 unit tests",
+      "body": "Offline httptest table tests using fixed clock.\n\n## Acceptance criteria\n- Given a valid token, when Me is called, then 200 and the player id are asserted\n- Given missing, tampered, wrong-secret, expired or garbage tokens, when Me is called, then 401 is asserted\n\n\n## Scope\n- In scope: me tests\n\n\n## Technical constraints\n- httptest, fixed Now func\n\n\n## Definition of done\n- Tests pass offline\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for me endpoint valid, missing, tampered, wrong-secret and expired tokens",
+      "description": "Offline httptest table tests using fixed clock.",
+      "acceptance_criteria": [
+        "Given a valid token, when Me is called, then 200 and the player id are asserted",
+        "Given missing, tampered, wrong-secret, expired or garbage tokens, when Me is called, then 401 is asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "me tests"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "httptest, fixed Now func"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass offline",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-016.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M842QZ11C5A3SZWNY1Y9RPA5",
+      "matched_feature_id": "01M8414WGS5H96JYKP42Z167W8",
+      "links": [
+        "parent:01M842QZ11C5A3SZWNY1Y9RPA5",
+        "trace:01M8414WGS5H96JYKP42Z167W8",
+        "artifact:.ai-dlc/units/UNIT-016.md"
+      ],
+      "depends_on": [
+        "01M842QZ11C5A3SZWNY1Y9RPA5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-016.md",
+      "artifact_id": "UNIT-016",
+      "steps": [
+        {
+          "file": "backend/internal/player/handler_test.go",
+          "symbol": "new: TestMe_ValidToken",
+          "lines": "new",
+          "action": "With fixed Now, create token via Sign(secret,'p1',Now); GET Me with cookie; assert 200 and body id 'p1'",
+          "command": "cd backend && go test ./internal/player -run TestMe_ValidToken",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/player/handler_test.go",
+          "symbol": "new: TestMe_Unauthorized",
+          "lines": "new",
+          "action": "Table test: no cookie, token with last char flipped, token signed with secret 'other', token issued 2h ago with TTL 1h, and garbage 'xyz'; assert each returns 401",
+          "command": "cd backend && go test ./internal/player -run TestMe_Unauthorized",
+          "expected": "All subtests pass"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestSessionThenMe",
+          "lines": "new",
+          "action": "Using server.New and httptest.NewRecorder (no live port), POST session, copy the Set-Cookie into a GET /api/v1/player/me request, assert 200 and the same id",
+          "command": "cd backend && go test ./internal/server -run TestSessionThenMe",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M842QZ11A98V2XK45XRVZDJD",
+      "kind": "evidence",
+      "title": "Evidence: Backend bootstrap unit test results",
+      "body": "Record output of the Verify unit test commands showing config, health, session and me behavior pass offline.\n\n## Acceptance criteria\n- Test output for config, server and player packages shows ok\n- No network access required\n\n\n## Scope\n- In scope: test run results\n\n\n## Definition of done\n- Passing test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing offline unit test output for backend",
+      "description": "Record output of the Verify unit test commands showing config, health, session and me behavior pass offline.",
+      "acceptance_criteria": [
+        "Test output for config, server and player packages shows ok",
+        "No network access required"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run results"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-003.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M842QZ115PXKBESKMYVZ34NH",
+      "matched_feature_id": "01M8414WGSVNT11K12NB2BB3Y9",
+      "links": [
+        "parent:01M842QZ115PXKBESKMYVZ34NH",
+        "trace:01M8414WGSVNT11K12NB2BB3Y9",
+        "artifact:.ai-dlc/evidence/EVD-003.md"
+      ],
+      "depends_on": [
+        "01M842QZ115PXKBESKMYVZ34NH",
+        "01M842QZ11T65DA5CYJVA7XYWV",
+        "01M842QZ11WVE34QZ5T5A9YSAK"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-003.md",
+      "artifact_id": "EVD-003"
+    }
+  ],
+  "created_at": "2026-11-23T11:30:30.093047+00:00",
+  "summary": "AI · 3 NEW · 8 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

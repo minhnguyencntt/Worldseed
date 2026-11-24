@@ -1,0 +1,69 @@
+{
+  "id": "01M855M98QKYJBHC934V8DJVMR",
+  "intent_id": "01M855H3R01K80M8S2X4GRETZJ",
+  "title": "Act: Add resolveTextureKey to the engine",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add resolveTextureKey to game/src/engine/planPreload.ts.",
+  "description": "Add a pure function that returns the id when the manifest knows it, and the fallback id otherwise.",
+  "acceptance_criteria": [
+    "Known id returns itself",
+    "Unknown or undefined id returns the fallback id"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/engine/planPreload.ts"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "BootScene wiring"
+    ],
+    "preserve": [
+      "planPreload behavior"
+    ]
+  },
+  "technical_constraints": [
+    "No import of manifestLoader",
+    "New file: `game/src/engine/planPreload.ts`"
+  ],
+  "dependencies": [
+    "REQ2",
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "resolveTextureKey is exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-507.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855JJ7H364EBQENRADXCNYW",
+    "trace:01M84WZ47Y1ZHY78M6N57376FG",
+    "artifact:.ai-dlc/units/UNIT-507.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M855M98QW0NV4DR88VKBNTMK"
+  ],
+  "sim_node_id": "01M855JJ7HP7HG2XQGDF9DCPEP",
+  "feature_id": "01M84WZ47Y1ZHY78M6N57376FG",
+  "artifact_path": ".ai-dlc/units/UNIT-507.md",
+  "artifact_id": "UNIT-507",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/planPreload.ts",
+      "symbol": "new: resolveTextureKey",
+      "lines": "after the end of planPreload",
+      "action": "Append export function resolveTextureKey(id: string | undefined, manifest: AssetManifest, fallbackId: string): string. Return id when it is defined and some manifest.assets entry has that id; otherwise return fallbackId.",
+      "code": "export function resolveTextureKey(id: string | undefined, manifest: AssetManifest, fallbackId: string): string {\n  return id !== undefined && manifest.assets.some((a) => a.id === id) ? id : fallbackId;\n}",
+      "expected": "npx tsc --noEmit in game/ passes and resolveTextureKey is importable"
+    }
+  ],
+  "created_at": "2026-11-23T21:40:09.623183+00:00",
+  "updated_at": "2026-11-23T21:41:42.552874+00:00"
+}

@@ -1,0 +1,1172 @@
+{
+  "id": "01M84660NTVWVK73E04KF9M5T3",
+  "trigger_node_id": "INT-015, UNIT-071 +18",
+  "node_ids": [
+    "INT-015",
+    "UNIT-071",
+    "UNIT-072",
+    "UNIT-073",
+    "UNIT-074",
+    "UNIT-075",
+    "UNIT-076",
+    "UNIT-077",
+    "UNIT-078",
+    "UNIT-079",
+    "UNIT-080",
+    "UNIT-081",
+    "UNIT-082",
+    "REQ-036",
+    "REQ-037",
+    "REQ-038",
+    "REQ-039",
+    "REQ-040",
+    "REQ-041",
+    "EVD-015"
+  ],
+  "intent_id": "INT-015",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-015",
+      "title": "SG-5 · Implement round lifecycle and admin API",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-071",
+      "title": "Act: Implement round model, transition table and FileStore",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HR8DD83J75DH3MMZF6"
+      ],
+      "depends_on": [
+        "REQ-036"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "38b97f2076c3f54e7c19a6e73788f490dd13664d",
+      "from_sha": "0437466168b082de4e629bf0a6f89a4d0c405efe",
+      "started_at": "2026-11-23T12:30:37.304897+00:00",
+      "ended_at": "2026-11-23T12:34:24.589576+00:00",
+      "run_started_at": "2026-11-23T12:30:37.304897+00:00",
+      "duration_ms": 226074,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 42,
+      "tokens_out": 17297,
+      "estimated_cost_usd": 0.069222,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED. I wrote UNIT-071's round.go and store.go, but the shared worktree is being rewritten by other agents on branch devion/exec-01m84660. HEAD moved from 99ea7bf to 0437466 with INT-015 round/admin/execution commits, and the round package now holds lifecycle.go, scheduler.go, snapshot.go and scheduler_test.go. The index shows the round files staged as deleted. The round package does not compile: scheduler.go (UNIT-073, f1b160e) declares untyped StatusScheduled/StatusOpen and `type Round = world.Round`, which conflicts with UNIT-071's Status type and Round struct. HEAD's round.go is byte-identical to my version. I did not edit other units' files or the index, and I did not commit. Next step needs a decision: either retire UNIT-071 as superseded by the committed round package, or rename/remove the conflicting declarations under UNIT-073/074 and confirm which owns Round. My own round.go and store.go were gofmt'd and are still untracked in backend/internal/round/. Step 1 (round.go) and Step 2 (store.go) are written but unverified. The scratch vet failed on the duplicate Status type, and I stopped the background run. The transition table is derived from the SCHEDULED→…→NEXT ROUND OPEN lifecycle in the planning intent, since no explicit table exists in the repo."
+    },
+    {
+      "unit_id": "UNIT-072",
+      "title": "Act: Implement lifecycle Create/Open/Close, snapshot and Git head",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRZ4M51T5HN2JSNGD6"
+      ],
+      "depends_on": [
+        "REQ-037"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "38b97f2076c3f54e7c19a6e73788f490dd13664d",
+      "from_sha": "38b97f2076c3f54e7c19a6e73788f490dd13664d",
+      "started_at": "2026-11-23T12:30:37.330466+00:00",
+      "ended_at": "2026-11-23T12:34:29.469098+00:00",
+      "run_started_at": "2026-11-23T12:30:37.330466+00:00",
+      "duration_ms": 231009,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 56,
+      "tokens_out": 46177,
+      "estimated_cost_usd": 0.184753,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Implemented Steps 1-4 in the worktree; build, vet and the round, gitrepo and contribution tests pass. Blocked on commit state: the branch is shared with concurrent INT-015 agents, and HEAD (0437466) does not build. da89fb8 (INT-015-UNIT-076-Act) swept my first-draft internal/round/lifecycle.go into HEAD, where it redeclares Status/Round/CanTransition/Transition from HEAD round.go. The working-tree lifecycle.go is the corrected version. I did not commit, because the index is stale (staged deletions of other agents' files) and committing was not requested. Next step: commit only the four unit paths (path-limited commit) or have the orchestrator confirm. Baseline cited: approved scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa. Adaptations: (1) Step 1 Head and Step 2 ErrFrozen/ListByRound were already in HEAD and identical to my edits, so no change was needed. (2) Step 3 snapshot.go is byte-identical to the HEAD version. (3) Step 4 did not match the code: round/round.go, store.go and scheduler.go already define Status, Round, Transition, CanTransition, FileStore, ErrNotFound and an empty OpenOptions. I reused those instead of redefining them. Service.Open and Service.Close return error only, so Service satisfies the scheduler's Controller interface. Open keeps the window set at Create, falling back to DefaultDuration (24h), because OpenOptions has no Duration field and I did not edit scheduler.go. BaseRelease defaults to 1.0.0. The brief's referenced spec UNIT-072 is not in .ai-dlc, so acceptance criteria were taken from the brief alone. No tests were written."
+    },
+    {
+      "unit_id": "UNIT-073",
+      "title": "Act: Implement round Scheduler with injected Clock",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRHP0C1HDJ514BWDK3"
+      ],
+      "depends_on": [
+        "REQ-038"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "f1b160efafd98fd9024e5ce870d765ae2f2f3989",
+      "from_sha": "807563af9171da6bb13959751a83166af1c947cd",
+      "started_at": "2026-11-23T12:30:37.341027+00:00",
+      "ended_at": "2026-11-23T12:31:21.646717+00:00",
+      "run_started_at": "2026-11-23T12:30:37.341027+00:00",
+      "duration_ms": 42400,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-074",
+      "title": "Act: Add admin Middleware and Admin/Round config",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRQ8WB40ZEMH0B6N2V"
+      ],
+      "depends_on": [
+        "REQ-039"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "807563af9171da6bb13959751a83166af1c947cd",
+      "from_sha": "99ea7bfe911174c4bd72712089274f5a02361d68",
+      "started_at": "2026-11-23T12:30:37.361374+00:00",
+      "ended_at": "2026-11-23T12:31:04.280739+00:00",
+      "run_started_at": "2026-11-23T12:30:37.361374+00:00",
+      "duration_ms": 26284,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-075",
+      "title": "Act: Add admin round handlers, route wiring and scheduler start",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HR67RKSSMRFY50A8H8"
+      ],
+      "depends_on": [
+        "REQ-040"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "8fbf43f4748c3b12130f3c1b01ecfdca5523930c",
+      "from_sha": "8fbf43f4748c3b12130f3c1b01ecfdca5523930c",
+      "started_at": "2026-11-23T12:30:37.378010+00:00",
+      "ended_at": "2026-11-23T12:32:02.311359+00:00",
+      "run_started_at": "2026-11-23T12:30:37.378010+00:00",
+      "duration_ms": 83418,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 32,
+      "tokens_out": 14403,
+      "estimated_cost_usd": 0.057638,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Step 1 done: backend/internal/admin/rounds.go adds RoundHandler (Create, Open, Close, Get, Contributions), RoundService and ContributionLister interfaces, and statusFor (404/409/400/500). gofmt and go vet pass for ./internal/admin. Steps 2 and 3 are blocked and not done. (a) round.Service does not exist; internal/round has only FileStore, Scheduler, Clock, Controller and Lister, so NewWithScheduler cannot build it. (b) contribution.FileStore has no ListByRound. (c) The branch moved under this run to 103dd49 (INT-015 commits) and the index is mid-change (staged deletes of round.go, scheduler.go and admin/middleware.go), so go build ./... fails in internal/round with duplicate declarations. I did not touch git state. (d) No UNIT-075 markdown exists under .ai-dlc/, so the acceptance criteria came only from the brief. Adaptations: the Lister field is named Lister because a field named Contributions would clash with the method. Round errors are expected to wrap admin.ErrNotFound, ErrConflict or ErrInvalid (or world.ErrNotFound). Create returns 201; the other handlers return 200. Route paths for step 2 are not chosen yet. Next step: once round.Service and ListByRound exist and internal/round compiles, wire server.go and main.go."
+    },
+    {
+      "unit_id": "UNIT-076",
+      "title": "Act: Implement execution store, handlers and routes",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRB18802AQ35SK01KS"
+      ],
+      "depends_on": [
+        "REQ-041"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "da89fb80365207e7364c7db811cf206099b7e5df",
+      "from_sha": "8fbf43f4748c3b12130f3c1b01ecfdca5523930c",
+      "started_at": "2026-11-23T12:30:37.425022+00:00",
+      "ended_at": "2026-11-23T12:32:35.304659+00:00",
+      "run_started_at": "2026-11-23T12:30:37.425022+00:00",
+      "duration_ms": 117310,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-077",
+      "title": "Verify: Round transition table and FileStore unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRHBDCGWS86XHQ8PX1"
+      ],
+      "depends_on": [
+        "UNIT-071",
+        "REQ-036"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "c32452acfe533e7dd866e0ed2a5540faec0d351d",
+      "from_sha": "38b97f2076c3f54e7c19a6e73788f490dd13664d",
+      "tests": [
+        {
+          "id": "TestTransitions",
+          "kind": "unit",
+          "name": "TestTransitions",
+          "title": "Round transition table allows listed edges and rejects illegal moves",
+          "scenario": "Given every edge in Transitions, When CanTransition is asked, Then each listed edge is allowed. Given SCHEDULED->CLOSED, OPEN->SCHEDULED, COMPLETED->OPEN, CANCELLED->OPEN, CLOSED->OPEN, When CanTransition or Transition is called, Then the move is refused, Transition returns an error wrapping ErrIllegalTransition, and Status is unchanged.",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestTransitions",
+          "status": "passed",
+          "detail": "PASS, including subtests every_listed_edge_is_allowed and five forbidden_* cases."
+        },
+        {
+          "id": "TestFileStore_RoundTrip",
+          "kind": "unit",
+          "name": "TestFileStore_RoundTrip",
+          "title": "FileStore saves a round to round.yaml and reads it back",
+          "scenario": "Given a valid Round in an empty t.TempDir root, When Save then Get are called, Then worlds/the-boys-room/rounds/round-0000001/round.yaml exists and Get returns the same ID, world, number, status and base release.",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestFileStore",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestFileStore_UnsafeIDs",
+          "kind": "unit",
+          "name": "TestFileStore_UnsafeIDs",
+          "title": "FileStore rejects unsafe world IDs and writes nothing",
+          "scenario": "Given a Round with WorldID \"../x\", When Save and Get are called, Then both return an error, and the temp root contains no entries and no file exists at root/x.",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestFileStore",
+          "status": "passed",
+          "detail": "PASS"
+        }
+      ],
+      "started_at": "2026-11-23T12:34:29.619276+00:00",
+      "ended_at": "2026-11-23T12:34:57.957970+00:00",
+      "run_started_at": "2026-11-23T12:34:29.619276+00:00",
+      "duration_ms": 27791,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-078",
+      "title": "Verify: Lifecycle, snapshot freeze and Git head unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRGXC2X7BXKKGWW5Z0"
+      ],
+      "depends_on": [
+        "UNIT-072",
+        "REQ-037"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+      "from_sha": "c32452acfe533e7dd866e0ed2a5540faec0d351d",
+      "tests": [
+        {
+          "id": "TestOpen_SetsWindow",
+          "kind": "unit",
+          "name": "TestOpen_SetsWindow",
+          "title": "Open moves a SCHEDULED round to OPEN with a 24h window and BaseRelease 1.0.0",
+          "scenario": "Given a SCHEDULED round created with a 24h duration and no base release, When Open is called, Then status is OPEN, StartsAt is now, EndsAt is StartsAt+24h and BaseRelease is 1.0.0",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestOpen",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestClose_FreezesSnapshot",
+          "kind": "unit",
+          "name": "TestClose_FreezesSnapshot",
+          "title": "Close on an OPEN round writes a read-only snapshot, commits it and records HEAD",
+          "scenario": "Given an OPEN round and two contributions, When Close is called, Then snapshot.yaml exists with mode 0444 and 2 entries, it is committed, FreezeCommit is abc123 and status is CLOSED",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestClose_FreezesSnapshot",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestClose_RequiresOpen",
+          "kind": "unit",
+          "name": "TestClose_RequiresOpen",
+          "title": "Close is rejected unless the round is OPEN, and a frozen snapshot is never rewritten",
+          "scenario": "Given a SCHEDULED round, When Close is called, Then it returns ErrIllegalTransition and writes no snapshot; Given a CLOSED round, When Close is called again, Then it errors and the snapshot bytes are unchanged",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestClose_RequiresOpen",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestCreate_RejectsActiveRound",
+          "kind": "unit",
+          "name": "TestCreate_RejectsActiveRound",
+          "title": "Create is rejected while an OPEN round exists in the world",
+          "scenario": "Given an OPEN round in world w, When Create is called for a new round, Then it returns ErrActiveRound",
+          "command": "cd backend && go test -timeout 2m ./internal/round -run TestCreate_RejectsActiveRound",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestFileStore_SaveRejectsFrozenRound",
+          "kind": "unit",
+          "name": "TestFileStore_SaveRejectsFrozenRound",
+          "title": "Saving a contribution to a frozen round fails with ErrFrozen and writes nothing",
+          "scenario": "Given a round directory containing snapshot.yaml, When a contribution is saved to that round, Then Save returns ErrFrozen, no .md file is created and no commit is made",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestFileStore_SaveRejectsFrozenRound",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestFileStore_ListByRound",
+          "kind": "unit",
+          "name": "TestFileStore_ListByRound",
+          "title": "ListByRound returns a round's contributions oldest first",
+          "scenario": "Given a newer and an older contribution saved in that order to one round, When ListByRound is called, Then both are returned with the older one first",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestFileStore_ListByRound",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestHead_ReturnsTrimmedSHA",
+          "kind": "unit",
+          "name": "TestHead_ReturnsTrimmedSHA",
+          "title": "Head returns the trimmed HEAD SHA from git rev-parse HEAD",
+          "scenario": "Given a runner that prints deadbeef with a trailing newline, When Head is called, Then it returns deadbeef and runs exactly rev-parse HEAD in the repo directory",
+          "command": "cd backend && go test -timeout 2m ./internal/gitrepo -run TestHead",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestHead_ReturnsRunnerError",
+          "kind": "unit",
+          "name": "TestHead_ReturnsRunnerError",
+          "title": "Head returns an error wrapping the runner failure and no SHA",
+          "scenario": "Given a runner whose rev-parse HEAD fails, When Head is called, Then it returns an error that wraps the runner error and an empty SHA",
+          "command": "cd backend && go test -timeout 2m ./internal/gitrepo -run TestHead",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T12:34:29.641788+00:00",
+      "ended_at": "2026-11-23T12:35:23.081204+00:00",
+      "run_started_at": "2026-11-23T12:34:29.641788+00:00",
+      "duration_ms": 52726,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-079",
+      "title": "Verify: Scheduler behavior with a fake clock unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRDNX372KK3DMG2EEV"
+      ],
+      "depends_on": [
+        "UNIT-073",
+        "REQ-038"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "0437466168b082de4e629bf0a6f89a4d0c405efe",
+      "from_sha": "0437466168b082de4e629bf0a6f89a4d0c405efe",
+      "tests": [
+        {
+          "id": "TestTick_OpensDueRound",
+          "kind": "unit",
+          "name": "TestTick_OpensDueRound",
+          "title": "opens a SCHEDULED round whose start time has passed",
+          "scenario": "Given the clock is 2026-01-01T12:00Z and a SCHEDULED round starts at 11:00, When Tick runs, Then Open is called once for that round",
+          "command": "go test -timeout 2m ./internal/round -run TestTick_OpensDueRound -v",
+          "status": "failed",
+          "detail": "Build failed in the worktree: duplicate declarations of Status, Round, CanTransition and OpenOptions between round.go/scheduler.go and lifecycle.go. Passes in a scratch copy without lifecycle.go."
+        },
+        {
+          "id": "TestTick_ClosesExpiredRound",
+          "kind": "unit",
+          "name": "TestTick_ClosesExpiredRound",
+          "title": "closes an OPEN round whose end time has passed",
+          "scenario": "Given the clock is 2026-01-01T12:00Z and an OPEN round ends at 11:59, When Tick runs, Then Close is called once for that round",
+          "command": "go test -timeout 2m ./internal/round -run TestTick_ClosesExpiredRound -v",
+          "status": "failed",
+          "detail": "Build failed in the worktree: duplicate declarations of Status, Round, CanTransition and OpenOptions between round.go/scheduler.go and lifecycle.go. Passes in a scratch copy without lifecycle.go."
+        },
+        {
+          "id": "TestTick_IgnoresFutureAndOtherStatuses",
+          "kind": "unit",
+          "name": "TestTick_IgnoresFutureAndOtherStatuses",
+          "title": "ignores future-start, future-end and COMPLETED rounds until the clock reaches their boundary",
+          "scenario": "Given the clock is 12:00Z with a future SCHEDULED round (13:00), a future OPEN round (ends 13:00) and a COMPLETED round, When Tick runs at 12:00 then the clock moves to 13:00 and Tick runs again, Then no calls at 12:00 and exactly Open then Close calls at 13:00",
+          "command": "go test -timeout 2m ./internal/round -run TestTick_IgnoresFutureAndOtherStatuses -v",
+          "status": "failed",
+          "detail": "Build failed in the worktree: duplicate declarations of Status, Round, CanTransition and OpenOptions between round.go/scheduler.go and lifecycle.go. Passes in a scratch copy without lifecycle.go."
+        },
+        {
+          "id": "TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+          "kind": "unit",
+          "name": "TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+          "title": "returns a failing Open error from Tick while still running Close for another due round",
+          "scenario": "Given a SCHEDULED round due for Open whose controller Open fails with an error, and an OPEN round past its end, When Tick runs, Then Tick returns an error wrapping the Open error and both Open and Close were called",
+          "command": "go test -timeout 2m ./internal/round -run TestTick_OpenErrorIsReturnedAndCloseStillRuns -v",
+          "status": "failed",
+          "detail": "Build failed in the worktree: duplicate declarations of Status, Round, CanTransition and OpenOptions between round.go/scheduler.go and lifecycle.go. Passes in a scratch copy without lifecycle.go."
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (4): TestTick_OpensDueRound, TestTick_ClosesExpiredRound, TestTick_IgnoresFutureAndOtherStatuses, TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "8fbf43f4748c3b12130f3c1b01ecfdca5523930c",
+          "from_sha": "103dd492269acff19b9c20eb5ff8fe521a5eef25",
+          "tests": [
+            {
+              "id": "TestTick_OpensDueRound",
+              "kind": "unit",
+              "name": "TestTick_OpensDueRound",
+              "title": "Tick opens a SCHEDULED round whose start time has passed",
+              "scenario": "Given the clock is 2026-01-01T12:00Z and a SCHEDULED round starts at 11:00, when Tick runs, then exactly one Open call is made for that round and no Close call",
+              "command": "cd backend && go test -timeout 2m -v ./internal/round -run TestTick_OpensDueRound",
+              "status": "failed",
+              "detail": "Build failed: duplicate declarations of StatusScheduled, StatusOpen and Round between scheduler.go and round.go. Test not executed."
+            },
+            {
+              "id": "TestTick_ClosesExpiredRound",
+              "kind": "unit",
+              "name": "TestTick_ClosesExpiredRound",
+              "title": "Tick closes an OPEN round whose end time has passed",
+              "scenario": "Given the clock is 2026-01-01T12:00Z and an OPEN round ends at 11:59, when Tick runs, then exactly one Close call is made for that round and no Open call",
+              "command": "cd backend && go test -timeout 2m -v ./internal/round -run TestTick_ClosesExpiredRound",
+              "status": "failed",
+              "detail": "Build failed: duplicate declarations between scheduler.go and round.go. Test not executed."
+            },
+            {
+              "id": "TestTick_IgnoresFutureAndOtherStatuses",
+              "kind": "unit",
+              "name": "TestTick_IgnoresFutureAndOtherStatuses",
+              "title": "Tick ignores future and COMPLETED rounds until the fake clock reaches their boundary",
+              "scenario": "Given a future SCHEDULED round (starts 13:00), a future OPEN round (ends 13:00) and a COMPLETED round, when Tick runs at 12:00 then no calls are made; when the fake clock advances to 13:00 and Tick runs again, then only the SCHEDULED round is opened and the OPEN round is closed",
+              "command": "cd backend && go test -timeout 2m -v ./internal/round -run TestTick_IgnoresFutureAndOtherStatuses",
+              "status": "failed",
+              "detail": "Build failed: duplicate declarations between scheduler.go and round.go. Test not executed."
+            },
+            {
+              "id": "TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+              "kind": "unit",
+              "name": "TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+              "title": "Tick returns a failing Open error and still runs the Close for other due rounds",
+              "scenario": "Given a due SCHEDULED round whose Open fails and a due OPEN round, when Tick runs, then the Open error is returned (wrapping the controller error) and the Close for the other round is still called",
+              "command": "cd backend && go test -timeout 2m -v ./internal/round -run TestTick_OpenErrorIsReturnedAndCloseStillRuns",
+              "status": "failed",
+              "detail": "Build failed: duplicate declarations between scheduler.go and round.go. Test not executed."
+            }
+          ],
+          "started_at": "2026-11-23T12:31:21.667107+00:00",
+          "ended_at": "2026-11-23T12:31:59.080218+00:00",
+          "duration_ms": 36880,
+          "model": "claude-haiku-5-5"
+        }
+      ],
+      "started_at": "2026-11-23T12:31:21.667107+00:00",
+      "ended_at": "2026-11-23T12:33:31.911016+00:00",
+      "run_started_at": "2026-11-23T12:33:01.079200+00:00",
+      "duration_ms": 30270,
+      "model": "claude-haiku-5-5",
+      "partial": true,
+      "failure": "Verify tests failed (4): TestTick_OpensDueRound, TestTick_ClosesExpiredRound, TestTick_IgnoresFutureAndOtherStatuses, TestTick_OpenErrorIsReturnedAndCloseStillRuns"
+    },
+    {
+      "unit_id": "UNIT-080",
+      "title": "Verify: Admin auth middleware and config unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRGVRDHXATWW54NTG0"
+      ],
+      "depends_on": [
+        "UNIT-074",
+        "REQ-039"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "103dd492269acff19b9c20eb5ff8fe521a5eef25",
+      "from_sha": "f1b160efafd98fd9024e5ce870d765ae2f2f3989",
+      "tests": [
+        {
+          "id": "TestMiddleware",
+          "kind": "unit",
+          "name": "TestMiddleware",
+          "title": "Admin middleware rejects missing, wrong, non-bearer and empty credentials with 401 and accepts the correct bearer token with 200",
+          "scenario": "Given admin middleware guarding a handler with token 's3cret', when a request has no header, 'Bearer wrong', 'Basic s3cret', or 'Bearer ' against an empty token, then it responds 401 and next is not called; when it has 'Bearer s3cret', then it responds 200 and next is called",
+          "command": "cd backend && go test -timeout 2m ./internal/admin -run TestMiddleware -v",
+          "status": "passed",
+          "detail": "PASS, 5 subtests all passed: no_Authorization_header_is_rejected, wrong_bearer_token_is_rejected, Basic_scheme_with_the_right_secret_is_rejected, correct_bearer_token_is_accepted, empty_configured_token_rejects_an_empty_bearer_credential."
+        },
+        {
+          "id": "TestLoadFS_AdminAndRoundDefaults",
+          "kind": "unit",
+          "name": "TestLoadFS_AdminAndRoundDefaults",
+          "title": "Config load applies round defaults (24h duration, base release 1.0.0, 30s scheduler interval) and takes Admin.Token from STORYFORGE_ADMIN_TOKEN",
+          "scenario": "Given a YAML config that sets only auth.token_secret and an env where STORYFORGE_ADMIN_TOKEN is 'tok', when LoadFS is called, then Round.Duration is 24h, Round.BaseRelease is '1.0.0', Round.SchedulerInterval is 30s, and Admin.Token is 'tok'",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestLoadFS_AdminAndRoundDefaults -v",
+          "status": "passed",
+          "detail": "PASS."
+        }
+      ],
+      "started_at": "2026-11-23T12:31:04.293631+00:00",
+      "ended_at": "2026-11-23T12:31:30.462024+00:00",
+      "run_started_at": "2026-11-23T12:31:04.293631+00:00",
+      "duration_ms": 24648,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-081",
+      "title": "Verify: Admin round handlers and route auth unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HR9G4TFZCA1PE9H6Y0"
+      ],
+      "depends_on": [
+        "UNIT-075",
+        "REQ-040"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "9791fd845032985bf7f05429707e9437dca00f0c",
+      "from_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+      "tests": [
+        {
+          "id": "TestRoundHandler_Statuses",
+          "kind": "unit",
+          "name": "TestRoundHandler_Statuses",
+          "title": "Round handlers map service results and sentinel errors to HTTP statuses",
+          "scenario": "Given a fake RoundService and ContributionLister, when the round endpoints are called, then POST /rounds returns 201 SCHEDULED, ErrConflict returns 409, ErrNotFound and world.ErrNotFound return 404, malformed JSON and bad duration return 400, ErrInvalid returns 400, unknown errors return a generic 500, and contributions return the fake list as JSON",
+          "command": "go test -timeout 2m ./internal/admin -run TestRoundHandler -v",
+          "status": "passed",
+          "detail": "8 subtests PASS. Logs an expected slog error for the generic 500 case."
+        },
+        {
+          "id": "TestNew_AdminRoundsRequireToken",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsRequireToken",
+          "title": "Admin round endpoints reject requests without a bearer token",
+          "scenario": "Given a server built with admin.token tok, when the admin round endpoints are requested without Authorization, then each responds 401, and with Bearer tok none responds 401",
+          "command": "go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+          "status": "passed",
+          "detail": "10 subtests PASS. Vacuous for the token-accepted half: the routes are unmounted, so the 'not 401' result is a 404. See TestNew_AdminRoundsAreMounted."
+        },
+        {
+          "id": "TestNew_AdminRoundsAreMounted",
+          "kind": "unit",
+          "name": "TestNew_AdminRoundsAreMounted",
+          "title": "Admin round endpoints are mounted on the router when called with the admin token",
+          "scenario": "Given a server built with admin.token tok, when each admin round endpoint is requested with Authorization: Bearer tok, then the response is not 404",
+          "command": "go test -timeout 2m ./internal/server -run TestNew_AdminRoundsAreMounted -v",
+          "status": "failed",
+          "detail": "All 5 subtests FAIL with status 404 (body '404 page not found'). The admin round routes are not mounted in backend/internal/server/server.go. Implementation fix needed in Act; test not changed to pass."
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify agent set ok:false",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+          "from_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+          "tests": [
+            {
+              "id": "TestRoundHandler_Statuses",
+              "kind": "unit",
+              "name": "TestRoundHandler_Statuses",
+              "title": "Round handlers map service results and errors to the expected HTTP statuses and JSON bodies",
+              "scenario": "Given a RoundHandler with fake RoundService and ContributionLister, when the round endpoints are called, then POST /rounds returns 201 SCHEDULED, close with ErrConflict returns 409, get with ErrNotFound or world.ErrNotFound returns 404, malformed JSON or a bad duration returns 400, an unknown error returns a generic 500, and contributions returns the fake list as JSON",
+              "command": "cd backend && go test -timeout 2m ./internal/admin -run TestRoundHandler -v",
+              "status": "passed",
+              "detail": "8 subtests PASS. Fixtures use admin sentinels (see note)."
+            },
+            {
+              "id": "TestNew_AdminRoundsRequireToken",
+              "kind": "unit",
+              "name": "TestNew_AdminRoundsRequireToken",
+              "title": "Admin round endpoints reject requests without the bearer token",
+              "scenario": "Given a server built with admin.token tok, when POST /api/v1/admin/rounds, open, close, GET round and GET contributions are requested without Authorization, then each responds 401; with Authorization: Bearer tok, none responds 401",
+              "command": "cd backend && go test -timeout 2m ./internal/server -run TestNew_AdminRoundsRequireToken -v",
+              "status": "passed",
+              "detail": "10 subtests PASS, but the 'not 401 with token' half is vacuous: the round routes are not mounted, so a valid token gets 404. The test does not prove the endpoints are reachable behind auth. Act must mount the RoundHandler routes in server.go; the test should then be tightened to assert a non-404 response."
+            }
+          ],
+          "started_at": "2026-11-23T12:34:29.652797+00:00",
+          "ended_at": "2026-11-23T12:35:33.950485+00:00",
+          "duration_ms": 63716,
+          "model": "claude-haiku-5-5"
+        }
+      ],
+      "started_at": "2026-11-23T12:34:29.652797+00:00",
+      "ended_at": "2026-11-23T12:37:22.809917+00:00",
+      "run_started_at": "2026-11-23T12:36:31.315591+00:00",
+      "duration_ms": 50949,
+      "model": "claude-haiku-5-5",
+      "partial": true,
+      "failure": "Verify tests failed (1): TestNew_AdminRoundsAreMounted"
+    },
+    {
+      "unit_id": "UNIT-082",
+      "title": "Verify: Execution store and handler unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84660HRFYFK08CEM5MP585B"
+      ],
+      "depends_on": [
+        "UNIT-076",
+        "REQ-041"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "0437466168b082de4e629bf0a6f89a4d0c405efe",
+      "from_sha": "ebbea8aec8d72c1ac4fb5befdaa908996b1bdb2f",
+      "tests": [
+        {
+          "id": "TestRetry",
+          "kind": "unit",
+          "name": "TestRetry",
+          "title": "Retry moves FAILED executions to QUEUED and rejects other statuses",
+          "scenario": "Given a FAILED execution, When Retry is called, Then it is QUEUED with the error cleared, persisted and committed to development/executions/EXE-1.yaml. Given an AWAITING_APPROVAL execution, When Retry is called, Then it returns ErrIllegalState and nothing is committed.",
+          "command": "cd backend && go test -timeout 2m ./internal/execution -run 'TestRetry'",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestApprove",
+          "kind": "unit",
+          "name": "TestApprove",
+          "title": "Approve moves AWAITING_APPROVAL executions to APPROVED and rejects unsafe IDs",
+          "scenario": "Given an AWAITING_APPROVAL execution, When Approve is called, Then it is APPROVED, persisted and committed. Given an unsafe ID '../x', When Approve is called, Then it returns ErrNotFound and writes nothing.",
+          "command": "cd backend && go test -timeout 2m ./internal/execution -run 'TestApprove'",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestList",
+          "kind": "unit",
+          "name": "TestList",
+          "title": "List returns executions sorted by ID and an empty slice when no directory exists",
+          "scenario": "Given two execution files, When List is called, Then both are returned sorted by ID. Given no executions directory, When List is called, Then it returns an empty non-nil slice.",
+          "command": "cd backend && go test -timeout 2m ./internal/execution -run 'TestList'",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestHandler_Statuses",
+          "kind": "unit",
+          "name": "TestHandler_Statuses",
+          "title": "Handler maps service results to HTTP statuses and encodes an empty list as []",
+          "scenario": "Given Retry or Approve succeeds, When POST is called through the chi router, Then the response is 200. Given ErrNotFound, Then 404. Given ErrIllegalState, Then 409. Given no executions, When GET is called, Then the body is [] and decodes to an empty slice. Given an unexpected service error on List, Then the response is 500.",
+          "command": "cd backend && go test -timeout 2m ./internal/execution -run TestHandler",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T12:32:35.317271+00:00",
+      "ended_at": "2026-11-23T12:33:17.024156+00:00",
+      "run_started_at": "2026-11-23T12:32:35.317271+00:00",
+      "duration_ms": 41169,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-036",
+      "title": "REQ · Round model with 13 statuses, transition table and round.yaml store",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-037",
+      "title": "REQ · Open and close rounds with frozen snapshot and recorded Git commit SHA",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-038",
+      "title": "REQ · Scheduler auto-opens and auto-closes rounds using an injected clock",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-039",
+      "title": "REQ · Admin token middleware and round/admin configuration",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-040",
+      "title": "REQ · Admin round endpoints wired behind token auth with scheduler started",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-041",
+      "title": "REQ · Admin execution list, retry and approve endpoints",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-015"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-015",
+      "title": "Evidence: Round lifecycle and admin API unit test results",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-071",
+        "UNIT-072",
+        "UNIT-073",
+        "UNIT-074",
+        "UNIT-075",
+        "UNIT-076",
+        "UNIT-077",
+        "UNIT-078",
+        "UNIT-079",
+        "UNIT-080",
+        "UNIT-081",
+        "UNIT-082"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-079",
+      "title": "Act: Fix Verify failure — Scheduler behavior with a fake clock unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "ebbea8aec8d72c1ac4fb5befdaa908996b1bdb2f",
+      "from_sha": "da89fb80365207e7364c7db811cf206099b7e5df",
+      "started_at": "2026-11-23T12:31:59.093499+00:00",
+      "ended_at": "2026-11-23T12:33:01.002957+00:00",
+      "run_started_at": "2026-11-23T12:31:59.093499+00:00",
+      "duration_ms": 61021,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 9936,
+      "estimated_cost_usd": 0.03976
+    },
+    {
+      "unit_id": "FIX-UNIT-081",
+      "title": "Act: Fix Verify failure — Admin round handlers and route auth unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+      "from_sha": "7b314d98498bd23daf0fb1b1a6904d532244f3d2",
+      "started_at": "2026-11-23T12:35:33.962826+00:00",
+      "ended_at": "2026-11-23T12:36:31.237194+00:00",
+      "run_started_at": "2026-11-23T12:35:33.962826+00:00",
+      "duration_ms": 55447,
+      "model": "claude-haiku-5-5"
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-075",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "UNIT-077",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-036",
+      "dst": "UNIT-071"
+    },
+    {
+      "src": "UNIT-072",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-036",
+      "dst": "UNIT-077"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-039"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-040"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-041"
+    },
+    {
+      "src": "REQ-039",
+      "dst": "UNIT-074"
+    },
+    {
+      "src": "REQ-040",
+      "dst": "UNIT-075"
+    },
+    {
+      "src": "UNIT-074",
+      "dst": "UNIT-080"
+    },
+    {
+      "src": "UNIT-076",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "UNIT-072",
+      "dst": "UNIT-078"
+    },
+    {
+      "src": "UNIT-071",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "UNIT-081",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-038",
+      "dst": "UNIT-073"
+    },
+    {
+      "src": "UNIT-074",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-041",
+      "dst": "UNIT-082"
+    },
+    {
+      "src": "REQ-040",
+      "dst": "UNIT-081"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-036"
+    },
+    {
+      "src": "REQ-037",
+      "dst": "UNIT-072"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-038"
+    },
+    {
+      "src": "UNIT-073",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "UNIT-075",
+      "dst": "UNIT-081"
+    },
+    {
+      "src": "UNIT-079",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-039",
+      "dst": "UNIT-080"
+    },
+    {
+      "src": "UNIT-080",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "UNIT-071",
+      "dst": "UNIT-077"
+    },
+    {
+      "src": "REQ-037",
+      "dst": "UNIT-078"
+    },
+    {
+      "src": "UNIT-076",
+      "dst": "UNIT-082"
+    },
+    {
+      "src": "REQ-038",
+      "dst": "UNIT-079"
+    },
+    {
+      "src": "UNIT-073",
+      "dst": "UNIT-079"
+    },
+    {
+      "src": "INT-015",
+      "dst": "REQ-037"
+    },
+    {
+      "src": "UNIT-082",
+      "dst": "EVD-015"
+    },
+    {
+      "src": "REQ-041",
+      "dst": "UNIT-076"
+    },
+    {
+      "src": "UNIT-078",
+      "dst": "EVD-015"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84660",
+  "base_sha": "99ea7bfe911174c4bd72712089274f5a02361d68",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84660NTVWVK73E04KF9M5T3:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T12:30:36.218989+00:00",
+  "updated_at": "2026-11-23T12:37:23.800388+00:00",
+  "completed_at": "2026-11-23T12:37:22.811971+00:00",
+  "duration_ms": 406593,
+  "usage_stats": {
+    "total_duration_ms": 1171126,
+    "total_tokens_in": 150,
+    "total_tokens_out": 87813,
+    "total_estimated_cost_usd": 0.351373
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 14,
+  "unit_allowlist": [
+    "UNIT-071",
+    "UNIT-072",
+    "UNIT-073",
+    "UNIT-074",
+    "UNIT-075",
+    "UNIT-076",
+    "UNIT-077",
+    "UNIT-078",
+    "UNIT-079",
+    "UNIT-080",
+    "UNIT-081",
+    "UNIT-082"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-071",
+        "title": "Act: Implement round model, transition table and FileStore",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-071 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-072",
+        "title": "Act: Implement lifecycle Create/Open/Close, snapshot and Git head",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-072 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-073",
+        "title": "Act: Implement round Scheduler with injected Clock",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-073 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-074",
+        "title": "Act: Add admin Middleware and Admin/Round config",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-074 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-075",
+        "title": "Act: Add admin round handlers, route wiring and scheduler start",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-075 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-076",
+        "title": "Act: Implement execution store, handlers and routes",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-076 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-077",
+        "title": "Verify: Round transition table and FileStore unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-077 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-078",
+        "title": "Verify: Lifecycle, snapshot freeze and Git head unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-078 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-079",
+        "title": "Verify: Scheduler behavior with a fake clock unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-079 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-080",
+        "title": "Verify: Admin auth middleware and config unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-080 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-081",
+        "title": "Verify: Admin round handlers and route auth unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-081 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-082",
+        "title": "Verify: Execution store and handler unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-015",
+            "path": ".ai-dlc/evidence/EVD-015.md",
+            "title": "Evidence: Round lifecycle and admin API unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-082 unless acceptance outcomes recorded in EVD-015 (.ai-dlc/evidence/EVD-015.md; \"Evidence: Round lifecycle and admin API unit test results\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T12:30:37.224146+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-071",
+    "UNIT-072",
+    "UNIT-073",
+    "UNIT-074",
+    "UNIT-075",
+    "UNIT-076",
+    "UNIT-077",
+    "UNIT-078",
+    "UNIT-079",
+    "UNIT-080",
+    "UNIT-081",
+    "UNIT-082"
+  ]
+}

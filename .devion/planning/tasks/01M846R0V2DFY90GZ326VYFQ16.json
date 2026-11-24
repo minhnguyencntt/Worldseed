@@ -1,0 +1,57 @@
+{
+  "id": "01M846R0V2DFY90GZ326VYFQ16",
+  "intent_id": "01M846M3DV6T8M0JTNKMDEHCEB",
+  "title": "SG-5.1 · One owner for round types, admin routes agree with them",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Round Status, Round and CanTransition have one owner and the admin API is built on them",
+  "description": "Context: backend/internal/round/round.go is now the only declaration of Status, Round and CanTransition, and go build ./... passes. But internal/admin.RoundService speaks world.Round while round.Service speaks round.Round, and server.New never mounts the admin round routes, so TestNew_AdminRoundsAreMounted fails with 404. Desired: the round, lifecycle and scheduler files agree on the same types and the backend serves them. Why: SG-5 lifecycle must be reachable.",
+  "acceptance_criteria": [
+    "Given the backend tree, when go build ./... and go vet ./... run, then both succeed with Status, Round and CanTransition declared only in internal/round/round.go",
+    "Given server.New with admin.token tok, when each admin round endpoint is called with Bearer tok, then the response is not 404",
+    "Given a round.Service error, when an admin round handler maps it, then ErrNotFound gives 404 and ErrIllegalTransition or ErrActiveRound gives 409"
+  ],
+  "scope": {
+    "in_scope": [
+      "adapter from round.Service to admin.RoundService",
+      "mount admin round routes in server.New",
+      "start round.Scheduler"
+    ],
+    "out_of_scope": [
+      "frontend",
+      "worker",
+      "new round states"
+    ],
+    "preserve": [
+      "round.Round and Transitions table",
+      "existing execution admin routes",
+      "admin.Middleware token auth"
+    ]
+  },
+  "technical_constraints": [
+    "Go, chi, no database",
+    "round package remains sole owner of Status, Round, CanTransition"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go build ./... and go test ./internal/server ./internal/round ./internal/admin pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-016.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M845WDCWPKE3DX0JEY7MF1GB",
+    "artifact:.ai-dlc/intent/INT-016.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M846QZA4J1ZAEADNP44GYC3N",
+  "feature_id": "01M845WDCWPKE3DX0JEY7MF1GB",
+  "artifact_path": ".ai-dlc/intent/INT-016.md",
+  "artifact_id": "INT-016",
+  "created_at": "2026-11-23T12:40:26.210176+00:00",
+  "updated_at": "2026-11-23T12:44:02.668485+00:00"
+}

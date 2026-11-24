@@ -1,0 +1,55 @@
+{
+  "id": "01M84JZMY362KT882J0RKA3MTK",
+  "intent_id": "01M84JY602RQMMN2PB98QWRQ70",
+  "title": "REQ · Exporter JSON format, frozen-only inclusion and empty round are covered by mocked-source tests",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Exporter behavior is proven with a fake ExportSource",
+  "description": "Context: Exporter.Export filters ListByRound results by FrozenIDs in snapshot order, returns a non-nil empty slice for an empty round and wraps source errors. Desired behavior: fake-source unit tests assert the JSON format, frozen-only inclusion, empty round and error propagation. Expected result: tests pass. Why: protects the handoff contract.",
+  "acceptance_criteria": [
+    "Given contributions A,B,C and frozen ids C,A, When Export runs, Then only C then A are returned with Author, Content and CreatedAt mapped",
+    "Given no frozen ids, When Export runs and is JSON-encoded, Then it contains \"contributions\":[]",
+    "Given a failing source, When Export runs, Then errors.Is matches the source error",
+    "Given an Export value, When marshaled, Then the JSON keys match the documented format"
+  ],
+  "scope": {
+    "in_scope": [
+      "exporter.go behavior",
+      "export.go JSON shape"
+    ],
+    "out_of_scope": [
+      "FileStore"
+    ],
+    "preserve": [
+      "Export JSON field names and ExportVersion"
+    ]
+  },
+  "technical_constraints": [
+    "Use the fakeSource and errSource doubles"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Exporter tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-135.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JZ5W6V6395K5F0GKDKZ6Y",
+    "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+    "artifact:.ai-dlc/requirements/REQ-135.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JZMY3TQ189JC8RNBG72N1"
+  ],
+  "sim_node_id": "01M84JZ5W6YZAZXAMTD9GVCRR3",
+  "feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+  "artifact_path": ".ai-dlc/requirements/REQ-135.md",
+  "artifact_id": "REQ-135",
+  "created_at": "2026-11-23T16:14:19.075413+00:00",
+  "updated_at": "2026-11-23T16:14:46.859465+00:00"
+}

@@ -1,0 +1,50 @@
+{
+  "id": "01M84GAFQ6554V3DKDWGED1BH2",
+  "intent_id": "01M84G82XSTGQPFX9S20XVE6SR",
+  "title": "REQ · A held lock blocks Run and exceeded budget stops retries with ErrBudgetExceeded",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Lock-held and budget-stop behavior are confirmed and proven",
+  "description": "Context: run acquires lock.Acquire before any state is written, and stops retrying once spent > MaxBudget. Desired: both are proven including that a held lock creates no worktree and no execution record, and that a budget stop persists FAILED and removes the worktree once. Why: protects the single-run-per-World guarantee and spend cap.",
+  "acceptance_criteria": [
+    "Given the lock file exists, When Run is called, Then errors.Is(err, lock.ErrLocked), agent.calls is 0, no worktree is created and store.Get(EXEC-1) fails",
+    "Given cost 3.0, MaxBudget 5.0, MaxRetries 5 and all calls fail, When Run is called, Then the error wraps ErrBudgetExceeded, agent.calls is 2, stored status is FAILED and trees.removed has one entry"
+  ],
+  "scope": {
+    "in_scope": [
+      "Confirm lock acquisition order and budget condition in runner.go"
+    ],
+    "out_of_scope": [
+      "Lock package internals"
+    ],
+    "preserve": [
+      "Lock released via defer"
+    ]
+  },
+  "technical_constraints": [],
+  "dependencies": [],
+  "definition_of_done": [
+    "Lock-before-save order and budget condition verified correct",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-104.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GA1JQ4ZRQ5M54E3PJH2WN",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-104.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GAFQ642Z51TNBJK1Z5MGT"
+  ],
+  "sim_node_id": "01M84GA1JQHB0DNC27T6CZ75KC",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-104.md",
+  "artifact_id": "REQ-104",
+  "created_at": "2026-11-23T15:27:48.454586+00:00",
+  "updated_at": "2026-11-23T15:28:31.513261+00:00"
+}

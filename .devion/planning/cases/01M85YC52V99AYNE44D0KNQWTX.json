@@ -1,0 +1,1494 @@
+{
+  "id": "01M85YC52V99AYNE44D0KNQWTX",
+  "trigger_node_id": "INT-170, UNIT-844 +9",
+  "node_ids": [
+    "INT-170",
+    "UNIT-844",
+    "UNIT-845",
+    "UNIT-846",
+    "UNIT-847",
+    "UNIT-848",
+    "UNIT-849",
+    "REQ-422",
+    "REQ-423",
+    "REQ-424",
+    "EVD-170"
+  ],
+  "intent_id": "INT-170",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-170",
+      "title": "SG-5.2 · Rebuild StoryPanel on the kit",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-844",
+      "title": "Act: Frame StoryPanel and add portrait dialogue card with choices list",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WTPF0PDYAJYRT1PAT1"
+      ],
+      "depends_on": [
+        "REQ-422"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "d3366521e2ba04f3baa0f470edd818a8e08d9b57",
+      "from_sha": "d3366521e2ba04f3baa0f470edd818a8e08d9b57",
+      "started_at": "2026-11-24T04:52:40.839029+00:00",
+      "ended_at": "2026-11-24T04:53:21.790208+00:00",
+      "run_started_at": "2026-11-24T04:52:40.839029+00:00",
+      "duration_ms": 36687,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 4506,
+      "estimated_cost_usd": 0.018037
+    },
+    {
+      "unit_id": "UNIT-845",
+      "title": "Act: Add buildInventorySlots and render the 3x2 inventory grid",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WTW0G9DDNCGCBK9ZPC"
+      ],
+      "depends_on": [
+        "REQ-423"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "5742d7660d728f4d105aa542efcc6864905e3dab",
+      "from_sha": "d3366521e2ba04f3baa0f470edd818a8e08d9b57",
+      "started_at": "2026-11-24T04:52:40.871150+00:00",
+      "ended_at": "2026-11-24T04:54:24.885822+00:00",
+      "run_started_at": "2026-11-24T04:52:40.871150+00:00",
+      "duration_ms": 100407,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 34,
+      "tokens_out": 11859,
+      "estimated_cost_usd": 0.047463,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Blocked on a concurrent edit to this shared worktree. My part is done on disk, but the StoryPanel/storyPanelData pair does not compile or run because of another unit's `portraitPath` import.\n\nWhat I did:\n- `game/frontend/src/lib/storyPanelData.ts`: `buildInventorySlots`, `INVENTORY_SLOT_COUNT = 6`, and `InventorySlot` are exported. Icons come from the committed `public/assets/worlds/the-boys-room/manifest.json` (`item/<id>` → `/assets/<path>`). I read the JSON directly rather than through `runtime/content` (which pulls in `zod`). `zod` is declared in `game/package.json` but not installed in this worktree.\n- `game/frontend/src/components/StoryPanel.tsx`: the Inventory section is now `<ul className='grid grid-cols-3 gap-2'>` with six `li.sf-frame-slot` items carrying `data-slot` and `data-empty`. Filled slots show a 16×16 pixelated icon and the name; empty slots are blank. The `aria-label='Inventory'` section and `h2` are kept.\n\nAdaptations and deviations:\n- The step's anchor `portraitPath` does not exist in the code I was given. I created the file as the step describes.\n- The worktree changed during the run. HEAD is now `d3366521` (INT-170-UNIT-846), which committed an early copy of `storyPanelData.ts` and a `StoryPanel.tsx` that imports `portraitPath` from it. The current `storyPanelData.ts` is untracked, and the index holds a staged deletion of its tracked version. I did not touch the index, did not commit, and did not stash.\n- Result: `tsc` reports `Module '../lib/storyPanelData' has no exported member 'portraitPath'` at StoryPanel.tsx:3. Story tests fail at render with `portraitPath is not a function`. The `zod` type errors in `src/assets/manifest`, `src/content` and others predate this change.\n- I did not add `portraitPath`. Its semantics belong to unit 846, and an untracked `tests/storyPanelData.test.ts` pins them (`portraitPath('boy')` → the boy portrait path; `'ghost'` → undefined). Adding it here would be a guess at another unit's scope.\n\nWhat's left: someone who owns UNIT-846 needs to export `portraitPath` from `storyPanelData.ts` and reconcile the staged deletion. Then `tsc` and the StoryPanel tests should run. I did not run the story tests green, so I can't confirm the grid renders correctly in the test suite."
+    },
+    {
+      "unit_id": "UNIT-846",
+      "title": "Act: Render the framed event log and confirm App wiring",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WTTPSBGMZA6E0C2D7Z"
+      ],
+      "depends_on": [
+        "REQ-424"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "d3366521e2ba04f3baa0f470edd818a8e08d9b57",
+      "from_sha": "36ae063c581e641959e8d72ad6c865a47882e28d",
+      "started_at": "2026-11-24T04:52:40.883028+00:00",
+      "ended_at": "2026-11-24T04:53:20.776568+00:00",
+      "run_started_at": "2026-11-24T04:52:40.883028+00:00",
+      "duration_ms": 36253,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 3404,
+      "estimated_cost_usd": 0.013627
+    },
+    {
+      "unit_id": "UNIT-847",
+      "title": "Verify: Dialogue card, portrait and choices unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WT87712GGHSQ36DCHF"
+      ],
+      "depends_on": [
+        "UNIT-844",
+        "REQ-422"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "249b9b513a097e9cc31e3a8ef5a02bc2631971e5",
+      "from_sha": "7a315a153c32f6409415a6efb32f4c4b04485707",
+      "tests": [
+        {
+          "id": "portraitPath returns the public URL of the boy portrait listed in the committed manifest",
+          "kind": "unit",
+          "name": "tests/storyPanelData.test.ts > portraitPath > returns the public URL of the boy portrait listed in the committed manifest",
+          "title": "portraitPath returns the boy portrait URL from the committed manifest",
+          "scenario": "Given the committed manifest entry character:boy-portrait, When portraitPath('boy') is called, Then it returns /assets/worlds/the-boys-room/characters/boy-portrait.png",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelData.test.ts",
+          "file": "tests/storyPanelData.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "portraitPath returns undefined for a speaker with no manifest portrait",
+          "kind": "unit",
+          "name": "tests/storyPanelData.test.ts > portraitPath > returns undefined for a speaker with no manifest portrait",
+          "title": "portraitPath returns undefined for a speaker with no portrait",
+          "scenario": "Given speaker 'ghost' has no portrait entry, When portraitPath('ghost') is called, Then it returns undefined",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelData.test.ts",
+          "file": "tests/storyPanelData.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel dialogue card shows a 32px boy portrait inside the Dialogue region",
+          "kind": "unit",
+          "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > shows a 32px boy portrait inside the Dialogue region",
+          "title": "StoryPanel shows a 32px boy portrait inside the Dialogue region",
+          "scenario": "Given a node spoken by 'boy', When StoryPanel renders it, Then an img with width 32 and src ending boy-portrait.png is inside the Dialogue region",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelDialogue.test.tsx",
+          "file": "tests/storyPanelDialogue.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel dialogue card renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line",
+          "kind": "unit",
+          "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line",
+          "title": "StoryPanel renders no portrait for a speaker without one but keeps speaker and line",
+          "scenario": "Given a node spoken by 'ghost', When StoryPanel renders it, Then no img is rendered and the speaker and line still appear",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelDialogue.test.tsx",
+          "file": "tests/storyPanelDialogue.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel dialogue card calls onChoose with 1 when the second button in the Choices list is clicked",
+          "kind": "unit",
+          "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > calls onChoose with 1 when the second button in the Choices list is clicked",
+          "title": "StoryPanel calls onChoose with 1 when the second choice is clicked",
+          "scenario": "Given a node with two choices, When the second choice button is clicked, Then onChoose is called once with index 1",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelDialogue.test.tsx",
+          "file": "tests/storyPanelDialogue.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel dialogue card shows the scene title heading and no Dialogue region when there is no node",
+          "kind": "unit",
+          "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > shows the scene title heading and no Dialogue region when there is no node",
+          "title": "StoryPanel shows the title h1 and no Dialogue region when there is no node",
+          "scenario": "Given no current node, When StoryPanel renders, Then the scene title is an h1 and no Dialogue region exists",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelDialogue.test.tsx",
+          "file": "tests/storyPanelDialogue.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel dialogue card gives the panel root the sf-frame-panel class",
+          "kind": "unit",
+          "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > gives the panel root the sf-frame-panel class",
+          "title": "StoryPanel root element carries the sf-frame-panel class",
+          "scenario": "Given any StoryPanel render, When inspecting the root element, Then it has the sf-frame-panel class",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelDialogue.test.tsx",
+          "file": "tests/storyPanelDialogue.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel scene title and choices shows the scene title as the heading",
+          "kind": "unit",
+          "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the scene title as the heading",
+          "title": "StoryPanel shows the scene title as the h1 heading",
+          "scenario": "Given a scene title and a node, When StoryPanel renders, Then the h1 heading is the scene title",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelTitle.test.tsx",
+          "file": "tests/storyPanelTitle.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel scene title and choices lists both history entries in the Story history list",
+          "kind": "unit",
+          "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > lists both history entries in the Story history list",
+          "title": "StoryPanel lists both history entries in the Story history list",
+          "scenario": "Given two history entries, When StoryPanel renders, Then the Story history list has two listitems",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelTitle.test.tsx",
+          "file": "tests/storyPanelTitle.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel scene title and choices shows the inventory item inside the Inventory region",
+          "kind": "unit",
+          "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the inventory item inside the Inventory region",
+          "title": "StoryPanel shows the humanised inventory item inside the Inventory region",
+          "scenario": "Given inventory ['key'], When StoryPanel renders, Then the Inventory region shows 'Key'",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelTitle.test.tsx",
+          "file": "tests/storyPanelTitle.test.tsx",
+          "status": "passed",
+          "detail": "Expectation adapted from 'key' to 'Key' (humanised name rendered by buildInventorySlots)."
+        },
+        {
+          "id": "StoryPanel scene title and choices keeps the panel root scrollable with the overflow-y-auto class",
+          "kind": "unit",
+          "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > keeps the panel root scrollable with the overflow-y-auto class",
+          "title": "StoryPanel root keeps overflow-y-auto for scrolling",
+          "scenario": "Given any StoryPanel render, When inspecting the root element, Then it has the overflow-y-auto class",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelTitle.test.tsx",
+          "file": "tests/storyPanelTitle.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "StoryPanel scene title and choices calls onChoose with 1 when the second choice is clicked",
+          "kind": "unit",
+          "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > calls onChoose with 1 when the second choice is clicked",
+          "title": "StoryPanel calls onChoose with 1 when the second choice button is clicked",
+          "scenario": "Given two choices, When the 'Let's explore' button in the Choices list is clicked, Then onChoose is called once with 1",
+          "command": "npx vitest run --testTimeout=10000 tests/storyPanelTitle.test.tsx",
+          "file": "tests/storyPanelTitle.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "story suite (tests/story.test.tsx, 5 tests)",
+          "kind": "unit",
+          "name": "tests/story.test.tsx",
+          "title": "Story suite passes alongside the StoryPanel title tests",
+          "scenario": "Given the Step 3 run command, When tests/story.test.tsx runs, Then all 5 tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/story.test.tsx",
+          "file": "tests/story.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (14): tests/storyPanelData.test.ts > portraitPath > returns the public URL of the boy portrait listed in the committed manifest, tests/storyPanelData.test.ts > portraitPath > returns undefined for a speaker with no manifest portrait, tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > shows a 32px boy portrait inside the Dialogue region, tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line, tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > calls onChoose with 1 when the second button in the Choices list is clicked, tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > gives the panel root the sf-frame-panel class, tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the scene title as the heading, tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > lists both history entries in the Story history list, tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the inventory item inside the Inventory region, tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > keeps the panel root scrollable with the overflow-y-auto class, tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > calls onChoose with 1 when the second choice is clicked, tests/story.test.tsx > intro copy and choices > StoryPanel calls onChoose with 0 when the first choice is clicked, tests/story.test.tsx > intro copy and choices > StoryPanel shows Empty when the inventory is empty, tests/story.test.tsx > intro copy and choices > StoryPanel lists the item name when the inventory holds key",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "b4991116bbb2c09bff5d3f3a48be7c940f3f1e94",
+          "from_sha": "5742d7660d728f4d105aa542efcc6864905e3dab",
+          "tests": [
+            {
+              "id": "portrait-path-boy",
+              "kind": "unit",
+              "name": "tests/storyPanelData.test.ts > portraitPath > returns the public URL of the boy portrait listed in the committed manifest",
+              "title": "portraitPath('boy') returns the manifest path for character:boy-portrait under /assets/",
+              "scenario": "Given the committed manifest entry character:boy-portrait, when portraitPath is called with boy, then it returns /assets/worlds/the-boys-room/characters/boy-portrait.png",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts --testTimeout=10000",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. src/lib/storyPanelData.ts does not export portraitPath (Act step missing)."
+            },
+            {
+              "id": "portrait-path-ghost",
+              "kind": "unit",
+              "name": "tests/storyPanelData.test.ts > portraitPath > returns undefined for a speaker with no manifest portrait",
+              "title": "portraitPath('ghost') returns undefined",
+              "scenario": "Given a speaker ghost with no manifest portrait, when portraitPath is called, then it returns undefined",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts --testTimeout=10000",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. src/lib/storyPanelData.ts does not export portraitPath (Act step missing)."
+            },
+            {
+              "id": "dialogue-boy-portrait-32",
+              "kind": "unit",
+              "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > shows a 32px boy portrait inside the Dialogue region",
+              "title": "A boy node renders a 32px portrait img inside the Dialogue region",
+              "scenario": "Given a DialogueNode with speaker boy, when StoryPanel renders, then an img width 32 with src ending boy-portrait.png is inside the Dialogue region",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "dialogue-ghost-no-portrait",
+              "kind": "unit",
+              "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line",
+              "title": "A speaker with no portrait renders no img but still shows speaker and line",
+              "scenario": "Given a DialogueNode with speaker ghost, when StoryPanel renders, then no img is rendered and the speaker and text appear in the Dialogue region",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "dialogue-second-choice",
+              "kind": "unit",
+              "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > calls onChoose with 1 when the second button in the Choices list is clicked",
+              "title": "Clicking the second choice in the Choices list calls onChoose with 1",
+              "scenario": "Given a node with two choices, when the second button in the Choices list is clicked, then onChoose is called once with 1",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "dialogue-no-node",
+              "kind": "unit",
+              "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > shows the scene title heading and no Dialogue region when there is no node",
+              "title": "With no node the h1 title shows and no Dialogue region exists",
+              "scenario": "Given no current node, when StoryPanel renders, then the scene title is an h1 and no Dialogue region exists",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "dialogue-root-class",
+              "kind": "unit",
+              "name": "tests/storyPanelDialogue.test.tsx > StoryPanel dialogue card > gives the panel root the sf-frame-panel class",
+              "title": "The StoryPanel root element carries the sf-frame-panel class",
+              "scenario": "Given any StoryPanel render, when inspecting the root element, then it has the sf-frame-panel class",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20 (node is passed in the test fixture)."
+            },
+            {
+              "id": "title-h1",
+              "kind": "unit",
+              "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the scene title as the heading",
+              "title": "The scene title is rendered as the h1 heading",
+              "scenario": "Given a StoryPanel with a node, when rendered, then the h1 shows the scene title",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "title-history",
+              "kind": "unit",
+              "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > lists both history entries in the Story history list",
+              "title": "Both history entries are listed in the Story history list",
+              "scenario": "Given history with two entries, when rendered, then the Story history list has two list items",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "title-inventory",
+              "kind": "unit",
+              "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > shows the inventory item inside the Inventory region",
+              "title": "The inventory item appears inside the Inventory region",
+              "scenario": "Given inventory with key, when rendered, then the Inventory region contains key",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "title-overflow-class",
+              "kind": "unit",
+              "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > keeps the panel root scrollable with the overflow-y-auto class",
+              "title": "The panel root keeps the overflow-y-auto class",
+              "scenario": "Given a StoryPanel render, when inspecting the root, then it has overflow-y-auto",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "title-choose-second",
+              "kind": "unit",
+              "name": "tests/storyPanelTitle.test.tsx > StoryPanel scene title and choices > calls onChoose with 1 when the second choice is clicked",
+              "title": "Clicking the second choice in the Choices list calls onChoose with 1",
+              "scenario": "Given a node with two choices, when the second choice in the Choices list is clicked, then onChoose is called with 1",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "story-choose-first",
+              "kind": "unit",
+              "name": "tests/story.test.tsx > intro copy and choices > StoryPanel calls onChoose with 0 when the first choice is clicked",
+              "title": "Clicking the first choice calls onChoose with 0",
+              "scenario": "Given a node with two choices, when the first is clicked, then onChoose is called with 0",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "story-empty-inventory",
+              "kind": "unit",
+              "name": "tests/story.test.tsx > intro copy and choices > StoryPanel shows Empty when the inventory is empty",
+              "title": "An empty inventory shows Empty",
+              "scenario": "Given an empty inventory, when StoryPanel renders, then the text Empty is shown",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "story-key-inventory",
+              "kind": "unit",
+              "name": "tests/story.test.tsx > intro copy and choices > StoryPanel lists the item name when the inventory holds key",
+              "title": "An inventory holding key lists the item name",
+              "scenario": "Given inventory with key, when StoryPanel renders, then key is shown and Empty is not",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "failed",
+              "detail": "StoryPanel throws TypeError: portraitPath is not a function at src/components/StoryPanel.tsx:20."
+            },
+            {
+              "id": "story-intro-copy",
+              "kind": "unit",
+              "name": "tests/story.test.tsx > intro copy and choices > IntroScreen shows the You decide line",
+              "title": "IntroScreen shows the You decide line and Begin calls onBegin",
+              "scenario": "Given IntroScreen, when rendered and Begin is clicked, then the copy shows and onBegin is called",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx --testTimeout=10000",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T04:53:21.809023+00:00",
+          "ended_at": "2026-11-24T04:54:32.810822+00:00",
+          "duration_ms": 69182,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 26,
+          "tokens_out": 13877,
+          "estimated_cost_usd": 0.055529
+        },
+        {
+          "attempt": 2,
+          "status": "done",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "cd71f237d1a790b95a80044b740b83a04083d38f",
+          "from_sha": "95eaac4c739428c75fa4b0a494b0616118779039",
+          "tests": [
+            {
+              "id": "storyPanelData > portraitPath returns the boy portrait URL from manifest",
+              "kind": "unit",
+              "name": "portraitPath returns the public URL of the boy portrait listed in the committed manifest",
+              "title": "portraitPath returns the public URL of the boy portrait listed in the committed manifest",
+              "scenario": "Given manifest entry character:boy-portrait, when portraitPath('boy') is called, then it returns /assets/worlds/the-boys-room/characters/boy-portrait.png",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelData > portraitPath undefined for ghost",
+              "kind": "unit",
+              "name": "returns undefined for a speaker with no manifest portrait",
+              "title": "portraitPath returns undefined for a speaker with no manifest portrait",
+              "scenario": "Given speaker 'ghost' with no portrait entry, when portraitPath('ghost') is called, then it returns undefined",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelDialogue > 32px boy portrait in Dialogue region",
+              "kind": "unit",
+              "name": "shows a 32px boy portrait inside the Dialogue region",
+              "title": "StoryPanel dialogue card shows a 32px boy portrait inside the Dialogue region",
+              "scenario": "Given a node spoken by 'boy', when StoryPanel renders it, then an img of width 32 with src ending boy-portrait.png is inside the Dialogue region",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelDialogue > ghost renders no img, shows speaker and text",
+              "kind": "unit",
+              "name": "renders no portrait image for a speaker without a manifest portrait, but keeps speaker and line",
+              "title": "StoryPanel dialogue card renders no portrait for ghost but keeps speaker and line",
+              "scenario": "Given a node spoken by 'ghost', when StoryPanel renders it, then no img is rendered and the speaker and line still appear",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelDialogue > second choice calls onChoose(1)",
+              "kind": "unit",
+              "name": "calls onChoose with 1 when the second button in the Choices list is clicked",
+              "title": "StoryPanel choices call onChoose with index 1 when the second choice is clicked",
+              "scenario": "Given a node with two choices, when the second choice button is clicked, then onChoose is called once with 1",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelDialogue > no node shows h1 and no Dialogue region",
+              "kind": "unit",
+              "name": "shows the scene title heading and no Dialogue region when there is no node",
+              "title": "StoryPanel shows the scene title heading and no Dialogue region when there is no node",
+              "scenario": "Given no current node, when StoryPanel renders, then the scene title is an h1 and no Dialogue region exists",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelDialogue > root has sf-frame-panel class",
+              "kind": "unit",
+              "name": "gives the panel root the sf-frame-panel class",
+              "title": "StoryPanel panel root carries the sf-frame-panel class",
+              "scenario": "Given any StoryPanel render, when inspecting the root element, then it has the sf-frame-panel class",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+              "file": "tests/storyPanelDialogue.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelTitle > shows the scene title as the heading",
+              "kind": "unit",
+              "name": "shows the scene title as the heading",
+              "title": "StoryPanel scene title and choices shows the scene title as the heading",
+              "scenario": "Given a StoryPanel with a scene title, then the title is an h1 heading",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelTitle > lists both history entries",
+              "kind": "unit",
+              "name": "lists both history entries in the Story history list",
+              "title": "StoryPanel scene title and choices lists both history entries in the Story history list",
+              "scenario": "Given two history entries, then the Story history list has two list items",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelTitle > inventory item in Inventory region",
+              "kind": "unit",
+              "name": "shows the inventory item inside the Inventory region",
+              "title": "StoryPanel scene title and choices shows the inventory item inside the Inventory region",
+              "scenario": "Given inventory ['key'], then the Inventory region contains 'key'",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelTitle > root keeps overflow-y-auto",
+              "kind": "unit",
+              "name": "keeps the panel root scrollable with the overflow-y-auto class",
+              "title": "StoryPanel scene title and choices keeps the panel root scrollable",
+              "scenario": "Given a StoryPanel render, then the root has the overflow-y-auto class",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelTitle > choice onChoose(1)",
+              "kind": "unit",
+              "name": "calls onChoose with 1 when the second choice is clicked",
+              "title": "StoryPanel scene title and choices calls onChoose with 1 for the second choice",
+              "scenario": "Given two choices, when 'Let's explore' is clicked, then onChoose is called once with 1",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+              "file": "tests/storyPanelTitle.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "story > existing story suite",
+              "kind": "unit",
+              "name": "tests/story.test.tsx (5 tests)",
+              "title": "Story suite passes alongside the StoryPanel tests",
+              "scenario": "Given the existing story.test.tsx, when run with the StoryPanel tests, then all 5 tests pass",
+              "command": "cd game/frontend && npx vitest run tests/story.test.tsx",
+              "file": "tests/story.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T04:55:47.492064+00:00",
+          "ended_at": "2026-11-24T04:56:15.254797+00:00",
+          "duration_ms": 26146,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 8,
+          "tokens_out": 4249,
+          "estimated_cost_usd": 0.017002
+        }
+      ],
+      "started_at": "2026-11-24T04:53:21.809023+00:00",
+      "ended_at": "2026-11-24T04:58:56.749795+00:00",
+      "run_started_at": "2026-11-24T04:58:05.480549+00:00",
+      "duration_ms": 49773,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 6695,
+      "estimated_cost_usd": 0.026793
+    },
+    {
+      "unit_id": "UNIT-848",
+      "title": "Verify: Inventory grid slots, icons and empty slots unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WT7MCBQQSVNX8FN01C"
+      ],
+      "depends_on": [
+        "UNIT-845",
+        "REQ-423"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "7a315a153c32f6409415a6efb32f4c4b04485707",
+      "from_sha": "309c5ba56487f89504f7f8010cd512c2644999ce",
+      "tests": [
+        {
+          "id": "storyPanelData.test.ts::buildInventorySlots::empty",
+          "kind": "unit",
+          "name": "buildInventorySlots returns six empty slots with null ids when the inventory is empty",
+          "title": "returns six empty slots with null ids when the inventory is empty",
+          "scenario": "Given an empty inventory, when buildInventorySlots is called, then it returns six slots and every slot id is null.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts --testTimeout=10000",
+          "file": "tests/storyPanelData.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelData.test.ts::buildInventorySlots::known-item",
+          "kind": "unit",
+          "name": "buildInventorySlots shows the humanised name and manifest icon for a known item, leaving the other slots empty",
+          "title": "shows the humanised name and manifest icon for a known item, leaving the other slots empty",
+          "scenario": "Given an inventory holding 'old-key', when buildInventorySlots is called, then slot 0 is named 'Old Key' with the manifest icon ending items/old-key.png and the other five slots are empty.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts --testTimeout=10000",
+          "file": "tests/storyPanelData.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelData.test.ts::buildInventorySlots::unknown-item",
+          "kind": "unit",
+          "name": "buildInventorySlots gives an unknown item a humanised name and no icon",
+          "title": "gives an unknown item a humanised name and no icon",
+          "scenario": "Given an inventory holding 'mystery-thing' with no manifest entry, when buildInventorySlots is called, then slot 0 is named 'Mystery Thing' and has no icon.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts --testTimeout=10000",
+          "file": "tests/storyPanelData.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelInventory.test.tsx::empty-grid",
+          "kind": "unit",
+          "name": "new: StoryPanel inventory grid renders six empty slots with no icons when the inventory is empty",
+          "title": "renders six empty slots with no icons when the inventory is empty",
+          "scenario": "Given an empty inventory, when StoryPanel renders, then the Inventory region shows six list items, all data-empty='true', with no images.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelInventory.test.tsx --testTimeout=10000",
+          "file": "tests/storyPanelInventory.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelInventory.test.tsx::known-item-icon",
+          "kind": "unit",
+          "name": "new: StoryPanel inventory grid shows the item name and a 16px icon in the first slot, leaving five slots empty",
+          "title": "shows the item name and a 16px icon in the first slot, leaving five slots empty",
+          "scenario": "Given an inventory holding 'old-key', when StoryPanel renders, then the first slot shows 'Old Key' with a 16px icon and the other five slots are data-empty='true'.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelInventory.test.tsx --testTimeout=10000",
+          "file": "tests/storyPanelInventory.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelInventory.test.tsx::grid-cols-3",
+          "kind": "unit",
+          "name": "new: StoryPanel inventory grid lays the slots out in a three-column grid",
+          "title": "lays the slots out in a three-column grid",
+          "scenario": "Given any inventory, when StoryPanel renders, then the slot list has the grid-cols-3 class.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelInventory.test.tsx --testTimeout=10000",
+          "file": "tests/storyPanelInventory.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "story.test.tsx::inventory-empty-slots",
+          "kind": "unit",
+          "name": "StoryPanel renders six empty inventory slots when the inventory is empty",
+          "title": "renders six empty inventory slots when the inventory is empty",
+          "scenario": "Given an empty inventory, when StoryPanel renders, then the Inventory region has six list items.",
+          "command": "cd game/frontend && npx vitest run tests/story.test.tsx tests/frameKit.test.tsx --testTimeout=10000",
+          "file": "tests/story.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "story.test.tsx::inventory-humanised-name",
+          "kind": "unit",
+          "name": "StoryPanel lists the humanised item name in the first slot when the inventory holds 'old-key'",
+          "title": "lists the humanised item name in the first slot when the inventory holds 'old-key'",
+          "scenario": "Given an inventory holding 'old-key', when StoryPanel renders, then the first slot shows 'Old Key' and does not show the raw id 'old-key'.",
+          "command": "cd game/frontend && npx vitest run tests/story.test.tsx tests/frameKit.test.tsx --testTimeout=10000",
+          "file": "tests/story.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "frameKit.test.tsx::suite",
+          "kind": "unit",
+          "name": "frameKit.test.tsx (3 tests)",
+          "title": "frame kit suite runs alongside the story inventory assertions",
+          "scenario": "Given the Step 3 command runs story.test.tsx and frameKit.test.tsx together, when vitest completes, then all 3 frameKit tests pass.",
+          "command": "cd game/frontend && npx vitest run tests/story.test.tsx tests/frameKit.test.tsx --testTimeout=10000",
+          "file": "tests/story.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (4): buildInventorySlots > shows the humanised name and manifest icon for a known item, leaving the other slots empty, buildInventorySlots > gives an unknown item a humanised name and no icon, new: StoryPanel inventory grid > shows the item name and a 16px icon in the first slot, leaving five slots empty, intro copy and choices > StoryPanel lists the humanised item name in the first slot when the inventory holds \"old-key\"",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "bd0c61349ae89a3744d743ee1129493b01eacaa9",
+          "from_sha": "cd71f237d1a790b95a80044b740b83a04083d38f",
+          "tests": [
+            {
+              "id": "buildInventorySlots-empty-six-null",
+              "kind": "unit",
+              "name": "buildInventorySlots > returns six empty slots with null ids when the inventory is empty",
+              "title": "returns six empty slots with null ids when the inventory is empty",
+              "scenario": "Given an empty inventory, when buildInventorySlots is called, then it returns six slots and every slot id is null",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelData.test.ts",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "buildInventorySlots-old-key",
+              "kind": "unit",
+              "name": "buildInventorySlots > shows the humanised name and manifest icon for a known item, leaving the other slots empty",
+              "title": "shows the humanised name and manifest icon for a known item, leaving the other slots empty",
+              "scenario": "Given an inventory holding 'old-key', when buildInventorySlots is called, then slot 0 is named 'Old Key' with the manifest icon and the other five slots are empty",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelData.test.ts",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "failed",
+              "detail": "Expected name 'Old Key', received 'old-key'. buildInventorySlots (src/lib/storyPanelData.ts) uses the raw id as name; no humanising step exists."
+            },
+            {
+              "id": "buildInventorySlots-unknown-item",
+              "kind": "unit",
+              "name": "buildInventorySlots > gives an unknown item a humanised name and no icon",
+              "title": "gives an unknown item a humanised name and no icon",
+              "scenario": "Given an inventory holding 'mystery-thing' with no manifest entry, when buildInventorySlots is called, then slot 0 is named 'Mystery Thing' and has no icon",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelData.test.ts",
+              "file": "tests/storyPanelData.test.ts",
+              "status": "failed",
+              "detail": "Expected name 'Mystery Thing', received 'mystery-thing'. The icon assertion was not reached. Same missing humanising step as above."
+            },
+            {
+              "id": "StoryPanel-inventory-empty-six-slots",
+              "kind": "unit",
+              "name": "new: StoryPanel inventory grid > renders six empty slots with no icons when the inventory is empty",
+              "title": "renders six empty slots with no icons when the inventory is empty",
+              "scenario": "Given an empty inventory, when StoryPanel renders, then the Inventory region shows six empty list items with no images",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelInventory.test.tsx",
+              "file": "tests/storyPanelInventory.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "StoryPanel-inventory-old-key-icon",
+              "kind": "unit",
+              "name": "new: StoryPanel inventory grid > shows the item name and a 16px icon in the first slot, leaving five slots empty",
+              "title": "shows the item name and a 16px icon in the first slot, leaving five slots empty",
+              "scenario": "Given an inventory holding 'old-key', when StoryPanel renders, then the first slot shows 'Old Key' with a 16px icon and the other five slots are empty",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelInventory.test.tsx",
+              "file": "tests/storyPanelInventory.test.tsx",
+              "status": "failed",
+              "detail": "Expected text 'Old Key', received 'old-key'. The rendered label is the raw id because buildInventorySlots does not humanise names."
+            },
+            {
+              "id": "StoryPanel-inventory-grid-cols-3",
+              "kind": "unit",
+              "name": "new: StoryPanel inventory grid > lays the slots out in a three-column grid",
+              "title": "lays the slots out in a three-column grid",
+              "scenario": "Given any inventory, when StoryPanel renders, then the slot list has the grid-cols-3 class",
+              "command": "npx vitest run --testTimeout=20000 tests/storyPanelInventory.test.tsx",
+              "file": "tests/storyPanelInventory.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "story-inventory-empty-six-slots",
+              "kind": "unit",
+              "name": "intro copy and choices > StoryPanel renders six empty inventory slots when the inventory is empty",
+              "title": "renders six empty inventory slots when the inventory is empty",
+              "scenario": "Given an empty inventory, when StoryPanel renders, then the Inventory region has six slots, all empty",
+              "command": "npx vitest run --testTimeout=20000 tests/story.test.tsx tests/frameKit.test.tsx",
+              "file": "tests/story.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "story-inventory-old-key-humanised",
+              "kind": "unit",
+              "name": "intro copy and choices > StoryPanel lists the humanised item name in the first slot when the inventory holds \"old-key\"",
+              "title": "lists the humanised item name in the first slot when the inventory holds \"old-key\"",
+              "scenario": "Given an inventory holding 'old-key', when StoryPanel renders, then the first of six slots shows 'Old Key' and not the raw id",
+              "command": "npx vitest run --testTimeout=20000 tests/story.test.tsx tests/frameKit.test.tsx",
+              "file": "tests/story.test.tsx",
+              "status": "failed",
+              "detail": "Expected text 'Old Key', received 'old-key'. Missing humanising step in buildInventorySlots (src/lib/storyPanelData.ts)."
+            },
+            {
+              "id": "frameKit-inventory-slots",
+              "kind": "unit",
+              "name": "frameKit inventory slots (tests/frameKit.test.tsx, 3 tests)",
+              "title": "keeps six sf-frame-slot inventory items in the frame kit layout",
+              "scenario": "Given a StoryPanel with inventory ['Key'], when rendered, then the Inventory region has six sf-frame-slot list items",
+              "command": "npx vitest run --testTimeout=20000 tests/story.test.tsx tests/frameKit.test.tsx",
+              "file": "tests/story.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T04:56:16.412612+00:00",
+          "ended_at": "2026-11-24T04:57:25.323255+00:00",
+          "duration_ms": 66242,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 26,
+          "tokens_out": 13223,
+          "estimated_cost_usd": 0.052913
+        }
+      ],
+      "started_at": "2026-11-24T04:56:16.412612+00:00",
+      "ended_at": "2026-11-24T04:58:36.760413+00:00",
+      "run_started_at": "2026-11-24T04:58:05.470486+00:00",
+      "duration_ms": 29947,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 4590,
+      "estimated_cost_usd": 0.018366
+    },
+    {
+      "unit_id": "UNIT-849",
+      "title": "Verify: Event log and App-fed StoryPanel unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85YC3WT5ZPDWEE2EJTR0XQ3"
+      ],
+      "depends_on": [
+        "UNIT-846",
+        "REQ-424"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "309c5ba56487f89504f7f8010cd512c2644999ce",
+      "from_sha": "0749c8d2bad0a19cf0e0fa1c4307a4b474e30f99",
+      "tests": [
+        {
+          "id": "storyPanelLog:lists-history-in-order",
+          "kind": "unit",
+          "name": "tests/storyPanelLog.test.tsx > StoryPanel event log > lists the history lines in order inside the Event log region",
+          "title": "lists the history lines in order inside the Event log region",
+          "scenario": "Given a StoryPanel whose history is ['a', 'b'], when it renders, then the Event log region contains a Story history list whose items read a, then b.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=10000",
+          "file": "tests/storyPanelLog.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "storyPanelLog:empty-history-message",
+          "kind": "unit",
+          "name": "tests/storyPanelLog.test.tsx > StoryPanel event log > shows the empty message and no Story history list when history is empty",
+          "title": "shows the empty message and no Story history list when history is empty",
+          "scenario": "Given a StoryPanel whose history is [], when it renders, then the Event log region shows 'Nothing has happened yet' and no Story history list exists.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=10000",
+          "file": "tests/storyPanelLog.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "frameKit:game-screen-components-apply-kit",
+          "kind": "unit",
+          "name": "tests/frameKit.test.tsx > frame kit > game screen components apply the kit",
+          "title": "game screen components apply the kit",
+          "scenario": "Given StoryPanel with a dialogue node, empty history and one inventory item, when it renders, then the root has sf-frame-panel and neither bg-stone-900 nor border-amber-900, the Event log region has sf-frame-plaque, and the six Inventory slots have sf-frame-slot.",
+          "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=10000",
+          "file": "tests/frameKit.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appFlow:playing-view-story-panel",
+          "kind": "unit",
+          "name": "tests/appFlow.test.tsx > App flow: action menu > Given the playing view, then the App-fed story panel shows the Event log, six Inventory slots and the Dialogue region",
+          "title": "Given the playing view, then the App-fed story panel shows the Event log, six Inventory slots and the Dialogue region",
+          "scenario": "Given the App with PhaserHost and the API client mocked, when Begin is clicked, then the Event log region, an Inventory region with six slots, and the Dialogue region exist.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=10000",
+          "file": "tests/appFlow.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (7): tests/storyPanelLog.test.tsx > lists the history lines in order inside the Event log region, tests/storyPanelLog.test.tsx > shows the empty message and no Story history list when history is empty, tests/frameKit.test.tsx > game screen components apply the kit, tests/appFlow.test.tsx > Bookshelf action menu, tests/appFlow.test.tsx > App-fed story panel playing view, tests/appFlow.test.tsx > Search adds the hidden door text to the story history, tests/appFlow.test.tsx > choosing a dialogue option advances to the next dialogue node and records it",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "5028c64c7661d7472d44aaa99096d51707de4b36",
+          "from_sha": "b4991116bbb2c09bff5d3f3a48be7c940f3f1e94",
+          "tests": [
+            {
+              "id": "storyPanelLog.lists-history-in-order",
+              "kind": "unit",
+              "name": "tests/storyPanelLog.test.tsx > lists the history lines in order inside the Event log region",
+              "title": "lists the history lines in order inside the Event log region",
+              "scenario": "Given a StoryPanel whose history is ['a','b'], when it renders, then the Event log region contains a Story history list whose items read a, then b.",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=20000",
+              "file": "tests/storyPanelLog.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. StoryPanel.tsx imports portraitPath from src/lib/storyPanelData.ts, which no longer exports it. Act must restore the export."
+            },
+            {
+              "id": "storyPanelLog.empty-history",
+              "kind": "unit",
+              "name": "tests/storyPanelLog.test.tsx > shows the empty message and no Story history list when history is empty",
+              "title": "shows the empty message and no Story history list when history is empty",
+              "scenario": "Given a StoryPanel whose history is [], when it renders, then the Event log region shows 'Nothing has happened yet' and no Story history list exists.",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=20000",
+              "file": "tests/storyPanelLog.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function (same root cause as the defect in the note; the test renders a dialogue node)."
+            },
+            {
+              "id": "frameKit.frame-classes",
+              "kind": "unit",
+              "name": "tests/frameKit.test.tsx > frame classes use border-image and pixelated",
+              "title": "frame classes use border-image and pixelated",
+              "scenario": "Given the frame kit generator, when frameComponentClasses is called, then each sf-frame class is pixelated with a border-image and the sf-btn states are distinct.",
+              "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=20000",
+              "file": "tests/frameKit.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "frameKit.button-states",
+              "kind": "unit",
+              "name": "tests/frameKit.test.tsx > button shows four states",
+              "title": "button shows four states",
+              "scenario": "Given a frame Button in each of four states, when rendered, then it has sf-btn and its data-state, and a panel Frame carries sf-frame-panel.",
+              "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=20000",
+              "file": "tests/frameKit.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "frameKit.story-panel-frame-assertions",
+              "kind": "unit",
+              "name": "tests/frameKit.test.tsx > game screen components apply the kit",
+              "title": "game screen components apply the kit",
+              "scenario": "Given the game layout, header overlay and story panel with kit props, when rendered, then the aside is sf-frame-panel, the header is sf-frame-bar, the story root is sf-frame-panel without bg-stone-900 or border-amber-900, the Event log is sf-frame-plaque, all six inventory slots are sf-frame-slot, and the Dialogue region is sf-frame-parchment.",
+              "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=20000",
+              "file": "tests/frameKit.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function (the test renders a dialogue node). The new assertions after the story render are not yet observed passing."
+            },
+            {
+              "id": "appFlow.bookshelf-action-menu",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > Bookshelf action menu",
+              "title": "Bookshelf hotspot opens the action menu with Inspect, Push, Search and Leave",
+              "scenario": "Given the playing view, when the Bookshelf hotspot is clicked, then the Bookshelf action menu opens with Inspect, Push, Search and Leave.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function (App renders StoryPanel with a dialogue node)."
+            },
+            {
+              "id": "appFlow.playing-view-regions",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > App-fed story panel playing view",
+              "title": "playing view shows the Event log, six Inventory slots and the Dialogue region",
+              "scenario": "Given the App with PhaserHost and the round API mocked, when Begin is clicked, then the Event log region, an Inventory region with six slots and the Dialogue region exist.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. The App-fed assertions are written, but the store-to-panel path cannot render until the export is restored."
+            },
+            {
+              "id": "appFlow.search-story-history",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > Search adds the hidden door text to the story history",
+              "title": "Search adds the hidden door text to the story history",
+              "scenario": "Given the playing view with the Bookshelf menu open, when Search is clicked, then the Story history list contains the hidden door text.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. Not an assertion of this unit, but it runs in the same file."
+            },
+            {
+              "id": "appFlow.choice-advances-dialogue",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > choosing a dialogue option advances to the next dialogue node and records it",
+              "title": "choosing a dialogue option advances to the next dialogue node and records it",
+              "scenario": "Given the playing view, when 'Look around the room' is chosen, then the Dialogue shows the follow-up node and the Story history records the choice.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "failed",
+              "detail": "TypeError: portraitPath is not a function. Not an assertion of this unit, but it runs in the same file."
+            }
+          ],
+          "started_at": "2026-11-24T04:53:21.799537+00:00",
+          "ended_at": "2026-11-24T04:54:44.464218+00:00",
+          "duration_ms": 81010,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 28,
+          "tokens_out": 13930,
+          "estimated_cost_usd": 0.055742
+        },
+        {
+          "attempt": 2,
+          "status": "done",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "95eaac4c739428c75fa4b0a494b0616118779039",
+          "from_sha": "95eaac4c739428c75fa4b0a494b0616118779039",
+          "tests": [
+            {
+              "id": "storyPanelLog:lists-history-in-order",
+              "kind": "unit",
+              "name": "tests/storyPanelLog.test.tsx > StoryPanel event log > lists the history lines in order inside the Event log region",
+              "title": "lists the history lines in order inside the Event log region",
+              "scenario": "Given a StoryPanel whose history is ['a', 'b'], when it renders, then the Event log region contains a Story history list whose items read a, then b.",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=20000",
+              "file": "tests/storyPanelLog.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "storyPanelLog:empty-history-message",
+              "kind": "unit",
+              "name": "tests/storyPanelLog.test.tsx > StoryPanel event log > shows the empty message and no Story history list when history is empty",
+              "title": "shows the empty message and no Story history list when history is empty",
+              "scenario": "Given a StoryPanel whose history is [], when it renders, then the Event log region shows 'Nothing has happened yet' and no Story history list exists.",
+              "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx --testTimeout=20000",
+              "file": "tests/storyPanelLog.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "frameKit:story-panel-frame-assertions",
+              "kind": "unit",
+              "name": "tests/frameKit.test.tsx > story panel frame assertions",
+              "title": "story panel frame assertions",
+              "scenario": "Given the StoryPanel with a dialogue node and one inventory item, when it renders, then the root is sf-frame-panel without bg-stone-900 or border-amber-900, the Event log is sf-frame-plaque, all six inventory slots are sf-frame-slot, and the Dialogue region is sf-frame-parchment.",
+              "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=20000",
+              "file": "tests/frameKit.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "frameKit:other-frame-assertions",
+              "kind": "unit",
+              "name": "tests/frameKit.test.tsx > frame kit (other cases in file)",
+              "title": "frame kit assertions for the other components in the file",
+              "scenario": "Given the GameLayout, HeaderOverlay and StoryPanel frame kits, when they render, then their frame classes are applied as specified.",
+              "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx --testTimeout=20000",
+              "file": "tests/frameKit.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "appFlow:playing-view-story-panel",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > App flow: action menu > Given the playing view, then the App-fed story panel shows the Event log, six Inventory slots and the Dialogue region",
+              "title": "App playing view shows the Event log, six Inventory slots and the Dialogue region after Begin",
+              "scenario": "Given App with PhaserHost mocked and getCurrentRound resolved with a Round fixture, when Begin is clicked, then the Event log region, an Inventory region with six listitem slots, and the Dialogue region exist.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "appFlow:bookshelf-action-menu",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > App flow: action menu > Bookshelf action menu opens with Inspect, Push, Search and Leave",
+              "title": "Bookshelf hotspot opens the action menu with Inspect, Push, Search and Leave",
+              "scenario": "Given the playing view, when the Bookshelf hotspot is clicked, then the Bookshelf action menu opens with its four actions.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "appFlow:search-adds-history",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > App flow: story actions and choices > Search adds the hidden door text to the story history",
+              "title": "Search adds the hidden door text to the story history",
+              "scenario": "Given the Bookshelf menu is open, when Search is clicked, then the Story history list contains the hidden door text.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "appFlow:choice-advances-dialogue",
+              "kind": "unit",
+              "name": "tests/appFlow.test.tsx > App flow: story actions and choices > choosing a dialogue option advances to the next dialogue node and records it",
+              "title": "choosing a dialogue option advances to the next node and records it in history",
+              "scenario": "Given the Dialogue region is open, when 'Look around the room' is chosen, then the follow-up node text and 'Okay' choice appear and the history records the choice.",
+              "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx --testTimeout=20000",
+              "file": "tests/appFlow.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T04:55:21.582514+00:00",
+          "ended_at": "2026-11-24T04:55:57.841444+00:00",
+          "duration_ms": 34852,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 10,
+          "tokens_out": 4332,
+          "estimated_cost_usd": 0.017336
+        }
+      ],
+      "started_at": "2026-11-24T04:53:21.799537+00:00",
+      "ended_at": "2026-11-24T04:58:31.514975+00:00",
+      "run_started_at": "2026-11-24T04:58:05.490446+00:00",
+      "duration_ms": 24481,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3520,
+      "estimated_cost_usd": 0.014088
+    },
+    {
+      "unit_id": "REQ-422",
+      "title": "REQ · Panel shows chapter title and a parchment dialogue card with portrait, speaker, line and choices",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-170"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-423",
+      "title": "REQ · Inventory is a 3x2 grid of slots with item icons and names, empty slots included",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-170"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-424",
+      "title": "REQ · Event log renders game history in its own scrolling region and App feeds real state",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-170"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-170",
+      "title": "Evidence: StoryPanel kit rebuild unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-844",
+        "UNIT-845",
+        "UNIT-846",
+        "UNIT-847",
+        "UNIT-848",
+        "UNIT-849"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-847",
+      "title": "Act: Fix Verify failure — Dialogue card, portrait and choices unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "95eaac4c739428c75fa4b0a494b0616118779039",
+      "from_sha": "c6dfe246e21f80d9ef4eb9e391426001fda97e0a",
+      "started_at": "2026-11-24T04:54:32.820404+00:00",
+      "ended_at": "2026-11-24T04:55:47.220769+00:00",
+      "run_started_at": "2026-11-24T04:54:32.820404+00:00",
+      "duration_ms": 72788,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 8001,
+      "estimated_cost_usd": 0.032022
+    },
+    {
+      "unit_id": "FIX-UNIT-849",
+      "title": "Act: Fix Verify failure — Event log and App-fed StoryPanel unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "c6dfe246e21f80d9ef4eb9e391426001fda97e0a",
+      "from_sha": "5028c64c7661d7472d44aaa99096d51707de4b36",
+      "started_at": "2026-11-24T04:54:44.472936+00:00",
+      "ended_at": "2026-11-24T04:55:21.305992+00:00",
+      "run_started_at": "2026-11-24T04:54:44.472936+00:00",
+      "duration_ms": 35314,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3584,
+      "estimated_cost_usd": 0.014346
+    },
+    {
+      "unit_id": "FIX-UNIT-848",
+      "title": "Act: Fix Verify failure — Inventory grid slots, icons and empty slots unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "0749c8d2bad0a19cf0e0fa1c4307a4b474e30f99",
+      "from_sha": "bd0c61349ae89a3744d743ee1129493b01eacaa9",
+      "started_at": "2026-11-24T04:57:25.332384+00:00",
+      "ended_at": "2026-11-24T04:58:05.354447+00:00",
+      "run_started_at": "2026-11-24T04:57:25.332384+00:00",
+      "duration_ms": 38616,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 3473,
+      "estimated_cost_usd": 0.013903
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-424",
+      "dst": "UNIT-846"
+    },
+    {
+      "src": "UNIT-845",
+      "dst": "UNIT-848"
+    },
+    {
+      "src": "UNIT-849",
+      "dst": "EVD-170"
+    },
+    {
+      "src": "REQ-423",
+      "dst": "UNIT-845"
+    },
+    {
+      "src": "UNIT-847",
+      "dst": "EVD-170"
+    },
+    {
+      "src": "UNIT-846",
+      "dst": "UNIT-849"
+    },
+    {
+      "src": "UNIT-846",
+      "dst": "EVD-170"
+    },
+    {
+      "src": "UNIT-844",
+      "dst": "EVD-170"
+    },
+    {
+      "src": "UNIT-844",
+      "dst": "UNIT-847"
+    },
+    {
+      "src": "INT-170",
+      "dst": "REQ-422"
+    },
+    {
+      "src": "REQ-423",
+      "dst": "UNIT-848"
+    },
+    {
+      "src": "INT-170",
+      "dst": "REQ-424"
+    },
+    {
+      "src": "REQ-424",
+      "dst": "UNIT-849"
+    },
+    {
+      "src": "INT-170",
+      "dst": "REQ-423"
+    },
+    {
+      "src": "REQ-422",
+      "dst": "UNIT-844"
+    },
+    {
+      "src": "REQ-422",
+      "dst": "UNIT-847"
+    },
+    {
+      "src": "UNIT-845",
+      "dst": "EVD-170"
+    },
+    {
+      "src": "UNIT-848",
+      "dst": "EVD-170"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85yc5",
+  "base_sha": "36ae063c581e641959e8d72ad6c865a47882e28d",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85YC52V99AYNE44D0KNQWTX:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T04:52:37.595575+00:00",
+  "updated_at": "2026-11-24T04:58:58.721112+00:00",
+  "completed_at": "2026-11-24T04:58:56.752963+00:00",
+  "duration_ms": 379157,
+  "usage_stats": {
+    "total_duration_ms": 701709,
+    "total_tokens_in": 244,
+    "total_tokens_out": 99243,
+    "total_estimated_cost_usd": 0.397167
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-844",
+    "UNIT-845",
+    "UNIT-846",
+    "UNIT-847",
+    "UNIT-848",
+    "UNIT-849"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-844",
+        "title": "Act: Frame StoryPanel and add portrait dialogue card with choices list",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-844 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-845",
+        "title": "Act: Add buildInventorySlots and render the 3x2 inventory grid",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-845 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-846",
+        "title": "Act: Render the framed event log and confirm App wiring",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-846 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-847",
+        "title": "Verify: Dialogue card, portrait and choices unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-847 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-848",
+        "title": "Verify: Inventory grid slots, icons and empty slots unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-848 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-849",
+        "title": "Verify: Event log and App-fed StoryPanel unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-170",
+            "path": ".ai-dlc/evidence/EVD-170.md",
+            "title": "Evidence: StoryPanel kit rebuild unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-849 unless acceptance outcomes recorded in EVD-170 (.ai-dlc/evidence/EVD-170.md; \"Evidence: StoryPanel kit rebuild unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T04:52:40.218503+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-844",
+    "UNIT-845",
+    "UNIT-846",
+    "UNIT-847",
+    "UNIT-848",
+    "UNIT-849"
+  ]
+}

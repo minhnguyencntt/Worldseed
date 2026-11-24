@@ -1,0 +1,66 @@
+{
+  "id": "01M84GTSZTXKFT1RC02PPCYN55",
+  "intent_id": "01M84GQXYGEM5FW8AXNR539H4W",
+  "title": "Act: Close expired OPEN Rounds in Poll through the Closer",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add the expiry case to Poll that calls Closer.Close and records ClosedNow",
+  "description": "Extend Poller.Poll in poller.go with an OPEN case using the injected Clock.",
+  "acceptance_criteria": [
+    "Expired OPEN Rounds are closed once; non-expired are not.",
+    "Closed IDs appear in ClosedNow and Closed."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/poller/poller.go"
+    ],
+    "out_of_scope": [
+      "Error handling beyond collecting Close errors",
+      "Tests"
+    ],
+    "preserve": [
+      "Detection behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Use p.clock.Now().Before(r.EndsAt) for the expiry check",
+    "New file: `backend/worker/internal/poller/poller.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "poller.go builds and expired Rounds are closed",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-217.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GT5FN2VKTXMNQRM2W7TGK",
+    "trace:01M8470M8T9BC85XFQSVAAYGZG",
+    "artifact:.ai-dlc/units/UNIT-217.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GTSZT173D1BFZF75TH6FG"
+  ],
+  "sim_node_id": "01M84GT5FNKSY8PX338CP7Y3X6",
+  "feature_id": "01M8470M8T9BC85XFQSVAAYGZG",
+  "artifact_path": ".ai-dlc/units/UNIT-217.md",
+  "artifact_id": "UNIT-217",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/poller/poller.go",
+      "symbol": "Poller.Poll",
+      "lines": "after the StatusClosed case of the switch written by act-detect",
+      "action": "Add case r.Status == StatusOpen && !p.clock.Now().Before(r.EndsAt): call p.closer.Close(ctx, p.worldID, r.ID); on nil error append r.ID to res.ClosedNow and res.Closed; on error append fmt.Errorf(\"poller: close %s: %w\", r.ID, err) to a local errs slice. Return res and errors.Join(errs...) at the end. Convert the switch to a tagless switch to allow the condition.",
+      "code": "case r.Status == StatusOpen && !p.clock.Now().Before(r.EndsAt):\n\tif err := p.closer.Close(ctx, p.worldID, r.ID); err != nil {\n\t\terrs = append(errs, fmt.Errorf(\"poller: close %s: %w\", r.ID, err))\n\t\tcontinue\n\t}\n\tres.ClosedNow = append(res.ClosedNow, r.ID)\n\tres.Closed = append(res.Closed, r.ID)",
+      "expected": "Expired OPEN Rounds are closed once and reported."
+    }
+  ],
+  "created_at": "2026-11-23T15:36:43.257859+00:00",
+  "updated_at": "2026-11-23T15:38:54.476331+00:00"
+}

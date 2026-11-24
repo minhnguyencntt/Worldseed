@@ -1,0 +1,72 @@
+{
+  "id": "01M856E3NK9F6B9B0KE7KSX34M",
+  "intent_id": "01M8569GJC72TXDCT8GJQAAMQH",
+  "title": "Verify: preload.test.ts BootScene planner and fallback unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "BootScene preload and resolveKey tests with mocked Phaser",
+  "description": "Add BootScene tests to game/tests/preload.test.ts mirroring the mocking pattern of game/frontend/tests/bootScenePreload.test.ts.",
+  "acceptance_criteria": [
+    "Given known bed and unknown ghost refs, when preload runs, then load.image is called once for objects/bed and console.warn names objects/ghost",
+    "Given unknown id, when resolveKey runs, then FALLBACK_KEY returned",
+    "Given loaderror on a known id, when resolveKey runs, then FALLBACK_KEY returned"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene describe in preload.test.ts"
+    ],
+    "out_of_scope": [
+      "Real Phaser"
+    ],
+    "preserve": [
+      "Frontend tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock phaser (Scene class with events.once), the content module, ../store/gameStore, ./events and ./effectContext paths of BootScene using absolute frontend paths"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-523.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M856BHHY6JTR87Q0CRTKCKYW",
+    "trace:01M85643NDKT0TCTDZGW5K5P80",
+    "artifact:.ai-dlc/units/UNIT-523.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M856E3NKDVTC5CSNR3VM5AQS"
+  ],
+  "sim_node_id": "01M856BHHYEW5XCWJFR4P7GM4P",
+  "artifact_path": ".ai-dlc/units/UNIT-523.md",
+  "artifact_id": "UNIT-523",
+  "steps": [
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: vi.mock block",
+      "lines": "top of file",
+      "action": "Add vi.mock for 'phaser' (default Scene class with events={once:vi.fn()}, Scenes.Events.SHUTDOWN), for the frontend src/runtime/content (scene with objects/bed and objects/ghost, manifest with objects/bed and objects/desk), and stub modules for store/gameStore, phaser/events and phaser/effectContext",
+      "command": "cd game && npx vitest run tests/preload.test.ts",
+      "expected": "File loads without resolution errors"
+    },
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: describe('BootScene')",
+      "lines": "after resolveTextureKey describe",
+      "action": "Import BootScene and FALLBACK_KEY from ../frontend/src/phaser/BootScene; stub boot.load={image,on} and boot.make.graphics fake; test preload calls image once with ('objects/bed','assets/<manifest path>') and warns 'unknown asset ref: objects/ghost'; test resolveKey('nope') and a loaderror-failed id return FALLBACK_KEY",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene",
+      "expected": "BootScene tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T21:54:15.859008+00:00",
+  "updated_at": "2026-11-23T21:56:24.891755+00:00"
+}

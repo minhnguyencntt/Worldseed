@@ -1,0 +1,74 @@
+{
+  "id": "01M864WFYDVZ1NYNXKVX58N4PA",
+  "intent_id": "01M864BB4QHPD4PRQ9S91WZ9P0",
+  "title": "Verify: GameLayout centered story dialog unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "New layout tests plus replacement of obsolete sidebar tests.",
+  "description": "Write tests/layoutDialog.test.tsx and update tests that assert the aside or Story toggle.",
+  "acceptance_criteria": [
+    "No aside and no Story button",
+    "story-dialog contains the story node and the scene node stays mounted"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/layoutDialog.test.tsx",
+      "game/frontend/tests/layout.test.tsx",
+      "game/frontend/tests/layoutSplit.test.tsx",
+      "game/frontend/tests/layoutStack.test.tsx",
+      "game/frontend/tests/layoutDesktop.test.tsx",
+      "game/frontend/tests/app.test.tsx"
+    ],
+    "out_of_scope": [
+      "Real browser"
+    ],
+    "preserve": [
+      "Header slot tests"
+    ]
+  },
+  "technical_constraints": [
+    "jsdom; no server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-878.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M864EG64CPV2H4CAPDEHZ3ZF",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-878.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "NEW",
+  "depends_on": [
+    "01M864WFYDRXW51HKPG965N73C"
+  ],
+  "sim_node_id": "01M864EG644CJTTRBGWM123MA2",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-878.md",
+  "artifact_id": "UNIT-878",
+  "steps": [
+    {
+      "file": "game/frontend/tests/layoutDialog.test.tsx",
+      "symbol": "new: GameLayout centered dialog",
+      "lines": "new",
+      "action": "Add test rendering <GameLayout header={<i data-testid='h'/>} scene={<div data-testid='scene'/>} story={<p>Hello</p>}/>; expect container.querySelector('aside') toBeNull, queryByRole('button',{name:'Story'}) toBeNull, getByTestId('story-dialog') toHaveClass('sf-dialog') and toHaveTextContent('Hello'), and getByTestId('scene') in the document.",
+      "command": "cd game/frontend && npx vitest run tests/layoutDialog.test.tsx",
+      "expected": "The test passes."
+    },
+    {
+      "file": "game/frontend/tests/layout.test.tsx",
+      "symbol": "obsolete drawer/aside tests",
+      "lines": "L11-L90",
+      "action": "Delete the tests asserting the Story toggle, aside data-state and drawerOpen, and in layoutSplit.test.tsx, layoutStack.test.tsx and layoutDesktop.test.tsx remove the assertions on aside, grid-cols 3fr/1fr, max-md drawer classes and the Story button; also delete the Story button expectation at app.test.tsx L61.",
+      "command": "cd game/frontend && npx vitest run tests/layout.test.tsx tests/layoutSplit.test.tsx tests/layoutStack.test.tsx tests/layoutDesktop.test.tsx tests/app.test.tsx",
+      "expected": "All of these files pass with no sidebar assertions."
+    }
+  ],
+  "created_at": "2026-11-24T06:46:24.461386+00:00"
+}

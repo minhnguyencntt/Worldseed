@@ -1,0 +1,63 @@
+{
+  "id": "01M84ESEQZ7DX9EMKPRFW7M1WA",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "REQ · Executions run in an isolated worktree with timeout, retry, budget, approval gate and structured reports",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Runner orchestrating lock, worktree, agent attempts, budget and approval, writing reports",
+  "description": "Context: builds on lock and state packages. Desired behavior: runner.Runner.Run acquires the World lock, creates a worktree through a Worktrees interface, calls an Agent per attempt under a context timeout, retries failures up to MaxRetries, stops when cumulative cost reaches MaxBudgetUSD, then sets AWAITING_APPROVAL; Publish refuses until the record is APPROVED unless auto_publish. A report JSON is written to development/executions/<id>.report.json. Why: safe, bounded, supervised development.",
+  "acceptance_criteria": [
+    "Given the lock is already held, when Run is called, then it returns lock.ErrLocked and no worktree is created",
+    "Given an agent that blocks past ExecTimeout on the fake clock-driven context, when Run runs, then the attempt fails with a timeout error and is retried",
+    "Given an agent failing every time, when Run runs with MaxRetries 2, then exactly 3 attempts are made and the record is FAILED",
+    "Given attempts whose cost reaches MaxBudgetUSD, when Run runs, then ErrBudgetExceeded is returned and no further attempt starts",
+    "Given a successful attempt, when Run ends, then status is AWAITING_APPROVAL and Publish returns ErrNotApproved until approved; the worktree is always removed",
+    "Given any outcome, then a structured report with attempts, cost, status and error exists under development/executions"
+  ],
+  "scope": {
+    "in_scope": [
+      "worker/internal/runner"
+    ],
+    "out_of_scope": [
+      "Real Git worktree CLI",
+      "Publishing artifacts"
+    ],
+    "preserve": [
+      "state.Execution fields",
+      "lock API"
+    ]
+  },
+  "technical_constraints": [
+    "Agent interface: Run(ctx, workDir, prompt string) (costUSD float64, output string, err error); Worktrees interface: Add(ctx, path, branch, baseRef) error and Remove(ctx, path) error"
+  ],
+  "dependencies": [
+    "R1",
+    "R2"
+  ],
+  "definition_of_done": [
+    "Runner behaves per criteria",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-084.md`"
+  ],
+  "non_functional": [
+    "Worktree removal runs on a non-cancelled context"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14SVHM4ZBNMJTXVGTXW",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-084.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZR9YFPGAMECA789RV"
+  ],
+  "sim_node_id": "01M84ES14SJ2ZEWAX113NT2N7R",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-084.md",
+  "artifact_id": "REQ-084",
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.168951+00:00"
+}

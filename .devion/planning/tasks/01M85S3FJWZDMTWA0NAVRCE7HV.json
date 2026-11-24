@@ -1,0 +1,90 @@
+{
+  "id": "01M85S3FJWZDMTWA0NAVRCE7HV",
+  "intent_id": "01M85RXTNZB1TQE3PDK3QXNYRX",
+  "title": "Act: Add createFsIo and use it in the CLI entry",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Build the ArtIo from default paths with injected fs and drop the empty-manifest fallback",
+  "description": "Replace the cwd-relative entry block in generateArt.ts with an ArtIo built by createFsIo(defaultArtPaths(dirname(fileURLToPath(import.meta.url))), fs).",
+  "acceptance_criteria": [
+    "createFsIo returns assetsRoot and manifestPath from the given paths",
+    "readText on a missing manifest throws instead of returning an empty manifest",
+    "The entry block passes real node:fs functions into createFsIo"
+  ],
+  "scope": {
+    "in_scope": [
+      "generateArt.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "VITEST guard around the entry block"
+    ]
+  },
+  "technical_constraints": [
+    "Hard constraint: deterministic in-repo art only",
+    "Code path: `game/frontend/scripts/generateArt.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Entry block no longer references 'public/assets' strings or EMPTY_MANIFEST_TEXT",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-787.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85RZB16CJKDT7CNZMK3JHZF",
+    "trace:01M859KF8VMCCBYVT7R36YAJTB",
+    "artifact:.ai-dlc/units/UNIT-787.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85S3FJWG5CGK8EHSYT0TN5K"
+  ],
+  "sim_node_id": "01M85RZB16XPKREJY4522N0RHS",
+  "feature_id": "01M859KF8VMCCBYVT7R36YAJTB",
+  "artifact_path": ".ai-dlc/units/UNIT-787.md",
+  "artifact_id": "UNIT-787",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "imports",
+      "lines": "L1-L2",
+      "action": "Add import { fileURLToPath } from 'node:url'; keep existing node:fs imports.",
+      "code": "import { fileURLToPath } from 'node:url';",
+      "expected": "fileURLToPath available"
+    },
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "new: createFsIo",
+      "lines": "after defaultArtPaths",
+      "action": "Add exported FsLike interface { readFileSync(p: string, enc: 'utf8'): string; writeFileSync(p: string, d: Uint8Array | string): void; mkdirSync(p: string, o: { recursive: true }): void } and createFsIo(paths: ArtPaths, fs: FsLike): ArtIo. readText calls fs.readFileSync(path,'utf8') with no existence fallback; write calls fs.mkdirSync(dirname(path),{recursive:true}) then fs.writeFileSync(path,data).",
+      "expected": "ArtIo built over injected fs"
+    },
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "EMPTY_MANIFEST_TEXT",
+      "lines": "L13",
+      "action": "Delete the EMPTY_MANIFEST_TEXT constant.",
+      "expected": "No empty-manifest fallback remains"
+    },
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "entry block (if process.env.VITEST === undefined)",
+      "lines": "L38-L50",
+      "action": "Replace the body with runGenerateArt(createFsIo(defaultArtPaths(dirname(fileURLToPath(import.meta.url))), { readFileSync, writeFileSync, mkdirSync })); remove the unused existsSync import.",
+      "code": "runGenerateArt(createFsIo(defaultArtPaths(dirname(fileURLToPath(import.meta.url))), { readFileSync, writeFileSync, mkdirSync }));",
+      "expected": "CLI uses the app manifest and assets paths regardless of cwd"
+    }
+  ],
+  "created_at": "2026-11-24T03:20:30.556703+00:00",
+  "updated_at": "2026-11-24T03:23:33.060170+00:00"
+}

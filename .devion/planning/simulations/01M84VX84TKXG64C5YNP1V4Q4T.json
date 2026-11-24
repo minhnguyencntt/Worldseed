@@ -1,0 +1,511 @@
+{
+  "intent_id": "01M84VX84TKXG64C5YNP1V4Q4T",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84VYFYC2V111NJ8S2X00GM4",
+      "kind": "intent",
+      "title": "SG-4.4 · Apply device pixel ratio at runtime",
+      "body": "Context: game/frontend/src/phaser/config.ts exports computeZoom(w,h,dpr) but nothing calls it. buildGameConfig sets no zoom, and PhaserHost's ResizeObserver only calls scale.refresh(). Desired behavior: the zoom computed from window.devicePixelRatio and the container size is passed into the game config at creation, and recomputed in the ResizeObserver callback and when the ratio changes. Expected result: Phaser-mocked unit tests show the zoom is passed in and refreshed on resize. Why: the pixel-art scene stays crisp on high-DPI and resized displays.\n\n## Acceptance criteria\n- Given a container of 1280x720 and dpr 2, when PhaserHost mounts, then createGame receives zoom equal to computeZoom(1280,720,2)\n- Given a mounted PhaserHost, when the ResizeObserver callback fires with a new size or dpr, then scale.setZoom is called with the recomputed zoom and scale.refresh is called\n- Given a devicePixelRatio change, when the media query change event fires, then the zoom is recomputed and applied\n\n\n## Scope\n- In scope: buildGameConfig and createGame zoom parameter\n- In scope: PhaserHost zoom computation and refresh\n- Out of scope: Changing GAME_WIDTH/GAME_HEIGHT\n- Out of scope: Changing the computeZoom formula\n- Out of scope: Scene or asset changes\n- Preserve: Single game instance and destroy(true) cleanup on unmount\n- Preserve: pixelArt, roundPixels and FIT scale settings\n\n\n## Technical constraints\n- Phaser 3.90 APIs only (ScaleManager.setZoom, scale.refresh)\n- Unit tests mock createGame and Phaser, no real browser\n\n\n## Definition of done\n- Both requirements verified by passing unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pass computeZoom(window.devicePixelRatio, container size) into the Phaser game and refresh it on resize",
+      "description": "Context: game/frontend/src/phaser/config.ts exports computeZoom(w,h,dpr) but nothing calls it. buildGameConfig sets no zoom, and PhaserHost's ResizeObserver only calls scale.refresh(). Desired behavior: the zoom computed from window.devicePixelRatio and the container size is passed into the game config at creation, and recomputed in the ResizeObserver callback and when the ratio changes. Expected result: Phaser-mocked unit tests show the zoom is passed in and refreshed on resize. Why: the pixel-art scene stays crisp on high-DPI and resized displays.",
+      "acceptance_criteria": [
+        "Given a container of 1280x720 and dpr 2, when PhaserHost mounts, then createGame receives zoom equal to computeZoom(1280,720,2)",
+        "Given a mounted PhaserHost, when the ResizeObserver callback fires with a new size or dpr, then scale.setZoom is called with the recomputed zoom and scale.refresh is called",
+        "Given a devicePixelRatio change, when the media query change event fires, then the zoom is recomputed and applied"
+      ],
+      "scope": {
+        "in_scope": [
+          "buildGameConfig and createGame zoom parameter",
+          "PhaserHost zoom computation and refresh"
+        ],
+        "out_of_scope": [
+          "Changing GAME_WIDTH/GAME_HEIGHT",
+          "Changing the computeZoom formula",
+          "Scene or asset changes"
+        ],
+        "preserve": [
+          "Single game instance and destroy(true) cleanup on unmount",
+          "pixelArt, roundPixels and FIT scale settings"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only (ScaleManager.setZoom, scale.refresh)",
+        "Unit tests mock createGame and Phaser, no real browser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements verified by passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-094.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M843NJMCH5NMK1PNJ4293CEP",
+      "links": [
+        "trace:01M843NJMCH5NMK1PNJ4293CEP",
+        "artifact:.ai-dlc/intent/INT-094.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-094.md",
+      "artifact_id": "INT-094"
+    },
+    {
+      "id": "01M84VYFYCT9YRVGBJFZQMQPYA",
+      "kind": "requirement",
+      "title": "REQ · Game config accepts and applies a zoom computed with computeZoom",
+      "body": "Context: buildGameConfig(parent, scenes) in game/frontend/src/phaser/config.ts builds the config without zoom, and createGame forwards only parent and scenes. Desired behavior: an optional zoom argument is forwarded and set as scale.zoom. Expected result: the Phaser game starts with the DPR-derived zoom. Why: initial render uses the correct pixel density.\n\n## Acceptance criteria\n- Given zoom 3, when buildGameConfig(parent, scenes, 3) is called, then config.scale.zoom equals 3\n- Given no zoom, when buildGameConfig(parent, scenes) is called, then config.scale.zoom equals 1\n- Given createGame(parent, scenes, 2), when it runs, then buildGameConfig receives zoom 2\n\n\n## Scope\n- In scope: config.ts buildGameConfig\n- In scope: createGame.ts createGame\n- Out of scope: PhaserHost\n- Preserve: Existing render and scale keys\n\n\n## Technical constraints\n- Phaser 3.90 config key scale.zoom\n\n\n## Definition of done\n- Config carries zoom and defaults to 1\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "buildGameConfig and createGame take a zoom and put it in the Phaser config",
+      "description": "Context: buildGameConfig(parent, scenes) in game/frontend/src/phaser/config.ts builds the config without zoom, and createGame forwards only parent and scenes. Desired behavior: an optional zoom argument is forwarded and set as scale.zoom. Expected result: the Phaser game starts with the DPR-derived zoom. Why: initial render uses the correct pixel density.",
+      "acceptance_criteria": [
+        "Given zoom 3, when buildGameConfig(parent, scenes, 3) is called, then config.scale.zoom equals 3",
+        "Given no zoom, when buildGameConfig(parent, scenes) is called, then config.scale.zoom equals 1",
+        "Given createGame(parent, scenes, 2), when it runs, then buildGameConfig receives zoom 2"
+      ],
+      "scope": {
+        "in_scope": [
+          "config.ts buildGameConfig",
+          "createGame.ts createGame"
+        ],
+        "out_of_scope": [
+          "PhaserHost"
+        ],
+        "preserve": [
+          "Existing render and scale keys"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 config key scale.zoom"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Config carries zoom and defaults to 1",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-232.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84VYFYC2V111NJ8S2X00GM4",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84VYFYC2V111NJ8S2X00GM4",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-232.md"
+      ],
+      "depends_on": [
+        "01M84VYFYC2V111NJ8S2X00GM4"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-232.md",
+      "artifact_id": "REQ-232"
+    },
+    {
+      "id": "01M84VYFYCDNPHPE71MV2BGVN6",
+      "kind": "requirement",
+      "title": "REQ · PhaserHost computes the zoom on mount and refreshes it on resize and ratio change",
+      "body": "Context: PhaserHost.tsx creates the game with createGame(container, scenes) and the ResizeObserver only refreshes. Desired behavior: compute zoom at mount, pass it to createGame, recompute in the ResizeObserver callback and on devicePixelRatio change, and call scale.setZoom then scale.refresh. Expected result: zoom stays correct as the container or ratio changes. Why: crisp pixels at any size.\n\n## Acceptance criteria\n- Given container clientWidth 1280, clientHeight 720 and dpr 2, when mounted, then createGame is called with third argument computeZoom(1280,720,2)\n- Given the container size changes, when the ResizeObserver callback fires, then scale.setZoom is called with the new zoom before scale.refresh\n- Given the dpr changes, when the matchMedia change listener fires, then scale.setZoom is called with the zoom for the new dpr and the listener is removed on unmount\n\n\n## Scope\n- In scope: PhaserHost.tsx\n- Out of scope: computeZoom formula\n- Preserve: StrictMode single-instance behaviour\n- Preserve: destroy(true) on unmount\n- Preserve: observer.disconnect on unmount\n\n\n## Technical constraints\n- Guard window.matchMedia when undefined\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Zoom passed at creation and refreshed on resize and ratio change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "PhaserHost uses computeZoom with devicePixelRatio and container size",
+      "description": "Context: PhaserHost.tsx creates the game with createGame(container, scenes) and the ResizeObserver only refreshes. Desired behavior: compute zoom at mount, pass it to createGame, recompute in the ResizeObserver callback and on devicePixelRatio change, and call scale.setZoom then scale.refresh. Expected result: zoom stays correct as the container or ratio changes. Why: crisp pixels at any size.",
+      "acceptance_criteria": [
+        "Given container clientWidth 1280, clientHeight 720 and dpr 2, when mounted, then createGame is called with third argument computeZoom(1280,720,2)",
+        "Given the container size changes, when the ResizeObserver callback fires, then scale.setZoom is called with the new zoom before scale.refresh",
+        "Given the dpr changes, when the matchMedia change listener fires, then scale.setZoom is called with the zoom for the new dpr and the listener is removed on unmount"
+      ],
+      "scope": {
+        "in_scope": [
+          "PhaserHost.tsx"
+        ],
+        "out_of_scope": [
+          "computeZoom formula"
+        ],
+        "preserve": [
+          "StrictMode single-instance behaviour",
+          "destroy(true) on unmount",
+          "observer.disconnect on unmount"
+        ]
+      },
+      "technical_constraints": [
+        "Guard window.matchMedia when undefined"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Zoom passed at creation and refreshed on resize and ratio change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-233.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84VYFYC2V111NJ8S2X00GM4",
+      "matched_feature_id": "01M8457KMNZEKD0H1DQSEXK0KS",
+      "links": [
+        "parent:01M84VYFYC2V111NJ8S2X00GM4",
+        "trace:01M8457KMNZEKD0H1DQSEXK0KS",
+        "artifact:.ai-dlc/requirements/REQ-233.md"
+      ],
+      "depends_on": [
+        "01M84VYFYC2V111NJ8S2X00GM4"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-233.md",
+      "artifact_id": "REQ-233"
+    },
+    {
+      "id": "01M84VYFYCPHFNBF49R024D8DS",
+      "kind": "unit",
+      "title": "Act: Add zoom parameter to buildGameConfig and createGame",
+      "body": "Add an optional zoom argument to buildGameConfig and createGame so the game is created with the computed zoom.\n\n## Acceptance criteria\n- buildGameConfig sets scale.zoom to the given zoom, default 1\n- createGame forwards its zoom argument\n\n\n## Scope\n- In scope: config.ts\n- In scope: createGame.ts\n- Out of scope: PhaserHost\n- Preserve: Other config keys\n\n\n## Technical constraints\n- Phaser 3.90\n- Code path: `game/frontend/src/phaser/config.ts`\n- Code path: `game/frontend/src/phaser/createGame.ts`\n\n\n## Definition of done\n- Signatures updated and type-check clean\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Forward optional zoom into scale.zoom",
+      "description": "Add an optional zoom argument to buildGameConfig and createGame so the game is created with the computed zoom.",
+      "acceptance_criteria": [
+        "buildGameConfig sets scale.zoom to the given zoom, default 1",
+        "createGame forwards its zoom argument"
+      ],
+      "scope": {
+        "in_scope": [
+          "config.ts",
+          "createGame.ts"
+        ],
+        "out_of_scope": [
+          "PhaserHost"
+        ],
+        "preserve": [
+          "Other config keys"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Code path: `game/frontend/src/phaser/config.ts`",
+        "Code path: `game/frontend/src/phaser/createGame.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Signatures updated and type-check clean",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-464.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84VYFYCT9YRVGBJFZQMQPYA",
+      "matched_feature_id": "01M84SFS5W4SCBD6Q93YG36RTD",
+      "links": [
+        "parent:01M84VYFYCT9YRVGBJFZQMQPYA",
+        "trace:01M84SFS5W4SCBD6Q93YG36RTD",
+        "artifact:.ai-dlc/units/UNIT-464.md"
+      ],
+      "depends_on": [
+        "01M84VYFYCT9YRVGBJFZQMQPYA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-464.md",
+      "artifact_id": "UNIT-464",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/config.ts",
+          "symbol": "buildGameConfig",
+          "lines": "L10-L28",
+          "action": "Add third parameter zoom: number = 1 and add zoom to the scale object next to mode and autoCenter.",
+          "code": "scenes: Phaser.Types.Scenes.SceneType[], zoom = 1 ... scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, zoom }",
+          "expected": "buildGameConfig(p, s, 3).scale.zoom === 3 and default is 1"
+        },
+        {
+          "file": "game/frontend/src/phaser/createGame.ts",
+          "symbol": "createGame",
+          "lines": "L5-L10",
+          "action": "Add third parameter zoom = 1 and pass it as the third argument to buildGameConfig.",
+          "code": "return new Phaser.Game(buildGameConfig(parent, scenes, zoom));",
+          "expected": "createGame forwards zoom to buildGameConfig"
+        }
+      ]
+    },
+    {
+      "id": "01M84VYFYCJ0WWQE4TVD52HWSC",
+      "kind": "unit",
+      "title": "Act: Compute and refresh zoom in PhaserHost",
+      "body": "PhaserHost computes the zoom from the container size and window.devicePixelRatio, passes it to createGame, and re-applies it via scale.setZoom plus scale.refresh on resize and ratio change.\n\n## Acceptance criteria\n- createGame receives computed zoom\n- Resize and dpr change call setZoom then refresh\n\n\n## Scope\n- In scope: PhaserHost.tsx\n- Out of scope: config.ts\n- Preserve: Cleanup and single instance\n\n\n## Technical constraints\n- Phaser 3.90 ScaleManager.setZoom\n- Code path: `game/frontend/src/components/PhaserHost.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Host wired and type-check clean\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Use computeZoom at mount, on resize and on dpr change",
+      "description": "PhaserHost computes the zoom from the container size and window.devicePixelRatio, passes it to createGame, and re-applies it via scale.setZoom plus scale.refresh on resize and ratio change.",
+      "acceptance_criteria": [
+        "createGame receives computed zoom",
+        "Resize and dpr change call setZoom then refresh"
+      ],
+      "scope": {
+        "in_scope": [
+          "PhaserHost.tsx"
+        ],
+        "out_of_scope": [
+          "config.ts"
+        ],
+        "preserve": [
+          "Cleanup and single instance"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 ScaleManager.setZoom",
+        "Code path: `game/frontend/src/components/PhaserHost.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Host wired and type-check clean",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-465.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84VYFYCDNPHPE71MV2BGVN6",
+      "matched_feature_id": "01M84SFS5XK9YFCZH1C0KG6AEE",
+      "links": [
+        "parent:01M84VYFYCDNPHPE71MV2BGVN6",
+        "trace:01M84SFS5XK9YFCZH1C0KG6AEE",
+        "artifact:.ai-dlc/units/UNIT-465.md"
+      ],
+      "depends_on": [
+        "01M84VYFYCDNPHPE71MV2BGVN6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-465.md",
+      "artifact_id": "UNIT-465",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/PhaserHost.tsx",
+          "symbol": "PhaserHost",
+          "lines": "L1-L3",
+          "action": "Import computeZoom from '../phaser/config'.",
+          "code": "import { computeZoom } from '../phaser/config';",
+          "expected": "computeZoom available"
+        },
+        {
+          "file": "game/frontend/src/components/PhaserHost.tsx",
+          "symbol": "PhaserHost useEffect",
+          "lines": "L13-L30",
+          "action": "Define const currentZoom = () => computeZoom(container.clientWidth, container.clientHeight, window.devicePixelRatio) once container is non-null; pass currentZoom() as third argument to createGame; in the ResizeObserver callback call game.scale.setZoom(currentZoom()) then game.scale.refresh(); also register a matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`) 'change' listener (only if window.matchMedia exists) running the same update, and remove it in cleanup.",
+          "code": "gameRef.current = createGame(container, scenes ?? [], currentZoom());",
+          "expected": "Zoom passed at creation and refreshed on resize and dpr change"
+        }
+      ]
+    },
+    {
+      "id": "01M84VYFYC0YAHGMSFDR04ZAK0",
+      "kind": "unit",
+      "title": "Verify: Config and createGame pass zoom unit tests",
+      "body": "Unit tests with Phaser mocked prove that zoom is put into the config and forwarded by createGame.\n\n## Acceptance criteria\n- Config zoom set and defaults to 1\n- createGame forwards zoom\n\n\n## Scope\n- In scope: tests/phaserConfig.test.ts\n- Out of scope: PhaserHost tests\n- Preserve: Existing config tests\n\n\n## Technical constraints\n- No real Phaser canvas\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Phaser-mocked tests for zoom in config",
+      "description": "Unit tests with Phaser mocked prove that zoom is put into the config and forwarded by createGame.",
+      "acceptance_criteria": [
+        "Config zoom set and defaults to 1",
+        "createGame forwards zoom"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/phaserConfig.test.ts"
+        ],
+        "out_of_scope": [
+          "PhaserHost tests"
+        ],
+        "preserve": [
+          "Existing config tests"
+        ]
+      },
+      "technical_constraints": [
+        "No real Phaser canvas"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-466.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VYFYCPHFNBF49R024D8DS",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84VYFYCPHFNBF49R024D8DS",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-466.md"
+      ],
+      "depends_on": [
+        "01M84VYFYCPHFNBF49R024D8DS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-466.md",
+      "artifact_id": "UNIT-466",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserConfig.test.ts",
+          "symbol": "new: it('buildGameConfig sets scale.zoom and defaults to 1')",
+          "lines": "after existing tests",
+          "action": "Add a test calling buildGameConfig(document.createElement('div'), [], 3) and asserting scale.zoom is 3, then without the third argument asserting scale.zoom is 1. Follow the file's existing Phaser import or mock approach.",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/phaserConfig.test.ts",
+          "symbol": "new: it('createGame forwards zoom to the Phaser.Game config')",
+          "lines": "after previous test",
+          "action": "Use vi.mock('phaser') with a fake Game class capturing its config argument; call createGame(div, [], 2) and assert captured config.scale.zoom equals 2.",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts -t 'forwards zoom'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84VYFYCQT5Y41SKWF7KWHSN",
+      "kind": "unit",
+      "title": "Verify: PhaserHost zoom pass-in and refresh unit tests",
+      "body": "Unit tests with createGame, ResizeObserver and matchMedia mocked prove zoom is passed in and refreshed.\n\n## Acceptance criteria\n- Mount passes computeZoom\n- Resize and dpr change call setZoom then refresh\n\n\n## Scope\n- In scope: tests/phaserHost.test.tsx\n- Out of scope: Real browser\n- Preserve: Existing lifecycle tests\n\n\n## Technical constraints\n- Reuse FakeResizeObserver and createGameMock in the file; add setZoom: vi.fn() to the fake scale\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked createGame tests for zoom at mount, resize and dpr change",
+      "description": "Unit tests with createGame, ResizeObserver and matchMedia mocked prove zoom is passed in and refreshed.",
+      "acceptance_criteria": [
+        "Mount passes computeZoom",
+        "Resize and dpr change call setZoom then refresh"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/phaserHost.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real browser"
+        ],
+        "preserve": [
+          "Existing lifecycle tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse FakeResizeObserver and createGameMock in the file; add setZoom: vi.fn() to the fake scale"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-467.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VYFYCJ0WWQE4TVD52HWSC",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84VYFYCJ0WWQE4TVD52HWSC",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-467.md"
+      ],
+      "depends_on": [
+        "01M84VYFYCJ0WWQE4TVD52HWSC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-467.md",
+      "artifact_id": "UNIT-467",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserHost.test.tsx",
+          "symbol": "FakeGame type and createGameMock",
+          "lines": "L5-L17",
+          "action": "Add setZoom: ReturnType<typeof vi.fn> to scale in FakeGame and setZoom: vi.fn() in the factory.",
+          "command": "cd game/frontend && npx vitest run tests/phaserHost.test.tsx -t 'passes computeZoom'",
+          "expected": "Fake supports setZoom"
+        },
+        {
+          "file": "game/frontend/tests/phaserHost.test.tsx",
+          "symbol": "new: it('passes computeZoom(container size, dpr) to createGame')",
+          "lines": "after existing tests",
+          "action": "Stub window.devicePixelRatio=2 and define clientWidth 1280 and clientHeight 720 on HTMLElement.prototype via Object.defineProperty; render PhaserHost; assert createGameMock third argument equals computeZoom(1280,720,2).",
+          "command": "cd game/frontend && npx vitest run tests/phaserHost.test.tsx -t 'passes computeZoom'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/phaserHost.test.tsx",
+          "symbol": "new: it('recomputes zoom and refreshes on resize and dpr change')",
+          "lines": "after previous test",
+          "action": "Render, change clientWidth to 640 and devicePixelRatio to 1, invoke resizeCallbacks[0](); assert fakes[0].scale.setZoom called with computeZoom(640,720,1) and scale.refresh called. Then stub window.matchMedia to capture the change listener, re-render, fire it and assert setZoom is called again; unmount and assert removeEventListener was called.",
+          "command": "cd game/frontend && npx vitest run tests/phaserHost.test.tsx -t 'recomputes zoom'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84VYFYCKQHPF3AW22CAQDWJ",
+      "kind": "evidence",
+      "title": "Evidence: DPR zoom unit tests pass",
+      "body": "Evidence that Phaser-mocked tests show zoom is passed in and refreshed on resize and ratio change.\n\n## Acceptance criteria\n- phaserConfig and phaserHost test files pass\n- Zoom assertions cover mount, resize and dpr change\n\n\n## Scope\n- In scope: Test run output\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Config and PhaserHost zoom tests green",
+      "description": "Evidence that Phaser-mocked tests show zoom is passed in and refreshed on resize and ratio change.",
+      "acceptance_criteria": [
+        "phaserConfig and phaserHost test files pass",
+        "Zoom assertions cover mount, resize and dpr change"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-094.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VYFYC0YAHGMSFDR04ZAK0",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84VYFYC0YAHGMSFDR04ZAK0",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-094.md"
+      ],
+      "depends_on": [
+        "01M84VYFYC0YAHGMSFDR04ZAK0",
+        "01M84VYFYCQT5Y41SKWF7KWHSN"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-094.md",
+      "artifact_id": "EVD-094"
+    }
+  ],
+  "created_at": "2026-11-23T18:51:21.692548+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

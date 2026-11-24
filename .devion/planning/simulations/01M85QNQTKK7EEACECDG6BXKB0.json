@@ -1,0 +1,533 @@
+{
+  "intent_id": "01M85QNQTKK7EEACECDG6BXKB0",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85QR7R2WY70K94CGZM69WSE",
+      "kind": "intent",
+      "title": "SG-1.2 Write pure grid-to-pixels and sprite-sheet functions",
+      "body": "Context: game/frontend/src/lib/palette.ts exports PALETTE, a 48-entry list of '#rrggbb' strings. No art code exists yet. Desired behaviour: pure, deterministic functions convert a palette-indexed grid to RGBA bytes and arrange frames into a sheet. Expected result: unit tests check width, height, frame count, palette-only colours and that an out-of-range index throws. Why: SG-1.3 builds the PNG script on top of these functions.\n\n## Acceptance criteria\n- Given a grid of palette indices, when gridToRgba runs, then it returns RGBA bytes of width*height*4 whose colours all come from PALETTE.\n- Given an index outside the palette, when gridToRgba runs, then it throws.\n- Given N equal-size frames, when buildSpriteSheet runs, then width, height and frameCount describe the sheet and every pixel colour is in PALETTE.\n\n\n## Scope\n- In scope: New pure modules under game/frontend/src/art\n- In scope: Unit tests in game/frontend/tests\n- Out of scope: PNG writing script and manifest update (SG-1.3)\n- Out of scope: Authoring sprite grids\n- Out of scope: New rooms, story content, backend, audio, deployment, repository clean-up\n- Preserve: game/frontend/src/lib/palette.ts exports and its tests\n- Preserve: Phaser ~3.90.0 pin\n- Preserve: Go API contracts\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.\n- Shared palette of at most 48 colours defined once in src/lib/palette.ts; reuse it, do not redefine colours.\n- All art is generated in-repo and deterministically; no downloaded art or CDN.\n- Tests are unit tests with all dependencies mocked.\n\n\n## Definition of done\n- Both requirements are met and their Verify units pass.\n\n\n## Non-functional requirements\n- Functions are pure and deterministic: identical input gives identical bytes.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pure functions turn a palette-indexed grid into RGBA and lay frames out into a sprite sheet, with unit tests.",
+      "description": "Context: game/frontend/src/lib/palette.ts exports PALETTE, a 48-entry list of '#rrggbb' strings. No art code exists yet. Desired behaviour: pure, deterministic functions convert a palette-indexed grid to RGBA bytes and arrange frames into a sheet. Expected result: unit tests check width, height, frame count, palette-only colours and that an out-of-range index throws. Why: SG-1.3 builds the PNG script on top of these functions.",
+      "acceptance_criteria": [
+        "Given a grid of palette indices, when gridToRgba runs, then it returns RGBA bytes of width*height*4 whose colours all come from PALETTE.",
+        "Given an index outside the palette, when gridToRgba runs, then it throws.",
+        "Given N equal-size frames, when buildSpriteSheet runs, then width, height and frameCount describe the sheet and every pixel colour is in PALETTE."
+      ],
+      "scope": {
+        "in_scope": [
+          "New pure modules under game/frontend/src/art",
+          "Unit tests in game/frontend/tests"
+        ],
+        "out_of_scope": [
+          "PNG writing script and manifest update (SG-1.3)",
+          "Authoring sprite grids",
+          "New rooms, story content, backend, audio, deployment, repository clean-up"
+        ],
+        "preserve": [
+          "game/frontend/src/lib/palette.ts exports and its tests",
+          "Phaser ~3.90.0 pin",
+          "Go API contracts"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.",
+        "Shared palette of at most 48 colours defined once in src/lib/palette.ts; reuse it, do not redefine colours.",
+        "All art is generated in-repo and deterministically; no downloaded art or CDN.",
+        "Tests are unit tests with all dependencies mocked."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements are met and their Verify units pass.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-157.md`"
+      ],
+      "non_functional": [
+        "Functions are pure and deterministic: identical input gives identical bytes."
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M855M8266NY059ZY7SSJK91X",
+      "links": [
+        "trace:01M855M8266NY059ZY7SSJK91X",
+        "artifact:.ai-dlc/intent/INT-157.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-157.md",
+      "artifact_id": "INT-157"
+    },
+    {
+      "id": "01M85QR7R3MX1CNHA2VCWXJWFV",
+      "kind": "requirement",
+      "title": "REQ · gridToRgba converts a palette-indexed grid to RGBA and rejects bad indices",
+      "body": "Context: palette colours are hex strings in PALETTE. Desired behaviour: gridToRgba(grid) returns width, height and a Uint8ClampedArray of RGBA. Index -1 means transparent (alpha 0); any other index outside 0..PALETTE.length-1, or a non-integer, throws a RangeError; rows of unequal length throw. Expected result: every opaque pixel equals a PALETTE colour. Why: guarantees art uses only the shared palette.\n\n## Acceptance criteria\n- Given a 3x2 grid, when converted, then width is 3, height is 2 and data length is 24.\n- Given any valid grid, when converted, then each opaque pixel's rgb matches the hex of PALETTE[index] with alpha 255.\n- Given index 48, -2 or 1.5, when converted, then a RangeError is thrown.\n- Given the same grid twice, when converted, then the byte arrays are equal.\n\n\n## Scope\n- In scope: gridToRgba and a hex-to-rgb helper\n- Out of scope: Sheet layout\n- Out of scope: PNG encoding\n- Preserve: PALETTE definition\n\n\n## Technical constraints\n- Palette of at most 48 colours, defined once and reused.\n- Pure function, no I/O.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- gridToRgba is exported from game/frontend/src/art/pixelGrid.ts.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure function maps a grid of palette indices to an RGBA byte array using only palette colours.",
+      "description": "Context: palette colours are hex strings in PALETTE. Desired behaviour: gridToRgba(grid) returns width, height and a Uint8ClampedArray of RGBA. Index -1 means transparent (alpha 0); any other index outside 0..PALETTE.length-1, or a non-integer, throws a RangeError; rows of unequal length throw. Expected result: every opaque pixel equals a PALETTE colour. Why: guarantees art uses only the shared palette.",
+      "acceptance_criteria": [
+        "Given a 3x2 grid, when converted, then width is 3, height is 2 and data length is 24.",
+        "Given any valid grid, when converted, then each opaque pixel's rgb matches the hex of PALETTE[index] with alpha 255.",
+        "Given index 48, -2 or 1.5, when converted, then a RangeError is thrown.",
+        "Given the same grid twice, when converted, then the byte arrays are equal."
+      ],
+      "scope": {
+        "in_scope": [
+          "gridToRgba and a hex-to-rgb helper"
+        ],
+        "out_of_scope": [
+          "Sheet layout",
+          "PNG encoding"
+        ],
+        "preserve": [
+          "PALETTE definition"
+        ]
+      },
+      "technical_constraints": [
+        "Palette of at most 48 colours, defined once and reused.",
+        "Pure function, no I/O."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "gridToRgba is exported from game/frontend/src/art/pixelGrid.ts.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-386.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85QR7R2WY70K94CGZM69WSE",
+      "matched_feature_id": "01M84H6WGGZ6QAD267HECPGFSD",
+      "links": [
+        "parent:01M85QR7R2WY70K94CGZM69WSE",
+        "trace:01M84H6WGGZ6QAD267HECPGFSD",
+        "artifact:.ai-dlc/requirements/REQ-386.md"
+      ],
+      "depends_on": [
+        "01M85QR7R2WY70K94CGZM69WSE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-386.md",
+      "artifact_id": "REQ-386"
+    },
+    {
+      "id": "01M85QR7R3NAZWNSSN4ACZZYM2",
+      "kind": "requirement",
+      "title": "REQ · buildSpriteSheet lays equal-size frames into one horizontal sheet with size and frame metadata",
+      "body": "Context: sprites are animation frames, each a palette-indexed grid. Desired behaviour: buildSpriteSheet(frames) validates that frames is non-empty and all share width and height (else throws Error), converts each with gridToRgba and places them left to right. Returns { width: frameWidth*count, height: frameHeight, frameWidth, frameHeight, frameCount, data }. Expected result: sheet metadata matches what SG-1.3 will write into the manifest. Why: manifest needs real size, frame size and frame count.\n\n## Acceptance criteria\n- Given 4 frames of 32x48, when built, then width 128, height 48, frameWidth 32, frameHeight 48, frameCount 4.\n- Given frame k, when read at x offset k*frameWidth, then its pixels equal gridToRgba of that frame.\n- Given an empty list or frames of different sizes, when built, then it throws.\n- Given a frame with an out-of-range index, when built, then it throws.\n\n\n## Scope\n- In scope: buildSpriteSheet\n- Out of scope: PNG encoding\n- Out of scope: manifest writing\n- Preserve: gridToRgba behaviour\n\n\n## Technical constraints\n- Pure function, deterministic output.\n- Palette of at most 48 colours defined once.\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- buildSpriteSheet is exported from game/frontend/src/art/spriteSheet.ts.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure function converts frame grids into a single RGBA sheet and reports width, height, frame size and count.",
+      "description": "Context: sprites are animation frames, each a palette-indexed grid. Desired behaviour: buildSpriteSheet(frames) validates that frames is non-empty and all share width and height (else throws Error), converts each with gridToRgba and places them left to right. Returns { width: frameWidth*count, height: frameHeight, frameWidth, frameHeight, frameCount, data }. Expected result: sheet metadata matches what SG-1.3 will write into the manifest. Why: manifest needs real size, frame size and frame count.",
+      "acceptance_criteria": [
+        "Given 4 frames of 32x48, when built, then width 128, height 48, frameWidth 32, frameHeight 48, frameCount 4.",
+        "Given frame k, when read at x offset k*frameWidth, then its pixels equal gridToRgba of that frame.",
+        "Given an empty list or frames of different sizes, when built, then it throws.",
+        "Given a frame with an out-of-range index, when built, then it throws."
+      ],
+      "scope": {
+        "in_scope": [
+          "buildSpriteSheet"
+        ],
+        "out_of_scope": [
+          "PNG encoding",
+          "manifest writing"
+        ],
+        "preserve": [
+          "gridToRgba behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "Pure function, deterministic output.",
+        "Palette of at most 48 colours defined once."
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "buildSpriteSheet is exported from game/frontend/src/art/spriteSheet.ts.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-387.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85QR7R2WY70K94CGZM69WSE",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85QR7R2WY70K94CGZM69WSE",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-387.md"
+      ],
+      "depends_on": [
+        "01M85QR7R2WY70K94CGZM69WSE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-387.md",
+      "artifact_id": "REQ-387"
+    },
+    {
+      "id": "01M85QR7R3CK8F1N1B4HM7WYP8",
+      "kind": "unit",
+      "title": "Act: Add gridToRgba to the art module",
+      "body": "Create the pure module converting a palette-indexed grid into RGBA bytes using PALETTE from src/lib/palette.ts.\n\n## Acceptance criteria\n- gridToRgba returns width, height and RGBA data for valid grids.\n- Out-of-range or non-integer indices throw RangeError.\n\n\n## Scope\n- In scope: game/frontend/src/art/pixelGrid.ts\n- Out of scope: tests\n- Out of scope: sheet layout\n- Preserve: src/lib/palette.ts\n\n\n## Technical constraints\n- Reuse PALETTE; do not redefine colours (shared palette, max 48).\n- Phaser stays on 3.90.x.\n- New file: `game/frontend/src/art/pixelGrid.ts`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Module compiles under tsc --noEmit and exports PixelGrid, TRANSPARENT and gridToRgba.\n\n\n## Non-functional requirements\n- Pure and deterministic.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game/frontend/src/art/pixelGrid.ts with gridToRgba.",
+      "description": "Create the pure module converting a palette-indexed grid into RGBA bytes using PALETTE from src/lib/palette.ts.",
+      "acceptance_criteria": [
+        "gridToRgba returns width, height and RGBA data for valid grids.",
+        "Out-of-range or non-integer indices throw RangeError."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/art/pixelGrid.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "sheet layout"
+        ],
+        "preserve": [
+          "src/lib/palette.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse PALETTE; do not redefine colours (shared palette, max 48).",
+        "Phaser stays on 3.90.x.",
+        "New file: `game/frontend/src/art/pixelGrid.ts`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Module compiles under tsc --noEmit and exports PixelGrid, TRANSPARENT and gridToRgba.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-772.md`"
+      ],
+      "non_functional": [
+        "Pure and deterministic."
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85QR7R3MX1CNHA2VCWXJWFV",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M85QR7R3MX1CNHA2VCWXJWFV",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-772.md"
+      ],
+      "depends_on": [
+        "01M85QR7R3MX1CNHA2VCWXJWFV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-772.md",
+      "artifact_id": "UNIT-772",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/pixelGrid.ts",
+          "symbol": "new: PixelGrid, TRANSPARENT, hexToRgb",
+          "lines": "new",
+          "action": "Create the file importing PALETTE from '../lib/palette'. Export type PixelGrid = readonly (readonly number[])[], export const TRANSPARENT = -1, and a local hexToRgb(hex) returning [r,g,b] parsed from the 6 hex digits after '#'.",
+          "code": "import { PALETTE } from '../lib/palette';\nexport type PixelGrid = readonly (readonly number[])[];\nexport const TRANSPARENT = -1;\nfunction hexToRgb(hex: string): [number, number, number] {\n  const n = parseInt(hex.slice(1), 16);\n  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];\n}",
+          "expected": "File compiles with the three declarations."
+        },
+        {
+          "file": "game/frontend/src/art/pixelGrid.ts",
+          "symbol": "new: gridToRgba",
+          "lines": "after hexToRgb",
+          "action": "Export gridToRgba(grid: PixelGrid): { width: number; height: number; data: Uint8ClampedArray }. height = grid.length, width = grid[0]?.length ?? 0. Throw Error if any row length differs from width. Allocate Uint8ClampedArray(width*height*4). For each cell: if value === TRANSPARENT leave zeros; else if !Number.isInteger(value) or value<0 or value>=PALETTE.length throw RangeError with the value, x and y; else write hexToRgb(PALETTE[value]) and alpha 255 at offset (y*width+x)*4.",
+          "code": "export function gridToRgba(grid: PixelGrid) { /* as described */ }",
+          "expected": "gridToRgba([[0,1],[2,-1]]) returns width 2, height 2, 16 bytes with the last pixel alpha 0."
+        }
+      ]
+    },
+    {
+      "id": "01M85QR7R33Q98QK9YT853F38G",
+      "kind": "unit",
+      "title": "Act: Add buildSpriteSheet to the art module",
+      "body": "Create the pure module that validates frames, converts each with gridToRgba and copies rows into one sheet buffer, returning sheet metadata.\n\n## Acceptance criteria\n- buildSpriteSheet returns width, height, frameWidth, frameHeight, frameCount and data.\n- Empty or mismatched frames throw.\n\n\n## Scope\n- In scope: game/frontend/src/art/spriteSheet.ts\n- Out of scope: tests\n- Out of scope: PNG writing\n- Preserve: pixelGrid.ts exports\n\n\n## Technical constraints\n- Reuse gridToRgba and the shared palette (max 48).\n- Phaser stays on 3.90.x.\n- New file: `game/frontend/src/art/spriteSheet.ts`\n\n\n## Dependencies\n- ACT1\n- REQ2\n\n\n## Definition of done\n- Module compiles and exports SpriteSheet and buildSpriteSheet.\n\n\n## Non-functional requirements\n- Pure and deterministic.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game/frontend/src/art/spriteSheet.ts that lays frames out horizontally using gridToRgba.",
+      "description": "Create the pure module that validates frames, converts each with gridToRgba and copies rows into one sheet buffer, returning sheet metadata.",
+      "acceptance_criteria": [
+        "buildSpriteSheet returns width, height, frameWidth, frameHeight, frameCount and data.",
+        "Empty or mismatched frames throw."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/art/spriteSheet.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "PNG writing"
+        ],
+        "preserve": [
+          "pixelGrid.ts exports"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse gridToRgba and the shared palette (max 48).",
+        "Phaser stays on 3.90.x.",
+        "New file: `game/frontend/src/art/spriteSheet.ts`"
+      ],
+      "dependencies": [
+        "ACT1",
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Module compiles and exports SpriteSheet and buildSpriteSheet.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-773.md`"
+      ],
+      "non_functional": [
+        "Pure and deterministic."
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85QR7R3NAZWNSSN4ACZZYM2",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M85QR7R3NAZWNSSN4ACZZYM2",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-773.md"
+      ],
+      "depends_on": [
+        "01M85QR7R3NAZWNSSN4ACZZYM2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-773.md",
+      "artifact_id": "UNIT-773",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/spriteSheet.ts",
+          "symbol": "new: SpriteSheet",
+          "lines": "new",
+          "action": "Create the file importing gridToRgba and PixelGrid from './pixelGrid'. Export interface SpriteSheet { width: number; height: number; frameWidth: number; frameHeight: number; frameCount: number; data: Uint8ClampedArray }.",
+          "expected": "Interface compiles."
+        },
+        {
+          "file": "game/frontend/src/art/spriteSheet.ts",
+          "symbol": "new: buildSpriteSheet",
+          "lines": "after SpriteSheet",
+          "action": "Export buildSpriteSheet(frames: readonly PixelGrid[]): SpriteSheet. Throw Error('no frames') when frames.length is 0. Convert every frame with gridToRgba; throw Error if any width/height differs from the first frame's. Set sheetWidth = frameWidth*frames.length. Allocate Uint8ClampedArray(sheetWidth*frameHeight*4). For frame k and row y, data.set(frameData.subarray(y*frameWidth*4,(y+1)*frameWidth*4), (y*sheetWidth + k*frameWidth)*4). Return the metadata and data.",
+          "code": "export function buildSpriteSheet(frames: readonly PixelGrid[]): SpriteSheet { /* as described */ }",
+          "expected": "4 frames of 32x48 give width 128, height 48, frameCount 4."
+        }
+      ]
+    },
+    {
+      "id": "01M85QR7R3T19XETT83DZT3DYY",
+      "kind": "unit",
+      "title": "Verify: gridToRgba unit tests",
+      "body": "Write tests from REQ1 acceptance criteria. No I/O or mocks needed beyond the pure function.\n\n## Acceptance criteria\n- Size, palette-only and throw behaviours are asserted.\n- Determinism is asserted.\n\n\n## Scope\n- In scope: game/frontend/tests/pixelGrid.test.ts\n- Out of scope: sheet tests\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; shared palette max 48 colours.\n- Test file imports PALETTE from ../src/lib/palette.\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- All tests in pixelGrid.test.ts pass.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for gridToRgba covering size, palette-only colours, transparency and out-of-range throw.",
+      "description": "Write tests from REQ1 acceptance criteria. No I/O or mocks needed beyond the pure function.",
+      "acceptance_criteria": [
+        "Size, palette-only and throw behaviours are asserted.",
+        "Determinism is asserted."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/pixelGrid.test.ts"
+        ],
+        "out_of_scope": [
+          "sheet tests"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; shared palette max 48 colours.",
+        "Test file imports PALETTE from ../src/lib/palette."
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "All tests in pixelGrid.test.ts pass.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-774.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QR7R3CK8F1N1B4HM7WYP8",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85QR7R3CK8F1N1B4HM7WYP8",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-774.md"
+      ],
+      "depends_on": [
+        "01M85QR7R3CK8F1N1B4HM7WYP8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-774.md",
+      "artifact_id": "UNIT-774",
+      "steps": [
+        {
+          "file": "game/frontend/tests/pixelGrid.test.ts",
+          "symbol": "new: describe('gridToRgba') › sizes and palette-only colours",
+          "lines": "new",
+          "action": "Create the test file. Test 'reports width, height and data length': grid [[0,1,2],[3,4,5]] gives width 3, height 2, data.length 24. Test 'uses only palette colours': convert a grid containing indices 0, 7, 47; for each pixel build '#'+hex of rgb and assert PALETTE.includes it and alpha is 255.",
+          "command": "cd game/frontend && npx vitest run tests/pixelGrid.test.ts",
+          "expected": "Both tests pass."
+        },
+        {
+          "file": "game/frontend/tests/pixelGrid.test.ts",
+          "symbol": "describe('gridToRgba') › transparency, errors, determinism",
+          "lines": "after first describe tests",
+          "action": "Add tests: index -1 yields alpha 0; indices 48, -2 and 1.5 each make expect(() => gridToRgba([[v]])).toThrow(RangeError); ragged rows [[0,1],[0]] throw; converting the same grid twice gives equal arrays (toEqual).",
+          "command": "cd game/frontend && npx vitest run tests/pixelGrid.test.ts",
+          "expected": "All tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85QR7R3KBNVZ9FY1J6N3ZQH",
+      "kind": "unit",
+      "title": "Verify: buildSpriteSheet unit tests",
+      "body": "Write tests from REQ2 acceptance criteria using small synthetic grids.\n\n## Acceptance criteria\n- Metadata, frame placement and palette-only colours are asserted.\n- Throws on bad input and identical bytes on repeat runs are asserted.\n\n\n## Scope\n- In scope: game/frontend/tests/spriteSheet.test.ts\n- Out of scope: PNG output\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; shared palette max 48 colours.\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- All tests in spriteSheet.test.ts pass.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for sheet size, frame count, frame placement, palette-only colours and errors.",
+      "description": "Write tests from REQ2 acceptance criteria using small synthetic grids.",
+      "acceptance_criteria": [
+        "Metadata, frame placement and palette-only colours are asserted.",
+        "Throws on bad input and identical bytes on repeat runs are asserted."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/spriteSheet.test.ts"
+        ],
+        "out_of_scope": [
+          "PNG output"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; shared palette max 48 colours."
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "All tests in spriteSheet.test.ts pass.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-775.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QR7R33Q98QK9YT853F38G",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85QR7R33Q98QK9YT853F38G",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-775.md"
+      ],
+      "depends_on": [
+        "01M85QR7R33Q98QK9YT853F38G"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-775.md",
+      "artifact_id": "UNIT-775",
+      "steps": [
+        {
+          "file": "game/frontend/tests/spriteSheet.test.ts",
+          "symbol": "new: describe('buildSpriteSheet') › metadata and placement",
+          "lines": "new",
+          "action": "Create the test file. Build 4 frames of 32x48 filled with indices 0..3 via Array.from. Assert width 128, height 48, frameWidth 32, frameHeight 48, frameCount 4, data.length 128*48*4. Assert the pixel at (k*32, 0) equals gridToRgba(frame k).data first 4 bytes for k 0..3.",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts",
+          "expected": "Tests pass."
+        },
+        {
+          "file": "game/frontend/tests/spriteSheet.test.ts",
+          "symbol": "describe('buildSpriteSheet') › palette, errors, determinism",
+          "lines": "after metadata tests",
+          "action": "Add tests: every opaque pixel's colour is in PALETTE; [] throws; frames of 2x2 and 3x2 throw; a frame with index 99 throws; two builds of the same frames give toEqual data (identical bytes).",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts",
+          "expected": "All tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85QR7R3NE97BDJMGRXQ4CYW",
+      "kind": "evidence",
+      "title": "Evidence: grid-to-RGBA and sprite-sheet unit tests pass",
+      "body": "Record the outputs of the two unit test files proving size, frame count, palette-only colours and out-of-range throw.\n\n## Acceptance criteria\n- pixelGrid.test.ts passes.\n- spriteSheet.test.ts passes.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Full suite\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Both test files report all tests passed.\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the pixelGrid and spriteSheet unit tests pass.",
+      "description": "Record the outputs of the two unit test files proving size, frame count, palette-only colours and out-of-range throw.",
+      "acceptance_criteria": [
+        "pixelGrid.test.ts passes.",
+        "spriteSheet.test.ts passes."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Full suite"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Both test files report all tests passed.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-157.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QR7R3T19XETT83DZT3DYY",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85QR7R3T19XETT83DZT3DYY",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-157.md"
+      ],
+      "depends_on": [
+        "01M85QR7R3T19XETT83DZT3DYY",
+        "01M85QR7R3KBNVZ9FY1J6N3ZQH"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-157.md",
+      "artifact_id": "EVD-157"
+    }
+  ],
+  "created_at": "2026-11-24T02:57:56.157575+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

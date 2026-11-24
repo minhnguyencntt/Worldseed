@@ -1,0 +1,72 @@
+{
+  "id": "01M85CR35ZYGGNEMMR7VJTVBDF",
+  "intent_id": "01M85CJMBD6F8YVA6APHGQ7386",
+  "title": "Act: Add blank-text validation to ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Disable Send and show message for blank prompts",
+  "description": "Implement blank validation in handleSubmit and render logic of ContributionSheet.",
+  "acceptance_criteria": [
+    "Send is disabled when text.trim() is empty",
+    "Submitting blank text shows the inline message and does not call submitContribution"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Valid submit flow"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Blank prompts blocked with inline role=alert message",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-632.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CMAAB6YQMX4WGJD6Z87ZF",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-632.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85CR35ZJE8RBS23JRCPCQD3"
+  ],
+  "sim_node_id": "01M85CMAAB9Z08GVPTV7G78CZQ",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-632.md",
+  "artifact_id": "UNIT-632",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (validation state)",
+      "lines": "L64-L69",
+      "action": "Add const isBlank = text.trim() === '' after the remaining declaration; in handleSubmit replace the silent 'if (prompt === \"\") return;' with setError('Write your idea before sending'); return;",
+      "code": "if (prompt === '') { setError('Write your idea before sending'); return; }",
+      "expected": "Blank submit sets the error state instead of returning silently"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "Send button",
+      "lines": "L108",
+      "action": "Add disabled={isBlank} to the Send button.",
+      "code": "<button type=\"submit\" disabled={isBlank}>Send</button>",
+      "expected": "Send is disabled while the textarea is blank"
+    }
+  ],
+  "created_at": "2026-11-23T23:44:34.495487+00:00",
+  "updated_at": "2026-11-23T23:44:51.176754+00:00"
+}

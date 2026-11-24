@@ -1,0 +1,615 @@
+{
+  "id": "01M848A98V67KHQKSMRJQQ2M1H",
+  "trigger_node_id": "INT-024, UNIT-121 +6",
+  "node_ids": [
+    "INT-024",
+    "UNIT-121",
+    "UNIT-122",
+    "UNIT-123",
+    "UNIT-124",
+    "REQ-061",
+    "REQ-062",
+    "EVD-024"
+  ],
+  "intent_id": "INT-024",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-024",
+      "title": "SG-6.2 · Render LifecycleStepper in AdminApp with derived current stage",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-121",
+      "title": "Act: Add deriveStage to LifecycleStepper module",
+      "kind": "unit",
+      "task_ids": [
+        "01M848A94AF09J9T59QCKHG6RK"
+      ],
+      "depends_on": [
+        "REQ-061"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "64f55507154f3dadf8f19bcc04eb626d56d9169f",
+      "from_sha": "9f92f9cacdc62e64f44f03c650f018204cb93ecc",
+      "started_at": "2026-11-23T13:07:54.208390+00:00",
+      "ended_at": "2026-11-23T13:08:17.964023+00:00",
+      "run_started_at": "2026-11-23T13:07:54.208390+00:00",
+      "duration_ms": 23189,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-122",
+      "title": "Act: Render LifecycleStepper in AdminApp from Round and execution",
+      "kind": "unit",
+      "task_ids": [
+        "01M848A94ANYR2A9BVJDJ9SJGP"
+      ],
+      "depends_on": [
+        "REQ-062"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "d6104362bdbedeebbe33b15ee1cb70e0311bd121",
+      "from_sha": "d6104362bdbedeebbe33b15ee1cb70e0311bd121",
+      "started_at": "2026-11-23T13:07:54.235734+00:00",
+      "ended_at": "2026-11-23T13:09:25.280988+00:00",
+      "run_started_at": "2026-11-23T13:07:54.235734+00:00",
+      "duration_ms": 90121,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 36,
+      "tokens_out": 12579,
+      "estimated_cost_usd": 0.050345,
+      "partial": true,
+      "failure": "Act agent reported ok:false: UNIT-122 AdminApp change is implemented in game/frontend/src/components/AdminApp.tsx (uncommitted). Imports (step 1), execution state (step 2), the 3-entry load effect with non-401 execution errors mapped to undefined and 401 rethrown (step 3), and the LifecycleStepper render with deriveStage(round.status, execution?.status) (step 4) are all in place. I did not write deriveStage: it already exists at HEAD 64f5550 (UNIT-121), so no step was adapted. Blocker: after I started, another actor staged a removal of deriveStage and EXECUTION_STAGES from LifecycleStepper.tsx in the index, and added untracked tests/deriveStage.test.ts. In the worktree as it stands, tsc fails (TS2305 on deriveStage in AdminApp.tsx and in the deriveStage test) and 14 tests fail, including 4 AdminApp tests. I left the index and that file alone. Verification in a scratch copy with HEAD's LifecycleStepper.tsx and my AdminApp.tsx: tests/admin.test.tsx and tests/deriveStage.test.ts pass, 16/16, and no tsc errors in AdminApp, LifecycleStepper or api/client. The scratch tsc run had unrelated path errors from the copy missing sibling @game directories. The Atlas unit markdown for UNIT-122 is not present under .ai-dlc/units (only UNIT-001 to UNIT-010), so I worked from the brief alone. Needs: whoever staged the deriveStage removal to restore it or confirm it is intended; then re-run tsc and vitest in the worktree."
+    },
+    {
+      "unit_id": "UNIT-123",
+      "title": "Verify: deriveStage unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M848A94A9087MKJARRYDFD0B"
+      ],
+      "depends_on": [
+        "UNIT-121",
+        "REQ-061"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "93fdd99ffdb483729e8fc4ab637fa3175c733280",
+      "from_sha": "293fe8ed5c69b012354a3794c6ac4f992ae424d6",
+      "tests": [
+        {
+          "id": "deriveStage-open-round-no-execution",
+          "kind": "unit",
+          "name": "deriveStage: given round status OPEN and no execution status, derives stage OPEN",
+          "title": "Given an OPEN round with no execution, deriveStage returns OPEN",
+          "scenario": "Given round status OPEN and execution status undefined, When deriveStage runs, Then the stage is OPEN",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-running",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status RUNNING, derives stage DEVELOPING",
+          "title": "Given a CLOSED round with a RUNNING execution, deriveStage returns DEVELOPING",
+          "scenario": "Given round status CLOSED and execution status RUNNING, When deriveStage runs, Then the stage is DEVELOPING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-awaiting-approval",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status AWAITING_APPROVAL, derives stage PUBLISHING",
+          "title": "Given a CLOSED round with an AWAITING_APPROVAL execution, deriveStage returns PUBLISHING",
+          "scenario": "Given round status CLOSED and execution status AWAITING_APPROVAL, When deriveStage runs, Then the stage is PUBLISHING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-approved",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status APPROVED, derives stage PUBLISHING",
+          "title": "Given a CLOSED round with an APPROVED execution, deriveStage returns PUBLISHING",
+          "scenario": "Given round status CLOSED and execution status APPROVED, When deriveStage runs, Then the stage is PUBLISHING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-completed",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status COMPLETED, derives stage COMPLETED",
+          "title": "Given a CLOSED round with a COMPLETED execution, deriveStage returns COMPLETED",
+          "scenario": "Given round status CLOSED and execution status COMPLETED, When deriveStage runs, Then the stage is COMPLETED",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-failed",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status FAILED, derives stage CLOSED",
+          "title": "Given a CLOSED round with a FAILED execution, deriveStage keeps CLOSED",
+          "scenario": "Given round status CLOSED and execution status FAILED, When deriveStage runs, Then the stage is CLOSED",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-closed-queued",
+          "kind": "unit",
+          "name": "deriveStage: given round status CLOSED and execution status QUEUED, derives stage CLOSED",
+          "title": "Given a CLOSED round with a QUEUED execution, deriveStage keeps CLOSED",
+          "scenario": "Given round status CLOSED and execution status QUEUED, When deriveStage runs, Then the stage is CLOSED",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-publishing-running",
+          "kind": "unit",
+          "name": "deriveStage: given round status PUBLISHING and execution status RUNNING, derives stage PUBLISHING",
+          "title": "Given a PUBLISHING round with a RUNNING execution, deriveStage keeps PUBLISHING",
+          "scenario": "Given round status PUBLISHING and execution status RUNNING, When deriveStage runs, Then the stage is PUBLISHING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-building-running",
+          "kind": "unit",
+          "name": "deriveStage: given round status BUILDING and execution status RUNNING, derives stage BUILDING",
+          "title": "Given a BUILDING round with a RUNNING execution, deriveStage keeps BUILDING",
+          "scenario": "Given round status BUILDING and execution status RUNNING, When deriveStage runs, Then the stage is BUILDING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "deriveStage-fixture-running-closed",
+          "kind": "unit",
+          "name": "deriveStage: a CLOSED round with the execution fixture status derives DEVELOPING",
+          "title": "Given the execution fixture status, a CLOSED round derives DEVELOPING",
+          "scenario": "Given round status CLOSED and executionFixture.status RUNNING, When deriveStage runs, Then the stage is DEVELOPING",
+          "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+          "file": "tests/deriveStage.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests not executed (10 planned/unrun): deriveStage(OPEN, undefined) -> OPEN, deriveStage(CLOSED, RUNNING) -> DEVELOPING, deriveStage(CLOSED, AWAITING_APPROVAL) -> PUBLISHING, deriveStage(CLOSED, APPROVED) -> PUBLISHING, deriveStage(CLOSED, COMPLETED) -> COMPLETED, deriveStage(CLOSED, FAILED) -> CLOSED, deriveStage(CLOSED, QUEUED) -> CLOSED, deriveStage(PUBLISHING, RUNNING) -> PUBLISHING, deriveStage(BUILDING, RUNNING) -> BUILDING, deriveStage(CLOSED, executionFixture.status) -> DEVELOPING",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "d6104362bdbedeebbe33b15ee1cb70e0311bd121",
+          "from_sha": "64f55507154f3dadf8f19bcc04eb626d56d9169f",
+          "tests": [
+            {
+              "id": "deriveStage > OPEN round with no execution status",
+              "kind": "unit",
+              "name": "deriveStage(OPEN, undefined) -> OPEN",
+              "title": "given round status OPEN and no execution status, derives stage OPEN",
+              "scenario": "Given round OPEN and no execution status, When deriveStage runs, Then it returns OPEN",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: test file fails to load because LifecycleStepper.tsx declares deriveStage twice (uncommitted working-tree change, see note)."
+            },
+            {
+              "id": "deriveStage > CLOSED + RUNNING",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, RUNNING) -> DEVELOPING",
+              "title": "given round CLOSED and execution RUNNING, derives stage DEVELOPING",
+              "scenario": "Given round CLOSED and execution RUNNING, When deriveStage runs, Then it returns DEVELOPING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree. Current uncommitted second version would return CLOSED."
+            },
+            {
+              "id": "deriveStage > CLOSED + AWAITING_APPROVAL",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, AWAITING_APPROVAL) -> PUBLISHING",
+              "title": "given round CLOSED and execution AWAITING_APPROVAL, derives stage PUBLISHING",
+              "scenario": "Given round CLOSED and execution AWAITING_APPROVAL, When deriveStage runs, Then it returns PUBLISHING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > CLOSED + APPROVED",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, APPROVED) -> PUBLISHING",
+              "title": "given round CLOSED and execution APPROVED, derives stage PUBLISHING",
+              "scenario": "Given round CLOSED and execution APPROVED, When deriveStage runs, Then it returns PUBLISHING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > CLOSED + COMPLETED",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, COMPLETED) -> COMPLETED",
+              "title": "given round CLOSED and execution COMPLETED, derives stage COMPLETED",
+              "scenario": "Given round CLOSED and execution COMPLETED, When deriveStage runs, Then it returns COMPLETED",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > CLOSED + FAILED",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, FAILED) -> CLOSED",
+              "title": "given round CLOSED and execution FAILED, keeps stage CLOSED",
+              "scenario": "Given round CLOSED and execution FAILED, When deriveStage runs, Then it returns CLOSED",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > CLOSED + QUEUED",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, QUEUED) -> CLOSED",
+              "title": "given round CLOSED and execution QUEUED, keeps stage CLOSED",
+              "scenario": "Given round CLOSED and execution QUEUED, When deriveStage runs, Then it returns CLOSED",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > PUBLISHING + RUNNING",
+              "kind": "unit",
+              "name": "deriveStage(PUBLISHING, RUNNING) -> PUBLISHING",
+              "title": "given round PUBLISHING and execution RUNNING, keeps stage PUBLISHING",
+              "scenario": "Given round PUBLISHING and execution RUNNING, When deriveStage runs, Then it returns PUBLISHING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > BUILDING + RUNNING",
+              "kind": "unit",
+              "name": "deriveStage(BUILDING, RUNNING) -> BUILDING",
+              "title": "given round BUILDING and execution RUNNING, keeps stage BUILDING",
+              "scenario": "Given round BUILDING and execution RUNNING, When deriveStage runs, Then it returns BUILDING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            },
+            {
+              "id": "deriveStage > executionFixture status",
+              "kind": "unit",
+              "name": "deriveStage(CLOSED, executionFixture.status) -> DEVELOPING",
+              "title": "given round CLOSED and the execution fixture status, derives stage DEVELOPING",
+              "scenario": "Given round CLOSED and executionFixture.status (RUNNING), When deriveStage runs, Then it returns DEVELOPING",
+              "command": "npx vitest run tests/deriveStage.test.ts --testTimeout=10000",
+              "file": "tests/deriveStage.test.ts",
+              "status": "planned",
+              "detail": "Not executed: blocked by duplicate declaration in working tree."
+            }
+          ],
+          "started_at": "2026-11-23T13:08:17.973961+00:00",
+          "ended_at": "2026-11-23T13:09:12.140230+00:00",
+          "duration_ms": 52580,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 20,
+          "tokens_out": 8678,
+          "estimated_cost_usd": 0.034728
+        }
+      ],
+      "started_at": "2026-11-23T13:08:17.973961+00:00",
+      "ended_at": "2026-11-23T13:10:08.243562+00:00",
+      "run_started_at": "2026-11-23T13:09:47.905200+00:00",
+      "duration_ms": 19792,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-124",
+      "title": "Verify: AdminApp lifecycle stepper unit tests with mocked fetch",
+      "kind": "unit",
+      "task_ids": [
+        "01M848A94A2W47PVK3FBX7W411"
+      ],
+      "depends_on": [
+        "UNIT-122",
+        "REQ-062"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "1dbbaebbf997bc8947906e8d00846067ab5125ca",
+      "from_sha": "93fdd99ffdb483729e8fc4ab637fa3175c733280",
+      "tests": [
+        {
+          "id": "adminStepper-open-no-executions",
+          "kind": "unit",
+          "name": "tests/adminStepper.test.tsx > AdminApp lifecycle stepper > Given an OPEN round with no executions, when the admin round loads, then the OPEN step is the single current step",
+          "title": "Given an OPEN round with no executions, the OPEN step is the single current step",
+          "scenario": "Given round status OPEN and executions [], when the admin round loads, then within 'Round lifecycle' exactly one aria-current=step item reads OPEN",
+          "command": "npx vitest run tests/adminStepper.test.tsx --testTimeout=10000",
+          "file": "tests/adminStepper.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminStepper-closed-running-execution",
+          "kind": "unit",
+          "name": "tests/adminStepper.test.tsx > AdminApp lifecycle stepper > Given a CLOSED round with a RUNNING execution, when the admin round loads, then the DEVELOPING step is the current step",
+          "title": "Given a CLOSED round with a RUNNING execution, the DEVELOPING step is current",
+          "scenario": "Given round status CLOSED and a RUNNING execution for that round, when the admin round loads, then the current step is DEVELOPING",
+          "command": "npx vitest run tests/adminStepper.test.tsx --testTimeout=10000",
+          "file": "tests/adminStepper.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminStepper-executions-404-no-alert",
+          "kind": "unit",
+          "name": "tests/adminStepper.test.tsx > AdminApp lifecycle stepper > Given an OPEN round and an executions endpoint that returns 404, when the admin round loads, then the OPEN step is current and no alert is shown",
+          "title": "Given executions returns 404, the stepper stays on OPEN with no alert",
+          "scenario": "Given round status OPEN and GET /api/v1/admin/executions responds 404, when the admin round loads, then the current step is OPEN and no role=alert is rendered",
+          "command": "npx vitest run tests/adminStepper.test.tsx --testTimeout=10000",
+          "file": "tests/adminStepper.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "adminStepper-executions-401-invalid-token",
+          "kind": "unit",
+          "name": "tests/adminStepper.test.tsx > AdminApp lifecycle stepper > Given an executions endpoint that returns 401, when the admin round loads, then the gate shows Invalid token",
+          "title": "Given executions returns 401, the gate shows Invalid token",
+          "scenario": "Given GET /api/v1/admin/executions responds 401, when the admin round loads, then role=alert reads 'Invalid token' and the Admin token input returns",
+          "command": "npx vitest run tests/adminStepper.test.tsx --testTimeout=10000",
+          "file": "tests/adminStepper.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T13:10:08.432199+00:00",
+      "ended_at": "2026-11-23T13:10:49.829535+00:00",
+      "run_started_at": "2026-11-23T13:10:08.432199+00:00",
+      "duration_ms": 40841,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-061",
+      "title": "REQ · A deriveStage helper maps Round and execution status to a lifecycle stage",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-024"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-062",
+      "title": "REQ · AdminApp renders LifecycleStepper for the current Round",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-024"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-024",
+      "title": "Evidence: AdminApp lifecycle stepper unit test results",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-121",
+        "UNIT-122",
+        "UNIT-123",
+        "UNIT-124"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-123",
+      "title": "Act: Fix Verify failure — deriveStage unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "293fe8ed5c69b012354a3794c6ac4f992ae424d6",
+      "from_sha": "d6104362bdbedeebbe33b15ee1cb70e0311bd121",
+      "started_at": "2026-11-23T13:09:12.151406+00:00",
+      "ended_at": "2026-11-23T13:09:47.873586+00:00",
+      "run_started_at": "2026-11-23T13:09:12.151406+00:00",
+      "duration_ms": 35176,
+      "model": "claude-haiku-5-5"
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-121",
+      "dst": "UNIT-123"
+    },
+    {
+      "src": "REQ-061",
+      "dst": "UNIT-121"
+    },
+    {
+      "src": "REQ-062",
+      "dst": "UNIT-122"
+    },
+    {
+      "src": "REQ-062",
+      "dst": "UNIT-124"
+    },
+    {
+      "src": "INT-024",
+      "dst": "REQ-061"
+    },
+    {
+      "src": "UNIT-124",
+      "dst": "EVD-024"
+    },
+    {
+      "src": "UNIT-122",
+      "dst": "UNIT-124"
+    },
+    {
+      "src": "REQ-061",
+      "dst": "UNIT-123"
+    },
+    {
+      "src": "UNIT-121",
+      "dst": "EVD-024"
+    },
+    {
+      "src": "UNIT-122",
+      "dst": "EVD-024"
+    },
+    {
+      "src": "INT-024",
+      "dst": "REQ-062"
+    },
+    {
+      "src": "UNIT-123",
+      "dst": "EVD-024"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m848a9",
+  "base_sha": "9f92f9cacdc62e64f44f03c650f018204cb93ecc",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M848A98V67KHQKSMRJQQ2M1H:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T13:07:53.243190+00:00",
+  "updated_at": "2026-11-23T13:10:50.661993+00:00",
+  "completed_at": "2026-11-23T13:10:49.830894+00:00",
+  "duration_ms": 176587,
+  "usage_stats": {
+    "total_duration_ms": 261713,
+    "total_tokens_in": 56,
+    "total_tokens_out": 21257,
+    "total_estimated_cost_usd": 0.085073
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 14,
+  "unit_allowlist": [
+    "UNIT-121",
+    "UNIT-122",
+    "UNIT-123",
+    "UNIT-124"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-121",
+        "title": "Act: Add deriveStage to LifecycleStepper module",
+        "evidence_refs": [
+          {
+            "id": "EVD-024",
+            "path": ".ai-dlc/evidence/EVD-024.md",
+            "title": "Evidence: AdminApp lifecycle stepper unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-121 unless acceptance outcomes recorded in EVD-024 (.ai-dlc/evidence/EVD-024.md; \"Evidence: AdminApp lifecycle stepper unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-122",
+        "title": "Act: Render LifecycleStepper in AdminApp from Round and execution",
+        "evidence_refs": [
+          {
+            "id": "EVD-024",
+            "path": ".ai-dlc/evidence/EVD-024.md",
+            "title": "Evidence: AdminApp lifecycle stepper unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-122 unless acceptance outcomes recorded in EVD-024 (.ai-dlc/evidence/EVD-024.md; \"Evidence: AdminApp lifecycle stepper unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-123",
+        "title": "Verify: deriveStage unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-024",
+            "path": ".ai-dlc/evidence/EVD-024.md",
+            "title": "Evidence: AdminApp lifecycle stepper unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-123 unless acceptance outcomes recorded in EVD-024 (.ai-dlc/evidence/EVD-024.md; \"Evidence: AdminApp lifecycle stepper unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-124",
+        "title": "Verify: AdminApp lifecycle stepper unit tests with mocked fetch",
+        "evidence_refs": [
+          {
+            "id": "EVD-024",
+            "path": ".ai-dlc/evidence/EVD-024.md",
+            "title": "Evidence: AdminApp lifecycle stepper unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-124 unless acceptance outcomes recorded in EVD-024 (.ai-dlc/evidence/EVD-024.md; \"Evidence: AdminApp lifecycle stepper unit test results\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T13:07:54.088753+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-121",
+    "UNIT-122",
+    "UNIT-123",
+    "UNIT-124"
+  ]
+}

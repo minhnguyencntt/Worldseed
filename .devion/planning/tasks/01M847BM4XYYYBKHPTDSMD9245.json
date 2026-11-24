@@ -1,0 +1,53 @@
+{
+  "id": "01M847BM4XYYYBKHPTDSMD9245",
+  "intent_id": "01M847A84P3F0A9BH7JBTPZMQ5",
+  "title": "REQ · Tick opens due SCHEDULED rounds, closes expired OPEN rounds and waits for future and COMPLETED rounds",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Tick acts on rounds only when the injected clock has reached their boundary",
+  "description": "Context: Scheduler.Tick in backend/internal/round/scheduler.go compares clock.Now() with StartsAt for SCHEDULED rounds and EndsAt for OPEN rounds. Desired behavior: due rounds are opened or closed, while future-start, future-end and COMPLETED rounds are ignored until the boundary. Expected result: Controller receives exactly the due Open and Close calls. Why: rounds must change state at the right time.",
+  "acceptance_criteria": [
+    "Given a SCHEDULED round with StartsAt 11:00 and clock 12:00, when Tick runs, then Open is called with the world ID and round ID",
+    "Given an OPEN round with EndsAt 11:59 and clock 12:00, when Tick runs, then Close is called with the world ID and round ID",
+    "Given future SCHEDULED, future OPEN and COMPLETED rounds at clock 12:00, when Tick runs, then no calls are made, and at clock 13:00 only Open and Close for the two non-COMPLETED rounds are made"
+  ],
+  "scope": {
+    "in_scope": [
+      "Tick switch cases on Status and clock boundary"
+    ],
+    "out_of_scope": [
+      "Error aggregation behavior"
+    ],
+    "preserve": [
+      "!now.Before(boundary) comparison so the exact boundary instant counts as due"
+    ]
+  },
+  "technical_constraints": [
+    "Time comes only from Scheduler.Clock"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tick dispatch against the clock is confirmed in scheduler.go and covered by tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-050.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847BJ006N3186X4TTX074V8",
+    "trace:01M8470M8T8AH3QDGD1YGYRJ1G",
+    "artifact:.ai-dlc/requirements/REQ-050.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M847BM4X0W9N3HTTBNZGRGN0"
+  ],
+  "sim_node_id": "01M847BJ0018XA4QH8FXQY54XE",
+  "feature_id": "01M8470M8T8AH3QDGD1YGYRJ1G",
+  "artifact_path": ".ai-dlc/requirements/REQ-050.md",
+  "artifact_id": "REQ-050",
+  "created_at": "2026-11-23T12:51:08.573458+00:00",
+  "updated_at": "2026-11-23T12:51:39.607895+00:00"
+}

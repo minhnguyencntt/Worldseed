@@ -1,0 +1,52 @@
+{
+  "id": "01M847BM4X4GNMGT2GQ72XE0V8",
+  "intent_id": "01M847A84P3F0A9BH7JBTPZMQ5",
+  "title": "REQ · Tick returns an Open failure and still closes another due round",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "A failing Controller.Open does not stop the rest of the pass and is reported by Tick",
+  "description": "Context: Tick appends errors to a slice and returns errors.Join(errs...) after the loop. Desired behavior: an Open error is wrapped and returned while Close for another due round still runs. Expected result: errors.Is(err, openErr) is true and both calls are recorded. Why: one failing round must not block another round from closing.",
+  "acceptance_criteria": [
+    "Given Open returns an error for a due SCHEDULED round, when Tick runs, then the returned error satisfies errors.Is with that error",
+    "Given an expired OPEN round listed after the failing round, when Tick runs, then Close is still called for it and calls are open then close in order"
+  ],
+  "scope": {
+    "in_scope": [
+      "Error collection and joining in Tick"
+    ],
+    "out_of_scope": [
+      "Retry of failed opens"
+    ],
+    "preserve": [
+      "Error wrapping with %w in the open and close messages"
+    ]
+  },
+  "technical_constraints": [
+    "Use errors.Join and fmt.Errorf with %w"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Error behavior is confirmed in scheduler.go and covered by a test",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-051.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847BJ006N3186X4TTX074V8",
+    "trace:01M8457KMNQV27GGDGKH8GE5YH",
+    "artifact:.ai-dlc/requirements/REQ-051.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M847BM4X0W9N3HTTBNZGRGN0"
+  ],
+  "sim_node_id": "01M847BJ0000YD2SBFE08HVPJH",
+  "feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+  "artifact_path": ".ai-dlc/requirements/REQ-051.md",
+  "artifact_id": "REQ-051",
+  "created_at": "2026-11-23T12:51:08.573458+00:00",
+  "updated_at": "2026-11-23T12:51:39.608162+00:00"
+}

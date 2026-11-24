@@ -1,0 +1,70 @@
+{
+  "id": "01M84JVEDWJZZHB0HVS3M7P4CA",
+  "intent_id": "01M84JSSMB017K29PX57X7B2KQ",
+  "title": "Verify: Exporter empty round and error propagation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for empty round and errors",
+  "description": "Tests for empty list JSON and ErrNotFound propagation using fakes.",
+  "acceptance_criteria": [
+    "Empty round marshals contributions as []",
+    "ErrNotFound propagates via errors.Is"
+  ],
+  "scope": {
+    "in_scope": [
+      "exporter_test.go"
+    ],
+    "out_of_scope": [
+      "real filesystem"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Define an errSource fake in the test file returning a set error"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-269.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JTWM3VRT94DYKN0XHG9RM",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-269.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JVEDW53BHZ6SCK1C49NSQ"
+  ],
+  "sim_node_id": "01M84JTWM31TTAWP0YK7F2PYDP",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-269.md",
+  "artifact_id": "UNIT-269",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/exporter_test.go",
+      "symbol": "new: TestExporter_EmptyRound",
+      "lines": "new",
+      "action": "With fakeSource holding contributions but frozen nil, call Export, assert Contributions is non-nil with len 0 and json.Marshal output contains \"contributions\":[]",
+      "command": "cd backend && go test ./internal/contribution -run TestExporter_EmptyRound",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/contribution/exporter_test.go",
+      "symbol": "new: TestExporter_SourceErrors",
+      "lines": "new",
+      "action": "Define errSource implementing ExportSource whose FrozenIDs returns ErrNotFound; assert errors.Is(err, ErrNotFound); second case with ListByRound returning a custom error asserts errors.Is on it",
+      "command": "cd backend && go test ./internal/contribution -run TestExporter_SourceErrors",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:12:01.340053+00:00",
+  "updated_at": "2026-11-23T16:13:20.114726+00:00"
+}

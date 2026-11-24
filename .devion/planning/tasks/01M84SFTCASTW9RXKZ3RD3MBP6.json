@@ -1,0 +1,75 @@
+{
+  "id": "01M84SFTCASTW9RXKZ3RD3MBP6",
+  "intent_id": "01M84SD74FR4S7415AGVJFAZRJ",
+  "title": "Act: Document the 3.90 lifecycle APIs in BootScene and PhaserHost",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Keep 3.90 lifecycle APIs and state the target",
+  "description": "The audit found BootScene and PhaserHost use only 3.90 APIs. Add comments naming them. Do not change behavior.",
+  "acceptance_criteria": [
+    "Given BootScene.ts, when read, then a comment states it uses Phaser.Scenes.Events.SHUTDOWN and this.events.once from 3.90.",
+    "Given PhaserHost.tsx, when read, then a comment states it uses game.scale.refresh and game.destroy(true) from 3.90."
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.ts",
+      "PhaserHost.tsx"
+    ],
+    "out_of_scope": [
+      "Behavior changes"
+    ],
+    "preserve": [
+      "Lifecycle behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Comments only",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`",
+    "Code path: `game/frontend/src/components/PhaserHost.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Comments added; tests/bootScene.test.ts and tests/phaserHost.test.tsx still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-415.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84SEJ7G81AN7XY1SHFCHYY1",
+    "trace:01M847PS3S92ZKV8MN9QEWHYN2",
+    "artifact:.ai-dlc/units/UNIT-415.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84SFTCAE1WS11GBGSE191MQ"
+  ],
+  "sim_node_id": "01M84SEJ7GJB66ZP78PHWYHDV2",
+  "feature_id": "01M847PS3S92ZKV8MN9QEWHYN2",
+  "artifact_path": ".ai-dlc/units/UNIT-415.md",
+  "artifact_id": "UNIT-415",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create",
+      "lines": "L18-L25",
+      "action": "Add a comment above this.events.once stating that Phaser.Scenes.Events.SHUTDOWN and Scene.events.once are 3.90 APIs.",
+      "code": "// Phaser 3.90: Scenes.Events.SHUTDOWN via this.events.once.",
+      "expected": "Method body otherwise unchanged."
+    },
+    {
+      "file": "game/frontend/src/components/PhaserHost.tsx",
+      "symbol": "PhaserHost",
+      "lines": "L12-L28",
+      "action": "Add a comment above the ResizeObserver stating that game.scale.refresh() and game.destroy(true) are the Phaser 3.90 resize and cleanup APIs.",
+      "code": "// Phaser 3.90: scale.refresh() on resize, destroy(true) on unmount.",
+      "expected": "Effect body unchanged."
+    }
+  ],
+  "created_at": "2026-11-23T18:08:00.394063+00:00",
+  "updated_at": "2026-11-23T18:09:23.077604+00:00"
+}

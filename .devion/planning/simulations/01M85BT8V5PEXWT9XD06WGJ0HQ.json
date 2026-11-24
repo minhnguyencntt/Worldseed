@@ -1,0 +1,754 @@
+{
+  "intent_id": "01M85BT8V5PEXWT9XD06WGJ0HQ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85BWFWR0020TKN4WHKC2J3W",
+      "kind": "intent",
+      "title": "SG-8 Suggest What Happens Next contribution modal",
+      "body": "Context: ContributionSheet is a plain div dialog with a bare textarea, a Send button and a best-effort own-suggestions list, opened from a button in App. Desired behavior: a Radix modal opens from the gameplay screen without navigation, with a prompt textarea, remaining count, submit button with disabled and loading states, inline success and error feedback, validation (empty, over-length, quota exhausted) and a history list, using only the existing client in game/frontend/src/api/client.ts. Expected result: players contribute without leaving the game, with keyboard and focus handled correctly. Why: the StoryForge redesign requires a polished in-game contribution UX with no Firebase, no database and no Git credentials in the browser.\n\n## Acceptance criteria\n- Given the gameplay screen, when the Suggest What Happens Next button is activated, then a modal dialog opens without any navigation or URL change\n- Given an open modal, when the player submits valid text, then the existing submitContribution client call is used and success or error feedback appears inline\n- Given empty text, over-length text or an exhausted quota, when the player tries to submit, then no API call is made and an inline validation message is shown\n- Given an open modal, when it opens, closes or Escape is pressed, then focus moves into the dialog, is trapped, and returns to the trigger on close\n\n\n## Scope\n- In scope: ContributionSheet component in game/frontend/src/components\n- In scope: App wiring of the trigger button\n- In scope: Unit tests with fetch mocked\n- Out of scope: Backend changes\n- Out of scope: Firebase, database or Git credentials in the browser\n- Out of scope: Admin console\n- Preserve: submitContribution and listMine contracts in client.ts\n- Preserve: 401 session-retry behavior\n- Preserve: Existing tests/contribution.test.tsx expectations\n\n\n## Technical constraints\n- React + TypeScript, Radix Dialog (@radix-ui/react-dialog already in package.json)\n- Use only the existing client in src/api/client.ts for submit and history\n\n\n## Definition of done\n- All requirements delivered and their Verify units green\n\n\n## Non-functional requirements\n- Keyboard accessible dialog\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Accessible Radix modal opened from gameplay for submitting and viewing contributions via the Go backend client",
+      "description": "Context: ContributionSheet is a plain div dialog with a bare textarea, a Send button and a best-effort own-suggestions list, opened from a button in App. Desired behavior: a Radix modal opens from the gameplay screen without navigation, with a prompt textarea, remaining count, submit button with disabled and loading states, inline success and error feedback, validation (empty, over-length, quota exhausted) and a history list, using only the existing client in game/frontend/src/api/client.ts. Expected result: players contribute without leaving the game, with keyboard and focus handled correctly. Why: the StoryForge redesign requires a polished in-game contribution UX with no Firebase, no database and no Git credentials in the browser.",
+      "acceptance_criteria": [
+        "Given the gameplay screen, when the Suggest What Happens Next button is activated, then a modal dialog opens without any navigation or URL change",
+        "Given an open modal, when the player submits valid text, then the existing submitContribution client call is used and success or error feedback appears inline",
+        "Given empty text, over-length text or an exhausted quota, when the player tries to submit, then no API call is made and an inline validation message is shown",
+        "Given an open modal, when it opens, closes or Escape is pressed, then focus moves into the dialog, is trapped, and returns to the trigger on close"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet component in game/frontend/src/components",
+          "App wiring of the trigger button",
+          "Unit tests with fetch mocked"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Firebase, database or Git credentials in the browser",
+          "Admin console"
+        ],
+        "preserve": [
+          "submitContribution and listMine contracts in client.ts",
+          "401 session-retry behavior",
+          "Existing tests/contribution.test.tsx expectations"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript, Radix Dialog (@radix-ui/react-dialog already in package.json)",
+        "Use only the existing client in src/api/client.ts for submit and history"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered and their Verify units green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-125.md`"
+      ],
+      "non_functional": [
+        "Keyboard accessible dialog"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+      "links": [
+        "trace:01M84JF0K0XHTV40GE5BY6073A",
+        "artifact:.ai-dlc/intent/INT-125.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-125.md",
+      "artifact_id": "INT-125"
+    },
+    {
+      "id": "01M85BWFWRKK6BC0SP86MQ9W0M",
+      "kind": "requirement",
+      "title": "REQ · Contribution modal is a Radix dialog opened from gameplay with correct focus and keyboard behavior",
+      "body": "Context: ContributionSheet renders a div with role=dialog and no focus management. Desired behavior: Radix Dialog gives focus trapping, Escape to close and focus restore to the trigger, without navigation. Expected result: keyboard users can open, use and dismiss the modal. Why: accessibility and polish requirement.\n\n## Acceptance criteria\n- Given the gameplay screen, when the trigger button is clicked, then a role=dialog named 'Suggest What Happens Next' is in the document and location is unchanged\n- Given an open dialog, when Escape is pressed, then onClose is called and the dialog is removed\n- Given the dialog opens, then focus is inside the dialog, and after closing, focus returns to the trigger button\n\n\n## Scope\n- In scope: ContributionSheet Dialog shell\n- In scope: App trigger wiring\n- Out of scope: Validation and history logic\n- Preserve: Props open, onClose, roundId\n- Preserve: Heading text and form labels\n\n\n## Technical constraints\n- Use @radix-ui/react-dialog\n\n\n## Definition of done\n- Dialog is Radix-based and keyboard accessible\n\n\n## Non-functional requirements\n- Accessible name and description present\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Replace the plain div dialog with a Radix Dialog opened from the gameplay trigger",
+      "description": "Context: ContributionSheet renders a div with role=dialog and no focus management. Desired behavior: Radix Dialog gives focus trapping, Escape to close and focus restore to the trigger, without navigation. Expected result: keyboard users can open, use and dismiss the modal. Why: accessibility and polish requirement.",
+      "acceptance_criteria": [
+        "Given the gameplay screen, when the trigger button is clicked, then a role=dialog named 'Suggest What Happens Next' is in the document and location is unchanged",
+        "Given an open dialog, when Escape is pressed, then onClose is called and the dialog is removed",
+        "Given the dialog opens, then focus is inside the dialog, and after closing, focus returns to the trigger button"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet Dialog shell",
+          "App trigger wiring"
+        ],
+        "out_of_scope": [
+          "Validation and history logic"
+        ],
+        "preserve": [
+          "Props open, onClose, roundId",
+          "Heading text and form labels"
+        ]
+      },
+      "technical_constraints": [
+        "Use @radix-ui/react-dialog"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Dialog is Radix-based and keyboard accessible",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-310.md`"
+      ],
+      "non_functional": [
+        "Accessible name and description present"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BWFWR0020TKN4WHKC2J3W",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85BWFWR0020TKN4WHKC2J3W",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-310.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR0020TKN4WHKC2J3W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-310.md",
+      "artifact_id": "REQ-310"
+    },
+    {
+      "id": "01M85BWFWR5J3K7WE0RNC46H2H",
+      "kind": "requirement",
+      "title": "REQ · Submit validates input and quota and shows disabled, loading and inline feedback states",
+      "body": "Context: handleSubmit silently ignores empty text, has no length check, allows sending past quota and has no success message. Desired behavior: client-side validation with inline messages, Send disabled while sending or quota is exhausted, and a visible success message. Expected result: invalid submissions never reach the API. Why: clear feedback and fewer wasted calls.\n\n## Acceptance criteria\n- Given empty or whitespace text, when Send is clicked, then a role=alert 'Enter an idea before sending' shows and fetch is not called\n- Given text longer than 500 characters, when Send is clicked, then a role=alert mentioning the 500 character limit shows and fetch is not called\n- Given remaining is 0, then the textarea and Send are disabled and 'No contributions left' shows\n- Given a submit in flight, then Send is disabled and reads 'Sending…'; on success a role=status 'Idea sent' shows; on API error the mapped error shows in role=alert\n\n\n## Scope\n- In scope: Validation, submit states and feedback in ContributionSheet\n- In scope: MAX_PROMPT_LEN constant in client.ts\n- Out of scope: Backend limit changes\n- Preserve: errorMessage mapping for 429 and 409\n- Preserve: MAX_PER_PLAYER of 5\n\n\n## Technical constraints\n- MAX_PROMPT_LEN = 500 mirrors MaxPromptLen in backend/internal/contribution/service.go (rune count)\n\n\n## Definition of done\n- Invalid input never calls submitContribution\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Validate empty, over-length and quota-exhausted input; show submit loading and success or error feedback",
+      "description": "Context: handleSubmit silently ignores empty text, has no length check, allows sending past quota and has no success message. Desired behavior: client-side validation with inline messages, Send disabled while sending or quota is exhausted, and a visible success message. Expected result: invalid submissions never reach the API. Why: clear feedback and fewer wasted calls.",
+      "acceptance_criteria": [
+        "Given empty or whitespace text, when Send is clicked, then a role=alert 'Enter an idea before sending' shows and fetch is not called",
+        "Given text longer than 500 characters, when Send is clicked, then a role=alert mentioning the 500 character limit shows and fetch is not called",
+        "Given remaining is 0, then the textarea and Send are disabled and 'No contributions left' shows",
+        "Given a submit in flight, then Send is disabled and reads 'Sending…'; on success a role=status 'Idea sent' shows; on API error the mapped error shows in role=alert"
+      ],
+      "scope": {
+        "in_scope": [
+          "Validation, submit states and feedback in ContributionSheet",
+          "MAX_PROMPT_LEN constant in client.ts"
+        ],
+        "out_of_scope": [
+          "Backend limit changes"
+        ],
+        "preserve": [
+          "errorMessage mapping for 429 and 409",
+          "MAX_PER_PLAYER of 5"
+        ]
+      },
+      "technical_constraints": [
+        "MAX_PROMPT_LEN = 500 mirrors MaxPromptLen in backend/internal/contribution/service.go (rune count)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Invalid input never calls submitContribution",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-311.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BWFWR0020TKN4WHKC2J3W",
+      "matched_feature_id": "01M85BP7N1EDCKTVQD6N8K2G7C",
+      "links": [
+        "parent:01M85BWFWR0020TKN4WHKC2J3W",
+        "trace:01M85BP7N1EDCKTVQD6N8K2G7C",
+        "artifact:.ai-dlc/requirements/REQ-311.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR0020TKN4WHKC2J3W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-311.md",
+      "artifact_id": "REQ-311"
+    },
+    {
+      "id": "01M85BWFWR6W1AJM73Y80PZ0G3",
+      "kind": "requirement",
+      "title": "REQ · Modal shows a contribution history list with loading and error states from the backend client",
+      "body": "Context: history is fetched best-effort and failures are swallowed; entries show only prompt and state. Desired behavior: history list loaded through listMine shows prompts with status, with visible loading, empty and load-error states. Expected result: players see their prior ideas or why none appear. Why: history requirement of the intent.\n\n## Acceptance criteria\n- Given listMine resolves with contributions, when the dialog opens, then each prompt appears in the 'Your suggestions' list marked Sent\n- Given listMine is pending, then 'Loading suggestions…' shows; given it resolves empty, then 'No suggestions yet' shows\n- Given listMine rejects, then role=alert 'Could not load your suggestions' shows and submitting still works\n\n\n## Scope\n- In scope: History states in ContributionSheet\n- Out of scope: New backend endpoint for other players' contributions\n- Preserve: Merge of in-flight entries with loaded history\n\n\n## Technical constraints\n- Use listMine from client.ts only\n\n\n## Definition of done\n- History states render for each outcome\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Render history from listMine with loading, empty and error states",
+      "description": "Context: history is fetched best-effort and failures are swallowed; entries show only prompt and state. Desired behavior: history list loaded through listMine shows prompts with status, with visible loading, empty and load-error states. Expected result: players see their prior ideas or why none appear. Why: history requirement of the intent.",
+      "acceptance_criteria": [
+        "Given listMine resolves with contributions, when the dialog opens, then each prompt appears in the 'Your suggestions' list marked Sent",
+        "Given listMine is pending, then 'Loading suggestions…' shows; given it resolves empty, then 'No suggestions yet' shows",
+        "Given listMine rejects, then role=alert 'Could not load your suggestions' shows and submitting still works"
+      ],
+      "scope": {
+        "in_scope": [
+          "History states in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "New backend endpoint for other players' contributions"
+        ],
+        "preserve": [
+          "Merge of in-flight entries with loaded history"
+        ]
+      },
+      "technical_constraints": [
+        "Use listMine from client.ts only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "History states render for each outcome",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-312.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BWFWR0020TKN4WHKC2J3W",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85BWFWR0020TKN4WHKC2J3W",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-312.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR0020TKN4WHKC2J3W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-312.md",
+      "artifact_id": "REQ-312"
+    },
+    {
+      "id": "01M85BWFWR5ZHDC28MT2DVQGZK",
+      "kind": "unit",
+      "title": "Act: Wrap ContributionSheet in a Radix Dialog and wire the App trigger",
+      "body": "Convert ContributionSheet root into Dialog.Root/Portal/Overlay/Content with Title and Description, and make App's trigger the focus-restoring opener.\n\n## Acceptance criteria\n- Dialog.Content has role dialog and accessible name 'Suggest What Happens Next'\n- Escape and overlay click call onClose\n- Closing returns focus to the trigger button\n\n\n## Scope\n- In scope: ContributionSheet.tsx root markup\n- In scope: App.tsx trigger\n- In scope: styles.css dialog classes\n- Out of scope: Validation logic\n- Preserve: Props and labels\n\n\n## Technical constraints\n- Keep the component mounted-open controlled via open prop\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n- Code path: `game/frontend/src/App.tsx`\n- Code path: `game/frontend/src/styles.css`\n\n\n## Definition of done\n- Component renders through Radix Dialog\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Radix Dialog shell with focus restore",
+      "description": "Convert ContributionSheet root into Dialog.Root/Portal/Overlay/Content with Title and Description, and make App's trigger the focus-restoring opener.",
+      "acceptance_criteria": [
+        "Dialog.Content has role dialog and accessible name 'Suggest What Happens Next'",
+        "Escape and overlay click call onClose",
+        "Closing returns focus to the trigger button"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx root markup",
+          "App.tsx trigger",
+          "styles.css dialog classes"
+        ],
+        "out_of_scope": [
+          "Validation logic"
+        ],
+        "preserve": [
+          "Props and labels"
+        ]
+      },
+      "technical_constraints": [
+        "Keep the component mounted-open controlled via open prop",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`",
+        "Code path: `game/frontend/src/App.tsx`",
+        "Code path: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Component renders through Radix Dialog",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-620.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BWFWRKK6BC0SP86MQ9W0M",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M85BWFWRKK6BC0SP86MQ9W0M",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-620.md"
+      ],
+      "depends_on": [
+        "01M85BWFWRKK6BC0SP86MQ9W0M"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-620.md",
+      "artifact_id": "UNIT-620",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet",
+          "lines": "L1-L2, L62-L64, L87-L117",
+          "action": "Import * as Dialog from '@radix-ui/react-dialog'. Remove the `if (!open) return null` early return at L62-L64 (hooks stay above it). Replace the root div at L88 with Dialog.Root open={open} onOpenChange={(next) => { if (!next) onClose(); }}, containing Dialog.Portal > Dialog.Overlay className='contribution-overlay' and Dialog.Content className='contribution-sheet' with Dialog.Title (text 'Suggest What Happens Next', replacing the h2) and Dialog.Description (text 'Ideas are considered when the Round closes.', replacing the p). Keep the remaining paragraph, form, alert and list inside Content, and make the Close button wrap Dialog.Close asChild.",
+          "code": "<Dialog.Root open={open} onOpenChange={(next) => { if (!next) onClose(); }}><Dialog.Portal><Dialog.Overlay className=\"contribution-overlay\" /><Dialog.Content className=\"contribution-sheet\">…</Dialog.Content></Dialog.Portal></Dialog.Root>",
+          "expected": "Open sheet renders a role=dialog named 'Suggest What Happens Next'; closed sheet renders nothing"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App playing view trigger button",
+          "lines": "L66-L78",
+          "action": "Keep the Suggest What Happens Next button and sheetOpen state; add no navigation. Radix restores focus to the element focused before opening, so no extra code beyond keeping the button rendered while the dialog is open.",
+          "expected": "Trigger button remains in the DOM and receives focus after the dialog closes"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": ".contribution-sheet",
+          "lines": "L9-L30",
+          "action": "Add a .contribution-overlay rule (position: fixed; inset: 0; background: rgba(0,0,0,0.55)) and make .contribution-sheet position: fixed centered with max-width 28rem and max-height 90vh with overflow-y auto.",
+          "expected": "Modal is centered over the game with a dimmed overlay and no page scroll"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWRXXYQHDAGZZPGBR5D",
+      "kind": "unit",
+      "title": "Act: Add validation, quota gating and submit states to ContributionSheet",
+      "body": "Add MAX_PROMPT_LEN to the client and implement validation, disabled/loading submit and success feedback in handleSubmit.\n\n## Acceptance criteria\n- Empty and over-length text produce inline alerts without a fetch\n- Quota exhausted disables the form\n- Success shows 'Idea sent'\n\n\n## Scope\n- In scope: handleSubmit and form markup\n- In scope: MAX_PROMPT_LEN export\n- Out of scope: History states\n- Preserve: errorMessage\n- Preserve: submitContribution call\n\n\n## Technical constraints\n- Count length with Array.from(prompt).length to match rune count\n- Code path: `game/frontend/src/api/client.ts`\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Validation paths implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Client-side validation and submit state UI",
+      "description": "Add MAX_PROMPT_LEN to the client and implement validation, disabled/loading submit and success feedback in handleSubmit.",
+      "acceptance_criteria": [
+        "Empty and over-length text produce inline alerts without a fetch",
+        "Quota exhausted disables the form",
+        "Success shows 'Idea sent'"
+      ],
+      "scope": {
+        "in_scope": [
+          "handleSubmit and form markup",
+          "MAX_PROMPT_LEN export"
+        ],
+        "out_of_scope": [
+          "History states"
+        ],
+        "preserve": [
+          "errorMessage",
+          "submitContribution call"
+        ]
+      },
+      "technical_constraints": [
+        "Count length with Array.from(prompt).length to match rune count",
+        "Code path: `game/frontend/src/api/client.ts`",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Validation paths implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-621.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BWFWR5J3K7WE0RNC46H2H",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M85BWFWR5J3K7WE0RNC46H2H",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-621.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR5J3K7WE0RNC46H2H"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-621.md",
+      "artifact_id": "UNIT-621",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "MAX_PROMPT_LEN",
+          "lines": "after L2",
+          "action": "Add a new exported constant mirroring backend MaxPromptLen in backend/internal/contribution/service.go.",
+          "code": "export const MAX_PROMPT_LEN = 500;",
+          "expected": "MAX_PROMPT_LEN is importable and equals 500"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet state",
+          "lines": "L33-L35, L66",
+          "action": "Add state `const [success, setSuccess] = useState(false)` and `const [sending, setSending] = useState(false)`. Compute `const exhausted = remaining <= 0`. Import MAX_PROMPT_LEN.",
+          "expected": "Component tracks sending, success and exhausted"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "handleSubmit",
+          "lines": "L68-L85",
+          "action": "After preventDefault: return early if exhausted or sending. Compute prompt = text.trim(). If prompt === '' call setError('Enter an idea before sending') and return. If Array.from(prompt).length > MAX_PROMPT_LEN call setError(`Ideas are limited to ${MAX_PROMPT_LEN} characters`) and return. Before the await call setSuccess(false) and setSending(true); on success setSuccess(true); on catch keep existing failed handling; in a finally block setSending(false).",
+          "expected": "Invalid input sets an alert and never calls submitContribution; valid input sets success after resolve"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "form markup",
+          "lines": "L93-L104",
+          "action": "Set textarea disabled={exhausted || sending}. Set the submit button disabled={exhausted || sending} with text {sending ? 'Sending…' : 'Send'}. Below the form render <p>No contributions left</p> when exhausted, and <p role=\"status\">Idea sent</p> when success is true.",
+          "expected": "Send is disabled while sending or exhausted; status and exhausted message render"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWRP67B90YP8RQKSVV7",
+      "kind": "unit",
+      "title": "Act: Add loading, empty and error states to the contribution history",
+      "body": "Track history load status in ContributionSheet and render loading, empty and error messages.\n\n## Acceptance criteria\n- Loading, empty and error messages render\n- Submitting works after a history failure\n\n\n## Scope\n- In scope: History effect and list rendering\n- Out of scope: Backend changes\n- Preserve: Merge logic of history with in-flight entries\n\n\n## Technical constraints\n- Use listMine only\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- History states implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "History state UI driven by listMine",
+      "description": "Track history load status in ContributionSheet and render loading, empty and error messages.",
+      "acceptance_criteria": [
+        "Loading, empty and error messages render",
+        "Submitting works after a history failure"
+      ],
+      "scope": {
+        "in_scope": [
+          "History effect and list rendering"
+        ],
+        "out_of_scope": [
+          "Backend changes"
+        ],
+        "preserve": [
+          "Merge logic of history with in-flight entries"
+        ]
+      },
+      "technical_constraints": [
+        "Use listMine only",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "History states implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-622.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BWFWR6W1AJM73Y80PZ0G3",
+      "matched_feature_id": "01M85BP7N2NAS1X6Z3121BWPPZ",
+      "links": [
+        "parent:01M85BWFWR6W1AJM73Y80PZ0G3",
+        "trace:01M85BP7N2NAS1X6Z3121BWPPZ",
+        "artifact:.ai-dlc/units/UNIT-622.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR6W1AJM73Y80PZ0G3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-622.md",
+      "artifact_id": "UNIT-622",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet state",
+          "lines": "L33-L35",
+          "action": "Add `const [historyState, setHistoryState] = useState<'idle' | 'loading' | 'loaded' | 'failed'>('idle')`.",
+          "expected": "historyState exists"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "history useEffect",
+          "lines": "L38-L60",
+          "action": "Before listMine call setHistoryState('loading'). In the then callback (after the cancelled check) call setHistoryState('loaded'). Replace the empty catch body with `if (!cancelled) setHistoryState('failed');` keeping the merge logic unchanged.",
+          "expected": "historyState reflects pending, success and failure of listMine"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "history list markup",
+          "lines": "L106-L112",
+          "action": "Above the ul render <p>Loading suggestions…</p> when historyState === 'loading'; <p role=\"alert\">Could not load your suggestions</p> when 'failed'; and <p>No suggestions yet</p> when historyState === 'loaded' and entries.length === 0. Keep the ul aria-label='Your suggestions'.",
+          "expected": "Each history outcome shows its message and entries still render in the list"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWR7PZXJAKP2XJ07BJF",
+      "kind": "unit",
+      "title": "Verify: Radix dialog open, Escape and focus behavior unit tests",
+      "body": "Test the Radix dialog shell with fetch mocked.\n\n## Acceptance criteria\n- Dialog role and name asserted\n- Escape calls onClose\n- Focus enters dialog and returns to trigger\n\n\n## Scope\n- In scope: tests/contributionDialog.test.tsx\n- Out of scope: Real network\n- Preserve: tests/contribution.test.tsx\n\n\n## Technical constraints\n- jsdom, vitest, fetch stubbed with vi.stubGlobal\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for dialog semantics and keyboard/focus",
+      "description": "Test the Radix dialog shell with fetch mocked.",
+      "acceptance_criteria": [
+        "Dialog role and name asserted",
+        "Escape calls onClose",
+        "Focus enters dialog and returns to trigger"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionDialog.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real network"
+        ],
+        "preserve": [
+          "tests/contribution.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "jsdom, vitest, fetch stubbed with vi.stubGlobal"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-623.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BWFWR5ZHDC28MT2DVQGZK",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BWFWR5ZHDC28MT2DVQGZK",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-623.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR5ZHDC28MT2DVQGZK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-623.md",
+      "artifact_id": "UNIT-623",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionDialog.test.tsx",
+          "symbol": "new: contributionDialog suite",
+          "lines": "new",
+          "action": "Create the test file with `// @vitest-environment jsdom`. Stub fetch to return the JSON of an empty array (history route mirrors listMine in src/api/client.ts; payload entries come from contributionFixture in tests/fixtures/api.ts, mirroring contributionJSON in backend/internal/contribution/handler.go). Test 'exposes a named dialog': render a harness with a trigger button that toggles ContributionSheet open; click it; assert screen.getByRole('dialog', {name: 'Suggest What Happens Next'}) is present and window.location.pathname is unchanged.",
+          "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"named dialog\"",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionDialog.test.tsx",
+          "symbol": "test: escape closes",
+          "lines": "new",
+          "action": "With the harness open and onClose a vi.fn, fire keyDown Escape on the dialog; assert onClose called once.",
+          "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"escape\"",
+          "expected": "onClose called once"
+        },
+        {
+          "file": "game/frontend/tests/contributionDialog.test.tsx",
+          "symbol": "test: focus management",
+          "lines": "new",
+          "action": "Focus the trigger, click it, assert document.activeElement is inside the dialog (dialog.contains), then close via the Close button and assert document.activeElement is the trigger button (await waitFor).",
+          "command": "cd game/frontend && npx vitest run tests/contributionDialog.test.tsx -t \"focus\"",
+          "expected": "Focus enters dialog and returns to trigger"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWR9G1RWKMDQCR3X0GG",
+      "kind": "unit",
+      "title": "Verify: Submit validation, quota and submit-state unit tests",
+      "body": "Test empty, over-length, exhausted, loading, success and API error paths.\n\n## Acceptance criteria\n- No fetch on invalid input\n- Exhausted disables form\n- Loading, success and error states asserted\n\n\n## Scope\n- In scope: tests/contributionValidation.test.tsx\n- Out of scope: Real network\n- Preserve: tests/contribution.test.tsx\n\n\n## Technical constraints\n- fetch stubbed with vi.stubGlobal; POST returns contributionFixture per tests/fixtures/api.ts (mirrors contributionJSON in backend/internal/contribution/handler.go)\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for validation and feedback with fetch mocked",
+      "description": "Test empty, over-length, exhausted, loading, success and API error paths.",
+      "acceptance_criteria": [
+        "No fetch on invalid input",
+        "Exhausted disables form",
+        "Loading, success and error states asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionValidation.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real network"
+        ],
+        "preserve": [
+          "tests/contribution.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed with vi.stubGlobal; POST returns contributionFixture per tests/fixtures/api.ts (mirrors contributionJSON in backend/internal/contribution/handler.go)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-624.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BWFWRXXYQHDAGZZPGBR5D",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BWFWRXXYQHDAGZZPGBR5D",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-624.md"
+      ],
+      "depends_on": [
+        "01M85BWFWRXXYQHDAGZZPGBR5D"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-624.md",
+      "artifact_id": "UNIT-624",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: empty and over-length",
+          "lines": "new",
+          "action": "Create the file with jsdom env and a stubFetch helper. Render <ContributionSheet open onClose roundId=''> (empty id skips history). Test 1: click Send with empty textarea; assert alert 'Enter an idea before sending' and fetch not called. Test 2: change textarea to 'a'.repeat(501), click Send; assert alert contains '500 characters' and fetch not called.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t \"empty|over-length\"",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: quota exhausted",
+          "lines": "new",
+          "action": "Stub GET history to return 5 contributions built from contributionFixture with distinct prompts; render with roundId 'round-1'; await 'No contributions left'; assert textarea and Send button are disabled and fetch was called only for the history GET.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t \"exhausted\"",
+          "expected": "Form disabled and no POST made"
+        },
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: loading, success and API error",
+          "lines": "new",
+          "action": "Success: POST resolves via a deferred promise; click Send with valid text; assert button is disabled with text 'Sending…', resolve, then assert role=status 'Idea sent'. Error: POST returns 429 JSON {error:'rate limited'}; assert alert 'Slow down, try again shortly'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t \"success|API error\"",
+          "expected": "Loading, success and error states asserted"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWRT2AV9YR2GAFZS9Z4",
+      "kind": "unit",
+      "title": "Verify: Contribution history loading, empty, error and list unit tests",
+      "body": "Test history rendering for success, pending, empty and failure.\n\n## Acceptance criteria\n- History prompts render marked Sent\n- Loading and empty messages\n- Load error alert and submit still works\n\n\n## Scope\n- In scope: tests/contributionHistory.test.tsx\n- Out of scope: Real network\n- Preserve: tests/contribution.test.tsx\n\n\n## Technical constraints\n- fetch stubbed; history payload uses contributionFixture mirroring contributionJSON in backend/internal/contribution/handler.go\n\n\n## Definition of done\n- New test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for history states with fetch mocked",
+      "description": "Test history rendering for success, pending, empty and failure.",
+      "acceptance_criteria": [
+        "History prompts render marked Sent",
+        "Loading and empty messages",
+        "Load error alert and submit still works"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionHistory.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real network"
+        ],
+        "preserve": [
+          "tests/contribution.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed; history payload uses contributionFixture mirroring contributionJSON in backend/internal/contribution/handler.go"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-625.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BWFWRP67B90YP8RQKSVV7",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BWFWRP67B90YP8RQKSVV7",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-625.md"
+      ],
+      "depends_on": [
+        "01M85BWFWRP67B90YP8RQKSVV7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-625.md",
+      "artifact_id": "UNIT-625",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistory.test.tsx",
+          "symbol": "test: history renders",
+          "lines": "new",
+          "action": "Create file with jsdom env. Stub GET /api/v1/player/me/contributions?round_id=round-1 to return [contributionFixture]. Render with roundId 'round-1'; assert 'Loading suggestions…' initially, then within list 'Your suggestions' find contributionFixture.prompt and 'Sent'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"history renders\"",
+          "expected": "Loading then history item with Sent"
+        },
+        {
+          "file": "game/frontend/tests/contributionHistory.test.tsx",
+          "symbol": "test: empty history",
+          "lines": "new",
+          "action": "Stub the GET to return []; assert 'No suggestions yet' appears.",
+          "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"empty history\"",
+          "expected": "Empty message shown"
+        },
+        {
+          "file": "game/frontend/tests/contributionHistory.test.tsx",
+          "symbol": "test: history failure",
+          "lines": "new",
+          "action": "Stub the GET to return status 500 and POST to return 201 contributionFixture; assert alert 'Could not load your suggestions'; then type text, click Send and assert the POST was made and 'Idea sent' shows.",
+          "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"history failure\"",
+          "expected": "Error shown and submit still works"
+        }
+      ]
+    },
+    {
+      "id": "01M85BWFWRG129NDFQDGQ0S6PR",
+      "kind": "evidence",
+      "title": "Evidence: Contribution modal unit tests pass",
+      "body": "Collect results of the three new contribution unit test files plus the existing contribution test file as evidence for SG-8.\n\n## Acceptance criteria\n- contributionDialog, contributionValidation and contributionHistory tests pass\n- Existing contribution.test.tsx still passes\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser runs\n\n\n## Definition of done\n- All four test files green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence of passing dialog, validation and history unit tests",
+      "description": "Collect results of the three new contribution unit test files plus the existing contribution test file as evidence for SG-8.",
+      "acceptance_criteria": [
+        "contributionDialog, contributionValidation and contributionHistory tests pass",
+        "Existing contribution.test.tsx still passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "All four test files green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-125.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BWFWR7PZXJAKP2XJ07BJF",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85BWFWR7PZXJAKP2XJ07BJF",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-125.md"
+      ],
+      "depends_on": [
+        "01M85BWFWR7PZXJAKP2XJ07BJF",
+        "01M85BWFWR9G1RWKMDQCR3X0GG",
+        "01M85BWFWRT2AV9YR2GAFZS9Z4"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-125.md",
+      "artifact_id": "EVD-125"
+    }
+  ],
+  "created_at": "2026-11-23T23:30:29.346441+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 8/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

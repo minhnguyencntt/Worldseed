@@ -1,0 +1,483 @@
+{
+  "intent_id": "01M855QJJNCNNP0Q6JYBYQ71MB",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M855SDV03GF00BS5QWDFFN93",
+      "kind": "intent",
+      "title": "SG-5.4.2 BootScene preloads only planned assets with fallback texture",
+      "body": "Context: planPreload and resolveTextureKey exist in game/src/engine/planPreload.ts but BootScene (game/frontend/src/phaser/BootScene.ts) has no preload and effectContext.ts passes spec.asset straight to Phaser. Desired behavior: BootScene loads only the planned assets, resolves every texture key through resolveTextureKey and uses a fallback texture for missing or invalid assets. Why: avoid loading unused assets and avoid crashes or green-box textures.\n\n## Acceptance criteria\n- Given the bedroom scene, when BootScene.preload runs, then only ids in planPreload(scene, manifest).load are queued with the loader\n- Given an id not in the manifest or a file that fails to load, when a texture key is resolved, then the fallback texture key is returned and used\n- Given the dust effect asset, when the effect is created, then its texture key comes from resolveTextureKey\n\n\n## Scope\n- In scope: BootScene.preload\n- In scope: bundled manifest in runtime/content.ts\n- In scope: effectContext key resolution\n- In scope: runtime fallback texture\n- Out of scope: new pixel-art files\n- Out of scope: changing planPreload or resolveTextureKey\n- Out of scope: backend\n- Preserve: existing BootScene create/shutdown behavior\n- Preserve: engine planPreload API\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Engine code in game/src must not import Phaser\n\n\n## Definition of done\n- Both requirements verified by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene preloads planPreload assets, resolves keys via resolveTextureKey and falls back for missing assets",
+      "description": "Context: planPreload and resolveTextureKey exist in game/src/engine/planPreload.ts but BootScene (game/frontend/src/phaser/BootScene.ts) has no preload and effectContext.ts passes spec.asset straight to Phaser. Desired behavior: BootScene loads only the planned assets, resolves every texture key through resolveTextureKey and uses a fallback texture for missing or invalid assets. Why: avoid loading unused assets and avoid crashes or green-box textures.",
+      "acceptance_criteria": [
+        "Given the bedroom scene, when BootScene.preload runs, then only ids in planPreload(scene, manifest).load are queued with the loader",
+        "Given an id not in the manifest or a file that fails to load, when a texture key is resolved, then the fallback texture key is returned and used",
+        "Given the dust effect asset, when the effect is created, then its texture key comes from resolveTextureKey"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.preload",
+          "bundled manifest in runtime/content.ts",
+          "effectContext key resolution",
+          "runtime fallback texture"
+        ],
+        "out_of_scope": [
+          "new pixel-art files",
+          "changing planPreload or resolveTextureKey",
+          "backend"
+        ],
+        "preserve": [
+          "existing BootScene create/shutdown behavior",
+          "engine planPreload API"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Engine code in game/src must not import Phaser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-103.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M855M8266NY059ZY7SSJK91X",
+      "links": [
+        "trace:01M855M8266NY059ZY7SSJK91X",
+        "artifact:.ai-dlc/intent/INT-103.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-103.md",
+      "artifact_id": "INT-103"
+    },
+    {
+      "id": "01M855SDV0DCPRQGJWVP0XA3WX",
+      "kind": "requirement",
+      "title": "REQ · BootScene preloads only the planned assets",
+      "body": "Context: BootScene has no preload method and the frontend has no manifest. Desired: runtime/content.ts exposes the validated manifest and BootScene.preload loads only planned ids using manifest paths under assets/. Expected: unlisted manifest assets are never requested. Why: avoid unnecessary loading.\n\n## Acceptance criteria\n- Given scene objects and dust effect referencing known ids, when preload runs, then load.image is called once per planned id with the key equal to the id and url assets/<manifest path>\n- Given a manifest asset not referenced by the scene, when preload runs, then no load call is made for it\n- Given unknown refs in the plan, when preload runs, then a console.warn names each and nothing is queued for them\n\n\n## Scope\n- In scope: runtime/content.ts manifest export\n- In scope: BootScene.preload\n- Out of scope: audio loading\n- Preserve: scene export\n\n\n## Technical constraints\n- Use parseManifest from @game/assets/manifest and planPreload from @game/engine/planPreload\n\n\n## Definition of done\n- preload queues only planned assets\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene.preload queues exactly planPreload.load ids from the bundled manifest",
+      "description": "Context: BootScene has no preload method and the frontend has no manifest. Desired: runtime/content.ts exposes the validated manifest and BootScene.preload loads only planned ids using manifest paths under assets/. Expected: unlisted manifest assets are never requested. Why: avoid unnecessary loading.",
+      "acceptance_criteria": [
+        "Given scene objects and dust effect referencing known ids, when preload runs, then load.image is called once per planned id with the key equal to the id and url assets/<manifest path>",
+        "Given a manifest asset not referenced by the scene, when preload runs, then no load call is made for it",
+        "Given unknown refs in the plan, when preload runs, then a console.warn names each and nothing is queued for them"
+      ],
+      "scope": {
+        "in_scope": [
+          "runtime/content.ts manifest export",
+          "BootScene.preload"
+        ],
+        "out_of_scope": [
+          "audio loading"
+        ],
+        "preserve": [
+          "scene export"
+        ]
+      },
+      "technical_constraints": [
+        "Use parseManifest from @game/assets/manifest and planPreload from @game/engine/planPreload"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "preload queues only planned assets",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-255.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M855SDV03GF00BS5QWDFFN93",
+      "matched_feature_id": "01M84JF0K04F8JTG8PXSPHAFG3",
+      "links": [
+        "parent:01M855SDV03GF00BS5QWDFFN93",
+        "trace:01M84JF0K04F8JTG8PXSPHAFG3",
+        "artifact:.ai-dlc/requirements/REQ-255.md"
+      ],
+      "depends_on": [
+        "01M855SDV03GF00BS5QWDFFN93"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-255.md",
+      "artifact_id": "REQ-255"
+    },
+    {
+      "id": "01M855SDV0H26MY6CGFH26GXFX",
+      "kind": "requirement",
+      "title": "REQ · Texture keys resolve through resolveTextureKey with a fallback texture",
+      "body": "Context: effectContext passes spec.asset directly to Phaser particles. Desired: BootScene generates a fallback texture keyed by FALLBACK_ASSET_ID, records ids whose load fails, and resolves every key via resolveTextureKey. Why: missing assets must not crash or show Phaser's missing texture.\n\n## Acceptance criteria\n- Given an id absent from the manifest, when resolved, then the fallback key is returned\n- Given a loaderror for an id, when resolved, then the fallback key is returned\n- Given a dust effect with a missing asset, when created, then particles use the fallback key\n\n\n## Scope\n- In scope: BootScene fallback generation and loaderror handling\n- In scope: effectContext resolver parameter\n- Out of scope: authored fallback art file\n- Preserve: effect behavior for known assets\n\n\n## Technical constraints\n- FALLBACK_ASSET_ID from @game/assets/loaders/manifestLoader must not pull in node fs at runtime: define key via a literal 'fallback:missing' in BootScene\n\n\n## Definition of done\n- all texture keys resolved\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Fallback texture generated at runtime and used for missing or failed assets",
+      "description": "Context: effectContext passes spec.asset directly to Phaser particles. Desired: BootScene generates a fallback texture keyed by FALLBACK_ASSET_ID, records ids whose load fails, and resolves every key via resolveTextureKey. Why: missing assets must not crash or show Phaser's missing texture.",
+      "acceptance_criteria": [
+        "Given an id absent from the manifest, when resolved, then the fallback key is returned",
+        "Given a loaderror for an id, when resolved, then the fallback key is returned",
+        "Given a dust effect with a missing asset, when created, then particles use the fallback key"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene fallback generation and loaderror handling",
+          "effectContext resolver parameter"
+        ],
+        "out_of_scope": [
+          "authored fallback art file"
+        ],
+        "preserve": [
+          "effect behavior for known assets"
+        ]
+      },
+      "technical_constraints": [
+        "FALLBACK_ASSET_ID from @game/assets/loaders/manifestLoader must not pull in node fs at runtime: define key via a literal 'fallback:missing' in BootScene"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "all texture keys resolved",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-256.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M855SDV03GF00BS5QWDFFN93",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M855SDV03GF00BS5QWDFFN93",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-256.md"
+      ],
+      "depends_on": [
+        "01M855SDV03GF00BS5QWDFFN93"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-256.md",
+      "artifact_id": "REQ-256"
+    },
+    {
+      "id": "01M855SDV0M397RX82AT4FN42T",
+      "kind": "unit",
+      "title": "Act: Add BootScene.preload driven by planPreload",
+      "body": "Bundle manifest.json into runtime/content.ts, validate with parseManifest, and add BootScene.preload that loads planned ids.\n\n## Acceptance criteria\n- preload calls this.load.image(id, 'assets/'+path) only for planned image ids\n- unknown ids are warned, not loaded\n\n\n## Scope\n- In scope: content.ts\n- In scope: BootScene.ts\n- Out of scope: effectContext\n- Preserve: create()\n\n\n## Technical constraints\n- Phaser 3.90\n- Code path: `game/frontend/src/runtime/content.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- BootScene has preload using planPreload\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export manifest and implement preload",
+      "description": "Bundle manifest.json into runtime/content.ts, validate with parseManifest, and add BootScene.preload that loads planned ids.",
+      "acceptance_criteria": [
+        "preload calls this.load.image(id, 'assets/'+path) only for planned image ids",
+        "unknown ids are warned, not loaded"
+      ],
+      "scope": {
+        "in_scope": [
+          "content.ts",
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "effectContext"
+        ],
+        "preserve": [
+          "create()"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Code path: `game/frontend/src/runtime/content.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BootScene has preload using planPreload",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-510.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M855SDV0DCPRQGJWVP0XA3WX",
+      "matched_feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+      "links": [
+        "parent:01M855SDV0DCPRQGJWVP0XA3WX",
+        "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+        "artifact:.ai-dlc/units/UNIT-510.md"
+      ],
+      "depends_on": [
+        "01M855SDV0DCPRQGJWVP0XA3WX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-510.md",
+      "artifact_id": "UNIT-510",
+      "steps": [
+        {
+          "file": "game/frontend/src/runtime/content.ts",
+          "symbol": "new: manifest",
+          "lines": "after L32",
+          "action": "Import manifest.json from public/assets/worlds/the-boys-room and export `manifest` as the data of parseManifest(json); throw an Error listing errors when ok is false.",
+          "code": "import manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json';\nimport { parseManifest } from '@game/assets/manifest';\nconst parsed = parseManifest(manifestJson);\nif (!parsed.ok) throw new Error('invalid manifest: ' + JSON.stringify(parsed.errors));\nexport const manifest = parsed.data;",
+          "expected": "content.ts exports a validated manifest"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.preload",
+          "lines": "after L22",
+          "action": "Add preload(): compute plan = planPreload(scene, manifest); console.warn for each plan.unknown id; for each id in plan.load find the manifest entry and call this.load.image(entry.id, `assets/${entry.path}`) when entry.type is 'image'; skip other types.",
+          "code": "preload(): void {\n  const plan = planPreload(scene, manifest);\n  plan.unknown.forEach((id) => console.warn(`unknown asset ref: ${id}`));\n  for (const id of plan.load) {\n    const entry = manifest.assets.find((a) => a.id === id);\n    if (entry && entry.type === 'image') this.load.image(entry.id, `assets/${entry.path}`);\n  }\n}",
+          "expected": "Only planned images are queued"
+        }
+      ]
+    },
+    {
+      "id": "01M855SDV0MY49TYGN5YDEA880",
+      "kind": "unit",
+      "title": "Act: Resolve texture keys and generate fallback in BootScene",
+      "body": "Add resolver param to createPhaserEffectContext, generate the fallback texture in preload, track failed ids.\n\n## Acceptance criteria\n- dust uses resolved key\n- loaderror ids map to fallback\n\n\n## Scope\n- In scope: effectContext.ts\n- In scope: BootScene.ts\n- Out of scope: content.ts\n- Preserve: shutdown cleanup\n\n\n## Technical constraints\n- Phaser 3.90\n- Code path: `game/frontend/src/phaser/effectContext.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- resolver used for every texture key\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire resolveTextureKey and fallback texture",
+      "description": "Add resolver param to createPhaserEffectContext, generate the fallback texture in preload, track failed ids.",
+      "acceptance_criteria": [
+        "dust uses resolved key",
+        "loaderror ids map to fallback"
+      ],
+      "scope": {
+        "in_scope": [
+          "effectContext.ts",
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "content.ts"
+        ],
+        "preserve": [
+          "shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Code path: `game/frontend/src/phaser/effectContext.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "resolver used for every texture key",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-511.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M855SDV0H26MY6CGFH26GXFX",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M855SDV0H26MY6CGFH26GXFX",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-511.md"
+      ],
+      "depends_on": [
+        "01M855SDV0H26MY6CGFH26GXFX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-511.md",
+      "artifact_id": "UNIT-511",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "createPhaserEffectContext",
+          "lines": "L7-L40",
+          "action": "Add second parameter `resolveKey: (id: string) => string` and replace `spec.asset` in scene.add.particles with `resolveKey(spec.asset)`.",
+          "code": "createPhaserEffectContext(scene, resolveKey) ... .particles(area.x, area.y, resolveKey(spec.asset), {",
+          "expected": "Particles use the resolved key"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.preload / resolveKey / create",
+          "lines": "L22-L30",
+          "action": "In preload, call this.textures.generate? no: use make.graphics to draw a 8x8 magenta/black checker and generateTexture('fallback:missing',8,8); register this.load.on('loaderror', f => this.failed.add(f.key)). Add private failed=new Set<string>() and resolveKey(id)=> this.failed.has(id) ? 'fallback:missing' : resolveTextureKey(id, manifest, 'fallback:missing'). In create pass (id)=>this.resolveKey(id) to createPhaserEffectContext.",
+          "code": "const g = this.make.graphics({ x: 0, y: 0 }, false); g.fillStyle(0xff00ff).fillRect(0,0,8,8).fillStyle(0x000000).fillRect(0,0,4,4).fillRect(4,4,4,4); g.generateTexture('fallback:missing', 8, 8); g.destroy();",
+          "expected": "Fallback texture exists and resolveKey returns it for unknown or failed ids"
+        }
+      ]
+    },
+    {
+      "id": "01M855SDV03SJ2W42CTZ6DE62K",
+      "kind": "unit",
+      "title": "Verify: BootScene.preload loads only planned assets",
+      "body": "Test BootScene.preload with mocked Phaser load and mocked content.\n\n## Acceptance criteria\n- only planned ids queued\n- unknown ids warned\n\n\n## Scope\n- In scope: frontend/tests/bootScenePreload.test.ts\n- Out of scope: browser\n\n\n## Technical constraints\n- Mock phaser and ../src/runtime/content\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for preload",
+      "description": "Test BootScene.preload with mocked Phaser load and mocked content.",
+      "acceptance_criteria": [
+        "only planned ids queued",
+        "unknown ids warned"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/bootScenePreload.test.ts"
+        ],
+        "out_of_scope": [
+          "browser"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Mock phaser and ../src/runtime/content"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-512.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M855SDV0M397RX82AT4FN42T",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M855SDV0M397RX82AT4FN42T",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-512.md"
+      ],
+      "depends_on": [
+        "01M855SDV0M397RX82AT4FN42T"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-512.md",
+      "artifact_id": "UNIT-512",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootScenePreload.test.ts",
+          "symbol": "new: BootScene preload plans only scene assets",
+          "lines": "new",
+          "action": "Mock phaser like bootScene.test.ts; vi.mock '../src/runtime/content' to export a scene with objects referencing 'objects/bed' and 'objects/ghost' and a manifest holding 'objects/bed' and unused 'objects/desk'. Set boot.load = { image: vi.fn() }, spy console.warn, call boot.preload(). Assert image called once with ('objects/bed','assets/<path>'), never with 'objects/desk' or 'objects/ghost', and warn called with a message containing 'objects/ghost'.",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M855SDV0SSB7ECN50HTBCQXQ",
+      "kind": "unit",
+      "title": "Verify: Fallback texture and key resolution",
+      "body": "Test BootScene.resolveKey and effectContext key usage with mocked Phaser.\n\n## Acceptance criteria\n- unknown and failed ids return fallback\n- dust uses resolved key\n\n\n## Scope\n- In scope: frontend/tests/bootSceneFallback.test.ts\n- Out of scope: browser\n\n\n## Technical constraints\n- Mock phaser\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for resolveKey and effect context",
+      "description": "Test BootScene.resolveKey and effectContext key usage with mocked Phaser.",
+      "acceptance_criteria": [
+        "unknown and failed ids return fallback",
+        "dust uses resolved key"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/bootSceneFallback.test.ts"
+        ],
+        "out_of_scope": [
+          "browser"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Mock phaser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-513.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M855SDV0MY49TYGN5YDEA880",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M855SDV0MY49TYGN5YDEA880",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-513.md"
+      ],
+      "depends_on": [
+        "01M855SDV0MY49TYGN5YDEA880"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-513.md",
+      "artifact_id": "UNIT-513",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFallback.test.ts",
+          "symbol": "new: fallback resolution",
+          "lines": "new",
+          "action": "Mock phaser; construct BootScene; assert resolveKey('objects/bed') returns 'objects/bed', resolveKey('nope') returns 'fallback:missing'; add 'objects/bed' to failed via the registered loaderror handler (captured from a mocked load.on) and assert resolveKey('objects/bed') returns 'fallback:missing'. Separately call createPhaserEffectContext with a fake scene whose add.particles is vi.fn returning chainable setDepth and resolveKey=()=>'fallback:missing'; createEffect a dust spec and assert particles third arg is 'fallback:missing'.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneFallback.test.ts",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M855SDV0RZKZPEECACB44ME0",
+      "kind": "evidence",
+      "title": "Evidence: BootScene preload and fallback unit tests",
+      "body": "Record passing results of bootScenePreload and bootSceneFallback tests.\n\n## Acceptance criteria\n- both test files pass\n- no real Phaser or browser used\n\n\n## Scope\n- In scope: test results\n\n\n## Definition of done\n- tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that preload and fallback tests pass",
+      "description": "Record passing results of bootScenePreload and bootSceneFallback tests.",
+      "acceptance_criteria": [
+        "both test files pass",
+        "no real Phaser or browser used"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-103.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M855SDV03SJ2W42CTZ6DE62K",
+      "links": [
+        "parent:01M855SDV03SJ2W42CTZ6DE62K",
+        "trace:01M855ASGS004Y2W94BMZVD6ZM",
+        "artifact:.ai-dlc/evidence/EVD-103.md"
+      ],
+      "depends_on": [
+        "01M855SDV03SJ2W42CTZ6DE62K",
+        "01M855SDV0SSB7ECN50HTBCQXQ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-103.md",
+      "artifact_id": "EVD-103"
+    }
+  ],
+  "created_at": "2026-11-23T21:43:26.448365+00:00",
+  "summary": "AI · 1 NEW · 7 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

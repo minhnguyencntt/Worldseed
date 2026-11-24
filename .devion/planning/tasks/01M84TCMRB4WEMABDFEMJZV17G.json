@@ -1,0 +1,57 @@
+{
+  "id": "01M84TCMRB4WEMABDFEMJZV17G",
+  "intent_id": "01M84T9JM3YEJXT8S7RCEEVBGJ",
+  "title": "SG-4.2.2 Untrack node_modules files in game/frontend with tested cleanup code",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Provide code that untracks the ~15,000 tracked node_modules files without deleting them from disk, plus mocked unit tests that guard against tracked dependency paths.",
+  "description": "Context: about 15,327 files under game/frontend/node_modules (Phaser, type-generation tests, .vite/vitest/results.json) are tracked by git. Desired behavior: a helper in game/frontend/src/lib lists tracked node_modules paths, a cleanup untracks them with git rm -r --cached, and unit tests with mocked git fail while any such path is tracked. Why: dependency files must not be versioned.",
+  "acceptance_criteria": [
+    "Given a list of paths, when trackedNodeModulesPaths runs, then it returns only paths with a node_modules segment.",
+    "Given a fake git runner, when untrackNodeModules runs, then it issues 'git rm -r --cached' for node_modules and never deletes files from disk.",
+    "Given a mocked file listing with a node_modules path, when the guard runs, then it throws; given none, it passes."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/lib helper module",
+      "package.json script entry",
+      "unit tests with mocked git"
+    ],
+    "out_of_scope": [
+      "Changing .gitignore rules",
+      "Deleting node_modules from disk",
+      "Phaser version changes"
+    ],
+    "preserve": [
+      "Existing src/lib/gitignore.ts and phaserPin.ts",
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Git runner must be injectable",
+    "Use 'git rm -r --cached' only",
+    "Must also unstage node_modules/.vite/vitest/results.json"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements delivered with passing unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-088.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84T653733GNHNR148NM3TA2",
+    "artifact:.ai-dlc/intent/INT-088.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84TARR0DW6N9W7K33106JGB",
+  "feature_id": "01M84T653733GNHNR148NM3TA2",
+  "artifact_path": ".ai-dlc/intent/INT-088.md",
+  "artifact_id": "INT-088",
+  "created_at": "2026-11-23T18:23:44.907598+00:00",
+  "updated_at": "2026-11-23T18:25:10.526371+00:00"
+}

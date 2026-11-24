@@ -1,0 +1,479 @@
+{
+  "intent_id": "01M85KH1H1NDMJAMDWHSQB70PY",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85KJKZ660T68ZKAENCAVYTK",
+      "kind": "intent",
+      "title": "SG-10.2.4 Keyboard focus moves write to the store focus",
+      "body": "Context: BootScene.onKeyDown (game/frontend/src/phaser/BootScene.ts) moves focus with moveFocus and only emits the focusChange event on phaserToReact. The store already has focusedObjectId and setFocusedObject, and applyFocusedObject already pushes store focus into the scene. Desired behavior: Tab, Shift+Tab and arrow keys write the newly focused id to the store via setFocusedObject. Expected result: the store is the single owner of focus state. Why: avoids duplicated focus ownership between Phaser and React.\n\n## Acceptance criteria\n- Given a scene with a focusable object, when Tab is pressed, then useGameStore.getState().focusedObjectId equals the id of the object now focused.\n- Given focus moves with Shift+Tab or an arrow key, when the handler runs, then the store focusedObjectId equals the newly focused id.\n- Given no object is focused after a move, when the handler runs, then the store focusedObjectId is null.\n- Given a keyboard focus move, when the store is written, then applyFocusedObject leaves the scene focus unchanged and does not blur the focused object.\n\n\n## Scope\n- In scope: BootScene.onKeyDown writes store focus\n- Out of scope: Backend changes\n- Out of scope: Pointer hover handling\n- Out of scope: New focus UI\n- Preserve: focusChange and menuClose events still emitted\n- Preserve: Enter, Space and Escape behavior\n- Preserve: applyFocusedObject behavior\n- Preserve: gameStore API\n\n\n## Technical constraints\n- Reuse useGameStore.setFocusedObject; do not add store fields\n- Phaser 3.90 APIs only\n\n\n## Definition of done\n- Keyboard focus moves update the store focusedObjectId\n- Existing keyboard and focus tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Keyboard focus moves in BootScene write focusedObjectId to the game store so the store owns focus state",
+      "description": "Context: BootScene.onKeyDown (game/frontend/src/phaser/BootScene.ts) moves focus with moveFocus and only emits the focusChange event on phaserToReact. The store already has focusedObjectId and setFocusedObject, and applyFocusedObject already pushes store focus into the scene. Desired behavior: Tab, Shift+Tab and arrow keys write the newly focused id to the store via setFocusedObject. Expected result: the store is the single owner of focus state. Why: avoids duplicated focus ownership between Phaser and React.",
+      "acceptance_criteria": [
+        "Given a scene with a focusable object, when Tab is pressed, then useGameStore.getState().focusedObjectId equals the id of the object now focused.",
+        "Given focus moves with Shift+Tab or an arrow key, when the handler runs, then the store focusedObjectId equals the newly focused id.",
+        "Given no object is focused after a move, when the handler runs, then the store focusedObjectId is null.",
+        "Given a keyboard focus move, when the store is written, then applyFocusedObject leaves the scene focus unchanged and does not blur the focused object."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.onKeyDown writes store focus"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Pointer hover handling",
+          "New focus UI"
+        ],
+        "preserve": [
+          "focusChange and menuClose events still emitted",
+          "Enter, Space and Escape behavior",
+          "applyFocusedObject behavior",
+          "gameStore API"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse useGameStore.setFocusedObject; do not add store fields",
+        "Phaser 3.90 APIs only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Keyboard focus moves update the store focusedObjectId",
+        "Existing keyboard and focus tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-149.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+      "links": [
+        "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+        "artifact:.ai-dlc/intent/INT-149.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-149.md",
+      "artifact_id": "INT-149"
+    },
+    {
+      "id": "01M85KJKZ6KNYVC98NFWSAH375",
+      "kind": "requirement",
+      "title": "REQ · Tab and arrow keys write the focused object id to the store",
+      "body": "Context: onKeyDown calls moveFocus then emits focusChange only. Desired behavior: after moveFocus, the scene calls useGameStore.getState().setFocusedObject(id) for Tab, Shift+Tab and arrow keys. Expected result: the store focusedObjectId matches the scene's focused object after every move. Why: store becomes the owner of focus.\n\n## Acceptance criteria\n- Given objects [bookshelf] and Tab pressed, when handled, then the store focusedObjectId is 'bookshelf'.\n- Given Shift+Tab or ArrowLeft pressed, when handled, then setFocusedObject is called with the focused object id.\n- Given the focusChange event, when a move happens, then it is still emitted with the same id.\n\n\n## Scope\n- In scope: onKeyDown store write\n- Out of scope: Enter, Space, Escape handling\n- Preserve: focusChange event payload\n\n\n## Technical constraints\n- Write via setFocusedObject only\n\n\n## Definition of done\n- Store write happens on every focus-moving key\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Keyboard focus moves call setFocusedObject with the newly focused id",
+      "description": "Context: onKeyDown calls moveFocus then emits focusChange only. Desired behavior: after moveFocus, the scene calls useGameStore.getState().setFocusedObject(id) for Tab, Shift+Tab and arrow keys. Expected result: the store focusedObjectId matches the scene's focused object after every move. Why: store becomes the owner of focus.",
+      "acceptance_criteria": [
+        "Given objects [bookshelf] and Tab pressed, when handled, then the store focusedObjectId is 'bookshelf'.",
+        "Given Shift+Tab or ArrowLeft pressed, when handled, then setFocusedObject is called with the focused object id.",
+        "Given the focusChange event, when a move happens, then it is still emitted with the same id."
+      ],
+      "scope": {
+        "in_scope": [
+          "onKeyDown store write"
+        ],
+        "out_of_scope": [
+          "Enter, Space, Escape handling"
+        ],
+        "preserve": [
+          "focusChange event payload"
+        ]
+      },
+      "technical_constraints": [
+        "Write via setFocusedObject only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Store write happens on every focus-moving key",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-369.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85KJKZ660T68ZKAENCAVYTK",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M85KJKZ660T68ZKAENCAVYTK",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-369.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ660T68ZKAENCAVYTK"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-369.md",
+      "artifact_id": "REQ-369"
+    },
+    {
+      "id": "01M85KJKZ6N62JQAZ1004A0C4W",
+      "kind": "requirement",
+      "title": "REQ · Store write stays consistent with scene focus and null when nothing is focused",
+      "body": "Context: the focused id is currently computed inline for the event. Desired behavior: a single private helper computes the focused id (null when none) and its result is used for both the store write and the focusChange event, so the later store-driven applyFocusedObject is a no-op. Expected result: no focus flicker or blur after a keyboard move. Why: single source of focus truth.\n\n## Acceptance criteria\n- Given no object isFocused after a move, when handled, then store focusedObjectId is null and focusChange emits id null.\n- Given the store write triggers onStateChange, when applyFocusedObject runs, then the focused object's blur is not called.\n\n\n## Scope\n- In scope: Private helper in BootScene for the focused id\n- Out of scope: Changing applyFocusedObject\n- Preserve: applyFocusedObject semantics\n\n\n## Technical constraints\n- Keep helper private to BootScene\n\n\n## Dependencies\n- REQ1 Act touches the same handler\n\n\n## Definition of done\n- Store and event use the same computed id\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The id written to the store is derived once from the scene and is null when no object is focused",
+      "description": "Context: the focused id is currently computed inline for the event. Desired behavior: a single private helper computes the focused id (null when none) and its result is used for both the store write and the focusChange event, so the later store-driven applyFocusedObject is a no-op. Expected result: no focus flicker or blur after a keyboard move. Why: single source of focus truth.",
+      "acceptance_criteria": [
+        "Given no object isFocused after a move, when handled, then store focusedObjectId is null and focusChange emits id null.",
+        "Given the store write triggers onStateChange, when applyFocusedObject runs, then the focused object's blur is not called."
+      ],
+      "scope": {
+        "in_scope": [
+          "Private helper in BootScene for the focused id"
+        ],
+        "out_of_scope": [
+          "Changing applyFocusedObject"
+        ],
+        "preserve": [
+          "applyFocusedObject semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Keep helper private to BootScene"
+      ],
+      "dependencies": [
+        "REQ1 Act touches the same handler"
+      ],
+      "definition_of_done": [
+        "Store and event use the same computed id",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-370.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85KJKZ660T68ZKAENCAVYTK",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85KJKZ660T68ZKAENCAVYTK",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-370.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ660T68ZKAENCAVYTK"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-370.md",
+      "artifact_id": "REQ-370"
+    },
+    {
+      "id": "01M85KJKZ6TWRR5PH8H74D4YAR",
+      "kind": "unit",
+      "title": "Act: Write store focus from BootScene.onKeyDown",
+      "body": "In BootScene.onKeyDown, after moveFocus, write the focused id to useGameStore via setFocusedObject, before emitting focusChange.\n\n## Acceptance criteria\n- Tab press leaves store focusedObjectId equal to the focused object id.\n- focusChange is still emitted.\n\n\n## Scope\n- In scope: BootScene.onKeyDown\n- Out of scope: Other handlers\n- Preserve: Enter/Space/Escape branches\n\n\n## Technical constraints\n- useGameStore already imported in BootScene.ts\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- onKeyDown writes store focus on Tab, Shift+Tab, arrows\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Call setFocusedObject after moveFocus in the keyboard handler",
+      "description": "In BootScene.onKeyDown, after moveFocus, write the focused id to useGameStore via setFocusedObject, before emitting focusChange.",
+      "acceptance_criteria": [
+        "Tab press leaves store focusedObjectId equal to the focused object id.",
+        "focusChange is still emitted."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.onKeyDown"
+        ],
+        "out_of_scope": [
+          "Other handlers"
+        ],
+        "preserve": [
+          "Enter/Space/Escape branches"
+        ]
+      },
+      "technical_constraints": [
+        "useGameStore already imported in BootScene.ts",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "onKeyDown writes store focus on Tab, Shift+Tab, arrows",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-738.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85KJKZ6KNYVC98NFWSAH375",
+      "matched_feature_id": "01M84MX32EMQ7G8B2M8AC4ZXN0",
+      "links": [
+        "parent:01M85KJKZ6KNYVC98NFWSAH375",
+        "trace:01M84MX32EMQ7G8B2M8AC4ZXN0",
+        "artifact:.ai-dlc/units/UNIT-738.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ6KNYVC98NFWSAH375"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-738.md",
+      "artifact_id": "UNIT-738",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onKeyDown",
+          "lines": "L143-L152",
+          "action": "Inside the `if (delta !== 0)` branch, compute `const id = this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null;` after moveFocus, call useGameStore.getState().setFocusedObject(id), then emit focusChange with { id }.",
+          "code": "moveFocus(...); const id = this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null; useGameStore.getState().setFocusedObject(id); phaserToReact.emit('focusChange', { id });",
+          "expected": "A Tab press sets the store focusedObjectId and still emits focusChange with the same id."
+        }
+      ]
+    },
+    {
+      "id": "01M85KJKZ6MJ03WKMY4XZAAVG3",
+      "kind": "unit",
+      "title": "Act: Extract a single focused-id helper in BootScene",
+      "body": "Replace the inline focused-id lookup in onKeyDown with a private focusedObjectIdFromScene method returning string | null.\n\n## Acceptance criteria\n- Helper returns null when no object isFocused.\n- Store write and event use the helper result.\n\n\n## Scope\n- In scope: BootScene private helper\n- Out of scope: applyFocusedObject changes\n- Preserve: Public behavior of BootScene\n\n\n## Technical constraints\n- Method must be private\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- onKeyDown calls the helper once per move\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Use one private helper for the store write and the event payload",
+      "description": "Replace the inline focused-id lookup in onKeyDown with a private focusedObjectIdFromScene method returning string | null.",
+      "acceptance_criteria": [
+        "Helper returns null when no object isFocused.",
+        "Store write and event use the helper result."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene private helper"
+        ],
+        "out_of_scope": [
+          "applyFocusedObject changes"
+        ],
+        "preserve": [
+          "Public behavior of BootScene"
+        ]
+      },
+      "technical_constraints": [
+        "Method must be private",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "onKeyDown calls the helper once per move",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-739.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85KJKZ6N62JQAZ1004A0C4W",
+      "matched_feature_id": "01M84T6537706VR5FGDE69V8GW",
+      "links": [
+        "parent:01M85KJKZ6N62JQAZ1004A0C4W",
+        "trace:01M84T6537706VR5FGDE69V8GW",
+        "artifact:.ai-dlc/units/UNIT-739.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ6N62JQAZ1004A0C4W"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-739.md",
+      "artifact_id": "UNIT-739",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "new: BootScene.focusedObjectIdFromScene",
+          "lines": "after L152",
+          "action": "Add a private method focusedObjectIdFromScene(): string | null returning this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null.",
+          "code": "private focusedObjectIdFromScene(): string | null { return this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null; }",
+          "expected": "Method exists and compiles."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onKeyDown",
+          "lines": "L143-L152",
+          "action": "Replace the inline find in the delta branch with `const id = this.focusedObjectIdFromScene();` and use id for setFocusedObject and the focusChange emit.",
+          "code": "const id = this.focusedObjectIdFromScene();",
+          "expected": "Store write and event share one computed id."
+        }
+      ]
+    },
+    {
+      "id": "01M85KJKZ62CQZJJW3YJJX41D0",
+      "kind": "unit",
+      "title": "Verify: Keyboard moves write the store focusedObjectId unit tests",
+      "body": "Add bootSceneKeyboardStore.test.ts reusing the Phaser, content, buildScene and moveFocus mocks from tests/bootSceneKeyboard.test.ts.\n\n## Acceptance criteria\n- Tab sets store focusedObjectId to 'bookshelf'.\n- Shift+Tab and ArrowLeft call setFocusedObject with 'bookshelf'.\n- focusChange still emitted.\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Browser runs\n- Preserve: Existing keyboard tests\n\n\n## Technical constraints\n- Phaser, content and engine mocked\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for store writes on Tab, Shift+Tab and arrows",
+      "description": "Add bootSceneKeyboardStore.test.ts reusing the Phaser, content, buildScene and moveFocus mocks from tests/bootSceneKeyboard.test.ts.",
+      "acceptance_criteria": [
+        "Tab sets store focusedObjectId to 'bookshelf'.",
+        "Shift+Tab and ArrowLeft call setFocusedObject with 'bookshelf'.",
+        "focusChange still emitted."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": [
+          "Existing keyboard tests"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser, content and engine mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-740.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KJKZ6TWRR5PH8H74D4YAR",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85KJKZ6TWRR5PH8H74D4YAR",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-740.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ6TWRR5PH8H74D4YAR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-740.md",
+      "artifact_id": "UNIT-740",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneKeyboardStore.test.ts",
+          "symbol": "new: BootScene keyboard store focus",
+          "lines": "new",
+          "action": "Copy the vi.mock blocks and beforeEach setup from tests/bootSceneKeyboard.test.ts. Add tests: press('Tab') then expect useGameStore.getState().focusedObjectId toBe 'bookshelf'; press('Tab', true) and press('ArrowLeft') spy on setFocusedObject via vi.spyOn(useGameStore.getState(), 'setFocusedObject') and expect calledWith 'bookshelf'; expect emit toHaveBeenCalledWith('focusChange', { id: 'bookshelf' }).",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneKeyboardStore.test.ts",
+          "expected": "All tests in the file pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85KJKZ6XNZ2M4J6GPJ1GFEX",
+      "kind": "unit",
+      "title": "Verify: Store focus is null when nothing focused and apply is a no-op",
+      "body": "Add bootSceneKeyboardStoreNull.test.ts with the same mocks; set the fake object isFocused false and true in separate cases.\n\n## Acceptance criteria\n- With no focused object, Tab leaves store focusedObjectId null and emits focusChange id null.\n- With a focused object and non-null game state, Tab does not call blur on the object.\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Browser runs\n- Preserve: Existing focus apply tests\n\n\n## Technical constraints\n- Seed state with createInitialState as in bootSceneFocusApply.test.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for null focus and non-blurring apply",
+      "description": "Add bootSceneKeyboardStoreNull.test.ts with the same mocks; set the fake object isFocused false and true in separate cases.",
+      "acceptance_criteria": [
+        "With no focused object, Tab leaves store focusedObjectId null and emits focusChange id null.",
+        "With a focused object and non-null game state, Tab does not call blur on the object."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": [
+          "Existing focus apply tests"
+        ]
+      },
+      "technical_constraints": [
+        "Seed state with createInitialState as in bootSceneFocusApply.test.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-741.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KJKZ6MJ03WKMY4XZAAVG3",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85KJKZ6MJ03WKMY4XZAAVG3",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-741.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ6MJ03WKMY4XZAAVG3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-741.md",
+      "artifact_id": "UNIT-741",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneKeyboardStoreNull.test.ts",
+          "symbol": "new: BootScene keyboard store null and apply",
+          "lines": "new",
+          "action": "Reuse mocks from tests/bootSceneKeyboard.test.ts; add blur: vi.fn() and focus: vi.fn() to the fake object. Test 1: fake.isFocused=false, press('Tab'), expect store focusedObjectId toBeNull and emit calledWith('focusChange',{id:null}). Test 2: seed useGameStore state with createInitialState(worldFixture, sceneSpecFixture) as in bootSceneFocusApply.test.ts, fake.isFocused=true, press('Tab'), expect fake.blur not called.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneKeyboardStoreNull.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85KJKZ6822QY47FCMV5692X",
+      "kind": "evidence",
+      "title": "Evidence: Keyboard focus store write unit tests",
+      "body": "Collects results of the two new BootScene keyboard store unit test files proving the store owns focus.\n\n## Acceptance criteria\n- bootSceneKeyboardStore tests pass.\n- bootSceneKeyboardStoreNull tests pass.\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Browser checks\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that keyboard focus moves write the store focus",
+      "description": "Collects results of the two new BootScene keyboard store unit test files proving the store owns focus.",
+      "acceptance_criteria": [
+        "bootSceneKeyboardStore tests pass.",
+        "bootSceneKeyboardStoreNull tests pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-149.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85KJKZ62CQZJJW3YJJX41D0",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85KJKZ62CQZJJW3YJJX41D0",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-149.md"
+      ],
+      "depends_on": [
+        "01M85KJKZ62CQZJJW3YJJX41D0",
+        "01M85KJKZ6XNZ2M4J6GPJ1GFEX"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-149.md",
+      "artifact_id": "EVD-149"
+    }
+  ],
+  "created_at": "2026-11-24T01:44:52.979054+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M85STRXCZ39MJB5A6X9B0XCS",
+  "intent_id": "01M85SHYJTCGKNGQ56NSZS65QJ",
+  "title": "Verify: Background grid size and palette unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Tests for wall, wainscot, floor and window grids",
+  "description": "Write tests from the R2 criteria.",
+  "acceptance_criteria": [
+    "Each background grid has its declared size",
+    "Each renders with gridToRgba using only palette colours"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/roomBackground.test.ts"
+    ],
+    "out_of_scope": [
+      "Furniture"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, no filesystem",
+    "Palette read from src/lib/palette.ts"
+  ],
+  "dependencies": [
+    "A2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-796.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SMTB5GVFV8BYG3VA9BT6J",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-796.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85STRXC7HS7RWM7D5RN8ZER"
+  ],
+  "sim_node_id": "01M85SMTB5E0EKAHJHJVP9811W",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-796.md",
+  "artifact_id": "UNIT-796",
+  "steps": [
+    {
+      "file": "game/frontend/tests/roomBackground.test.ts",
+      "symbol": "new: sizes",
+      "lines": "new",
+      "action": "Create the file. For each source in BACKGROUND_SOURCES, strip the 'room/' prefix to get the id, read ROOM_ART_SIZES[id], and assert frames.length is 1, grid.length equals height and every row length equals width.",
+      "command": "cd game/frontend && npx vitest run tests/roomBackground.test.ts",
+      "expected": "Size test passes for the 4 ids"
+    },
+    {
+      "file": "game/frontend/tests/roomBackground.test.ts",
+      "symbol": "new: palette use",
+      "lines": "after sizes",
+      "action": "For each source call gridToRgba(frames[0], PALETTE); build the set of 'r,g,b' from data and assert each equals a PALETTE hex converted to rgb and the distinct index count is at least 3. Also assert the wall grid contains both rampIndex('plum',2) and rampIndex('plum',3), the wainscot contains a wood-ramp index, and the window contains rampIndex('moon',5) and a brass-ramp index.",
+      "command": "cd game/frontend && npx vitest run tests/roomBackground.test.ts",
+      "expected": "Palette tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T03:33:13.772213+00:00",
+  "updated_at": "2026-11-24T03:38:50.014084+00:00"
+}

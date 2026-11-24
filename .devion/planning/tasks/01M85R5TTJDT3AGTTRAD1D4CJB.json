@@ -1,0 +1,76 @@
+{
+  "id": "01M85R5TTJDT3AGTTRAD1D4CJB",
+  "intent_id": "01M85R04Y7ESS4H737B4QA602P",
+  "title": "Act: Create buildSpriteSheet in the frontend lib",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add game/frontend/src/lib/spriteSheet.ts with the pure buildSpriteSheet function",
+  "description": "Create the pure function that lays equal-size RGBA frames side by side into one sheet and returns size and frame metadata.",
+  "acceptance_criteria": [
+    "buildSpriteSheet(frames) returns width = frameWidth*frameCount and height = frameHeight",
+    "Empty input or mismatched frame sizes throw"
+  ],
+  "scope": {
+    "in_scope": [
+      "new file game/frontend/src/lib/spriteSheet.ts"
+    ],
+    "out_of_scope": [
+      "tests",
+      "PNG encoding",
+      "manifest"
+    ],
+    "preserve": [
+      "gridToRgba.ts unchanged"
+    ]
+  },
+  "technical_constraints": [
+    "Pure, deterministic, does not mutate input frames",
+    "Shared palette colours pass through unchanged",
+    "New file: `game/frontend/src/lib/spriteSheet.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "File exists, exports buildSpriteSheet and SpriteSheet, and tsc --noEmit accepts it",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-777.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85R1X8FTYQZA7ZMT7QT1CM6",
+    "trace:01M844GYQJJMHCJZGB2V33H3N6",
+    "artifact:.ai-dlc/units/UNIT-777.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85R5TTJ7CWCQG3FSEKS6T6M"
+  ],
+  "sim_node_id": "01M85R1X8F82GJHSPF46WMGEKW",
+  "feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+  "artifact_path": ".ai-dlc/units/UNIT-777.md",
+  "artifact_id": "UNIT-777",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/spriteSheet.ts",
+      "symbol": "new: SpriteFrame, SpriteSheet",
+      "lines": "new",
+      "action": "Create the file exporting interface SpriteFrame {width:number;height:number;data:Uint8ClampedArray} and interface SpriteSheet extends SpriteFrame with frameWidth, frameHeight and frameCount numbers.",
+      "code": "export interface SpriteFrame { width: number; height: number; data: Uint8ClampedArray; }\nexport interface SpriteSheet extends SpriteFrame { frameWidth: number; frameHeight: number; frameCount: number; }",
+      "expected": "Both types are exported"
+    },
+    {
+      "file": "game/frontend/src/lib/spriteSheet.ts",
+      "symbol": "new: buildSpriteSheet",
+      "lines": "after SpriteSheet",
+      "action": "Export buildSpriteSheet(frames: readonly SpriteFrame[]): SpriteSheet. Throw when frames is empty or any frame width/height differs from frames[0]. Allocate data of size frameWidth*frameCount*frameHeight*4 and, for each frame i and row y, copy frame.data.subarray(y*fw*4,(y+1)*fw*4) to offset (y*sheetWidth + i*fw)*4 using data.set.",
+      "code": "export function buildSpriteSheet(frames) {\n  if (frames.length === 0) throw new Error('frames must not be empty');\n  const { width: fw, height: fh } = frames[0];\n  const n = frames.length;\n  const width = fw * n;\n  const data = new Uint8ClampedArray(width * fh * 4);\n  frames.forEach((f, i) => {\n    if (f.width !== fw || f.height !== fh) throw new Error(`frame ${i} is ${f.width}x${f.height}, expected ${fw}x${fh}`);\n    for (let y = 0; y < fh; y++) data.set(f.data.subarray(y * fw * 4, (y + 1) * fw * 4), (y * width + i * fw) * 4);\n  });\n  return { width, height: fh, frameWidth: fw, frameHeight: fh, frameCount: n, data };\n}",
+      "expected": "Frames are laid out left to right with metadata"
+    }
+  ],
+  "created_at": "2026-11-24T03:04:19.026094+00:00",
+  "updated_at": "2026-11-24T03:05:28.173397+00:00"
+}

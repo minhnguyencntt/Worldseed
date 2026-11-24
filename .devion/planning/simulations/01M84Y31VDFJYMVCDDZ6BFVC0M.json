@@ -1,0 +1,475 @@
+{
+  "intent_id": "01M84Y31VDFJYMVCDDZ6BFVC0M",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84Y4DFNDF5K9YWNHY6VKXHQ",
+      "kind": "intent",
+      "title": "SG-5.3.1 · Scene start plays the authored fade transition",
+      "body": "Context: buildEffects (game/src/engine/buildEffects.ts) skips 'transition' effect specs and says they are played through ctx.playTransition, but nothing calls playTransition. BootScene.create (game/frontend/src/phaser/BootScene.ts) only builds effects, so no fade plays although bedroom.yaml authors a fade transition. Desired behavior: on scene start the authored fade is played with its content duration, and nothing is played when the scene has no transition entry. Why: the fade scene transition is part of the content-driven effects requirement.\n\n## Acceptance criteria\n- Given a scene with a fade transition entry of 400 ms, when the scene starts, then playTransition is called once with 400.\n- Given a scene with no transition entry, when the scene starts, then playTransition is not called.\n\n\n## Scope\n- In scope: Engine helper that reads the transition entry and calls ctx.playTransition\n- In scope: BootScene.create calling that helper\n- In scope: Unit tests with a mocked effect context\n- Out of scope: New transition kinds\n- Out of scope: Changing the effects schema\n- Out of scope: Changing the Phaser camera fade implementation\n- Preserve: buildEffects keeps skipping transition specs\n- Preserve: BootScene shutdown cleanup and sceneReady event\n\n\n## Technical constraints\n- Phaser 3.90\n- Engine code in game/src/engine must not import Phaser; it uses EffectRenderContext\n\n\n## Definition of done\n- Both requirements have Act and Verify units merged and green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene calls the effect context fade with the duration authored in scene content.",
+      "description": "Context: buildEffects (game/src/engine/buildEffects.ts) skips 'transition' effect specs and says they are played through ctx.playTransition, but nothing calls playTransition. BootScene.create (game/frontend/src/phaser/BootScene.ts) only builds effects, so no fade plays although bedroom.yaml authors a fade transition. Desired behavior: on scene start the authored fade is played with its content duration, and nothing is played when the scene has no transition entry. Why: the fade scene transition is part of the content-driven effects requirement.",
+      "acceptance_criteria": [
+        "Given a scene with a fade transition entry of 400 ms, when the scene starts, then playTransition is called once with 400.",
+        "Given a scene with no transition entry, when the scene starts, then playTransition is not called."
+      ],
+      "scope": {
+        "in_scope": [
+          "Engine helper that reads the transition entry and calls ctx.playTransition",
+          "BootScene.create calling that helper",
+          "Unit tests with a mocked effect context"
+        ],
+        "out_of_scope": [
+          "New transition kinds",
+          "Changing the effects schema",
+          "Changing the Phaser camera fade implementation"
+        ],
+        "preserve": [
+          "buildEffects keeps skipping transition specs",
+          "BootScene shutdown cleanup and sceneReady event"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Engine code in game/src/engine must not import Phaser; it uses EffectRenderContext"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements have Act and Verify units merged and green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-100.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "trace:01M84XZS821CXX68K1N68ZE9B2",
+        "artifact:.ai-dlc/intent/INT-100.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-100.md",
+      "artifact_id": "INT-100"
+    },
+    {
+      "id": "01M84Y4DFNYTRYPT5EC2VNE1MK",
+      "kind": "requirement",
+      "title": "REQ · An engine helper plays the scene's authored fade with its content duration",
+      "body": "Context: EffectSpec has a { type: 'transition', kind: 'fade', durationMs } variant (game/src/content/schema.ts L14) and SceneDef.effects holds it. Desired behavior: a pure engine helper finds the transition spec and calls ctx.playTransition(durationMs); it does nothing when absent. Expected result: the duration comes from content, never hardcoded. Why: keeps runtime separate from content.\n\n## Acceptance criteria\n- Given scene.effects contains a fade transition with durationMs 400, when playSceneTransition runs, then ctx.playTransition is called once with 400.\n- Given scene.effects is undefined or has no transition entry, when playSceneTransition runs, then ctx.playTransition is never called.\n\n\n## Scope\n- In scope: New game/src/engine/playSceneTransition.ts\n- Out of scope: Phaser-specific code\n- Preserve: buildEffects behavior\n\n\n## Technical constraints\n- Use EffectRenderContext from game/src/engine/renderContext.ts\n\n\n## Definition of done\n- Helper exported and used by BootScene\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "playSceneTransition(ctx, scene) calls ctx.playTransition with the transition entry's durationMs.",
+      "description": "Context: EffectSpec has a { type: 'transition', kind: 'fade', durationMs } variant (game/src/content/schema.ts L14) and SceneDef.effects holds it. Desired behavior: a pure engine helper finds the transition spec and calls ctx.playTransition(durationMs); it does nothing when absent. Expected result: the duration comes from content, never hardcoded. Why: keeps runtime separate from content.",
+      "acceptance_criteria": [
+        "Given scene.effects contains a fade transition with durationMs 400, when playSceneTransition runs, then ctx.playTransition is called once with 400.",
+        "Given scene.effects is undefined or has no transition entry, when playSceneTransition runs, then ctx.playTransition is never called."
+      ],
+      "scope": {
+        "in_scope": [
+          "New game/src/engine/playSceneTransition.ts"
+        ],
+        "out_of_scope": [
+          "Phaser-specific code"
+        ],
+        "preserve": [
+          "buildEffects behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Use EffectRenderContext from game/src/engine/renderContext.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and used by BootScene",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-249.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84Y4DFNDF5K9YWNHY6VKXHQ",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84Y4DFNDF5K9YWNHY6VKXHQ",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-249.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFNDF5K9YWNHY6VKXHQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-249.md",
+      "artifact_id": "REQ-249"
+    },
+    {
+      "id": "01M84Y4DFNHMTEQWVP0BQAVBZJ",
+      "kind": "requirement",
+      "title": "REQ · BootScene.create plays the authored transition on scene start",
+      "body": "Context: BootScene.create builds effects but never plays the fade. Desired behavior: create() calls playSceneTransition with the same Phaser effect context used for buildEffects. Expected result: the bedroom fades in over its authored duration. Why: no fade plays today.\n\n## Acceptance criteria\n- Given BootScene.create runs, then playSceneTransition is called once with the effect context and the bundled scene.\n- Given the scene shuts down, then effect handles are still destroyed.\n\n\n## Scope\n- In scope: BootScene.create wiring\n- Out of scope: New scenes\n- Preserve: Subscription cleanup\n- Preserve: sceneReady emit\n\n\n## Technical constraints\n- Reuse a single createPhaserEffectContext(this) instance\n\n\n## Definition of done\n- BootScene calls the helper\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene.create calls playSceneTransition with the Phaser effect context and bundled scene.",
+      "description": "Context: BootScene.create builds effects but never plays the fade. Desired behavior: create() calls playSceneTransition with the same Phaser effect context used for buildEffects. Expected result: the bedroom fades in over its authored duration. Why: no fade plays today.",
+      "acceptance_criteria": [
+        "Given BootScene.create runs, then playSceneTransition is called once with the effect context and the bundled scene.",
+        "Given the scene shuts down, then effect handles are still destroyed."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.create wiring"
+        ],
+        "out_of_scope": [
+          "New scenes"
+        ],
+        "preserve": [
+          "Subscription cleanup",
+          "sceneReady emit"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse a single createPhaserEffectContext(this) instance"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BootScene calls the helper",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-250.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M84Y4DFNDF5K9YWNHY6VKXHQ",
+      "links": [
+        "parent:01M84Y4DFNDF5K9YWNHY6VKXHQ",
+        "trace:01M84XZS83AM5PMH68YPMGT0QD",
+        "artifact:.ai-dlc/requirements/REQ-250.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFNDF5K9YWNHY6VKXHQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-250.md",
+      "artifact_id": "REQ-250"
+    },
+    {
+      "id": "01M84Y4DFND16FNNJMTQJWZHFW",
+      "kind": "unit",
+      "title": "Act: Add playSceneTransition engine helper",
+      "body": "Add game/src/engine/playSceneTransition.ts exporting playSceneTransition(ctx, scene) that calls ctx.playTransition with the durationMs of the first transition effect.\n\n## Acceptance criteria\n- playSceneTransition calls ctx.playTransition(durationMs) for a scene with a transition spec.\n- playSceneTransition makes no call when no transition spec exists.\n\n\n## Scope\n- In scope: New helper file\n- Out of scope: BootScene changes\n- Preserve: buildEffects.ts unchanged\n\n\n## Technical constraints\n- No Phaser import\n- New file: `game/src/engine/playSceneTransition.ts`\n\n\n## Definition of done\n- Helper compiles under tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create the helper that reads the transition entry and calls playTransition.",
+      "description": "Add game/src/engine/playSceneTransition.ts exporting playSceneTransition(ctx, scene) that calls ctx.playTransition with the durationMs of the first transition effect.",
+      "acceptance_criteria": [
+        "playSceneTransition calls ctx.playTransition(durationMs) for a scene with a transition spec.",
+        "playSceneTransition makes no call when no transition spec exists."
+      ],
+      "scope": {
+        "in_scope": [
+          "New helper file"
+        ],
+        "out_of_scope": [
+          "BootScene changes"
+        ],
+        "preserve": [
+          "buildEffects.ts unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser import",
+        "New file: `game/src/engine/playSceneTransition.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper compiles under tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-498.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84Y4DFNYTRYPT5EC2VNE1MK",
+      "links": [
+        "parent:01M84Y4DFNYTRYPT5EC2VNE1MK",
+        "trace:01M84XZS83YWX75YVM3NWC5BAZ",
+        "artifact:.ai-dlc/units/UNIT-498.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFNYTRYPT5EC2VNE1MK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-498.md",
+      "artifact_id": "UNIT-498",
+      "steps": [
+        {
+          "file": "game/src/engine/playSceneTransition.ts",
+          "symbol": "new: playSceneTransition",
+          "lines": "new",
+          "action": "Create the file exporting playSceneTransition(ctx: EffectRenderContext, scene: SceneDef): void that finds the first entry of scene.effects with type 'transition' and calls ctx.playTransition(spec.durationMs); returns without calling when none is found.",
+          "code": "import type { SceneDef } from '../state/types';\nimport type { EffectRenderContext } from './renderContext';\n\nexport function playSceneTransition(ctx: EffectRenderContext, scene: SceneDef): void {\n  const spec = (scene.effects ?? []).find((e) => e.type === 'transition');\n  if (spec && spec.type === 'transition') ctx.playTransition(spec.durationMs);\n}",
+          "expected": "Module exports playSceneTransition and type-checks."
+        }
+      ]
+    },
+    {
+      "id": "01M84Y4DFN2CTSNABMY89XJDHS",
+      "kind": "unit",
+      "title": "Act: Call playSceneTransition from BootScene.create",
+      "body": "Import playSceneTransition and call it in BootScene.create with the shared effect context.\n\n## Acceptance criteria\n- create() invokes playSceneTransition(ctx, scene).\n- Existing shutdown cleanup is unchanged.\n\n\n## Scope\n- In scope: BootScene.ts\n- Out of scope: effectContext.ts\n- Preserve: Shutdown handler\n\n\n## Technical constraints\n- Depends on ACT1 helper\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- BootScene type-checks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire the helper into BootScene.create after effects are built.",
+      "description": "Import playSceneTransition and call it in BootScene.create with the shared effect context.",
+      "acceptance_criteria": [
+        "create() invokes playSceneTransition(ctx, scene).",
+        "Existing shutdown cleanup is unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "effectContext.ts"
+        ],
+        "preserve": [
+          "Shutdown handler"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on ACT1 helper",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "BootScene type-checks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-499.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84Y4DFNHMTEQWVP0BQAVBZJ",
+      "links": [
+        "parent:01M84Y4DFNHMTEQWVP0BQAVBZJ",
+        "trace:01M84XZS83CD2QK2D0KGDWZ7TH",
+        "artifact:.ai-dlc/units/UNIT-499.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFNHMTEQWVP0BQAVBZJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-499.md",
+      "artifact_id": "UNIT-499",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L6-L25",
+          "action": "Add import { playSceneTransition } from '@game/engine/playSceneTransition'; in create() replace the inline createPhaserEffectContext(this) argument with a const ctx, pass ctx to buildEffects, then call playSceneTransition(ctx, scene) right after.",
+          "code": "const ctx = createPhaserEffectContext(this);\nthis.effects = buildEffects(ctx, scene);\nplaySceneTransition(ctx, scene);",
+          "expected": "create() builds effects then plays the authored fade."
+        }
+      ]
+    },
+    {
+      "id": "01M84Y4DFNP54WVHXFWR6SWH3C",
+      "kind": "unit",
+      "title": "Verify: playSceneTransition unit tests with a mocked context",
+      "body": "Unit tests in game/tests/playSceneTransition.test.ts using a fake EffectRenderContext, mirroring game/tests/buildEffects.test.ts.\n\n## Acceptance criteria\n- Test asserts playTransition called once with 400 for a fade entry.\n- Test asserts playTransition not called without a transition entry.\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Phaser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fake context made of vi.fn(); no Phaser\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Prove the fade is called with the content duration and skipped when absent.",
+      "description": "Unit tests in game/tests/playSceneTransition.test.ts using a fake EffectRenderContext, mirroring game/tests/buildEffects.test.ts.",
+      "acceptance_criteria": [
+        "Test asserts playTransition called once with 400 for a fade entry.",
+        "Test asserts playTransition not called without a transition entry."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Phaser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake context made of vi.fn(); no Phaser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-500.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M84Y4DFND16FNNJMTQJWZHFW",
+      "links": [
+        "parent:01M84Y4DFND16FNNJMTQJWZHFW",
+        "trace:01M84XZS83G2BB3BMMX1XJYBW3",
+        "artifact:.ai-dlc/units/UNIT-500.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFND16FNNJMTQJWZHFW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-500.md",
+      "artifact_id": "UNIT-500",
+      "steps": [
+        {
+          "file": "game/tests/playSceneTransition.test.ts",
+          "symbol": "new: plays the authored fade with the content duration",
+          "lines": "new",
+          "action": "Build ctx = { createEffect: vi.fn(), playTransition: vi.fn() } and a scene object with effects [{ type: 'transition', kind: 'fade', durationMs: 400 }] (shape copied from the fade constant in game/tests/buildEffects.test.ts L18); call playSceneTransition(ctx, scene) and assert playTransition toHaveBeenCalledTimes(1) and toHaveBeenCalledWith(400).",
+          "command": "cd game && npx vitest run tests/playSceneTransition.test.ts",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/tests/playSceneTransition.test.ts",
+          "symbol": "new: does not play when no transition entry",
+          "lines": "after the first test",
+          "action": "Call playSceneTransition with a scene whose effects are [{ type: 'ambientLight', color: '#1a2b3c', alpha: 0.4 }] and again with effects undefined; assert playTransition not.toHaveBeenCalled().",
+          "command": "cd game && npx vitest run tests/playSceneTransition.test.ts",
+          "expected": "Both no-call assertions pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84Y4DFN11CP33NJHKNBSSRX",
+      "kind": "unit",
+      "title": "Verify: BootScene plays the authored transition on create",
+      "body": "Extend game/frontend/tests/bootSceneEffects.test.ts with a mocked playSceneTransition.\n\n## Acceptance criteria\n- create() calls playSceneTransition once with ctx and the bundled scene.\n- Shutdown still destroys effect handles.\n\n\n## Scope\n- In scope: bootSceneEffects.test.ts\n- Out of scope: Real Phaser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Phaser and engine modules are mocked with vi.mock\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Prove create() calls playSceneTransition with the context and scene.",
+      "description": "Extend game/frontend/tests/bootSceneEffects.test.ts with a mocked playSceneTransition.",
+      "acceptance_criteria": [
+        "create() calls playSceneTransition once with ctx and the bundled scene.",
+        "Shutdown still destroys effect handles."
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneEffects.test.ts"
+        ],
+        "out_of_scope": [
+          "Real Phaser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser and engine modules are mocked with vi.mock"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-501.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M84Y4DFN2CTSNABMY89XJDHS",
+      "links": [
+        "parent:01M84Y4DFN2CTSNABMY89XJDHS",
+        "trace:01M84XZS83S234TJECYTZC0YK3",
+        "artifact:.ai-dlc/units/UNIT-501.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFN2CTSNABMY89XJDHS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-501.md",
+      "artifact_id": "UNIT-501",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "vi.mock('@game/engine/playSceneTransition')",
+          "lines": "after L22",
+          "action": "Add vi.mock('@game/engine/playSceneTransition', () => ({ playSceneTransition: vi.fn() })) and import playSceneTransition; add vi.mocked(playSceneTransition).mockReset() in beforeEach so the fake Phaser scene needs no camera.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+          "expected": "Existing BootScene tests still pass with the helper mocked."
+        },
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "it: plays the authored transition when create() runs",
+          "lines": "after L44",
+          "action": "Set state, mock buildEffects to return [], call new BootScene().create(); assert playSceneTransition toHaveBeenCalledTimes(1), first arg has function playTransition, second arg toBe(scene).",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+          "expected": "New and existing tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84Y4DFNFXJB62VCX9TQ8FPY",
+      "kind": "evidence",
+      "title": "Evidence: Scene start plays the authored fade unit tests",
+      "body": "Record passing output of playSceneTransition.test.ts and bootSceneEffects.test.ts as evidence that the fade is called with the content duration and skipped when absent.\n\n## Acceptance criteria\n- Both test files pass.\n- Results show the 400 ms call and the no-transition case.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser runs\n\n\n## Definition of done\n- Test output attached\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect results of the helper and BootScene unit tests.",
+      "description": "Record passing output of playSceneTransition.test.ts and bootSceneEffects.test.ts as evidence that the fade is called with the content duration and skipped when absent.",
+      "acceptance_criteria": [
+        "Both test files pass.",
+        "Results show the 400 ms call and the no-transition case."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output attached",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-100.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84Y4DFNP54WVHXFWR6SWH3C",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84Y4DFNP54WVHXFWR6SWH3C",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-100.md"
+      ],
+      "depends_on": [
+        "01M84Y4DFNP54WVHXFWR6SWH3C",
+        "01M84Y4DFN11CP33NJHKNBSSRX"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-100.md",
+      "artifact_id": "EVD-100"
+    }
+  ],
+  "created_at": "2026-11-23T19:29:35.734682+00:00",
+  "summary": "AI · 6 NEW · 2 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

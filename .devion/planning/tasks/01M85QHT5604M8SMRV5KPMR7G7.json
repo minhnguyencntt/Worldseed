@@ -1,0 +1,78 @@
+{
+  "id": "01M85QHT5604M8SMRV5KPMR7G7",
+  "intent_id": "01M85Q9HW9N2CVSQD6BPVWCP20",
+  "title": "Act: Export palette Tailwind colours and register them in tailwind.config.ts",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add paletteTailwindColors and colors.pal",
+  "description": "Derive the Tailwind colour object from PALETTE_RAMPS and add it to the Tailwind theme.",
+  "acceptance_criteria": [
+    "paletteTailwindColors maps ramp -> step number -> hex.",
+    "tailwind.config.ts theme.extend.colors.pal equals it and old tokens remain."
+  ],
+  "scope": {
+    "in_scope": [
+      "palette.ts export",
+      "tailwind.config.ts"
+    ],
+    "out_of_scope": [
+      "Component restyling",
+      "tests"
+    ],
+    "preserve": [
+      "Existing hsl tokens, content globs, plugins"
+    ]
+  },
+  "technical_constraints": [
+    "Tailwind stays; derive from the single palette, do not copy hex values.",
+    "New file: `game/frontend/src/lib/palette.ts`",
+    "Code path: `game/frontend/tailwind.config.ts`"
+  ],
+  "dependencies": [
+    "ACT-PAL"
+  ],
+  "definition_of_done": [
+    "tsc --noEmit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-767.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85QC21CV9HFS98HZHTXB7J1",
+    "trace:01M84GAF91STPB09PZYJSX9XTF",
+    "artifact:.ai-dlc/units/UNIT-767.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85QHT565Z3Y0R0ZP1TSF7YS"
+  ],
+  "sim_node_id": "01M85QC21CVCTMF6A9RKHRNATR",
+  "feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+  "artifact_path": ".ai-dlc/units/UNIT-767.md",
+  "artifact_id": "UNIT-767",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/palette.ts",
+      "symbol": "new: paletteTailwindColors",
+      "lines": "after PALETTE",
+      "action": "Export paletteTailwindColors built from PALETTE_RAMPS: each ramp name maps to an object whose keys are '1'..'6' and values are the hex.",
+      "code": "export const paletteTailwindColors: Record<string, Record<string, string>> = Object.fromEntries(\n  Object.entries(PALETTE_RAMPS).map(([name, steps]) => [\n    name,\n    Object.fromEntries(steps.map((hex, i) => [String(i + 1), hex])),\n  ]),\n);",
+      "expected": "paletteTailwindColors.wood['3'] is '#6b3b1d'."
+    },
+    {
+      "file": "game/frontend/tailwind.config.ts",
+      "symbol": "default export colors",
+      "lines": "L1-L4",
+      "action": "Import paletteTailwindColors from './src/lib/palette' after line 2 and add pal: paletteTailwindColors inside theme.extend.colors next to muted and border, leaving other keys unchanged.",
+      "code": "import { paletteTailwindColors } from './src/lib/palette';\n... muted:'hsl(var(--muted))', border:'hsl(var(--border))', pal: paletteTailwindColors }",
+      "expected": "theme.extend.colors.pal is defined; background is still hsl(var(--background))."
+    }
+  ],
+  "created_at": "2026-11-24T02:53:22.982886+00:00",
+  "updated_at": "2026-11-24T02:55:11.997999+00:00"
+}

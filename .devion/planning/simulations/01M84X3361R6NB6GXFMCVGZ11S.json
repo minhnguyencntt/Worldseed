@@ -1,0 +1,761 @@
+{
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84X58HR1WZMW5X405HMF9CC",
+      "kind": "intent",
+      "title": "SG-5.2 · Scene object entity with hover, label, click, actions and keyboard access",
+      "body": "Context: game/src/entities/SceneObject.ts only creates a sprite (key, position, scale, depth) and toggles visibility from visibleWhen. No interaction helper exists in game/src/systems yet. Desired behavior: every authored ObjectSpec becomes an interactive entity. Expected result: hover highlights the object and shows its name, a click or keyboard activation emits an event carrying the object id and its currently available actions. Why: interactive bedroom objects must be data-driven and keyboard accessible.\n\n## Acceptance criteria\n- Given a pointer position inside an object's interactionBounds, When hit-tested, Then the helper reports a hit and a position outside reports a miss\n- Given an object with actions guarded by conditions, When the state changes, Then only actions whose conditions pass are listed\n- Given a pointer over the object, When hover starts and ends, Then highlight and name label toggle on and off\n- Given a click or Enter/Space on a focused visible object, When activated, Then an interact event with the object id and available actions is emitted\n\n\n## Scope\n- In scope: New interaction helper in game/src/systems\n- In scope: SceneObject hover, label, click, focus and activation\n- In scope: RenderContext/RenderHandle interface extension\n- In scope: buildScene focus cycling and interact callback\n- Out of scope: Phaser-backed RenderContext implementation\n- Out of scope: React ActionMenu changes\n- Out of scope: New content or assets\n- Preserve: ObjectSpec schema\n- Preserve: Existing SceneObject sprite creation arguments and visibility sync\n- Preserve: buildScene layer ordering\n\n\n## Technical constraints\n- Engine code stays free of Phaser imports; rendering goes through RenderContext\n- Reuse evaluateAll from game/src/systems/conditions.ts\n\n\n## Definition of done\n- All requirements delivered with Act and Verify units\n- Unit tests green with fake render context\n\n\n## Non-functional requirements\n- Pure, deterministic helper functions\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "SceneObject gains bounds, hover highlight, name label, click event, contextual actions, visibility and keyboard focus/activation through a shared interaction helper",
+      "description": "Context: game/src/entities/SceneObject.ts only creates a sprite (key, position, scale, depth) and toggles visibility from visibleWhen. No interaction helper exists in game/src/systems yet. Desired behavior: every authored ObjectSpec becomes an interactive entity. Expected result: hover highlights the object and shows its name, a click or keyboard activation emits an event carrying the object id and its currently available actions. Why: interactive bedroom objects must be data-driven and keyboard accessible.",
+      "acceptance_criteria": [
+        "Given a pointer position inside an object's interactionBounds, When hit-tested, Then the helper reports a hit and a position outside reports a miss",
+        "Given an object with actions guarded by conditions, When the state changes, Then only actions whose conditions pass are listed",
+        "Given a pointer over the object, When hover starts and ends, Then highlight and name label toggle on and off",
+        "Given a click or Enter/Space on a focused visible object, When activated, Then an interact event with the object id and available actions is emitted"
+      ],
+      "scope": {
+        "in_scope": [
+          "New interaction helper in game/src/systems",
+          "SceneObject hover, label, click, focus and activation",
+          "RenderContext/RenderHandle interface extension",
+          "buildScene focus cycling and interact callback"
+        ],
+        "out_of_scope": [
+          "Phaser-backed RenderContext implementation",
+          "React ActionMenu changes",
+          "New content or assets"
+        ],
+        "preserve": [
+          "ObjectSpec schema",
+          "Existing SceneObject sprite creation arguments and visibility sync",
+          "buildScene layer ordering"
+        ]
+      },
+      "technical_constraints": [
+        "Engine code stays free of Phaser imports; rendering goes through RenderContext",
+        "Reuse evaluateAll from game/src/systems/conditions.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered with Act and Verify units",
+        "Unit tests green with fake render context",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-097.md`"
+      ],
+      "non_functional": [
+        "Pure, deterministic helper functions"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+      "links": [
+        "trace:01M84G51W28MN6Z7X3354EYDE3",
+        "artifact:.ai-dlc/intent/INT-097.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-097.md",
+      "artifact_id": "INT-097"
+    },
+    {
+      "id": "01M84X58HRPAASNHQ50627D9DG",
+      "kind": "requirement",
+      "title": "REQ · Interaction helper provides hit-testing, available actions and activation keys",
+      "body": "Context: ObjectSpec carries interactionBounds (relative to position, scaled) and actions with conditions, but nothing evaluates them. Desired behavior: a pure helper exposes pointInBounds, availableActions, isActivationKey and nextFocusIndex. Expected result: SceneObject and buildScene reuse one tested helper. Why: the intent requires using an interaction helper.\n\n## Acceptance criteria\n- Given bounds {x:0,y:0,width:40,height:80}, position (100,200), scale 2, When point (110,210) is tested, Then it is a hit and (190,210) is a miss\n- Given an object without interactionBounds, When point-tested, Then the result is a miss\n- Given actions with and without failing conditions, When availableActions runs, Then only passing actions are returned in authored order\n- Given keys Enter and ' ', When isActivationKey runs, Then true; for 'a' false\n- Given count 3, index 2 and delta +1, When nextFocusIndex runs, Then 0; with count 0 it returns -1\n\n\n## Scope\n- In scope: game/src/systems/interaction.ts\n- Out of scope: Rendering\n- Out of scope: React UI\n- Preserve: conditions.ts behavior\n\n\n## Technical constraints\n- No Phaser or DOM imports\n\n\n## Definition of done\n- Helper exported and typed against ObjectSpec\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure interaction helper in game/src/systems/interaction.ts",
+      "description": "Context: ObjectSpec carries interactionBounds (relative to position, scaled) and actions with conditions, but nothing evaluates them. Desired behavior: a pure helper exposes pointInBounds, availableActions, isActivationKey and nextFocusIndex. Expected result: SceneObject and buildScene reuse one tested helper. Why: the intent requires using an interaction helper.",
+      "acceptance_criteria": [
+        "Given bounds {x:0,y:0,width:40,height:80}, position (100,200), scale 2, When point (110,210) is tested, Then it is a hit and (190,210) is a miss",
+        "Given an object without interactionBounds, When point-tested, Then the result is a miss",
+        "Given actions with and without failing conditions, When availableActions runs, Then only passing actions are returned in authored order",
+        "Given keys Enter and ' ', When isActivationKey runs, Then true; for 'a' false",
+        "Given count 3, index 2 and delta +1, When nextFocusIndex runs, Then 0; with count 0 it returns -1"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/systems/interaction.ts"
+        ],
+        "out_of_scope": [
+          "Rendering",
+          "React UI"
+        ],
+        "preserve": [
+          "conditions.ts behavior"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser or DOM imports"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and typed against ObjectSpec",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-241.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84X58HR1WZMW5X405HMF9CC",
+      "matched_feature_id": "01M84T6537DBT4A27GNM8ZT8DW",
+      "links": [
+        "parent:01M84X58HR1WZMW5X405HMF9CC",
+        "trace:01M84T6537DBT4A27GNM8ZT8DW",
+        "artifact:.ai-dlc/requirements/REQ-241.md"
+      ],
+      "depends_on": [
+        "01M84X58HR1WZMW5X405HMF9CC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-241.md",
+      "artifact_id": "REQ-241"
+    },
+    {
+      "id": "01M84X58HRPGDZDHYE2M4PMMR8",
+      "kind": "requirement",
+      "title": "REQ · SceneObject renders bounds, hover highlight, name label and emits click",
+      "body": "Context: RenderHandle only has setVisible and destroy. Desired behavior: createSprite receives the object name and interaction bounds; the handle exposes setHighlighted, setLabelVisible, onHover and onClick. SceneObject toggles highlight and label on hover and emits an interact event on click, only when visible. Expected result: pointer interaction is data-driven with no Phaser in the entity. Why: hover and click identify and trigger interactive objects.\n\n## Acceptance criteria\n- Given a spec with a name and bounds, When constructed, Then createSprite receives label equal to spec.name and the computed bounds\n- Given hover enters then leaves, When callbacks fire, Then setHighlighted and setLabelVisible receive true then false\n- Given a visible object is clicked, When onClick fires, Then the interact listener receives the object id and availableActions for the state\n- Given the object is hidden by visibleWhen, When clicked or hovered, Then no event is emitted and no highlight shows\n\n\n## Scope\n- In scope: renderContext.ts interfaces\n- In scope: SceneObject hover/click/onInteract\n- Out of scope: Phaser implementation of RenderContext\n- Preserve: Existing createSprite fields key,x,y,scale,depth\n- Preserve: visibleWhen sync\n\n\n## Technical constraints\n- Reuse availableActions and pointInBounds from systems/interaction.ts\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Interfaces and entity updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "SceneObject wires pointer interaction through RenderContext",
+      "description": "Context: RenderHandle only has setVisible and destroy. Desired behavior: createSprite receives the object name and interaction bounds; the handle exposes setHighlighted, setLabelVisible, onHover and onClick. SceneObject toggles highlight and label on hover and emits an interact event on click, only when visible. Expected result: pointer interaction is data-driven with no Phaser in the entity. Why: hover and click identify and trigger interactive objects.",
+      "acceptance_criteria": [
+        "Given a spec with a name and bounds, When constructed, Then createSprite receives label equal to spec.name and the computed bounds",
+        "Given hover enters then leaves, When callbacks fire, Then setHighlighted and setLabelVisible receive true then false",
+        "Given a visible object is clicked, When onClick fires, Then the interact listener receives the object id and availableActions for the state",
+        "Given the object is hidden by visibleWhen, When clicked or hovered, Then no event is emitted and no highlight shows"
+      ],
+      "scope": {
+        "in_scope": [
+          "renderContext.ts interfaces",
+          "SceneObject hover/click/onInteract"
+        ],
+        "out_of_scope": [
+          "Phaser implementation of RenderContext"
+        ],
+        "preserve": [
+          "Existing createSprite fields key,x,y,scale,depth",
+          "visibleWhen sync"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse availableActions and pointInBounds from systems/interaction.ts"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Interfaces and entity updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-242.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84X58HR1WZMW5X405HMF9CC",
+      "matched_feature_id": "01M84WZ47Y1KGEPRSW570N8QXJ",
+      "links": [
+        "parent:01M84X58HR1WZMW5X405HMF9CC",
+        "trace:01M84WZ47Y1KGEPRSW570N8QXJ",
+        "artifact:.ai-dlc/requirements/REQ-242.md"
+      ],
+      "depends_on": [
+        "01M84X58HR1WZMW5X405HMF9CC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-242.md",
+      "artifact_id": "REQ-242"
+    },
+    {
+      "id": "01M84X58HR1HFWWS5R05BMJ8X3",
+      "kind": "requirement",
+      "title": "REQ · Scene objects support keyboard focus and activation",
+      "body": "Context: no keyboard access exists. Desired behavior: SceneObject has focus() and blur() applying the same highlight and label as hover, and handleKey(key) that activates when focused and isActivationKey. buildScene-level SceneFocus helper cycles focus across visible objects using nextFocusIndex. Expected result: users can Tab/arrow to an object and press Enter or Space to open its actions. Why: interactive objects must be keyboard accessible.\n\n## Acceptance criteria\n- Given a focused visible object, When Enter or Space is pressed, Then the interact event is emitted\n- Given an unfocused object, When Enter is pressed, Then nothing is emitted\n- Given three objects with the second hidden, When focus moves next twice from the first, Then focus lands on the third then wraps to the first\n- Given focus moves away, When blur runs, Then highlight and label turn off\n\n\n## Scope\n- In scope: SceneObject focus/blur/handleKey\n- In scope: focus cycling function in buildScene.ts\n- Out of scope: DOM key listener binding\n- Out of scope: Phaser input\n- Preserve: buildScene return type and ordering\n\n\n## Technical constraints\n- Reuse isActivationKey and nextFocusIndex\n\n\n## Dependencies\n- REQ1\n- REQ2\n\n\n## Definition of done\n- Focus and activation implemented\n\n\n## Non-functional requirements\n- Hidden objects are never focusable\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Keyboard focus cycling and Enter/Space activation through buildScene",
+      "description": "Context: no keyboard access exists. Desired behavior: SceneObject has focus() and blur() applying the same highlight and label as hover, and handleKey(key) that activates when focused and isActivationKey. buildScene-level SceneFocus helper cycles focus across visible objects using nextFocusIndex. Expected result: users can Tab/arrow to an object and press Enter or Space to open its actions. Why: interactive objects must be keyboard accessible.",
+      "acceptance_criteria": [
+        "Given a focused visible object, When Enter or Space is pressed, Then the interact event is emitted",
+        "Given an unfocused object, When Enter is pressed, Then nothing is emitted",
+        "Given three objects with the second hidden, When focus moves next twice from the first, Then focus lands on the third then wraps to the first",
+        "Given focus moves away, When blur runs, Then highlight and label turn off"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject focus/blur/handleKey",
+          "focus cycling function in buildScene.ts"
+        ],
+        "out_of_scope": [
+          "DOM key listener binding",
+          "Phaser input"
+        ],
+        "preserve": [
+          "buildScene return type and ordering"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse isActivationKey and nextFocusIndex"
+      ],
+      "dependencies": [
+        "REQ1",
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Focus and activation implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-243.md`"
+      ],
+      "non_functional": [
+        "Hidden objects are never focusable"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84X58HR1WZMW5X405HMF9CC",
+      "matched_feature_id": "01M84PBVRNWN22DRPEVFTCZB2Z",
+      "links": [
+        "parent:01M84X58HR1WZMW5X405HMF9CC",
+        "trace:01M84PBVRNWN22DRPEVFTCZB2Z",
+        "artifact:.ai-dlc/requirements/REQ-243.md"
+      ],
+      "depends_on": [
+        "01M84X58HR1WZMW5X405HMF9CC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-243.md",
+      "artifact_id": "REQ-243"
+    },
+    {
+      "id": "01M84X58HRCEWW3V0XWAD1EHZC",
+      "kind": "unit",
+      "title": "Act: Add interaction helper module",
+      "body": "Add pure functions pointInBounds, availableActions, isActivationKey and nextFocusIndex reusing evaluateAll.\n\n## Acceptance criteria\n- Module exports the four functions with typed signatures\n- availableActions uses evaluateAll on each action's conditions\n\n\n## Scope\n- In scope: New interaction.ts\n- Out of scope: Tests\n- Out of scope: SceneObject changes\n- Preserve: systems/conditions.ts\n\n\n## Technical constraints\n- Import types from ../content/schema and ../state/types\n- New file: `game/src/systems/interaction.ts`\n\n\n## Definition of done\n- interaction.ts compiles under tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game/src/systems/interaction.ts",
+      "description": "Add pure functions pointInBounds, availableActions, isActivationKey and nextFocusIndex reusing evaluateAll.",
+      "acceptance_criteria": [
+        "Module exports the four functions with typed signatures",
+        "availableActions uses evaluateAll on each action's conditions"
+      ],
+      "scope": {
+        "in_scope": [
+          "New interaction.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "SceneObject changes"
+        ],
+        "preserve": [
+          "systems/conditions.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Import types from ../content/schema and ../state/types",
+        "New file: `game/src/systems/interaction.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "interaction.ts compiles under tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-482.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84X58HRPAASNHQ50627D9DG",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M84X58HRPAASNHQ50627D9DG",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-482.md"
+      ],
+      "depends_on": [
+        "01M84X58HRPAASNHQ50627D9DG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-482.md",
+      "artifact_id": "UNIT-482",
+      "steps": [
+        {
+          "file": "game/src/systems/interaction.ts",
+          "symbol": "new: pointInBounds",
+          "lines": "new",
+          "action": "Create the file; export pointInBounds(spec: ObjectSpec, px: number, py: number): boolean returning false when spec.interactionBounds is undefined, else true when px and py lie within [position.x + b.x*scale, +b.width*scale] and [position.y + b.y*scale, +b.height*scale] inclusive of the left/top edge and exclusive of the right/bottom edge",
+          "code": "const b = spec.interactionBounds; if (!b) return false; const x0 = spec.position.x + b.x * spec.scale; const y0 = spec.position.y + b.y * spec.scale; return px >= x0 && px < x0 + b.width * spec.scale && py >= y0 && py < y0 + b.height * spec.scale;",
+          "expected": "Function compiles and returns booleans per the bounds rule"
+        },
+        {
+          "file": "game/src/systems/interaction.ts",
+          "symbol": "new: availableActions",
+          "lines": "new",
+          "action": "Export availableActions(state: GameState, spec: ObjectSpec): ActionSpec[] returning spec.actions.filter(a => evaluateAll(state, a.conditions)); import evaluateAll from './conditions'",
+          "code": "return spec.actions.filter((a) => evaluateAll(state, a.conditions));",
+          "expected": "Only actions with passing conditions are returned"
+        },
+        {
+          "file": "game/src/systems/interaction.ts",
+          "symbol": "new: isActivationKey",
+          "lines": "new",
+          "action": "Export isActivationKey(key: string): boolean returning true for 'Enter' and ' ' only",
+          "code": "return key === 'Enter' || key === ' ';",
+          "expected": "Returns true only for Enter and Space"
+        },
+        {
+          "file": "game/src/systems/interaction.ts",
+          "symbol": "new: nextFocusIndex",
+          "lines": "new",
+          "action": "Export nextFocusIndex(count: number, current: number, delta: 1 | -1): number returning -1 when count <= 0, else ((current + delta) % count + count) % count",
+          "code": "if (count <= 0) return -1; return (((current + delta) % count) + count) % count;",
+          "expected": "Focus index wraps in both directions"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HR7CQRBE4QRZSQEMKN",
+      "kind": "unit",
+      "title": "Act: Extend RenderHandle and SceneObject with hover, label and click",
+      "body": "Extend RenderSpriteSpec and RenderHandle, and add hover state, last-synced state and an interact listener to SceneObject.\n\n## Acceptance criteria\n- RenderHandle exposes setHighlighted, setLabelVisible, onHover, onClick\n- SceneObject.onInteract registers a listener fired on visible clicks\n\n\n## Scope\n- In scope: renderContext.ts\n- In scope: SceneObject.ts\n- Out of scope: Tests\n- Out of scope: Phaser adapter\n- Preserve: Constructor createSprite fields\n\n\n## Technical constraints\n- No Phaser import\n- Code path: `game/src/engine/renderContext.ts`\n- Code path: `game/src/entities/SceneObject.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- tsc --noEmit passes for game/src\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add pointer interaction to the entity",
+      "description": "Extend RenderSpriteSpec and RenderHandle, and add hover state, last-synced state and an interact listener to SceneObject.",
+      "acceptance_criteria": [
+        "RenderHandle exposes setHighlighted, setLabelVisible, onHover, onClick",
+        "SceneObject.onInteract registers a listener fired on visible clicks"
+      ],
+      "scope": {
+        "in_scope": [
+          "renderContext.ts",
+          "SceneObject.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Phaser adapter"
+        ],
+        "preserve": [
+          "Constructor createSprite fields"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser import",
+        "Code path: `game/src/engine/renderContext.ts`",
+        "Code path: `game/src/entities/SceneObject.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "tsc --noEmit passes for game/src",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-483.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84X58HRPGDZDHYE2M4PMMR8",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M84X58HRPGDZDHYE2M4PMMR8",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-483.md"
+      ],
+      "depends_on": [
+        "01M84X58HRPGDZDHYE2M4PMMR8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-483.md",
+      "artifact_id": "UNIT-483",
+      "steps": [
+        {
+          "file": "game/src/engine/renderContext.ts",
+          "symbol": "RenderSpriteSpec, RenderHandle",
+          "lines": "L1-L3",
+          "action": "Add optional label?: string and bounds?: {x:number;y:number;width:number;height:number} to RenderSpriteSpec; add to RenderHandle: setHighlighted(on: boolean): void; setLabelVisible(on: boolean): void; onHover(cb: (over: boolean) => void): void; onClick(cb: () => void): void",
+          "code": "RenderHandle { setVisible; destroy; setHighlighted(on: boolean): void; setLabelVisible(on: boolean): void; onHover(cb: (over: boolean) => void): void; onClick(cb: () => void): void }",
+          "expected": "Interfaces compile with the new members"
+        },
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "SceneObject constructor",
+          "lines": "L11-L22",
+          "action": "Pass label: spec.name and bounds: spec.interactionBounds in the createSprite argument; then register this.handle.onHover(over => { if (!this.visible) return; this.handle.setHighlighted(over); this.handle.setLabelVisible(over); }) and this.handle.onClick(() => this.activate())",
+          "expected": "Hover and click wired at construction"
+        },
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "SceneObject.sync, onInteract, activate",
+          "lines": "L24-L26",
+          "action": "Add private visible = true, private lastState?: GameState and private listener?: (e:{objectId:string; actions:ActionSpec[]}) => void; sync stores state, sets visible = evaluateAll(...), calls setVisible(visible) and, when hidden, setHighlighted(false) and setLabelVisible(false); add onInteract(cb) setting the listener; add activate(): when visible and lastState defined, call listener with {objectId: spec.id, actions: availableActions(lastState, spec)}",
+          "expected": "Visible clicks emit, hidden clicks do not"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HR630D30C5H3KVFWXE",
+      "kind": "unit",
+      "title": "Act: Add focus, blur, handleKey and focus cycling",
+      "body": "Add focus API to SceneObject and a moveFocus helper exported from buildScene.ts.\n\n## Acceptance criteria\n- SceneObject.handleKey emits on Enter/Space when focused\n- moveFocus skips hidden objects and wraps\n\n\n## Scope\n- In scope: SceneObject.ts\n- In scope: buildScene.ts\n- Out of scope: Tests\n- Preserve: buildScene sorted output\n\n\n## Technical constraints\n- No DOM access\n- Code path: `game/src/entities/SceneObject.ts`\n- Code path: `game/src/engine/buildScene.ts`\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- tsc --noEmit passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Keyboard access in SceneObject and buildScene",
+      "description": "Add focus API to SceneObject and a moveFocus helper exported from buildScene.ts.",
+      "acceptance_criteria": [
+        "SceneObject.handleKey emits on Enter/Space when focused",
+        "moveFocus skips hidden objects and wraps"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject.ts",
+          "buildScene.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "buildScene sorted output"
+        ]
+      },
+      "technical_constraints": [
+        "No DOM access",
+        "Code path: `game/src/entities/SceneObject.ts`",
+        "Code path: `game/src/engine/buildScene.ts`"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "tsc --noEmit passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-484.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84X58HR1HFWWS5R05BMJ8X3",
+      "links": [
+        "parent:01M84X58HR1HFWWS5R05BMJ8X3",
+        "artifact:.ai-dlc/units/UNIT-484.md"
+      ],
+      "depends_on": [
+        "01M84X58HR1HFWWS5R05BMJ8X3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-484.md",
+      "artifact_id": "UNIT-484",
+      "steps": [
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "SceneObject.focus, blur, handleKey, isVisible, isFocused",
+          "lines": "after activate method added in the previous unit",
+          "action": "Add private focused = false; focus(): if visible set focused true, setHighlighted(true), setLabelVisible(true); blur(): set focused false, setHighlighted(false), setLabelVisible(false); handleKey(key: string): if focused && isActivationKey(key) call this.activate(); add getters isVisible() and isFocused(); import isActivationKey from '../systems/interaction'",
+          "expected": "Focused objects activate on Enter and Space only"
+        },
+        {
+          "file": "game/src/engine/buildScene.ts",
+          "symbol": "new: moveFocus",
+          "lines": "after L8",
+          "action": "Export moveFocus(objects: SceneObject[], delta: 1 | -1): void: collect visible = objects.filter(o => o.isVisible()); current = visible.findIndex(o => o.isFocused()); next = nextFocusIndex(visible.length, current, delta) (when current is -1 and delta is 1 start at 0 by using current = -1 so result is 0); blur all objects; if next >= 0 call visible[next].focus(); import nextFocusIndex from '../systems/interaction'",
+          "code": "const next = nextFocusIndex(visible.length, current, delta); objects.forEach((o) => o.blur()); if (next >= 0) visible[next].focus();",
+          "expected": "Focus advances over visible objects and wraps"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HR549MGN0AP84F66JR",
+      "kind": "unit",
+      "title": "Verify: Interaction helper unit tests",
+      "body": "Write TDD unit tests from REQ1 acceptance criteria using inline ObjectSpec objects and the valid-world fixture state.\n\n## Acceptance criteria\n- Hit, miss and no-bounds cases pass\n- Condition filtering, key and focus wrap cases pass\n\n\n## Scope\n- In scope: game/tests/interaction.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No Phaser, DOM or network\n\n\n## Definition of done\n- interaction.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for interaction.ts",
+      "description": "Write TDD unit tests from REQ1 acceptance criteria using inline ObjectSpec objects and the valid-world fixture state.",
+      "acceptance_criteria": [
+        "Hit, miss and no-bounds cases pass",
+        "Condition filtering, key and focus wrap cases pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/interaction.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser, DOM or network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "interaction.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-485.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84X58HRCEWW3V0XWAD1EHZC",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84X58HRCEWW3V0XWAD1EHZC",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-485.md"
+      ],
+      "depends_on": [
+        "01M84X58HRCEWW3V0XWAD1EHZC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-485.md",
+      "artifact_id": "UNIT-485",
+      "steps": [
+        {
+          "file": "game/tests/interaction.test.ts",
+          "symbol": "new: describe('pointInBounds')",
+          "lines": "new",
+          "action": "Add tests: spec with position (100,200), scale 2, bounds {0,0,40,80}; assert (110,210) true, (190,210) false (right edge excluded), (99,210) false; spec without interactionBounds returns false",
+          "command": "cd game && npx vitest run tests/interaction.test.ts -t pointInBounds",
+          "expected": "pointInBounds assertions pass"
+        },
+        {
+          "file": "game/tests/interaction.test.ts",
+          "symbol": "new: describe('availableActions')",
+          "lines": "new",
+          "action": "Build a spec from validScene.objects[0] (tests/fixtures/valid-world.ts) with two actions, one with conditions [{flag:'a'}]; with createInitialState assert only the unguarded action, after setFlag(state,'a',true) assert both in authored order",
+          "command": "cd game && npx vitest run tests/interaction.test.ts -t availableActions",
+          "expected": "Filtering follows state flags"
+        },
+        {
+          "file": "game/tests/interaction.test.ts",
+          "symbol": "new: describe('isActivationKey and nextFocusIndex')",
+          "lines": "new",
+          "action": "Assert isActivationKey('Enter') and (' ') true, ('a') false; nextFocusIndex(3,2,1)=0, (3,0,-1)=2, (0,0,1)=-1",
+          "command": "cd game && npx vitest run tests/interaction.test.ts -t 'isActivationKey'",
+          "expected": "All assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HRBCSNMZRQEH8TA20S",
+      "kind": "unit",
+      "title": "Verify: SceneObject hover, label and click unit tests",
+      "body": "Extend tests/sceneObject.test.ts: update makeFakeContext so the fake handle includes the new methods and captures the hover and click callbacks.\n\n## Acceptance criteria\n- Label and bounds passed to createSprite\n- Hover toggles highlight and label\n- Click emits only when visible\n\n\n## Scope\n- In scope: game/tests/sceneObject.test.ts\n- Out of scope: Product code\n- Preserve: Existing four tests\n\n\n## Technical constraints\n- Fake context only\n\n\n## Definition of done\n- sceneObject.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with a fake RenderContext",
+      "description": "Extend tests/sceneObject.test.ts: update makeFakeContext so the fake handle includes the new methods and captures the hover and click callbacks.",
+      "acceptance_criteria": [
+        "Label and bounds passed to createSprite",
+        "Hover toggles highlight and label",
+        "Click emits only when visible"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/sceneObject.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing four tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake context only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "sceneObject.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-486.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84X58HR7CQRBE4QRZSQEMKN",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84X58HR7CQRBE4QRZSQEMKN",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-486.md"
+      ],
+      "depends_on": [
+        "01M84X58HR7CQRBE4QRZSQEMKN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-486.md",
+      "artifact_id": "UNIT-486",
+      "steps": [
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "makeFakeContext",
+          "lines": "L24-L28",
+          "action": "Add vi.fn() for setHighlighted and setLabelVisible, and onHover/onClick mocks that store the passed callbacks in returned fields hoverCb and clickCb",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts",
+          "expected": "Existing tests still pass with the extended handle"
+        },
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "new: it('passes label and bounds to createSprite')",
+          "lines": "after L61",
+          "action": "Make spec with interactionBounds {x:0,y:0,width:40,height:80}; construct; assert createSprite call object contains label equal to spec.name and bounds equal to that rectangle",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts -t 'label and bounds'",
+          "expected": "Assertion passes"
+        },
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "new: it('toggles highlight and label on hover')",
+          "lines": "after L61",
+          "action": "Sync with a state where visibleWhen passes (setFlag a true), call hoverCb(true) then hoverCb(false); assert setHighlighted and setLabelVisible calls equal [[true],[false]]; with the flag unset, hoverCb(true) causes no true call",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts -t 'hover'",
+          "expected": "Hover toggles only when visible"
+        },
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "new: it('emits interact on click only when visible')",
+          "lines": "after L61",
+          "action": "Register onInteract mock; with visible state call clickCb and assert one call with {objectId: spec.id, actions: spec.actions filtered by conditions}; with hidden state assert zero calls",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts -t 'emits interact'",
+          "expected": "Listener called once for visible, never for hidden"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HRWT13KV1JK5SPKMAZ",
+      "kind": "unit",
+      "title": "Verify: Keyboard focus and activation unit tests",
+      "body": "Add tests to tests/sceneObject.test.ts and tests/buildScene.test.ts using fake render contexts.\n\n## Acceptance criteria\n- Enter/Space emit only when focused\n- moveFocus skips hidden and wraps\n- blur clears highlight\n\n\n## Scope\n- In scope: game/tests/sceneObject.test.ts\n- In scope: game/tests/buildScene.test.ts\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fake contexts only\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for focus, handleKey and moveFocus",
+      "description": "Add tests to tests/sceneObject.test.ts and tests/buildScene.test.ts using fake render contexts.",
+      "acceptance_criteria": [
+        "Enter/Space emit only when focused",
+        "moveFocus skips hidden and wraps",
+        "blur clears highlight"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/sceneObject.test.ts",
+          "game/tests/buildScene.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake contexts only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-487.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84X58HR630D30C5H3KVFWXE",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84X58HR630D30C5H3KVFWXE",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-487.md"
+      ],
+      "depends_on": [
+        "01M84X58HR630D30C5H3KVFWXE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-487.md",
+      "artifact_id": "UNIT-487",
+      "steps": [
+        {
+          "file": "game/tests/sceneObject.test.ts",
+          "symbol": "new: it('activates with Enter and Space only when focused')",
+          "lines": "after the last it()",
+          "action": "Using the extended fake context, sync a visible state, register onInteract mock; handleKey('Enter') -> 0 calls; focus(); handleKey('Enter'), handleKey(' ') -> 2 calls; handleKey('a') -> still 2; blur() then assert last setHighlighted call is [false] and last setLabelVisible call is [false]",
+          "command": "cd game && npx vitest run tests/sceneObject.test.ts -t 'Enter and Space'",
+          "expected": "Call counts as stated"
+        },
+        {
+          "file": "game/tests/buildScene.test.ts",
+          "symbol": "new: it('moveFocus skips hidden objects and wraps')",
+          "lines": "after the last it()",
+          "action": "Build three SceneObjects with a fake context, sync a state where the second is hidden via visibleWhen; call moveFocus(objs,1) twice and assert isFocused on objs[0] then objs[2]; a third call wraps to objs[0]; moveFocus(objs,-1) from objs[0] focuses objs[2]",
+          "command": "cd game && npx vitest run tests/buildScene.test.ts -t 'moveFocus'",
+          "expected": "Focus order 0,2,0 and reverse wrap to 2"
+        }
+      ]
+    },
+    {
+      "id": "01M84X58HRTYCCRQ80RRK3G6EC",
+      "kind": "evidence",
+      "title": "Evidence: SceneObject interaction unit tests pass",
+      "body": "Collect unit test results for interaction, sceneObject and buildScene suites as evidence for SG-5.2.\n\n## Acceptance criteria\n- interaction, sceneObject and buildScene suites pass\n- No test uses a real browser, server or Phaser\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: New code\n\n\n## Definition of done\n- Passing results recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that interaction helper, SceneObject and focus tests pass",
+      "description": "Collect unit test results for interaction, sceneObject and buildScene suites as evidence for SG-5.2.",
+      "acceptance_criteria": [
+        "interaction, sceneObject and buildScene suites pass",
+        "No test uses a real browser, server or Phaser"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing results recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-097.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84X58HR549MGN0AP84F66JR",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84X58HR549MGN0AP84F66JR",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-097.md"
+      ],
+      "depends_on": [
+        "01M84X58HR549MGN0AP84F66JR",
+        "01M84X58HRBCSNMZRQEH8TA20S",
+        "01M84X58HRWT13KV1JK5SPKMAZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-097.md",
+      "artifact_id": "EVD-097"
+    }
+  ],
+  "created_at": "2026-11-23T19:12:45.293410+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

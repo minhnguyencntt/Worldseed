@@ -1,0 +1,553 @@
+{
+  "intent_id": "01M85CW82JT3S0XRB3QDHD06T9",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85CXX8YAQPJVTBAXGNNCBHR",
+      "kind": "intent",
+      "title": "SG-8.2.1 Block blank contribution submit with an inline message",
+      "body": "Context: ContributionSheet.handleSubmit currently executes `if (prompt === '') return;`, so pressing Send with empty or whitespace-only text does nothing and the player gets no feedback. Desired behavior: block the submit and show an inline message 'Enter an idea first'. Expected result: no API call is made and the message is visible and announced. Why: players must understand why nothing was sent.\n\n## Acceptance criteria\n- Given the dialog is open and the textarea is empty, when Send is pressed, then 'Enter an idea first' is shown in an element with role=alert and submitContribution is not called\n- Given the textarea holds only spaces or newlines, when Send is pressed, then the same message is shown and submitContribution is not called\n- Given the message is shown, when the player types a character, then the message disappears and a valid idea still submits to the backend\n\n\n## Scope\n- In scope: game/frontend/src/components/ContributionSheet.tsx blank-text validation message\n- Out of scope: Max length counter and quota gating\n- Out of scope: Backend API changes\n- Out of scope: Visual restyling of the dialog\n- Preserve: submitContribution and listMine API contracts\n- Preserve: Server error messages from errorMessage\n- Preserve: Existing Radix Dialog focus behavior\n- Preserve: Trimmed prompt sent on valid submit\n\n\n## Technical constraints\n- React + TypeScript, existing ContributionSheet component\n- No new dependencies\n- No mock data replacing the real backend client\n\n\n## Definition of done\n- Blank and whitespace-only submit shows 'Enter an idea first' and sends nothing\n- Message clears on typing\n- Unit tests cover each acceptance criterion\n\n\n## Non-functional requirements\n- Message is exposed to assistive tech via role=alert and aria-describedby\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Contribution dialog shows 'Enter an idea first' for empty or whitespace-only text instead of silently returning",
+      "description": "Context: ContributionSheet.handleSubmit currently executes `if (prompt === '') return;`, so pressing Send with empty or whitespace-only text does nothing and the player gets no feedback. Desired behavior: block the submit and show an inline message 'Enter an idea first'. Expected result: no API call is made and the message is visible and announced. Why: players must understand why nothing was sent.",
+      "acceptance_criteria": [
+        "Given the dialog is open and the textarea is empty, when Send is pressed, then 'Enter an idea first' is shown in an element with role=alert and submitContribution is not called",
+        "Given the textarea holds only spaces or newlines, when Send is pressed, then the same message is shown and submitContribution is not called",
+        "Given the message is shown, when the player types a character, then the message disappears and a valid idea still submits to the backend"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/ContributionSheet.tsx blank-text validation message"
+        ],
+        "out_of_scope": [
+          "Max length counter and quota gating",
+          "Backend API changes",
+          "Visual restyling of the dialog"
+        ],
+        "preserve": [
+          "submitContribution and listMine API contracts",
+          "Server error messages from errorMessage",
+          "Existing Radix Dialog focus behavior",
+          "Trimmed prompt sent on valid submit"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript, existing ContributionSheet component",
+        "No new dependencies",
+        "No mock data replacing the real backend client"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Blank and whitespace-only submit shows 'Enter an idea first' and sends nothing",
+        "Message clears on typing",
+        "Unit tests cover each acceptance criterion",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-128.md`"
+      ],
+      "non_functional": [
+        "Message is exposed to assistive tech via role=alert and aria-describedby"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85BP7N1BFPBGF8TXMWX525X",
+      "links": [
+        "trace:01M85BP7N1BFPBGF8TXMWX525X",
+        "artifact:.ai-dlc/intent/INT-128.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-128.md",
+      "artifact_id": "INT-128"
+    },
+    {
+      "id": "01M85CXX8YFZXSDQBKBG3EG1D7",
+      "kind": "requirement",
+      "title": "REQ · Blank or whitespace-only submit is blocked with 'Enter an idea first'",
+      "body": "Context: handleSubmit trims the text and silently returns when empty. Desired behavior: set a validation message 'Enter an idea first', render it inline under the textarea with role=alert, link it with aria-describedby and mark the textarea aria-invalid. Expected result: submitContribution is never called for blank text. Why: silent failure confuses players.\n\n## Acceptance criteria\n- Given an empty textarea, when the form is submitted, then an element with role=alert has the text 'Enter an idea first'\n- Given text of only spaces and newlines, when the form is submitted, then the same alert appears and submitContribution is not called\n- Given the alert is shown, then the textarea has aria-invalid=true and aria-describedby pointing to the alert id\n\n\n## Scope\n- In scope: Validation state, blank branch and inline message in ContributionSheet\n- Out of scope: Length limit\n- Out of scope: Quota gating\n- Preserve: Server error alert rendered from error state\n- Preserve: Entries list behavior\n\n\n## Technical constraints\n- Keep the message separate from server `error` state so it can clear independently\n\n\n## Definition of done\n- Alert shown for blank submit\n- No API call for blank submit\n\n\n## Non-functional requirements\n- Accessible error association\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pressing Send with blank text shows an inline alert and makes no API call",
+      "description": "Context: handleSubmit trims the text and silently returns when empty. Desired behavior: set a validation message 'Enter an idea first', render it inline under the textarea with role=alert, link it with aria-describedby and mark the textarea aria-invalid. Expected result: submitContribution is never called for blank text. Why: silent failure confuses players.",
+      "acceptance_criteria": [
+        "Given an empty textarea, when the form is submitted, then an element with role=alert has the text 'Enter an idea first'",
+        "Given text of only spaces and newlines, when the form is submitted, then the same alert appears and submitContribution is not called",
+        "Given the alert is shown, then the textarea has aria-invalid=true and aria-describedby pointing to the alert id"
+      ],
+      "scope": {
+        "in_scope": [
+          "Validation state, blank branch and inline message in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "Length limit",
+          "Quota gating"
+        ],
+        "preserve": [
+          "Server error alert rendered from error state",
+          "Entries list behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Keep the message separate from server `error` state so it can clear independently"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Alert shown for blank submit",
+        "No API call for blank submit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-319.md`"
+      ],
+      "non_functional": [
+        "Accessible error association"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85CXX8YAQPJVTBAXGNNCBHR",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85CXX8YAQPJVTBAXGNNCBHR",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-319.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YAQPJVTBAXGNNCBHR"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-319.md",
+      "artifact_id": "REQ-319"
+    },
+    {
+      "id": "01M85CXX8YYXM6R5XGEGJN1E91",
+      "kind": "requirement",
+      "title": "REQ · The blank-text message clears on typing and valid submit still works",
+      "body": "Context: once the validation message is shown it must not linger. Desired behavior: typing in the textarea clears it, and a valid submit clears it and posts the trimmed prompt. Expected result: no stale message after correction. Why: a stale error would contradict the entered text.\n\n## Acceptance criteria\n- Given the alert is visible, when the player types into the textarea, then the alert is removed and aria-invalid is not true\n- Given the alert was shown, when the player enters ' hello ' and submits, then submitContribution is called once with 'hello' and no 'Enter an idea first' alert remains\n\n\n## Scope\n- In scope: onChange clearing and valid-submit clearing of the validation message\n- Out of scope: Changing server error display\n- Preserve: Trimming of prompt\n- Preserve: Entry state labels Sending/Sent/Failed\n\n\n## Technical constraints\n- Reuse the validation state added for the blank message\n\n\n## Definition of done\n- Message clears on change and on valid submit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Message disappears once the player edits the text, and a real idea is still sent trimmed",
+      "description": "Context: once the validation message is shown it must not linger. Desired behavior: typing in the textarea clears it, and a valid submit clears it and posts the trimmed prompt. Expected result: no stale message after correction. Why: a stale error would contradict the entered text.",
+      "acceptance_criteria": [
+        "Given the alert is visible, when the player types into the textarea, then the alert is removed and aria-invalid is not true",
+        "Given the alert was shown, when the player enters ' hello ' and submits, then submitContribution is called once with 'hello' and no 'Enter an idea first' alert remains"
+      ],
+      "scope": {
+        "in_scope": [
+          "onChange clearing and valid-submit clearing of the validation message"
+        ],
+        "out_of_scope": [
+          "Changing server error display"
+        ],
+        "preserve": [
+          "Trimming of prompt",
+          "Entry state labels Sending/Sent/Failed"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the validation state added for the blank message"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Message clears on change and on valid submit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-320.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85CXX8YAQPJVTBAXGNNCBHR",
+      "matched_feature_id": "01M8457KMMSQBY9VJAQTVZ1RNJ",
+      "links": [
+        "parent:01M85CXX8YAQPJVTBAXGNNCBHR",
+        "trace:01M8457KMMSQBY9VJAQTVZ1RNJ",
+        "artifact:.ai-dlc/requirements/REQ-320.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YAQPJVTBAXGNNCBHR"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-320.md",
+      "artifact_id": "REQ-320"
+    },
+    {
+      "id": "01M85CXX8YEWCFD7DQJKCF99G2",
+      "kind": "unit",
+      "title": "Act: Show 'Enter an idea first' for blank submit in ContributionSheet",
+      "body": "Implement the blank-text validation message in ContributionSheet so blank submit is blocked visibly.\n\n## Acceptance criteria\n- Blank or whitespace-only submit renders role=alert 'Enter an idea first'\n- submitContribution is not reached for blank text\n\n\n## Scope\n- In scope: ContributionSheet.tsx\n- Out of scope: Tests\n- Out of scope: Other components\n- Preserve: Existing error alert\n- Preserve: API client\n\n\n## Technical constraints\n- Keep existing imports; no new dependencies\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Blank branch sets validation message and returns\n- Message rendered with role=alert and linked to textarea\n\n\n## Non-functional requirements\n- aria-invalid and aria-describedby on the textarea\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add validation state, blank branch and inline alert",
+      "description": "Implement the blank-text validation message in ContributionSheet so blank submit is blocked visibly.",
+      "acceptance_criteria": [
+        "Blank or whitespace-only submit renders role=alert 'Enter an idea first'",
+        "submitContribution is not reached for blank text"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Other components"
+        ],
+        "preserve": [
+          "Existing error alert",
+          "API client"
+        ]
+      },
+      "technical_constraints": [
+        "Keep existing imports; no new dependencies",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Blank branch sets validation message and returns",
+        "Message rendered with role=alert and linked to textarea",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-638.md`"
+      ],
+      "non_functional": [
+        "aria-invalid and aria-describedby on the textarea"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85CXX8YFZXSDQBKBG3EG1D7",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85CXX8YFZXSDQBKBG3EG1D7",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-638.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YFZXSDQBKBG3EG1D7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-638.md",
+      "artifact_id": "UNIT-638",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (state)",
+          "lines": "after L37",
+          "action": "Add a new state hook `validation` holding the inline validation message, undefined by default, and a module constant BLANK_MESSAGE with the text 'Enter an idea first' placed after STATE_LABEL (L24).",
+          "code": "const BLANK_MESSAGE = 'Enter an idea first';\n...\nconst [validation, setValidation] = useState<string | undefined>(undefined);",
+          "expected": "Component compiles with the new state and constant."
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet::handleSubmit",
+          "lines": "L66-L69",
+          "action": "Replace the silent `if (prompt === '') return;` with a branch that calls setValidation(BLANK_MESSAGE) and then returns, so submitContribution is never called for blank text.",
+          "code": "if (prompt === '') return;  ->  if (prompt === '') { setValidation(BLANK_MESSAGE); return; }",
+          "expected": "Blank or whitespace-only submit stores the message and does not call the API."
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet render (textarea and alert)",
+          "lines": "L102-L111",
+          "action": "On the textarea add aria-invalid={validation !== undefined} and aria-describedby={validation ? 'contribution-idea-error' : undefined}. Directly after the closing </form> render the message paragraph only when validation is set.",
+          "code": "{validation && <p id=\"contribution-idea-error\" role=\"alert\">{validation}</p>}",
+          "expected": "Inline alert 'Enter an idea first' appears after a blank submit and is linked to the textarea."
+        }
+      ]
+    },
+    {
+      "id": "01M85CXX8Y276FT7VTZ5ZK1F1Q",
+      "kind": "unit",
+      "title": "Act: Clear the blank-text message on typing and valid submit",
+      "body": "Clear the validation message when the player edits the text or submits a valid idea.\n\n## Acceptance criteria\n- Typing removes the alert\n- Valid submit leaves no blank-text alert\n\n\n## Scope\n- In scope: ContributionSheet.tsx onChange and handleSubmit\n- Out of scope: Tests\n- Preserve: Trimmed prompt\n- Preserve: setText('') after valid submit\n\n\n## Technical constraints\n- Depends on the validation state introduced by the first Act\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- onChange clears validation\n- Valid submit clears validation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Reset validation state in onChange and at valid submit",
+      "description": "Clear the validation message when the player edits the text or submits a valid idea.",
+      "acceptance_criteria": [
+        "Typing removes the alert",
+        "Valid submit leaves no blank-text alert"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx onChange and handleSubmit"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Trimmed prompt",
+          "setText('') after valid submit"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on the validation state introduced by the first Act",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "onChange clears validation",
+        "Valid submit clears validation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-639.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85CXX8YYXM6R5XGEGJN1E91",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M85CXX8YYXM6R5XGEGJN1E91",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-639.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YYXM6R5XGEGJN1E91"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-639.md",
+      "artifact_id": "UNIT-639",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet textarea onChange",
+          "lines": "L105",
+          "action": "Change the onChange handler so it also calls setValidation(undefined) in addition to setText(e.target.value).",
+          "code": "onChange={(e) => setText(e.target.value)}  ->  onChange={(e) => { setText(e.target.value); setValidation(undefined); }}",
+          "expected": "Typing a character removes the alert."
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet::handleSubmit",
+          "lines": "L71-L74",
+          "action": "After the blank branch, next to the existing setError(undefined) call, add setValidation(undefined) so a valid submit never leaves the blank message.",
+          "code": "setError(undefined);  ->  setError(undefined);\nsetValidation(undefined);",
+          "expected": "A valid submit after a blank attempt leaves no 'Enter an idea first' alert."
+        }
+      ]
+    },
+    {
+      "id": "01M85CXX8YBJN3YQWCESE4JCDT",
+      "kind": "unit",
+      "title": "Verify: Blank and whitespace-only submit shows the inline message unit tests",
+      "body": "Prove with mocked client that blank text shows the alert and never calls submitContribution.\n\n## Acceptance criteria\n- Empty submit shows alert and no API call\n- Whitespace-only submit shows alert and no API call\n- Textarea has aria-invalid and aria-describedby\n\n\n## Scope\n- In scope: New test file game/frontend/tests/contributionBlank.test.tsx\n- Out of scope: Running app or browser\n- Preserve: Existing contribution.test.tsx\n\n\n## Technical constraints\n- vi.mock('../src/api/client') with importActual to keep ApiError and MAX_PER_PLAYER; no network\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass in isolation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the blank branch with the API client mocked",
+      "description": "Prove with mocked client that blank text shows the alert and never calls submitContribution.",
+      "acceptance_criteria": [
+        "Empty submit shows alert and no API call",
+        "Whitespace-only submit shows alert and no API call",
+        "Textarea has aria-invalid and aria-describedby"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file game/frontend/tests/contributionBlank.test.tsx"
+        ],
+        "out_of_scope": [
+          "Running app or browser"
+        ],
+        "preserve": [
+          "Existing contribution.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "vi.mock('../src/api/client') with importActual to keep ApiError and MAX_PER_PLAYER; no network"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass in isolation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-640.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CXX8YEWCFD7DQJKCF99G2",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85CXX8YEWCFD7DQJKCF99G2",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-640.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YEWCFD7DQJKCF99G2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-640.md",
+      "artifact_id": "UNIT-640",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "new: test setup",
+          "lines": "new",
+          "action": "Create the file; vi.mock '../src/api/client' spreading importActual and replacing submitContribution and listMine with vi.fn. listMine resolves with the list from the fixture in game/frontend/tests/fixtures/api.ts (contributionFixture), which mirrors the Contribution type returned by listMine in game/frontend/src/api/client.ts; do not inline the payload. Render <ContributionSheet open onClose={vi.fn()} roundId=\"ROUND-0000001\" /> and call cleanup in afterEach.",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx",
+          "expected": "File loads with mocks in place."
+        },
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "it: empty text shows 'Enter an idea first' and does not submit",
+          "lines": "new",
+          "action": "Add test: click the 'Send' button with the textarea empty; assert screen.getByRole('alert') has text 'Enter an idea first' and submitContribution toHaveBeenCalledTimes(0).",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"empty text\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "it: whitespace-only text shows the message and does not submit",
+          "lines": "new",
+          "action": "Add test: fireEvent.change the textarea (label 'Your idea') to '   \\n  ', click Send; assert the alert text 'Enter an idea first' and submitContribution not called.",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"whitespace-only\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "it: textarea is marked invalid and described by the alert",
+          "lines": "new",
+          "action": "Add test: after blank Send assert the textarea has attribute aria-invalid='true' and aria-describedby equal to the alert element id.",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"marked invalid\"",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M85CXX8YTNXRKZ9JWKRB9VFC",
+      "kind": "unit",
+      "title": "Verify: Blank message clears on typing and valid submit unit tests",
+      "body": "Prove with mocked client that the message clears on typing and a trimmed valid idea is posted.\n\n## Acceptance criteria\n- Typing removes the alert\n- Valid submit posts the trimmed prompt once and no blank alert remains\n\n\n## Scope\n- In scope: Same test file game/frontend/tests/contributionBlank.test.tsx\n- Out of scope: Running app or browser\n- Preserve: Existing contribution tests\n\n\n## Technical constraints\n- Use the same mocked client and fixture as the first Verify\n\n\n## Dependencies\n- ACT2\n- VER1\n\n\n## Definition of done\n- Tests pass in isolation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for clearing the message and still submitting valid text",
+      "description": "Prove with mocked client that the message clears on typing and a trimmed valid idea is posted.",
+      "acceptance_criteria": [
+        "Typing removes the alert",
+        "Valid submit posts the trimmed prompt once and no blank alert remains"
+      ],
+      "scope": {
+        "in_scope": [
+          "Same test file game/frontend/tests/contributionBlank.test.tsx"
+        ],
+        "out_of_scope": [
+          "Running app or browser"
+        ],
+        "preserve": [
+          "Existing contribution tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use the same mocked client and fixture as the first Verify"
+      ],
+      "dependencies": [
+        "ACT2",
+        "VER1"
+      ],
+      "definition_of_done": [
+        "Tests pass in isolation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-641.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CXX8Y276FT7VTZ5ZK1F1Q",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85CXX8Y276FT7VTZ5ZK1F1Q",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-641.md"
+      ],
+      "depends_on": [
+        "01M85CXX8Y276FT7VTZ5ZK1F1Q"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-641.md",
+      "artifact_id": "UNIT-641",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "it: typing clears the blank message",
+          "lines": "new",
+          "action": "Add test: click Send with empty text so the alert shows, then fireEvent.change the textarea to 'a'; assert screen.queryByRole('alert') is null and the textarea aria-invalid is not 'true'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"typing clears\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/contributionBlank.test.tsx",
+          "symbol": "it: valid idea after a blank attempt is sent trimmed",
+          "lines": "new",
+          "action": "Add test with submitContribution mocked to resolve: click Send blank, change textarea to '  hello  ', click Send; await waitFor submitContribution toHaveBeenCalledTimes(1) and toHaveBeenCalledWith('hello'); assert no alert with text 'Enter an idea first'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"sent trimmed\"",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M85CXX8YQNDAAVKBMN036A0D",
+      "kind": "evidence",
+      "title": "Evidence: Blank contribution submit message unit tests pass",
+      "body": "Evidence that contributionBlank.test.tsx passes, covering blank, whitespace-only, accessibility attributes, clearing on typing and trimmed valid submit.\n\n## Acceptance criteria\n- All tests in contributionBlank.test.tsx pass\n- Existing contribution.test.tsx still passes\n\n\n## Scope\n- In scope: Test run output for contribution tests\n- Out of scope: Browser checks\n- Preserve: Existing test suites\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Test output shows all passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test run proves blank submit is blocked with an inline message",
+      "description": "Evidence that contributionBlank.test.tsx passes, covering blank, whitespace-only, accessibility attributes, clearing on typing and trimmed valid submit.",
+      "acceptance_criteria": [
+        "All tests in contributionBlank.test.tsx pass",
+        "Existing contribution.test.tsx still passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output for contribution tests"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": [
+          "Existing test suites"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Test output shows all passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-128.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CXX8YBJN3YQWCESE4JCDT",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85CXX8YBJN3YQWCESE4JCDT",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-128.md"
+      ],
+      "depends_on": [
+        "01M85CXX8YBJN3YQWCESE4JCDT",
+        "01M85CXX8YTNXRKZ9JWKRB9VFC"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-128.md",
+      "artifact_id": "EVD-128"
+    }
+  ],
+  "created_at": "2026-11-23T23:48:28.939498+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

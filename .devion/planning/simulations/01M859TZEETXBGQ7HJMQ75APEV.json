@@ -1,0 +1,698 @@
+{
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M859XCEVQQMKHX4BAVVZGBG9",
+      "kind": "intent",
+      "title": "SG-6.1 Data-driven NPC support from scene data",
+      "body": "Context: characterSchema (game/src/content/schema.ts) already holds id, name, position, scale, layer and idle/walk/interact animation refs. BootScene.createCharacter already spawns and animates sprites from scene.characters. Desired behavior: a scene author can add any NPC, with optional dialogue or interaction, in scene YAML only. Dangling character references are caught by validation, and clicking an NPC reports its interaction to React, with no code change. Why: future AI cycles must add characters without touching the engine.\n\n## Acceptance criteria\n- Given a scene YAML character with an interaction block, When parseWorldContent('scene') runs, Then it validates and keeps the interaction data.\n- Given a scene character whose id is not in world.characters, or whose interaction names an unknown dialogue, When validateWorld runs, Then it returns a descriptive error.\n- Given a scene with several characters, When BootScene.create runs, Then one sprite is created per character at its position and each plays its idle animation.\n- Given a character with an interaction, When its sprite is clicked, Then a characterClick event with its id and dialogue id is emitted.\n\n\n## Scope\n- In scope: characterSchema optional interaction field\n- In scope: validateWorld checks for scene characters\n- In scope: BootScene NPC click event\n- In scope: characterClick bus event\n- Out of scope: New art assets\n- Out of scope: React dialogue UI changes\n- Out of scope: Backend/API changes\n- Out of scope: Pathfinding or NPC movement\n- Preserve: Existing boy character behavior and animation resolution\n- Preserve: Existing manifest and preload planning\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Zod schemas stay the single source of content validation\n- Engine code must stay free of hardcoded character ids\n\n\n## Definition of done\n- All requirements have Act and Verify units complete\n- Unit tests for the three slices pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Scene data alone can add NPCs with placement, manifest animations and optional interaction, and BootScene spawns and animates them.",
+      "description": "Context: characterSchema (game/src/content/schema.ts) already holds id, name, position, scale, layer and idle/walk/interact animation refs. BootScene.createCharacter already spawns and animates sprites from scene.characters. Desired behavior: a scene author can add any NPC, with optional dialogue or interaction, in scene YAML only. Dangling character references are caught by validation, and clicking an NPC reports its interaction to React, with no code change. Why: future AI cycles must add characters without touching the engine.",
+      "acceptance_criteria": [
+        "Given a scene YAML character with an interaction block, When parseWorldContent('scene') runs, Then it validates and keeps the interaction data.",
+        "Given a scene character whose id is not in world.characters, or whose interaction names an unknown dialogue, When validateWorld runs, Then it returns a descriptive error.",
+        "Given a scene with several characters, When BootScene.create runs, Then one sprite is created per character at its position and each plays its idle animation.",
+        "Given a character with an interaction, When its sprite is clicked, Then a characterClick event with its id and dialogue id is emitted."
+      ],
+      "scope": {
+        "in_scope": [
+          "characterSchema optional interaction field",
+          "validateWorld checks for scene characters",
+          "BootScene NPC click event",
+          "characterClick bus event"
+        ],
+        "out_of_scope": [
+          "New art assets",
+          "React dialogue UI changes",
+          "Backend/API changes",
+          "Pathfinding or NPC movement"
+        ],
+        "preserve": [
+          "Existing boy character behavior and animation resolution",
+          "Existing manifest and preload planning"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Zod schemas stay the single source of content validation",
+        "Engine code must stay free of hardcoded character ids"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements have Act and Verify units complete",
+        "Unit tests for the three slices pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-117.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-117.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-117.md",
+      "artifact_id": "INT-117"
+    },
+    {
+      "id": "01M859XCEV76M00WY8QB0DR591",
+      "kind": "requirement",
+      "title": "REQ · Scene character schema accepts optional dialogue or interaction",
+      "body": "Context: characterSchema has no way to attach dialogue or interaction to an NPC. Desired behavior: add an optional interaction object { dialogue?: string, events: event[] } so NPCs can open a dialogue node or fire events from data. Expected result: characters without interaction still parse unchanged. Why: lets NPCs be authored purely in scene data.\n\n## Acceptance criteria\n- Given a character with interaction { dialogue: 'greet' }, When sceneSchema parses it, Then the parsed character has interaction.dialogue 'greet' and events [].\n- Given a character without interaction, When sceneSchema parses it, Then it passes and interaction is undefined.\n- Given an interaction whose dialogue is a number, When parsed, Then a path-tagged error mentions characters.0.interaction.dialogue.\n\n\n## Scope\n- In scope: characterSchema in game/src/content/schema.ts\n- In scope: CharacterSpec inferred type\n- Out of scope: Loader reference validation\n- Out of scope: Phaser wiring\n- Preserve: Existing character fields and defaults\n\n\n## Technical constraints\n- Reuse eventSchema for events\n\n\n## Definition of done\n- Schema extended and type inferred\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "characterSchema accepts an optional interaction (dialogue id and events) and still validates existing characters.",
+      "description": "Context: characterSchema has no way to attach dialogue or interaction to an NPC. Desired behavior: add an optional interaction object { dialogue?: string, events: event[] } so NPCs can open a dialogue node or fire events from data. Expected result: characters without interaction still parse unchanged. Why: lets NPCs be authored purely in scene data.",
+      "acceptance_criteria": [
+        "Given a character with interaction { dialogue: 'greet' }, When sceneSchema parses it, Then the parsed character has interaction.dialogue 'greet' and events [].",
+        "Given a character without interaction, When sceneSchema parses it, Then it passes and interaction is undefined.",
+        "Given an interaction whose dialogue is a number, When parsed, Then a path-tagged error mentions characters.0.interaction.dialogue."
+      ],
+      "scope": {
+        "in_scope": [
+          "characterSchema in game/src/content/schema.ts",
+          "CharacterSpec inferred type"
+        ],
+        "out_of_scope": [
+          "Loader reference validation",
+          "Phaser wiring"
+        ],
+        "preserve": [
+          "Existing character fields and defaults"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse eventSchema for events"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema extended and type inferred",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-293.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M859XCEVQQMKHX4BAVVZGBG9",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M859XCEVQQMKHX4BAVVZGBG9",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-293.md"
+      ],
+      "depends_on": [
+        "01M859XCEVQQMKHX4BAVVZGBG9"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-293.md",
+      "artifact_id": "REQ-293"
+    },
+    {
+      "id": "01M859XCEVD3TDBHW9Z5MCGPZA",
+      "kind": "requirement",
+      "title": "REQ · World validation rejects dangling scene character references",
+      "body": "Context: validateWorld checks speakers, objects and events but never inspects scene.characters. Desired behavior: every scene character id must exist in world.characters, its interaction.dialogue must be a dialogue id in that scene, and its interaction events go through checkEvents. Expected result: a bad NPC definition fails validation with a descriptive message. Why: data-only NPC additions stay safe.\n\n## Acceptance criteria\n- Given a scene character id absent from world.characters, When validateWorld runs, Then errors include 'unknown character: <id>'.\n- Given interaction.dialogue naming a missing node, When validateWorld runs, Then errors include 'unknown dialogue: <id>'.\n- Given interaction events with an unknown flag, When validateWorld runs, Then errors include 'unknown flag: <flag>'.\n- Given a valid NPC, When validateWorld runs, Then it adds no errors.\n\n\n## Scope\n- In scope: validateWorld in game/src/content/loader.ts\n- Out of scope: Manifest asset ref checks (planPreload already reports unknown refs)\n- Preserve: Existing validateWorld error strings and the bedroom content validity\n\n\n## Technical constraints\n- Reuse checkEvents\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Validation implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "validateWorld reports scene characters missing from world.characters and interactions with unknown dialogue, flags, scenes or objects.",
+      "description": "Context: validateWorld checks speakers, objects and events but never inspects scene.characters. Desired behavior: every scene character id must exist in world.characters, its interaction.dialogue must be a dialogue id in that scene, and its interaction events go through checkEvents. Expected result: a bad NPC definition fails validation with a descriptive message. Why: data-only NPC additions stay safe.",
+      "acceptance_criteria": [
+        "Given a scene character id absent from world.characters, When validateWorld runs, Then errors include 'unknown character: <id>'.",
+        "Given interaction.dialogue naming a missing node, When validateWorld runs, Then errors include 'unknown dialogue: <id>'.",
+        "Given interaction events with an unknown flag, When validateWorld runs, Then errors include 'unknown flag: <flag>'.",
+        "Given a valid NPC, When validateWorld runs, Then it adds no errors."
+      ],
+      "scope": {
+        "in_scope": [
+          "validateWorld in game/src/content/loader.ts"
+        ],
+        "out_of_scope": [
+          "Manifest asset ref checks (planPreload already reports unknown refs)"
+        ],
+        "preserve": [
+          "Existing validateWorld error strings and the bedroom content validity"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse checkEvents"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Validation implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-294.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M859XCEVQQMKHX4BAVVZGBG9",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M859XCEVQQMKHX4BAVVZGBG9",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-294.md"
+      ],
+      "depends_on": [
+        "01M859XCEVQQMKHX4BAVVZGBG9"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-294.md",
+      "artifact_id": "REQ-294"
+    },
+    {
+      "id": "01M859XCEVHRFZD4HW8PV1XCXB",
+      "kind": "requirement",
+      "title": "REQ · BootScene spawns NPCs from scene data and reports their interaction",
+      "body": "Context: BootScene.createCharacter spawns and animates sprites from scene.characters but a click only plays the interact animation. Desired behavior: add a characterClick event to PhaserToReactEvents and emit it from the sprite pointerdown handler when the spec has an interaction. Expected result: React can open the NPC dialogue without engine changes. Why: completes data-driven NPC support.\n\n## Acceptance criteria\n- Given scene.characters with two entries, When create runs, Then add.sprite is called twice with each position and each sprite plays its idle animation.\n- Given a character with interaction.dialogue 'greet', When pointerdown fires, Then characterClick is emitted with { id, dialogue: 'greet' }.\n- Given a character without interaction, When pointerdown fires, Then no characterClick is emitted and the interact animation still plays.\n\n\n## Scope\n- In scope: frontend/src/phaser/events.ts\n- In scope: frontend/src/phaser/BootScene.ts createCharacter\n- Out of scope: React-side handling of characterClick\n- Preserve: Existing interact-then-idle animation behavior\n- Preserve: Sprite cleanup on SHUTDOWN\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Event typed and emitted; sprites spawn per scene character\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene creates and animates one sprite per scene character and emits characterClick with the interaction dialogue id when an NPC is clicked.",
+      "description": "Context: BootScene.createCharacter spawns and animates sprites from scene.characters but a click only plays the interact animation. Desired behavior: add a characterClick event to PhaserToReactEvents and emit it from the sprite pointerdown handler when the spec has an interaction. Expected result: React can open the NPC dialogue without engine changes. Why: completes data-driven NPC support.",
+      "acceptance_criteria": [
+        "Given scene.characters with two entries, When create runs, Then add.sprite is called twice with each position and each sprite plays its idle animation.",
+        "Given a character with interaction.dialogue 'greet', When pointerdown fires, Then characterClick is emitted with { id, dialogue: 'greet' }.",
+        "Given a character without interaction, When pointerdown fires, Then no characterClick is emitted and the interact animation still plays."
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/phaser/events.ts",
+          "frontend/src/phaser/BootScene.ts createCharacter"
+        ],
+        "out_of_scope": [
+          "React-side handling of characterClick"
+        ],
+        "preserve": [
+          "Existing interact-then-idle animation behavior",
+          "Sprite cleanup on SHUTDOWN"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Event typed and emitted; sprites spawn per scene character",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-295.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M859XCEVQQMKHX4BAVVZGBG9",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M859XCEVQQMKHX4BAVVZGBG9",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-295.md"
+      ],
+      "depends_on": [
+        "01M859XCEVQQMKHX4BAVVZGBG9"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-295.md",
+      "artifact_id": "REQ-295"
+    },
+    {
+      "id": "01M859XCEVABBD300X61RYZKYM",
+      "kind": "unit",
+      "title": "Act: Add optional interaction to characterSchema",
+      "body": "Add interaction: z.object({ dialogue: z.string().optional(), events: z.array(eventSchema).default([]) }).optional() to characterSchema so CharacterSpec carries it.\n\n## Acceptance criteria\n- characterSchema parses a character with and without interaction.\n- CharacterSpec type includes interaction.\n\n\n## Scope\n- In scope: game/src/content/schema.ts\n- Out of scope: tests\n- Preserve: Existing fields\n\n\n## Technical constraints\n- Define eventSchema before use (already defined above)\n- Code path: `game/src/content/schema.ts`\n\n\n## Definition of done\n- Schema updated; tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Extend characterSchema with an optional interaction object.",
+      "description": "Add interaction: z.object({ dialogue: z.string().optional(), events: z.array(eventSchema).default([]) }).optional() to characterSchema so CharacterSpec carries it.",
+      "acceptance_criteria": [
+        "characterSchema parses a character with and without interaction.",
+        "CharacterSpec type includes interaction."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/content/schema.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "Existing fields"
+        ]
+      },
+      "technical_constraints": [
+        "Define eventSchema before use (already defined above)",
+        "Code path: `game/src/content/schema.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema updated; tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-586.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M859XCEV76M00WY8QB0DR591",
+      "matched_feature_id": "01M84X7J08GGA9YZADN6E6W7WQ",
+      "links": [
+        "parent:01M859XCEV76M00WY8QB0DR591",
+        "trace:01M84X7J08GGA9YZADN6E6W7WQ",
+        "artifact:.ai-dlc/units/UNIT-586.md"
+      ],
+      "depends_on": [
+        "01M859XCEV76M00WY8QB0DR591"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-586.md",
+      "artifact_id": "UNIT-586",
+      "steps": [
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "characterSchema",
+          "lines": "L53-L60",
+          "action": "Add an optional `interaction` key after `animations` using the existing eventSchema, with dialogue optional and events defaulting to an empty array.",
+          "code": "animations: z.object({...}),\n+ interaction: z.object({ dialogue: z.string().optional(), events: z.array(eventSchema).default([]) }).optional(),",
+          "expected": "CharacterSpec has an optional interaction with dialogue?: string and events: EventSpec[]."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEVB51D87K08435RXYA",
+      "kind": "unit",
+      "title": "Act: Validate scene characters in validateWorld",
+      "body": "In validateWorld's per-scene loop add a pass over scene.characters.\n\n## Acceptance criteria\n- Unknown character id reported.\n- Unknown interaction dialogue reported.\n- Interaction events checked via checkEvents.\n\n\n## Scope\n- In scope: game/src/content/loader.ts\n- Out of scope: tests\n- Preserve: Existing error messages\n\n\n## Technical constraints\n- Reuse checkEvents and the existing ctx object\n- Code path: `game/src/content/loader.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- validateWorld extended\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Check scene character ids, interaction dialogue and events in validateWorld.",
+      "description": "In validateWorld's per-scene loop add a pass over scene.characters.",
+      "acceptance_criteria": [
+        "Unknown character id reported.",
+        "Unknown interaction dialogue reported.",
+        "Interaction events checked via checkEvents."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/content/loader.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "Existing error messages"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse checkEvents and the existing ctx object",
+        "Code path: `game/src/content/loader.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "validateWorld extended",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-587.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M859XCEVD3TDBHW9Z5MCGPZA",
+      "matched_feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+      "links": [
+        "parent:01M859XCEVD3TDBHW9Z5MCGPZA",
+        "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+        "artifact:.ai-dlc/units/UNIT-587.md"
+      ],
+      "depends_on": [
+        "01M859XCEVD3TDBHW9Z5MCGPZA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-587.md",
+      "artifact_id": "UNIT-587",
+      "steps": [
+        {
+          "file": "game/src/content/loader.ts",
+          "symbol": "validateWorld",
+          "lines": "after the `for (const node of scene.dialogue)` loop (about L141)",
+          "action": "Insert a loop over scene.characters ?? [] that pushes `unknown character: ${c.id}` when !characters.has(c.id), pushes `unknown dialogue: ${d}` when c.interaction?.dialogue is set and not in dialogueIds, and calls checkEvents(c.interaction?.events, ctx, errors).",
+          "code": "for (const c of scene.characters ?? []) {\n  if (!characters.has(c.id)) errors.push(`unknown character: ${c.id}`);\n  const d = c.interaction?.dialogue;\n  if (d !== undefined && !dialogueIds.has(d)) errors.push(`unknown dialogue: ${d}`);\n  checkEvents(c.interaction?.events as GameEvent[] | undefined, ctx, errors);\n}",
+          "expected": "validateWorld returns the new errors for bad NPCs and none for valid ones."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEV4139N35V585037XY",
+      "kind": "unit",
+      "title": "Act: Emit characterClick from BootScene NPC sprites",
+      "body": "Add the event type and emit it in createCharacter when the spec has an interaction.\n\n## Acceptance criteria\n- characterClick is typed in PhaserToReactEvents.\n- Clicking an NPC with interaction emits it.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/events.ts\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: tests\n- Out of scope: React consumers\n- Preserve: Interact animation behavior\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Code path: `game/frontend/src/phaser/events.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Event emitted on click\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add characterClick to the event bus types and emit it on NPC click.",
+      "description": "Add the event type and emit it in createCharacter when the spec has an interaction.",
+      "acceptance_criteria": [
+        "characterClick is typed in PhaserToReactEvents.",
+        "Clicking an NPC with interaction emits it."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/events.ts",
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "React consumers"
+        ],
+        "preserve": [
+          "Interact animation behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Code path: `game/frontend/src/phaser/events.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Event emitted on click",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-588.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M859XCEVHRFZD4HW8PV1XCXB",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M859XCEVHRFZD4HW8PV1XCXB",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-588.md"
+      ],
+      "depends_on": [
+        "01M859XCEVHRFZD4HW8PV1XCXB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-588.md",
+      "artifact_id": "UNIT-588",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/events.ts",
+          "symbol": "PhaserToReactEvents",
+          "lines": "L3-L7",
+          "action": "Add a characterClick member after objectClick.",
+          "code": "characterClick: { id: string; dialogue?: string };",
+          "expected": "phaserToReact.emit('characterClick', ...) type-checks."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.createCharacter pointerdown handler",
+          "lines": "L117-L123",
+          "action": "At the start of the POINTER_DOWN callback, before the `if (!idleKey) return;` guard, emit the event when spec.interaction exists.",
+          "code": "if (spec.interaction) phaserToReact.emit('characterClick', { id: spec.id, dialogue: spec.interaction.dialogue });",
+          "expected": "NPCs with interaction report clicks; others are unchanged."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEV6FE6EWWB049ZHT9C",
+      "kind": "unit",
+      "title": "Verify: characterSchema interaction unit tests",
+      "body": "Add schema tests proving interaction parsing, defaults and errors.\n\n## Acceptance criteria\n- Interaction parses with defaulted events.\n- Missing interaction passes.\n- Bad dialogue type yields a path-tagged error.\n\n\n## Scope\n- In scope: game/tests/contentSchema.test.ts\n- Out of scope: product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Pure schema tests, no I/O\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the optional character interaction field.",
+      "description": "Add schema tests proving interaction parsing, defaults and errors.",
+      "acceptance_criteria": [
+        "Interaction parses with defaulted events.",
+        "Missing interaction passes.",
+        "Bad dialogue type yields a path-tagged error."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/contentSchema.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Pure schema tests, no I/O"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-589.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M859XCEVABBD300X61RYZKYM",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M859XCEVABBD300X61RYZKYM",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-589.md"
+      ],
+      "depends_on": [
+        "01M859XCEVABBD300X61RYZKYM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-589.md",
+      "artifact_id": "UNIT-589",
+      "steps": [
+        {
+          "file": "game/tests/contentSchema.test.ts",
+          "symbol": "new: describe('characterSchema interaction')",
+          "lines": "after the last existing describe block",
+          "action": "Add test 'keeps interaction.dialogue and defaults events': call parseWorldContent('scene', {id:'s',title:'S',dialogue:[],objects:[],characters:[{id:'npc',name:'Npc',position:{x:1,y:2},animations:{idle:{asset:'a',animation:'idle'}},interaction:{dialogue:'greet'}}]}) and assert ok and data.characters[0].interaction equals {dialogue:'greet',events:[]}.",
+          "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/tests/contentSchema.test.ts",
+          "symbol": "new: it('accepts a character without interaction')",
+          "lines": "inside the same describe",
+          "action": "Parse the same input with no interaction key; assert ok is true and characters[0].interaction is undefined.",
+          "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/tests/contentSchema.test.ts",
+          "symbol": "new: it('rejects a non-string interaction dialogue')",
+          "lines": "inside the same describe",
+          "action": "Parse input with interaction:{dialogue:5}; assert ok is false and errors contains an entry whose path is 'characters.0.interaction.dialogue'.",
+          "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEVZ2DBABCVHX76TFXT",
+      "kind": "unit",
+      "title": "Verify: validateWorld scene character reference unit tests",
+      "body": "Add in-memory world objects to tests/content.test.ts and assert validateWorld errors.\n\n## Acceptance criteria\n- Each bad reference yields its error.\n- A valid NPC yields none.\n\n\n## Scope\n- In scope: game/tests/content.test.ts\n- Out of scope: product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Build LoadedWorld objects inline; no filesystem\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for NPC reference validation.",
+      "description": "Add in-memory world objects to tests/content.test.ts and assert validateWorld errors.",
+      "acceptance_criteria": [
+        "Each bad reference yields its error.",
+        "A valid NPC yields none."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/content.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Build LoadedWorld objects inline; no filesystem"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-590.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M859XCEVB51D87K08435RXYA",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M859XCEVB51D87K08435RXYA",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-590.md"
+      ],
+      "depends_on": [
+        "01M859XCEVB51D87K08435RXYA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-590.md",
+      "artifact_id": "UNIT-590",
+      "steps": [
+        {
+          "file": "game/tests/content.test.ts",
+          "symbol": "new: describe('validateWorld scene characters')",
+          "lines": "after the last describe",
+          "action": "Add a helper building a world {id:'w',title:'W',startScene:'s',scenes:[scene],characters:[{id:'boy',name:'Boy'}],flags:['f']} where scene has dialogue [{id:'greet',speaker:'boy',text:'hi',choices:[]}] and a characters array passed per test. Test 1: character id 'ghost' -> errors contains 'unknown character: ghost'. Test 2: boy with interaction.dialogue 'nope' -> contains 'unknown dialogue: nope'. Test 3: interaction events [{type:'set_flag',flag:'zzz',value:true}] -> contains 'unknown flag: zzz'. Test 4: boy with dialogue 'greet' -> errors is [].",
+          "command": "cd game && npx vitest run tests/content.test.ts -t 'validateWorld scene characters'",
+          "expected": "All four tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEVRFM7Z0DPGSM8VFQM",
+      "kind": "unit",
+      "title": "Verify: BootScene NPC spawn and characterClick unit tests",
+      "body": "Extend the Phaser-mocked character suite with a second NPC that has an interaction.\n\n## Acceptance criteria\n- Two sprites spawn at their positions and idle.\n- characterClick emitted only for NPCs with interaction.\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneCharacters.test.ts\n- Out of scope: product code\n- Preserve: Existing tests in the file\n\n\n## Technical constraints\n- Reuse the existing vi.mock('phaser') and vi.mock content fixtures; no real Phaser\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with Phaser mocked for multi-NPC spawn and click events.",
+      "description": "Extend the Phaser-mocked character suite with a second NPC that has an interaction.",
+      "acceptance_criteria": [
+        "Two sprites spawn at their positions and idle.",
+        "characterClick emitted only for NPCs with interaction."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneCharacters.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "Existing tests in the file"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the existing vi.mock('phaser') and vi.mock content fixtures; no real Phaser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-591.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M859XCEV4139N35V585037XY",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M859XCEV4139N35V585037XY",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-591.md"
+      ],
+      "depends_on": [
+        "01M859XCEV4139N35V585037XY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-591.md",
+      "artifact_id": "UNIT-591",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+          "symbol": "vi.mock('../src/runtime/content') scene fixture",
+          "lines": "L69-L88",
+          "action": "Append a second character to scene.characters: id 'shopkeeper', position {x:60,y:120}, scale 1, layer 'characters', animations.idle reusing {asset:'character:boy',animation:'idle'}, interaction {dialogue:'greet',events:[]}; add {id:'shopkeeper',name:'Shopkeeper'} to world.characters.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'spawns one sprite'",
+          "expected": "Fixture has a boy without interaction and an NPC with interaction."
+        },
+        {
+          "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+          "symbol": "new: it('spawns one sprite per scene character')",
+          "lines": "after the last it",
+          "action": "Create BootScene, call create(), assert add.sprite was called twice with first two args (150,140) and (60,120), and play was called on both sprites.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'spawns one sprite'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+          "symbol": "new: it('emits characterClick only for NPCs with interaction')",
+          "lines": "after the previous it",
+          "action": "Subscribe with phaserToReact.on('characterClick', spy). Using pointerDownOn(sprite) invoke the shopkeeper listener and assert spy called once with {id:'shopkeeper',dialogue:'greet'}; invoke the boy listener and assert spy still called once.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'emits characterClick'",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M859XCEVTW7MBJQ2H8NM777K",
+      "kind": "evidence",
+      "title": "Evidence: Data-driven NPC unit tests pass",
+      "body": "Collect results of the three Verify units' test runs as evidence for SG-6.1.\n\n## Acceptance criteria\n- Schema, validateWorld and BootScene NPC tests pass.\n- No unrelated test is modified.\n\n\n## Scope\n- In scope: Test run output of the three Verify units\n- Out of scope: Manual or browser checks\n\n\n## Definition of done\n- All three Verify test commands pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that schema, validation and BootScene NPC unit tests pass.",
+      "description": "Collect results of the three Verify units' test runs as evidence for SG-6.1.",
+      "acceptance_criteria": [
+        "Schema, validateWorld and BootScene NPC tests pass.",
+        "No unrelated test is modified."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output of the three Verify units"
+        ],
+        "out_of_scope": [
+          "Manual or browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three Verify test commands pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-117.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M859XCEV6FE6EWWB049ZHT9C",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M859XCEV6FE6EWWB049ZHT9C",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-117.md"
+      ],
+      "depends_on": [
+        "01M859XCEV6FE6EWWB049ZHT9C",
+        "01M859XCEVZ2DBABCVHX76TFXT",
+        "01M859XCEVRFM7Z0DPGSM8VFQM"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-117.md",
+      "artifact_id": "EVD-117"
+    }
+  ],
+  "created_at": "2026-11-23T22:55:54.505094+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

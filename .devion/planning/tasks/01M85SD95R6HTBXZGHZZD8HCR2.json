@@ -1,0 +1,68 @@
+{
+  "id": "01M85SD95R6HTBXZGHZZD8HCR2",
+  "intent_id": "01M85S9SXYQSG0TVMV631D4PF9",
+  "title": "Act: Point defaultArtPaths at game/public/assets",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Change the assetsRoot resolution in defaultArtPaths",
+  "description": "Edit defaultArtPaths in game/frontend/scripts/generateArt.ts so assetsRoot resolves two levels up from the script dir. The CLI entry already calls defaultArtPaths, so it is wired in with no further change.",
+  "acceptance_criteria": [
+    "assetsRoot is resolve(scriptDir, '../../public/assets')",
+    "manifestPath is resolve(assetsRoot, 'worlds/the-boys-room/manifest.json')"
+  ],
+  "scope": {
+    "in_scope": [
+      "defaultArtPaths body"
+    ],
+    "out_of_scope": [
+      "tests",
+      "other scripts"
+    ],
+    "preserve": [
+      "createFsIo",
+      "runGenerateArt"
+    ]
+  },
+  "technical_constraints": [
+    "Deterministic in-repo art generation; shared palette max 48 colours",
+    "Code path: `game/frontend/scripts/generateArt.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "defaultArtPaths returns game/public/assets paths",
+    "Script still type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-790.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SAVW5R0FAW1C8TFF4GE75",
+    "trace:01M844Z5BYB1MXBH0K6Z4E8TE9",
+    "artifact:.ai-dlc/units/UNIT-790.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85SD95R4H74XXBX9AM4J3F2"
+  ],
+  "sim_node_id": "01M85SAVW5PC2WMMGJ6H5P1MXB",
+  "feature_id": "01M844Z5BYB1MXBH0K6Z4E8TE9",
+  "artifact_path": ".ai-dlc/units/UNIT-790.md",
+  "artifact_id": "UNIT-790",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "defaultArtPaths",
+      "lines": "L22-L25",
+      "action": "Change the assetsRoot constant to resolve scriptDir with '../../public/assets' instead of '../public/assets'; leave the manifestPath line unchanged.",
+      "code": "const assetsRoot = resolve(scriptDir, '../public/assets'); -> const assetsRoot = resolve(scriptDir, '../../public/assets');",
+      "expected": "defaultArtPaths('/repo/game/frontend/scripts') returns assetsRoot /repo/game/public/assets"
+    }
+  ],
+  "created_at": "2026-11-24T03:25:51.672067+00:00",
+  "updated_at": "2026-11-24T03:26:58.176526+00:00"
+}

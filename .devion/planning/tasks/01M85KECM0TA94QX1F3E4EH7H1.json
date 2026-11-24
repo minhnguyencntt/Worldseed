@@ -1,0 +1,51 @@
+{
+  "id": "01M85KECM0TA94QX1F3E4EH7H1",
+  "intent_id": "01M85K9F2Z1HDMTP8XNSKJEWFA",
+  "title": "REQ · Shutdown unsubscribes from the store so later changes do not reach the scene",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "After shutdown the scene's store subscription is released and store updates no longer touch the scene.",
+  "description": "Context: the handler already calls this.unsubscribe, but ordering relative to the focus reset matters: the unsubscribe must run before setFocusedObject(null) so the reset does not trigger onStateChange on destroyed objects. Desired behavior: unsubscribe first, then clear focus. Expected result: onStateChange is not called after shutdown. Why: prevents calls on destroyed objects.",
+  "acceptance_criteria": [
+    "Given shutdown has run, when setFocusedObject is called with an id, then no object focus or sync is invoked.",
+    "Given shutdown, when focus is cleared, then onStateChange is not called by that update."
+  ],
+  "scope": {
+    "in_scope": [
+      "Ordering of unsubscribe and focus reset in the SHUTDOWN handler"
+    ],
+    "out_of_scope": [
+      "Subscription creation"
+    ],
+    "preserve": [
+      "unsubscribe set to null after shutdown"
+    ]
+  },
+  "technical_constraints": [
+    "Keep this.unsubscribe nullable field"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Unsubscribe precedes the focus reset",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-368.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85KATM0BVTDW9TF37MJGJV9",
+    "trace:01M855M826E3C405ZASCHH5B77",
+    "artifact:.ai-dlc/requirements/REQ-368.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M85KECM070KS1BPK2SP6HKAP"
+  ],
+  "sim_node_id": "01M85KATM00WZE7HJ881DZ1YMA",
+  "feature_id": "01M855M826E3C405ZASCHH5B77",
+  "artifact_path": ".ai-dlc/requirements/REQ-368.md",
+  "artifact_id": "REQ-368",
+  "created_at": "2026-11-24T01:41:36.512693+00:00"
+}

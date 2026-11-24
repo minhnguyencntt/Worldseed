@@ -1,0 +1,74 @@
+{
+  "id": "01M85S3FJWCM314KM5A09XJN7W",
+  "intent_id": "01M85RXTNZB1TQE3PDK3QXNYRX",
+  "title": "Verify: createFsIo reads and rewrites the app manifest with mocked fs",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Assert the CLI I/O targets the default manifest and assets with a fake fs",
+  "description": "Unit tests for createFsIo and runGenerateArt using a fake fs object (vi.fn) and no disk access.",
+  "acceptance_criteria": [
+    "With a fake fs serving the existing manifest at the default path, runGenerateArt writes merged JSON to that same path",
+    "A fake fs whose readFileSync throws makes readText throw",
+    "PNG files are written under the default assetsRoot"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/generateArtScript.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing identical-bytes tests"
+    ]
+  },
+  "technical_constraints": [
+    "Hard constraint: unit tests with all dependencies mocked",
+    "Fixture manifest content comes from the AssetManifest type in @game/assets/manifest, e.g. { version: 1, assets: [] }"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-789.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85RZB16XPKREJY4522N0RHS",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-789.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85S3FJWZDMTWA0NAVRCE7HV"
+  ],
+  "sim_node_id": "01M85RZB16EEH931TRK4CQES63",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-789.md",
+  "artifact_id": "UNIT-789",
+  "steps": [
+    {
+      "file": "game/frontend/tests/generateArtScript.test.ts",
+      "symbol": "new: describe('createFsIo')",
+      "lines": "after defaultArtPaths tests",
+      "action": "Build paths = defaultArtPaths('/repo/game/frontend/scripts') and a fake fs with readFileSync returning '{\"version\":1,\"assets\":[]}', writeFileSync and mkdirSync as vi.fn. Run runGenerateArt(createFsIo(paths, fake)). Assert writeFileSync was called with paths.manifestPath and a string, and that every other written path starts with paths.assetsRoot.",
+      "command": "npx vitest run tests/generateArtScript.test.ts -t createFsIo",
+      "expected": "Manifest rewritten at the-boys-room path; PNGs under public/assets"
+    },
+    {
+      "file": "game/frontend/tests/generateArtScript.test.ts",
+      "symbol": "new: test 'throws when the manifest is missing'",
+      "lines": "after previous test",
+      "action": "Fake fs readFileSync throws Error('ENOENT'); assert createFsIo(paths, fake).readText(paths.manifestPath) throws and no writeFileSync call happened.",
+      "command": "npx vitest run tests/generateArtScript.test.ts -t missing",
+      "expected": "Test passes; missing manifest is not replaced by an empty one"
+    }
+  ],
+  "created_at": "2026-11-24T03:20:30.556703+00:00",
+  "updated_at": "2026-11-24T03:23:33.060570+00:00"
+}

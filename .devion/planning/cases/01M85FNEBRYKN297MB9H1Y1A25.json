@@ -1,0 +1,251 @@
+{
+  "id": "01M85FNEBRYKN297MB9H1Y1A25",
+  "trigger_node_id": "INT-137, UNIT-680 +3",
+  "node_ids": [
+    "INT-137",
+    "UNIT-680",
+    "UNIT-681",
+    "REQ-340",
+    "EVD-137"
+  ],
+  "intent_id": "INT-137",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-137",
+      "title": "SG-8.4.3 Show 'No suggestions yet this round' for an empty loaded history",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-680",
+      "title": "Act: Render the empty history message in ContributionSheet",
+      "kind": "unit",
+      "task_ids": [
+        "01M85FNDCHKD5Y8S61HATTEM0Z"
+      ],
+      "depends_on": [
+        "REQ-340"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "98dacbadc72035745b30d798de47d8be5ba46d27",
+      "from_sha": "12249864a77c8b3e5bf072a3077a86c8f8f8c6ec",
+      "started_at": "2026-11-24T00:35:36.100254+00:00",
+      "ended_at": "2026-11-24T00:36:02.922343+00:00",
+      "run_started_at": "2026-11-24T00:35:36.100254+00:00",
+      "duration_ms": 23519,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 2333,
+      "estimated_cost_usd": 0.009342
+    },
+    {
+      "unit_id": "UNIT-681",
+      "title": "Verify: Empty history message unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85FNDCHCW5CMTS4V55BYTAP"
+      ],
+      "depends_on": [
+        "UNIT-680",
+        "REQ-340"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "cc1707f9c729e3d8bb2948ae6d7743561aa9471d",
+      "from_sha": "98dacbadc72035745b30d798de47d8be5ba46d27",
+      "tests": [
+        {
+          "id": "contributionHistoryEmpty.shows-empty",
+          "kind": "unit",
+          "name": "shows the empty message when history loads empty",
+          "title": "history empty state > shows the empty message when history loads empty",
+          "scenario": "Given listMine resolves [] When the sheet renders Then 'No suggestions yet this round' is shown",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx --testTimeout=10000",
+          "file": "tests/contributionHistoryEmpty.test.tsx",
+          "status": "passed",
+          "detail": "Passed in the single file run."
+        },
+        {
+          "id": "contributionHistoryEmpty.hides-after-add",
+          "kind": "unit",
+          "name": "hides the empty message after an entry is added",
+          "title": "history empty state > hides the empty message after an entry is added",
+          "scenario": "Given history is empty and submitContribution resolves When the user types 'A new idea' and clicks Send Then the empty message is gone and 'A new idea' is listed",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx --testTimeout=10000",
+          "file": "tests/contributionHistoryEmpty.test.tsx",
+          "status": "passed",
+          "detail": "Passed in the single file run."
+        },
+        {
+          "id": "contributionHistoryEmpty.not-while-loading",
+          "kind": "unit",
+          "name": "does not show the empty message while loading",
+          "title": "history empty state > does not show the empty message while loading",
+          "scenario": "Given listMine never settles When the sheet renders Then the loading text is shown and the empty message is not",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx --testTimeout=10000",
+          "file": "tests/contributionHistoryEmpty.test.tsx",
+          "status": "passed",
+          "detail": "Passed in the single file run."
+        },
+        {
+          "id": "contributionHistoryEmpty.not-on-error",
+          "kind": "unit",
+          "name": "does not show the empty message on error",
+          "title": "history empty state > does not show the empty message on error",
+          "scenario": "Given listMine rejects When the sheet renders Then the error alert is shown and the empty message is not",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx --testTimeout=10000",
+          "file": "tests/contributionHistoryEmpty.test.tsx",
+          "status": "passed",
+          "detail": "Passed in the single file run."
+        },
+        {
+          "id": "contributionHistoryEmpty.not-with-entries",
+          "kind": "unit",
+          "name": "does not show the empty message when history has entries",
+          "title": "history empty state > does not show the empty message when history has entries",
+          "scenario": "Given listMine resolves [contributionFixture] When the sheet renders Then the prompt is listed and the empty message is not",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx --testTimeout=10000",
+          "file": "tests/contributionHistoryEmpty.test.tsx",
+          "status": "passed",
+          "detail": "Passed in the single file run."
+        }
+      ],
+      "started_at": "2026-11-24T00:36:02.930774+00:00",
+      "ended_at": "2026-11-24T00:36:42.300709+00:00",
+      "run_started_at": "2026-11-24T00:36:02.930774+00:00",
+      "duration_ms": 36664,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 6303,
+      "estimated_cost_usd": 0.025228
+    },
+    {
+      "unit_id": "REQ-340",
+      "title": "REQ · Empty loaded history shows 'No suggestions yet this round' and hides once an entry exists",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-137"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-137",
+      "title": "Evidence: Empty history message unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-680",
+        "UNIT-681"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-340",
+      "dst": "UNIT-681"
+    },
+    {
+      "src": "UNIT-681",
+      "dst": "EVD-137"
+    },
+    {
+      "src": "INT-137",
+      "dst": "REQ-340"
+    },
+    {
+      "src": "UNIT-680",
+      "dst": "UNIT-681"
+    },
+    {
+      "src": "UNIT-680",
+      "dst": "EVD-137"
+    },
+    {
+      "src": "REQ-340",
+      "dst": "UNIT-680"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85fne",
+  "base_sha": "12249864a77c8b3e5bf072a3077a86c8f8f8c6ec",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85FNEBRYKN297MB9H1Y1A25:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T00:35:33.368398+00:00",
+  "updated_at": "2026-11-24T00:36:45.114382+00:00",
+  "completed_at": "2026-11-24T00:36:42.301653+00:00",
+  "duration_ms": 68933,
+  "usage_stats": {
+    "total_duration_ms": 60194,
+    "total_tokens_in": 32,
+    "total_tokens_out": 8636,
+    "total_estimated_cost_usd": 0.03457
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-680",
+    "UNIT-681"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-680",
+        "title": "Act: Render the empty history message in ContributionSheet",
+        "evidence_refs": [
+          {
+            "id": "EVD-137",
+            "path": ".ai-dlc/evidence/EVD-137.md",
+            "title": "Evidence: Empty history message unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-680 unless acceptance outcomes recorded in EVD-137 (.ai-dlc/evidence/EVD-137.md; \"Evidence: Empty history message unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-681",
+        "title": "Verify: Empty history message unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-137",
+            "path": ".ai-dlc/evidence/EVD-137.md",
+            "title": "Evidence: Empty history message unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-681 unless acceptance outcomes recorded in EVD-137 (.ai-dlc/evidence/EVD-137.md; \"Evidence: Empty history message unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T00:35:35.618533+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-680",
+    "UNIT-681"
+  ]
+}

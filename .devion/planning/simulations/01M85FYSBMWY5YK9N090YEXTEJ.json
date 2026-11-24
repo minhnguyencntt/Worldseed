@@ -1,0 +1,655 @@
+{
+  "intent_id": "01M85FYSBMWY5YK9N090YEXTEJ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85G0ECY75CB1HDNG0CKFKFB",
+      "kind": "intent",
+      "title": "SG-8.4.5 Distinguish loading message from submit success feedback",
+      "body": "Context: ContributionSheet renders the submit success message, the history loading message and the empty history message all with role=\"status\" (ContributionSheet.tsx L153, L154, L159). tests/contributionSuccessFeedback.test.tsx uses findByRole('status') and can match the wrong element. Desired behavior: each status element has its own test id and the success test targets the success element. Expected result: loading, empty and error/Retry unit tests pass against real code. Why: unambiguous, stable assertions.\n\n## Acceptance criteria\n- Given history is loading, when the sheet renders, then the loading message is found by test id contribution-history-loading and the success element is absent\n- Given a successful send, when submitted, then the success message is found by test id contribution-success\n- Given the loading, empty and error/Retry unit tests run with mocked client, then they all pass against the real ContributionSheet\n\n\n## Scope\n- In scope: ContributionSheet status elements\n- In scope: contributionSuccessFeedback test targeting\n- Out of scope: Backend changes\n- Out of scope: Visual restyling\n- Out of scope: New API calls\n- Preserve: Existing roles, message texts and ids\n- Preserve: Retry behavior\n\n\n## Technical constraints\n- React + TypeScript + vitest with mocked ../src/api/client\n- No backend or mock-data replacement\n\n\n## Definition of done\n- Status elements distinguishable by test id\n- Related unit tests pass\n\n\n## Non-functional requirements\n- Keep accessibility roles intact\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Loading and success status elements in ContributionSheet become distinguishable and tests target the right one",
+      "description": "Context: ContributionSheet renders the submit success message, the history loading message and the empty history message all with role=\"status\" (ContributionSheet.tsx L153, L154, L159). tests/contributionSuccessFeedback.test.tsx uses findByRole('status') and can match the wrong element. Desired behavior: each status element has its own test id and the success test targets the success element. Expected result: loading, empty and error/Retry unit tests pass against real code. Why: unambiguous, stable assertions.",
+      "acceptance_criteria": [
+        "Given history is loading, when the sheet renders, then the loading message is found by test id contribution-history-loading and the success element is absent",
+        "Given a successful send, when submitted, then the success message is found by test id contribution-success",
+        "Given the loading, empty and error/Retry unit tests run with mocked client, then they all pass against the real ContributionSheet"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet status elements",
+          "contributionSuccessFeedback test targeting"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Visual restyling",
+          "New API calls"
+        ],
+        "preserve": [
+          "Existing roles, message texts and ids",
+          "Retry behavior"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript + vitest with mocked ../src/api/client",
+        "No backend or mock-data replacement"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Status elements distinguishable by test id",
+        "Related unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-139.md`"
+      ],
+      "non_functional": [
+        "Keep accessibility roles intact"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85FWFYE6T0BGGMNHZ3BZKFR",
+      "links": [
+        "trace:01M85FWFYE6T0BGGMNHZ3BZKFR",
+        "artifact:.ai-dlc/intent/INT-139.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-139.md",
+      "artifact_id": "INT-139"
+    },
+    {
+      "id": "01M85G0ECYCM1XT3XKQY19WYBE",
+      "kind": "requirement",
+      "title": "REQ · Loading and empty history messages carry their own test ids",
+      "body": "The loading message (L154) and the empty history message (L159) are plain role=\"status\" paragraphs. Give each a data-testid so they cannot be confused with the success feedback or each other. Why: stable selectors.\n\n## Acceptance criteria\n- Given historyStatus is loading, when rendered, then an element with data-testid contribution-history-loading shows 'Loading your suggestions…'\n- Given history loaded with no entries, when rendered, then an element with data-testid contribution-history-empty shows the empty message\n\n\n## Scope\n- In scope: data-testid on loading and empty paragraphs\n- Out of scope: Changing message text\n- Preserve: role=\"status\" on both\n\n\n## Technical constraints\n- Edit only ContributionSheet.tsx\n\n\n## Definition of done\n- Both test ids present in rendered output\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "History loading and empty messages are individually addressable",
+      "description": "The loading message (L154) and the empty history message (L159) are plain role=\"status\" paragraphs. Give each a data-testid so they cannot be confused with the success feedback or each other. Why: stable selectors.",
+      "acceptance_criteria": [
+        "Given historyStatus is loading, when rendered, then an element with data-testid contribution-history-loading shows 'Loading your suggestions…'",
+        "Given history loaded with no entries, when rendered, then an element with data-testid contribution-history-empty shows the empty message"
+      ],
+      "scope": {
+        "in_scope": [
+          "data-testid on loading and empty paragraphs"
+        ],
+        "out_of_scope": [
+          "Changing message text"
+        ],
+        "preserve": [
+          "role=\"status\" on both"
+        ]
+      },
+      "technical_constraints": [
+        "Edit only ContributionSheet.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test ids present in rendered output",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-343.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85G0ECY75CB1HDNG0CKFKFB",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85G0ECY75CB1HDNG0CKFKFB",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-343.md"
+      ],
+      "depends_on": [
+        "01M85G0ECY75CB1HDNG0CKFKFB"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-343.md",
+      "artifact_id": "REQ-343"
+    },
+    {
+      "id": "01M85G0ECY7TW5RHP1RY4YQDVQ",
+      "kind": "requirement",
+      "title": "REQ · Submit success feedback is targeted by its own test id in its test",
+      "body": "The success paragraph (L153) shares role=\"status\" with the loading and empty messages, so findByRole('status') in tests/contributionSuccessFeedback.test.tsx is ambiguous. Add data-testid=\"contribution-success\" and make the test target it.\n\n## Acceptance criteria\n- Given a successful send, when submitted, then getByTestId contribution-success has text 'Suggestion sent'\n- Given a 429 error or an edit after success, then queryByTestId contribution-success is null\n\n\n## Scope\n- In scope: data-testid on success paragraph\n- In scope: success feedback test selectors\n- Out of scope: Error alert changes\n- Preserve: id contribution-idea-success\n- Preserve: role=\"status\"\n\n\n## Technical constraints\n- vitest with mocked submitContribution and listMine\n\n\n## Definition of done\n- Success test no longer queries by role status\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Success element has a test id and contributionSuccessFeedback.test.tsx uses it",
+      "description": "The success paragraph (L153) shares role=\"status\" with the loading and empty messages, so findByRole('status') in tests/contributionSuccessFeedback.test.tsx is ambiguous. Add data-testid=\"contribution-success\" and make the test target it.",
+      "acceptance_criteria": [
+        "Given a successful send, when submitted, then getByTestId contribution-success has text 'Suggestion sent'",
+        "Given a 429 error or an edit after success, then queryByTestId contribution-success is null"
+      ],
+      "scope": {
+        "in_scope": [
+          "data-testid on success paragraph",
+          "success feedback test selectors"
+        ],
+        "out_of_scope": [
+          "Error alert changes"
+        ],
+        "preserve": [
+          "id contribution-idea-success",
+          "role=\"status\""
+        ]
+      },
+      "technical_constraints": [
+        "vitest with mocked submitContribution and listMine"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Success test no longer queries by role status",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-344.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85G0ECY75CB1HDNG0CKFKFB",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M85G0ECY75CB1HDNG0CKFKFB",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-344.md"
+      ],
+      "depends_on": [
+        "01M85G0ECY75CB1HDNG0CKFKFB"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-344.md",
+      "artifact_id": "REQ-344"
+    },
+    {
+      "id": "01M85G0ECYVD2YRXGT0ZFCPW9W",
+      "kind": "requirement",
+      "title": "REQ · History error alert and Retry stay identifiable and loading/empty/error tests pass",
+      "body": "The history error paragraph (L155) and Retry button (L157) must remain working while the other status elements change. Add data-testid to the error alert and run the loading, empty and error/Retry suites against the real component.\n\n## Acceptance criteria\n- Given listMine rejects, when rendered, then data-testid contribution-history-error shows the error message and a Retry button is present\n- Given Retry is clicked, then the loading message reappears and listMine is called again\n\n\n## Scope\n- In scope: data-testid on error alert\n- Out of scope: Retry logic changes\n- Preserve: role=\"alert\"\n- Preserve: Retry button label and reloadKey behavior\n\n\n## Technical constraints\n- Edit only ContributionSheet.tsx\n\n\n## Definition of done\n- Error alert has test id; existing history tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Error alert gets a test id; loading, empty and error/Retry tests pass against real code",
+      "description": "The history error paragraph (L155) and Retry button (L157) must remain working while the other status elements change. Add data-testid to the error alert and run the loading, empty and error/Retry suites against the real component.",
+      "acceptance_criteria": [
+        "Given listMine rejects, when rendered, then data-testid contribution-history-error shows the error message and a Retry button is present",
+        "Given Retry is clicked, then the loading message reappears and listMine is called again"
+      ],
+      "scope": {
+        "in_scope": [
+          "data-testid on error alert"
+        ],
+        "out_of_scope": [
+          "Retry logic changes"
+        ],
+        "preserve": [
+          "role=\"alert\"",
+          "Retry button label and reloadKey behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Edit only ContributionSheet.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Error alert has test id; existing history tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-345.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85G0ECY75CB1HDNG0CKFKFB",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85G0ECY75CB1HDNG0CKFKFB",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-345.md"
+      ],
+      "depends_on": [
+        "01M85G0ECY75CB1HDNG0CKFKFB"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-345.md",
+      "artifact_id": "REQ-345"
+    },
+    {
+      "id": "01M85G0ECYGN7V1SVD4W7D21VV",
+      "kind": "unit",
+      "title": "Act: Add test ids to the history loading and empty messages",
+      "body": "Edit ContributionSheet.tsx so the loading and empty history paragraphs have data-testid attributes while keeping role and text.\n\n## Acceptance criteria\n- Loading paragraph has data-testid contribution-history-loading\n- Empty paragraph has data-testid contribution-history-empty\n\n\n## Scope\n- In scope: ContributionSheet.tsx L154, L159\n- Out of scope: Tests\n- Preserve: Roles and texts\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attributes added; component compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to loading and empty paragraphs",
+      "description": "Edit ContributionSheet.tsx so the loading and empty history paragraphs have data-testid attributes while keeping role and text.",
+      "acceptance_criteria": [
+        "Loading paragraph has data-testid contribution-history-loading",
+        "Empty paragraph has data-testid contribution-history-empty"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx L154, L159"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Roles and texts"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attributes added; component compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-686.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85G0ECYCM1XT3XKQY19WYBE",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85G0ECYCM1XT3XKQY19WYBE",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-686.md"
+      ],
+      "depends_on": [
+        "01M85G0ECYCM1XT3XKQY19WYBE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-686.md",
+      "artifact_id": "UNIT-686",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (loading paragraph)",
+          "lines": "L154",
+          "action": "Add the data-testid attribute contribution-history-loading to the paragraph rendered when historyStatus === 'loading'",
+          "code": "<p role=\"status\" data-testid=\"contribution-history-loading\">{HISTORY_LOADING}</p>",
+          "expected": "Loading paragraph renders with test id contribution-history-loading"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (empty paragraph)",
+          "lines": "L159",
+          "action": "Add the data-testid attribute contribution-history-empty to the paragraph rendered when historyStatus is ready and entries is empty",
+          "code": "<p role=\"status\" data-testid=\"contribution-history-empty\">{HISTORY_EMPTY}</p>",
+          "expected": "Empty paragraph renders with test id contribution-history-empty"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECYH04C6G0BJAX0A8CS",
+      "kind": "unit",
+      "title": "Act: Add a test id to the submit success message",
+      "body": "Edit ContributionSheet.tsx so the success paragraph is addressable by test id.\n\n## Acceptance criteria\n- Success paragraph has data-testid contribution-success\n- Id and role are unchanged\n\n\n## Scope\n- In scope: ContributionSheet.tsx L153\n- Out of scope: Tests\n- Preserve: id contribution-idea-success\n- Preserve: role status\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attribute added\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid contribution-success to the success paragraph",
+      "description": "Edit ContributionSheet.tsx so the success paragraph is addressable by test id.",
+      "acceptance_criteria": [
+        "Success paragraph has data-testid contribution-success",
+        "Id and role are unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx L153"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "id contribution-idea-success",
+          "role status"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attribute added",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-687.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85G0ECY7TW5RHP1RY4YQDVQ",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85G0ECY7TW5RHP1RY4YQDVQ",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-687.md"
+      ],
+      "depends_on": [
+        "01M85G0ECY7TW5RHP1RY4YQDVQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-687.md",
+      "artifact_id": "UNIT-687",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (success paragraph)",
+          "lines": "L153",
+          "action": "Add data-testid contribution-success to the paragraph rendered when success is set, keeping id and role",
+          "code": "<p id=\"contribution-idea-success\" role=\"status\" data-testid=\"contribution-success\">{success}</p>",
+          "expected": "Success paragraph renders with test id contribution-success"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECY0EYCP7HD01JK4CV2",
+      "kind": "unit",
+      "title": "Act: Add a test id to the history error alert",
+      "body": "Edit ContributionSheet.tsx so the history error alert is addressable by test id; Retry button untouched.\n\n## Acceptance criteria\n- Error paragraph has data-testid contribution-history-error\n- Retry button unchanged\n\n\n## Scope\n- In scope: ContributionSheet.tsx L155\n- Out of scope: Tests\n- Out of scope: Retry logic\n- Preserve: role alert\n- Preserve: Retry button\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Attribute added\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-testid to the history error paragraph",
+      "description": "Edit ContributionSheet.tsx so the history error alert is addressable by test id; Retry button untouched.",
+      "acceptance_criteria": [
+        "Error paragraph has data-testid contribution-history-error",
+        "Retry button unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx L155"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Retry logic"
+        ],
+        "preserve": [
+          "role alert",
+          "Retry button"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Attribute added",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-688.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85G0ECYVD2YRXGT0ZFCPW9W",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85G0ECYVD2YRXGT0ZFCPW9W",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-688.md"
+      ],
+      "depends_on": [
+        "01M85G0ECYVD2YRXGT0ZFCPW9W"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-688.md",
+      "artifact_id": "UNIT-688",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (history error paragraph)",
+          "lines": "L155",
+          "action": "Add data-testid contribution-history-error to the paragraph rendered when historyStatus === 'error'",
+          "code": "<p role=\"alert\" data-testid=\"contribution-history-error\">{HISTORY_ERROR}</p>",
+          "expected": "Error paragraph renders with test id contribution-history-error"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECYY1AN6DDTBQR0FNVH",
+      "kind": "unit",
+      "title": "Verify: History loading and empty message test ids unit tests",
+      "body": "Add unit tests with mocked listMine asserting the loading and empty test ids.\n\n## Acceptance criteria\n- Pending listMine shows contribution-history-loading and no contribution-success\n- Resolved empty list shows contribution-history-empty\n\n\n## Scope\n- In scope: tests/contributionHistoryStatus.test.tsx\n- In scope: tests/contributionHistoryEmpty.test.tsx\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock ../src/api/client; fixtures in tests/fixtures/api.ts mirror the client types\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests assert loading and empty test ids",
+      "description": "Add unit tests with mocked listMine asserting the loading and empty test ids.",
+      "acceptance_criteria": [
+        "Pending listMine shows contribution-history-loading and no contribution-success",
+        "Resolved empty list shows contribution-history-empty"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionHistoryStatus.test.tsx",
+          "tests/contributionHistoryEmpty.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client; fixtures in tests/fixtures/api.ts mirror the client types"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-689.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85G0ECYGN7V1SVD4W7D21VV",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85G0ECYGN7V1SVD4W7D21VV",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-689.md"
+      ],
+      "depends_on": [
+        "01M85G0ECYGN7V1SVD4W7D21VV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-689.md",
+      "artifact_id": "UNIT-689",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistoryStatus.test.tsx",
+          "symbol": "new test: shows loading test id while history pending",
+          "lines": "after last test",
+          "action": "Mock listMine with a never-resolving promise, render ContributionSheet open, assert getByTestId('contribution-history-loading') has text 'Loading your suggestions…' and queryByTestId('contribution-success') is null",
+          "command": "npx vitest run tests/contributionHistoryStatus.test.tsx",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionHistoryEmpty.test.tsx",
+          "symbol": "new test: shows empty test id",
+          "lines": "after last test",
+          "action": "Mock listMine to resolve [], render the sheet, assert await findByTestId('contribution-history-empty') is present and queryByTestId('contribution-history-loading') is null",
+          "command": "npx vitest run tests/contributionHistoryEmpty.test.tsx",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECY7F2PDH6HJHNS33X5",
+      "kind": "unit",
+      "title": "Verify: Success feedback targets its own test id unit tests",
+      "body": "Replace ambiguous role queries with test id queries in the success feedback test.\n\n## Acceptance criteria\n- Success test uses contribution-success\n- 429 and edit tests assert it is absent\n\n\n## Scope\n- In scope: tests/contributionSuccessFeedback.test.tsx\n- Out of scope: Product code\n- Preserve: Alert assertions\n\n\n## Technical constraints\n- Mock submitContribution and listMine\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update contributionSuccessFeedback tests to use the success test id",
+      "description": "Replace ambiguous role queries with test id queries in the success feedback test.",
+      "acceptance_criteria": [
+        "Success test uses contribution-success",
+        "429 and edit tests assert it is absent"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionSuccessFeedback.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Alert assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Mock submitContribution and listMine"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-690.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85G0ECYH04C6G0BJAX0A8CS",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85G0ECYH04C6G0BJAX0A8CS",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-690.md"
+      ],
+      "depends_on": [
+        "01M85G0ECYH04C6G0BJAX0A8CS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-690.md",
+      "artifact_id": "UNIT-690",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionSuccessFeedback.test.tsx",
+          "symbol": "ContributionSheet inline feedback tests",
+          "lines": "L54, L65, L73, L77",
+          "action": "Replace findByRole('status') with findByTestId('contribution-success') at L54 and L73, and queryByRole('status') with queryByTestId('contribution-success') at L65 and L77; keep text assertion SUCCESS_MESSAGE and alert assertions",
+          "code": "expect(await screen.findByTestId('contribution-success')).toHaveTextContent(SUCCESS_MESSAGE);",
+          "command": "npx vitest run tests/contributionSuccessFeedback.test.tsx",
+          "expected": "All 3 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECYPKTM0RXSBG4B298A",
+      "kind": "unit",
+      "title": "Verify: History error alert and Retry unit tests",
+      "body": "Add unit tests asserting the error test id, Retry button and return to loading.\n\n## Acceptance criteria\n- Rejected listMine shows contribution-history-error and Retry\n- Retry shows loading again and calls listMine twice\n\n\n## Scope\n- In scope: tests/contributionHistoryRetry.test.tsx\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock listMine\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests assert error test id and Retry",
+      "description": "Add unit tests asserting the error test id, Retry button and return to loading.",
+      "acceptance_criteria": [
+        "Rejected listMine shows contribution-history-error and Retry",
+        "Retry shows loading again and calls listMine twice"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contributionHistoryRetry.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock listMine"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-691.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85G0ECY0EYCP7HD01JK4CV2",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85G0ECY0EYCP7HD01JK4CV2",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-691.md"
+      ],
+      "depends_on": [
+        "01M85G0ECY0EYCP7HD01JK4CV2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-691.md",
+      "artifact_id": "UNIT-691",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistoryRetry.test.tsx",
+          "symbol": "new test: error test id and Retry",
+          "lines": "after last test",
+          "action": "Mock listMine to reject once then never resolve; render sheet; assert findByTestId('contribution-history-error') exists and button 'Retry' exists; click Retry; assert getByTestId('contribution-history-loading') is shown and listMine toHaveBeenCalledTimes(2)",
+          "command": "npx vitest run tests/contributionHistoryRetry.test.tsx",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85G0ECY9E4H0N5KVWZJJ6WT",
+      "kind": "evidence",
+      "title": "Evidence: Loading, success, empty and error/Retry unit tests pass",
+      "body": "Collect passing results of the verify unit tests for the distinguishable status elements.\n\n## Acceptance criteria\n- All referenced test files pass\n- No test queries success feedback by generic role status\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: Product changes\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that status element tests pass",
+      "description": "Collect passing results of the verify unit tests for the distinguishable status elements.",
+      "acceptance_criteria": [
+        "All referenced test files pass",
+        "No test queries success feedback by generic role status"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-139.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85G0ECYY1AN6DDTBQR0FNVH",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85G0ECYY1AN6DDTBQR0FNVH",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-139.md"
+      ],
+      "depends_on": [
+        "01M85G0ECYY1AN6DDTBQR0FNVH",
+        "01M85G0ECY7F2PDH6HJHNS33X5",
+        "01M85G0ECYPKTM0RXSBG4B298A"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-139.md",
+      "artifact_id": "EVD-139"
+    }
+  ],
+  "created_at": "2026-11-24T00:42:47.075089+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

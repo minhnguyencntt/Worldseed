@@ -1,0 +1,697 @@
+{
+  "intent_id": "01M85H9KZF7E1HJM1FD88Z6EN1",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85HBTVZHY0X56A3E3VFWX6N",
+      "kind": "intent",
+      "title": "SG-10 Connect Phaser pointer and keyboard events to the game store",
+      "body": "Context: BootScene already emits objectClick (App opens ActionMenu) and re-syncs SceneObjects on every gameStore change. SceneObject already shows hover highlight/label and keyboard focus. Gaps: the typed objectHover event is declared in PhaserToReactEvents but never emitted, and the typed highlightObject event in ReactToPhaserEvents is never consumed. Desired behavior: hover and click flow Phaser to React, store changes (secret door open, inventory) flow back into the scene, and unit tests cover both directions. Why: the Phaser scene and React UI must stay consistent without duplicated state.\n\n## Acceptance criteria\n- Given a scene object, when the pointer hovers it, then the highlight and label show and objectHover is emitted with its id; on pointer out objectHover carries null\n- Given a clicked object, when objectClick is emitted, then App selects it and shows its ActionMenu\n- Given a store change such as secret_door_open flag or an inventory item, when the state updates, then every SceneObject receives sync with the new state\n- Given a highlightObject event from React, when it is emitted, then the matching scene object takes focus highlight and label and null clears it\n- Given unit tests, when run, then they cover Phaser to React and store to Phaser directions\n\n\n## Scope\n- In scope: SceneObject hover listener\n- In scope: BootScene objectHover emission and highlightObject subscription\n- In scope: Unit tests in both directions\n- Out of scope: New assets or content\n- Out of scope: Backend or API changes\n- Out of scope: Reworking the ActionMenu\n- Preserve: Existing objectClick bridge and App ActionMenu\n- Preserve: useGameStore as single source of GameState\n- Preserve: Phaser mocked in unit tests\n\n\n## Technical constraints\n- Use the typed phaserToReact and reactToPhaser buses in game/frontend/src/phaser/events.ts\n- BootScene must not keep its own copy of GameState\n\n\n## Definition of done\n- All three requirements have passing unit tests\n- Existing bootScene and appObjectClick tests still pass\n\n\n## Non-functional requirements\n- Subscriptions are released on scene SHUTDOWN\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Two-way bridge between Phaser scene events and the Zustand game store, proven by unit tests in both directions",
+      "description": "Context: BootScene already emits objectClick (App opens ActionMenu) and re-syncs SceneObjects on every gameStore change. SceneObject already shows hover highlight/label and keyboard focus. Gaps: the typed objectHover event is declared in PhaserToReactEvents but never emitted, and the typed highlightObject event in ReactToPhaserEvents is never consumed. Desired behavior: hover and click flow Phaser to React, store changes (secret door open, inventory) flow back into the scene, and unit tests cover both directions. Why: the Phaser scene and React UI must stay consistent without duplicated state.",
+      "acceptance_criteria": [
+        "Given a scene object, when the pointer hovers it, then the highlight and label show and objectHover is emitted with its id; on pointer out objectHover carries null",
+        "Given a clicked object, when objectClick is emitted, then App selects it and shows its ActionMenu",
+        "Given a store change such as secret_door_open flag or an inventory item, when the state updates, then every SceneObject receives sync with the new state",
+        "Given a highlightObject event from React, when it is emitted, then the matching scene object takes focus highlight and label and null clears it",
+        "Given unit tests, when run, then they cover Phaser to React and store to Phaser directions"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject hover listener",
+          "BootScene objectHover emission and highlightObject subscription",
+          "Unit tests in both directions"
+        ],
+        "out_of_scope": [
+          "New assets or content",
+          "Backend or API changes",
+          "Reworking the ActionMenu"
+        ],
+        "preserve": [
+          "Existing objectClick bridge and App ActionMenu",
+          "useGameStore as single source of GameState",
+          "Phaser mocked in unit tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use the typed phaserToReact and reactToPhaser buses in game/frontend/src/phaser/events.ts",
+        "BootScene must not keep its own copy of GameState"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements have passing unit tests",
+        "Existing bootScene and appObjectClick tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-142.md`"
+      ],
+      "non_functional": [
+        "Subscriptions are released on scene SHUTDOWN"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+      "links": [
+        "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+        "artifact:.ai-dlc/intent/INT-142.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-142.md",
+      "artifact_id": "INT-142"
+    },
+    {
+      "id": "01M85HBTVZCFYS3PYFFVP8TZN3",
+      "kind": "requirement",
+      "title": "REQ · Hovering a scene object emits a typed objectHover event to React",
+      "body": "Context: SceneObject wires handle.onHover only to highlight and label; PhaserToReactEvents.objectHover exists but nothing emits it. Desired behavior: BootScene forwards hover to the phaserToReact bus. Expected result: React listeners learn which object is hovered. Why: the UI can mirror hover state.\n\n## Acceptance criteria\n- Given a visible SceneObject, when its handle hover callback fires with true, then onHover listener receives objectId and over true and the highlight and label are shown\n- Given a hovered object, when hover fires with false, then BootScene emits objectHover with id null\n- Given a hidden object, when hover fires, then no listener call and no highlight occurs\n\n\n## Scope\n- In scope: SceneObject.onHover\n- In scope: BootScene hover wiring\n- Out of scope: React consumers of objectHover\n- Preserve: Existing hover highlight and label behavior\n- Preserve: objectClick emission\n\n\n## Technical constraints\n- Event payload shape is { id: string | null }\n\n\n## Definition of done\n- objectHover emitted on hover in and out\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pointer hover and out on a scene object emit objectHover with the id or null",
+      "description": "Context: SceneObject wires handle.onHover only to highlight and label; PhaserToReactEvents.objectHover exists but nothing emits it. Desired behavior: BootScene forwards hover to the phaserToReact bus. Expected result: React listeners learn which object is hovered. Why: the UI can mirror hover state.",
+      "acceptance_criteria": [
+        "Given a visible SceneObject, when its handle hover callback fires with true, then onHover listener receives objectId and over true and the highlight and label are shown",
+        "Given a hovered object, when hover fires with false, then BootScene emits objectHover with id null",
+        "Given a hidden object, when hover fires, then no listener call and no highlight occurs"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject.onHover",
+          "BootScene hover wiring"
+        ],
+        "out_of_scope": [
+          "React consumers of objectHover"
+        ],
+        "preserve": [
+          "Existing hover highlight and label behavior",
+          "objectClick emission"
+        ]
+      },
+      "technical_constraints": [
+        "Event payload shape is { id: string | null }"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "objectHover emitted on hover in and out",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-352.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85HBTVZHY0X56A3E3VFWX6N",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85HBTVZHY0X56A3E3VFWX6N",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-352.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZHY0X56A3E3VFWX6N"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-352.md",
+      "artifact_id": "REQ-352"
+    },
+    {
+      "id": "01M85HBTVZHJDW4MPAGFQXWMQS",
+      "kind": "requirement",
+      "title": "REQ · React highlightObject events drive scene object focus",
+      "body": "Context: ReactToPhaserEvents.highlightObject is declared but unused; SceneObject already has focus() and blur() that show highlight and label. Desired behavior: BootScene subscribes to reactToPhaser highlightObject in create(). Expected result: React can highlight a scene object. Why: completes the React to Phaser direction.\n\n## Acceptance criteria\n- Given a scene with objects, when highlightObject is emitted with an object id, then that object is focused and all others blurred\n- Given a highlighted object, when highlightObject is emitted with null, then every object is blurred\n- Given the scene shuts down, when highlightObject is emitted afterwards, then no object is touched\n\n\n## Scope\n- In scope: SceneObject spec id access\n- In scope: BootScene highlightObject subscription and cleanup\n- Out of scope: Emitting highlightObject from React components\n- Preserve: Existing SHUTDOWN cleanup\n\n\n## Technical constraints\n- Reuse SceneObject.focus and blur\n\n\n## Definition of done\n- highlightObject focuses and clears objects; listener removed on shutdown\n\n\n## Non-functional requirements\n- No listener leak across scene restarts\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene consumes highlightObject to focus or blur the matching SceneObject and unsubscribes on shutdown",
+      "description": "Context: ReactToPhaserEvents.highlightObject is declared but unused; SceneObject already has focus() and blur() that show highlight and label. Desired behavior: BootScene subscribes to reactToPhaser highlightObject in create(). Expected result: React can highlight a scene object. Why: completes the React to Phaser direction.",
+      "acceptance_criteria": [
+        "Given a scene with objects, when highlightObject is emitted with an object id, then that object is focused and all others blurred",
+        "Given a highlighted object, when highlightObject is emitted with null, then every object is blurred",
+        "Given the scene shuts down, when highlightObject is emitted afterwards, then no object is touched"
+      ],
+      "scope": {
+        "in_scope": [
+          "SceneObject spec id access",
+          "BootScene highlightObject subscription and cleanup"
+        ],
+        "out_of_scope": [
+          "Emitting highlightObject from React components"
+        ],
+        "preserve": [
+          "Existing SHUTDOWN cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse SceneObject.focus and blur"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "highlightObject focuses and clears objects; listener removed on shutdown",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-353.md`"
+      ],
+      "non_functional": [
+        "No listener leak across scene restarts"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85HBTVZHY0X56A3E3VFWX6N",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85HBTVZHY0X56A3E3VFWX6N",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-353.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZHY0X56A3E3VFWX6N"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-353.md",
+      "artifact_id": "REQ-353"
+    },
+    {
+      "id": "01M85HBTVZK8724MBD8WHSF008",
+      "kind": "requirement",
+      "title": "REQ · Store changes such as the secret door and inventory are pushed into the scene",
+      "body": "Context: BootScene.create subscribes to useGameStore and onStateChange calls sync on every SceneObject; SceneObject visibility derives from flag and hasItem conditions. Desired behavior: confirm this path and keep it intact. Expected result: opening the secret door (flag secret_door_open) or gaining an inventory item updates scene visibility. Why: store is the single source of truth.\n\n## Acceptance criteria\n- Given a created scene, when the store state gains flag secret_door_open true, then every SceneObject.sync is called with that state\n- Given a created scene, when the store inventory changes, then every SceneObject.sync is called with the new inventory\n- Given a null store state, when onStateChange runs, then no sync is called\n\n\n## Scope\n- In scope: BootScene.onStateChange and subscription\n- Out of scope: New content conditions\n- Preserve: Subscription release on SHUTDOWN\n\n\n## Technical constraints\n- BootScene reads state only through useGameStore\n\n\n## Definition of done\n- Store to scene sync confirmed and covered\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Every gameStore update reaches each SceneObject via sync",
+      "description": "Context: BootScene.create subscribes to useGameStore and onStateChange calls sync on every SceneObject; SceneObject visibility derives from flag and hasItem conditions. Desired behavior: confirm this path and keep it intact. Expected result: opening the secret door (flag secret_door_open) or gaining an inventory item updates scene visibility. Why: store is the single source of truth.",
+      "acceptance_criteria": [
+        "Given a created scene, when the store state gains flag secret_door_open true, then every SceneObject.sync is called with that state",
+        "Given a created scene, when the store inventory changes, then every SceneObject.sync is called with the new inventory",
+        "Given a null store state, when onStateChange runs, then no sync is called"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.onStateChange and subscription"
+        ],
+        "out_of_scope": [
+          "New content conditions"
+        ],
+        "preserve": [
+          "Subscription release on SHUTDOWN"
+        ]
+      },
+      "technical_constraints": [
+        "BootScene reads state only through useGameStore"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Store to scene sync confirmed and covered",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-354.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85HBTVZHY0X56A3E3VFWX6N",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85HBTVZHY0X56A3E3VFWX6N",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-354.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZHY0X56A3E3VFWX6N"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-354.md",
+      "artifact_id": "REQ-354"
+    },
+    {
+      "id": "01M85HBTVZPD1MZ15R0GVDPDNY",
+      "kind": "unit",
+      "title": "Act: Add SceneObject.onHover and emit objectHover from BootScene",
+      "body": "Add a hoverListener to SceneObject invoked from the existing handle.onHover callback for visible objects, and register it in BootScene.create to emit objectHover.\n\n## Acceptance criteria\n- SceneObject.onHover listener receives objectId and over for visible objects\n- BootScene emits objectHover with id or null\n\n\n## Scope\n- In scope: game/src/entities/SceneObject.ts\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: Tests\n- Preserve: Highlight and label behavior\n\n\n## Technical constraints\n- Code path: `game/src/entities/SceneObject.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Hover in and out emits objectHover\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "SceneObject exposes a hover listener; BootScene forwards it to phaserToReact",
+      "description": "Add a hoverListener to SceneObject invoked from the existing handle.onHover callback for visible objects, and register it in BootScene.create to emit objectHover.",
+      "acceptance_criteria": [
+        "SceneObject.onHover listener receives objectId and over for visible objects",
+        "BootScene emits objectHover with id or null"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/entities/SceneObject.ts",
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Highlight and label behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/src/entities/SceneObject.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Hover in and out emits objectHover",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-704.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85HBTVZCFYS3PYFFVP8TZN3",
+      "matched_feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+      "links": [
+        "parent:01M85HBTVZCFYS3PYFFVP8TZN3",
+        "trace:01M84JF0K1M4MR33A1AVV81WQV",
+        "artifact:.ai-dlc/units/UNIT-704.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZCFYS3PYFFVP8TZN3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-704.md",
+      "artifact_id": "UNIT-704",
+      "steps": [
+        {
+          "file": "game/src/entities/SceneObject.ts",
+          "symbol": "SceneObject (field + constructor hover handler + onHover method)",
+          "lines": "L19-L22, L35-L39, after L88",
+          "action": "Add a private field hoverListener, call it inside the existing handle.onHover callback after the visible check, and add a public onHover method that stores the callback.",
+          "code": "private hoverListener?: (e: { objectId: string; over: boolean }) => void;\n// in handle.onHover callback, after setLabelVisible(over):\nthis.hoverListener?.({ objectId: this.spec.id, over });\nonHover(cb: (e: { objectId: string; over: boolean }) => void): void { this.hoverListener = cb; }",
+          "expected": "SceneObject.onHover registers a listener called with objectId and over when a visible object is hovered"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L72-L73",
+          "action": "After the onInteract registration add an onHover registration that emits objectHover with the id when over is true and null when over is false.",
+          "code": "this.sceneObjects.forEach((o) => o.onHover((e) => phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null })));",
+          "expected": "Hovering a scene object emits objectHover on phaserToReact"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZTTRYNVT9XH3QS88X",
+      "kind": "unit",
+      "title": "Act: Subscribe BootScene to highlightObject and release it on shutdown",
+      "body": "Subscribe to reactToPhaser highlightObject in BootScene.create, apply focus or blur through SceneObject, and unsubscribe in the SHUTDOWN handler.\n\n## Acceptance criteria\n- highlightObject id focuses that object and blurs the rest\n- null blurs all; handler removed on shutdown\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: Tests\n- Preserve: Existing SHUTDOWN cleanup\n\n\n## Technical constraints\n- Reuse SceneObject.focus/blur and spec.id\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-2\n\n\n## Definition of done\n- highlightObject drives focus; no leak\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "BootScene focuses the matching SceneObject on highlightObject and blurs others",
+      "description": "Subscribe to reactToPhaser highlightObject in BootScene.create, apply focus or blur through SceneObject, and unsubscribe in the SHUTDOWN handler.",
+      "acceptance_criteria": [
+        "highlightObject id focuses that object and blurs the rest",
+        "null blurs all; handler removed on shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing SHUTDOWN cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse SceneObject.focus/blur and spec.id",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-2"
+      ],
+      "definition_of_done": [
+        "highlightObject drives focus; no leak",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-705.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85HBTVZHJDW4MPAGFQXWMQS",
+      "matched_feature_id": "01M857STNYBSFHHDJRC4CHWYJJ",
+      "links": [
+        "parent:01M85HBTVZHJDW4MPAGFQXWMQS",
+        "trace:01M857STNYBSFHHDJRC4CHWYJJ",
+        "artifact:.ai-dlc/units/UNIT-705.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZHJDW4MPAGFQXWMQS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-705.md",
+      "artifact_id": "UNIT-705",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene fields and imports",
+          "lines": "L5, L26-L31",
+          "action": "Import reactToPhaser alongside phaserToReact from ./events and add a private field unsubscribeHighlight of type (() => void) | null initialised to null.",
+          "code": "import { phaserToReact, reactToPhaser } from './events';\nprivate unsubscribeHighlight: (() => void) | null = null;",
+          "expected": "File compiles with the new import and field"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "after L73",
+          "action": "Subscribe to highlightObject: for each scene object call focus() when spec.id equals the payload id, otherwise blur(); store the returned unsubscribe in unsubscribeHighlight.",
+          "code": "this.unsubscribeHighlight = reactToPhaser.on('highlightObject', ({ id }) => this.sceneObjects.forEach((o) => (o.spec.id === id ? o.focus() : o.blur())));",
+          "expected": "Emitting highlightObject focuses the matching object and null blurs all"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN handler",
+          "lines": "L78-L81",
+          "action": "Inside the SHUTDOWN callback call this.unsubscribeHighlight?.() and set it to null next to the existing unsubscribe release.",
+          "code": "this.unsubscribeHighlight?.();\nthis.unsubscribeHighlight = null;",
+          "expected": "After shutdown highlightObject no longer reaches scene objects"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZF52G071WC8HHH3V6",
+      "kind": "unit",
+      "title": "Act: Confirm BootScene pushes store changes into every SceneObject",
+      "body": "Read-only confirmation of the existing store to scene path; no behavior change expected unless the path is broken.\n\n## Acceptance criteria\n- create subscribes to useGameStore and calls onStateChange\n- onStateChange syncs every object and ignores null state\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: Tests\n- Preserve: Current sync behavior\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ-3\n\n\n## Definition of done\n- Path confirmed; fix only if broken\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Confirm create subscribes to the store and onStateChange syncs all objects, null-safe",
+      "description": "Read-only confirmation of the existing store to scene path; no behavior change expected unless the path is broken.",
+      "acceptance_criteria": [
+        "create subscribes to useGameStore and calls onStateChange",
+        "onStateChange syncs every object and ignores null state"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Current sync behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ-3"
+      ],
+      "definition_of_done": [
+        "Path confirmed; fix only if broken",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-706.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85HBTVZK8724MBD8WHSF008",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85HBTVZK8724MBD8WHSF008",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-706.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZK8724MBD8WHSF008"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-706.md",
+      "artifact_id": "UNIT-706",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L71",
+          "action": "Confirm the line this.unsubscribe = useGameStore.subscribe(() => this.onStateChange()) exists and is released in the SHUTDOWN handler; do not change it.",
+          "expected": "Subscription present and released on shutdown"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onStateChange",
+          "lines": "L128-L132",
+          "action": "Confirm it returns early when readState() is null and otherwise calls o.sync(state) for each entry of this.sceneObjects; leave unchanged.",
+          "expected": "Every SceneObject.sync receives the current state; null state is ignored"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZM069SYYK2FQB0JTB",
+      "kind": "unit",
+      "title": "Verify: Hover emits objectHover and SceneObject hover listener",
+      "body": "Tests with fake RenderContext and mocked Phaser.\n\n## Acceptance criteria\n- Hover in/out events asserted\n- Hidden object produces no listener call\n\n\n## Scope\n- In scope: game/tests/sceneObjectHover.test.ts\n- In scope: game/frontend/tests/bootSceneHover.test.ts\n- Out of scope: Source changes\n\n\n## Technical constraints\n- Phaser mocked; no browser\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the SceneObject hover listener and BootScene objectHover emission",
+      "description": "Tests with fake RenderContext and mocked Phaser.",
+      "acceptance_criteria": [
+        "Hover in/out events asserted",
+        "Hidden object produces no listener call"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/sceneObjectHover.test.ts",
+          "game/frontend/tests/bootSceneHover.test.ts"
+        ],
+        "out_of_scope": [
+          "Source changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Phaser mocked; no browser"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-707.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85HBTVZPD1MZ15R0GVDPDNY",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85HBTVZPD1MZ15R0GVDPDNY",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-707.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZPD1MZ15R0GVDPDNY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-707.md",
+      "artifact_id": "UNIT-707",
+      "steps": [
+        {
+          "file": "game/tests/sceneObjectHover.test.ts",
+          "symbol": "new: describe('SceneObject onHover')",
+          "lines": "new",
+          "action": "Copy makeSpec and the fake RenderContext helper from game/tests/sceneObject.test.ts. Add test 'visible object reports hover in and out': register onHover spy, trigger captured handle hover callback with true then false, assert spy called with {objectId, over:true} then {objectId, over:false}. Add test 'hidden object reports nothing': sync a state failing visibleWhen, trigger hover true, assert spy not called.",
+          "command": "cd game && npx vitest run tests/sceneObjectHover.test.ts",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneHover.test.ts",
+          "symbol": "new: describe('BootScene objectHover')",
+          "lines": "new",
+          "action": "Reuse the vi.mock setup of bootSceneSync.test.ts but make the fake object's onHover a vi.fn. Subscribe to phaserToReact objectHover with a spy, call boot.create(), take the callback passed to fake.onHover, call it with {objectId:'bookshelf', over:true} then {objectId:'bookshelf', over:false}, assert spy payloads {id:'bookshelf'} then {id:null}.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneHover.test.ts",
+          "expected": "objectHover emitted with the id then null"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZRR4RT1T288V9V6Z0",
+      "kind": "unit",
+      "title": "Verify: highlightObject focuses scene objects and unsubscribes on shutdown",
+      "body": "Fake scene objects with focus/blur spies and mocked Phaser.\n\n## Acceptance criteria\n- Focus and blur by id\n- Null clears all\n- No effect after shutdown\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneHighlight.test.ts\n- Out of scope: Source changes\n\n\n## Technical constraints\n- Phaser mocked\n\n\n## Dependencies\n- ACT-2\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for BootScene highlightObject handling",
+      "description": "Fake scene objects with focus/blur spies and mocked Phaser.",
+      "acceptance_criteria": [
+        "Focus and blur by id",
+        "Null clears all",
+        "No effect after shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneHighlight.test.ts"
+        ],
+        "out_of_scope": [
+          "Source changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Phaser mocked"
+      ],
+      "dependencies": [
+        "ACT-2"
+      ],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-708.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85HBTVZTTRYNVT9XH3QS88X",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85HBTVZTTRYNVT9XH3QS88X",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-708.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZTTRYNVT9XH3QS88X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-708.md",
+      "artifact_id": "UNIT-708",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneHighlight.test.ts",
+          "symbol": "new: describe('BootScene highlightObject')",
+          "lines": "new",
+          "action": "Reuse mocks from bootSceneSync.test.ts; buildScene returns two fakes with spec ids 'bookshelf' and 'door', each with focus, blur, sync, destroy, onInteract, onHover spies. After boot.create(), emit reactToPhaser highlightObject {id:'door'} and assert door.focus and bookshelf.blur called; emit {id:null} and assert both blur called; run the SHUTDOWN callback from boot.events.once mock, clear spies, emit again and assert no focus/blur calls.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneHighlight.test.ts",
+          "expected": "All three assertions groups pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZTR64YW4QZEEFSYFZ",
+      "kind": "unit",
+      "title": "Verify: Store changes for the secret door and inventory reach every SceneObject",
+      "body": "BootScene with fake objects; real useGameStore.\n\n## Acceptance criteria\n- Flag change synced\n- Inventory change synced\n- Null ignored\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneStoreToScene.test.ts\n- Out of scope: Source changes\n\n\n## Technical constraints\n- Phaser mocked; real gameStore\n\n\n## Dependencies\n- ACT-3\n\n\n## Definition of done\n- Test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test for store to scene sync",
+      "description": "BootScene with fake objects; real useGameStore.",
+      "acceptance_criteria": [
+        "Flag change synced",
+        "Inventory change synced",
+        "Null ignored"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneStoreToScene.test.ts"
+        ],
+        "out_of_scope": [
+          "Source changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Phaser mocked; real gameStore"
+      ],
+      "dependencies": [
+        "ACT-3"
+      ],
+      "definition_of_done": [
+        "Test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-709.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85HBTVZF52G071WC8HHH3V6",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85HBTVZF52G071WC8HHH3V6",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-709.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZF52G071WC8HHH3V6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-709.md",
+      "artifact_id": "UNIT-709",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneStoreToScene.test.ts",
+          "symbol": "new: describe('BootScene store to scene')",
+          "lines": "new",
+          "action": "Reuse mocks and afterEach cleanup from bootSceneSync.test.ts with two fake objects. Seed the store with createInitialState, call boot.create(). Set state {...first, flags:{secret_door_open:true}} and assert both fakes' sync last called with it; set state {...first, inventory:['key']} and assert sync last called with it; set state null and assert sync call count is unchanged.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneStoreToScene.test.ts",
+          "expected": "Both objects synced on flag and inventory changes, none on null"
+        }
+      ]
+    },
+    {
+      "id": "01M85HBTVZB8WN4N9MHPFGXTZA",
+      "kind": "evidence",
+      "title": "Evidence: Phaser and store bridge unit tests in both directions pass",
+      "body": "Collect results of the three Verify units covering Phaser to React and store to Phaser directions.\n\n## Acceptance criteria\n- All new test files report passing\n- Existing appObjectClick and bootSceneSync tests still pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Source changes\n\n\n## Dependencies\n- VER-1\n- VER-2\n- VER-3\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that hover, highlight and store sync unit tests pass",
+      "description": "Collect results of the three Verify units covering Phaser to React and store to Phaser directions.",
+      "acceptance_criteria": [
+        "All new test files report passing",
+        "Existing appObjectClick and bootSceneSync tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Source changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER-1",
+        "VER-2",
+        "VER-3"
+      ],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-142.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85HBTVZM069SYYK2FQB0JTB",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85HBTVZM069SYYK2FQB0JTB",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-142.md"
+      ],
+      "depends_on": [
+        "01M85HBTVZM069SYYK2FQB0JTB",
+        "01M85HBTVZRR4RT1T288V9V6Z0",
+        "01M85HBTVZTR64YW4QZEEFSYFZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-142.md",
+      "artifact_id": "EVD-142"
+    }
+  ],
+  "created_at": "2026-11-24T01:06:32.909839+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 10/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

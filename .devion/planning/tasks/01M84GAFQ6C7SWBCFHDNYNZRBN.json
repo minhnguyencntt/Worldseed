@@ -1,0 +1,63 @@
+{
+  "id": "01M84GAFQ6C7SWBCFHDNYNZRBN",
+  "intent_id": "01M84G82XSTGQPFX9S20XVE6SR",
+  "title": "Act: Confirm retry loop and failure cleanup in Runner.run",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm the loop stops after MaxRetries and the failure path removes the worktree once",
+  "description": "Read the retry loop and failure branch in Runner.run; they already break when attempt > MaxRetries and call trees.Remove once. Make no change unless a defect is found.",
+  "acceptance_criteria": [
+    "Loop breaks when attempt > cfg.MaxRetries",
+    "Failure branch saves FAILED with Error text then calls trees.Remove exactly once"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/runner/runner.go review"
+    ],
+    "out_of_scope": [
+      "Behavior changes"
+    ],
+    "preserve": [
+      "Existing control flow"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/worker/internal/runner/runner.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Loop and failure branch confirmed correct by reading",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-204.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GA1JQQ4ME5BCJHRRKR5EA",
+    "trace:01M84G51W2TEM1JDTH4JNBF0SR",
+    "artifact:.ai-dlc/units/UNIT-204.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GAFQ6CZ08TBAEQG8ASPDF"
+  ],
+  "sim_node_id": "01M84GA1JQNRV9R03RG1W4RARB",
+  "feature_id": "01M84G51W2TEM1JDTH4JNBF0SR",
+  "artifact_path": ".ai-dlc/units/UNIT-204.md",
+  "artifact_id": "UNIT-204",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner.go",
+      "symbol": "Runner.run",
+      "lines": "L147-L180",
+      "action": "Confirm the for loop sets e.Attempt = attempt, breaks on nil error, breaks when attempt > r.cfg.MaxRetries, and that the err != nil branch sets Status to store.StatusFailed, Error to err.Error(), saves, then calls r.trees.Remove(ctx, dir) once; edit only if any of these is false.",
+      "expected": "All listed conditions hold with no edit required"
+    }
+  ],
+  "created_at": "2026-11-23T15:27:48.454586+00:00",
+  "updated_at": "2026-11-23T15:28:31.444135+00:00"
+}

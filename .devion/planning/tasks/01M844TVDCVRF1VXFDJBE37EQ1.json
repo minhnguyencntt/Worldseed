@@ -1,0 +1,73 @@
+{
+  "id": "01M844TVDCVRF1VXFDJBE37EQ1",
+  "intent_id": "01M844RY0G15P4GR4PE00BC8S2",
+  "title": "Verify: Hotspot click opens the action menu unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for hotspot-to-menu flow with mocked storage",
+  "description": "Write tests/appFlow.test.tsx with an in-memory mock of runtime/storage and assert the menu flow.",
+  "acceptance_criteria": [
+    "Given Begin clicked, when Bookshelf clicked, then region Bookshelf has data-object-id bookshelf and four action buttons",
+    "Given Begin clicked and nothing selected, then no region named Bookshelf exists"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/appFlow.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "tests/app.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Mock ../src/runtime/storage with vi.mock"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "Tests pass with the command below",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-050.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M844TTJXJ2NZQV93TY6NHBFN",
+    "trace:01M844GYQJ55B1RVZJXYYRYX24",
+    "artifact:.ai-dlc/units/UNIT-050.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M844TVDC2AFZA5575HE05Z3R"
+  ],
+  "sim_node_id": "01M844TTJXQ20NFDH21QZYYW5D",
+  "feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+  "artifact_path": ".ai-dlc/units/UNIT-050.md",
+  "artifact_id": "UNIT-050",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appFlow.test.tsx",
+      "symbol": "new: storage mock + describe('App flow: action menu')",
+      "lines": "new",
+      "action": "Create the file with '// @vitest-environment jsdom', and vi.mock('../src/runtime/storage') factory whose readSaved returns a module-level `saved` variable (initially null) and writeSaved assigns `saved = state` and returns true; add beforeEach resetting saved to null and afterEach(cleanup). Add helper begin() that renders <App/> and clicks the Begin button.",
+      "code": "let saved: unknown = null;\nvi.mock('../src/runtime/storage', () => ({ readSaved: () => saved, writeSaved: (s: unknown) => { saved = s; return true; } }));",
+      "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'action menu'",
+      "expected": "File is collected with the mock active."
+    },
+    {
+      "file": "game/frontend/tests/appFlow.test.tsx",
+      "symbol": "it('opens the Bookshelf menu on hotspot click')",
+      "lines": "new",
+      "action": "Call begin(); assert screen.queryByRole('region',{name:'Bookshelf'}) is null; click button 'Bookshelf'; assert the region named 'Bookshelf' has attribute data-object-id='bookshelf' and within it buttons Inspect, Push, Search, Leave exist.",
+      "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'action menu'",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T12:07:01.804814+00:00",
+  "updated_at": "2026-11-23T12:08:18.548847+00:00"
+}

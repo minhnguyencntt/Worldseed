@@ -1,0 +1,71 @@
+{
+  "id": "01M85M0S911V4KXJ4Z5S8QFT7G",
+  "intent_id": "01M85KV2DJJNKDTK66EXGJH3MP",
+  "title": "Verify: BootScene handles playAnimation and transitionTo unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with Phaser mocked prove BootScene reacts to the React bus",
+  "description": "Add a test file modelled on bootSceneCharacters.test.ts with the fake Phaser, emitting reactToPhaser events.",
+  "acceptance_criteria": [
+    "playAnimation interact plays the interact key then idle",
+    "transitionTo calls cameras.main.fadeIn with the authored duration",
+    "Events after SHUTDOWN do nothing"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootSceneReactEvents.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing bootSceneCharacters tests"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser fully mocked; no browser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-744.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85KX50EBW61W2JXN1GH5Q85",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-744.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85M0S91H128FVCEPDGWYRAY"
+  ],
+  "sim_node_id": "01M85KX50E5RG0RD9G0P6Q7VM2",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-744.md",
+  "artifact_id": "UNIT-744",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneReactEvents.test.ts",
+      "symbol": "new: bootSceneReactEvents",
+      "lines": "new",
+      "action": "Create the file copying the vi.mock('phaser') fake, content mock and setup from bootSceneCharacters.test.ts (L1-L120). Add test 'playAnimation interact plays interact then idle': create BootScene, run create(), reactToPhaser.emit('playAnimation',{target:'boy',name:'interact'}), assert sprite.play was called with the interact key 'character:boy-interact:interact', invoke the captured ANIMATION_COMPLETE callback and assert play called with 'character:boy:idle'.",
+      "command": "npx vitest run tests/bootSceneReactEvents.test.ts -t playAnimation",
+      "expected": "playAnimation test passes"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneReactEvents.test.ts",
+      "symbol": "transitionTo and shutdown tests",
+      "lines": "new",
+      "action": "Add test 'transitionTo replays the fade': emit reactToPhaser 'transitionTo' {sceneId:'bedroom'} and assert cameras.main.fadeIn was called twice (create plus event) with the transition durationMs. Add test 'ignores events after shutdown': invoke the SHUTDOWN callback captured from events.once, clear spies, emit both events, assert sprite.play and fadeIn were not called.",
+      "command": "npx vitest run tests/bootSceneReactEvents.test.ts",
+      "expected": "All three tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T01:51:39.297258+00:00",
+  "updated_at": "2026-11-24T01:54:21.608902+00:00"
+}

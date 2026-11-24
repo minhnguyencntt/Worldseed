@@ -1,0 +1,78 @@
+{
+  "id": "01M84X7K92B2Z8N1KK41MEG7T8",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "Verify: Interaction helper unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for interaction.ts",
+  "description": "Write TDD unit tests from REQ1 acceptance criteria using inline ObjectSpec objects and the valid-world fixture state.",
+  "acceptance_criteria": [
+    "Hit, miss and no-bounds cases pass",
+    "Condition filtering, key and focus wrap cases pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/interaction.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "No Phaser, DOM or network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "interaction.test.ts passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-485.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84X58HRCEWW3V0XWAD1EHZC",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-485.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84X7K925VXK5E0PJSZQRR7P"
+  ],
+  "sim_node_id": "01M84X58HR549MGN0AP84F66JR",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-485.md",
+  "artifact_id": "UNIT-485",
+  "steps": [
+    {
+      "file": "game/tests/interaction.test.ts",
+      "symbol": "new: describe('pointInBounds')",
+      "lines": "new",
+      "action": "Add tests: spec with position (100,200), scale 2, bounds {0,0,40,80}; assert (110,210) true, (190,210) false (right edge excluded), (99,210) false; spec without interactionBounds returns false",
+      "command": "cd game && npx vitest run tests/interaction.test.ts -t pointInBounds",
+      "expected": "pointInBounds assertions pass"
+    },
+    {
+      "file": "game/tests/interaction.test.ts",
+      "symbol": "new: describe('availableActions')",
+      "lines": "new",
+      "action": "Build a spec from validScene.objects[0] (tests/fixtures/valid-world.ts) with two actions, one with conditions [{flag:'a'}]; with createInitialState assert only the unguarded action, after setFlag(state,'a',true) assert both in authored order",
+      "command": "cd game && npx vitest run tests/interaction.test.ts -t availableActions",
+      "expected": "Filtering follows state flags"
+    },
+    {
+      "file": "game/tests/interaction.test.ts",
+      "symbol": "new: describe('isActivationKey and nextFocusIndex')",
+      "lines": "new",
+      "action": "Assert isActivationKey('Enter') and (' ') true, ('a') false; nextFocusIndex(3,2,1)=0, (3,0,-1)=2, (0,0,1)=-1",
+      "command": "cd game && npx vitest run tests/interaction.test.ts -t 'isActivationKey'",
+      "expected": "All assertions pass"
+    }
+  ],
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.565362+00:00"
+}

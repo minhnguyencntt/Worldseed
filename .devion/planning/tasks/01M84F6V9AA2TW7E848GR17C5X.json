@@ -1,0 +1,76 @@
+{
+  "id": "01M84F6V9AA2TW7E848GR17C5X",
+  "intent_id": "01M84F2Y7B1BMD41PYYF9Y78WM",
+  "title": "Verify: Worker config LoadFS unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for defaults, env override and empty repo_path",
+  "description": "Test config.LoadFS with fstest.MapFS and a fake getenv.",
+  "acceptance_criteria": [
+    "Defaults asserted",
+    "Env override asserted",
+    "Empty repo_path error asserted"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/config/config_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "fstest.MapFS only; no real env or disk"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-175.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84F6ECB940AD9ZCSAK5GGWZ",
+    "trace:01M8414WGSSF8FJPDP6VFWX3Q5",
+    "artifact:.ai-dlc/units/UNIT-175.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84F6V9AKA01WNK0R29NGS79"
+  ],
+  "sim_node_id": "01M84F6ECBYWP19TRVVH2WGB3A",
+  "artifact_path": ".ai-dlc/units/UNIT-175.md",
+  "artifact_id": "UNIT-175",
+  "steps": [
+    {
+      "file": "backend/worker/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_Defaults",
+      "lines": "new",
+      "action": "Given MapFS config.yaml containing 'worker:\\n  repo_path: /r', call LoadFS with getenv returning ''; assert PollInterval==30s, ExecutionTimeout==30m, MaxRetries==2, Store.Dir=='.storyforge/executions', Log.Level=='info'.",
+      "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_Defaults",
+      "expected": "Test TestLoadFS_Defaults passes (ok line printed)"
+    },
+    {
+      "file": "backend/worker/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_EnvOverride",
+      "lines": "new",
+      "action": "Given YAML repo_path '/yaml' and getenv map STORYFORGE_WORKER_REPO_PATH='/env', assert cfg.Worker.RepoPath=='/env'.",
+      "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_EnvOverride",
+      "expected": "Test TestLoadFS_EnvOverride passes (ok line printed)"
+    },
+    {
+      "file": "backend/worker/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_EmptyRepoPath",
+      "lines": "new",
+      "action": "Given YAML 'log:\\n  level: info' without repo_path and empty getenv, assert LoadFS returns a non-nil error mentioning repo_path.",
+      "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_EmptyRepoPath",
+      "expected": "Test TestLoadFS_EmptyRepoPath passes (ok line printed)"
+    }
+  ],
+  "created_at": "2026-11-23T15:08:20.650605+00:00",
+  "updated_at": "2026-11-23T15:10:14.907098+00:00"
+}

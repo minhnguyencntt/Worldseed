@@ -1,0 +1,64 @@
+{
+  "id": "01M856R586YB98JEDRFGWCA5R6",
+  "intent_id": "01M856K83CFVAYV4ZXQVP28ZQ8",
+  "title": "SG-5.5 Phaser scene is a thin wrapper over the generic scene builder",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "BootScene builds all scene objects through buildScene from bundled content, with no hardcoded objects",
+  "description": "Context: BootScene (game/frontend/src/phaser/BootScene.ts) preloads assets and builds effects, but it never calls buildScene, and no Phaser-backed RenderContext exists. Desired behavior: BootScene delegates object creation to the engine's buildScene using a Phaser RenderContext and the bundled bedroom scene content. Expected result: every object on screen comes from content, and BootScene names no object id or asset id. Why: future AI cycles must add or replace objects by editing content only.",
+  "acceptance_criteria": [
+    "Given the bundled bedroom scene, when BootScene.create runs, then buildScene is called once with that scene and a Phaser-backed RenderContext",
+    "Given BootScene.ts and the Phaser render context source, when scanned, then neither contains a bedroom object id or asset id literal",
+    "Given a shared-store state change, when it fires, then every built SceneObject receives sync(state)",
+    "Given BootScene shutdown, when it fires, then every SceneObject is destroyed and the store subscription is removed"
+  ],
+  "scope": {
+    "in_scope": [
+      "Phaser RenderContext implementation",
+      "BootScene wiring of buildScene, state sync and cleanup",
+      "Forwarding object clicks to the typed phaserToReact bus"
+    ],
+    "out_of_scope": [
+      "New assets or new scene content",
+      "Character animation",
+      "React UI changes",
+      "Backend changes"
+    ],
+    "preserve": [
+      "Existing preload, fallback texture and effects wiring in BootScene",
+      "Existing buildScene, SceneObject and layerDepth behavior",
+      "Typed event bus contract in events.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only",
+    "Engine modules under game/src/engine must not import Phaser",
+    "Game state stays in the Zustand store, BootScene keeps no copy"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All acceptance criteria are met",
+    "BootScene contains no hardcoded object",
+    "Existing BootScene tests still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-106.md`"
+  ],
+  "non_functional": [
+    "Pixel-art friendly rendering: no smoothing on sprites"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+    "artifact:.ai-dlc/intent/INT-106.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M856NGY295R1E3CT0TTTKSNJ",
+  "feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+  "artifact_path": ".ai-dlc/intent/INT-106.md",
+  "artifact_id": "INT-106",
+  "created_at": "2026-11-23T21:59:45.158149+00:00",
+  "updated_at": "2026-11-23T22:02:50.218654+00:00"
+}

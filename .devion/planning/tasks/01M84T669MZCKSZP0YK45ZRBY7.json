@@ -1,0 +1,56 @@
+{
+  "id": "01M84T669MZCKSZP0YK45ZRBY7",
+  "intent_id": "01M84T26TV9815MN0SJWGRKHWZ",
+  "title": "REQ · Cleanup untracks dependency paths with git rm --cached and keeps them on disk",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "untrackNodeModules removes node_modules paths from the index only",
+  "description": "Context: 15,329 dependency files are tracked. Desired behavior: a cleanup lists tracked files via an injected git runner, filters them, and runs git rm -r --cached for the matching top-level node_modules directories, never deleting from disk. Why: stops vendored files showing as tracked changes.",
+  "acceptance_criteria": [
+    "Given tracked node_modules paths, when cleanup runs, then git is called with rm -r --cached --ignore-unmatch -- and the node_modules roots",
+    "Given no tracked node_modules paths, when cleanup runs, then git rm is not called",
+    "Given any call, then no --force or filesystem-deleting argument is passed"
+  ],
+  "scope": {
+    "in_scope": [
+      "untrackNodeModules with injected GitRunner"
+    ],
+    "out_of_scope": [
+      "Committing the result"
+    ],
+    "preserve": [
+      "Files on disk"
+    ]
+  },
+  "technical_constraints": [
+    "Git args passed as an array, no shell string"
+  ],
+  "dependencies": [
+    "r1"
+  ],
+  "definition_of_done": [
+    "Cleanup exported and unit tested with a fake runner",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-216.md`"
+  ],
+  "non_functional": [
+    "Batch roots, not one call per file, so it stays fast with 15,000 files"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84T4C3MSPJ5XTGA1DE5JCXA",
+    "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+    "artifact:.ai-dlc/requirements/REQ-216.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M84T669M3M42BCZPTQ2XKWC8"
+  ],
+  "sim_node_id": "01M84T4C3MGBMS23115CAJHMDB",
+  "feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+  "artifact_path": ".ai-dlc/requirements/REQ-216.md",
+  "artifact_id": "REQ-216",
+  "created_at": "2026-11-23T18:20:13.492092+00:00"
+}

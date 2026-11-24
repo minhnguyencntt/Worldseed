@@ -1,0 +1,77 @@
+{
+  "id": "01M84660HR8DD83J75DH3MMZF6",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "Act: Implement round model, transition table and FileStore",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create round.go and store.go in internal/round",
+  "description": "Create the round package: Status type and 13 constants, Round struct with yaml tags, Transitions map, CanTransition and Round.Transition, and FileStore with Get, Save and List.",
+  "acceptance_criteria": [
+    "Transitions follow SCHEDULED→OPEN|CANCELLED, OPEN→CLOSED|CANCELLED, CLOSED→ANALYZING|FAILED|CANCELLED, ANALYZING→PLANNING|FAILED, PLANNING→DEVELOPING|FAILED, DEVELOPING→TESTING|FAILED, TESTING→BUILDING|FAILED, BUILDING→PUBLISHING|FAILED, PUBLISHING→COMPLETED|FAILED, FAILED→RECOVERING|CANCELLED, RECOVERING→ANALYZING|FAILED|CANCELLED",
+    "COMPLETED and CANCELLED have no outgoing transitions",
+    "FileStore.Save never leaves a partial round.yaml"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/round.go",
+      "backend/internal/round/store.go"
+    ],
+    "out_of_scope": [
+      "lifecycle service"
+    ],
+    "preserve": [
+      "safepath.Segment"
+    ]
+  },
+  "technical_constraints": [
+    "Round dir is worlds/<world>/rounds/<strings.ToLower(id)>",
+    "New file: `backend/internal/round/round.go`",
+    "New file: `backend/internal/round/store.go`"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "go build ./internal/round succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-071.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD8W9ER9QA7HHPHTCN3",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-071.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HR9T56QSPANN9CRQA9"
+  ],
+  "sim_node_id": "01M8465XD88GGV84CAHN3JBFDA",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-071.md",
+  "artifact_id": "UNIT-071",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/round/round.go",
+      "symbol": "new: Status, Round, Transitions, CanTransition, (*Round).Transition, ErrIllegalTransition",
+      "lines": "new",
+      "action": "Declare type Status string with constants StatusScheduled..StatusRecovering (values are the upper-case names), Round{ID, WorldID, Number, Status, StartsAt, EndsAt, BaseRelease, FreezeCommit, ClosedAt} with yaml tags id, world, number, status, starts_at, ends_at, base_release, freeze_commit, closed_at; Transitions map[Status][]Status per the acceptance criteria; CanTransition(from,to) bool; (*Round).Transition(to) error returning fmt.Errorf wrapping ErrIllegalTransition and leaving Status unchanged when not allowed",
+      "code": "var ErrIllegalTransition = errors.New(\"round: illegal transition\")",
+      "expected": "Package compiles; Transition mutates Status only on legal moves"
+    },
+    {
+      "file": "backend/internal/round/store.go",
+      "symbol": "new: FileStore (Root string), Get, Save, List, RoundDir",
+      "lines": "new",
+      "action": "Add FileStore with Root; RoundDir(worldID, roundID) validates both with safepath.Segment and returns filepath.Join(Root,\"worlds\",worldID,\"rounds\",strings.ToLower(roundID)); Get reads round.yaml (yaml.v3) and returns ErrNotFound when missing; Save marshals to a temp file in the same dir then os.Rename to round.yaml, MkdirAll 0o755; List(worldID) reads rounds/* dirs and returns all rounds sorted by Number",
+      "expected": "Round round-trips through round.yaml; unsafe ids error"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.275558+00:00"
+}

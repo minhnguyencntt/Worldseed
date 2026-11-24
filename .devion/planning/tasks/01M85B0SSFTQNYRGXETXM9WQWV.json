@@ -1,0 +1,55 @@
+{
+  "id": "01M85B0SSFTQNYRGXETXM9WQWV",
+  "intent_id": "01M85ATKCA4JPNPQZD365VQEFV",
+  "title": "SG-6.1.4 Reconcile character tests with schema, validation and BootScene source",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Character tests must assert real behavior in the schema, validateWorld and BootScene, so they fail when that code is missing.",
+  "description": "Context: character tests exist in game/tests/characterSchema.test.ts, game/tests/validator.test.ts and game/frontend/tests/bootSceneCharacters.test.ts. They are reported as passing. Desired behavior: each suite asserts observable behavior of characterSchema (game/src/content/schema.ts), validateWorld (game/src/content/loader.ts) and BootScene character wiring (game/frontend/src/phaser/BootScene.ts). Expected result: removing the code under test makes the matching test fail. Why: passing tests that do not exercise the source give false confidence.",
+  "acceptance_criteria": [
+    "Given the characterSchema tests, when characterSchema defaults, required idle animation or interaction handling is removed, then at least one test in game/tests/characterSchema.test.ts fails",
+    "Given the validateWorld tests, when the scene character check is removed from validateWorld, then a test in game/tests/validator.test.ts fails",
+    "Given the BootScene character tests, when createCharacter or the shutdown cleanup is removed, then a test in game/frontend/tests/bootSceneCharacters.test.ts fails"
+  ],
+  "scope": {
+    "in_scope": [
+      "Test assertions for characterSchema, validateWorld scene characters and BootScene character wiring"
+    ],
+    "out_of_scope": [
+      "New character features",
+      "Backend changes",
+      "Browser or e2e testing"
+    ],
+    "preserve": [
+      "Existing public exports of schema.ts, loader.ts and BootScene.ts",
+      "Existing passing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser stays mocked via vi.mock in BootScene tests",
+    "Tests use zod and the real source modules, never mocks of the code under test"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements have an Act and a Verify unit",
+    "Evidence ticket confirms the three test files pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-122.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-122.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85AXB9MNK8PFRJZGF74SEKA",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-122.md",
+  "artifact_id": "INT-122",
+  "created_at": "2026-11-23T23:14:22.639602+00:00",
+  "updated_at": "2026-11-23T23:16:13.814407+00:00"
+}

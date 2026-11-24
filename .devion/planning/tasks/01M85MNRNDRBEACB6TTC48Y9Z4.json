@@ -1,0 +1,83 @@
+{
+  "id": "01M85MNRNDRBEACB6TTC48Y9Z4",
+  "intent_id": "01M85MG976R4Z053KP1KCZDQWJ",
+  "title": "Act: Subscribe BootScene to transitionTo with fade-out and scene start",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add transitionTo subscription and handler in BootScene",
+  "description": "In BootScene.ts add a private unsubscribeTransition field, subscribe in create after the playAnimation subscription, and add a handler that fades out then starts the scene.",
+  "acceptance_criteria": [
+    "transitionTo emit calls cameras.main.fadeOut",
+    "FADE_OUT_COMPLETE calls scene.start with the sceneId"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.ts"
+    ],
+    "out_of_scope": [
+      "tests",
+      "App"
+    ],
+    "preserve": [
+      "playAnimation"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Handler implemented in BootScene.ts",
+    "Type-check passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-750.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85MJ2194SAZFCB0R30GHKQ9",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-750.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85MNRNDYF31MQGA3G38K8TB"
+  ],
+  "sim_node_id": "01M85MJ219WPZY1T2ZFAKMS4N9",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-750.md",
+  "artifact_id": "UNIT-750",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene (fields)",
+      "lines": "after L31",
+      "action": "Add a private field unsubscribeTransition typed (() => void) | null initialised to null, next to unsubscribeAnimation.",
+      "code": "private unsubscribeTransition: (() => void) | null = null;",
+      "expected": "Field exists and compiles."
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.transitionToScene",
+      "lines": "after L151",
+      "action": "Add private method transitionToScene(sceneId: string) that reads the durationMs of the first scene.effects entry with type 'transition' (default 400), calls this.cameras.main.fadeOut(durationMs), and registers this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId)).",
+      "code": "private transitionToScene(sceneId: string): void {\n  const spec = (scene.effects ?? []).find((e) => e.type === 'transition');\n  const durationMs = spec && spec.type === 'transition' ? spec.durationMs : 400;\n  this.cameras.main.fadeOut(durationMs);\n  this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));\n}",
+      "expected": "Method compiles and is the only place that fades out."
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create",
+      "lines": "after L73",
+      "action": "Subscribe to the transitionTo event and store the returned unsubscribe in this.unsubscribeTransition.",
+      "code": "this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => this.transitionToScene(sceneId));",
+      "expected": "Emitting transitionTo calls transitionToScene."
+    }
+  ],
+  "created_at": "2026-11-24T02:03:06.797157+00:00",
+  "updated_at": "2026-11-24T02:03:59.920283+00:00"
+}

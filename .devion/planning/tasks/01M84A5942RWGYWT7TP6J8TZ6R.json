@@ -1,0 +1,71 @@
+{
+  "id": "01M84A5942RWGYWT7TP6J8TZ6R",
+  "intent_id": "01M84A1ZJRF3WV8S0RQ97FT5Q6",
+  "title": "Verify: World title display unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for getWorld and heading title with mocked fetch",
+  "description": "Test getWorld and AdminApp heading with a url-routing fetch stub.",
+  "acceptance_criteria": [
+    "Title appears when world fetch succeeds.",
+    "Fallback WORLD_ID shown when it fails."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/adminWorld.test.tsx",
+      "tests/fixtures/api.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing fixtures"
+    ]
+  },
+  "technical_constraints": [
+    "fetch mocked; no server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-158.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M84A50YEQ2JPXEGHXJAKGMDS",
+    "trace:01M8457KMNBJJM1XTK538W1B9M",
+    "artifact:.ai-dlc/units/UNIT-158.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84A5942Q41ERTETS6WHPVVH"
+  ],
+  "sim_node_id": "01M84A50YE87KD0QYPH260RDDM",
+  "feature_id": "01M8457KMNBJJM1XTK538W1B9M",
+  "artifact_path": ".ai-dlc/units/UNIT-158.md",
+  "artifact_id": "UNIT-158",
+  "steps": [
+    {
+      "file": "game/frontend/tests/fixtures/api.ts",
+      "symbol": "new: worldFixture",
+      "lines": "after L30",
+      "action": "Add exported worldFixture: World mirroring world.World JSON in backend/internal/world/world.go (fields id, title), importing type World from ../../src/api/client; take values from that contract (id the-boys-room, a non-empty title).",
+      "command": "cd game/frontend && npx vitest run tests/adminWorld.test.tsx",
+      "expected": "Fixture type-checks against World and is consumed by the adminWorld tests, which pass."
+    },
+    {
+      "file": "game/frontend/tests/adminWorld.test.tsx",
+      "symbol": "new: AdminApp world title",
+      "lines": "new",
+      "action": "Create jsdom test file following tests/admin.test.tsx stubFetch pattern; test 1: stub fetch returns worldFixture for /api/v1/worlds/the-boys-room, roundFixture for round/current and admin routes with Bearer secret; render AdminApp, enter token secret, assert heading level 1 contains worldFixture.title. Test 2: world URL returns 404 json; assert heading contains 'the-boys-room' and no alert crash.",
+      "command": "cd game/frontend && npx vitest run tests/adminWorld.test.tsx",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T13:40:06.402653+00:00",
+  "updated_at": "2026-11-23T13:42:04.458461+00:00"
+}

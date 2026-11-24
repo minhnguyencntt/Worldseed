@@ -1,0 +1,56 @@
+{
+  "id": "01M84WBYFR94HHX67MWQ4890TS",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "REQ · Assets are preloaded, validated and fall back gracefully when missing",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Scene assets are planned from the manifest, and missing or dangling ones resolve to a fallback texture.",
+  "description": "Context: assets/loaders/manifestLoader.ts already offers loadManifestWithFallback, checkAssetRefs and FALLBACK_ASSET_ID, but nothing turns a scene's asset refs into a preload plan. Desired behavior: a preload planner validates every object asset ref against the manifest, lists assets to load and returns a fallback texture key for any missing ref. Expected: a missing asset never throws and the object renders with the fallback. Why: broken content must not crash the game.",
+  "acceptance_criteria": [
+    "Given refs present in the manifest, when planning, then the plan lists each asset once to load",
+    "Given a ref absent from the manifest, when resolving, then the fallback texture key is returned and the ref is reported in missing",
+    "Given a ref whose texture failed to load, when resolving, then the fallback key is returned without throwing",
+    "Given duplicate refs, when planning, then each asset is loaded once"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/assets/loaders/preload.ts",
+      "WorldScene preload() using the plan"
+    ],
+    "out_of_scope": [
+      "Changing manifest schema"
+    ],
+    "preserve": [
+      "checkAssetRefs and loadManifestWithFallback behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse checkAssetRefs and FALLBACK_ASSET_ID"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Planner exported and used by WorldScene",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-235.md`"
+  ],
+  "non_functional": [
+    "Avoid loading unreferenced assets"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84W9646CK8S2FDWDATYVV3K",
+    "trace:01M84VFDBH8B1SQYMYQMDMFYB7",
+    "artifact:.ai-dlc/requirements/REQ-235.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M84WBYFR3H2KEQEP9XTJ2PDQ"
+  ],
+  "sim_node_id": "01M84W96464809F67X1725YYX5",
+  "feature_id": "01M84VFDBH8B1SQYMYQMDMFYB7",
+  "artifact_path": ".ai-dlc/requirements/REQ-235.md",
+  "artifact_id": "REQ-235",
+  "created_at": "2026-11-23T18:58:19.256934+00:00"
+}

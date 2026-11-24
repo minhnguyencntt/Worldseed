@@ -1,0 +1,67 @@
+{
+  "id": "01M84T669MQJYXS6TGV42J0KCS",
+  "intent_id": "01M84T26TV9815MN0SJWGRKHWZ",
+  "title": "Act: Add untrackNodeModules cleanup with an injected git runner",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Cleanup runs git rm --cached on node_modules roots",
+  "description": "Add GitRunner type and untrackNodeModules to the same module; it lists files via git ls-files and untracks node_modules roots from the index only.",
+  "acceptance_criteria": [
+    "Calls git rm -r --cached --ignore-unmatch -- <roots>",
+    "Skips git rm when nothing is tracked"
+  ],
+  "scope": {
+    "in_scope": [
+      "untrackNodeModules"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Disk contents"
+    ]
+  },
+  "technical_constraints": [
+    "Args as array",
+    "New file: `game/frontend/src/lib/untrackNodeModules.ts`"
+  ],
+  "dependencies": [
+    "a1"
+  ],
+  "definition_of_done": [
+    "untrackNodeModules exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-431.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84T4C3MGBMS23115CAJHMDB",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-431.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84T669MZCKSZP0YK45ZRBY7"
+  ],
+  "sim_node_id": "01M84T4C3M1RHPGG1EBZ5HCQRA",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-431.md",
+  "artifact_id": "UNIT-431",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/untrackNodeModules.ts",
+      "symbol": "new: GitRunner, untrackNodeModules",
+      "lines": "after L3",
+      "action": "Export type GitRunner = (args: string[]) => Promise<string>. Export async untrackNodeModules(git): call git(['ls-files']), split on newline, filter with trackedNodeModulesPaths, derive unique roots as the path prefix up to and including the first node_modules segment, and if any roots exist call git(['rm','-r','--cached','--ignore-unmatch','--',...roots]); return the roots array.",
+      "code": "export async function untrackNodeModules(git: GitRunner): Promise<string[]> {\n  const tracked = trackedNodeModulesPaths((await git(['ls-files'])).split('\\n').filter(Boolean));\n  const roots = [...new Set(tracked.map((p) => { const s = p.split('/'); return s.slice(0, s.indexOf('node_modules') + 1).join('/'); }))];\n  if (roots.length) await git(['rm', '-r', '--cached', '--ignore-unmatch', '--', ...roots]);\n  return roots;\n}",
+      "expected": "Roots returned; git rm invoked once with --cached"
+    }
+  ],
+  "created_at": "2026-11-23T18:20:13.492092+00:00",
+  "updated_at": "2026-11-23T18:21:03.622275+00:00"
+}

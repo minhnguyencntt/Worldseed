@@ -1,0 +1,60 @@
+{
+  "id": "01M855V5TKEA4NNTXPMM9EYCQN",
+  "intent_id": "01M855QJJNCNNP0Q6JYBYQ71MB",
+  "title": "Verify: BootScene.preload loads only planned assets",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for preload",
+  "description": "Test BootScene.preload with mocked Phaser load and mocked content.",
+  "acceptance_criteria": [
+    "only planned ids queued",
+    "unknown ids warned"
+  ],
+  "scope": {
+    "in_scope": [
+      "frontend/tests/bootScenePreload.test.ts"
+    ],
+    "out_of_scope": [
+      "browser"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Mock phaser and ../src/runtime/content"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-512.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855SDV0M397RX82AT4FN42T",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-512.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M855V5TKJNDH5CEFTTAA9XYY"
+  ],
+  "sim_node_id": "01M855SDV03SJ2W42CTZ6DE62K",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-512.md",
+  "artifact_id": "UNIT-512",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootScenePreload.test.ts",
+      "symbol": "new: BootScene preload plans only scene assets",
+      "lines": "new",
+      "action": "Mock phaser like bootScene.test.ts; vi.mock '../src/runtime/content' to export a scene with objects referencing 'objects/bed' and 'objects/ghost' and a manifest holding 'objects/bed' and unused 'objects/desk'. Set boot.load = { image: vi.fn() }, spy console.warn, call boot.preload(). Assert image called once with ('objects/bed','assets/<path>'), never with 'objects/desk' or 'objects/ghost', and warn called with a message containing 'objects/ghost'.",
+      "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T21:43:55.475408+00:00",
+  "updated_at": "2026-11-23T21:46:42.313428+00:00"
+}

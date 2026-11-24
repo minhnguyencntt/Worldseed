@@ -1,0 +1,76 @@
+{
+  "id": "01M8457KSMBFEW840PKNN279NN",
+  "intent_id": "01M84522HNMQHD166PMNC6CKQ8",
+  "title": "Act: Implement the world repository and read handlers",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files.",
+  "description": "Context: world data lives in worlds/<id>/world.yaml and rounds/<round>/round.yaml, game content in game/content/worlds/<id>. Desired behavior: a world repository and handlers for the four read endpoints. Expected result: JSON responses, 404 for unknown worlds. Why: the client needs world, game and round state.",
+  "acceptance_criteria": [
+    "Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned",
+    "Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned",
+    "Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned"
+  ],
+  "scope": {
+    "in_scope": [
+      "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files."
+    ],
+    "out_of_scope": [
+      "Writing tests",
+      "Frontend changes"
+    ],
+    "preserve": [
+      "Existing player session handlers in backend/internal/player",
+      "GET /healthz"
+    ]
+  },
+  "technical_constraints": [
+    "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+    "Git writes go through an interface wrapping the Git CLI",
+    "New file: `backend/internal/world/world.go`",
+    "New file: `backend/internal/world/handler.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Product code compiles with go build ./...",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-060.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8457J1J67DQEKQA53XB9HZA",
+    "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+    "artifact:.ai-dlc/units/UNIT-060.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8457KSMSVVF4C1F28V7832F"
+  ],
+  "sim_node_id": "01M8457J1JZPTXHJ90CMMNH712",
+  "feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+  "artifact_path": ".ai-dlc/units/UNIT-060.md",
+  "artifact_id": "UNIT-060",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/world/world.go",
+      "symbol": "new: Repo, World, Round, List, Get, CurrentRound, Game",
+      "lines": "new",
+      "action": "Create package world with Repo{Root, ContentDir string}; World{ID, Title string} yaml-decoded from <Root>/worlds/<id>/world.yaml (fields id, title); Round{ID string; Number int; Status string; StartsAt, EndsAt time.Time} yaml-decoded from rounds/*/round.yaml (id, number, status, starts_at, ends_at). List reads dirs under worlds; Get and CurrentRound call safepath.Segment first and return ErrNotFound for a missing world; CurrentRound picks highest Number; Game reads <ContentDir>/worlds/<id>/world.yaml and scenes/*.yaml into map[string]any and returns {world, scenes}.",
+      "expected": "Repo returns typed data or ErrNotFound"
+    },
+    {
+      "file": "backend/internal/world/handler.go",
+      "symbol": "new: Handler, List, Get, Game, CurrentRound",
+      "lines": "new",
+      "action": "Create Handler{Repo *Repo} with methods List, Get, Game, CurrentRound reading chi.URLParam(r,\"id\"), writing JSON with Content-Type application/json, 404 on ErrNotFound and 500 otherwise.",
+      "expected": "Each handler returns 200 JSON or 404"
+    }
+  ],
+  "created_at": "2026-11-23T12:13:59.988368+00:00",
+  "updated_at": "2026-11-23T12:22:20.022135+00:00"
+}

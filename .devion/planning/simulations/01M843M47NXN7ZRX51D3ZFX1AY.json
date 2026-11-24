@@ -1,0 +1,524 @@
+{
+  "intent_id": "01M843M47NXN7ZRX51D3ZFX1AY",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M843NJE0NSAHCFENK5MF9SWC",
+      "kind": "intent",
+      "title": "SG-2.2 · Move game runtime from backend/game to top-level game/",
+      "body": "Context: the game runtime (src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room, tests, vitest/tsconfig/package.json) currently lives in backend/game. The goal specifies a top-level game/ module separate from the Go backend. Desired behavior: the same files live under game/ with unchanged relative layout, the old backend/game folder is gone, and the tests still pass. Why: separation of runtime concerns from the Go backend.\n\n## Acceptance criteria\n- Given the repo, when listing game/, then game/src/engine, game/src/state, game/src/systems, game/content and game/tests exist and backend/game does not\n- Given game/, when running vitest there, then all existing tests pass with no changes to src logic\n- Given .gitignore, when read, then it ignores game/node_modules/ and no longer references backend/game\n\n\n## Scope\n- In scope: git mv of backend/game to game\n- In scope: fixing path references in config and ignore files\n- Out of scope: changes to engine or system logic\n- Out of scope: Go backend code\n- Out of scope: frontend/worker modules\n- Preserve: relative layout inside the module\n- Preserve: existing test behavior\n- Preserve: world.yaml and bedroom.yaml content\n\n\n## Technical constraints\n- Use git mv to retain history\n- Relative imports in src and tests must keep working unchanged\n\n\n## Definition of done\n- game/ holds the full runtime\n- backend/game removed\n- tests pass from game/\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Relocate the TypeScript game runtime and content to the top-level game/ folder and keep its tests and config passing",
+      "description": "Context: the game runtime (src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room, tests, vitest/tsconfig/package.json) currently lives in backend/game. The goal specifies a top-level game/ module separate from the Go backend. Desired behavior: the same files live under game/ with unchanged relative layout, the old backend/game folder is gone, and the tests still pass. Why: separation of runtime concerns from the Go backend.",
+      "acceptance_criteria": [
+        "Given the repo, when listing game/, then game/src/engine, game/src/state, game/src/systems, game/content and game/tests exist and backend/game does not",
+        "Given game/, when running vitest there, then all existing tests pass with no changes to src logic",
+        "Given .gitignore, when read, then it ignores game/node_modules/ and no longer references backend/game"
+      ],
+      "scope": {
+        "in_scope": [
+          "git mv of backend/game to game",
+          "fixing path references in config and ignore files"
+        ],
+        "out_of_scope": [
+          "changes to engine or system logic",
+          "Go backend code",
+          "frontend/worker modules"
+        ],
+        "preserve": [
+          "relative layout inside the module",
+          "existing test behavior",
+          "world.yaml and bedroom.yaml content"
+        ]
+      },
+      "technical_constraints": [
+        "Use git mv to retain history",
+        "Relative imports in src and tests must keep working unchanged"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "game/ holds the full runtime",
+        "backend/game removed",
+        "tests pass from game/",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-006.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8433BDP22G3MWEH7V8ZKH7Z",
+      "links": [
+        "trace:01M8433BDP22G3MWEH7V8ZKH7Z",
+        "artifact:.ai-dlc/intent/INT-006.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-006.md",
+      "artifact_id": "INT-006"
+    },
+    {
+      "id": "01M843NJE06RMSD1QDXNR9QXMV",
+      "kind": "requirement",
+      "title": "REQ · Runtime source, content and tests live under game/",
+      "body": "Context: backend/game contains package.json, package-lock.json, tsconfig.json, vitest.config.ts, src/{content,engine,state,systems}, content/worlds/the-boys-room and tests. Desired behavior: these files exist at game/ with the same relative paths and nothing remains in backend/game. Expected result: imports like ../src/content/loader and content paths like ../content/worlds/the-boys-room resolve unchanged. Why: top-level game module per the goal.\n\n## Acceptance criteria\n- Given the move, when listing game/, then src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room, tests, package.json, tsconfig.json and vitest.config.ts exist\n- Given the move, when checking backend/, then backend/game does not exist\n- Given game/content/worlds/the-boys-room, when loadWorld runs on it, then it loads without validation errors\n\n\n## Scope\n- In scope: moving all tracked files of backend/game\n- Out of scope: editing file contents beyond path fixes\n- Preserve: relative paths between src, tests and content\n\n\n## Technical constraints\n- git mv, not copy/delete\n\n\n## Definition of done\n- files moved\n- old folder removed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "All files from backend/game are moved to top-level game/ with identical internal layout",
+      "description": "Context: backend/game contains package.json, package-lock.json, tsconfig.json, vitest.config.ts, src/{content,engine,state,systems}, content/worlds/the-boys-room and tests. Desired behavior: these files exist at game/ with the same relative paths and nothing remains in backend/game. Expected result: imports like ../src/content/loader and content paths like ../content/worlds/the-boys-room resolve unchanged. Why: top-level game module per the goal.",
+      "acceptance_criteria": [
+        "Given the move, when listing game/, then src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room, tests, package.json, tsconfig.json and vitest.config.ts exist",
+        "Given the move, when checking backend/, then backend/game does not exist",
+        "Given game/content/worlds/the-boys-room, when loadWorld runs on it, then it loads without validation errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "moving all tracked files of backend/game"
+        ],
+        "out_of_scope": [
+          "editing file contents beyond path fixes"
+        ],
+        "preserve": [
+          "relative paths between src, tests and content"
+        ]
+      },
+      "technical_constraints": [
+        "git mv, not copy/delete"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "files moved",
+        "old folder removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-015.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M843NJE0NSAHCFENK5MF9SWC",
+      "matched_feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+      "links": [
+        "parent:01M843NJE0NSAHCFENK5MF9SWC",
+        "trace:01M8414WGR17QT0BMYRJPZ02TC",
+        "artifact:.ai-dlc/requirements/REQ-015.md"
+      ],
+      "depends_on": [
+        "01M843NJE0NSAHCFENK5MF9SWC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-015.md",
+      "artifact_id": "REQ-015"
+    },
+    {
+      "id": "01M843NJE0S0XZCR17GZS247R8",
+      "kind": "requirement",
+      "title": "REQ · Ignore and config paths point at game/ not backend/game",
+      "body": "Context: .gitignore line 10 is backend/game/node_modules/. vitest.config.ts includes tests/**/*.test.ts and tsconfig includes src and tests, both relative so valid after the move. Desired behavior: .gitignore ignores game/node_modules/ and no stale backend/game reference remains. Expected result: node_modules under game/ is never tracked. Why: avoid committing dependencies after relocation.\n\n## Acceptance criteria\n- Given .gitignore, when read, then it contains the line game/node_modules/\n- Given .gitignore, when read, then no line contains backend/game\n- Given game/vitest.config.ts and game/tsconfig.json, when read, then they include tests and src relative globs\n\n\n## Scope\n- In scope: .gitignore path fix\n- Out of scope: new ignore rules\n- Preserve: all other .gitignore lines\n\n\n## Technical constraints\n- Change only the stale line\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- .gitignore updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Repository ignore rules and module config reference the new game/ location",
+      "description": "Context: .gitignore line 10 is backend/game/node_modules/. vitest.config.ts includes tests/**/*.test.ts and tsconfig includes src and tests, both relative so valid after the move. Desired behavior: .gitignore ignores game/node_modules/ and no stale backend/game reference remains. Expected result: node_modules under game/ is never tracked. Why: avoid committing dependencies after relocation.",
+      "acceptance_criteria": [
+        "Given .gitignore, when read, then it contains the line game/node_modules/",
+        "Given .gitignore, when read, then no line contains backend/game",
+        "Given game/vitest.config.ts and game/tsconfig.json, when read, then they include tests and src relative globs"
+      ],
+      "scope": {
+        "in_scope": [
+          ".gitignore path fix"
+        ],
+        "out_of_scope": [
+          "new ignore rules"
+        ],
+        "preserve": [
+          "all other .gitignore lines"
+        ]
+      },
+      "technical_constraints": [
+        "Change only the stale line"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        ".gitignore updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-016.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M843NJE0NSAHCFENK5MF9SWC",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M843NJE0NSAHCFENK5MF9SWC",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-016.md"
+      ],
+      "depends_on": [
+        "01M843NJE0NSAHCFENK5MF9SWC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-016.md",
+      "artifact_id": "REQ-016"
+    },
+    {
+      "id": "01M843NJE0P033R6BFFW75PRM2",
+      "kind": "unit",
+      "title": "Act: Move backend/game to top-level game/",
+      "body": "Context: backend/game holds the full TypeScript runtime. Desired behavior: move it wholesale so relative imports stay valid. Expected result: game/ contains every former file and backend/game is gone. Why: top-level module layout.\n\n## Acceptance criteria\n- Given the repo root, when running git mv backend/game game, then game/src and game/content exist\n- Given the move, when checking backend/game, then it is absent\n\n\n## Scope\n- In scope: move of all files\n- Out of scope: logic changes\n- Preserve: file contents\n\n\n## Technical constraints\n- git mv from repo root\n- Code path: `backend/game/package.json`\n- Code path: `backend/game/package-lock.json`\n- Code path: `backend/game/tsconfig.json`\n- Code path: `backend/game/vitest.config.ts`\n- Code path: `backend/game/src/content/loader.ts`\n- Code path: `backend/game/src/engine/scene.ts`\n- Code path: `backend/game/src/state/types.ts`\n- Code path: `backend/game/src/state/gameState.ts`\n- Code path: `backend/game/src/state/persistence.ts`\n- Code path: `backend/game/src/systems/inventory.ts`\n- Code path: `backend/game/src/systems/dialogue.ts`\n- Code path: `backend/game/src/systems/conditions.ts`\n- Code path: `backend/game/src/systems/events.ts`\n- Code path: `backend/game/content/worlds/the-boys-room/world.yaml`\n- Code path: `backend/game/content/worlds/the-boys-room/scenes/bedroom.yaml`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- backend/game removed\n- game/ populated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "git mv the runtime module to game/",
+      "description": "Context: backend/game holds the full TypeScript runtime. Desired behavior: move it wholesale so relative imports stay valid. Expected result: game/ contains every former file and backend/game is gone. Why: top-level module layout.",
+      "acceptance_criteria": [
+        "Given the repo root, when running git mv backend/game game, then game/src and game/content exist",
+        "Given the move, when checking backend/game, then it is absent"
+      ],
+      "scope": {
+        "in_scope": [
+          "move of all files"
+        ],
+        "out_of_scope": [
+          "logic changes"
+        ],
+        "preserve": [
+          "file contents"
+        ]
+      },
+      "technical_constraints": [
+        "git mv from repo root",
+        "Code path: `backend/game/package.json`",
+        "Code path: `backend/game/package-lock.json`",
+        "Code path: `backend/game/tsconfig.json`",
+        "Code path: `backend/game/vitest.config.ts`",
+        "Code path: `backend/game/src/content/loader.ts`",
+        "Code path: `backend/game/src/engine/scene.ts`",
+        "Code path: `backend/game/src/state/types.ts`",
+        "Code path: `backend/game/src/state/gameState.ts`",
+        "Code path: `backend/game/src/state/persistence.ts`",
+        "Code path: `backend/game/src/systems/inventory.ts`",
+        "Code path: `backend/game/src/systems/dialogue.ts`",
+        "Code path: `backend/game/src/systems/conditions.ts`",
+        "Code path: `backend/game/src/systems/events.ts`",
+        "Code path: `backend/game/content/worlds/the-boys-room/world.yaml`",
+        "Code path: `backend/game/content/worlds/the-boys-room/scenes/bedroom.yaml`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "backend/game removed",
+        "game/ populated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-029.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M843NJE06RMSD1QDXNR9QXMV",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M843NJE06RMSD1QDXNR9QXMV",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-029.md"
+      ],
+      "depends_on": [
+        "01M843NJE06RMSD1QDXNR9QXMV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-029.md",
+      "artifact_id": "UNIT-029",
+      "steps": [
+        {
+          "file": "backend/game/package.json",
+          "symbol": "new: game module (moved from backend/game/package.json)",
+          "lines": "new",
+          "action": "From the repo root run git mv backend/game game so every tracked file (src, content, tests, package.json, package-lock.json, tsconfig.json, vitest.config.ts) moves with its history; do not edit contents because all imports are relative (../src/..., ../content/...).",
+          "code": "git mv backend/game game",
+          "expected": "ls game shows src content tests package.json tsconfig.json vitest.config.ts; ls backend shows no game directory"
+        },
+        {
+          "file": "backend/game/content/worlds/the-boys-room/world.yaml",
+          "symbol": "world.yaml",
+          "lines": "new",
+          "action": "Confirm the moved world.yaml and scenes/bedroom.yaml are at game/content/worlds/the-boys-room/ unchanged, which is the path content.test.ts resolves via resolve(__dirname, '../content/worlds/the-boys-room').",
+          "expected": "git status shows renames (R) only, no content modifications"
+        }
+      ]
+    },
+    {
+      "id": "01M843NJE0PYZFMG2JACEFPT82",
+      "kind": "unit",
+      "title": "Act: Fix .gitignore node_modules path for game/",
+      "body": "Context: .gitignore line 10 reads backend/game/node_modules/. Desired behavior: it reads game/node_modules/. Expected result: installing deps in game/ leaves a clean git status. Why: avoid tracking dependencies.\n\n## Acceptance criteria\n- Given .gitignore, when read, then line game/node_modules/ is present\n- Given .gitignore, when read, then backend/game does not appear\n\n\n## Scope\n- In scope: .gitignore line 10\n- Out of scope: other ignore lines\n- Preserve: remaining lines\n\n\n## Technical constraints\n- Single-line change\n- Code path: `.gitignore`\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- .gitignore updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Replace stale backend/game/node_modules/ ignore line",
+      "description": "Context: .gitignore line 10 reads backend/game/node_modules/. Desired behavior: it reads game/node_modules/. Expected result: installing deps in game/ leaves a clean git status. Why: avoid tracking dependencies.",
+      "acceptance_criteria": [
+        "Given .gitignore, when read, then line game/node_modules/ is present",
+        "Given .gitignore, when read, then backend/game does not appear"
+      ],
+      "scope": {
+        "in_scope": [
+          ".gitignore line 10"
+        ],
+        "out_of_scope": [
+          "other ignore lines"
+        ],
+        "preserve": [
+          "remaining lines"
+        ]
+      },
+      "technical_constraints": [
+        "Single-line change",
+        "Code path: `.gitignore`"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        ".gitignore updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-030.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M843NJE0S0XZCR17GZS247R8",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M843NJE0S0XZCR17GZS247R8",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-030.md"
+      ],
+      "depends_on": [
+        "01M843NJE0S0XZCR17GZS247R8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-030.md",
+      "artifact_id": "UNIT-030",
+      "steps": [
+        {
+          "file": ".gitignore",
+          "symbol": "ignore rule backend/game/node_modules/",
+          "lines": "L10",
+          "action": "Replace the line backend/game/node_modules/ with game/node_modules/.",
+          "code": "backend/game/node_modules/ -> game/node_modules/",
+          "expected": "grep -n 'node_modules' .gitignore shows game/node_modules/ and no backend/game"
+        }
+      ]
+    },
+    {
+      "id": "01M843NJE0NS937SHX64DSHSXT",
+      "kind": "unit",
+      "title": "Verify: game/ layout and content load unit tests",
+      "body": "Context: loader.loadWorld(worldDir) validates world.yaml and scenes. Desired behavior: tests prove the moved layout exists and the real world loads. Expected result: tests pass from game/.\n\n## Acceptance criteria\n- Given game/, when the layout test runs, then required directories exist and backend/game does not\n- Given game/content/worlds/the-boys-room, when loadWorld is called, then it returns without throwing\n- Given the existing suite files, when run from game/, then they pass\n\n\n## Scope\n- In scope: new layout.test.ts\n- In scope: existing tests run\n- Out of scope: e2e or live servers\n- Preserve: existing tests\n\n\n## Technical constraints\n- Vitest only, filesystem reads of repo files only, no network\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- layout.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove the module layout and that the world loads from game/content",
+      "description": "Context: loader.loadWorld(worldDir) validates world.yaml and scenes. Desired behavior: tests prove the moved layout exists and the real world loads. Expected result: tests pass from game/.",
+      "acceptance_criteria": [
+        "Given game/, when the layout test runs, then required directories exist and backend/game does not",
+        "Given game/content/worlds/the-boys-room, when loadWorld is called, then it returns without throwing",
+        "Given the existing suite files, when run from game/, then they pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "new layout.test.ts",
+          "existing tests run"
+        ],
+        "out_of_scope": [
+          "e2e or live servers"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest only, filesystem reads of repo files only, no network"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "layout.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-031.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843NJE0P033R6BFFW75PRM2",
+      "matched_feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+      "links": [
+        "parent:01M843NJE0P033R6BFFW75PRM2",
+        "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+        "artifact:.ai-dlc/units/UNIT-031.md"
+      ],
+      "depends_on": [
+        "01M843NJE0P033R6BFFW75PRM2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-031.md",
+      "artifact_id": "UNIT-031",
+      "steps": [
+        {
+          "file": "backend/game/tests/layout.test.ts",
+          "symbol": "new: describe('game layout') / it('has runtime dirs and no backend/game')",
+          "lines": "new",
+          "action": "Create the test using fileURLToPath(new URL('..', import.meta.url)) as gameDir; assert existsSync for src/engine, src/state, src/systems, src/content, content/worlds/the-boys-room/world.yaml and tests, and assert existsSync(join(gameDir,'../backend/game')) is false.",
+          "code": "expect(existsSync(join(gameDir,'../backend/game'))).toBe(false)",
+          "command": "cd game && npx vitest run tests/layout.test.ts",
+          "expected": "layout test passes"
+        },
+        {
+          "file": "backend/game/tests/layout.test.ts",
+          "symbol": "it('loads the-boys-room from game/content')",
+          "lines": "after the first it",
+          "action": "Import loadWorld from '../src/content/loader'; call it with join(gameDir,'content/worlds/the-boys-room') and assert the result is defined and does not throw.",
+          "command": "cd game && npx vitest run tests/layout.test.ts tests/content.test.ts tests/loader.test.ts",
+          "expected": "all three files pass"
+        }
+      ]
+    },
+    {
+      "id": "01M843NJE0SPM0FPXTFMYP5JRW",
+      "kind": "unit",
+      "title": "Verify: .gitignore and module config path unit tests",
+      "body": "Context: .gitignore must ignore game/node_modules/; vitest/tsconfig use relative globs. Desired behavior: tests read these files and assert content. Expected result: pass.\n\n## Acceptance criteria\n- Given .gitignore, when read, then game/node_modules/ is a line and backend/game is absent\n- Given game/vitest.config.ts and game/tsconfig.json, when read, then they contain tests/**/*.test.ts and \"src\"/\"tests\" includes\n\n\n## Scope\n- In scope: new config.test.ts\n- Out of scope: running the whole suite\n- Preserve: existing tests\n\n\n## Technical constraints\n- Read repo files with node:fs only\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- config.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test asserts ignore rule and relative config globs",
+      "description": "Context: .gitignore must ignore game/node_modules/; vitest/tsconfig use relative globs. Desired behavior: tests read these files and assert content. Expected result: pass.",
+      "acceptance_criteria": [
+        "Given .gitignore, when read, then game/node_modules/ is a line and backend/game is absent",
+        "Given game/vitest.config.ts and game/tsconfig.json, when read, then they contain tests/**/*.test.ts and \"src\"/\"tests\" includes"
+      ],
+      "scope": {
+        "in_scope": [
+          "new config.test.ts"
+        ],
+        "out_of_scope": [
+          "running the whole suite"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Read repo files with node:fs only"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "config.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-032.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843NJE0PYZFMG2JACEFPT82",
+      "matched_feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+      "links": [
+        "parent:01M843NJE0PYZFMG2JACEFPT82",
+        "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+        "artifact:.ai-dlc/units/UNIT-032.md"
+      ],
+      "depends_on": [
+        "01M843NJE0PYZFMG2JACEFPT82"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-032.md",
+      "artifact_id": "UNIT-032",
+      "steps": [
+        {
+          "file": "backend/game/tests/config.test.ts",
+          "symbol": "new: it('gitignore targets game/node_modules')",
+          "lines": "new",
+          "action": "Read ../../.gitignore relative to import.meta.url with readFileSync, split by newline, assert lines include 'game/node_modules/' and that no line includes 'backend/game'.",
+          "code": "expect(lines).toContain('game/node_modules/')",
+          "command": "cd game && npx vitest run tests/config.test.ts",
+          "expected": "test passes"
+        },
+        {
+          "file": "backend/game/tests/config.test.ts",
+          "symbol": "it('vitest and tsconfig use relative globs')",
+          "lines": "after first it",
+          "action": "Read vitest.config.ts and tsconfig.json from game/; assert vitest text contains 'tests/**/*.test.ts' and the parsed tsconfig include equals ['src','tests'].",
+          "code": "expect(JSON.parse(ts).include).toEqual(['src','tests'])",
+          "command": "cd game && npx vitest run tests/config.test.ts",
+          "expected": "both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M843NJE0GH0EV3G5XJHJR37F",
+      "kind": "evidence",
+      "title": "Evidence: game/ relocation unit test results",
+      "body": "Collect the vitest output of layout.test.ts and config.test.ts plus the existing suites run from game/, proving the move and path fixes.\n\n## Acceptance criteria\n- Given the Verify units, when run, then layout.test.ts and config.test.ts pass\n- Given the suite, when run from game/, then content, loader, persistence, systems and validator tests pass\n\n\n## Scope\n- In scope: test output summary\n- Out of scope: new tests\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record passing unit test output for the relocated game module",
+      "description": "Collect the vitest output of layout.test.ts and config.test.ts plus the existing suites run from game/, proving the move and path fixes.",
+      "acceptance_criteria": [
+        "Given the Verify units, when run, then layout.test.ts and config.test.ts pass",
+        "Given the suite, when run from game/, then content, loader, persistence, systems and validator tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output summary"
+        ],
+        "out_of_scope": [
+          "new tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-006.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843NJE0NS937SHX64DSHSXT",
+      "matched_feature_id": "01M8414WGSVNT11K12NB2BB3Y9",
+      "links": [
+        "parent:01M843NJE0NS937SHX64DSHSXT",
+        "trace:01M8414WGSVNT11K12NB2BB3Y9",
+        "artifact:.ai-dlc/evidence/EVD-006.md"
+      ],
+      "depends_on": [
+        "01M843NJE0NS937SHX64DSHSXT",
+        "01M843NJE0SPM0FPXTFMYP5JRW"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-006.md",
+      "artifact_id": "EVD-006"
+    }
+  ],
+  "created_at": "2026-11-23T11:46:40.308549+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

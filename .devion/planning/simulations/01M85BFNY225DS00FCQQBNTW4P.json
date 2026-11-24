@@ -1,0 +1,687 @@
+{
+  "intent_id": "01M85BFNY225DS00FCQQBNTW4P",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85BJPWT4GK6S0FPV39G7JKZ",
+      "kind": "intent",
+      "title": "SG-7 Story Panel and Round status UI with real API integration",
+      "body": "Context: StoryPanel lacks the scene title, independent scroll and pixel-art styling. HeaderOverlay shows a bare 'Round unavailable: <msg>' with no retry. Desired behavior: a complete Story Panel and an explained, retryable round status header, both wired to existing state and the existing getCurrentRound client. Expected result: unit tests with the API mocked cover panel rendering, choice clicks and the round loading, success, empty and error states. Why: players need readable story context and a recoverable round status.\n\n## Acceptance criteria\n- Given game state, when StoryPanel renders, then it shows the scene title, dialogue, choices, history and inventory\n- Given the Round API fails, when the header renders, then it explains the cause and offers a Retry button\n- Given Retry is clicked and the API succeeds, when the request resolves, then the header shows round id, status and countdown\n- Given no round exists (404), when the header renders, then it shows the distinct empty state, not an error\n\n\n## Scope\n- In scope: StoryPanel\n- In scope: HeaderOverlay\n- In scope: App round loading\n- Out of scope: Backend changes\n- Out of scope: Phaser scene\n- Out of scope: ContributionSheet\n- Preserve: getCurrentRound API contract in game/frontend/src/api/client.ts\n- Preserve: useGame state shape\n- Preserve: No mock data in production code\n\n\n## Technical constraints\n- React + TypeScript + Tailwind\n- Existing Go API client only\n\n\n## Definition of done\n- All requirements verified by unit tests with the API mocked\n\n\n## Non-functional requirements\n- Story panel scrolls independently without page scroll\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Story Panel shows scene title, dialogue, choices, history and inventory; header round status uses the real Go API with loading, empty and error states and a retry",
+      "description": "Context: StoryPanel lacks the scene title, independent scroll and pixel-art styling. HeaderOverlay shows a bare 'Round unavailable: <msg>' with no retry. Desired behavior: a complete Story Panel and an explained, retryable round status header, both wired to existing state and the existing getCurrentRound client. Expected result: unit tests with the API mocked cover panel rendering, choice clicks and the round loading, success, empty and error states. Why: players need readable story context and a recoverable round status.",
+      "acceptance_criteria": [
+        "Given game state, when StoryPanel renders, then it shows the scene title, dialogue, choices, history and inventory",
+        "Given the Round API fails, when the header renders, then it explains the cause and offers a Retry button",
+        "Given Retry is clicked and the API succeeds, when the request resolves, then the header shows round id, status and countdown",
+        "Given no round exists (404), when the header renders, then it shows the distinct empty state, not an error"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel",
+          "HeaderOverlay",
+          "App round loading"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Phaser scene",
+          "ContributionSheet"
+        ],
+        "preserve": [
+          "getCurrentRound API contract in game/frontend/src/api/client.ts",
+          "useGame state shape",
+          "No mock data in production code"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript + Tailwind",
+        "Existing Go API client only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements verified by unit tests with the API mocked",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-124.md`"
+      ],
+      "non_functional": [
+        "Story panel scrolls independently without page scroll"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+      "links": [
+        "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+        "artifact:.ai-dlc/intent/INT-124.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-124.md",
+      "artifact_id": "INT-124"
+    },
+    {
+      "id": "01M85BJPWT13JYJR0HH00N1RG3",
+      "kind": "requirement",
+      "title": "REQ · Story Panel shows scene title and scrolls independently in pixel-art styling",
+      "body": "Context: game/frontend/src/components/StoryPanel.tsx (L1-L47) renders dialogue, history and inventory but no scene title, and uses the unstyled 'story-content' class. Desired behavior: add a sceneTitle prop rendered as a heading, and wrap the content in a container that scrolls on its own with pixel-art Tailwind styling. Expected result: the panel shows all required story elements. Why: players need context for where they are.\n\n## Acceptance criteria\n- Given sceneTitle 'The Boys Room', when StoryPanel renders, then a heading with that text is shown\n- Given a container, when the history is long, then the container has overflow-y-auto and a bounded height so it scrolls independently\n- Given a dialogue node with two choices, when the second is clicked, then onChoose is called with 1\n\n\n## Scope\n- In scope: StoryPanel sceneTitle prop and styling\n- Out of scope: GameLayout grid\n- Out of scope: dialogue system logic\n- Preserve: onChoose contract\n- Preserve: aria-labels 'Dialogue', 'Story history', 'Inventory'\n- Preserve: 'Empty' inventory text\n\n\n## Technical constraints\n- Tailwind classes only; pixel font via existing design tokens\n\n\n## Definition of done\n- StoryPanel renders scene title and scrolls independently\n\n\n## Non-functional requirements\n- Keyboard-accessible choice buttons\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "StoryPanel renders the current scene title with dialogue, choices, history and inventory in a self-scrolling pixel-styled container",
+      "description": "Context: game/frontend/src/components/StoryPanel.tsx (L1-L47) renders dialogue, history and inventory but no scene title, and uses the unstyled 'story-content' class. Desired behavior: add a sceneTitle prop rendered as a heading, and wrap the content in a container that scrolls on its own with pixel-art Tailwind styling. Expected result: the panel shows all required story elements. Why: players need context for where they are.",
+      "acceptance_criteria": [
+        "Given sceneTitle 'The Boys Room', when StoryPanel renders, then a heading with that text is shown",
+        "Given a container, when the history is long, then the container has overflow-y-auto and a bounded height so it scrolls independently",
+        "Given a dialogue node with two choices, when the second is clicked, then onChoose is called with 1"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel sceneTitle prop and styling"
+        ],
+        "out_of_scope": [
+          "GameLayout grid",
+          "dialogue system logic"
+        ],
+        "preserve": [
+          "onChoose contract",
+          "aria-labels 'Dialogue', 'Story history', 'Inventory'",
+          "'Empty' inventory text"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind classes only; pixel font via existing design tokens"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "StoryPanel renders scene title and scrolls independently",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-307.md`"
+      ],
+      "non_functional": [
+        "Keyboard-accessible choice buttons"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BJPWT4GK6S0FPV39G7JKZ",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85BJPWT4GK6S0FPV39G7JKZ",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-307.md"
+      ],
+      "depends_on": [
+        "01M85BJPWT4GK6S0FPV39G7JKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-307.md",
+      "artifact_id": "REQ-307"
+    },
+    {
+      "id": "01M85BJPWTK5MTY8S6B0NY2PRW",
+      "kind": "requirement",
+      "title": "REQ · Header explains round failure and offers Retry",
+      "body": "Context: HeaderOverlay.tsx (L1-L44) shows 'Round unavailable: {error}' only. Desired behavior: accept an optional onRetry prop and render a Retry button in the error state with explanatory text. Expected result: users can retry a failed round load. Why: avoid a dead-end error.\n\n## Acceptance criteria\n- Given error and onRetry, when rendered, then alert text includes the cause and a Retry button is shown\n- When Retry is clicked, then onRetry is called once\n- Given no error, then no Retry button is rendered\n\n\n## Scope\n- In scope: HeaderOverlay error state\n- Out of scope: Countdown\n- Preserve: Loading and empty states\n- Preserve: Sound and Settings buttons\n\n\n## Technical constraints\n- Reuse ui/button\n\n\n## Definition of done\n- Retry rendered in error state only\n\n\n## Non-functional requirements\n- Alert uses role=alert\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "HeaderOverlay error state shows an explained cause and a Retry button instead of a bare message",
+      "description": "Context: HeaderOverlay.tsx (L1-L44) shows 'Round unavailable: {error}' only. Desired behavior: accept an optional onRetry prop and render a Retry button in the error state with explanatory text. Expected result: users can retry a failed round load. Why: avoid a dead-end error.",
+      "acceptance_criteria": [
+        "Given error and onRetry, when rendered, then alert text includes the cause and a Retry button is shown",
+        "When Retry is clicked, then onRetry is called once",
+        "Given no error, then no Retry button is rendered"
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay error state"
+        ],
+        "out_of_scope": [
+          "Countdown"
+        ],
+        "preserve": [
+          "Loading and empty states",
+          "Sound and Settings buttons"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse ui/button"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Retry rendered in error state only",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-308.md`"
+      ],
+      "non_functional": [
+        "Alert uses role=alert"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BJPWT4GK6S0FPV39G7JKZ",
+      "matched_feature_id": "01M84GAF91YHBCPRJZQFKHDMBG",
+      "links": [
+        "parent:01M85BJPWT4GK6S0FPV39G7JKZ",
+        "trace:01M84GAF91YHBCPRJZQFKHDMBG",
+        "artifact:.ai-dlc/requirements/REQ-308.md"
+      ],
+      "depends_on": [
+        "01M85BJPWT4GK6S0FPV39G7JKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-308.md",
+      "artifact_id": "REQ-308"
+    },
+    {
+      "id": "01M85BJPWTHV766MYSEVNFHHFG",
+      "kind": "requirement",
+      "title": "REQ · App loads the round from the Go API with explained errors, empty state and retry",
+      "body": "Context: App.tsx (L14-L28) calls getCurrentRound once and stores e.message. Desired behavior: a describeRoundError helper gives the cause (HTTP status, server detail, or network failure), a 404 yields the empty state, and a retry callback reloads and passes onRetry to HeaderOverlay. Backend CurrentRound returns 404 when no round exists (backend/internal/world/handler.go). Why: distinct states and recovery.\n\n## Acceptance criteria\n- Given getCurrentRound rejects ApiError 500, when App renders, then the alert explains 'Round service returned 500'\n- Given it rejects ApiError 404, then 'No active round' is shown with no alert\n- Given a failure then Retry click with success, then the round id and status appear\n- Given a network TypeError, then the alert says the server could not be reached\n\n\n## Scope\n- In scope: App.tsx round loading\n- Out of scope: client.ts changes\n- Preserve: getCurrentRound signature\n\n\n## Technical constraints\n- No mock data in production code\n\n\n## Definition of done\n- Retry reloads the round\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App maps API failures to a cause, treats 404 as empty and reloads on retry",
+      "description": "Context: App.tsx (L14-L28) calls getCurrentRound once and stores e.message. Desired behavior: a describeRoundError helper gives the cause (HTTP status, server detail, or network failure), a 404 yields the empty state, and a retry callback reloads and passes onRetry to HeaderOverlay. Backend CurrentRound returns 404 when no round exists (backend/internal/world/handler.go). Why: distinct states and recovery.",
+      "acceptance_criteria": [
+        "Given getCurrentRound rejects ApiError 500, when App renders, then the alert explains 'Round service returned 500'",
+        "Given it rejects ApiError 404, then 'No active round' is shown with no alert",
+        "Given a failure then Retry click with success, then the round id and status appear",
+        "Given a network TypeError, then the alert says the server could not be reached"
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx round loading"
+        ],
+        "out_of_scope": [
+          "client.ts changes"
+        ],
+        "preserve": [
+          "getCurrentRound signature"
+        ]
+      },
+      "technical_constraints": [
+        "No mock data in production code"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Retry reloads the round",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-309.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85BJPWT4GK6S0FPV39G7JKZ",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85BJPWT4GK6S0FPV39G7JKZ",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-309.md"
+      ],
+      "depends_on": [
+        "01M85BJPWT4GK6S0FPV39G7JKZ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-309.md",
+      "artifact_id": "REQ-309"
+    },
+    {
+      "id": "01M85BJPWTE83W4PKH254SJ30Z",
+      "kind": "unit",
+      "title": "Act: Add sceneTitle and scroll styling to StoryPanel",
+      "body": "Implement the sceneTitle prop in StoryPanel and pass game.scene.title from App. Product code only.\n\n## Acceptance criteria\n- StoryPanel accepts a required sceneTitle string and renders it in an h1\n- The root element has overflow-y-auto and h-full classes\n- App passes game.scene.title as sceneTitle\n\n\n## Scope\n- In scope: StoryPanel.tsx\n- In scope: App.tsx StoryPanel usage\n- Out of scope: Header changes\n- Preserve: Existing props and aria-labels\n\n\n## Technical constraints\n- Keep the 'story-content' class name\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Definition of done\n- Component compiles and renders the title\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add sceneTitle prop, heading and independent-scroll pixel styling to StoryPanel and pass the title from App",
+      "description": "Implement the sceneTitle prop in StoryPanel and pass game.scene.title from App. Product code only.",
+      "acceptance_criteria": [
+        "StoryPanel accepts a required sceneTitle string and renders it in an h1",
+        "The root element has overflow-y-auto and h-full classes",
+        "App passes game.scene.title as sceneTitle"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel.tsx",
+          "App.tsx StoryPanel usage"
+        ],
+        "out_of_scope": [
+          "Header changes"
+        ],
+        "preserve": [
+          "Existing props and aria-labels"
+        ]
+      },
+      "technical_constraints": [
+        "Keep the 'story-content' class name",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Component compiles and renders the title",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-614.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BJPWT13JYJR0HH00N1RG3",
+      "matched_feature_id": "01M844TV9Q7355VWB6ZZCFWVZ4",
+      "links": [
+        "parent:01M85BJPWT13JYJR0HH00N1RG3",
+        "trace:01M844TV9Q7355VWB6ZZCFWVZ4",
+        "artifact:.ai-dlc/units/UNIT-614.md"
+      ],
+      "depends_on": [
+        "01M85BJPWT13JYJR0HH00N1RG3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-614.md",
+      "artifact_id": "UNIT-614",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanelProps / StoryPanel",
+          "lines": "L3-L15",
+          "action": "Add `sceneTitle: string` to StoryPanelProps, destructure it, render `<h1>{sceneTitle}</h1>` as the first child, and change the root div className to the scrolling pixel-art style.",
+          "code": "className=\"story-content h-full overflow-y-auto p-3 font-mono text-sm border-l-4 border-amber-900 bg-stone-900 text-amber-100\"",
+          "expected": "StoryPanel shows the scene title heading and its root scrolls on its own"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App (story prop)",
+          "lines": "L54-L61",
+          "action": "Pass `sceneTitle={game.scene.title}` to the StoryPanel element.",
+          "code": "<StoryPanel sceneTitle={game.scene.title} node={...} />",
+          "expected": "Typecheck passes and the title reaches the panel"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWTX3ZBBFZNK9JA84RR",
+      "kind": "unit",
+      "title": "Act: Add onRetry and Retry button to HeaderOverlay error state",
+      "body": "Extend HeaderOverlayProps with onRetry and render the button in the error branch. Product code only.\n\n## Acceptance criteria\n- Retry button is rendered only when error is set and onRetry is provided\n- Clicking calls onRetry\n\n\n## Scope\n- In scope: HeaderOverlay.tsx\n- Out of scope: App wiring\n- Preserve: Existing alert text prefix 'Round unavailable: '\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/HeaderOverlay.tsx`\n\n\n## Definition of done\n- Component compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add onRetry prop and Retry button in the error branch",
+      "description": "Extend HeaderOverlayProps with onRetry and render the button in the error branch. Product code only.",
+      "acceptance_criteria": [
+        "Retry button is rendered only when error is set and onRetry is provided",
+        "Clicking calls onRetry"
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "App wiring"
+        ],
+        "preserve": [
+          "Existing alert text prefix 'Round unavailable: '"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/HeaderOverlay.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Component compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-615.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BJPWTK5MTY8S6B0NY2PRW",
+      "matched_feature_id": "01M84GAF918PB05VJE7944AM4P",
+      "links": [
+        "parent:01M85BJPWTK5MTY8S6B0NY2PRW",
+        "trace:01M84GAF918PB05VJE7944AM4P",
+        "artifact:.ai-dlc/units/UNIT-615.md"
+      ],
+      "depends_on": [
+        "01M85BJPWTK5MTY8S6B0NY2PRW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-615.md",
+      "artifact_id": "UNIT-615",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlayProps / HeaderOverlay",
+          "lines": "L6-L24",
+          "action": "Add `onRetry?: () => void` to the props and destructure it. Replace the error span with a fragment holding the alert span and, when onRetry is defined, a Retry Button.",
+          "code": "<><span role=\"alert\">Round unavailable: {error}</span>{onRetry && <Button type=\"button\" variant=\"ghost\" onClick={onRetry}>Retry</Button>}</>",
+          "expected": "Error state renders a Retry button"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWTHH2YCT410ECQNGTM",
+      "kind": "unit",
+      "title": "Act: Add describeRoundError, empty mapping and retry to App",
+      "body": "Implement loadRound, describeRoundError and wire onRetry to HeaderOverlay. Product code only.\n\n## Acceptance criteria\n- 404 sets no error and no round\n- Other ApiError sets error to 'Round service returned <status>' plus detail when present\n- TypeError sets 'Could not reach the server'\n- Retry resets loading and error and reloads\n\n\n## Scope\n- In scope: App.tsx\n- Out of scope: HeaderOverlay internals\n- Preserve: Intro gate\n- Preserve: Existing props to HeaderOverlay\n\n\n## Technical constraints\n- Import ApiError from ./api/client\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Definition of done\n- App compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Refactor App round loading into a reusable loader with error mapping and retry",
+      "description": "Implement loadRound, describeRoundError and wire onRetry to HeaderOverlay. Product code only.",
+      "acceptance_criteria": [
+        "404 sets no error and no round",
+        "Other ApiError sets error to 'Round service returned <status>' plus detail when present",
+        "TypeError sets 'Could not reach the server'",
+        "Retry resets loading and error and reloads"
+      ],
+      "scope": {
+        "in_scope": [
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "HeaderOverlay internals"
+        ],
+        "preserve": [
+          "Intro gate",
+          "Existing props to HeaderOverlay"
+        ]
+      },
+      "technical_constraints": [
+        "Import ApiError from ./api/client",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "App compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-616.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85BJPWTHV766MYSEVNFHHFG",
+      "matched_feature_id": "01M84GAF918PB05VJE7944AM4P",
+      "links": [
+        "parent:01M85BJPWTHV766MYSEVNFHHFG",
+        "trace:01M84GAF918PB05VJE7944AM4P",
+        "artifact:.ai-dlc/units/UNIT-616.md"
+      ],
+      "depends_on": [
+        "01M85BJPWTHV766MYSEVNFHHFG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-616.md",
+      "artifact_id": "UNIT-616",
+      "steps": [
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "new: describeRoundError",
+          "lines": "after L12",
+          "action": "Add exported function describeRoundError(e: unknown): string returning `Round service returned ${e.status}` plus `: ${e.detail}` if present for ApiError, 'Could not reach the server' for TypeError, otherwise 'Round request failed'.",
+          "code": "export function describeRoundError(e: unknown): string {...}",
+          "expected": "Function maps each error kind to a message"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App useEffect / loadRound",
+          "lines": "L21-L28",
+          "action": "Replace the effect body with a useCallback loadRound that sets loading true and clears roundError, calls getCurrentRound, sets round on success, on ApiError status 404 sets round undefined without error, otherwise sets roundError via describeRoundError, and finally sets loading false. Call loadRound from useEffect.",
+          "expected": "Initial load and retry share one code path"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "HeaderOverlay element",
+          "lines": "L42",
+          "action": "Pass `onRetry={loadRound}` to HeaderOverlay.",
+          "code": "<HeaderOverlay ... onRetry={loadRound} />",
+          "expected": "Retry button reloads the round"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWT181GQQ5PVRCDK4FY",
+      "kind": "unit",
+      "title": "Verify: StoryPanel scene title, scroll and choice unit tests",
+      "body": "Add unit tests proving the StoryPanel rendering from state and choice clicks. No network is involved.\n\n## Acceptance criteria\n- Title heading asserted\n- Scroll classes asserted\n- Choice click calls onChoose with the index\n\n\n## Scope\n- In scope: New test file storyPanelTitle.test.tsx\n- Out of scope: Browser checks\n- Preserve: tests/story.test.tsx\n\n\n## Technical constraints\n- vitest + testing-library\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for StoryPanel title, scroll classes, history, inventory and choice clicks",
+      "description": "Add unit tests proving the StoryPanel rendering from state and choice clicks. No network is involved.",
+      "acceptance_criteria": [
+        "Title heading asserted",
+        "Scroll classes asserted",
+        "Choice click calls onChoose with the index"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file storyPanelTitle.test.tsx"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": [
+          "tests/story.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "vitest + testing-library"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-617.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BJPWTE83W4PKH254SJ30Z",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BJPWTE83W4PKH254SJ30Z",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-617.md"
+      ],
+      "depends_on": [
+        "01M85BJPWTE83W4PKH254SJ30Z"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-617.md",
+      "artifact_id": "UNIT-617",
+      "steps": [
+        {
+          "file": "game/frontend/tests/storyPanelTitle.test.tsx",
+          "symbol": "new: StoryPanel scene title and choices",
+          "lines": "new",
+          "action": "Render StoryPanel with sceneTitle 'The Boys Room', a two-choice DialogueNode built like introNode in tests/story.test.tsx, history ['a','b'], inventory ['key']; assert heading 'The Boys Room', the Story history list has 2 items, the Inventory region contains 'key', the root has class overflow-y-auto, and clicking the second choice calls onChoose with 1.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx",
+          "expected": "All assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWTPBM23ZSQYJCW99QX",
+      "kind": "unit",
+      "title": "Verify: HeaderOverlay Retry and success state unit tests",
+      "body": "Tests render HeaderOverlay with fixtures only.\n\n## Acceptance criteria\n- Retry click calls onRetry\n- No Retry without error\n- Success state shows round id, status and timer\n\n\n## Scope\n- In scope: New test file headerRetry.test.tsx\n- Out of scope: Network\n- Preserve: headerOverlayStates.test.tsx\n\n\n## Technical constraints\n- Use roundFixture from tests/fixtures/api.ts, which mirrors backend world.Round JSON\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the Retry button and loading, success, empty states",
+      "description": "Tests render HeaderOverlay with fixtures only.",
+      "acceptance_criteria": [
+        "Retry click calls onRetry",
+        "No Retry without error",
+        "Success state shows round id, status and timer"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file headerRetry.test.tsx"
+        ],
+        "out_of_scope": [
+          "Network"
+        ],
+        "preserve": [
+          "headerOverlayStates.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Use roundFixture from tests/fixtures/api.ts, which mirrors backend world.Round JSON"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-618.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BJPWTX3ZBBFZNK9JA84RR",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BJPWTX3ZBBFZNK9JA84RR",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-618.md"
+      ],
+      "depends_on": [
+        "01M85BJPWTX3ZBBFZNK9JA84RR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-618.md",
+      "artifact_id": "UNIT-618",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerRetry.test.tsx",
+          "symbol": "new: HeaderOverlay retry",
+          "lines": "new",
+          "action": "Add tests: (1) render with error='Round service returned 500' and onRetry=vi.fn(); click button 'Retry'; assert called once. (2) render with roundFixture and no error; assert queryByRole('button',{name:'Retry'}) is null, the id text 'round-1', status 'OPEN' and role timer present.",
+          "command": "cd game/frontend && npx vitest run tests/headerRetry.test.tsx",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWTNVCKT47EQ2XW9WZG",
+      "kind": "unit",
+      "title": "Verify: App round loading, empty, error and retry unit tests",
+      "body": "Mock ./api/client getCurrentRound; no network.\n\n## Acceptance criteria\n- Loading and success states are each asserted with getCurrentRound mocked\n- Empty (404) and error (500, network) states are each asserted\n- Retry after a failure reloads the round and shows it\n\n\n## Scope\n- In scope: New test file appRound.test.tsx\n- Out of scope: Phaser\n- Preserve: appHeader.test.tsx\n\n\n## Technical constraints\n- Fixture roundFixture mirrors backend world.Round; ApiError constructed from the real class; mock Phaser-dependent children as in tests/appHeader.test.tsx\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "App tests with getCurrentRound mocked for success, 404, 500, network and retry",
+      "description": "Mock ./api/client getCurrentRound; no network.",
+      "acceptance_criteria": [
+        "Loading and success states are each asserted with getCurrentRound mocked",
+        "Empty (404) and error (500, network) states are each asserted",
+        "Retry after a failure reloads the round and shows it"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file appRound.test.tsx"
+        ],
+        "out_of_scope": [
+          "Phaser"
+        ],
+        "preserve": [
+          "appHeader.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Fixture roundFixture mirrors backend world.Round; ApiError constructed from the real class; mock Phaser-dependent children as in tests/appHeader.test.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-619.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BJPWTHH2YCT410ECQNGTM",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85BJPWTHH2YCT410ECQNGTM",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-619.md"
+      ],
+      "depends_on": [
+        "01M85BJPWTHH2YCT410ECQNGTM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-619.md",
+      "artifact_id": "UNIT-619",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appRound.test.tsx",
+          "symbol": "new: App round states",
+          "lines": "new",
+          "action": "vi.mock('../src/api/client', importActual with getCurrentRound as vi.fn()). Reuse the mock setup and Begin click from tests/appHeader.test.tsx. Cases: pending promise shows 'Loading round…'; roundFixture shows 'round-1' and 'OPEN'; reject new ApiError(404,'404 Not Found') shows 'No active round' and no alert; reject ApiError(500,'500 x') shows alert containing 'Round service returned 500'; reject TypeError shows 'Could not reach the server'; reject then resolve roundFixture, click Retry, assert 'round-1' appears and getCurrentRound called twice.",
+          "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx",
+          "expected": "All six cases pass"
+        },
+        {
+          "file": "game/frontend/tests/appRound.test.tsx",
+          "symbol": "describeRoundError tests",
+          "lines": "new",
+          "action": "Add direct unit tests of describeRoundError for ApiError with and without detail, TypeError, and a plain string input.",
+          "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx -t describeRoundError",
+          "expected": "Messages match the mapping"
+        }
+      ]
+    },
+    {
+      "id": "01M85BJPWT844FYAES5HW3MN2X",
+      "kind": "evidence",
+      "title": "Evidence: Story Panel and Round status UI unit tests",
+      "body": "Collect results of the three unit test files covering the intent acceptance criteria.\n\n## Acceptance criteria\n- storyPanelTitle, headerRetry and appRound tests all pass\n- Each intent acceptance criterion maps to a passing test\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser runs\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the Story Panel and Round status unit tests pass with the API mocked",
+      "description": "Collect results of the three unit test files covering the intent acceptance criteria.",
+      "acceptance_criteria": [
+        "storyPanelTitle, headerRetry and appRound tests all pass",
+        "Each intent acceptance criterion maps to a passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-124.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85BJPWT181GQQ5PVRCDK4FY",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85BJPWT181GQQ5PVRCDK4FY",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-124.md"
+      ],
+      "depends_on": [
+        "01M85BJPWT181GQQ5PVRCDK4FY",
+        "01M85BJPWTPBM23ZSQYJCW99QX",
+        "01M85BJPWTNVCKT47EQ2XW9WZG"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-124.md",
+      "artifact_id": "EVD-124"
+    }
+  ],
+  "created_at": "2026-11-23T23:25:07.690975+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 9/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "id": "01M8641RZTZY4DQNH1NG6JVJ4M",
+  "intent_id": "01M862TMQP38WDZVMC10QK0KVE",
+  "title": "Act: Add /api proxy to vite.config.ts",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add server.proxy for /api to localhost:8080",
+  "description": "Add a proxy entry to the existing server block in vite.config.ts so dev /api calls reach the Go backend.",
+  "acceptance_criteria": [
+    "server.proxy['/api'].target is 'http://localhost:8080'",
+    "Existing config keys remain"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/vite.config.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "publicDir",
+      "alias",
+      "server.fs"
+    ]
+  },
+  "technical_constraints": [
+    "Backend port :8080",
+    "Code path: `game/frontend/vite.config.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "vite.config.ts has the proxy",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-868.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M863DD5GEZA4H4533PVMRMCN",
+    "artifact:.ai-dlc/units/UNIT-868.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8641RZTX7NJPN7JFVYS0HYP"
+  ],
+  "sim_node_id": "01M863DD5GMQ0J1106X79WNA7Y",
+  "artifact_path": ".ai-dlc/units/UNIT-868.md",
+  "artifact_id": "UNIT-868",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/vite.config.ts",
+      "symbol": "defineConfig server",
+      "lines": "L14-L18",
+      "action": "Add a proxy property next to fs in the server object, forwarding '/api' to the Go backend with changeOrigin true.",
+      "code": "server: { fs: { allow: ['..'] }, proxy: { '/api': { target: 'http://localhost:8080', changeOrigin: true } } },",
+      "expected": "The dev server forwards /api/* to http://localhost:8080 instead of serving index.html."
+    }
+  ],
+  "created_at": "2026-11-24T06:31:48.986286+00:00",
+  "updated_at": "2026-11-24T06:34:25.852696+00:00"
+}

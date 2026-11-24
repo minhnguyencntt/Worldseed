@@ -1,0 +1,64 @@
+{
+  "id": "01M844Z5FZXMMP9X15C0PTGW4M",
+  "intent_id": "01M844XNJF45JVTC7S2T492R66",
+  "title": "Act: Guard the missing #root in main.tsx",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "main.tsx throws a clear error when #root is absent",
+  "description": "Replace the non-null assertion on document.getElementById('root') with an explicit check that throws 'Root element #root not found'.",
+  "acceptance_criteria": [
+    "main.tsx throws Error('Root element #root not found') when #root is missing",
+    "main.tsx still renders <App /> when #root exists"
+  ],
+  "scope": {
+    "in_scope": [
+      "src/main.tsx"
+    ],
+    "out_of_scope": [
+      "App.tsx"
+    ],
+    "preserve": [
+      "./styles.css import"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/main.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "tsc --noEmit still exits 0",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-054.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M844Z4RRJ0W8H4JZWJHS0AME",
+    "trace:01M844TV9Q2EB912YVFDDXVRMY",
+    "artifact:.ai-dlc/units/UNIT-054.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M844Z5FZYJ8TP2ZN0893CXDJ"
+  ],
+  "sim_node_id": "01M844Z4RR1JNK7CQARYX0BXJ4",
+  "feature_id": "01M844TV9Q2EB912YVFDDXVRMY",
+  "artifact_path": ".ai-dlc/units/UNIT-054.md",
+  "artifact_id": "UNIT-054",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/main.tsx",
+      "symbol": "module top level (createRoot call)",
+      "lines": "L4",
+      "action": "Replace the createRoot line with a lookup of the root element, throw if it is null, then call createRoot(rootEl).render(<App />).",
+      "code": "createRoot(document.getElementById('root')!).render(<App />); -> const rootEl = document.getElementById('root');\nif (!rootEl) {\n  throw new Error('Root element #root not found');\n}\ncreateRoot(rootEl).render(<App />);",
+      "expected": "Missing #root throws the named error; present #root renders App."
+    }
+  ],
+  "created_at": "2026-11-23T12:09:23.199868+00:00",
+  "updated_at": "2026-11-23T12:10:16.207499+00:00"
+}

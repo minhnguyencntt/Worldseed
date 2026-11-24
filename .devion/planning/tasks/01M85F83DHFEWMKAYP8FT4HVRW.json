@@ -1,0 +1,74 @@
+{
+  "id": "01M85F83DHFEWMKAYP8FT4HVRW",
+  "intent_id": "01M85F23G77XTZTBV1HJ0M6MAE",
+  "title": "Act: Guard every history effect update with the cancelled flag",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Skip status and entries writes after cleanup in then and catch",
+  "description": "Ensure both promise branches return early when cancelled is true.",
+  "acceptance_criteria": [
+    "No writes after cleanup on resolve",
+    "No writes after cleanup on reject"
+  ],
+  "scope": {
+    "in_scope": [
+      "cancelled checks in effect"
+    ],
+    "out_of_scope": [
+      "API client"
+    ],
+    "preserve": [
+      "Existing .then merge logic"
+    ]
+  },
+  "technical_constraints": [
+    "Use the local cancelled flag",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "Both branches guarded",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-674.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85F3V34A8049R3TMQNE00SC",
+    "trace:01M84GAF920NPK8B6GMWTR3AX4",
+    "artifact:.ai-dlc/units/UNIT-674.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85F83DHX0VRP9ZFC6KT5MVF"
+  ],
+  "sim_node_id": "01M85F3V34F3PP18ZS9K21A9B8",
+  "feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+  "artifact_path": ".ai-dlc/units/UNIT-674.md",
+  "artifact_id": "UNIT-674",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet history effect .then",
+      "lines": "L48-L59",
+      "action": "Keep the existing if (cancelled) return; as the first line so neither setEntries nor setHistoryStatus('ready') run after cleanup.",
+      "expected": "Resolve path guarded"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet history effect .catch",
+      "lines": "L60-L62",
+      "action": "Make the catch callback start with if (cancelled) return; before setHistoryStatus('error').",
+      "code": ".catch(() => { if (cancelled) return; setHistoryStatus('error'); })",
+      "expected": "Reject path guarded"
+    }
+  ],
+  "created_at": "2026-11-24T00:28:16.177688+00:00",
+  "updated_at": "2026-11-24T00:30:32.049023+00:00"
+}

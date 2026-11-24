@@ -1,0 +1,415 @@
+{
+  "id": "01M843H7R9MZSHG7FCCK90RP0W",
+  "trigger_node_id": "INT-005, UNIT-025 +6",
+  "node_ids": [
+    "INT-005",
+    "UNIT-025",
+    "UNIT-026",
+    "UNIT-027",
+    "UNIT-028",
+    "REQ-013",
+    "REQ-014",
+    "EVD-005"
+  ],
+  "intent_id": "INT-005",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-005",
+      "title": "SG-2.1 · Merge duplicate content loader/validator into one module",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-025",
+      "title": "Act: Port strict field validation into loader.ts loadWorld",
+      "kind": "unit",
+      "task_ids": [
+        "01M843H7N4S1FVSJJNN2GHPH35"
+      ],
+      "depends_on": [
+        "REQ-013"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "5c9d5ce2ec529e64c5ec9fab1e8a173c0e77ca48",
+      "from_sha": "fc0e4a58f17c327c592c7395b2d8b04c958a0bc4",
+      "started_at": "2026-11-23T11:44:18.601422+00:00",
+      "ended_at": "2026-11-23T11:44:54.154523+00:00",
+      "run_started_at": "2026-11-23T11:44:18.601422+00:00",
+      "duration_ms": 35386,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-026",
+      "title": "Act: Remove duplicate world.ts module",
+      "kind": "unit",
+      "task_ids": [
+        "01M843H7N49B2W1E621B73SS7D"
+      ],
+      "depends_on": [
+        "REQ-014"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "fc0e4a58f17c327c592c7395b2d8b04c958a0bc4",
+      "from_sha": "6206742af4dcb7cd09adf3ba8bc5e5fda14b0f76",
+      "started_at": "2026-11-23T11:44:18.634766+00:00",
+      "ended_at": "2026-11-23T11:44:29.216049+00:00",
+      "run_started_at": "2026-11-23T11:44:18.634766+00:00",
+      "duration_ms": 10433,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-027",
+      "title": "Verify: loadWorld strict loading unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M843H7N4TXY1KP4CYWHDV2A0"
+      ],
+      "depends_on": [
+        "UNIT-025",
+        "REQ-013"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "b10eb5740e4a824eb863cfc4f49af9e5090895c8",
+      "from_sha": "b10eb5740e4a824eb863cfc4f49af9e5090895c8",
+      "tests": [
+        {
+          "id": "loader.test.ts > loadWorld > throws when id is missing",
+          "kind": "unit",
+          "name": "loadWorld throws when id is missing",
+          "title": "loadWorld throws when world.yaml has no id",
+          "scenario": "Given world.yaml without an id line and a valid scenes/s.yaml, When loadWorld is called, Then it throws an error mentioning id",
+          "command": "npx vitest run tests/loader.test.ts --testTimeout=10000 -t \"id is missing\"",
+          "file": "tests/loader.test.ts",
+          "status": "passed",
+          "detail": "Error 'world.yaml missing string field: id' matches /id/."
+        },
+        {
+          "id": "loader.test.ts > loadWorld > throws naming s2.yaml when a listed scene file is missing",
+          "kind": "unit",
+          "name": "loadWorld throws naming s2.yaml when a listed scene file is missing",
+          "title": "loadWorld names the missing scene file",
+          "scenario": "Given world.yaml lists scenes s and s2 and only scenes/s.yaml exists, When loadWorld is called, Then it throws an error naming s2.yaml",
+          "command": "npx vitest run tests/loader.test.ts --testTimeout=10000",
+          "file": "tests/loader.test.ts",
+          "status": "passed",
+          "detail": "Error 'missing content file: .../scenes/s2.yaml' matches /s2\\.yaml/."
+        },
+        {
+          "id": "loader.test.ts > loadWorld > throws when a scene file declares a different id than listed",
+          "kind": "unit",
+          "name": "loadWorld throws when a scene file declares a different id than listed",
+          "title": "loadWorld rejects a scene file whose id does not match",
+          "scenario": "Given world.yaml lists scene s and scenes/s.yaml declares id other, When loadWorld is called, Then it throws an error saying expected s",
+          "command": "npx vitest run tests/loader.test.ts --testTimeout=10000",
+          "file": "tests/loader.test.ts",
+          "status": "passed",
+          "detail": "Error 'scenes/s.yaml declares id other, expected s' matches /expected s/."
+        },
+        {
+          "id": "loader.test.ts > loadWorld > returns scenes array",
+          "kind": "unit",
+          "name": "loadWorld returns scenes array",
+          "title": "loadWorld returns the resolved scenes as an array",
+          "scenario": "Given a valid world with scene s, When loadWorld is called, Then loaded.scenes is an array whose first entry has id s",
+          "command": "npx vitest run tests/loader.test.ts --testTimeout=10000",
+          "file": "tests/loader.test.ts",
+          "status": "passed",
+          "detail": "Array.isArray(loaded.scenes) true; loaded.scenes[0].id === 's'."
+        }
+      ],
+      "started_at": "2026-11-23T11:44:54.167196+00:00",
+      "ended_at": "2026-11-23T11:45:31.106432+00:00",
+      "run_started_at": "2026-11-23T11:44:54.167196+00:00",
+      "duration_ms": 36797,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-028",
+      "title": "Verify: loader.ts validateWorld reference unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M843H7N4JAG6DJEY2FCWM3C2"
+      ],
+      "depends_on": [
+        "UNIT-026",
+        "REQ-014"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "b10eb5740e4a824eb863cfc4f49af9e5090895c8",
+      "from_sha": "5c9d5ce2ec529e64c5ec9fab1e8a173c0e77ca48",
+      "tests": [
+        {
+          "id": "validator.test.ts::validateWorld invalid reference detection::reports unknown scene, character, flag and object references for an invalid world",
+          "kind": "unit",
+          "name": "reports unknown scene, character, flag and object references for an invalid world",
+          "title": "validateWorld reports unknown scene, character, flag and object references",
+          "scenario": "Given an invalid world with a scene referencing missing ids, When validateWorld runs, Then it reports each unknown reference",
+          "command": "npx vitest run tests/validator.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "validator.test.ts::validateWorld invalid reference detection::reports unknown start scene and unknown dialogue next",
+          "kind": "unit",
+          "name": "reports unknown start scene and unknown dialogue next",
+          "title": "validateWorld reports unknown start scene and unknown dialogue next",
+          "scenario": "Given a world with startScene 'missing' and a choice whose next is 'nope', When validateWorld runs, Then it reports 'unknown scene: missing' and 'unknown dialogue: nope'",
+          "command": "npx vitest run tests/validator.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "validator.test.ts::loadWorld and validateWorld with a valid world::loadWorld returns the scene keyed by its id from scenes/s.yaml",
+          "kind": "unit",
+          "name": "loadWorld returns the scene keyed by its id from scenes/s.yaml",
+          "title": "loadWorld resolves scenes from scenes/<id>.yaml",
+          "scenario": "Given a temp world dir with world.yaml and scenes/s.yaml, When loadWorld runs, Then the loaded scenes contain scene 's'",
+          "command": "npx vitest run tests/validator.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": "Assertion adapted to array form (scenes[0].id) to match loader.ts LoadedWorld contract."
+        },
+        {
+          "id": "validator.test.ts::loadWorld and validateWorld with a valid world::loadWorld throws an error naming s2.yaml when world.yaml lists a scene with no file",
+          "kind": "unit",
+          "name": "loadWorld throws an error naming s2.yaml when world.yaml lists a scene with no file",
+          "title": "loadWorld reports a missing scene file by name",
+          "scenario": "Given world.yaml lists scenes s and s2 but only s.yaml exists, When loadWorld runs, Then it throws an error naming s2.yaml",
+          "command": "npx vitest run tests/validator.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "validator.test.ts::loadWorld and validateWorld with a valid world::validateWorld returns no errors for the fully consistent valid fixture",
+          "kind": "unit",
+          "name": "validateWorld returns no errors for the fully consistent valid fixture",
+          "title": "validateWorld accepts a fully consistent world",
+          "scenario": "Given the valid world and scene fixtures, When validateWorld runs, Then it returns an empty error list",
+          "command": "npx vitest run tests/validator.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "content.test.ts",
+          "kind": "unit",
+          "name": "tests/content.test.ts (4 tests)",
+          "title": "Bedroom content loads and validates with no reference errors",
+          "scenario": "Given the the-boys-room content files, When loadWorld and validateWorld run through src/content/loader.ts, Then no reference errors are reported",
+          "command": "npx vitest run tests/validator.test.ts tests/content.test.ts",
+          "file": "tests/validator.test.ts",
+          "status": "passed",
+          "detail": "All 4 tests in the file passed; individual names not enumerated."
+        }
+      ],
+      "started_at": "2026-11-23T11:44:29.226156+00:00",
+      "ended_at": "2026-11-23T11:45:26.027144+00:00",
+      "run_started_at": "2026-11-23T11:44:29.226156+00:00",
+      "duration_ms": 56629,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-013",
+      "title": "REQ · Single loadWorld with strict field validation",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-005"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-014",
+      "title": "REQ · One validator, world.ts removed, imports updated",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-005"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-005",
+      "title": "Evidence: Single loader and validator unit test results",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-025",
+        "UNIT-026",
+        "UNIT-027",
+        "UNIT-028"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-026",
+      "dst": "EVD-005"
+    },
+    {
+      "src": "UNIT-027",
+      "dst": "EVD-005"
+    },
+    {
+      "src": "REQ-014",
+      "dst": "UNIT-026"
+    },
+    {
+      "src": "INT-005",
+      "dst": "REQ-014"
+    },
+    {
+      "src": "UNIT-025",
+      "dst": "UNIT-027"
+    },
+    {
+      "src": "UNIT-026",
+      "dst": "UNIT-028"
+    },
+    {
+      "src": "UNIT-025",
+      "dst": "EVD-005"
+    },
+    {
+      "src": "INT-005",
+      "dst": "REQ-013"
+    },
+    {
+      "src": "UNIT-028",
+      "dst": "EVD-005"
+    },
+    {
+      "src": "REQ-013",
+      "dst": "UNIT-025"
+    },
+    {
+      "src": "REQ-013",
+      "dst": "UNIT-027"
+    },
+    {
+      "src": "REQ-014",
+      "dst": "UNIT-028"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m843h7",
+  "base_sha": "6206742af4dcb7cd09adf3ba8bc5e5fda14b0f76",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M843H7R9MZSHG7FCCK90RP0W:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T11:44:18.185074+00:00",
+  "updated_at": "2026-11-23T11:45:31.855635+00:00",
+  "completed_at": "2026-11-23T11:45:31.107664+00:00",
+  "duration_ms": 72922,
+  "usage_stats": {
+    "total_duration_ms": 139271
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 26,
+  "unit_allowlist": [
+    "UNIT-025",
+    "UNIT-026",
+    "UNIT-027",
+    "UNIT-028"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-025",
+        "title": "Act: Port strict field validation into loader.ts loadWorld",
+        "evidence_refs": [
+          {
+            "id": "EVD-005",
+            "path": ".ai-dlc/evidence/EVD-005.md",
+            "title": "Evidence: Single loader and validator unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-025 unless acceptance outcomes recorded in EVD-005 (.ai-dlc/evidence/EVD-005.md; \"Evidence: Single loader and validator unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-026",
+        "title": "Act: Remove duplicate world.ts module",
+        "evidence_refs": [
+          {
+            "id": "EVD-005",
+            "path": ".ai-dlc/evidence/EVD-005.md",
+            "title": "Evidence: Single loader and validator unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-026 unless acceptance outcomes recorded in EVD-005 (.ai-dlc/evidence/EVD-005.md; \"Evidence: Single loader and validator unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-027",
+        "title": "Verify: loadWorld strict loading unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-005",
+            "path": ".ai-dlc/evidence/EVD-005.md",
+            "title": "Evidence: Single loader and validator unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-027 unless acceptance outcomes recorded in EVD-005 (.ai-dlc/evidence/EVD-005.md; \"Evidence: Single loader and validator unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-028",
+        "title": "Verify: loader.ts validateWorld reference unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-005",
+            "path": ".ai-dlc/evidence/EVD-005.md",
+            "title": "Evidence: Single loader and validator unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-028 unless acceptance outcomes recorded in EVD-005 (.ai-dlc/evidence/EVD-005.md; \"Evidence: Single loader and validator unit test results\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T11:44:18.532935+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-025",
+    "UNIT-026",
+    "UNIT-027",
+    "UNIT-028"
+  ]
+}

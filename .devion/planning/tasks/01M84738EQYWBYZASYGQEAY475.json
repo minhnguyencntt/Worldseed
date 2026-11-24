@@ -1,0 +1,75 @@
+{
+  "id": "01M84738EQYWBYZASYGQEAY475",
+  "intent_id": "01M8471WDMNZZFD9PS77RZ5FV4",
+  "title": "Act: Confirm scheduler construction and start in main",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Verify NewScheduler and main start the scheduler and fix any gap",
+  "description": "Read server.NewScheduler and cmd/server/main.go and confirm the scheduler is built from cfg and run in a goroutine with the signal context.",
+  "acceptance_criteria": [
+    "NewScheduler sets Controller, Rounds, Worlds and Interval",
+    "main calls go server.NewScheduler(cfg).Run(ctx)"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go",
+      "backend/cmd/server/main.go"
+    ],
+    "out_of_scope": [
+      "Scheduler.Tick"
+    ],
+    "preserve": [
+      "Shutdown handling"
+    ]
+  },
+  "technical_constraints": [
+    "Run takes the NotifyContext ctx",
+    "Code path: `backend/internal/server/server.go`",
+    "Code path: `backend/cmd/server/main.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Scheduler wired; build passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-092.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84736MH3BDGT7B77C05MQAT",
+    "trace:01M8470M8T9BC85XFQSVAAYGZG",
+    "artifact:.ai-dlc/units/UNIT-092.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84738EQWNQZGWVPDDXF1D7T"
+  ],
+  "sim_node_id": "01M84736MHCQG5YV92GE44Z0DM",
+  "feature_id": "01M8470M8T9BC85XFQSVAAYGZG",
+  "artifact_path": ".ai-dlc/units/UNIT-092.md",
+  "artifact_id": "UNIT-092",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "NewScheduler",
+      "lines": "L140-L162",
+      "action": "Confirm the returned round.Scheduler sets Controller to newRoundService(cfg), Rounds to &round.FileStore{Root: cfg.Storage.RepoPath}, Worlds from repo.List and Interval to cfg.Round.SchedulerInterval; set any missing field.",
+      "code": "Interval: cfg.Round.SchedulerInterval,",
+      "expected": "All four fields set"
+    },
+    {
+      "file": "backend/cmd/server/main.go",
+      "symbol": "main",
+      "lines": "L30-L33",
+      "action": "Confirm go server.NewScheduler(cfg).Run(ctx) is called after signal.NotifyContext and before ListenAndServe; add it if missing.",
+      "code": "go server.NewScheduler(cfg).Run(ctx)",
+      "expected": "Scheduler goroutine starts with server"
+    }
+  ],
+  "created_at": "2026-11-23T12:46:34.455447+00:00",
+  "updated_at": "2026-11-23T12:47:11.818848+00:00"
+}

@@ -1,0 +1,70 @@
+{
+  "id": "01M85644WCVE2399FWMW8YRN6M",
+  "intent_id": "01M8560PVSPK3BJS1C30JXENCT",
+  "title": "Verify: preload.test.ts planner and resolver unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create preload.test.ts with dedup, unknown and fallback-key cases",
+  "description": "Create game/tests/preload.test.ts with an in-memory manifest and the valid-world fixture; no filesystem or Phaser involved.",
+  "acceptance_criteria": [
+    "Dedup, unknown and fallback-key tests pass",
+    "Tests use only in-memory data"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/preload.test.ts planner describe block"
+    ],
+    "out_of_scope": [
+      "BootScene block"
+    ],
+    "preserve": [
+      "Existing test files"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Command passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-516.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8562BYKM8PQ2AV8Q47PCQD5",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-516.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85644WCM8N6JDZMVQC2EBTY"
+  ],
+  "sim_node_id": "01M8562BYK2RT6C8BCZTQQM0R7",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-516.md",
+  "artifact_id": "UNIT-516",
+  "steps": [
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: describe('planPreload dedup and unknown')",
+      "lines": "new",
+      "action": "Create the file importing planPreload from '../src/engine/planPreload', validScene from './fixtures/valid-world' and an in-memory manifest with one asset id 'A'. Add test 'dedupes' (two objects asset 'A' => load ['A'], unknown []) and test 'reports unknown' (object asset 'Z' and dust effect asset 'Y' => unknown ['Z','Y'], load []).",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t 'planPreload'",
+      "expected": "Both tests pass"
+    },
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: describe('resolveTextureKey fallback')",
+      "lines": "after planner describe",
+      "action": "Add tests: resolveTextureKey('Z', manifest, 'fb') === 'fb'; resolveTextureKey(undefined, manifest, 'fb') === 'fb'; resolveTextureKey('A', manifest, 'fb') === 'A'.",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t 'resolveTextureKey'",
+      "expected": "Fallback key returned for unknown or undefined id"
+    }
+  ],
+  "created_at": "2026-11-23T21:48:49.420649+00:00",
+  "updated_at": "2026-11-23T21:51:11.430338+00:00"
+}

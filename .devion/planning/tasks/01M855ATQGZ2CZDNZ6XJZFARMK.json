@@ -1,0 +1,68 @@
+{
+  "id": "01M855ATQGZ2CZDNZ6XJZFARMK",
+  "intent_id": "01M8556WFEASC9F9P2D8RG7ZK6",
+  "title": "Verify: planPreload and resolveTextureKey unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the preload planner and resolver",
+  "description": "Pure unit tests with in-memory manifest and scene objects; no filesystem.",
+  "acceptance_criteria": [
+    "planPreload test asserts deduplicated entries and the unknown ref issue",
+    "resolveTextureKey test asserts the fallback key for an unknown id"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/preload.test.ts"
+    ],
+    "out_of_scope": [
+      "Phaser"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Fixture shape mirrors assetSchema and sceneSchema in game/src"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-504.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855951HJMVSE461B1VH6QZD",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-504.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M855ATQGFJ16CH7AG2S8RX2P"
+  ],
+  "sim_node_id": "01M855951HPDWW8S52R44FNJ33",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-504.md",
+  "artifact_id": "UNIT-504",
+  "steps": [
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: planPreload dedupes and reports unknown refs",
+      "lines": "new",
+      "action": "Build a manifest with assets 'a' and 'b' (types per assetSchema) and a scene whose two objects use 'a', one object uses 'missing', and a dust effect uses 'b'. Assert entries ids equal ['a','b'] and issues has length 1 with message containing 'missing'.",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t planPreload",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: resolveTextureKey falls back",
+      "lines": "new",
+      "action": "Assert resolveTextureKey('a', new Set(['a'])) === 'a' and resolveTextureKey('x', new Set(['a'])) === FALLBACK_ASSET_ID.",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t resolveTextureKey",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T21:34:59.824050+00:00",
+  "updated_at": "2026-11-23T21:36:50.363637+00:00"
+}

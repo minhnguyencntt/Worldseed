@@ -1,0 +1,74 @@
+{
+  "id": "01M84MA4F5JNTCJPEJ4ZW13S51",
+  "intent_id": "01M84M8HTP9R8NH34RBDEJ59M0",
+  "title": "Act: Add sound and settings flags and actions to useUiStore",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend UiState with soundEnabled, settingsOpen and actions.",
+  "description": "Extend src/store/uiStore.ts with soundEnabled (true), settingsOpen (false), toggleSound, setSoundEnabled and toggleSettings.",
+  "acceptance_criteria": [
+    "Given the store, When toggleSound is called, Then soundEnabled is false",
+    "Given the store, When toggleSettings is called, Then settingsOpen is true"
+  ],
+  "scope": {
+    "in_scope": [
+      "src/store/uiStore.ts"
+    ],
+    "out_of_scope": [
+      "audio playback"
+    ],
+    "preserve": [
+      "Drawer and modal actions"
+    ]
+  },
+  "technical_constraints": [
+    "New file: `game/frontend/src/store/uiStore.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Store compiles with tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-293.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84M9HA7GDM7JW961CD3QP3H",
+    "trace:01M84KNPXBJWXQBKC3G7CYRWWD",
+    "artifact:.ai-dlc/units/UNIT-293.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84MA4F5EFEZ47FATHX0WF2H"
+  ],
+  "sim_node_id": "01M84M9HA7HSQQX381RT1FV0FW",
+  "feature_id": "01M84KNPXBJWXQBKC3G7CYRWWD",
+  "artifact_path": ".ai-dlc/units/UNIT-293.md",
+  "artifact_id": "UNIT-293",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/store/uiStore.ts",
+      "symbol": "UiState",
+      "lines": "new",
+      "action": "Add to interface UiState: soundEnabled: boolean; settingsOpen: boolean; toggleSound: () => void; setSoundEnabled: (on: boolean) => void; toggleSettings: () => void.",
+      "code": "soundEnabled: boolean;\nsettingsOpen: boolean;\ntoggleSound: () => void;\nsetSoundEnabled: (on: boolean) => void;\ntoggleSettings: () => void;",
+      "expected": "Interface declares the new members"
+    },
+    {
+      "file": "game/frontend/src/store/uiStore.ts",
+      "symbol": "useUiStore",
+      "lines": "new",
+      "action": "In the create initializer add soundEnabled: true, settingsOpen: false and the three actions.",
+      "code": "soundEnabled: true,\nsettingsOpen: false,\ntoggleSound: () => set((s) => ({ soundEnabled: !s.soundEnabled })),\nsetSoundEnabled: (on) => set({ soundEnabled: on }),\ntoggleSettings: () => set((s) => ({ settingsOpen: !s.settingsOpen })),",
+      "expected": "npx tsc --noEmit passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:37:31.237179+00:00",
+  "updated_at": "2026-11-23T16:39:39.766351+00:00"
+}

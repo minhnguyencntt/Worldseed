@@ -1,0 +1,56 @@
+{
+  "id": "01M85A0KA23S9M6084E1WEEZJW",
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "title": "REQ · BootScene spawns NPCs from scene data and reports their interaction",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "BootScene creates and animates one sprite per scene character and emits characterClick with the interaction dialogue id when an NPC is clicked.",
+  "description": "Context: BootScene.createCharacter spawns and animates sprites from scene.characters but a click only plays the interact animation. Desired behavior: add a characterClick event to PhaserToReactEvents and emit it from the sprite pointerdown handler when the spec has an interaction. Expected result: React can open the NPC dialogue without engine changes. Why: completes data-driven NPC support.",
+  "acceptance_criteria": [
+    "Given scene.characters with two entries, When create runs, Then add.sprite is called twice with each position and each sprite plays its idle animation.",
+    "Given a character with interaction.dialogue 'greet', When pointerdown fires, Then characterClick is emitted with { id, dialogue: 'greet' }.",
+    "Given a character without interaction, When pointerdown fires, Then no characterClick is emitted and the interact animation still plays."
+  ],
+  "scope": {
+    "in_scope": [
+      "frontend/src/phaser/events.ts",
+      "frontend/src/phaser/BootScene.ts createCharacter"
+    ],
+    "out_of_scope": [
+      "React-side handling of characterClick"
+    ],
+    "preserve": [
+      "Existing interact-then-idle animation behavior",
+      "Sprite cleanup on SHUTDOWN"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Event typed and emitted; sprites spawn per scene character",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-295.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859XCEVQQMKHX4BAVVZGBG9",
+    "trace:01M855M826E3C405ZASCHH5B77",
+    "artifact:.ai-dlc/requirements/REQ-295.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "NEW",
+  "depends_on": [
+    "01M85A0KA25J43BHRWCKVHG3NN"
+  ],
+  "sim_node_id": "01M859XCEVHRFZD4HW8PV1XCXB",
+  "feature_id": "01M855M826E3C405ZASCHH5B77",
+  "artifact_path": ".ai-dlc/requirements/REQ-295.md",
+  "artifact_id": "REQ-295",
+  "created_at": "2026-11-23T22:56:47.426266+00:00"
+}

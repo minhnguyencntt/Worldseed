@@ -1,0 +1,611 @@
+{
+  "id": "01M85D869404HG8K7QZK65E8B2",
+  "trigger_node_id": "INT-129, UNIT-642 +6",
+  "node_ids": [
+    "INT-129",
+    "UNIT-642",
+    "UNIT-643",
+    "UNIT-644",
+    "UNIT-645",
+    "REQ-321",
+    "REQ-322",
+    "EVD-129"
+  ],
+  "intent_id": "INT-129",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-129",
+      "title": "SG-8.2.2 Max-length constant, counter and over-limit block",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-642",
+      "title": "Act: Add MAX_PROMPT_LENGTH and the n / max counter",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D85DWC8GPDTZQT862M52F"
+      ],
+      "depends_on": [
+        "REQ-321"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "7c47691409ba532e1be409f6336ba6f6dd9fb2e0",
+      "from_sha": "db4486860c9f8b80315df0c97e9984f83146c4b3",
+      "started_at": "2026-11-23T23:53:24.704777+00:00",
+      "ended_at": "2026-11-23T23:54:03.112106+00:00",
+      "run_started_at": "2026-11-23T23:53:24.704777+00:00",
+      "duration_ms": 35010,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 3620,
+      "estimated_cost_usd": 0.014494
+    },
+    {
+      "unit_id": "UNIT-643",
+      "title": "Act: Block over-limit submit with an inline message",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D85DW1BCPJQHPH9Y5G2NF"
+      ],
+      "depends_on": [
+        "REQ-322"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "c668e534d5397067e88791008d2fb885c7cc1e00",
+      "from_sha": "7c47691409ba532e1be409f6336ba6f6dd9fb2e0",
+      "started_at": "2026-11-23T23:53:24.730766+00:00",
+      "ended_at": "2026-11-23T23:54:23.503228+00:00",
+      "run_started_at": "2026-11-23T23:53:24.730766+00:00",
+      "duration_ms": 55602,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 28,
+      "tokens_out": 8277,
+      "estimated_cost_usd": 0.03313
+    },
+    {
+      "unit_id": "UNIT-644",
+      "title": "Verify: Max-length counter unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D85DWT0D1XHA7JV01H02T"
+      ],
+      "depends_on": [
+        "UNIT-642",
+        "REQ-321"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "a4b9672c35705e29650179ab6f157d65e9e58ffb",
+      "from_sha": "a4b9672c35705e29650179ab6f157d65e9e58ffb",
+      "tests": [
+        {
+          "id": "contributionMaxLength.initial-render-0-of-500",
+          "kind": "unit",
+          "name": "initial render shows \"0 / 500\"",
+          "title": "ContributionSheet max length counter: initial render shows \"0 / 500\"",
+          "scenario": "Given the sheet is open with an empty idea, When it renders, Then the counter reads 0 / 500",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength.typing-hello-5-of-500",
+          "kind": "unit",
+          "name": "typing \"hello\" shows \"5 / 500\"",
+          "title": "ContributionSheet max length counter: typing \"hello\" shows \"5 / 500\"",
+          "scenario": "Given the sheet is open, When the idea is changed to hello, Then the counter reads 5 / 500",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength.whitespace-not-counted",
+          "kind": "unit",
+          "name": "surrounding whitespace is not counted: \"  hi  \" shows \"2 / 500\"",
+          "title": "ContributionSheet max length counter: surrounding whitespace is not counted",
+          "scenario": "Given the sheet is open, When the idea is changed to '  hi  ', Then the counter reads 2 / 500",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength.textarea-described-by-counter",
+          "kind": "unit",
+          "name": "textarea is described by the counter element",
+          "title": "ContributionSheet max length counter: textarea is described by the counter element",
+          "scenario": "Given the sheet is open, When it renders, Then the textarea aria-describedby contains contribution-idea-count",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength.max-prompt-length-500",
+          "kind": "unit",
+          "name": "MAX_PROMPT_LENGTH is 500",
+          "title": "ContributionSheet max length counter: MAX_PROMPT_LENGTH is 500",
+          "scenario": "Given the client module exports MAX_PROMPT_LENGTH, Then its value is 500",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "ff3cd45565b388562f230b50c9e13d793a4b7b39",
+          "from_sha": "c668e534d5397067e88791008d2fb885c7cc1e00",
+          "tests": [
+            {
+              "id": "contributionMaxLength.initial-zero",
+              "kind": "unit",
+              "name": "initial render shows '0 / 500'",
+              "title": "ContributionSheet max length counter: initial render shows \"0 / 500\"",
+              "scenario": "Given the sheet is open with an empty idea, When it renders, Then the counter reads 0 / 500",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=20000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength.hello-five",
+              "kind": "unit",
+              "name": "typing 'hello' shows '5 / 500'",
+              "title": "ContributionSheet max length counter: typing \"hello\" shows \"5 / 500\"",
+              "scenario": "Given the sheet is open, When the idea is changed to 'hello', Then the counter reads 5 / 500",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=20000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength.trimmed-count",
+              "kind": "unit",
+              "name": "'  hi  ' shows '2 / 500'",
+              "title": "ContributionSheet max length counter: surrounding whitespace is not counted",
+              "scenario": "Given the sheet is open, When the idea is changed to '  hi  ', Then the counter reads 2 / 500",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=20000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength.aria-describedby",
+              "kind": "unit",
+              "name": "textarea aria-describedby contains 'contribution-idea-count'",
+              "title": "ContributionSheet max length counter: textarea is described by the counter element",
+              "scenario": "Given the sheet is open, When the idea textarea is inspected, Then its aria-describedby contains contribution-idea-count",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=20000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength.max-prompt-length",
+              "kind": "unit",
+              "name": "MAX_PROMPT_LENGTH equals 500",
+              "title": "ContributionSheet max length counter: MAX_PROMPT_LENGTH is 500",
+              "scenario": "Given the API client module, When MAX_PROMPT_LENGTH is read, Then it equals 500",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t counter --testTimeout=20000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-23T23:54:03.126516+00:00",
+          "ended_at": "2026-11-23T23:54:28.333407+00:00",
+          "duration_ms": 23583,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 10,
+          "tokens_out": 3994,
+          "estimated_cost_usd": 0.015984
+        }
+      ],
+      "started_at": "2026-11-23T23:54:03.126516+00:00",
+      "ended_at": "2026-11-23T23:55:54.849370+00:00",
+      "run_started_at": "2026-11-23T23:55:28.818147+00:00",
+      "duration_ms": 23233,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3863,
+      "estimated_cost_usd": 0.01546
+    },
+    {
+      "unit_id": "UNIT-645",
+      "title": "Verify: Over-limit message and submit block unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85D85DWEYWM01Y06Z6GZR8Y"
+      ],
+      "depends_on": [
+        "UNIT-643",
+        "REQ-322"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "a4b9672c35705e29650179ab6f157d65e9e58ffb",
+      "from_sha": "73a9fb78a8126af3655a4d629792df810d1eec5b",
+      "tests": [
+        {
+          "id": "contributionMaxLength > over limit: 501 characters block submit",
+          "kind": "unit",
+          "name": "501 characters show \"Too long: 501 / 500\" and block submit",
+          "title": "Over-limit message appears and submit is blocked at 501 characters",
+          "scenario": "Given the sheet is open, When 501 characters are entered and Send is clicked, Then the alert reads 'Too long: 501 / 500', the textarea is aria-invalid, submit is not called, and the value keeps 501 characters",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength > over limit: 500 characters submit",
+          "kind": "unit",
+          "name": "500 characters show no limit message and submit the full string",
+          "title": "500 characters show no limit message and submit",
+          "scenario": "Given 500 characters are entered, When Send is clicked, Then no 'Too long' message is shown and submit is called once with the 500-character string",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength > over limit: 501 to 500 clears message",
+          "kind": "unit",
+          "name": "changing from 501 to 500 characters removes the limit message",
+          "title": "Limit message clears when the text drops from 501 to 500 characters",
+          "scenario": "Given the message shows at 501 characters, When the text is changed to 500 characters, Then the 'Too long' message is removed",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionMaxLength > over limit: 500 plus spaces submits trimmed",
+          "kind": "unit",
+          "name": "500 characters plus surrounding spaces still submit the trimmed 500-character string",
+          "title": "500 characters with surrounding spaces still submit after trimming",
+          "scenario": "Given 500 characters padded with spaces, When Send is clicked, Then no limit message is shown and submit is called once with the trimmed 500-character string",
+          "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+          "file": "tests/contributionMaxLength.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "contributionBlank (existing suite, unchanged)",
+          "kind": "unit",
+          "name": "tests/contributionBlank.test.tsx",
+          "title": "Blank submit behavior is preserved",
+          "scenario": "Given the existing blank-submit suite, When it runs unchanged, Then all 5 tests pass",
+          "command": "npx vitest run tests/contributionBlank.test.tsx --testTimeout=10000",
+          "file": "tests/contributionBlank.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (1): textarea is marked invalid and described by the alert after a blank submit",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "1510862354e916a7c3bb54b1907db3700a008864",
+          "from_sha": "ff3cd45565b388562f230b50c9e13d793a4b7b39",
+          "tests": [
+            {
+              "id": "contributionMaxLength > over limit > 501 characters show Too long message and block submit",
+              "kind": "unit",
+              "name": "501 characters show \"Too long: 501 / 500\" and block submit",
+              "title": "501 characters show 'Too long: 501 / 500' and block submit",
+              "scenario": "Given a 501-char idea, when Send is clicked, then the alert shows the limit message, aria-invalid is true, submit is not called, and the text is kept",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": "Textarea keeps 501 chars; submitContribution not called."
+            },
+            {
+              "id": "contributionMaxLength > over limit > 500 characters submit the full string",
+              "kind": "unit",
+              "name": "500 characters show no limit message and submit the full string",
+              "title": "500 characters show no limit message and submit the full string",
+              "scenario": "Given a 500-char idea, when Send is clicked, then no 'Too long' message appears and submit is called once with the 500-char string",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength > over limit > changing from 501 to 500 removes the message",
+              "kind": "unit",
+              "name": "changing from 501 to 500 characters removes the limit message",
+              "title": "Changing from 501 to 500 characters removes the limit message",
+              "scenario": "Given the over-limit message is shown, when the text is edited to 500 chars, then the message is removed",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionMaxLength > over limit > 500 characters plus surrounding spaces still submit",
+              "kind": "unit",
+              "name": "500 characters plus surrounding spaces still submit the trimmed 500-character string",
+              "title": "500 characters plus surrounding spaces still submit the trimmed 500-character string",
+              "scenario": "Given 500 chars wrapped in spaces, when Send is clicked, then no limit message appears and submit is called with the trimmed string",
+              "command": "npx vitest run tests/contributionMaxLength.test.tsx -t over --testTimeout=10000",
+              "file": "tests/contributionMaxLength.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "contributionBlank > existing suite (4 tests, unchanged)",
+              "kind": "unit",
+              "name": "contributionBlank.test.tsx existing blank-submit suite",
+              "title": "Existing blank-submit behaviour is preserved",
+              "scenario": "Run unchanged; blank and whitespace submits still show 'Enter an idea first' and do not submit",
+              "command": "npx vitest run tests/contributionBlank.test.tsx --testTimeout=10000",
+              "file": "tests/contributionBlank.test.tsx",
+              "status": "passed",
+              "detail": "4 of 5 tests passed."
+            },
+            {
+              "id": "contributionBlank > textarea is marked invalid and described by the alert after a blank submit",
+              "kind": "unit",
+              "name": "textarea is marked invalid and described by the alert after a blank submit",
+              "title": "Textarea is marked invalid and described by the alert after a blank submit",
+              "scenario": "Given a blank submit, when the textarea is inspected, then aria-invalid is true and aria-describedby equals the alert id",
+              "command": "npx vitest run tests/contributionBlank.test.tsx --testTimeout=10000",
+              "file": "tests/contributionBlank.test.tsx",
+              "status": "failed",
+              "detail": "Regression: aria-describedby is 'contribution-idea-count contribution-idea-error' and no longer equals only the alert id (contributionBlank.test.tsx:63). Blank test left unchanged per Step 2; Act/Plan must decide how to reconcile it with the counter spec."
+            }
+          ],
+          "started_at": "2026-11-23T23:54:23.512118+00:00",
+          "ended_at": "2026-11-23T23:54:58.617167+00:00",
+          "duration_ms": 33164,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 10,
+          "tokens_out": 6308,
+          "estimated_cost_usd": 0.02524
+        }
+      ],
+      "started_at": "2026-11-23T23:54:23.512118+00:00",
+      "ended_at": "2026-11-23T23:55:53.761948+00:00",
+      "run_started_at": "2026-11-23T23:55:28.809748+00:00",
+      "duration_ms": 21860,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3067,
+      "estimated_cost_usd": 0.012276
+    },
+    {
+      "unit_id": "REQ-321",
+      "title": "REQ · Shared max-length constant drives a visible n / max counter",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-129"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-322",
+      "title": "REQ · Over-limit text shows an inline message and blocks submit",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-129"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-129",
+      "title": "Evidence: Max length counter and over-limit unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-642",
+        "UNIT-643",
+        "UNIT-644",
+        "UNIT-645"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-645",
+      "title": "Act: Fix Verify failure — Over-limit message and submit block unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "73a9fb78a8126af3655a4d629792df810d1eec5b",
+      "from_sha": "1510862354e916a7c3bb54b1907db3700a008864",
+      "started_at": "2026-11-23T23:54:58.625780+00:00",
+      "ended_at": "2026-11-23T23:55:28.585112+00:00",
+      "run_started_at": "2026-11-23T23:54:58.625780+00:00",
+      "duration_ms": 26835,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 3311,
+      "estimated_cost_usd": 0.013254
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-321",
+      "dst": "UNIT-644"
+    },
+    {
+      "src": "UNIT-643",
+      "dst": "EVD-129"
+    },
+    {
+      "src": "INT-129",
+      "dst": "REQ-321"
+    },
+    {
+      "src": "UNIT-642",
+      "dst": "UNIT-644"
+    },
+    {
+      "src": "UNIT-644",
+      "dst": "EVD-129"
+    },
+    {
+      "src": "INT-129",
+      "dst": "REQ-322"
+    },
+    {
+      "src": "UNIT-642",
+      "dst": "EVD-129"
+    },
+    {
+      "src": "UNIT-645",
+      "dst": "EVD-129"
+    },
+    {
+      "src": "REQ-321",
+      "dst": "UNIT-642"
+    },
+    {
+      "src": "REQ-322",
+      "dst": "UNIT-645"
+    },
+    {
+      "src": "UNIT-643",
+      "dst": "UNIT-645"
+    },
+    {
+      "src": "REQ-322",
+      "dst": "UNIT-643"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85d86",
+  "base_sha": "db4486860c9f8b80315df0c97e9984f83146c4b3",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85D869404HG8K7QZK65E8B2:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T23:53:21.956038+00:00",
+  "updated_at": "2026-11-23T23:55:56.689726+00:00",
+  "completed_at": "2026-11-23T23:55:54.850877+00:00",
+  "duration_ms": 152894,
+  "usage_stats": {
+    "total_duration_ms": 219298,
+    "total_tokens_in": 98,
+    "total_tokens_out": 32440,
+    "total_estimated_cost_usd": 0.129838
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-642",
+    "UNIT-643",
+    "UNIT-644",
+    "UNIT-645"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-642",
+        "title": "Act: Add MAX_PROMPT_LENGTH and the n / max counter",
+        "evidence_refs": [
+          {
+            "id": "EVD-129",
+            "path": ".ai-dlc/evidence/EVD-129.md",
+            "title": "Evidence: Max length counter and over-limit unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-642 unless acceptance outcomes recorded in EVD-129 (.ai-dlc/evidence/EVD-129.md; \"Evidence: Max length counter and over-limit unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-643",
+        "title": "Act: Block over-limit submit with an inline message",
+        "evidence_refs": [
+          {
+            "id": "EVD-129",
+            "path": ".ai-dlc/evidence/EVD-129.md",
+            "title": "Evidence: Max length counter and over-limit unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-643 unless acceptance outcomes recorded in EVD-129 (.ai-dlc/evidence/EVD-129.md; \"Evidence: Max length counter and over-limit unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-644",
+        "title": "Verify: Max-length counter unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-129",
+            "path": ".ai-dlc/evidence/EVD-129.md",
+            "title": "Evidence: Max length counter and over-limit unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-644 unless acceptance outcomes recorded in EVD-129 (.ai-dlc/evidence/EVD-129.md; \"Evidence: Max length counter and over-limit unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-645",
+        "title": "Verify: Over-limit message and submit block unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-129",
+            "path": ".ai-dlc/evidence/EVD-129.md",
+            "title": "Evidence: Max length counter and over-limit unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-645 unless acceptance outcomes recorded in EVD-129 (.ai-dlc/evidence/EVD-129.md; \"Evidence: Max length counter and over-limit unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T23:53:24.255495+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-642",
+    "UNIT-643",
+    "UNIT-644",
+    "UNIT-645"
+  ]
+}

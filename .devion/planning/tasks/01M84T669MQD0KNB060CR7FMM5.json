@@ -1,0 +1,66 @@
+{
+  "id": "01M84T669MQD0KNB060CR7FMM5",
+  "intent_id": "01M84T26TV9815MN0SJWGRKHWZ",
+  "title": "Act: Add assertNoTrackedNodeModules guard",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Guard throws when dependency paths are tracked",
+  "description": "Add assertNoTrackedNodeModules(git) to the same module.",
+  "acceptance_criteria": [
+    "Throws naming offending paths",
+    "Resolves when clean"
+  ],
+  "scope": {
+    "in_scope": [
+      "Guard"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Other exports"
+    ]
+  },
+  "technical_constraints": [
+    "New file: `game/frontend/src/lib/untrackNodeModules.ts`"
+  ],
+  "dependencies": [
+    "a1"
+  ],
+  "definition_of_done": [
+    "Guard exported",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-432.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84T4C3M7M7FFP60J04TZAT1",
+    "trace:01M84SNEWGP2GNT0CZ0JFS4QMA",
+    "artifact:.ai-dlc/units/UNIT-432.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84T669MG5TNK8KN6X2DP3E1"
+  ],
+  "sim_node_id": "01M84T4C3M3H57EV1BP0MDVJ8K",
+  "feature_id": "01M84SNEWGP2GNT0CZ0JFS4QMA",
+  "artifact_path": ".ai-dlc/units/UNIT-432.md",
+  "artifact_id": "UNIT-432",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/untrackNodeModules.ts",
+      "symbol": "new: assertNoTrackedNodeModules",
+      "lines": "after untrackNodeModules",
+      "action": "Export async assertNoTrackedNodeModules(git: GitRunner): call git(['ls-files']), filter with trackedNodeModulesPaths, and if any remain throw new Error with the count and the first 10 paths joined by newline.",
+      "code": "export async function assertNoTrackedNodeModules(git: GitRunner): Promise<void> {\n  const bad = trackedNodeModulesPaths((await git(['ls-files'])).split('\\n').filter(Boolean));\n  if (bad.length) throw new Error(`${bad.length} tracked node_modules paths:\\n${bad.slice(0, 10).join('\\n')}`);\n}",
+      "expected": "Throws on tracked paths, resolves otherwise"
+    }
+  ],
+  "created_at": "2026-11-23T18:20:13.492092+00:00",
+  "updated_at": "2026-11-23T18:21:06.499417+00:00"
+}

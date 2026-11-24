@@ -1,0 +1,71 @@
+{
+  "id": "01M85644WCC1S8D2K598G5JY8S",
+  "intent_id": "01M8560PVSPK3BJS1C30JXENCT",
+  "title": "Verify: preload.test.ts BootScene planner and fallback unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add BootScene cases with phaser and content mocked",
+  "description": "Extend game/tests/preload.test.ts with a BootScene block mirroring the mocking pattern in game/frontend/tests/bootScenePreload.test.ts (the BootScene.preload and resolveKey contract in game/frontend/src/phaser/BootScene.ts).",
+  "acceptance_criteria": [
+    "Only the known referenced asset is loaded",
+    "Unknown ref triggers console.warn",
+    "Fallback key used for unknown or failed ids"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene describe block in preload.test.ts"
+    ],
+    "out_of_scope": [
+      "Real Phaser"
+    ],
+    "preserve": [
+      "Planner tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('phaser'), vi.mock of '../frontend/src/runtime/content' and '../frontend/src/store/gameStore' if needed"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Command passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-517.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8562BYK7KXW4R54ERZ6RJM5",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-517.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85644WCNKEX96VV6YFCK7M3"
+  ],
+  "sim_node_id": "01M8562BYK23H0DBZKPYDY8WQZ",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-517.md",
+  "artifact_id": "UNIT-517",
+  "steps": [
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: BootScene mocks",
+      "lines": "top of file, before imports of BootScene",
+      "action": "Add vi.mock('phaser') returning default { Scene: class { events = { once: vi.fn() } }, Scenes: { Events: { SHUTDOWN: 'shutdown' } } } and vi.mock('../frontend/src/runtime/content') returning a scene with objects asset 'objects/bed' and 'objects/ghost' and a manifest declaring only 'objects/bed' (path 'worlds/the-boys-room/furniture/bed.svg', type 'image'). Import BootScene from '../frontend/src/phaser/BootScene'.",
+      "command": "cd game && npx vitest run tests/preload.test.ts -t 'BootScene'",
+      "expected": "BootScene imports under node env without real Phaser"
+    },
+    {
+      "file": "game/tests/preload.test.ts",
+      "symbol": "new: describe('BootScene uses planner and fallback')",
+      "lines": "after resolver describe",
+      "action": "Build a BootScene, stub boot.load = { image: vi.fn(), on: vi.fn() } and boot.make = { graphics } returning a chainable fake with generateTexture and destroy as vi.fn(); spy console.warn. Call preload() and assert image called once with ('objects/bed','assets/worlds/the-boys-room/furniture/bed.svg'), warn called with 'unknown asset ref: objects/ghost', generateTexture called with ('fallback:missing',8,8). Assert resolveKey('objects/ghost') and resolveKey('nope') equal 'fallback:missing' and resolveKey('objects/bed') equals 'objects/bed'.",
+      "command": "cd game && npx vitest run tests/preload.test.ts",
+      "expected": "All BootScene assertions pass"
+    }
+  ],
+  "created_at": "2026-11-23T21:48:49.420649+00:00",
+  "updated_at": "2026-11-23T21:50:17.216201+00:00"
+}

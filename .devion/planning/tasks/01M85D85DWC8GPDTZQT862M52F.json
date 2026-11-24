@@ -1,0 +1,86 @@
+{
+  "id": "01M85D85DWC8GPDTZQT862M52F",
+  "intent_id": "01M85D3P2X6TSZEGE1EGP1A47P",
+  "title": "Act: Add MAX_PROMPT_LENGTH and the n / max counter",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export the constant and render the counter in ContributionSheet",
+  "description": "Add MAX_PROMPT_LENGTH = 500 to the API client and render a counter derived from the trimmed text length in ContributionSheet.",
+  "acceptance_criteria": [
+    "Counter reads 'n / 500' for the trimmed text length",
+    "Textarea aria-describedby includes the counter id"
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts constant",
+      "ContributionSheet counter"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Over-limit logic"
+    ],
+    "preserve": [
+      "Existing blank validation"
+    ]
+  },
+  "technical_constraints": [
+    "Count with Array.from(text.trim()).length",
+    "Code path: `game/frontend/src/api/client.ts`",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Constant exported and counter rendered",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-642.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85D5DFAPJMYN3CJ3RG1CA00",
+    "trace:01M85CR1JW3XTV6FJ9ER5GQS84",
+    "artifact:.ai-dlc/units/UNIT-642.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85D85DWGFVYCXATJJ8PXCF3"
+  ],
+  "sim_node_id": "01M85D5DFAVE4YEKTCB89ZXDD4",
+  "feature_id": "01M85CR1JW3XTV6FJ9ER5GQS84",
+  "artifact_path": ".ai-dlc/units/UNIT-642.md",
+  "artifact_id": "UNIT-642",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "MAX_PER_PLAYER",
+      "lines": "after L2",
+      "action": "Add an exported constant MAX_PROMPT_LENGTH with value 500 directly below MAX_PER_PLAYER",
+      "code": "export const MAX_PROMPT_LENGTH = 500;",
+      "expected": "MAX_PROMPT_LENGTH is importable and equals 500"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet",
+      "lines": "L2 and L67",
+      "action": "Import MAX_PROMPT_LENGTH from '../api/client' in the existing import on L2, then after the 'remaining' const on L67 add const length = Array.from(text.trim()).length;",
+      "code": "const length = Array.from(text.trim()).length;",
+      "expected": "length holds the trimmed character count on every render"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet textarea JSX",
+      "lines": "L112-L127",
+      "action": "After the textarea add <p id=\"contribution-idea-count\">{`${length} / ${MAX_PROMPT_LENGTH}`}</p>; change aria-describedby on the textarea to join the ids 'contribution-idea-count' and, when validation is set, 'contribution-idea-error' with a space",
+      "code": "aria-describedby={validation ? 'contribution-idea-count contribution-idea-error' : 'contribution-idea-count'}",
+      "expected": "Counter text is visible and referenced by the textarea"
+    }
+  ],
+  "created_at": "2026-11-23T23:53:21.084571+00:00",
+  "updated_at": "2026-11-23T23:55:55.423178+00:00"
+}

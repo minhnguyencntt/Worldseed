@@ -1,0 +1,79 @@
+{
+  "id": "01M84JZMY3PX17HJ8ZK15FGQBF",
+  "intent_id": "01M84JY602RQMMN2PB98QWRQ70",
+  "title": "Verify: Exporter format, frozen-only, empty round and error tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Exporter unit tests exist and pass with fake sources",
+  "description": "Confirm TestExporter_OnlyFrozen, TestExporter_EmptyRound, TestExporter_SourceErrors and TestExport_JSONShape exist and assert the acceptance criteria using fakeSource and errSource; add any missing assertion.",
+  "acceptance_criteria": [
+    "Given the exporter tests, When run, Then all pass",
+    "Given the tests, When read, Then each REQ1 acceptance criterion maps to an assertion"
+  ],
+  "scope": {
+    "in_scope": [
+      "exporter_test.go",
+      "export_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Only fakes; no real storage"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Exporter tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-272.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JZ5W6WX280ACTKDHDZVF1",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-272.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JZMY3J9M4RK191BRSVWF9"
+  ],
+  "sim_node_id": "01M84JZ5W6BPKA9EP31AHJMCMJ",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-272.md",
+  "artifact_id": "UNIT-272",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/exporter_test.go",
+      "symbol": "TestExporter_OnlyFrozen",
+      "lines": "L22-L76",
+      "action": "Confirm it uses fakeSource with contributions A,B,C and frozen C,A and asserts IDs [C A], Author, Content, CreatedAt, Version, WorldID, RoundID",
+      "command": "cd backend && go test ./internal/contribution/ -run 'TestExporter_OnlyFrozen'",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/contribution/exporter_test.go",
+      "symbol": "TestExporter_EmptyRound and TestExporter_SourceErrors",
+      "lines": "L78-L148",
+      "action": "Confirm the empty round asserts non-nil empty Contributions and JSON containing \"contributions\":[], and that errSource errors satisfy errors.Is",
+      "command": "cd backend && go test ./internal/contribution/ -run 'TestExporter_EmptyRound|TestExporter_SourceErrors'",
+      "expected": "Both tests pass"
+    },
+    {
+      "file": "backend/internal/contribution/export_test.go",
+      "symbol": "TestExport_JSONShape",
+      "lines": "L16-L91",
+      "action": "Confirm it marshals an Export and asserts the documented JSON keys",
+      "command": "cd backend && go test ./internal/contribution/ -run 'TestExport_JSONShape'",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T16:14:19.075413+00:00",
+  "updated_at": "2026-11-23T16:14:46.834209+00:00"
+}

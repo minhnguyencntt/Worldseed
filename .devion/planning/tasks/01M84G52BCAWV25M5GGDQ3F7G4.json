@@ -1,0 +1,70 @@
+{
+  "id": "01M84G52BCAWV25M5GGDQ3F7G4",
+  "intent_id": "01M84G0SGVRTS10AHNW40X86RM",
+  "title": "Verify: Lock held and per-attempt timeout unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for foreign lock preservation and per-attempt timeout",
+  "description": "Add tests in a new file using fakeAgent, fakeTrees and the temp-dir rig from newRunner; no real Git or provider.",
+  "acceptance_criteria": [
+    "Given the lock file exists, When Run is called, Then the lock file still exists and the store has no record",
+    "Given a blocking agent, Timeout 20ms and MaxRetries 1, When Run is called, Then calls is 2 and error wraps context.DeadlineExceeded"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner_lock_timeout_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Same package runner"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-199.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84G4KBBVDCRDVBSR90SY88F",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-199.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84G52BCKGG17YXZ5168J02D"
+  ],
+  "sim_node_id": "01M84G4KBBJFAAKM44GSC7ZS98",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-199.md",
+  "artifact_id": "UNIT-199",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_lock_timeout_test.go",
+      "symbol": "new: TestRunLockedKeepsForeignLock",
+      "lines": "new",
+      "action": "Build h via newRunner(t, Config{}, agent); create the file h.cfg.LockPath with os.WriteFile; call h.r.Run(ctx,\"EXEC-1\",\"ROUND-0000001\"); assert errors.Is(err, lock.ErrLocked), os.Stat(h.cfg.LockPath) succeeds, h.st.Get(\"EXEC-1\") returns an error and agent.calls is 0.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunLockedKeepsForeignLock",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_lock_timeout_test.go",
+      "symbol": "new: TestRunTimeoutPerAttempt",
+      "lines": "new",
+      "action": "Use fakeAgent{block:true} and Config{Timeout:20*time.Millisecond, MaxRetries:1}; call Run; assert errors.Is(err, context.DeadlineExceeded) and agent.calls == 2.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunTimeoutPerAttempt",
+      "expected": "Test passes with two attempts"
+    }
+  ],
+  "created_at": "2026-11-23T15:24:50.923969+00:00",
+  "updated_at": "2026-11-23T15:26:09.396474+00:00"
+}

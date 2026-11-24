@@ -1,0 +1,73 @@
+{
+  "id": "01M84K6YW8RGGGH8T7ZS6A0Y70",
+  "intent_id": "01M84K165FF9YSHNCQRV5BN7RC",
+  "title": "Verify: LifecycleStepper has no execution helpers and still renders stages",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Replace the deriveStage test with a stepper export and render test",
+  "description": "Replace game/frontend/tests/deriveStage.test.ts, which imports the removed deriveStage, with a test of the remaining module.",
+  "acceptance_criteria": [
+    "Given the module namespace, when deriveStage is read, then it is undefined",
+    "Given status CLOSED, when the stepper renders, then the CLOSED step is current",
+    "Given the source file, when it is read, then it has no 'execution' text"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/lifecycleStepper.test.tsx",
+      "game/frontend/tests/deriveStage.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "adminStepper.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, no network; use Vitest and Testing Library as in adminStepper.test.tsx",
+    "Read the source with node:fs relative to the test file"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "The new test passes and deriveStage.test.ts is deleted",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-276.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84K6FJ9VDXWT92G5XEJZHMR",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-276.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84K6YW887NZ20BQXMEVGBP1"
+  ],
+  "sim_node_id": "01M84K6FJ995V8H38A8NJGKACK",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-276.md",
+  "artifact_id": "UNIT-276",
+  "steps": [
+    {
+      "file": "game/frontend/tests/deriveStage.test.ts",
+      "symbol": "describe('deriveStage')",
+      "lines": "L1-L22",
+      "action": "Delete this file, because deriveStage no longer exists and the import would fail.",
+      "command": "git rm game/frontend/tests/deriveStage.test.ts",
+      "expected": "The file is removed."
+    },
+    {
+      "file": "game/frontend/tests/lifecycleStepper.test.tsx",
+      "symbol": "new: describe('LifecycleStepper module')",
+      "lines": "new",
+      "action": "Add three tests. (1) import * as mod from '../src/components/LifecycleStepper'; assert (mod as Record<string, unknown>).deriveStage is undefined and mod.stageIndex('CLOSED') is 1. (2) render <LifecycleStepper status=\"CLOSED\" /> and assert the li with text CLOSED has aria-current='step' and the OPEN li has data-state='done'. (3) read ../src/components/LifecycleStepper.tsx with readFileSync and assert its lowercased text does not contain 'execution'.",
+      "command": "cd game/frontend && npx vitest run tests/lifecycleStepper.test.tsx",
+      "expected": "3 tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T16:18:18.632246+00:00",
+  "updated_at": "2026-11-23T16:19:11.650811+00:00"
+}

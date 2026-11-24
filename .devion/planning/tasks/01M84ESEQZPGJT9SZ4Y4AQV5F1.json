@@ -1,0 +1,74 @@
+{
+  "id": "01M84ESEQZPGJT9SZ4Y4AQV5F1",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "Verify: Runner locking, timeout, retry, budget and approval gate unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with fake agent, worktrees, clock-free timeouts and temp dirs",
+  "description": "Test the runner with fakeAgent and fakeTrees recording calls.",
+  "acceptance_criteria": [
+    "Lock contention returns ErrLocked and creates no worktree",
+    "Timeout triggers a retry and ends FAILED with ErrTimeout recorded",
+    "Retry limit yields exactly MaxRetries+1 attempts and FAILED status",
+    "Budget stop returns ErrBudgetExceeded before another attempt starts",
+    "Approval gating blocks Publish until the record is APPROVED",
+    "Report file exists with attempts, cost and status asserted"
+  ],
+  "scope": {
+    "in_scope": [
+      "worker/internal/runner/runner_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Act code"
+    ]
+  },
+  "technical_constraints": [
+    "Use ExecTimeout of a few milliseconds and a fakeAgent that waits on ctx.Done"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass in seconds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-169.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14SSKW319JF1GMMV6Y3",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-169.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZ7M89J8X7HV52A7T0"
+  ],
+  "sim_node_id": "01M84ES14S25FVWS0Q74QBJBS5",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-169.md",
+  "artifact_id": "UNIT-169",
+  "steps": [
+    {
+      "file": "worker/internal/runner/runner_test.go",
+      "symbol": "new: TestRun_LockHeld, TestRun_Timeout, TestRun_RetryLimit",
+      "lines": "new",
+      "action": "LockHeld: pre-Acquire the lock path, assert errors.Is(err, lock.ErrLocked) and fakeTrees.added==0. Timeout: fakeAgent blocks until ctx.Done with ExecTimeout 5ms, MaxRetries 1; assert 2 attempts and errors.Is ErrTimeout recorded and status FAILED. RetryLimit: fakeAgent always errors, MaxRetries 2; assert 3 calls, status FAILED, and Remove called once",
+      "command": "cd worker && go test ./internal/runner -run 'TestRun_(LockHeld|Timeout|RetryLimit)'",
+      "expected": "Three tests pass"
+    },
+    {
+      "file": "worker/internal/runner/runner_test.go",
+      "symbol": "new: TestRun_Budget, TestRun_ApprovalGate, TestRun_Report",
+      "lines": "new",
+      "action": "Budget: fakeAgent returns cost 3 with error, MaxBudgetUSD 5, MaxRetries 5; assert ErrBudgetExceeded after 2 calls. ApprovalGate: success run leaves AWAITING_APPROVAL, Publish returns ErrNotApproved and callback not called; set record APPROVED via Store.Save then Publish calls callback and status COMPLETED; with AutoPublish true status is APPROVED. Report: read development/executions/<id>.report.json from the temp repo and assert Attempts, CostUSD, Status",
+      "command": "cd worker && go test ./internal/runner -run 'TestRun_(Budget|ApprovalGate|Report)'",
+      "expected": "Three tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.151324+00:00"
+}

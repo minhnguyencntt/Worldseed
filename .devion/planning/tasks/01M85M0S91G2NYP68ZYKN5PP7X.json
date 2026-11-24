@@ -1,0 +1,70 @@
+{
+  "id": "01M85M0S91G2NYP68ZYKN5PP7X",
+  "intent_id": "01M85KV2DJJNKDTK66EXGJH3MP",
+  "title": "Verify: App emits interact and transition from game actions unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests prove App forwards actions to reactToPhaser",
+  "description": "Add an App test using the existing fake Phaser host pattern from appObjectClick.test.tsx and a spy on reactToPhaser.emit.",
+  "acceptance_criteria": [
+    "Choosing an action emits playAnimation boy interact",
+    "A scene id change emits transitionTo and no change does not"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/appGameActionEvents.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing app tests"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser, BootScene and createGame mocked; no browser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-745.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85KX50E3CFN425A5W4A24B8",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-745.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85M0S91Z1EXX5S9P0HKD4VR"
+  ],
+  "sim_node_id": "01M85KX50EDDMF6C0FCXHZY74Q",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-745.md",
+  "artifact_id": "UNIT-745",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appGameActionEvents.test.tsx",
+      "symbol": "new: App game action events",
+      "lines": "new",
+      "action": "Create the file copying the mocks and setup of appObjectClick.test.tsx (L1-L50), mock ../src/api/client getCurrentRound to resolve a round, spy on reactToPhaser.emit. Test 'action emits playAnimation': click Begin, emit phaserToReact objectClick for 'bed', click the first ActionMenu action button and assert the spy was called with 'playAnimation', {target:'boy',name:'interact'}.",
+      "command": "npx vitest run tests/appGameActionEvents.test.tsx -t playAnimation",
+      "expected": "playAnimation test passes"
+    },
+    {
+      "file": "game/frontend/tests/appGameActionEvents.test.tsx",
+      "symbol": "transition tests",
+      "lines": "new",
+      "action": "Add test 'scene change emits transitionTo': before clicking the action, make the action change state.sceneId by setting useGameStore.setState in a mocked act path (spy useGame act via vi.mock of ../src/runtime/useGame returning state.sceneId 'bedroom' then store sceneId 'library'); assert emit called with 'transitionTo', {sceneId:'library'}. Add test 'unchanged scene emits no transitionTo' asserting no transitionTo call.",
+      "command": "npx vitest run tests/appGameActionEvents.test.tsx",
+      "expected": "All tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T01:51:39.297258+00:00",
+  "updated_at": "2026-11-24T01:53:53.989173+00:00"
+}

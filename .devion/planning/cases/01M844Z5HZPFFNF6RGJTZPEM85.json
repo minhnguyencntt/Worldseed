@@ -1,0 +1,371 @@
+{
+  "id": "01M844Z5HZPFFNF6RGJTZPEM85",
+  "trigger_node_id": "INT-011, UNIT-053 +6",
+  "node_ids": [
+    "INT-011",
+    "UNIT-053",
+    "UNIT-054",
+    "UNIT-055",
+    "UNIT-056",
+    "REQ-027",
+    "REQ-028",
+    "EVD-011"
+  ],
+  "intent_id": "INT-011",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-011",
+      "title": "SG-3.4 · Frontend type-checks and entry point resolves",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-053",
+      "title": "Act: Declare @types/node and node types in tsconfig",
+      "kind": "unit",
+      "task_ids": [
+        "01M844Z5FZH78M6C559NQC2NRX"
+      ],
+      "depends_on": [
+        "REQ-027"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "df3d9e11b1d4bcce14c10537e6ff4c1d4ad13771",
+      "from_sha": "3ee8c40ff677060c5bee9c66fd04af079e16f2b8",
+      "started_at": "2026-11-23T12:09:24.024989+00:00",
+      "ended_at": "2026-11-23T12:09:57.253521+00:00",
+      "run_started_at": "2026-11-23T12:09:24.024989+00:00",
+      "duration_ms": 32617,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-054",
+      "title": "Act: Guard the missing #root in main.tsx",
+      "kind": "unit",
+      "task_ids": [
+        "01M844Z5FZXMMP9X15C0PTGW4M"
+      ],
+      "depends_on": [
+        "REQ-028"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "3ee8c40ff677060c5bee9c66fd04af079e16f2b8",
+      "from_sha": "babce437db196f34c148ff3833b937edc92e49a6",
+      "started_at": "2026-11-23T12:09:24.048757+00:00",
+      "ended_at": "2026-11-23T12:09:36.392223+00:00",
+      "run_started_at": "2026-11-23T12:09:24.048757+00:00",
+      "duration_ms": 11852,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-055",
+      "title": "Verify: Type-check config unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M844Z5FZHE240VT4ETZZXAKF"
+      ],
+      "depends_on": [
+        "UNIT-053",
+        "REQ-027"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "4d600bc9deb85328e20117c46b33b72520f62379",
+      "from_sha": "15d1a673e0c95d97b87a3c8d6359e561a7ec440b",
+      "tests": [
+        {
+          "id": "tsconfig types include node",
+          "kind": "unit",
+          "name": "tsconfig types include node",
+          "title": "type-check config > tsconfig types include node",
+          "scenario": "Given tsconfig.json in the frontend package, When compilerOptions.types is read, Then it contains node, vite/client and vitest/globals",
+          "command": "cd game/frontend && npx vitest run tests/typecheck.test.ts --testTimeout=10000",
+          "file": "tests/typecheck.test.ts",
+          "status": "passed",
+          "detail": "Passed on first run; the config fix was already present."
+        },
+        {
+          "id": "package declares @types/node",
+          "kind": "unit",
+          "name": "package declares @types/node",
+          "title": "type-check config > package declares @types/node",
+          "scenario": "Given package.json in the frontend package, When devDependencies is read, Then @types/node is defined",
+          "command": "cd game/frontend && npx vitest run tests/typecheck.test.ts --testTimeout=10000",
+          "file": "tests/typecheck.test.ts",
+          "status": "passed",
+          "detail": "Passed on first run; the config fix was already present."
+        }
+      ],
+      "started_at": "2026-11-23T12:09:57.263705+00:00",
+      "ended_at": "2026-11-23T12:10:15.756619+00:00",
+      "run_started_at": "2026-11-23T12:09:57.263705+00:00",
+      "duration_ms": 17936,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-056",
+      "title": "Verify: Entry point and App render unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M844Z5FZZCG0HG7S05PJDKCZ"
+      ],
+      "depends_on": [
+        "UNIT-054",
+        "REQ-028"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "15d1a673e0c95d97b87a3c8d6359e561a7ec440b",
+      "from_sha": "df3d9e11b1d4bcce14c10537e6ff4c1d4ad13771",
+      "tests": [
+        {
+          "id": "entry-html-root-and-main-script",
+          "kind": "unit",
+          "name": "entry point > Given index.html, then it declares the #root mount node and the main.tsx module script",
+          "title": "index.html declares the #root mount node and the main.tsx module script",
+          "scenario": "Given index.html, then it declares the #root mount node and the main.tsx module script",
+          "command": "cd game/frontend && npx vitest run tests/entry.test.tsx --testTimeout=20000",
+          "file": "tests/entry.test.tsx",
+          "status": "passed",
+          "detail": "index.html contains id=\"root\" and src=\"/src/main.tsx\"; src/main.tsx exists."
+        },
+        {
+          "id": "entry-main-mounts-on-root",
+          "kind": "unit",
+          "name": "entry point > Given a #root element exists, when main is imported, then createRoot mounts on it and render is called once",
+          "title": "main mounts App on the #root element and renders once",
+          "scenario": "Given a #root element exists, when main is imported, then createRoot mounts on it and render is called once",
+          "command": "cd game/frontend && npx vitest run tests/entry.test.tsx --testTimeout=20000",
+          "file": "tests/entry.test.tsx",
+          "status": "passed",
+          "detail": "createRoot (mocked) called with the #root element; its render mock called once."
+        },
+        {
+          "id": "entry-main-throws-without-root",
+          "kind": "unit",
+          "name": "entry point > Given no #root element, when main is imported, then it throws a missing root error",
+          "title": "main throws a missing-root error when #root is absent",
+          "scenario": "Given no #root element, when main is imported, then it throws a missing root error",
+          "command": "cd game/frontend && npx vitest run tests/entry.test.tsx --testTimeout=20000",
+          "file": "tests/entry.test.tsx",
+          "status": "passed",
+          "detail": "Import rejects with 'Root element #root not found'."
+        },
+        {
+          "id": "entry-app-renders-begin",
+          "kind": "unit",
+          "name": "entry point > Given the App component, when rendered, then the Begin button is shown",
+          "title": "App renders the intro with a Begin button",
+          "scenario": "Given the App component, when rendered, then the Begin button is shown",
+          "command": "cd game/frontend && npx vitest run tests/entry.test.tsx --testTimeout=20000",
+          "file": "tests/entry.test.tsx",
+          "status": "passed",
+          "detail": "screen.getByRole('button', {name: 'Begin'}) found in the document."
+        }
+      ],
+      "started_at": "2026-11-23T12:09:36.403122+00:00",
+      "ended_at": "2026-11-23T12:10:06.285832+00:00",
+      "run_started_at": "2026-11-23T12:09:36.403122+00:00",
+      "duration_ms": 29339,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-027",
+      "title": "REQ · Frontend tsc --noEmit passes with Node test types",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-011"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-028",
+      "title": "REQ · Entry point resolves to App and is covered by a render test",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-011"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-011",
+      "title": "Evidence: Frontend type-check and entry point unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-053",
+        "UNIT-054",
+        "UNIT-055",
+        "UNIT-056"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-054",
+      "dst": "UNIT-056"
+    },
+    {
+      "src": "INT-011",
+      "dst": "REQ-028"
+    },
+    {
+      "src": "REQ-028",
+      "dst": "UNIT-056"
+    },
+    {
+      "src": "REQ-028",
+      "dst": "UNIT-054"
+    },
+    {
+      "src": "UNIT-054",
+      "dst": "EVD-011"
+    },
+    {
+      "src": "UNIT-056",
+      "dst": "EVD-011"
+    },
+    {
+      "src": "REQ-027",
+      "dst": "UNIT-053"
+    },
+    {
+      "src": "REQ-027",
+      "dst": "UNIT-055"
+    },
+    {
+      "src": "UNIT-053",
+      "dst": "UNIT-055"
+    },
+    {
+      "src": "UNIT-053",
+      "dst": "EVD-011"
+    },
+    {
+      "src": "UNIT-055",
+      "dst": "EVD-011"
+    },
+    {
+      "src": "INT-011",
+      "dst": "REQ-027"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m844z5",
+  "base_sha": "babce437db196f34c148ff3833b937edc92e49a6",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M844Z5HZPFFNF6RGJTZPEM85:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T12:09:23.263582+00:00",
+  "updated_at": "2026-11-23T12:10:16.662405+00:00",
+  "completed_at": "2026-11-23T12:10:15.757720+00:00",
+  "duration_ms": 52494,
+  "usage_stats": {
+    "total_duration_ms": 91757
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 13,
+  "unit_allowlist": [
+    "UNIT-053",
+    "UNIT-054",
+    "UNIT-055",
+    "UNIT-056"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-053",
+        "title": "Act: Declare @types/node and node types in tsconfig",
+        "evidence_refs": [
+          {
+            "id": "EVD-011",
+            "path": ".ai-dlc/evidence/EVD-011.md",
+            "title": "Evidence: Frontend type-check and entry point unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-053 unless acceptance outcomes recorded in EVD-011 (.ai-dlc/evidence/EVD-011.md; \"Evidence: Frontend type-check and entry point unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-054",
+        "title": "Act: Guard the missing #root in main.tsx",
+        "evidence_refs": [
+          {
+            "id": "EVD-011",
+            "path": ".ai-dlc/evidence/EVD-011.md",
+            "title": "Evidence: Frontend type-check and entry point unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-054 unless acceptance outcomes recorded in EVD-011 (.ai-dlc/evidence/EVD-011.md; \"Evidence: Frontend type-check and entry point unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-055",
+        "title": "Verify: Type-check config unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-011",
+            "path": ".ai-dlc/evidence/EVD-011.md",
+            "title": "Evidence: Frontend type-check and entry point unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-055 unless acceptance outcomes recorded in EVD-011 (.ai-dlc/evidence/EVD-011.md; \"Evidence: Frontend type-check and entry point unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-056",
+        "title": "Verify: Entry point and App render unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-011",
+            "path": ".ai-dlc/evidence/EVD-011.md",
+            "title": "Evidence: Frontend type-check and entry point unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-056 unless acceptance outcomes recorded in EVD-011 (.ai-dlc/evidence/EVD-011.md; \"Evidence: Frontend type-check and entry point unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T12:09:23.961431+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-053",
+    "UNIT-054",
+    "UNIT-055",
+    "UNIT-056"
+  ]
+}

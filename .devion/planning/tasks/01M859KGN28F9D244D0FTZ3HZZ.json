@@ -1,0 +1,77 @@
+{
+  "id": "01M859KGN28F9D244D0FTZ3HZZ",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Act: Add secret-door-open object and strict save validation",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Visible persistent door and element-level deserialize checks",
+  "description": "Add a flag-visible secret door object and validate element types in deserializeState.",
+  "acceptance_criteria": [
+    "secret-door-open visible only when secret_door_open is true",
+    "deserializeState rejects non-string items and non-boolean flags"
+  ],
+  "scope": {
+    "in_scope": [
+      "bedroom.yaml object",
+      "persistence.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "serializeState",
+      "Save key"
+    ]
+  },
+  "technical_constraints": [
+    "localStorage only",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`",
+    "Code path: `game/src/state/persistence.ts`"
+  ],
+  "dependencies": [
+    "REQ4"
+  ],
+  "definition_of_done": [
+    "Object and validation implemented",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-581.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1BK62CBS2PAWNG0CM7",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-581.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN2RS16CF6EHGG0QKB7"
+  ],
+  "sim_node_id": "01M859FE1B72RV5ZKFBCY16HE7",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-581.md",
+  "artifact_id": "UNIT-581",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "new object secret-door-open",
+      "lines": "after L63",
+      "action": "Add object id secret-door-open, name Secret Door, asset objects/secret-door-open, position {x:118,y:40}, scale 1, layer objects, visibleWhen [{flag: secret_door_open}], interactionBounds {x:0,y:0,width:30,height:60}, one inspect action with show_text 'A narrow passage lies behind the shelf.'.",
+      "expected": "getSceneView lists the door only when the flag is true"
+    },
+    {
+      "file": "game/src/state/persistence.ts",
+      "symbol": "deserializeState",
+      "lines": "L22-L48",
+      "action": "After array checks, throw Error('Invalid game state: <field>') when any element of inventory, discoveredObjects, completedQuests or history is not a string; when any value of flags is not boolean; when any value of relationships is not a number.",
+      "code": "if (!(parsed[field] as unknown[]).every((v) => typeof v === 'string')) throw new Error(`Invalid game state: ${field}`)",
+      "expected": "Bad element types throw"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.620934+00:00"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "01M85B0SSFDSRJWQ24KYHRZXTY",
+  "intent_id": "01M85ATKCA4JPNPQZD365VQEFV",
+  "title": "Act: Confirm validateWorld checks every scene character id",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm loader.ts reports unknown scene characters with an indexed path.",
+  "description": "Read validateWorld in game/src/content/loader.ts and confirm the scene characters loop exists and builds the path message. Edit only if it is missing or differs.",
+  "acceptance_criteria": [
+    "validateWorld iterates scene.characters ?? []",
+    "The message format is scenes[<sceneId>].characters[<i>].id: unknown character <id>"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/content/loader.ts validateWorld"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Other validateWorld checks"
+    ]
+  },
+  "technical_constraints": [
+    "Keep the error string unchanged",
+    "Code path: `game/src/content/loader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Loop present with the exact message",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-603.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85AXB9MPP7HJJV3NTEV39VD",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-603.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85B0SSFR0TCRYFXFHZBH9T0"
+  ],
+  "sim_node_id": "01M85AXB9MYSSH4FPAGMJE30VB",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-603.md",
+  "artifact_id": "UNIT-603",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/loader.ts",
+      "symbol": "validateWorld",
+      "lines": "L142-L146",
+      "action": "Check that (scene.characters ?? []).forEach pushes the template message when !characters.has(character.id); restore it if missing, make no other edit.",
+      "code": "errors.push(`scenes[${scene.id}].characters[${i}].id: unknown character ${character.id}`);",
+      "command": "cd game && grep -n \"characters\\[\\${i}\\]\" src/content/loader.ts",
+      "expected": "One matching line inside validateWorld."
+    }
+  ],
+  "created_at": "2026-11-23T23:14:22.639602+00:00",
+  "updated_at": "2026-11-23T23:16:13.757872+00:00"
+}

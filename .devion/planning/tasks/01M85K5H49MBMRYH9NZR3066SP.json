@@ -1,0 +1,74 @@
+{
+  "id": "01M85K5H49MBMRYH9NZR3066SP",
+  "intent_id": "01M85K027ZY5QM09M45R8RHMYX",
+  "title": "Act: Add applyFocusedObject to BootScene and call it from onStateChange",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Focus the SceneObject matching the store focusedObjectId",
+  "description": "Add a private applyFocusedObject(id) method to BootScene that focuses the matching object and blurs other focused objects, and call it from onStateChange after the sync loop.",
+  "acceptance_criteria": [
+    "onStateChange reads useGameStore.getState().focusedObjectId and passes it to applyFocusedObject",
+    "Matching object gets focus(); other focused objects get blur()"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/phaser/BootScene.ts"
+    ],
+    "out_of_scope": [
+      "gameStore changes"
+    ],
+    "preserve": [
+      "sync(state) loop"
+    ]
+  },
+  "technical_constraints": [
+    "Same highlight and label path as hover: SceneObject.focus()",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "BootScene compiles with tsc --noEmit",
+    "Method wired in onStateChange",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-730.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85K1XTSRRDHK70P7XCR2R5X",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-730.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85K5H49EVX7CT23D5SY1MNK"
+  ],
+  "sim_node_id": "01M85K1XTSD22C04XFCZKNCZ1E",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-730.md",
+  "artifact_id": "UNIT-730",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "new: BootScene.applyFocusedObject",
+      "lines": "after L134",
+      "action": "Add private method applyFocusedObject(id: string | null): void. For each o in this.sceneObjects: if id !== null and o.spec.id === id and !o.isFocused call o.focus(); else if o.spec.id !== id and o.isFocused call o.blur().",
+      "code": "private applyFocusedObject(id: string | null): void {\n  this.sceneObjects.forEach((o) => {\n    if (id !== null && o.spec.id === id) {\n      if (!o.isFocused) o.focus();\n    } else if (o.isFocused) o.blur();\n  });\n}",
+      "expected": "Method exists and focuses only the matching object"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.onStateChange",
+      "lines": "L130-L134",
+      "action": "After the this.sceneObjects.forEach((o) => o.sync(state)) line, add a call this.applyFocusedObject(useGameStore.getState().focusedObjectId).",
+      "code": "this.sceneObjects.forEach((o) => o.sync(state));\n+ this.applyFocusedObject(useGameStore.getState().focusedObjectId);",
+      "expected": "Every store change re-applies the store focus to scene objects"
+    }
+  ],
+  "created_at": "2026-11-24T01:36:46.217850+00:00",
+  "updated_at": "2026-11-24T01:38:34.175884+00:00"
+}

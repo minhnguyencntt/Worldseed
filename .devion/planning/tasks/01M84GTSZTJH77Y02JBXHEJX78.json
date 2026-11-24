@@ -1,0 +1,54 @@
+{
+  "id": "01M84GTSZTJH77Y02JBXHEJX78",
+  "intent_id": "01M84GQXYGEM5FW8AXNR539H4W",
+  "title": "REQ · Poll aborts on Git failures and keeps going after a Close failure",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Pull and list errors abort Poll; Close errors are joined and do not stop other Rounds",
+  "description": "Context: the worker polls repeatedly and must survive partial failures. Desired behavior: a Pull error returns Result{} and an error wrapping the cause with prefix 'poller: pull'; a ListRounds error returns 'poller: list rounds'; a Close failure is collected with errors.Join as 'poller: close <id>' while remaining Rounds are processed and the failed ID is excluded from Closed. A nil Closer with an expired Round yields an error instead of a panic.",
+  "acceptance_criteria": [
+    "Given Pull returns an error, when Poll runs, then the error satisfies errors.Is against it and ListRounds and Close are not called.",
+    "Given ListRounds returns an error, then Poll returns it wrapped and Close is not called.",
+    "Given two expired Rounds where the first Close fails, then the second is still closed, the returned error wraps the first failure and Result.Closed lacks the first ID.",
+    "Given a nil Closer and an expired Round, then Poll returns an error and does not panic."
+  ],
+  "scope": {
+    "in_scope": [
+      "Error handling in Poll"
+    ],
+    "out_of_scope": [
+      "Retry or backoff"
+    ],
+    "preserve": [
+      "Detection and closing behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Use fmt.Errorf with %w and errors.Join"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Error semantics implemented in poller.go",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-110.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GT5FN68Z1PVDNAJY8ACC4",
+    "trace:01M84GAF91YHBCPRJZQFKHDMBG",
+    "artifact:.ai-dlc/requirements/REQ-110.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GTSZTKP3EJ48PY2QXPH7X"
+  ],
+  "sim_node_id": "01M84GT5FNAW5VWQXH0DSZ4DJY",
+  "feature_id": "01M84GAF91YHBCPRJZQFKHDMBG",
+  "artifact_path": ".ai-dlc/requirements/REQ-110.md",
+  "artifact_id": "REQ-110",
+  "created_at": "2026-11-23T15:36:43.257859+00:00",
+  "updated_at": "2026-11-23T15:38:54.498400+00:00"
+}

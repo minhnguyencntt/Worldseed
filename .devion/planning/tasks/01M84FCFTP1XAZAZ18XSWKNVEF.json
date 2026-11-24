@@ -1,0 +1,70 @@
+{
+  "id": "01M84FCFTP1XAZAZ18XSWKNVEF",
+  "intent_id": "01M84FAX57EP7AEAK5DCCEZWXM",
+  "title": "Verify: Worker config validation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Table test for invalid values",
+  "description": "Add table-driven test asserting each invalid setting is rejected with key-naming error and valid ones are accepted.",
+  "acceptance_criteria": [
+    "Each invalid input yields nil config and error naming the key",
+    "mock and claude accepted"
+  ],
+  "scope": {
+    "in_scope": [
+      "config_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-182.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FC8A0WCHYPXZ1ZBC5KTR2",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-182.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FCFTPQ6EBR9CJWNRT6R3C"
+  ],
+  "sim_node_id": "01M84FC8A0FWZFAYTXB8EZS149",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-182.md",
+  "artifact_id": "UNIT-182",
+  "steps": [
+    {
+      "file": "backend/worker/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_Validation",
+      "lines": "new",
+      "action": "Table cases, each YAML prefixed with 'worker:\\n  repo_path: /r\\n': execution_timeout: -1m -> want 'execution_timeout'; max_retries: -1 -> 'max_retries'; max_budget: -1 -> 'max_budget'; provider_kind: gpt -> 'provider_kind'. Assert err non-nil, cfg nil, err contains the key.",
+      "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_Validation",
+      "expected": "All cases pass."
+    },
+    {
+      "file": "backend/worker/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_ValidProviders",
+      "lines": "new",
+      "action": "For provider_kind mock and claude with repo_path /r, assert LoadFS returns nil error and ProviderKind equals the input.",
+      "command": "cd backend/worker && go test ./internal/config -run TestLoadFS_ValidProviders",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T15:11:25.526520+00:00",
+  "updated_at": "2026-11-23T15:12:19.731701+00:00"
+}

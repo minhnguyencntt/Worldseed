@@ -1,0 +1,804 @@
+{
+  "intent_id": "01M85R8JBW6142XFS73H2QC7VQ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85RB4DDVQDVGEAYZXYXN1CD",
+      "kind": "intent",
+      "title": "SG-1.3 Add the PNG generation script and manifest update",
+      "body": "Context: gridToRgba (frontend/src/lib/gridToRgba.ts), buildSpriteSheet (frontend/src/lib/spriteSheet.ts) and the shared PALETTE (frontend/src/lib/palette.ts) exist, but there is no PNG encoder, no grid source files, no script and no npm script. The manifest at game/public/assets/worlds/the-boys-room/manifest.json only lists SVGs. Desired behavior: a script reads grid sources, encodes PNGs with no timestamps, writes them under game/frontend/public/assets and rewrites manifest entries with path, size and frame data. Why: later cycles replace placeholder art with generated PNGs.\n\n## Acceptance criteria\n- Given the grid sources, when the script runs twice, then every PNG file has identical bytes\n- Given a generated PNG, when its IHDR is read, then width and height equal the manifest entry dimensions\n- Given a sheet source, when the manifest is rewritten, then the entry holds path, dimensions and frameWidth, frameHeight, frameCount\n- Given package.json, when scripts are read, then an art:generate npm script runs the generator\n\n\n## Scope\n- In scope: PNG encoder\n- In scope: grid source registry\n- In scope: generator plan and manifest merge\n- In scope: script and npm script\n- Out of scope: new rooms\n- Out of scope: story content\n- Out of scope: backend\n- Out of scope: audio\n- Out of scope: deployment\n- Out of scope: repository clean-up\n- Out of scope: redrawing the room art\n- Preserve: Phaser ~3.90.0 pin and guard tests\n- Preserve: existing manifest entries not produced by a source\n- Preserve: gridToRgba and buildSpriteSheet behavior\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay\n- All art is raster pixel art generated in-repo from source data; no downloaded art, image services or CDN links\n- One shared palette of at most 48 colours; sources use palette indices only\n- Scene content stays data-driven\n- Tests are unit tests with dependencies mocked\n\n\n## Dependencies\n- SG-1.1 palette (done)\n- SG-1.2 gridToRgba and buildSpriteSheet (done)\n\n\n## Definition of done\n- All requirements delivered with passing unit tests\n\n\n## Non-functional requirements\n- Output is byte-identical across runs on the same Node version\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A deterministic script turns grid sources into PNGs in public/assets and rewrites manifest entries",
+      "description": "Context: gridToRgba (frontend/src/lib/gridToRgba.ts), buildSpriteSheet (frontend/src/lib/spriteSheet.ts) and the shared PALETTE (frontend/src/lib/palette.ts) exist, but there is no PNG encoder, no grid source files, no script and no npm script. The manifest at game/public/assets/worlds/the-boys-room/manifest.json only lists SVGs. Desired behavior: a script reads grid sources, encodes PNGs with no timestamps, writes them under game/frontend/public/assets and rewrites manifest entries with path, size and frame data. Why: later cycles replace placeholder art with generated PNGs.",
+      "acceptance_criteria": [
+        "Given the grid sources, when the script runs twice, then every PNG file has identical bytes",
+        "Given a generated PNG, when its IHDR is read, then width and height equal the manifest entry dimensions",
+        "Given a sheet source, when the manifest is rewritten, then the entry holds path, dimensions and frameWidth, frameHeight, frameCount",
+        "Given package.json, when scripts are read, then an art:generate npm script runs the generator"
+      ],
+      "scope": {
+        "in_scope": [
+          "PNG encoder",
+          "grid source registry",
+          "generator plan and manifest merge",
+          "script and npm script"
+        ],
+        "out_of_scope": [
+          "new rooms",
+          "story content",
+          "backend",
+          "audio",
+          "deployment",
+          "repository clean-up",
+          "redrawing the room art"
+        ],
+        "preserve": [
+          "Phaser ~3.90.0 pin and guard tests",
+          "existing manifest entries not produced by a source",
+          "gridToRgba and buildSpriteSheet behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay",
+        "All art is raster pixel art generated in-repo from source data; no downloaded art, image services or CDN links",
+        "One shared palette of at most 48 colours; sources use palette indices only",
+        "Scene content stays data-driven",
+        "Tests are unit tests with dependencies mocked"
+      ],
+      "dependencies": [
+        "SG-1.1 palette (done)",
+        "SG-1.2 gridToRgba and buildSpriteSheet (done)"
+      ],
+      "definition_of_done": [
+        "All requirements delivered with passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-159.md`"
+      ],
+      "non_functional": [
+        "Output is byte-identical across runs on the same Node version"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84VFDBHAYB6W5YY84VJ3NGR",
+      "links": [
+        "trace:01M84VFDBHAYB6W5YY84VJ3NGR",
+        "artifact:.ai-dlc/intent/INT-159.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-159.md",
+      "artifact_id": "INT-159"
+    },
+    {
+      "id": "01M85RB4DDFHJZQBM2C3R95DE3",
+      "kind": "requirement",
+      "title": "REQ · Pure PNG encoder writes timestamp-free deterministic bytes and reads its own header size",
+      "body": "Context: no PNG encoder exists and no PNG library is a dependency. Desired behavior: a pure function encodes an RgbaImage into a PNG (signature, IHDR, one IDAT via node:zlib at fixed level, IEND) with no tIME or text chunks, and a helper reads width and height from the IHDR. Why: determinism and header checks are the sub-goal's test targets.\n\n## Acceptance criteria\n- Given the same RgbaImage, when encodePng runs twice, then both byte arrays are equal\n- Given a 4x3 image, when readPngSize reads the encoded bytes, then it returns width 4 and height 3\n- Given the encoded bytes, when chunk types are listed, then only IHDR, IDAT and IEND appear\n\n\n## Scope\n- In scope: encodePng\n- In scope: readPngSize\n- In scope: CRC32\n- Out of scope: PNG decoding of pixels\n- Out of scope: palette PNG colour types\n- Preserve: RgbaImage type from gridToRgba\n\n\n## Technical constraints\n- No new npm dependency; use node:zlib\n- Phaser stays on 3.90.x and the existing stack stays\n\n\n## Dependencies\n- frontend/src/lib/gridToRgba.ts\n\n\n## Definition of done\n- Encoder exported and typed\n\n\n## Non-functional requirements\n- Pure: no clock, no randomness, no fs\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "encodePng(RgbaImage) returns identical bytes every call; readPngSize parses IHDR",
+      "description": "Context: no PNG encoder exists and no PNG library is a dependency. Desired behavior: a pure function encodes an RgbaImage into a PNG (signature, IHDR, one IDAT via node:zlib at fixed level, IEND) with no tIME or text chunks, and a helper reads width and height from the IHDR. Why: determinism and header checks are the sub-goal's test targets.",
+      "acceptance_criteria": [
+        "Given the same RgbaImage, when encodePng runs twice, then both byte arrays are equal",
+        "Given a 4x3 image, when readPngSize reads the encoded bytes, then it returns width 4 and height 3",
+        "Given the encoded bytes, when chunk types are listed, then only IHDR, IDAT and IEND appear"
+      ],
+      "scope": {
+        "in_scope": [
+          "encodePng",
+          "readPngSize",
+          "CRC32"
+        ],
+        "out_of_scope": [
+          "PNG decoding of pixels",
+          "palette PNG colour types"
+        ],
+        "preserve": [
+          "RgbaImage type from gridToRgba"
+        ]
+      },
+      "technical_constraints": [
+        "No new npm dependency; use node:zlib",
+        "Phaser stays on 3.90.x and the existing stack stays"
+      ],
+      "dependencies": [
+        "frontend/src/lib/gridToRgba.ts"
+      ],
+      "definition_of_done": [
+        "Encoder exported and typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-390.md`"
+      ],
+      "non_functional": [
+        "Pure: no clock, no randomness, no fs"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85RB4DDVQDVGEAYZXYXN1CD",
+      "matched_feature_id": "01M85BP7N1HNKB5EKJA6GTBFFB",
+      "links": [
+        "parent:01M85RB4DDVQDVGEAYZXYXN1CD",
+        "trace:01M85BP7N1HNKB5EKJA6GTBFFB",
+        "artifact:.ai-dlc/requirements/REQ-390.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDVQDVGEAYZXYXN1CD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-390.md",
+      "artifact_id": "REQ-390"
+    },
+    {
+      "id": "01M85RB4DD3GK1HAH77Y137REX",
+      "kind": "requirement",
+      "title": "REQ · Grid sources become PNG files and manifest entries with real size and frame data",
+      "body": "Context: no grid source files exist. Desired behavior: src/art/sources.ts exports palette-indexed grid sources (id, path, frames); a pure generateAssets turns them through gridToRgba, buildSpriteSheet and encodePng into file bytes plus manifest entries; mergeManifest replaces entries by id and keeps others. Why: gives the script a testable core.\n\n## Acceptance criteria\n- Given a source with 4 frames of 32x48, when planned, then the entry has dimensions 128x48 and frames 32,48,4 and type spritesheet\n- Given a single-frame source, when planned, then the entry is type image with its dimensions\n- Given a manifest holding the same id, when merged, then that entry is replaced in place and other entries stay unchanged\n- Given a source with an index beyond the palette, when planned, then it throws\n\n\n## Scope\n- In scope: art source registry with one seed hand-cursor source\n- In scope: generateAssets\n- In scope: mergeManifest\n- Out of scope: the room, boy and UI art sets\n- Out of scope: removing placeholder SVGs\n- Preserve: existing manifest entries and schema\n\n\n## Technical constraints\n- Sources use indices into the shared PALETTE of at most 48 colours\n- Manifest entries must satisfy assetSchema in game/src/assets/manifest/schema.ts\n- All art generated in-repo; no downloaded art\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Entries validate against assetSchema\n\n\n## Non-functional requirements\n- Output order follows source order\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A registry of grid sources plus pure planning and manifest merge functions",
+      "description": "Context: no grid source files exist. Desired behavior: src/art/sources.ts exports palette-indexed grid sources (id, path, frames); a pure generateAssets turns them through gridToRgba, buildSpriteSheet and encodePng into file bytes plus manifest entries; mergeManifest replaces entries by id and keeps others. Why: gives the script a testable core.",
+      "acceptance_criteria": [
+        "Given a source with 4 frames of 32x48, when planned, then the entry has dimensions 128x48 and frames 32,48,4 and type spritesheet",
+        "Given a single-frame source, when planned, then the entry is type image with its dimensions",
+        "Given a manifest holding the same id, when merged, then that entry is replaced in place and other entries stay unchanged",
+        "Given a source with an index beyond the palette, when planned, then it throws"
+      ],
+      "scope": {
+        "in_scope": [
+          "art source registry with one seed hand-cursor source",
+          "generateAssets",
+          "mergeManifest"
+        ],
+        "out_of_scope": [
+          "the room, boy and UI art sets",
+          "removing placeholder SVGs"
+        ],
+        "preserve": [
+          "existing manifest entries and schema"
+        ]
+      },
+      "technical_constraints": [
+        "Sources use indices into the shared PALETTE of at most 48 colours",
+        "Manifest entries must satisfy assetSchema in game/src/assets/manifest/schema.ts",
+        "All art generated in-repo; no downloaded art"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Entries validate against assetSchema",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-391.md`"
+      ],
+      "non_functional": [
+        "Output order follows source order"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85RB4DDVQDVGEAYZXYXN1CD",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85RB4DDVQDVGEAYZXYXN1CD",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-391.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDVQDVGEAYZXYXN1CD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-391.md",
+      "artifact_id": "REQ-391"
+    },
+    {
+      "id": "01M85RB4DDSCGCYJP08VRAHDBS",
+      "kind": "requirement",
+      "title": "REQ · art:generate script writes PNGs and the manifest, and is wired as an npm script",
+      "body": "Context: package.json has no generator command. Desired behavior: runGenerateArt(deps) generates assets, writes each PNG under the assets root and rewrites the manifest JSON with two-space indent and trailing newline; scripts/generateArt.ts wires node:fs; package.json gets art:generate. Why: this is the real entry point that reaches the new code.\n\n## Acceptance criteria\n- Given fake IO, when runGenerateArt runs twice, then the written bytes of each file are equal\n- Given fake IO, when it runs, then the manifest written parses and holds an entry per source\n- Given package.json, when read, then scripts.art:generate equals vite-node scripts/generateArt.ts\n\n\n## Scope\n- In scope: runGenerateArt\n- In scope: scripts/generateArt.ts\n- In scope: art:generate npm script\n- Out of scope: running in CI\n- Out of scope: deployment\n- Preserve: existing npm scripts\n\n\n## Technical constraints\n- Assets root is game/frontend/public/assets; manifest is game/public/assets/worlds/the-boys-room/manifest.json\n- No CDN or image service; deterministic output\n\n\n## Dependencies\n- REQ-1\n- REQ-2\n\n\n## Definition of done\n- npm run art:generate works from game/frontend\n\n\n## Non-functional requirements\n- Finishes in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "runGenerateArt with injected IO, a vite-node script and an npm script",
+      "description": "Context: package.json has no generator command. Desired behavior: runGenerateArt(deps) generates assets, writes each PNG under the assets root and rewrites the manifest JSON with two-space indent and trailing newline; scripts/generateArt.ts wires node:fs; package.json gets art:generate. Why: this is the real entry point that reaches the new code.",
+      "acceptance_criteria": [
+        "Given fake IO, when runGenerateArt runs twice, then the written bytes of each file are equal",
+        "Given fake IO, when it runs, then the manifest written parses and holds an entry per source",
+        "Given package.json, when read, then scripts.art:generate equals vite-node scripts/generateArt.ts"
+      ],
+      "scope": {
+        "in_scope": [
+          "runGenerateArt",
+          "scripts/generateArt.ts",
+          "art:generate npm script"
+        ],
+        "out_of_scope": [
+          "running in CI",
+          "deployment"
+        ],
+        "preserve": [
+          "existing npm scripts"
+        ]
+      },
+      "technical_constraints": [
+        "Assets root is game/frontend/public/assets; manifest is game/public/assets/worlds/the-boys-room/manifest.json",
+        "No CDN or image service; deterministic output"
+      ],
+      "dependencies": [
+        "REQ-1",
+        "REQ-2"
+      ],
+      "definition_of_done": [
+        "npm run art:generate works from game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-392.md`"
+      ],
+      "non_functional": [
+        "Finishes in seconds"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85RB4DDVQDVGEAYZXYXN1CD",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M85RB4DDVQDVGEAYZXYXN1CD",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-392.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDVQDVGEAYZXYXN1CD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-392.md",
+      "artifact_id": "REQ-392"
+    },
+    {
+      "id": "01M85RB4DDXR6XVQMAEMTS9NTB",
+      "kind": "unit",
+      "title": "Act: Create encodePng and readPngSize in the frontend lib",
+      "body": "Create game/frontend/src/lib/pngEncode.ts exporting encodePng and readPngSize using node:zlib deflateSync at fixed level 9.\n\n## Acceptance criteria\n- encodePng returns equal bytes on repeated calls\n- readPngSize returns the encoded width and height\n\n\n## Scope\n- In scope: new pngEncode.ts\n- Out of scope: tests\n- Preserve: gridToRgba.ts\n\n\n## Technical constraints\n- No new dependency\n- Phaser 3.90.x and stack unchanged\n- New file: `game/frontend/src/lib/pngEncode.ts`\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Functions exported and typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add pngEncode.ts with deterministic PNG encoding",
+      "description": "Create game/frontend/src/lib/pngEncode.ts exporting encodePng and readPngSize using node:zlib deflateSync at fixed level 9.",
+      "acceptance_criteria": [
+        "encodePng returns equal bytes on repeated calls",
+        "readPngSize returns the encoded width and height"
+      ],
+      "scope": {
+        "in_scope": [
+          "new pngEncode.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "gridToRgba.ts"
+        ]
+      },
+      "technical_constraints": [
+        "No new dependency",
+        "Phaser 3.90.x and stack unchanged",
+        "New file: `game/frontend/src/lib/pngEncode.ts`"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Functions exported and typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-780.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85RB4DDFHJZQBM2C3R95DE3",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M85RB4DDFHJZQBM2C3R95DE3",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-780.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDFHJZQBM2C3R95DE3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-780.md",
+      "artifact_id": "UNIT-780",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/pngEncode.ts",
+          "symbol": "new: crc32 and chunk",
+          "lines": "new",
+          "action": "Add a module-level 256-entry CRC table, crc32(bytes) and chunk(type, data) returning length(4 BE)+type+data+crc over type+data.",
+          "code": "const T=new Uint32Array(256).map((_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0});",
+          "expected": "chunk('IEND', empty) yields 12 bytes"
+        },
+        {
+          "file": "game/frontend/src/lib/pngEncode.ts",
+          "symbol": "new: encodePng",
+          "lines": "new",
+          "action": "Export encodePng(img: RgbaImage): Uint8Array that writes the 8-byte signature, IHDR (width, height, bit depth 8, colour type 6, 0,0,0), one IDAT of deflateSync of rows each prefixed by filter byte 0 with level 9, then IEND; no other chunks.",
+          "expected": "Returns bytes starting 137 80 78 71 13 10 26 10"
+        },
+        {
+          "file": "game/frontend/src/lib/pngEncode.ts",
+          "symbol": "new: readPngSize",
+          "lines": "new",
+          "action": "Export readPngSize(bytes) returning {width,height} read big-endian from offsets 16 and 20; throw Error('not a png') when the signature differs.",
+          "expected": "Returns the encoded dimensions"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DDCXR73ZWPS5XRNNND",
+      "kind": "unit",
+      "title": "Act: Add art sources, generateAssets and mergeManifest",
+      "body": "Add game/frontend/src/art/sources.ts with the ArtSource type and one seed hand-cursor source, and game/frontend/src/lib/generateAssets.ts with generateAssets and mergeManifest.\n\n## Acceptance criteria\n- generateAssets returns bytes and a valid entry per source\n- mergeManifest replaces by id and keeps others\n\n\n## Scope\n- In scope: sources.ts\n- In scope: generateAssets.ts\n- Out of scope: tests\n- Out of scope: room art\n- Preserve: manifest schema\n- Preserve: spriteSheet.ts\n- Preserve: gridToRgba.ts\n\n\n## Technical constraints\n- Indices come from the shared PALETTE of at most 48 colours\n- Entries satisfy assetSchema\n- All art generated in-repo\n- New file: `game/frontend/src/art/sources.ts`\n- New file: `game/frontend/src/lib/generateAssets.ts`\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create sources registry and pure generation functions",
+      "description": "Add game/frontend/src/art/sources.ts with the ArtSource type and one seed hand-cursor source, and game/frontend/src/lib/generateAssets.ts with generateAssets and mergeManifest.",
+      "acceptance_criteria": [
+        "generateAssets returns bytes and a valid entry per source",
+        "mergeManifest replaces by id and keeps others"
+      ],
+      "scope": {
+        "in_scope": [
+          "sources.ts",
+          "generateAssets.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "room art"
+        ],
+        "preserve": [
+          "manifest schema",
+          "spriteSheet.ts",
+          "gridToRgba.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Indices come from the shared PALETTE of at most 48 colours",
+        "Entries satisfy assetSchema",
+        "All art generated in-repo",
+        "New file: `game/frontend/src/art/sources.ts`",
+        "New file: `game/frontend/src/lib/generateAssets.ts`"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-781.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M85RB4DD3GK1HAH77Y137REX",
+      "links": [
+        "parent:01M85RB4DD3GK1HAH77Y137REX",
+        "artifact:.ai-dlc/units/UNIT-781.md"
+      ],
+      "depends_on": [
+        "01M85RB4DD3GK1HAH77Y137REX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-781.md",
+      "artifact_id": "UNIT-781",
+      "steps": [
+        {
+          "file": "game/frontend/src/art/sources.ts",
+          "symbol": "new: ArtSource, ART_SOURCES",
+          "lines": "new",
+          "action": "Export interface ArtSource {id:string; path:string; frames: number[][][]} and ART_SOURCES array holding one source id 'ui/cursor-hand', path 'ui/cursors/hand.png', one 16x16 frame of palette indices (0 transparent-free background index 0, hand outline index 36, fill index 29).",
+          "expected": "ART_SOURCES has length 1 with a 16x16 frame"
+        },
+        {
+          "file": "game/frontend/src/lib/generateAssets.ts",
+          "symbol": "new: generateAssets",
+          "lines": "new",
+          "action": "Export generateAssets(sources, palette=PALETTE) returning {files:{path,bytes}[], entries:ManifestEntry[]}: map frames through gridToRgba, buildSpriteSheet, encodePng; entry is {id,path,type:'spritesheet',dimensions,frames:{frameWidth,frameHeight,frameCount}} when frameCount>1 else {id,path,type:'image',dimensions}.",
+          "expected": "Entries match the sheet size and frame count"
+        },
+        {
+          "file": "game/frontend/src/lib/generateAssets.ts",
+          "symbol": "new: mergeManifest",
+          "lines": "new",
+          "action": "Export mergeManifest(manifest:{version:number;assets:ManifestEntry[]}, entries) returning a new manifest where an entry with the same id replaces the old in place and unmatched entries are appended; other assets unchanged.",
+          "expected": "Existing unrelated entries are untouched"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DDN5KQMN9C5W4MFEP9",
+      "kind": "unit",
+      "title": "Act: Add runGenerateArt, the generateArt script and the art:generate npm script",
+      "body": "Add runGenerateArt with injected IO in generateAssets.ts, the script scripts/generateArt.ts and the npm script.\n\n## Acceptance criteria\n- runGenerateArt writes PNGs and the manifest through injected IO\n- package.json has art:generate\n\n\n## Scope\n- In scope: runGenerateArt\n- In scope: generateArt.ts\n- In scope: package.json script\n- Out of scope: tests\n- Preserve: other npm scripts\n\n\n## Technical constraints\n- Assets root game/frontend/public/assets; manifest game/public/assets/worlds/the-boys-room/manifest.json\n- Phaser pin unchanged\n- New file: `game/frontend/src/lib/generateAssets.ts`\n- New file: `game/frontend/scripts/generateArt.ts`\n- Code path: `game/frontend/package.json`\n\n\n## Dependencies\n- ACT-2\n\n\n## Definition of done\n- npm run art:generate runs\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire the generator to fs and package.json",
+      "description": "Add runGenerateArt with injected IO in generateAssets.ts, the script scripts/generateArt.ts and the npm script.",
+      "acceptance_criteria": [
+        "runGenerateArt writes PNGs and the manifest through injected IO",
+        "package.json has art:generate"
+      ],
+      "scope": {
+        "in_scope": [
+          "runGenerateArt",
+          "generateArt.ts",
+          "package.json script"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "other npm scripts"
+        ]
+      },
+      "technical_constraints": [
+        "Assets root game/frontend/public/assets; manifest game/public/assets/worlds/the-boys-room/manifest.json",
+        "Phaser pin unchanged",
+        "New file: `game/frontend/src/lib/generateAssets.ts`",
+        "New file: `game/frontend/scripts/generateArt.ts`",
+        "Code path: `game/frontend/package.json`"
+      ],
+      "dependencies": [
+        "ACT-2"
+      ],
+      "definition_of_done": [
+        "npm run art:generate runs",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-782.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85RB4DDSCGCYJP08VRAHDBS",
+      "matched_feature_id": "01M84VFDBHCRHHGJYTEFB6DDS4",
+      "links": [
+        "parent:01M85RB4DDSCGCYJP08VRAHDBS",
+        "trace:01M84VFDBHCRHHGJYTEFB6DDS4",
+        "artifact:.ai-dlc/units/UNIT-782.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDSCGCYJP08VRAHDBS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-782.md",
+      "artifact_id": "UNIT-782",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/generateAssets.ts",
+          "symbol": "new: runGenerateArt",
+          "lines": "after generateAssets",
+          "action": "Export runGenerateArt(io:{readText(p):string; writeBytes(p,b):void; writeText(p,t):void}, paths:{assetsRoot:string; manifest:string}, sources=ART_SOURCES): read manifest JSON, call generateAssets, writeBytes(assetsRoot+'/'+path) for each file, then writeText(manifest, JSON.stringify(mergeManifest(...),null,2)+'\\n').",
+          "expected": "Each source file and the manifest are written once"
+        },
+        {
+          "file": "game/frontend/scripts/generateArt.ts",
+          "symbol": "new: main",
+          "lines": "new",
+          "action": "Import node:fs mkdirSync, readFileSync, writeFileSync and node:path; call runGenerateArt with io creating parent dirs before writing and paths resolved from import.meta.url to ../public/assets and ../../public/assets/worlds/the-boys-room/manifest.json.",
+          "expected": "Running the script writes ui/cursors/hand.png"
+        },
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "scripts",
+          "lines": "L5-L12",
+          "action": "Add the entry \"art:generate\": \"vite-node scripts/generateArt.ts\" after the untrack:node-modules entry, adding a comma to the previous line.",
+          "code": "\"untrack:node-modules\": \"...\",\n\"art:generate\": \"vite-node scripts/generateArt.ts\"",
+          "expected": "npm run art:generate resolves"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DD54NM26AXTJVQ836A",
+      "kind": "unit",
+      "title": "Verify: encodePng determinism and readPngSize unit tests",
+      "body": "Tests for encodePng and readPngSize written from REQ-1.\n\n## Acceptance criteria\n- Two encodes are equal\n- Header size matches\n- Only IHDR, IDAT, IEND chunks exist\n\n\n## Scope\n- In scope: pngEncode.test.ts\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only, no fs beyond memory\n- Phaser pin untouched\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the PNG encoder",
+      "description": "Tests for encodePng and readPngSize written from REQ-1.",
+      "acceptance_criteria": [
+        "Two encodes are equal",
+        "Header size matches",
+        "Only IHDR, IDAT, IEND chunks exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "pngEncode.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, no fs beyond memory",
+        "Phaser pin untouched"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-783.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85RB4DDXR6XVQMAEMTS9NTB",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85RB4DDXR6XVQMAEMTS9NTB",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-783.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDXR6XVQMAEMTS9NTB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-783.md",
+      "artifact_id": "UNIT-783",
+      "steps": [
+        {
+          "file": "game/frontend/tests/pngEncode.test.ts",
+          "symbol": "new: encodePng is deterministic",
+          "lines": "new",
+          "action": "Build a 4x3 RgbaImage with gridToRgba of indices 0..11; call encodePng twice and assert Buffer.from(a).equals(Buffer.from(b)).",
+          "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/pngEncode.test.ts",
+          "symbol": "new: readPngSize reads IHDR",
+          "lines": "new",
+          "action": "Assert readPngSize(encodePng(img)) equals {width:4,height:3} and that readPngSize(new Uint8Array(30)) throws 'not a png'.",
+          "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/pngEncode.test.ts",
+          "symbol": "new: only IHDR IDAT IEND chunks",
+          "lines": "new",
+          "action": "Walk chunks from byte 8 reading length and 4-char type; assert types equal ['IHDR','IDAT','IEND'].",
+          "command": "cd game/frontend && npx vitest run tests/pngEncode.test.ts",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DDQ392005MDPVQ3Q5Y",
+      "kind": "unit",
+      "title": "Verify: generateAssets and mergeManifest unit tests",
+      "body": "Tests for generateAssets and mergeManifest from REQ-2 acceptance criteria.\n\n## Acceptance criteria\n- Sheet entry size and frames correct\n- Single frame is image\n- Merge replaces in place\n- Out-of-range index throws\n\n\n## Scope\n- In scope: generateAssets.test.ts\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Unit tests only; use assetSchema from game/src/assets/manifest/schema.ts to validate entries\n- All colours from the shared palette\n\n\n## Dependencies\n- ACT-2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for planning and merge",
+      "description": "Tests for generateAssets and mergeManifest from REQ-2 acceptance criteria.",
+      "acceptance_criteria": [
+        "Sheet entry size and frames correct",
+        "Single frame is image",
+        "Merge replaces in place",
+        "Out-of-range index throws"
+      ],
+      "scope": {
+        "in_scope": [
+          "generateAssets.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; use assetSchema from game/src/assets/manifest/schema.ts to validate entries",
+        "All colours from the shared palette"
+      ],
+      "dependencies": [
+        "ACT-2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-784.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85RB4DDCXR73ZWPS5XRNNND",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85RB4DDCXR73ZWPS5XRNNND",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-784.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDCXR73ZWPS5XRNNND"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-784.md",
+      "artifact_id": "UNIT-784",
+      "steps": [
+        {
+          "file": "game/frontend/tests/generateAssets.test.ts",
+          "symbol": "new: sheet entry and PNG header match",
+          "lines": "new",
+          "action": "Make a source with four 32x48 frames of index 1; call generateAssets; assert entry.dimensions {width:128,height:48}, frames {32,48,4}, type 'spritesheet', assetSchema.safeParse(entry).success true and readPngSize(files[0].bytes) equals {128,48}.",
+          "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/generateAssets.test.ts",
+          "symbol": "new: single frame is image and bad index throws",
+          "lines": "new",
+          "action": "Assert a one-frame 16x16 source yields type 'image' without frames; assert a grid containing index 999 makes generateAssets throw /out of range/; assert ART_SOURCES ids are unique.",
+          "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/generateAssets.test.ts",
+          "symbol": "new: mergeManifest replaces by id",
+          "lines": "new",
+          "action": "With manifest assets [a,b,c] and an entry with id b changed, assert result order [a,b',c] with a and c deep-equal to the originals; an unknown id is appended last.",
+          "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DDRBQVJJ0X4T40R5CT",
+      "kind": "unit",
+      "title": "Verify: runGenerateArt identical bytes and npm script unit tests",
+      "body": "Tests with fake IO for runGenerateArt and a read of package.json.\n\n## Acceptance criteria\n- Two runs write identical bytes\n- Manifest written holds entry per source and matches PNG headers\n- art:generate script exists\n\n\n## Scope\n- In scope: generateArtScript.test.ts\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Fake IO only, no real writes beyond memory\n- Reads package.json with node:fs readFileSync for the script check\n\n\n## Dependencies\n- ACT-3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the script core and package.json",
+      "description": "Tests with fake IO for runGenerateArt and a read of package.json.",
+      "acceptance_criteria": [
+        "Two runs write identical bytes",
+        "Manifest written holds entry per source and matches PNG headers",
+        "art:generate script exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "generateArtScript.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake IO only, no real writes beyond memory",
+        "Reads package.json with node:fs readFileSync for the script check"
+      ],
+      "dependencies": [
+        "ACT-3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-785.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85RB4DDN5KQMN9C5W4MFEP9",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85RB4DDN5KQMN9C5W4MFEP9",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-785.md"
+      ],
+      "depends_on": [
+        "01M85RB4DDN5KQMN9C5W4MFEP9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-785.md",
+      "artifact_id": "UNIT-785",
+      "steps": [
+        {
+          "file": "game/frontend/tests/generateArtScript.test.ts",
+          "symbol": "new: two runs give identical bytes",
+          "lines": "new",
+          "action": "Create a fake io storing writes in a Map; call runGenerateArt twice with a manifest text '{\"version\":1,\"assets\":[]}'; assert every binary entry from run 1 equals the same path from run 2.",
+          "command": "cd game/frontend && npx vitest run tests/generateArtScript.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/generateArtScript.test.ts",
+          "symbol": "new: manifest sizes match PNG headers",
+          "lines": "new",
+          "action": "Parse the written manifest; for each ART_SOURCES entry assert dimensions equal readPngSize of the bytes at assetsRoot/path, and the text ends with a newline.",
+          "command": "cd game/frontend && npx vitest run tests/generateArtScript.test.ts",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/generateArtScript.test.ts",
+          "symbol": "new: npm script registered",
+          "lines": "new",
+          "action": "Read ../package.json and assert scripts['art:generate'] === 'vite-node scripts/generateArt.ts'.",
+          "command": "cd game/frontend && npx vitest run tests/generateArtScript.test.ts",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85RB4DDF1DCAS5MY87C95CG",
+      "kind": "evidence",
+      "title": "Evidence: PNG generation script and manifest update unit tests",
+      "body": "Collect the passing runs of the three new test files as proof that output is deterministic, sizes match headers and the npm script exists.\n\n## Acceptance criteria\n- pngEncode, generateAssets and generateArtScript tests all pass\n- Each acceptance criterion maps to a passing test\n\n\n## Scope\n- In scope: test run output\n- Out of scope: new code\n- Preserve: existing suites\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- VER-1\n- VER-2\n- VER-3\n\n\n## Definition of done\n- Pass output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record passing unit test runs for SG-1.3",
+      "description": "Collect the passing runs of the three new test files as proof that output is deterministic, sizes match headers and the npm script exists.",
+      "acceptance_criteria": [
+        "pngEncode, generateAssets and generateArtScript tests all pass",
+        "Each acceptance criterion maps to a passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": [
+          "existing suites"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "VER-1",
+        "VER-2",
+        "VER-3"
+      ],
+      "definition_of_done": [
+        "Pass output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-159.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85RB4DD54NM26AXTJVQ836A",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85RB4DD54NM26AXTJVQ836A",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-159.md"
+      ],
+      "depends_on": [
+        "01M85RB4DD54NM26AXTJVQ836A",
+        "01M85RB4DDQ392005MDPVQ3Q5Y",
+        "01M85RB4DDRBQVJJ0X4T40R5CT"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-159.md",
+      "artifact_id": "EVD-159"
+    }
+  ],
+  "created_at": "2026-11-24T03:08:46.147932+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

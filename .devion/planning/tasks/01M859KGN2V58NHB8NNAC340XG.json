@@ -1,0 +1,115 @@
+{
+  "id": "01M859KGN2V58NHB8NNAC340XG",
+  "intent_id": "01M859AJP8XR3X6SGP7AH56V4Z",
+  "title": "Act: Add characters schema, animation resolver and Phaser character rendering",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Data-driven characters rendered and animated in BootScene",
+  "description": "Add characters to sceneSchema and SceneDef, a pure resolver, preload of character spritesheets and Phaser sprites in BootScene driven by yaml.",
+  "acceptance_criteria": [
+    "sceneSchema accepts characters with required animations.idle",
+    "resolveCharacterAnimation returns manifest animation or idle fallback",
+    "BootScene creates sprites for each character and plays idle then interact on objectClick"
+  ],
+  "scope": {
+    "in_scope": [
+      "schema.ts",
+      "types.ts",
+      "characterAnimation.ts",
+      "planPreload.ts",
+      "BootScene.ts",
+      "bedroom.yaml boy"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Object rendering"
+    ]
+  },
+  "technical_constraints": [
+    "Resolver has no Phaser import",
+    "Code path: `game/src/content/schema.ts`",
+    "Code path: `game/src/state/types.ts`",
+    "New file: `game/src/engine/characterAnimation.ts`",
+    "Code path: `game/src/engine/planPreload.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Boy defined in bedroom.yaml and animates in BootScene",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-578.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859FE1BC8MMR7N24JR09PX7",
+    "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+    "artifact:.ai-dlc/units/UNIT-578.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M859KGN2RXFJSBY33GGYF8KV"
+  ],
+  "sim_node_id": "01M859FE1BWRY29WA3TJ6VGSN0",
+  "feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+  "artifact_path": ".ai-dlc/units/UNIT-578.md",
+  "artifact_id": "UNIT-578",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/schema.ts",
+      "symbol": "new: characterSchema, sceneSchema.characters",
+      "lines": "after L33",
+      "action": "Add characterSchema with id, name, position {x,y}, scale default 1, layer default 'characters', animations record with required idle and optional walk and interact, each {asset: string, animation: string}; add optional characters array to sceneSchema; export CharacterSpec type.",
+      "code": "export const characterSchema = z.object({ id: z.string(), name: z.string(), position: z.object({x:z.number(),y:z.number()}), scale: z.number().positive().default(1), layer: layerSchema.default('characters'), animations: z.object({ idle: animRef, walk: animRef.optional(), interact: animRef.optional() }) })",
+      "expected": "sceneSchema.parse accepts a characters list and rejects missing idle"
+    },
+    {
+      "file": "game/src/state/types.ts",
+      "symbol": "SceneDef",
+      "lines": "L57-L65",
+      "action": "Add optional field characters?: CharacterSpec[] (import type from ../content/schema) to SceneDef.",
+      "code": "characters?: CharacterSpec[];",
+      "expected": "tsc accepts scene.characters"
+    },
+    {
+      "file": "game/src/engine/characterAnimation.ts",
+      "symbol": "new: resolveCharacterAnimation",
+      "lines": "new",
+      "action": "Export resolveCharacterAnimation(spec: CharacterSpec, name: 'idle'|'walk'|'interact', manifest: AssetManifest): {asset: string; animation: string}. Use spec.animations[name]; if absent, or its asset is missing from manifest.assets or lacks that animation in asset.animations, return spec.animations.idle.",
+      "expected": "Returns idle ref for missing or unknown entries"
+    },
+    {
+      "file": "game/src/engine/planPreload.ts",
+      "symbol": "planPreload",
+      "lines": "L6-L9",
+      "action": "After the objects loop add a loop over scene.characters ?? [] adding every animations.*.asset id to refs.",
+      "code": "for (const c of scene.characters ?? []) for (const a of Object.values(c.animations)) if (a) refs.add(a.asset)",
+      "expected": "load includes character:boy, character:boy-walk, character:boy-interact"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.preload and BootScene.create",
+      "lines": "L38-L69",
+      "action": "In preload, for entries of type spritesheet call this.load.spritesheet(entry.id, `assets/${entry.path}`, {frameWidth: entry.frames.frameWidth, frameHeight: entry.frames.frameHeight}). In create, for each scene.characters entry register anims via this.anims.create keyed `${asset}:${animation}` from the manifest animation, add a sprite at position with origin from the manifest, play the idle key, and in the objectClick handler play interact then idle on animationcomplete.",
+      "expected": "Boy sprite idles and plays interact on click"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "characters",
+      "lines": "after L10",
+      "action": "Add a characters list with id boy, name The Boy, position {x:150,y:140}, animations idle {asset: character:boy, animation: idle}, walk {asset: character:boy-walk, animation: walk}, interact {asset: character:boy-interact, animation: interact}.",
+      "expected": "Scene parses with one character"
+    }
+  ],
+  "created_at": "2026-11-23T22:49:38.722800+00:00",
+  "updated_at": "2026-11-23T22:53:08.615908+00:00"
+}

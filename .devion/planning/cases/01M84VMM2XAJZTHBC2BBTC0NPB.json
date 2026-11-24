@@ -1,0 +1,397 @@
+{
+  "id": "01M84VMM2XAJZTHBC2BBTC0NPB",
+  "trigger_node_id": "INT-092, UNIT-456 +6",
+  "node_ids": [
+    "INT-092",
+    "UNIT-456",
+    "UNIT-457",
+    "UNIT-458",
+    "UNIT-459",
+    "REQ-228",
+    "REQ-229",
+    "EVD-092"
+  ],
+  "intent_id": "INT-092",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-092",
+      "title": "SG-4.2.5 · Untrack the conflicted vitest cache and dedupe conflict-stage listings",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-456",
+      "title": "Act: Dedupe and strip stage prefixes in parseGitLsFiles",
+      "kind": "unit",
+      "task_ids": [
+        "01M84VMK7V1515DA2ZXZ6SZ60B"
+      ],
+      "depends_on": [
+        "REQ-228"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "a3db8cc2fdf87f2e018a632b17a442a2185e2619",
+      "from_sha": "bda1eeaffad7c44b9ffb2ef067b320b93cb78c15",
+      "started_at": "2026-11-23T18:45:37.478942+00:00",
+      "ended_at": "2026-11-23T18:45:58.475709+00:00",
+      "run_started_at": "2026-11-23T18:45:37.478942+00:00",
+      "duration_ms": 19316,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 2790,
+      "estimated_cost_usd": 0.011168
+    },
+    {
+      "unit_id": "UNIT-457",
+      "title": "Act: Force cached removal of results.json in untrackNodeModules",
+      "kind": "unit",
+      "task_ids": [
+        "01M84VMK7VZ3TNQE5S6RWKZM3J"
+      ],
+      "depends_on": [
+        "REQ-229"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "bda1eeaffad7c44b9ffb2ef067b320b93cb78c15",
+      "from_sha": "17950e779703157cb7f3dfbd4e03664d5d02de85",
+      "started_at": "2026-11-23T18:45:37.503278+00:00",
+      "ended_at": "2026-11-23T18:45:49.280555+00:00",
+      "run_started_at": "2026-11-23T18:45:37.503278+00:00",
+      "duration_ms": 10165,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 1166,
+      "estimated_cost_usd": 0.004669
+    },
+    {
+      "unit_id": "UNIT-458",
+      "title": "Verify: parseGitLsFiles and checkTrackedFiles dedupe conflict entries",
+      "kind": "unit",
+      "task_ids": [
+        "01M84VMK7V2JKN1SQ6YEPX2XKA"
+      ],
+      "depends_on": [
+        "UNIT-456",
+        "REQ-228"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "5ab049e665c1b0b7b9eced04edc3242379692504",
+      "from_sha": "8d943552ef120eeb07c977348810fe8a768988f1",
+      "tests": [
+        {
+          "id": "parseGitLsFiles-deduplicates-conflict-stage-entries",
+          "kind": "unit",
+          "name": "deduplicates conflict stage entries",
+          "title": "parseGitLsFiles deduplicates conflict stage entries",
+          "scenario": "Given git ls-files --stage output with one path at stages 1, 2 and 3, when parsed, then the path is returned once with stage prefixes stripped",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t parseGitLsFiles --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": "Passes; stage prefixes stripped and duplicates removed."
+        },
+        {
+          "id": "parseGitLsFiles-deduplicates-triplicated-nul-path",
+          "kind": "unit",
+          "name": "deduplicates a triplicated NUL-separated plain path to one entry",
+          "title": "parseGitLsFiles deduplicates a triplicated NUL-separated plain path to one entry",
+          "scenario": "Given NUL-separated output listing the same plain path three times, when parsed, then the result contains that path exactly once",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t parseGitLsFiles --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": "Passes; the Set-based dedupe returns a single entry."
+        },
+        {
+          "id": "checkTrackedFiles-reports-conflicted-path-once",
+          "kind": "unit",
+          "name": "reports a conflicted path once",
+          "title": "checkTrackedFiles reports a conflicted path once",
+          "scenario": "Given a fake git runner listing the vitest results cache file three times plus src/a.ts, when checkTrackedFiles runs, then the conflicted path is reported exactly once",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t checkTrackedFiles --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": "Passes; result equals [node_modules/.vite/vitest/results.json]."
+        }
+      ],
+      "started_at": "2026-11-23T18:45:58.484228+00:00",
+      "ended_at": "2026-11-23T18:46:24.373896+00:00",
+      "run_started_at": "2026-11-23T18:45:58.484228+00:00",
+      "duration_ms": 24266,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 4282,
+      "estimated_cost_usd": 0.017136
+    },
+    {
+      "unit_id": "UNIT-459",
+      "title": "Verify: untrackNodeModules force-removes the conflicted results.json",
+      "kind": "unit",
+      "task_ids": [
+        "01M84VMK7VEGTNFNJPP6KJF260"
+      ],
+      "depends_on": [
+        "UNIT-457",
+        "REQ-229"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "8d943552ef120eeb07c977348810fe8a768988f1",
+      "from_sha": "a3db8cc2fdf87f2e018a632b17a442a2185e2619",
+      "tests": [
+        {
+          "id": "untrackNodeModules-rm-recursive-cached",
+          "kind": "unit",
+          "name": "removes node_modules from the git index recursively using a cached-only rm",
+          "title": "untrackNodeModules removes node_modules from the git index recursively using a cached-only rm",
+          "scenario": "Given a fake git runner returning empty output, when untrackNodeModules is called, then one call is rm -r --cached node_modules",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t untrackNodeModules --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "untrackNodeModules-only-cached",
+          "kind": "unit",
+          "name": "only ever uses the --cached flag so working-tree files are never deleted",
+          "title": "untrackNodeModules only ever uses the --cached flag so working-tree files are never deleted",
+          "scenario": "Given a fake git runner returning empty output, when untrackNodeModules is called, then every git call carries --cached",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t untrackNodeModules --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "untrackNodeModules-results-json-path",
+          "kind": "unit",
+          "name": "also untracks the vitest results cache file under node_modules",
+          "title": "untrackNodeModules also untracks the vitest results cache file under node_modules",
+          "scenario": "Given a fake git runner returning empty output, when untrackNodeModules is called, then one call names node_modules/.vite/vitest/results.json",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t untrackNodeModules --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "untrackNodeModules-force-removes-results-json",
+          "kind": "unit",
+          "name": "force-removes conflicted results.json from the index with a cached-only forced rm",
+          "title": "untrackNodeModules force-removes the conflicted results.json from the index with a cached-only forced rm",
+          "scenario": "Given a fake git runner returning empty output, when untrackNodeModules is called, then the second call is rm --cached -f --ignore-unmatch -q -- node_modules/.vite/vitest/results.json and every call includes --cached",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts -t untrackNodeModules --testTimeout=10000",
+          "file": "tests/trackedNodeModules.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T18:45:49.288297+00:00",
+      "ended_at": "2026-11-23T18:46:10.017324+00:00",
+      "run_started_at": "2026-11-23T18:45:49.288297+00:00",
+      "duration_ms": 19204,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 3097,
+      "estimated_cost_usd": 0.012394
+    },
+    {
+      "unit_id": "REQ-228",
+      "title": "REQ · parseGitLsFiles deduplicates conflict stage entries",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-092"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-229",
+      "title": "REQ · Cleanup untracks the conflicted vitest results.json and clears its index entry",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-092"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-092",
+      "title": "Evidence: conflict dedupe and cache untracking unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-456",
+        "UNIT-457",
+        "UNIT-458",
+        "UNIT-459"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-459",
+      "dst": "EVD-092"
+    },
+    {
+      "src": "UNIT-456",
+      "dst": "EVD-092"
+    },
+    {
+      "src": "UNIT-457",
+      "dst": "UNIT-459"
+    },
+    {
+      "src": "UNIT-457",
+      "dst": "EVD-092"
+    },
+    {
+      "src": "REQ-228",
+      "dst": "UNIT-458"
+    },
+    {
+      "src": "UNIT-456",
+      "dst": "UNIT-458"
+    },
+    {
+      "src": "INT-092",
+      "dst": "REQ-228"
+    },
+    {
+      "src": "REQ-229",
+      "dst": "UNIT-459"
+    },
+    {
+      "src": "REQ-229",
+      "dst": "UNIT-457"
+    },
+    {
+      "src": "INT-092",
+      "dst": "REQ-229"
+    },
+    {
+      "src": "UNIT-458",
+      "dst": "EVD-092"
+    },
+    {
+      "src": "REQ-228",
+      "dst": "UNIT-456"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84vmm",
+  "base_sha": "17950e779703157cb7f3dfbd4e03664d5d02de85",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84VMM2XAJZTHBC2BBTC0NPB:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T18:45:34.941923+00:00",
+  "updated_at": "2026-11-23T18:46:27.101372+00:00",
+  "completed_at": "2026-11-23T18:46:24.375189+00:00",
+  "duration_ms": 49434,
+  "usage_stats": {
+    "total_duration_ms": 72962,
+    "total_tokens_in": 34,
+    "total_tokens_out": 11335,
+    "total_estimated_cost_usd": 0.045367
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-456",
+    "UNIT-457",
+    "UNIT-458",
+    "UNIT-459"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-456",
+        "title": "Act: Dedupe and strip stage prefixes in parseGitLsFiles",
+        "evidence_refs": [
+          {
+            "id": "EVD-092",
+            "path": ".ai-dlc/evidence/EVD-092.md",
+            "title": "Evidence: conflict dedupe and cache untracking unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-456 unless acceptance outcomes recorded in EVD-092 (.ai-dlc/evidence/EVD-092.md; \"Evidence: conflict dedupe and cache untracking unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-457",
+        "title": "Act: Force cached removal of results.json in untrackNodeModules",
+        "evidence_refs": [
+          {
+            "id": "EVD-092",
+            "path": ".ai-dlc/evidence/EVD-092.md",
+            "title": "Evidence: conflict dedupe and cache untracking unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-457 unless acceptance outcomes recorded in EVD-092 (.ai-dlc/evidence/EVD-092.md; \"Evidence: conflict dedupe and cache untracking unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-458",
+        "title": "Verify: parseGitLsFiles and checkTrackedFiles dedupe conflict entries",
+        "evidence_refs": [
+          {
+            "id": "EVD-092",
+            "path": ".ai-dlc/evidence/EVD-092.md",
+            "title": "Evidence: conflict dedupe and cache untracking unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-458 unless acceptance outcomes recorded in EVD-092 (.ai-dlc/evidence/EVD-092.md; \"Evidence: conflict dedupe and cache untracking unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-459",
+        "title": "Verify: untrackNodeModules force-removes the conflicted results.json",
+        "evidence_refs": [
+          {
+            "id": "EVD-092",
+            "path": ".ai-dlc/evidence/EVD-092.md",
+            "title": "Evidence: conflict dedupe and cache untracking unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-459 unless acceptance outcomes recorded in EVD-092 (.ai-dlc/evidence/EVD-092.md; \"Evidence: conflict dedupe and cache untracking unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T18:45:37.167641+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-456",
+    "UNIT-457",
+    "UNIT-458",
+    "UNIT-459"
+  ]
+}

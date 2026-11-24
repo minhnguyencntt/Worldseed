@@ -1,0 +1,1092 @@
+{
+  "id": "01M85V08SCS2GG15DQ27TWSEP4",
+  "trigger_node_id": "INT-164, UNIT-804 +12",
+  "node_ids": [
+    "INT-164",
+    "UNIT-804",
+    "UNIT-805",
+    "UNIT-806",
+    "UNIT-807",
+    "UNIT-808",
+    "UNIT-809",
+    "UNIT-810",
+    "UNIT-811",
+    "REQ-402",
+    "REQ-403",
+    "REQ-404",
+    "REQ-405",
+    "EVD-164"
+  ],
+  "intent_id": "INT-164",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-164",
+      "title": "SG-2.2 Author the boy sheet and portrait",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-804",
+      "title": "Act: Author the boy sheet frames in boy.ts",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCRX76X23A938DEHQE"
+      ],
+      "depends_on": [
+        "REQ-402"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "from_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "started_at": "2026-11-24T03:53:45.826397+00:00",
+      "ended_at": "2026-11-24T03:54:45.038088+00:00",
+      "run_started_at": "2026-11-24T03:53:45.826397+00:00",
+      "duration_ms": 56634,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 7653,
+      "estimated_cost_usd": 0.030628,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED, not done. I wrote game/frontend/src/art/boy.ts with boyFrame (32x48 grid, draw.ts helpers, hoodie/parchment/indigo, outlines), the three pose arrays (IDLE 4, WALK 6, INTERACT 4) and BOY_SHEET_SOURCE (id 'character:boy-sheet', 14 frames). Before I could check it, another writer replaced the file on disk with a different module: boyPortraitGrid / BOY_PORTRAIT_SOURCE / BOY_SOURCES, which has no boyFrame or BOY_SHEET_SOURCE. The worktree also has uncommitted changes from that same session in sources.ts, lib/generateAssets.ts and public/assets/worlds/the-boys-room/manifest.json, plus an untracked public/assets/ui/cursors/hand.png. I did not overwrite the file, because that would discard another session's in-progress work. The ticket's Expected results (boyFrame returns 48x32, arrays 4/6/4, BOY_SHEET_SOURCE.frames.length 14) are not verifiable against the disk state. Next step: confirm with whoever owns the boy-portrait work whether boy.ts should be replaced, or whether boyFrame and BOY_SHEET_SOURCE should go in a separate file. Then re-apply the content from step 1 to 3. Typecheck (npx tsc --noEmit) reports only pre-existing errors in tests/*.test.ts(x) and tests/tailwindConfig.test.ts; none are in src/art/boy.ts. Not run: the boyFrame shape check, because the first attempt failed on a missing `timeout` binary and the rerun was blocked by the file change."
+    },
+    {
+      "unit_id": "UNIT-805",
+      "title": "Act: Author the 32x32 boy portrait source",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCF01J6DBYRYY5QHQA"
+      ],
+      "depends_on": [
+        "REQ-403"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "from_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "started_at": "2026-11-24T03:53:45.846149+00:00",
+      "ended_at": "2026-11-24T03:54:47.283885+00:00",
+      "run_started_at": "2026-11-24T03:53:45.846149+00:00",
+      "duration_ms": 59880,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 7967,
+      "estimated_cost_usd": 0.031882,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Created game/frontend/src/art/boy.ts with boyPortraitGrid(), BOY_PORTRAIT_SOURCE (id 'character:boy-portrait', path 'worlds/the-boys-room/characters/boy-portrait.png', frames [boyPortraitGrid()]) and BOY_SOURCES. Adaptations: (1) Step 1's 'after BOY_SHEET_SOURCE' anchor did not exist. boy.ts was not in the repo and nothing in src/ defines BOY_SHEET_SOURCE; the boy sheet exists only as public/assets/worlds/the-boys-room/characters/boy-sheet.svg, which is not generated from a source. I created the file fresh. (2) Step 2 expects BOY_SOURCES to have two entries, [BOY_SHEET_SOURCE, BOY_PORTRAIT_SOURCE]. That is not achievable without inventing a sheet source, which is out of scope, so BOY_SOURCES = [BOY_PORTRAIT_SOURCE] (one entry). This is the open item: the expected two-entry result is unmet until someone defines the boy sheet source. The grid uses the helpers in draw.ts, with the palette ramps parchment, hoodie, indigo and wood, which all exist in lib/palette.ts. Type check: `npx tsc --noEmit` reports 0 errors in src/art/boy.ts; the 8 existing errors are all in tests/ and predate this change. I did not run a grid-dimension check; the 32x32 size follows from createGrid(32,32,0) and 32 rows by construction. Not wired into generateArt.ts, which only consumes ART_SOURCES, so the portrait is exported but not generated yet. Unexpected changes: while I worked, git status showed changes I did not make: modified game/frontend/src/art/sources.ts (added AnimationDef/Origin imports and optional animations/origin fields), game/frontend/src/lib/generateAssets.ts, game/public/assets/worlds/the-boys-room/manifest.json, untracked game/public/assets/ui/cursors/hand.png, and node_modules vitest results. I left them untouched; they look like another session or process, and boy.ts does not depend on them."
+    },
+    {
+      "unit_id": "UNIT-806",
+      "title": "Act: Carry animations and origin into generated entries and register boy sources",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NC72X1VHRFK1WWY0PR"
+      ],
+      "depends_on": [
+        "REQ-404"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "a7d434fe292a99a8ab128116e7954d8ffae502c7",
+      "from_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "started_at": "2026-11-24T03:53:45.855028+00:00",
+      "ended_at": "2026-11-24T03:55:07.249372+00:00",
+      "run_started_at": "2026-11-24T03:53:45.855028+00:00",
+      "duration_ms": 79675,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 24,
+      "tokens_out": 10092,
+      "estimated_cost_usd": 0.040387,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Blocked on steps 2 (partly) and 4. Step 1 done: ArtSource in game/frontend/src/art/sources.ts now has optional animations and origin, imported as types from '@game/assets/manifest' (the types exist in game/src/assets/manifest/schema.ts). Step 3 done: both entries.push calls in game/frontend/src/lib/generateAssets.ts spread animations and origin only when the source has them. Step 2 done: ART_SOURCES is [cursor-hand, ...BOY_SOURCES], importing BOY_SOURCES from './boy'. Step 4 is NOT done: BOY_SHEET_SOURCE does not exist anywhere in the worktree, and the boy sheet's frames 0-13 (idle/walk/interact) have no palette-grid source; only SVGs exist under game/public/assets/worlds/the-boys-room/characters/. I did not invent 14 frames of pixel art. Also, game/frontend/src/art/boy.ts appeared mid-run as an untracked file written by another process: it exports only BOY_PORTRAIT_SOURCE and BOY_SOURCES = [portrait], and its own header says BOY_SHEET_SOURCE is missing. I did not edit it. The portrait is the only boy source registered, so the step 2 expectation ('cursor-hand then the boy sheet and portrait') is only half met. Verification: npx tsc --noEmit shows no errors in src/; the only errors are pre-existing ones in tests/ (bootScene, layout, phaserHost, story, tailwindConfig). npx vitest run tests/generateAssets.test.ts tests/roomSources.test.ts: 50 passed. Running vitest modified the tracked cache game/frontend/node_modules/.vite/vitest/results.json; I restored it with git checkout. After that, git status showed changes I did not make: results.json staged as M, and boy.ts as staged-deleted plus untracked. I did not run git add and did not touch the index again. To finish, someone needs to supply the boy sheet's frame grids and animation frame layout (or confirm that the sheet is provided elsewhere), then add BOY_SHEET_SOURCE with animations idle {frames:[0,1,2,3],frameRate:6,repeat:-1}, walk {frames:[4..9],frameRate:10,repeat:-1}, interact {frames:[10..13],frameRate:8,repeat:0} and origin {x:0.5,y:1}, and include it in BOY_SOURCES. Baseline cited: scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa."
+    },
+    {
+      "unit_id": "UNIT-807",
+      "title": "Act: Generate boy PNGs and manifest entries with art:generate",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCK1PTJ8WMX6P3TXW5"
+      ],
+      "depends_on": [
+        "REQ-405"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "96da9e234d9881a437e59425344a90ff2212c209",
+      "from_sha": "47a095ddac6c84d3868cf8bfa4ec40ad834debfc",
+      "started_at": "2026-11-24T03:53:45.879102+00:00",
+      "ended_at": "2026-11-24T03:54:43.924350+00:00",
+      "run_started_at": "2026-11-24T03:53:45.879102+00:00",
+      "duration_ms": 54430,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 7308,
+      "estimated_cost_usd": 0.02925,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Blocked: `npm run art:generate` does not produce the boy PNGs or the two manifest entries, because the generator's source list has no boy sources. (1) ART_SOURCES in game/frontend/src/art/sources.ts contains only ui/cursor-hand. Its uncommitted BOY_SOURCES in game/frontend/src/art/boy.ts (character:boy-portrait) is not imported or registered there. (2) No source produces character:boy-sheet; boy.ts says the sheet source does not exist. Wiring these in is another unit's work and is outside this step, so I did not edit sources.ts. Other changes: the brief's manifest path game/frontend/public/... does not exist; generator's defaultArtPaths resolves to game/public/assets/worlds/the-boys-room/manifest.json, which I used. The generator also failed at first with 'zod' not found, so I ran `npm ci` in game/ (declared deps, lockfile, no lockfile change). The run then wrote only ui/cursors/hand.png and reformatted the manifest with an added ui/cursor-hand entry, not the boy entries. I reverted the manifest with git checkout and deleted the generated hand.png, so the tree has no output from this run. Uncommitted changes to sources.ts, generateAssets.ts and boy.ts came from other work, and I left them. To unblock: register BOY_SOURCES (and a boy-sheet source) in ART_SOURCES, then rerun art:generate."
+    },
+    {
+      "unit_id": "UNIT-808",
+      "title": "Verify: Boy sheet frame count, size and palette unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NC1V05CJ6H35A1Z69J"
+      ],
+      "depends_on": [
+        "UNIT-804",
+        "REQ-402"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "from_sha": "d18fd6a7e9d0d2a3049a26af262a659da989deea",
+      "tests": [
+        {
+          "id": "boySheet:has-14-frames",
+          "kind": "unit",
+          "name": "new: boy sheet frames > has 14 frames",
+          "title": "has 14 frames",
+          "scenario": "Given BOY_SHEET_SOURCE, When its frames are read, Then frames.length is 14",
+          "command": "npx vitest run tests/boySheet.test.ts --testTimeout=20000",
+          "file": "tests/boySheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boySheet:each-frame-48x32",
+          "kind": "unit",
+          "name": "new: boy sheet frames > each frame is 48 rows by 32 columns",
+          "title": "each frame is 48 rows by 32 columns",
+          "scenario": "Given each frame of BOY_SHEET_SOURCE, When its grid is inspected, Then it has 48 rows and every row has 32 columns",
+          "command": "npx vitest run tests/boySheet.test.ts --testTimeout=20000",
+          "file": "tests/boySheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boySheet:palette-indices-only",
+          "kind": "unit",
+          "name": "new: boy sheet frames > uses only palette indices",
+          "title": "uses only palette indices",
+          "scenario": "Given all cells of all frames, When each value is checked, Then every value is an integer index >= 0 and < PALETTE.length",
+          "command": "npx vitest run tests/boySheet.test.ts --testTimeout=20000",
+          "file": "tests/boySheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boySheet:idle-walk-interact-differ",
+          "kind": "unit",
+          "name": "new: boy sheet frames > idle, walk and interact frames differ",
+          "title": "idle, walk and interact frames differ",
+          "scenario": "Given frame 0 (idle), frame 4 (walk) and frame 10 (interact), When serialized, Then they are pairwise different",
+          "command": "npx vitest run tests/boySheet.test.ts --testTimeout=20000",
+          "file": "tests/boySheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (4): boySheet: has 14 frames, boySheet: each frame is 48 rows by 32 columns, boySheet: uses only palette indices, boySheet: idle, walk and interact frames differ",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "66790ca60d4b191bfa4bcc0c2e85eb013010aaa2",
+          "from_sha": "66790ca60d4b191bfa4bcc0c2e85eb013010aaa2",
+          "tests": [
+            {
+              "id": "boySheet.has14Frames",
+              "kind": "unit",
+              "name": "boySheet: has 14 frames",
+              "title": "has 14 frames",
+              "scenario": "Given BOY_SHEET_SOURCE, When frames are read, Then frames.length is 14",
+              "command": "npx vitest run tests/boySheet.test.ts --testTimeout=10000",
+              "file": "tests/boySheet.test.ts",
+              "status": "failed",
+              "detail": "BOY_SHEET_SOURCE is undefined: not exported from src/art/boy.ts"
+            },
+            {
+              "id": "boySheet.frameSize48x32",
+              "kind": "unit",
+              "name": "boySheet: each frame is 48 rows by 32 columns",
+              "title": "each frame is 48 rows by 32 columns",
+              "scenario": "Given each frame, When measured, Then 48 rows of 32 columns",
+              "command": "npx vitest run tests/boySheet.test.ts --testTimeout=10000",
+              "file": "tests/boySheet.test.ts",
+              "status": "failed",
+              "detail": "BOY_SHEET_SOURCE is undefined: not exported from src/art/boy.ts"
+            },
+            {
+              "id": "boySheet.paletteOnly",
+              "kind": "unit",
+              "name": "boySheet: uses only palette indices",
+              "title": "uses only palette indices",
+              "scenario": "Given every grid cell, When checked, Then each is an integer index in [0, PALETTE.length)",
+              "command": "npx vitest run tests/boySheet.test.ts --testTimeout=10000",
+              "file": "tests/boySheet.test.ts",
+              "status": "failed",
+              "detail": "BOY_SHEET_SOURCE is undefined: not exported from src/art/boy.ts"
+            },
+            {
+              "id": "boySheet.idleWalkInteractDiffer",
+              "kind": "unit",
+              "name": "boySheet: idle, walk and interact frames differ",
+              "title": "idle, walk and interact frames differ",
+              "scenario": "Given frames 0, 4 and 10, When serialized, Then they are pairwise different",
+              "command": "npx vitest run tests/boySheet.test.ts --testTimeout=10000",
+              "file": "tests/boySheet.test.ts",
+              "status": "failed",
+              "detail": "BOY_SHEET_SOURCE is undefined: not exported from src/art/boy.ts"
+            }
+          ],
+          "started_at": "2026-11-24T03:55:08.570901+00:00",
+          "ended_at": "2026-11-24T03:55:37.730191+00:00",
+          "duration_ms": 27631,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 14,
+          "tokens_out": 5071,
+          "estimated_cost_usd": 0.020295
+        }
+      ],
+      "started_at": "2026-11-24T03:55:08.570901+00:00",
+      "ended_at": "2026-11-24T03:57:15.493131+00:00",
+      "run_started_at": "2026-11-24T03:56:55.844250+00:00",
+      "duration_ms": 18056,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2346,
+      "estimated_cost_usd": 0.00939
+    },
+    {
+      "unit_id": "UNIT-809",
+      "title": "Verify: Boy portrait size and palette unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCZ28K8ZQJ4KYDZH8W"
+      ],
+      "depends_on": [
+        "UNIT-805",
+        "REQ-403"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "d18fd6a7e9d0d2a3049a26af262a659da989deea",
+      "from_sha": "8f72243a5d764b0d2572fd91361e52b8149523a0",
+      "tests": [
+        {
+          "id": "boy-portrait-has-one-frame",
+          "kind": "unit",
+          "name": "boy portrait > has one frame",
+          "title": "Boy portrait has exactly one frame",
+          "scenario": "Given BOY_PORTRAIT_SOURCE, when its frames are counted, then there is exactly 1 frame.",
+          "command": "cd game/frontend && npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+          "file": "tests/boyPortrait.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boy-portrait-is-32x32",
+          "kind": "unit",
+          "name": "boy portrait > is 32x32",
+          "title": "Boy portrait frame is 32 rows of 32 cells",
+          "scenario": "Given the single portrait frame, when its rows and cells are measured, then there are 32 rows and each row has 32 cells.",
+          "command": "cd game/frontend && npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+          "file": "tests/boyPortrait.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boy-portrait-uses-only-palette-indices",
+          "kind": "unit",
+          "name": "boy portrait > uses only palette indices",
+          "title": "Every boy portrait cell is a valid palette index",
+          "scenario": "Given the single portrait frame, when every cell is checked, then each is an integer between 0 and PALETTE.length - 1.",
+          "command": "cd game/frontend && npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+          "file": "tests/boyPortrait.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "66790ca60d4b191bfa4bcc0c2e85eb013010aaa2",
+          "from_sha": "a7d434fe292a99a8ab128116e7954d8ffae502c7",
+          "tests": [
+            {
+              "id": "boy-portrait-has-one-frame",
+              "kind": "unit",
+              "name": "has one frame",
+              "title": "boy portrait has one frame",
+              "scenario": "Given BOY_PORTRAIT_SOURCE, When its frames are counted, Then there is exactly one frame",
+              "command": "npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+              "file": "tests/boyPortrait.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "boy-portrait-is-32x32",
+              "kind": "unit",
+              "name": "is 32x32",
+              "title": "boy portrait is 32x32",
+              "scenario": "Given the single portrait frame, When its rows and cells are measured, Then there are 32 rows each 32 cells wide",
+              "command": "npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+              "file": "tests/boyPortrait.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "boy-portrait-uses-only-palette-indices",
+              "kind": "unit",
+              "name": "uses only palette indices",
+              "title": "boy portrait uses only palette indices",
+              "scenario": "Given the portrait frame and PALETTE, When every cell is checked, Then each cell is an integer from 0 to PALETTE.length - 1",
+              "command": "npx vitest run tests/boyPortrait.test.ts --testTimeout=10000",
+              "file": "tests/boyPortrait.test.ts",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T03:55:08.592705+00:00",
+          "ended_at": "2026-11-24T03:55:29.188419+00:00",
+          "duration_ms": 19027,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 12,
+          "tokens_out": 2866,
+          "estimated_cost_usd": 0.011474
+        }
+      ],
+      "started_at": "2026-11-24T03:55:08.592705+00:00",
+      "ended_at": "2026-11-24T03:57:13.953363+00:00",
+      "run_started_at": "2026-11-24T03:56:55.853457+00:00",
+      "duration_ms": 14108,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1941,
+      "estimated_cost_usd": 0.00777
+    },
+    {
+      "unit_id": "UNIT-810",
+      "title": "Verify: Boy manifest animations, sizes and generator unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCYW1SHMGKEBRND7E6"
+      ],
+      "depends_on": [
+        "UNIT-806",
+        "REQ-404"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "71dbaf7aa99450f4826aed1068b1bd8bb1880296",
+      "from_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "tests": [
+        {
+          "id": "generator-animations-origin-carried",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > carries animations and origin from a source into its generated entry",
+          "title": "carries animations and origin from a source into its generated entry",
+          "scenario": "Given a two-frame inline source with an idle animation and origin {x:0.5,y:1}, when generateAssets renders it, then the entry has equal animations and origin",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "generator-omits-absent-fields",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > omits animations and origin from the entry when the source does not define them",
+          "title": "omits animations and origin from the entry when the source does not define them",
+          "scenario": "Given a single-frame inline source with no animations and no origin, when generateAssets renders it, then the entry has neither 'animations' nor 'origin'",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "art-sources-boy-ids-unique",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > registers character:boy-sheet and character:boy-portrait exactly once each in ART_SOURCES",
+          "title": "registers character:boy-sheet and character:boy-portrait exactly once each in ART_SOURCES",
+          "scenario": "Given the shipped ART_SOURCES list, when the ids are counted, then character:boy-sheet and character:boy-portrait each appear exactly once",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boy-sheet-size-frames-animations",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > generates the boy sheet with 448x48 size, 14 frames and the idle, walk and interact animations",
+          "title": "generates the boy sheet with 448x48 size, 14 frames and the idle, walk and interact animations",
+          "scenario": "Given the boy sources rendered by generateAssets, when the character:boy-sheet entry is inspected, then it is 448x48 with 14 frames, idle [0..3], walk [4..9], interact [10..13] and a positive frameRate",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boy-portrait-size",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > generates the boy portrait with 32x32 dimensions",
+          "title": "generates the boy portrait with 32x32 dimensions",
+          "scenario": "Given the boy sources rendered by generateAssets, when the character:boy-portrait entry is inspected, then its dimensions are 32x32",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boy-entries-parse-as-manifest",
+          "kind": "unit",
+          "name": "tests/boyManifest.test.ts > generateAssets generator animations and origin > produces boy entries that parse as a valid manifest",
+          "title": "produces boy entries that parse as a valid manifest",
+          "scenario": "Given the boy entries produced by generateAssets, when wrapped in a version 1 manifest and parsed, then parseManifest reports ok",
+          "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+          "file": "tests/boyManifest.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (2): generateAssets generator animations and origin > registers character:boy-sheet and character:boy-portrait exactly once each in ART_SOURCES, generateAssets generator animations and origin > generates the boy sheet with 448x48 size, 14 frames and the idle, walk and interact animations",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "fc3af7ab0cb65143a8b2d74041afe9867a3e4f69",
+          "from_sha": "fc3af7ab0cb65143a8b2d74041afe9867a3e4f69",
+          "tests": [
+            {
+              "id": "generator-carries-animations-origin",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > carries animations and origin from a source into its generated entry",
+              "title": "carries animations and origin from a source into its generated entry",
+              "scenario": "Given a two-frame inline source with idle animation and origin {x:0.5,y:1}, when generateAssets renders it, then the entry has equal animations and origin",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "generator-omits-absent-fields",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > omits animations and origin from the entry when the source does not define them",
+              "title": "omits animations and origin when the source does not define them",
+              "scenario": "Given a single-frame source with no animations and no origin, when generateAssets renders it, then the entry has neither property",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "art-sources-boy-ids-once",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > registers character:boy-sheet and character:boy-portrait exactly once each in ART_SOURCES",
+              "title": "registers character:boy-sheet and character:boy-portrait exactly once each in ART_SOURCES",
+              "scenario": "Given the shipped ART_SOURCES list, when the ids are counted, then character:boy-sheet and character:boy-portrait each appear exactly once",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "failed",
+              "detail": "character:boy-portrait appears once, but character:boy-sheet appears 0 times. Missing: BOY_SHEET_SOURCE (id character:boy-sheet, path for the boy sheet) is not defined in src/art/boy.ts and is not in ART_SOURCES. Assertion at tests/boyManifest.test.ts:64 expected length 1, got 0."
+            },
+            {
+              "id": "boy-sheet-size-frames-animations",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > generates the boy sheet with 448x48 size, 14 frames and the idle, walk and interact animations",
+              "title": "generates the boy sheet with 448x48 size, 14 frames and idle, walk and interact animations",
+              "scenario": "Given the boy sources rendered by generateAssets, when the character:boy-sheet entry is inspected, then it is 448x48 with 14 frames, idle [0..3], walk [4..9], interact [10..13] and positive frameRate",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "failed",
+              "detail": "No character:boy-sheet entry is produced by generateAssets(BOY_SOURCES) because the sheet source does not exist (BOY_SOURCES contains only the portrait). Assertion at tests/boyManifest.test.ts:75 expected undefined to be defined. Needs the Act agent to add the boy sheet source (448x48, 14 frames) to src/art/boy.ts and register it in BOY_SOURCES."
+            },
+            {
+              "id": "boy-portrait-32x32",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > generates the boy portrait with 32x32 dimensions",
+              "title": "generates the boy portrait with 32x32 dimensions",
+              "scenario": "Given the boy sources rendered by generateAssets, when the character:boy-portrait entry is inspected, then its dimensions are 32x32",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "boy-entries-parse-manifest",
+              "kind": "unit",
+              "name": "generateAssets generator animations and origin > produces boy entries that parse as a valid manifest",
+              "title": "produces boy entries that parse as a valid manifest",
+              "scenario": "Given the boy entries from generateAssets, when wrapped in a version 1 manifest and parsed, then parseManifest reports ok",
+              "command": "npx vitest run tests/boyManifest.test.ts --testTimeout=20000",
+              "file": "tests/boyManifest.test.ts",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T03:55:08.602301+00:00",
+          "ended_at": "2026-11-24T03:56:09.908713+00:00",
+          "duration_ms": 59674,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 20,
+          "tokens_out": 8682,
+          "estimated_cost_usd": 0.034744
+        }
+      ],
+      "started_at": "2026-11-24T03:55:08.602301+00:00",
+      "ended_at": "2026-11-24T03:57:45.929780+00:00",
+      "run_started_at": "2026-11-24T03:57:17.602878+00:00",
+      "duration_ms": 26762,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3651,
+      "estimated_cost_usd": 0.014612
+    },
+    {
+      "unit_id": "UNIT-811",
+      "title": "Verify: Committed manifest boy entries match generated output unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85V07NCJ0MDS7TJKPD18T02"
+      ],
+      "depends_on": [
+        "UNIT-807",
+        "REQ-405"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "71dbaf7aa99450f4826aed1068b1bd8bb1880296",
+      "from_sha": "71dbaf7aa99450f4826aed1068b1bd8bb1880296",
+      "tests": [
+        {
+          "id": "boyManifestFile:generates-boy-entries",
+          "kind": "unit",
+          "name": "new: committed manifest boy entries > generates at least one boy entry",
+          "title": "generates at least one boy entry from BOY_SOURCES",
+          "scenario": "Given BOY_SOURCES, When generateAssets runs, Then at least one entry is produced",
+          "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=20000",
+          "file": "tests/boyManifestFile.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boyManifestFile:commits-entry-unchanged",
+          "kind": "unit",
+          "name": "new: committed manifest boy entries > commits the generated entry for %s unchanged",
+          "title": "commits each generated boy entry unchanged in manifest.json",
+          "scenario": "Given each generated boy entry, When looked up by id in the committed manifest, Then it is deep-equal to the generated entry",
+          "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=20000",
+          "file": "tests/boyManifestFile.test.ts",
+          "status": "passed",
+          "detail": "Parametrized by entry id (it.each); all cases passed."
+        },
+        {
+          "id": "boyManifestFile:commits-png-path",
+          "kind": "unit",
+          "name": "new: committed manifest boy entries > commits a PNG path for generated entry %s",
+          "title": "commits a .png path matching each generated boy entry",
+          "scenario": "Given each generated boy entry, When looked up in the committed manifest, Then its path ends in .png and equals the generated path",
+          "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=20000",
+          "file": "tests/boyManifestFile.test.ts",
+          "status": "passed",
+          "detail": "Parametrized by entry id (it.each); all cases passed."
+        },
+        {
+          "id": "boyManifestFile:character-boy-svg",
+          "kind": "unit",
+          "name": "new: committed manifest boy entries > keeps the existing character:boy entry as an SVG",
+          "title": "keeps the existing character:boy entry as an SVG",
+          "scenario": "Given the committed manifest, When character:boy is looked up, Then the entry exists and its path ends in .svg",
+          "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=20000",
+          "file": "tests/boyManifestFile.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (2): boyManifestFile.test.ts > commits the generated entry for %s unchanged, boyManifestFile.test.ts > commits a PNG path for generated entry %s",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "cascade-verify",
+          "commit_sha": "fc3af7ab0cb65143a8b2d74041afe9867a3e4f69",
+          "from_sha": "66790ca60d4b191bfa4bcc0c2e85eb013010aaa2",
+          "tests": [
+            {
+              "id": "commits the generated entry for character:boy-portrait unchanged",
+              "kind": "unit",
+              "name": "boyManifestFile.test.ts > commits the generated entry for %s unchanged",
+              "title": "commits the generated entry for character:boy-portrait unchanged",
+              "scenario": "Given the boy sources, when generateAssets runs, then the committed manifest entry with the same id equals the generated entry",
+              "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=10000",
+              "file": "tests/boyManifestFile.test.ts",
+              "status": "failed",
+              "detail": "Committed manifest has no 'character:boy-portrait' entry (manifest.assets.find returned undefined). Act must run art:generate and commit the updated manifest."
+            },
+            {
+              "id": "commits a PNG path for generated entry character:boy-portrait",
+              "kind": "unit",
+              "name": "boyManifestFile.test.ts > commits a PNG path for generated entry %s",
+              "title": "commits a PNG path for generated entry character:boy-portrait",
+              "scenario": "Given the generated boy entries, then each committed entry path ends in .png and matches the generated path",
+              "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=10000",
+              "file": "tests/boyManifestFile.test.ts",
+              "status": "failed",
+              "detail": "Committed path is undefined because the entry is missing from the manifest; expected worlds/the-boys-room/characters/boy-portrait.png."
+            },
+            {
+              "id": "generates at least one boy entry",
+              "kind": "unit",
+              "name": "boyManifestFile.test.ts > generates at least one boy entry",
+              "title": "generates at least one boy entry",
+              "scenario": "Given BOY_SOURCES, when generateAssets runs, then it yields one or more entries",
+              "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=10000",
+              "file": "tests/boyManifestFile.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "keeps the existing character:boy entry as an SVG",
+              "kind": "unit",
+              "name": "boyManifestFile.test.ts > keeps the existing character:boy entry as an SVG",
+              "title": "keeps the existing character:boy entry as an SVG",
+              "scenario": "Given the committed manifest, then the old character:boy entry is present with a .svg path",
+              "command": "npx vitest run tests/boyManifestFile.test.ts --testTimeout=10000",
+              "file": "tests/boyManifestFile.test.ts",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T03:55:08.623323+00:00",
+          "ended_at": "2026-11-24T03:56:00.130655+00:00",
+          "duration_ms": 49792,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 18,
+          "tokens_out": 6786,
+          "estimated_cost_usd": 0.027158
+        }
+      ],
+      "started_at": "2026-11-24T03:55:08.623323+00:00",
+      "ended_at": "2026-11-24T03:57:49.743948+00:00",
+      "run_started_at": "2026-11-24T03:57:26.678962+00:00",
+      "duration_ms": 21481,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2504,
+      "estimated_cost_usd": 0.010022
+    },
+    {
+      "unit_id": "REQ-402",
+      "title": "REQ · Boy sheet source holds 14 frames of 32x48 for idle, walk and interact",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-164"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-403",
+      "title": "REQ · Boy portrait grid is 32x32 and palette-only",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-164"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-404",
+      "title": "REQ · Generator carries animations and origin into manifest entries and boy sources are registered",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-164"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-405",
+      "title": "REQ · Generated boy PNGs and manifest entries exist at their declared sizes",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-164"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-164",
+      "title": "Evidence: Boy sheet, portrait and manifest unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-804",
+        "UNIT-805",
+        "UNIT-806",
+        "UNIT-807",
+        "UNIT-808",
+        "UNIT-809",
+        "UNIT-810",
+        "UNIT-811"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-808",
+      "title": "Act: Fix Verify failure — Boy sheet frame count, size and palette unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "8f72243a5d764b0d2572fd91361e52b8149523a0",
+      "from_sha": "fc3af7ab0cb65143a8b2d74041afe9867a3e4f69",
+      "started_at": "2026-11-24T03:55:37.739274+00:00",
+      "ended_at": "2026-11-24T03:56:55.576416+00:00",
+      "run_started_at": "2026-11-24T03:55:37.739274+00:00",
+      "duration_ms": 74089,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 26,
+      "tokens_out": 9316,
+      "estimated_cost_usd": 0.037285
+    },
+    {
+      "unit_id": "FIX-UNIT-811",
+      "title": "Act: Fix Verify failure — Committed manifest boy entries match generated output unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "from_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "started_at": "2026-11-24T03:56:00.139812+00:00",
+      "ended_at": "2026-11-24T03:57:26.590366+00:00",
+      "run_started_at": "2026-11-24T03:56:00.139812+00:00",
+      "duration_ms": 84982,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 28,
+      "tokens_out": 9209,
+      "estimated_cost_usd": 0.036858
+    },
+    {
+      "unit_id": "FIX-UNIT-810",
+      "title": "Act: Fix Verify failure — Boy manifest animations, sizes and generator unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "from_sha": "e29bd583e731e80885cd1a5062e753ae3edad9e6",
+      "started_at": "2026-11-24T03:56:09.917606+00:00",
+      "ended_at": "2026-11-24T03:57:17.341553+00:00",
+      "run_started_at": "2026-11-24T03:56:09.917606+00:00",
+      "duration_ms": 65782,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 24,
+      "tokens_out": 9212,
+      "estimated_cost_usd": 0.036867
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-806",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "UNIT-806",
+      "dst": "UNIT-810"
+    },
+    {
+      "src": "REQ-402",
+      "dst": "UNIT-808"
+    },
+    {
+      "src": "UNIT-804",
+      "dst": "UNIT-808"
+    },
+    {
+      "src": "INT-164",
+      "dst": "REQ-402"
+    },
+    {
+      "src": "INT-164",
+      "dst": "REQ-403"
+    },
+    {
+      "src": "UNIT-805",
+      "dst": "UNIT-809"
+    },
+    {
+      "src": "UNIT-807",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "UNIT-809",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "UNIT-811",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "INT-164",
+      "dst": "REQ-404"
+    },
+    {
+      "src": "UNIT-804",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "UNIT-810",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "REQ-402",
+      "dst": "UNIT-804"
+    },
+    {
+      "src": "REQ-403",
+      "dst": "UNIT-805"
+    },
+    {
+      "src": "REQ-404",
+      "dst": "UNIT-806"
+    },
+    {
+      "src": "UNIT-805",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "REQ-404",
+      "dst": "UNIT-810"
+    },
+    {
+      "src": "UNIT-808",
+      "dst": "EVD-164"
+    },
+    {
+      "src": "REQ-403",
+      "dst": "UNIT-809"
+    },
+    {
+      "src": "REQ-405",
+      "dst": "UNIT-807"
+    },
+    {
+      "src": "INT-164",
+      "dst": "REQ-405"
+    },
+    {
+      "src": "UNIT-807",
+      "dst": "UNIT-811"
+    },
+    {
+      "src": "REQ-405",
+      "dst": "UNIT-811"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85v08",
+  "base_sha": "47a095ddac6c84d3868cf8bfa4ec40ad834debfc",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85V08SCS2GG15DQ27TWSEP4:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T03:53:42.444129+00:00",
+  "updated_at": "2026-11-24T03:57:51.624032+00:00",
+  "completed_at": "2026-11-24T03:57:49.746058+00:00",
+  "duration_ms": 247302,
+  "usage_stats": {
+    "total_duration_ms": 712014,
+    "total_tokens_in": 260,
+    "total_tokens_out": 94604,
+    "total_estimated_cost_usd": 0.378622
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-804",
+    "UNIT-805",
+    "UNIT-806",
+    "UNIT-807",
+    "UNIT-808",
+    "UNIT-809",
+    "UNIT-810",
+    "UNIT-811"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-804",
+        "title": "Act: Author the boy sheet frames in boy.ts",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-804 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-805",
+        "title": "Act: Author the 32x32 boy portrait source",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-805 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-806",
+        "title": "Act: Carry animations and origin into generated entries and register boy sources",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-806 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-807",
+        "title": "Act: Generate boy PNGs and manifest entries with art:generate",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-807 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-808",
+        "title": "Verify: Boy sheet frame count, size and palette unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-808 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-809",
+        "title": "Verify: Boy portrait size and palette unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-809 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-810",
+        "title": "Verify: Boy manifest animations, sizes and generator unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-810 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-811",
+        "title": "Verify: Committed manifest boy entries match generated output unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-164",
+            "path": ".ai-dlc/evidence/EVD-164.md",
+            "title": "Evidence: Boy sheet, portrait and manifest unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-811 unless acceptance outcomes recorded in EVD-164 (.ai-dlc/evidence/EVD-164.md; \"Evidence: Boy sheet, portrait and manifest unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T03:53:45.238010+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-804",
+    "UNIT-805",
+    "UNIT-806",
+    "UNIT-807",
+    "UNIT-808",
+    "UNIT-809",
+    "UNIT-810",
+    "UNIT-811"
+  ]
+}

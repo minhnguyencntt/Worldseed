@@ -1,0 +1,56 @@
+{
+  "id": "01M85R5TTJHEGK6DX6RYF76FAD",
+  "intent_id": "01M85R04Y7ESS4H737B4QA602P",
+  "title": "REQ · gridToRgba converts a palette-indexed grid to RGBA and rejects out-of-range indices",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Pure gridToRgba returns RGBA pixels using only palette colours and throws on bad indices",
+  "description": "Context: no gridToRgba exists under game/. Desired behaviour: gridToRgba(grid, palette = PALETTE) takes rows of palette indices and returns {width, height, data} where data is a Uint8ClampedArray of length width*height*4 with alpha 255. Expected result: every pixel RGB equals a palette colour; any index that is not an integer in 0..palette.length-1, or a ragged row, throws. Why: art is authored as palette-indexed grids.",
+  "acceptance_criteria": [
+    "Given a 3x2 grid of valid indices, when gridToRgba runs, then width is 3, height is 2 and data length is 24",
+    "Given a valid grid, when each pixel is read back, then its RGB equals the hex colour of the palette entry at that index with alpha 255",
+    "Given an index equal to palette.length, a negative index or a non-integer, when gridToRgba runs, then it throws an Error naming the index",
+    "Given rows of unequal length or an empty grid, when gridToRgba runs, then it throws"
+  ],
+  "scope": {
+    "in_scope": [
+      "gridToRgba function and RgbaImage type"
+    ],
+    "out_of_scope": [
+      "transparency",
+      "PNG encoding"
+    ],
+    "preserve": [
+      "PALETTE export"
+    ]
+  },
+  "technical_constraints": [
+    "Pure function; reads colours only from the shared palette passed in (default PALETTE from game/frontend/src/lib/palette.ts)",
+    "Palette of at most 48 colours defined once"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "gridToRgba exported from game/frontend/src/lib/gridToRgba.ts",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-388.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85R1X8F6E5E7NBVNWGZ4FQ9",
+    "trace:01M85QW2EBXVMD69T7ERA37QBB",
+    "artifact:.ai-dlc/requirements/REQ-388.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M85R5TTJETSZFZG0BB34C1NC"
+  ],
+  "sim_node_id": "01M85R1X8F8Z8D7B8S4K10QSVG",
+  "feature_id": "01M85QW2EBXVMD69T7ERA37QBB",
+  "artifact_path": ".ai-dlc/requirements/REQ-388.md",
+  "artifact_id": "REQ-388",
+  "created_at": "2026-11-24T03:04:19.026094+00:00",
+  "updated_at": "2026-11-24T03:05:28.415777+00:00"
+}

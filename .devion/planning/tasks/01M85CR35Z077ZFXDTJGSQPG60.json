@@ -1,0 +1,70 @@
+{
+  "id": "01M85CR35Z077ZFXDTJGSQPG60",
+  "intent_id": "01M85CJMBD6F8YVA6APHGQ7386",
+  "title": "Verify: Max length counter and over-limit unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for counter and length gating",
+  "description": "Prove the counter, the over-limit message and the boundary at exactly 500 characters.",
+  "acceptance_criteria": [
+    "Counter shows N/500",
+    "501 chars blocks, 500 chars allows"
+  ],
+  "scope": {
+    "in_scope": [
+      "Test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "fetch stubbed; fixtures from tests/fixtures/api.ts mirroring Contribution in src/api/client.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-636.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CMAABSZGJ12NNMYXQNNAP",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-636.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85CR35Z41K3Y42CHKQ5RJMW"
+  ],
+  "sim_node_id": "01M85CMAABT77S7GFA276N02V9",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-636.md",
+  "artifact_id": "UNIT-636",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionValidation.test.tsx",
+      "symbol": "test: counter text",
+      "lines": "after blank tests",
+      "action": "Type 'hello' into the textarea and assert screen.getByText('5/500') is present.",
+      "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t counter",
+      "expected": "Counter assertion passes"
+    },
+    {
+      "file": "game/frontend/tests/contributionValidation.test.tsx",
+      "symbol": "test: length boundary",
+      "lines": "after counter test",
+      "action": "Type 'a'.repeat(501): assert getByText('Idea is too long') and Send disabled; then change to 'a'.repeat(500): assert queryByText('Idea is too long') is null and Send enabled.",
+      "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t boundary",
+      "expected": "501 blocked, 500 allowed"
+    }
+  ],
+  "created_at": "2026-11-23T23:44:34.495487+00:00",
+  "updated_at": "2026-11-23T23:46:17.449175+00:00"
+}

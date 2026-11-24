@@ -1,0 +1,73 @@
+{
+  "id": "01M85E1MYW8P2BJZPEM91W4SSF",
+  "intent_id": "01M85DVS0S49NMJFR6Q9K4AB6W",
+  "title": "Act: Confirm counter and over-limit guard in ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Check the counter paragraph and overLimit guard exist as the tests assert",
+  "description": "Context: length uses Array.from(text.trim()).length and overLimit blocks submit. Expected result: guard, counter and alert present.",
+  "acceptance_criteria": [
+    "handleSubmit returns before submitContribution when overLimit is true",
+    "The counter paragraph id contribution-idea-count renders `${length} / ${MAX_PROMPT_LENGTH}` and the alert id contribution-idea-limit renders when overLimit"
+  ],
+  "scope": {
+    "in_scope": [
+      "overLimit branch and counter JSX"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Existing texts"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [
+    "REQ-LEN"
+  ],
+  "definition_of_done": [
+    "Guard and texts confirmed present, added only if missing",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-655.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85DXK44727AWVMJVVMN2NH9",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-655.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85E1MYWTT2KZABH16NRB2FM"
+  ],
+  "sim_node_id": "01M85DXK44NT1RVVJZS45RK70G",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-655.md",
+  "artifact_id": "UNIT-655",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet.handleSubmit",
+      "lines": "L72-L95",
+      "action": "Check the line 'if (overLimit) return;' sits after the blank check and before setEntries/submitContribution; add if absent",
+      "code": "if (overLimit) return;",
+      "expected": "Over-limit text never reaches submitContribution"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet counter and limit alert",
+      "lines": "L125-L137",
+      "action": "Check <p id='contribution-idea-count'> renders `${length} / ${MAX_PROMPT_LENGTH}` and {overLimit && <p id='contribution-idea-limit' role='alert'>} renders `Too long: ${length} / ${MAX_PROMPT_LENGTH}`; add if absent",
+      "expected": "Counter and over-limit message texts match the tests"
+    }
+  ],
+  "created_at": "2026-11-24T00:07:16.188112+00:00",
+  "updated_at": "2026-11-24T00:07:38.828873+00:00"
+}

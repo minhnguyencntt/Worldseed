@@ -1,0 +1,64 @@
+{
+  "id": "01M84J3CJWCNHYFBBRBZJ4WVFB",
+  "intent_id": "01M84J1R4N0QKR7CQJ9WV8VQ4D",
+  "title": "Act: Confirm cmd/server/main.go reads only kept config fields",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm main.go wiring uses no worker or execution config",
+  "description": "Read main.go and confirm it only calls config.Load, server.NewScheduler(cfg), server.New(cfg, logger) and reads cfg.Server.Addr. Remove any worker wiring found; none is expected.",
+  "acceptance_criteria": [
+    "main.go has no worker or execution reference",
+    "main.go builds"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/cmd/server/main.go"
+    ],
+    "out_of_scope": [
+      "Test files"
+    ],
+    "preserve": [
+      "Scheduler start and graceful shutdown"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/cmd/server/main.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "main.go compiles with no worker or execution reference",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-245.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84J30C6DT105YQ9639EYRWX",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-245.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84J3CJW5P6YDY3Q8TBX5F7A"
+  ],
+  "sim_node_id": "01M84J30C61Z3B72GDW7YN6C6R",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-245.md",
+  "artifact_id": "UNIT-245",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/cmd/server/main.go",
+      "symbol": "main",
+      "lines": "L17-L46",
+      "action": "Check that main only uses config.Load, server.NewScheduler(cfg).Run, server.New(cfg, logger) and cfg.Server.Addr. Remove any worker or execution wiring found.",
+      "command": "cd backend && go build ./cmd/server && grep -niE 'worker|execution' cmd/server/main.go || true",
+      "expected": "The package builds with no worker or execution reference"
+    }
+  ],
+  "created_at": "2026-11-23T15:58:53.020085+00:00",
+  "updated_at": "2026-11-23T15:59:57.618154+00:00"
+}

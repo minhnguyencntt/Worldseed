@@ -1,0 +1,65 @@
+{
+  "id": "01M844Z5FZZCG0HG7S05PJDKCZ",
+  "intent_id": "01M844XNJF45JVTC7S2T492R66",
+  "title": "Verify: Entry point and App render unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for index.html, main.tsx mount and guard, and App render",
+  "description": "Test the entry chain with react-dom/client mocked.",
+  "acceptance_criteria": [
+    "index.html has div#root and script /src/main.tsx",
+    "main.tsx calls createRoot with #root and renders App",
+    "main.tsx throws when #root is missing",
+    "App renders the Begin button"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/entry.test.tsx"
+    ],
+    "out_of_scope": [
+      "Browser or dev server"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Mock react-dom/client with vi.mock; no real server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-056.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M844Z4RR1JNK7CQARYX0BXJ4",
+    "trace:01M844GYQJ55B1RVZJXYYRYX24",
+    "artifact:.ai-dlc/units/UNIT-056.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M844Z5FZXMMP9X15C0PTGW4M"
+  ],
+  "sim_node_id": "01M844Z4RR5KBR9HXNWYQZTSK3",
+  "feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+  "artifact_path": ".ai-dlc/units/UNIT-056.md",
+  "artifact_id": "UNIT-056",
+  "steps": [
+    {
+      "file": "game/frontend/tests/entry.test.tsx",
+      "symbol": "new: describe('entry point')",
+      "lines": "new",
+      "action": "Create file with '// @vitest-environment jsdom'. vi.mock('react-dom/client', () => ({ createRoot: vi.fn(() => ({ render: vi.fn() })) })). Test 1 reads index.html via readFileSync(join(process.cwd(),'index.html'),'utf8') and expects it to contain 'id=\"root\"' and 'src=\"/src/main.tsx\"', and existsSync of src/main.tsx true. Test 2: vi.resetModules, set document.body.innerHTML='<div id=\"root\"></div>', await import('../src/main'), expect createRoot toHaveBeenCalledWith the #root element and the render mock toHaveBeenCalledOnce. Test 3: set body empty, vi.resetModules, expect(import('../src/main')).rejects.toThrow('Root element #root not found'). Test 4: render(<App />) and expect screen.getByRole('button',{name:'Begin'}) in the document.",
+      "code": "await expect(import('../src/main')).rejects.toThrow('Root element #root not found');",
+      "command": "cd game/frontend && npx vitest run tests/entry.test.tsx",
+      "expected": "All four tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T12:09:23.199868+00:00",
+  "updated_at": "2026-11-23T12:10:16.207816+00:00"
+}

@@ -1,0 +1,500 @@
+{
+  "intent_id": "01M85N4CM4V0AVGP3FWEM1KQ9J",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85N66P5EK6ESBNMSV4R72JE",
+      "kind": "intent",
+      "title": "SG-11.2.2 Store and release the transitionTo unsubscribe in BootScene",
+      "body": "Context: BootScene.create subscribes to the transitionTo event through reactToPhaser.on and already keeps the returned function in the private field unsubscribeTransition. The SHUTDOWN handler already calls and nulls it. Desired behavior: the stored unsubscribe is called and cleared on SHUTDOWN, so a restarted scene does not hold duplicate transitionTo handlers. Expected result: exactly one fade-out per transitionTo event after any number of scene restarts. Why: a duplicate handler would fade and start the scene several times.\n\n## Acceptance criteria\n- Given BootScene.create has run, when transitionTo is emitted, then exactly one fadeOut call is made\n- Given the SHUTDOWN callback has run, when transitionTo is emitted, then no fadeOut and no scene.start happens\n- Given the scene was shut down and created again, when transitionTo is emitted, then fadeOut is called exactly once\n\n\n## Scope\n- In scope: unsubscribeTransition field and SHUTDOWN handler in BootScene\n- Out of scope: playAnimation and store subscription handling\n- Out of scope: new events\n- Preserve: fade-out then scene.start behavior of transitionTo\n- Preserve: other subscribers on reactToPhaser\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- No real Phaser or browser in tests\n\n\n## Definition of done\n- Both requirements have Act and Verify units complete\n- Unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene keeps the transitionTo unsubscribe function and calls then clears it on SHUTDOWN",
+      "description": "Context: BootScene.create subscribes to the transitionTo event through reactToPhaser.on and already keeps the returned function in the private field unsubscribeTransition. The SHUTDOWN handler already calls and nulls it. Desired behavior: the stored unsubscribe is called and cleared on SHUTDOWN, so a restarted scene does not hold duplicate transitionTo handlers. Expected result: exactly one fade-out per transitionTo event after any number of scene restarts. Why: a duplicate handler would fade and start the scene several times.",
+      "acceptance_criteria": [
+        "Given BootScene.create has run, when transitionTo is emitted, then exactly one fadeOut call is made",
+        "Given the SHUTDOWN callback has run, when transitionTo is emitted, then no fadeOut and no scene.start happens",
+        "Given the scene was shut down and created again, when transitionTo is emitted, then fadeOut is called exactly once"
+      ],
+      "scope": {
+        "in_scope": [
+          "unsubscribeTransition field and SHUTDOWN handler in BootScene"
+        ],
+        "out_of_scope": [
+          "playAnimation and store subscription handling",
+          "new events"
+        ],
+        "preserve": [
+          "fade-out then scene.start behavior of transitionTo",
+          "other subscribers on reactToPhaser"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "No real Phaser or browser in tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements have Act and Verify units complete",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-154.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85MNPTJCZY8SCT0WFZBV56X",
+      "links": [
+        "trace:01M85MNPTJCZY8SCT0WFZBV56X",
+        "artifact:.ai-dlc/intent/INT-154.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-154.md",
+      "artifact_id": "INT-154"
+    },
+    {
+      "id": "01M85N66P5RVN2V45NHZ1WAERN",
+      "kind": "requirement",
+      "title": "REQ · BootScene.create stores the transitionTo unsubscribe function",
+      "body": "Context: BootScene declares unsubscribeTransition at L33 and assigns it in create at L76. Desired behavior: the handle is retained so it can be released later. Expected result: after create the field holds the unsubscribe function, and one emit produces one fade. Why: without the handle the subscription could never be released.\n\n## Acceptance criteria\n- Given create has run, when transitionTo is emitted once, then fadeOut is called exactly once with the transition duration\n- Given the scene is shut down and created again, when transitionTo is emitted once, then fadeOut is called exactly once in total\n\n\n## Scope\n- In scope: assignment of unsubscribeTransition in BootScene.create\n- Out of scope: SHUTDOWN handler changes\n- Preserve: existing transitionTo fade and start logic\n\n\n## Technical constraints\n- Field typed (() => void) | null\n\n\n## Definition of done\n- Field assigned from reactToPhaser.on return value\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The function returned by reactToPhaser.on('transitionTo') is kept in unsubscribeTransition",
+      "description": "Context: BootScene declares unsubscribeTransition at L33 and assigns it in create at L76. Desired behavior: the handle is retained so it can be released later. Expected result: after create the field holds the unsubscribe function, and one emit produces one fade. Why: without the handle the subscription could never be released.",
+      "acceptance_criteria": [
+        "Given create has run, when transitionTo is emitted once, then fadeOut is called exactly once with the transition duration",
+        "Given the scene is shut down and created again, when transitionTo is emitted once, then fadeOut is called exactly once in total"
+      ],
+      "scope": {
+        "in_scope": [
+          "assignment of unsubscribeTransition in BootScene.create"
+        ],
+        "out_of_scope": [
+          "SHUTDOWN handler changes"
+        ],
+        "preserve": [
+          "existing transitionTo fade and start logic"
+        ]
+      },
+      "technical_constraints": [
+        "Field typed (() => void) | null"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Field assigned from reactToPhaser.on return value",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-378.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85N66P5EK6ESBNMSV4R72JE",
+      "matched_feature_id": "01M85MNPTJN2Z2441YTP0WZR6S",
+      "links": [
+        "parent:01M85N66P5EK6ESBNMSV4R72JE",
+        "trace:01M85MNPTJN2Z2441YTP0WZR6S",
+        "artifact:.ai-dlc/requirements/REQ-378.md"
+      ],
+      "depends_on": [
+        "01M85N66P5EK6ESBNMSV4R72JE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-378.md",
+      "artifact_id": "REQ-378"
+    },
+    {
+      "id": "01M85N66P5CETNP3R6YSAC6156",
+      "kind": "requirement",
+      "title": "REQ · BootScene SHUTDOWN calls and clears the transitionTo unsubscribe",
+      "body": "Context: the SHUTDOWN callback registered in create already calls unsubscribeTransition?.() and nulls it at L97-L98. Desired behavior: after shutdown no transitionTo event reaches BootScene, while other subscribers keep working. Expected result: no fade or scene start after shutdown. Why: avoids duplicate handlers after restart.\n\n## Acceptance criteria\n- Given the SHUTDOWN callback has run, when transitionTo is emitted, then fadeOut and scene.start are not called\n- Given another subscriber registered before create, when SHUTDOWN has run and transitionTo is emitted, then that subscriber still receives the payload\n\n\n## Scope\n- In scope: transitionTo release in the SHUTDOWN handler\n- Out of scope: other unsubscribe fields\n- Preserve: order and behavior of the other cleanup calls\n\n\n## Technical constraints\n- Release must happen inside the existing SHUTDOWN handler\n\n\n## Definition of done\n- unsubscribeTransition is called and set to null in SHUTDOWN\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "SHUTDOWN handler invokes unsubscribeTransition then sets it to null",
+      "description": "Context: the SHUTDOWN callback registered in create already calls unsubscribeTransition?.() and nulls it at L97-L98. Desired behavior: after shutdown no transitionTo event reaches BootScene, while other subscribers keep working. Expected result: no fade or scene start after shutdown. Why: avoids duplicate handlers after restart.",
+      "acceptance_criteria": [
+        "Given the SHUTDOWN callback has run, when transitionTo is emitted, then fadeOut and scene.start are not called",
+        "Given another subscriber registered before create, when SHUTDOWN has run and transitionTo is emitted, then that subscriber still receives the payload"
+      ],
+      "scope": {
+        "in_scope": [
+          "transitionTo release in the SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "other unsubscribe fields"
+        ],
+        "preserve": [
+          "order and behavior of the other cleanup calls"
+        ]
+      },
+      "technical_constraints": [
+        "Release must happen inside the existing SHUTDOWN handler"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "unsubscribeTransition is called and set to null in SHUTDOWN",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-379.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85N66P5EK6ESBNMSV4R72JE",
+      "matched_feature_id": "01M85MNPTJN2Z2441YTP0WZR6S",
+      "links": [
+        "parent:01M85N66P5EK6ESBNMSV4R72JE",
+        "trace:01M85MNPTJN2Z2441YTP0WZR6S",
+        "artifact:.ai-dlc/requirements/REQ-379.md"
+      ],
+      "depends_on": [
+        "01M85N66P5EK6ESBNMSV4R72JE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-379.md",
+      "artifact_id": "REQ-379"
+    },
+    {
+      "id": "01M85N66P50QVNQG8F2DQ4MSZ4",
+      "kind": "unit",
+      "title": "Act: Confirm create stores the transitionTo unsubscribe in unsubscribeTransition",
+      "body": "The code already declares unsubscribeTransition and assigns it in create. Read it and leave it unchanged unless it deviates from the spec; no new behavior is planned.\n\n## Acceptance criteria\n- unsubscribeTransition is assigned the return value of reactToPhaser.on('transitionTo', ...)\n- The handler fades out then starts the scene on FADE_OUT_COMPLETE\n\n\n## Scope\n- In scope: BootScene.create transitionTo subscription\n- Out of scope: tests\n- Preserve: fade and scene start logic\n\n\n## Technical constraints\n- Phaser 3.90\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Assignment present and correct\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify and keep the stored unsubscribe assignment in BootScene.create",
+      "description": "The code already declares unsubscribeTransition and assigns it in create. Read it and leave it unchanged unless it deviates from the spec; no new behavior is planned.",
+      "acceptance_criteria": [
+        "unsubscribeTransition is assigned the return value of reactToPhaser.on('transitionTo', ...)",
+        "The handler fades out then starts the scene on FADE_OUT_COMPLETE"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.create transitionTo subscription"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "fade and scene start logic"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Assignment present and correct",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-756.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85N66P5RVN2V45NHZ1WAERN",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85N66P5RVN2V45NHZ1WAERN",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-756.md"
+      ],
+      "depends_on": [
+        "01M85N66P5RVN2V45NHZ1WAERN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-756.md",
+      "artifact_id": "UNIT-756",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.unsubscribeTransition",
+          "lines": "L33",
+          "action": "Confirm the private field is declared as `private unsubscribeTransition: (() => void) | null = null;` and change nothing if so",
+          "expected": "Field exists with the nullable function type"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L76-L80",
+          "action": "Confirm `this.unsubscribeTransition = reactToPhaser.on('transitionTo', ...)` assigns the returned function; if the return value is discarded, assign it to this.unsubscribeTransition",
+          "code": "this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => { /* fade then scene.start */ });",
+          "expected": "Subscription handle is stored in the field"
+        }
+      ]
+    },
+    {
+      "id": "01M85N66P5A4GV4ENG78XWER4E",
+      "kind": "unit",
+      "title": "Act: Confirm SHUTDOWN handler calls and nulls unsubscribeTransition",
+      "body": "The SHUTDOWN callback already calls unsubscribeTransition?.() and sets it to null. Read and keep it; add only if missing.\n\n## Acceptance criteria\n- SHUTDOWN handler calls unsubscribeTransition?.()\n- The field is set to null afterward\n\n\n## Scope\n- In scope: SHUTDOWN handler in BootScene.create\n- Out of scope: tests\n- Preserve: other cleanup calls\n\n\n## Technical constraints\n- Keep inside the existing events.once(SHUTDOWN) callback\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Both lines present in SHUTDOWN\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify and keep the transitionTo release in the SHUTDOWN callback",
+      "description": "The SHUTDOWN callback already calls unsubscribeTransition?.() and sets it to null. Read and keep it; add only if missing.",
+      "acceptance_criteria": [
+        "SHUTDOWN handler calls unsubscribeTransition?.()",
+        "The field is set to null afterward"
+      ],
+      "scope": {
+        "in_scope": [
+          "SHUTDOWN handler in BootScene.create"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "other cleanup calls"
+        ]
+      },
+      "technical_constraints": [
+        "Keep inside the existing events.once(SHUTDOWN) callback",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both lines present in SHUTDOWN",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-757.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85N66P5CETNP3R6YSAC6156",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85N66P5CETNP3R6YSAC6156",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-757.md"
+      ],
+      "depends_on": [
+        "01M85N66P5CETNP3R6YSAC6156"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-757.md",
+      "artifact_id": "UNIT-757",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN callback",
+          "lines": "L84-L99",
+          "action": "Confirm the callback ends with `this.unsubscribeTransition?.(); this.unsubscribeTransition = null;`; add these two lines if either is missing",
+          "code": "this.unsubscribeTransition?.();\nthis.unsubscribeTransition = null;",
+          "expected": "Callback releases and clears the transitionTo handle"
+        }
+      ]
+    },
+    {
+      "id": "01M85N66P51ZDY279JYN5V1QKS",
+      "kind": "unit",
+      "title": "Verify: transitionTo unsubscribe is stored and restart yields one handler",
+      "body": "Add tests with Phaser mocked, copying the vi.mock setup from tests/bootSceneTransition.test.ts (camera with fadeOut and once spies, scene.start spy).\n\n## Acceptance criteria\n- One emit after create gives one fadeOut\n- One emit after shutdown plus re-create gives one fadeOut on the new scene\n\n\n## Scope\n- In scope: new test file\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Everything external mocked; no browser\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for single fade after create and after restart",
+      "description": "Add tests with Phaser mocked, copying the vi.mock setup from tests/bootSceneTransition.test.ts (camera with fadeOut and once spies, scene.start spy).",
+      "acceptance_criteria": [
+        "One emit after create gives one fadeOut",
+        "One emit after shutdown plus re-create gives one fadeOut on the new scene"
+      ],
+      "scope": {
+        "in_scope": [
+          "new test file"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Everything external mocked; no browser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-758.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85N66P50QVNQG8F2DQ4MSZ4",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85N66P50QVNQG8F2DQ4MSZ4",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-758.md"
+      ],
+      "depends_on": [
+        "01M85N66P50QVNQG8F2DQ4MSZ4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-758.md",
+      "artifact_id": "UNIT-758",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+          "symbol": "new: describe('BootScene transitionTo subscription handle')",
+          "lines": "new",
+          "action": "Create the file reusing the phaser and content vi.mock blocks from bootSceneTransition.test.ts; in beforeEach call reactToPhaser.clear(), set useGameStore state with createInitialState, then new BootScene().create()",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts",
+          "expected": "File loads with the mocks"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+          "symbol": "it('fades out exactly once per transitionTo after create')",
+          "lines": "new",
+          "action": "Emit reactToPhaser.emit('transitionTo', { sceneId: 'library' }) once and assert boot.cameras.main.fadeOut toHaveBeenCalledTimes(1)",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 'exactly once per transitionTo'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneTransitionStore.test.ts",
+          "symbol": "it('fades out once on the new scene after shutdown and re-create')",
+          "lines": "new",
+          "action": "Run the SHUTDOWN callback found in boot.events.once.mock.calls (name 'shutdown'), create a second BootScene and call create(), emit transitionTo { sceneId: 'library' } once, assert the second scene's fadeOut was called once and the first scene's fadeOut was not called again",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 're-create'",
+          "expected": "Test passes: no duplicate handler"
+        }
+      ]
+    },
+    {
+      "id": "01M85N66P5WZ4C5BM50ZK61VTM",
+      "kind": "unit",
+      "title": "Verify: transitionTo ignored after SHUTDOWN while other subscribers stay active",
+      "body": "Mirror tests/bootScenePlayAnimationShutdown.test.ts for transitionTo with Phaser mocked.\n\n## Acceptance criteria\n- No fadeOut or scene.start after shutdown\n- A pre-existing subscriber still receives transitionTo\n\n\n## Scope\n- In scope: new test file\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Everything external mocked\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the SHUTDOWN release of transitionTo",
+      "description": "Mirror tests/bootScenePlayAnimationShutdown.test.ts for transitionTo with Phaser mocked.",
+      "acceptance_criteria": [
+        "No fadeOut or scene.start after shutdown",
+        "A pre-existing subscriber still receives transitionTo"
+      ],
+      "scope": {
+        "in_scope": [
+          "new test file"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Everything external mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-759.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85N66P5A4GV4ENG78XWER4E",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85N66P5A4GV4ENG78XWER4E",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-759.md"
+      ],
+      "depends_on": [
+        "01M85N66P5A4GV4ENG78XWER4E"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-759.md",
+      "artifact_id": "UNIT-759",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+          "symbol": "new: describe('BootScene transitionTo shutdown')",
+          "lines": "new",
+          "action": "Create the file with the phaser mock from bootSceneTransition.test.ts; subscribe otherHandler = vi.fn() via reactToPhaser.on('transitionTo', ...) before new BootScene().create(); add a runShutdown helper that finds the 'shutdown' callback in boot.events.once.mock.calls and calls it",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts",
+          "expected": "File loads"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+          "symbol": "it('ignores transitionTo after the SHUTDOWN callback runs')",
+          "lines": "new",
+          "action": "Call runShutdown(), emit transitionTo { sceneId: 'library' }, assert fadeOut and scene.start were not called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'ignores transitionTo'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneTransitionShutdown.test.ts",
+          "symbol": "it('keeps other transitionTo subscribers active after shutdown')",
+          "lines": "new",
+          "action": "Call runShutdown(), emit transitionTo with payload { sceneId: 'library' }, assert otherHandler toHaveBeenCalledWith(payload) and fadeOut not called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'other transitionTo subscribers'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M85N66P5541A5BMZPVKPCZR5",
+      "kind": "evidence",
+      "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests",
+      "body": "Collect the passing results of the two new unit test files proving the stored unsubscribe is called and cleared on SHUTDOWN and that restarts do not duplicate handlers.\n\n## Acceptance criteria\n- bootSceneTransitionStore.test.ts passes\n- bootSceneTransitionShutdown.test.ts passes\n\n\n## Scope\n- In scope: test run output\n- Out of scope: product changes\n\n\n## Definition of done\n- Both files report all tests passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving transitionTo release on shutdown",
+      "description": "Collect the passing results of the two new unit test files proving the stored unsubscribe is called and cleared on SHUTDOWN and that restarts do not duplicate handlers.",
+      "acceptance_criteria": [
+        "bootSceneTransitionStore.test.ts passes",
+        "bootSceneTransitionShutdown.test.ts passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both files report all tests passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-154.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85N66P51ZDY279JYN5V1QKS",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85N66P51ZDY279JYN5V1QKS",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-154.md"
+      ],
+      "depends_on": [
+        "01M85N66P51ZDY279JYN5V1QKS",
+        "01M85N66P5WZ4C5BM50ZK61VTM"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-154.md",
+      "artifact_id": "EVD-154"
+    }
+  ],
+  "created_at": "2026-11-24T02:13:08.235272+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

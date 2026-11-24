@@ -1,0 +1,134 @@
+{
+  "id": "01M85XAF1P5XVTMPB9MQ8N8AKV",
+  "intent_id": "01M85WY6FJYG6CP4WV6SDZB9VM",
+  "title": "Act: Add frame CSS classes, Frame component, framed Button and wire them into the game screen",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "frameKit plugin, Frame, Button frame variant, wiring",
+  "description": "Generate .sf-frame-* and .sf-btn classes from FRAME_KIT, add components and apply them in the screen.",
+  "acceptance_criteria": [
+    "Frame classes use border-image and image-rendering pixelated",
+    "Button frame variant exposes four states",
+    "Header, aside, dialogue, inventory and trigger use the kit"
+  ],
+  "scope": {
+    "in_scope": [
+      "frameKit.ts",
+      "tailwind plugin",
+      "Frame.tsx",
+      "button.tsx",
+      "HeaderOverlay, GameLayout, StoryPanel, App"
+    ],
+    "out_of_scope": [
+      "tests",
+      "layout rebuild"
+    ],
+    "preserve": [
+      "default and ghost variants",
+      "aria labels"
+    ]
+  },
+  "technical_constraints": [
+    "Nearest-neighbour rendering",
+    "React, Tailwind, Radix stay",
+    "New file: `game/frontend/src/lib/frameKit.ts`",
+    "Code path: `game/frontend/tailwind.config.ts`",
+    "New file: `game/frontend/src/components/ui/Frame.tsx`",
+    "Code path: `game/frontend/src/components/ui/button.tsx`",
+    "Code path: `game/frontend/src/components/HeaderOverlay.tsx`",
+    "Code path: `game/frontend/src/components/GameLayout.tsx`",
+    "Code path: `game/frontend/src/components/StoryPanel.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "R4",
+    "A1",
+    "A3"
+  ],
+  "definition_of_done": [
+    "Game screen elements carry frame classes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-833.md`"
+  ],
+  "non_functional": [
+    "Focus and aria attributes preserved"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85X219H8HAJRZJTJ844FTAP",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-833.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XAF1PBQT8Z4EP3BM3HC4T"
+  ],
+  "sim_node_id": "01M85X219HP2CNSN0MQRA09DX1",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-833.md",
+  "artifact_id": "UNIT-833",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/frameKit.ts",
+      "symbol": "new: frameComponentClasses",
+      "lines": "new",
+      "action": "Import FRAME_KIT from ../art/uiFrames. Export frameComponentClasses(): Record<string,Record<string,string>> that for bar, panel, plaque, parchment and slot returns '.sf-frame-<name>' with borderStyle 'solid', borderWidth '<slice>px', borderImage `url(/assets/ui/frames/<file>.png) <slice> fill / <slice>px stretch`, imageRendering 'pixelated'; for buttons returns '.sf-btn' (normal frame), '.sf-btn:hover:not(:disabled)' and \".sf-btn[data-state='hover']\" (hover frame), '.sf-btn:active:not(:disabled)' and \".sf-btn[data-state='pressed']\" (pressed), '.sf-btn:disabled' and \".sf-btn[data-state='disabled']\" (disabled), and '.sf-cursor' with cursor url(/assets/ui/cursors/hand.png) 4 0, pointer.",
+      "expected": "Returned object has a .sf-frame-panel key with imageRendering pixelated"
+    },
+    {
+      "file": "game/frontend/tailwind.config.ts",
+      "symbol": "plugins",
+      "lines": "plugins array",
+      "action": "Add a second plugin call: plugin(({ addComponents }) => addComponents(frameComponentClasses())), importing frameComponentClasses from './src/lib/frameKit'.",
+      "expected": "Tailwind emits .sf-frame-* and .sf-btn classes"
+    },
+    {
+      "file": "game/frontend/src/components/ui/Frame.tsx",
+      "symbol": "new: Frame",
+      "lines": "new",
+      "action": "Export type FrameKind = 'bar'|'panel'|'plaque'|'parchment'|'slot' and component Frame({kind, as:Tag='div', className, ...props}) rendering <Tag className={cn(`sf-frame-${kind}`, className)} data-frame={kind} {...props} /> using cn from ../../lib/utils.",
+      "expected": "Frame kind='panel' renders class sf-frame-panel"
+    },
+    {
+      "file": "game/frontend/src/components/ui/button.tsx",
+      "symbol": "ButtonVariant, variantClasses, ButtonProps, Button",
+      "lines": "L5-L33",
+      "action": "Extend ButtonVariant with 'frame'. Add variantClasses.frame = 'sf-btn inline-flex items-center gap-2 font-pixel text-sf-sm'. Add optional prop state?: 'normal'|'hover'|'pressed'|'disabled' to ButtonProps; destructure it and, when variant is 'frame', pass data-state={state} and disabled={props.disabled || state==='disabled'} to the element. Do not change default or ghost classes.",
+      "expected": "<Button variant='frame' state='pressed'> has class sf-btn and data-state='pressed'"
+    },
+    {
+      "file": "game/frontend/src/components/HeaderOverlay.tsx",
+      "symbol": "HeaderOverlay",
+      "lines": "L19-L53",
+      "action": "Add class 'sf-frame-bar' to the <header> className and set variant=\"frame\" on the Retry, Toggle sound and Settings Buttons (keep aria-label, aria-pressed and handlers).",
+      "expected": "header has sf-frame-bar; the three buttons have sf-btn"
+    },
+    {
+      "file": "game/frontend/src/components/GameLayout.tsx",
+      "symbol": "GameLayout aside",
+      "lines": "L22-L27",
+      "action": "Append 'sf-frame-panel' to the motion.aside className and set variant=\"frame\" on the Story toggle Button (keep aria-expanded and onClick).",
+      "expected": "aside has sf-frame-panel and toggle has sf-btn"
+    },
+    {
+      "file": "game/frontend/src/components/StoryPanel.tsx",
+      "symbol": "StoryPanel dialogue and inventory",
+      "lines": "L16, L35-L45",
+      "action": "Add class 'sf-frame-parchment' to the <section aria-label=\"Dialogue\"> and class 'sf-frame-slot' to each inventory <li>. Keep aria-labels and text.",
+      "expected": "Dialogue section has sf-frame-parchment; inventory items have sf-frame-slot"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "Suggest What Happens Next trigger Button",
+      "lines": "L70-L80",
+      "action": "Set variant=\"frame\" on the Button whose text is 'Suggest What Happens Next', keeping ref=triggerRef and its onClick.",
+      "expected": "Trigger renders with class sf-btn"
+    }
+  ],
+  "created_at": "2026-11-24T04:34:13.686310+00:00",
+  "updated_at": "2026-11-24T04:38:49.491797+00:00"
+}

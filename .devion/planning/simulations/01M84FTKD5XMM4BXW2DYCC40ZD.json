@@ -1,0 +1,688 @@
+{
+  "intent_id": "01M84FTKD5XMM4BXW2DYCC40ZD",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84FWGD6BXK2Z44NCRKQNJ85",
+      "kind": "intent",
+      "title": "SG-7.4 · Write a structured execution report after each worker run",
+      "body": "Context: backend/worker/internal/runner.Runner.Run persists only a store.Execution record under .storyforge/executions and writes no report. Desired behavior: after every run that took the lock, a JSON report is written to development/executions/<id>.json. Success, failure and awaiting-approval all produce one. The ID is validated by the same rule as store.Store. Expected result: reviewable, committed execution summaries. Why: the product requires persisted structured execution reports.\n\n## Acceptance criteria\n- Given a run that fails, succeeds or awaits approval, When Run returns, Then <ReportDir>/<id>.json exists with the final status\n- Given an execution ID such as ../evil, When a report is written, Then it is rejected with store.ErrInvalidID and no file is created outside ReportDir\n\n\n## Scope\n- In scope: Export of the store ID validator\n- In scope: New report writer package\n- In scope: Runner integration\n- Out of scope: Git commit of reports\n- Out of scope: Admin UI changes\n- Out of scope: Worker config file fields\n- Preserve: store.Store behavior and JSON format\n- Preserve: Runner.New signature\n- Preserve: Existing runner tests\n\n\n## Technical constraints\n- Go 1.22, module github.com/worldseed/storyforge/worker\n- No database; plain JSON files written atomically\n- Same ID rule as store.idPattern\n\n\n## Definition of done\n- All three requirements implemented and verified by unit tests\n\n\n## Non-functional requirements\n- Atomic writes via temp file and rename\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Worker writes a structured execution report to development/executions after every run, whatever the outcome, with the execution ID validated like the state store",
+      "description": "Context: backend/worker/internal/runner.Runner.Run persists only a store.Execution record under .storyforge/executions and writes no report. Desired behavior: after every run that took the lock, a JSON report is written to development/executions/<id>.json. Success, failure and awaiting-approval all produce one. The ID is validated by the same rule as store.Store. Expected result: reviewable, committed execution summaries. Why: the product requires persisted structured execution reports.",
+      "acceptance_criteria": [
+        "Given a run that fails, succeeds or awaits approval, When Run returns, Then <ReportDir>/<id>.json exists with the final status",
+        "Given an execution ID such as ../evil, When a report is written, Then it is rejected with store.ErrInvalidID and no file is created outside ReportDir"
+      ],
+      "scope": {
+        "in_scope": [
+          "Export of the store ID validator",
+          "New report writer package",
+          "Runner integration"
+        ],
+        "out_of_scope": [
+          "Git commit of reports",
+          "Admin UI changes",
+          "Worker config file fields"
+        ],
+        "preserve": [
+          "store.Store behavior and JSON format",
+          "Runner.New signature",
+          "Existing runner tests"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, module github.com/worldseed/storyforge/worker",
+        "No database; plain JSON files written atomically",
+        "Same ID rule as store.idPattern"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements implemented and verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-039.md`"
+      ],
+      "non_functional": [
+        "Atomic writes via temp file and rename"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+      "links": [
+        "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+        "artifact:.ai-dlc/intent/INT-039.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-039.md",
+      "artifact_id": "INT-039"
+    },
+    {
+      "id": "01M84FWGD6TQS8G64Z39SYAFZA",
+      "kind": "requirement",
+      "title": "REQ · The store's execution ID validation is reusable by other packages",
+      "body": "Context: store.validateID is unexported, so another package cannot apply the same rule. Desired behavior: an exported store.ValidateID with identical behavior, used by Save and Get. Expected result: one source of truth for ID safety. Why: the intent requires validating the ID the same way the state store does.\n\n## Acceptance criteria\n- Given \"../evil\" or an empty string, When store.ValidateID is called, Then it returns an error wrapping ErrInvalidID\n- Given \"exec-1.2\", When store.ValidateID is called, Then it returns nil\n\n\n## Scope\n- In scope: Rename validateID to ValidateID in store.go\n- Out of scope: Changing the ID pattern\n- Preserve: ErrInvalidID semantics\n- Preserve: Save and Get rejecting bad ids\n\n\n## Technical constraints\n- Behavior must be unchanged\n\n\n## Definition of done\n- ValidateID exported and used by Save and Get\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "store exports ValidateID so reports use the identical rule",
+      "description": "Context: store.validateID is unexported, so another package cannot apply the same rule. Desired behavior: an exported store.ValidateID with identical behavior, used by Save and Get. Expected result: one source of truth for ID safety. Why: the intent requires validating the ID the same way the state store does.",
+      "acceptance_criteria": [
+        "Given \"../evil\" or an empty string, When store.ValidateID is called, Then it returns an error wrapping ErrInvalidID",
+        "Given \"exec-1.2\", When store.ValidateID is called, Then it returns nil"
+      ],
+      "scope": {
+        "in_scope": [
+          "Rename validateID to ValidateID in store.go"
+        ],
+        "out_of_scope": [
+          "Changing the ID pattern"
+        ],
+        "preserve": [
+          "ErrInvalidID semantics",
+          "Save and Get rejecting bad ids"
+        ]
+      },
+      "technical_constraints": [
+        "Behavior must be unchanged"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "ValidateID exported and used by Save and Get",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-095.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FWGD6BXK2Z44NCRKQNJ85",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M84FWGD6BXK2Z44NCRKQNJ85",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-095.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6BXK2Z44NCRKQNJ85"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-095.md",
+      "artifact_id": "REQ-095"
+    },
+    {
+      "id": "01M84FWGD6C49KEF8PDQGRPYH0",
+      "kind": "requirement",
+      "title": "REQ · A report writer persists validated, atomically written JSON reports",
+      "body": "Context: no report package exists. Desired behavior: report.Writer{dir}.Write(Report) validates ID with store.ValidateID, creates the directory, and atomically writes indented JSON containing execution id, round id, status, attempts, error, started_at, finished_at and duration_ms. Expected result: a structured file per execution. Why: persisted execution summaries.\n\n## Acceptance criteria\n- Given a valid Report, When Write is called, Then <dir>/<id>.json decodes to the same field values\n- Given an invalid ID, When Write is called, Then it returns an error wrapping store.ErrInvalidID and the directory has no files\n\n\n## Scope\n- In scope: backend/worker/internal/report/report.go\n- Out of scope: Runner wiring\n- Preserve: store package API\n\n\n## Technical constraints\n- Atomic temp file then rename like store.Save\n\n\n## Dependencies\n- req1\n\n\n## Definition of done\n- Writer implemented\n\n\n## Non-functional requirements\n- Atomic write\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "New report package writes <dir>/<id>.json",
+      "description": "Context: no report package exists. Desired behavior: report.Writer{dir}.Write(Report) validates ID with store.ValidateID, creates the directory, and atomically writes indented JSON containing execution id, round id, status, attempts, error, started_at, finished_at and duration_ms. Expected result: a structured file per execution. Why: persisted execution summaries.",
+      "acceptance_criteria": [
+        "Given a valid Report, When Write is called, Then <dir>/<id>.json decodes to the same field values",
+        "Given an invalid ID, When Write is called, Then it returns an error wrapping store.ErrInvalidID and the directory has no files"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/worker/internal/report/report.go"
+        ],
+        "out_of_scope": [
+          "Runner wiring"
+        ],
+        "preserve": [
+          "store package API"
+        ]
+      },
+      "technical_constraints": [
+        "Atomic temp file then rename like store.Save"
+      ],
+      "dependencies": [
+        "req1"
+      ],
+      "definition_of_done": [
+        "Writer implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-096.md`"
+      ],
+      "non_functional": [
+        "Atomic write"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FWGD6BXK2Z44NCRKQNJ85",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M84FWGD6BXK2Z44NCRKQNJ85",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-096.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6BXK2Z44NCRKQNJ85"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-096.md",
+      "artifact_id": "REQ-096"
+    },
+    {
+      "id": "01M84FWGD66KE07F64D252AM1X",
+      "kind": "requirement",
+      "title": "REQ · Runner writes a report after every run whatever the outcome",
+      "body": "Context: Runner.Run returns from several branches (agent failure, publish failure, awaiting approval, completed). Desired behavior: an optional Reporter set via SetReporter is called once after any run that acquired the lock, with the final execution and timestamps. Runs refused by lock.ErrLocked write nothing. Expected result: every executed run leaves a report. Why: reports must exist whatever the outcome.\n\n## Acceptance criteria\n- Given a failing agent, When Run returns, Then a report with status FAILED and the error text is written\n- Given a successful run with and without AutoPublish, When Run returns, Then reports with COMPLETED and AWAITING_APPROVAL are written\n- Given the lock is held, When Run is called, Then no report is written\n\n\n## Scope\n- In scope: backend/worker/internal/runner/runner.go\n- Out of scope: Git commits\n- Preserve: New signature\n- Preserve: Run return values and persisted store records\n\n\n## Technical constraints\n- Reporter is an interface so tests fake it\n\n\n## Dependencies\n- req2\n\n\n## Definition of done\n- Runner wired to Reporter\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Runner calls a Reporter on success, failure and approval wait",
+      "description": "Context: Runner.Run returns from several branches (agent failure, publish failure, awaiting approval, completed). Desired behavior: an optional Reporter set via SetReporter is called once after any run that acquired the lock, with the final execution and timestamps. Runs refused by lock.ErrLocked write nothing. Expected result: every executed run leaves a report. Why: reports must exist whatever the outcome.",
+      "acceptance_criteria": [
+        "Given a failing agent, When Run returns, Then a report with status FAILED and the error text is written",
+        "Given a successful run with and without AutoPublish, When Run returns, Then reports with COMPLETED and AWAITING_APPROVAL are written",
+        "Given the lock is held, When Run is called, Then no report is written"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/worker/internal/runner/runner.go"
+        ],
+        "out_of_scope": [
+          "Git commits"
+        ],
+        "preserve": [
+          "New signature",
+          "Run return values and persisted store records"
+        ]
+      },
+      "technical_constraints": [
+        "Reporter is an interface so tests fake it"
+      ],
+      "dependencies": [
+        "req2"
+      ],
+      "definition_of_done": [
+        "Runner wired to Reporter",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-097.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FWGD6BXK2Z44NCRKQNJ85",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M84FWGD6BXK2Z44NCRKQNJ85",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-097.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6BXK2Z44NCRKQNJ85"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-097.md",
+      "artifact_id": "REQ-097"
+    },
+    {
+      "id": "01M84FWGD6HWMRJD2CH0B860EX",
+      "kind": "unit",
+      "title": "Act: Export store.ValidateID",
+      "body": "Export the ID validator in store.go and update its callers Save and Get.\n\n## Acceptance criteria\n- ValidateID is exported and returns ErrInvalidID-wrapped errors for unsafe ids\n- Save and Get still reject unsafe ids\n\n\n## Scope\n- In scope: store.go\n- Out of scope: pattern changes\n- Preserve: behavior\n\n\n## Technical constraints\n- Code path: `backend/worker/internal/store/store.go`\n\n\n## Definition of done\n- Package compiles, callers updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rename validateID to ValidateID",
+      "description": "Export the ID validator in store.go and update its callers Save and Get.",
+      "acceptance_criteria": [
+        "ValidateID is exported and returns ErrInvalidID-wrapped errors for unsafe ids",
+        "Save and Get still reject unsafe ids"
+      ],
+      "scope": {
+        "in_scope": [
+          "store.go"
+        ],
+        "out_of_scope": [
+          "pattern changes"
+        ],
+        "preserve": [
+          "behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `backend/worker/internal/store/store.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Package compiles, callers updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-189.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84FWGD6TQS8G64Z39SYAFZA",
+      "links": [
+        "parent:01M84FWGD6TQS8G64Z39SYAFZA",
+        "artifact:.ai-dlc/units/UNIT-189.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6TQS8G64Z39SYAFZA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-189.md",
+      "artifact_id": "UNIT-189",
+      "steps": [
+        {
+          "file": "backend/worker/internal/store/store.go",
+          "symbol": "validateID",
+          "lines": "L61-L67",
+          "action": "Rename function validateID to exported ValidateID and update its doc comment to start with 'ValidateID'",
+          "code": "func validateID(id string) error -> func ValidateID(id string) error",
+          "expected": "store.ValidateID is callable from other packages"
+        },
+        {
+          "file": "backend/worker/internal/store/store.go",
+          "symbol": "Store.Save, Store.Get",
+          "lines": "L70-L72, L109-L112",
+          "action": "Replace both calls validateID(e.ID) and validateID(id) with ValidateID(e.ID) and ValidateID(id)",
+          "code": "validateID( -> ValidateID(",
+          "expected": "go build ./internal/store succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD6W8054QXV1CP1KJF1",
+      "kind": "unit",
+      "title": "Act: Implement the report writer package",
+      "body": "Create the report package with Report struct and Writer.Write that validates the id, then writes JSON atomically.\n\n## Acceptance criteria\n- Write validates id via store.ValidateID\n- Write produces <dir>/<id>.json atomically\n\n\n## Scope\n- In scope: report.go\n- Out of scope: runner\n- Preserve: store\n\n\n## Technical constraints\n- Reuse store.ValidateID\n- New file: `backend/worker/internal/report/report.go`\n\n\n## Dependencies\n- act1\n\n\n## Definition of done\n- Package compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create report.Writer",
+      "description": "Create the report package with Report struct and Writer.Write that validates the id, then writes JSON atomically.",
+      "acceptance_criteria": [
+        "Write validates id via store.ValidateID",
+        "Write produces <dir>/<id>.json atomically"
+      ],
+      "scope": {
+        "in_scope": [
+          "report.go"
+        ],
+        "out_of_scope": [
+          "runner"
+        ],
+        "preserve": [
+          "store"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse store.ValidateID",
+        "New file: `backend/worker/internal/report/report.go`"
+      ],
+      "dependencies": [
+        "act1"
+      ],
+      "definition_of_done": [
+        "Package compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-190.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FWGD6C49KEF8PDQGRPYH0",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M84FWGD6C49KEF8PDQGRPYH0",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-190.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6C49KEF8PDQGRPYH0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-190.md",
+      "artifact_id": "UNIT-190",
+      "steps": [
+        {
+          "file": "backend/worker/internal/report/report.go",
+          "symbol": "new: Report",
+          "lines": "new",
+          "action": "Create package report with struct Report with json tags: ExecutionID execution_id string, RoundID round_id string, Status store.Status status, Attempts attempts int, Error error string, StartedAt started_at time.Time, FinishedAt finished_at time.Time, DurationMS duration_ms int64",
+          "code": "type Report struct { ExecutionID string `json:\"execution_id\"`; ... }",
+          "expected": "Type compiles"
+        },
+        {
+          "file": "backend/worker/internal/report/report.go",
+          "symbol": "new: Writer, New, Writer.Write",
+          "lines": "new",
+          "action": "Add Writer{dir string}, New(dir) *Writer, and Write(r Report) error: call store.ValidateID(r.ExecutionID) first and return its error; os.MkdirAll(dir,0o755); json.MarshalIndent; os.CreateTemp(dir, \".tmp-*\"); write, close, os.Rename to filepath.Join(dir, id+\".json\"); remove temp on failure",
+          "expected": "Valid report yields <dir>/<id>.json; invalid id returns before touching disk"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD6BKHZFC3DHF7JHH45",
+      "kind": "unit",
+      "title": "Act: Write a report from Runner.Run for every outcome",
+      "body": "Add Reporter interface and SetReporter, wrap Run so a report is written after any run that acquired the lock.\n\n## Acceptance criteria\n- Report written on FAILED, AWAITING_APPROVAL and COMPLETED\n- No report when lock.ErrLocked\n\n\n## Scope\n- In scope: runner.go\n- Out of scope: worker config\n- Preserve: New signature\n- Preserve: return values\n\n\n## Technical constraints\n- Keep Runner.New unchanged\n- Code path: `backend/worker/internal/runner/runner.go`\n\n\n## Dependencies\n- act2\n\n\n## Definition of done\n- Compiles and existing tests unaffected\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire Reporter into Runner",
+      "description": "Add Reporter interface and SetReporter, wrap Run so a report is written after any run that acquired the lock.",
+      "acceptance_criteria": [
+        "Report written on FAILED, AWAITING_APPROVAL and COMPLETED",
+        "No report when lock.ErrLocked"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner.go"
+        ],
+        "out_of_scope": [
+          "worker config"
+        ],
+        "preserve": [
+          "New signature",
+          "return values"
+        ]
+      },
+      "technical_constraints": [
+        "Keep Runner.New unchanged",
+        "Code path: `backend/worker/internal/runner/runner.go`"
+      ],
+      "dependencies": [
+        "act2"
+      ],
+      "definition_of_done": [
+        "Compiles and existing tests unaffected",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-191.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FWGD66KE07F64D252AM1X",
+      "matched_feature_id": "01M848A8V8JW4R02SYG6QPSVE0",
+      "links": [
+        "parent:01M84FWGD66KE07F64D252AM1X",
+        "trace:01M848A8V8JW4R02SYG6QPSVE0",
+        "artifact:.ai-dlc/units/UNIT-191.md"
+      ],
+      "depends_on": [
+        "01M84FWGD66KE07F64D252AM1X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-191.md",
+      "artifact_id": "UNIT-191",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "new: Reporter, Runner.reporter, Runner.SetReporter",
+          "lines": "after L36, L49-L57",
+          "action": "Add interface Reporter{ Write(report.Report) error }, field reporter Reporter on Runner, and method SetReporter(rep Reporter) assigning it; import internal/report",
+          "code": "type Reporter interface { Write(report.Report) error }",
+          "expected": "Runner can hold a reporter; nil means no reports"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "Runner.Run, new: Runner.run",
+          "lines": "L77-L165",
+          "action": "Rename the existing Run body to run(ctx,id,roundID). Add new Run that records start:=r.now(), calls run, and if the returned execution has ID \"\" (lock failure) returns unchanged; otherwise if r.reporter!=nil builds report.Report from e (ExecutionID,RoundID,Status,Attempts,Error from e.Error or err.Error() when empty, StartedAt start, FinishedAt r.now(), DurationMS) and calls Write; if Write errors and err==nil return e and the wrapped error 'runner: write report: %w'",
+          "expected": "A report is written on every branch after the lock is taken"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD643M2TFJZVPCG61CR",
+      "kind": "unit",
+      "title": "Verify: store.ValidateID unit tests",
+      "body": "Prove ValidateID accepts safe ids and rejects unsafe ones.\n\n## Acceptance criteria\n- Unsafe ids wrap ErrInvalidID\n- Safe ids return nil\n\n\n## Scope\n- In scope: store_test.go\n- Out of scope: other packages\n- Preserve: existing store tests\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for exported ValidateID",
+      "description": "Prove ValidateID accepts safe ids and rejects unsafe ones.",
+      "acceptance_criteria": [
+        "Unsafe ids wrap ErrInvalidID",
+        "Safe ids return nil"
+      ],
+      "scope": {
+        "in_scope": [
+          "store_test.go"
+        ],
+        "out_of_scope": [
+          "other packages"
+        ],
+        "preserve": [
+          "existing store tests"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-192.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FWGD6HWMRJD2CH0B860EX",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FWGD6HWMRJD2CH0B860EX",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-192.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6HWMRJD2CH0B860EX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-192.md",
+      "artifact_id": "UNIT-192",
+      "steps": [
+        {
+          "file": "backend/worker/internal/store/store_test.go",
+          "symbol": "new: TestValidateID",
+          "lines": "after L97",
+          "action": "Add table test calling ValidateID with inputs \"\", \"../evil\", \"a/b\", \".hidden\" asserting errors.Is(err, ErrInvalidID), and \"exec-1.2\", \"EXEC_1\" asserting nil",
+          "command": "cd backend/worker && go test ./internal/store -run TestValidateID",
+          "expected": "TestValidateID passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD6Y8A4Y62XPYGX0P10",
+      "kind": "unit",
+      "title": "Verify: report writer unit tests",
+      "body": "Prove the writer persists reports and rejects bad ids using a temp dir.\n\n## Acceptance criteria\n- Round-trip equals input\n- Invalid id rejected with no files\n\n\n## Scope\n- In scope: report_test.go\n- Out of scope: runner\n\n\n## Technical constraints\n- t.TempDir only\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for report.Writer",
+      "description": "Prove the writer persists reports and rejects bad ids using a temp dir.",
+      "acceptance_criteria": [
+        "Round-trip equals input",
+        "Invalid id rejected with no files"
+      ],
+      "scope": {
+        "in_scope": [
+          "report_test.go"
+        ],
+        "out_of_scope": [
+          "runner"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "t.TempDir only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-193.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FWGD6W8054QXV1CP1KJF1",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FWGD6W8054QXV1CP1KJF1",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-193.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6W8054QXV1CP1KJF1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-193.md",
+      "artifact_id": "UNIT-193",
+      "steps": [
+        {
+          "file": "backend/worker/internal/report/report_test.go",
+          "symbol": "new: TestWriteRoundTrip",
+          "lines": "new",
+          "action": "With dir=t.TempDir()/executions, Write Report{ExecutionID:\"exec-1\",RoundID:\"ROUND-0000001\",Status:store.StatusFailed,Attempts:2,Error:\"boom\"}; read exec-1.json, json.Unmarshal, assert all fields equal",
+          "command": "cd backend/worker && go test ./internal/report -run TestWriteRoundTrip",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/report/report_test.go",
+          "symbol": "new: TestWriteInvalidID",
+          "lines": "new",
+          "action": "Write Report with ExecutionID \"../evil\"; assert errors.Is(err, store.ErrInvalidID) and os.ReadDir of the dir and its parent show no new json file",
+          "command": "cd backend/worker && go test ./internal/report -run TestWriteInvalidID",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD6F4P1ED1K4F3RVGET",
+      "kind": "unit",
+      "title": "Verify: Runner report unit tests",
+      "body": "Use a fake Reporter to prove reports for each outcome and none on lock contention.\n\n## Acceptance criteria\n- FAILED, AWAITING_APPROVAL, COMPLETED reports captured\n- No report when locked\n\n\n## Scope\n- In scope: runner_report_test.go\n- Out of scope: real files beyond temp\n- Preserve: existing runner tests\n\n\n## Technical constraints\n- Reuse newRunner, fakeAgent, fakeTrees helpers from runner_test.go\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Runner reporting",
+      "description": "Use a fake Reporter to prove reports for each outcome and none on lock contention.",
+      "acceptance_criteria": [
+        "FAILED, AWAITING_APPROVAL, COMPLETED reports captured",
+        "No report when locked"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner_report_test.go"
+        ],
+        "out_of_scope": [
+          "real files beyond temp"
+        ],
+        "preserve": [
+          "existing runner tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse newRunner, fakeAgent, fakeTrees helpers from runner_test.go"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-194.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FWGD6BKHZFC3DHF7JHH45",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FWGD6BKHZFC3DHF7JHH45",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-194.md"
+      ],
+      "depends_on": [
+        "01M84FWGD6BKHZFC3DHF7JHH45"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-194.md",
+      "artifact_id": "UNIT-194",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner_report_test.go",
+          "symbol": "new: fakeReporter, TestRunReportsFailure",
+          "lines": "new",
+          "action": "Define fakeReporter collecting []report.Report. Build newRunner with Config{MaxRetries:0}, fakeAgent{errs:[]error{errors.New(\"boom\")}}, call SetReporter, Run(\"exec-1\",\"ROUND-0000001\"); assert one report with Status FAILED, Error containing boom, ExecutionID exec-1",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunReportsFailure",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_report_test.go",
+          "symbol": "new: TestRunReportsApprovalAndCompleted",
+          "lines": "new",
+          "action": "Run once with AutoPublish false and assert report Status AWAITING_APPROVAL; run again with AutoPublish true and assert COMPLETED; assert StartedAt equals fixedNow",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunReportsApprovalAndCompleted",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_report_test.go",
+          "symbol": "new: TestRunLockedWritesNoReport",
+          "lines": "new",
+          "action": "Create the lock file at rig.cfg.LockPath via lock.Acquire, call Run, assert errors.Is(err, lock.ErrLocked) and fakeReporter has zero reports",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunLockedWritesNoReport",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FWGD6N1R6W823JF7BH3J6",
+      "kind": "evidence",
+      "title": "Evidence: Execution report unit tests pass",
+      "body": "Collect results of the store, report and runner report unit tests showing reports are written for every outcome with validated IDs.\n\n## Acceptance criteria\n- All named unit tests pass\n- Invalid id and locked run write no report\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Code changes\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence bundle for SG-7.4",
+      "description": "Collect results of the store, report and runner report unit tests showing reports are written for every outcome with validated IDs.",
+      "acceptance_criteria": [
+        "All named unit tests pass",
+        "Invalid id and locked run write no report"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Code changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-039.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FWGD643M2TFJZVPCG61CR",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M84FWGD643M2TFJZVPCG61CR",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-039.md"
+      ],
+      "depends_on": [
+        "01M84FWGD643M2TFJZVPCG61CR",
+        "01M84FWGD6Y8A4Y62XPYGX0P10",
+        "01M84FWGD6F4P1ED1K4F3RVGET"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-039.md",
+      "artifact_id": "EVD-039"
+    }
+  ],
+  "created_at": "2026-11-23T15:20:16.199946+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

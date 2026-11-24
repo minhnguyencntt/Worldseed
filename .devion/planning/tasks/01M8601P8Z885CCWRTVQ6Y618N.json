@@ -1,0 +1,83 @@
+{
+  "id": "01M8601P8Z885CCWRTVQ6Y618N",
+  "intent_id": "01M85ZKPM7T0R3TNQPAN9AHTG3",
+  "title": "Act: Emit playAnimation interact from the App action handler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add handleAction in App and pass it to ObjectOverlay",
+  "description": "Create handleAction that calls game.act then emits playAnimation for the boy.",
+  "acceptance_criteria": [
+    "Given handleAction, when called, then game.act runs and playAnimation interact is emitted",
+    "Given ObjectOverlay, when rendered, then onAction is handleAction"
+  ],
+  "scope": {
+    "in_scope": [
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "BootScene"
+    ],
+    "preserve": [
+      "overlay props"
+    ]
+  },
+  "technical_constraints": [
+    "React stays",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "REQ-INTERACT"
+  ],
+  "definition_of_done": [
+    "Overlay uses handleAction",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-859.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85ZPR8YF94RDBEN0PQ3NF2D",
+    "trace:01M85MNPTK7BTHK8EDH1RQS65R",
+    "artifact:.ai-dlc/units/UNIT-859.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8601P8ZS37RHV56RZZY34T0"
+  ],
+  "sim_node_id": "01M85ZPR8YPGHVD6RTPVPJ18TV",
+  "feature_id": "01M85MNPTK7BTHK8EDH1RQS65R",
+  "artifact_path": ".ai-dlc/units/UNIT-859.md",
+  "artifact_id": "UNIT-859",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "import { phaserToReact }",
+      "lines": "L16",
+      "action": "Change the events import to also import reactToPhaser.",
+      "code": "import { phaserToReact } from './phaser/events'; -> import { phaserToReact, reactToPhaser } from './phaser/events';",
+      "expected": "reactToPhaser is available in App"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App.handleAction",
+      "lines": "after L68",
+      "action": "Add const handleAction = (objectId: string, actionId: string) => { game.act(objectId, actionId); reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' }); }; placed before the return of the playing view (after the !begun early return).",
+      "code": "const handleAction = (objectId: string, actionId: string) => { game.act(objectId, actionId); reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' }); };",
+      "expected": "Handler defined"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "ObjectOverlay onAction prop",
+      "lines": "L98",
+      "action": "Replace onAction={game.act} with onAction={handleAction}.",
+      "code": "onAction={game.act} -> onAction={handleAction}",
+      "expected": "Actions emit the animation event"
+    }
+  ],
+  "created_at": "2026-11-24T05:21:51.903863+00:00",
+  "updated_at": "2026-11-24T05:24:51.484769+00:00"
+}

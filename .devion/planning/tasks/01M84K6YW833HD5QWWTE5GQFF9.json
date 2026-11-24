@@ -1,0 +1,63 @@
+{
+  "id": "01M84K6YW833HD5QWWTE5GQFF9",
+  "intent_id": "01M84K165FF9YSHNCQRV5BN7RC",
+  "title": "Verify: Docs name devion workseed, match the export keys and avoid removed terms",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add a Go unit test that reads the docs and checks content against the Export type",
+  "description": "Add a test that reads backend/README.md and backend/docs/handoff.md from the temp-free repo files and asserts content. No network or processes.",
+  "acceptance_criteria": [
+    "Given the README, when read, then it contains 'devion workseed'",
+    "Given the handoff doc, when read, then it contains every JSON key of Export and ExportContribution as encoded by json.Marshal",
+    "Given both docs, when lowercased, then they contain none of 'worker', 'executionpanel', 'claude code', 'cursor'"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/contribution/handoff_docs_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "export_source_test.go"
+    ]
+  },
+  "technical_constraints": [
+    "Unit test only; read files with os.ReadFile relative to the package directory (../../README.md and ../../docs/handoff.md)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "The test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-277.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84K6FJ93VMHN9HRNJSW6J3J",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-277.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84K6YW80MWWC9R6887DJBFH"
+  ],
+  "sim_node_id": "01M84K6FJ9K72DTS7TTE6PQSXD",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-277.md",
+  "artifact_id": "UNIT-277",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/handoff_docs_test.go",
+      "symbol": "new: TestHandoffDocs",
+      "lines": "new",
+      "action": "Add package contribution tests. TestHandoffDocs_ReadmeNamesWorkseed: read ../../README.md, assert it contains 'devion workseed'. TestHandoffDocs_KeysMatchExport: json.Marshal an Export holding one ExportContribution, unmarshal into map[string]any, collect the top-level keys and the keys of contributions[0], and assert handoff.md contains each. TestHandoffDocs_NoRemovedTerms: for both docs, assert the lowercased text contains none of 'worker', 'executionpanel', 'claude code', 'cursor'.",
+      "command": "cd backend && go test ./internal/contribution -run TestHandoffDocs",
+      "expected": "All three tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T16:18:18.632246+00:00",
+  "updated_at": "2026-11-23T16:19:11.650984+00:00"
+}

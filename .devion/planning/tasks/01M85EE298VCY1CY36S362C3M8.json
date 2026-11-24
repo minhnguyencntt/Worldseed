@@ -1,0 +1,59 @@
+{
+  "id": "01M85EE298VCY1CY36S362C3M8",
+  "intent_id": "01M85E6Q0K21M8MDX15NX69JJ0",
+  "title": "SG-8.3 Submit button disabled and loading states with inline success feedback",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Contribution Send button is disabled when invalid, empty, quota-exhausted or in flight, shows a loading label, and the sheet shows inline success as well as error feedback.",
+  "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) currently disables Send only when remaining <= 0 (L129). Blank and over-limit text leave it enabled, there is no in-flight guard, and the button label never changes. Success is shown only as a per-entry 'Sent' label in the list; errors show in a role=alert paragraph. Desired behavior: Send is disabled for blank, over-limit, zero quota and in-flight submissions, shows a loading label while in flight, and an inline success message appears after a successful send alongside the existing error message. Why: players get immediate, unambiguous feedback and cannot double-submit.",
+  "acceptance_criteria": [
+    "Given blank or whitespace-only text, over-limit text, zero remaining quota, or a submission in flight, when the sheet renders, then the Send button is disabled.",
+    "Given a submission in flight, when the sheet renders, then the button label reads 'Sending…' and returns to 'Send' when the request settles.",
+    "Given a successful submission, when it resolves, then an inline role=status message 'Suggestion sent' is shown and a failed submission still shows the existing role=alert error."
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet Send button disabled and loading states",
+      "Inline success message"
+    ],
+    "out_of_scope": [
+      "Backend API changes",
+      "Contribution history list changes",
+      "Quota or max length constants"
+    ],
+    "preserve": [
+      "Existing handleSubmit guards and validation messages",
+      "errorMessage mapping",
+      "Radix Dialog focus behavior",
+      "API contract of submitContribution and listMine"
+    ]
+  },
+  "technical_constraints": [
+    "Frontend only: React + TypeScript in game/frontend",
+    "No new dependencies"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements are implemented and their unit tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-133.md`"
+  ],
+  "non_functional": [
+    "Disabled and status states are announced accessibly (disabled attribute, role=status)"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M85BP7N1BFPBGF8TXMWX525X",
+    "artifact:.ai-dlc/intent/INT-133.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85E9YAHG8N9KS0P92YZG0DF",
+  "feature_id": "01M85BP7N1BFPBGF8TXMWX525X",
+  "artifact_path": ".ai-dlc/intent/INT-133.md",
+  "artifact_id": "INT-133",
+  "created_at": "2026-11-24T00:14:03.048777+00:00",
+  "updated_at": "2026-11-24T00:15:44.954009+00:00"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "01M85VQB53EW88T5CBJEZFRNBJ",
+  "intent_id": "01M85V8DJ1E8EVGVFR4YDYKYK2",
+  "title": "REQ · Every scene asset has a palette-grid source and a generated PNG with a manifest entry",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "ART_SOURCES covers room, boy, secret door and dust so art:generate writes all scene PNGs",
+  "description": "Context: sources.ts ART_SOURCES holds only the hand cursor and BOY_SOURCES; ROOM_SOURCES (13 room/* grids) is not registered, and the secret door and dust mote have no grid. Desired: register all of them and regenerate. Expected: PNGs exist under public/assets and manifest.json has entries with real sizes. Why: content cannot reference PNG ids that do not exist.",
+  "acceptance_criteria": [
+    "Given ART_SOURCES, when generateAssets runs, then entries exist for the 13 room/* ids, character:boy-sheet, character:boy-portrait, objects/secret-door-open, effect:dust and ui/cursor-hand",
+    "Given the generated secret door and dust grids, when sizes are read, then they are 32x64 and 4x4 and use only palette indices",
+    "Given the committed manifest, when its entries are compared to generateAssets output, then they are equal"
+  ],
+  "scope": {
+    "in_scope": [
+      "New sceneExtras.ts sources",
+      "Registering ROOM_SOURCES in ART_SOURCES",
+      "Running art:generate"
+    ],
+    "out_of_scope": [
+      "Redrawing existing room or boy grids"
+    ],
+    "preserve": [
+      "ROOM_ART_SIZES keys and its 13-name test",
+      "encodePng determinism"
+    ]
+  },
+  "technical_constraints": [
+    "Palette-indexed grids, deterministic generation, shared palette of at most 48 colours",
+    "Do not add ids to ROOM_ART_SIZES"
+  ],
+  "dependencies": [
+    "INT"
+  ],
+  "definition_of_done": [
+    "art:generate has been run and its outputs are in the tree",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-406.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85VF91FDNG28BRPBAC6PX22",
+    "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+    "artifact:.ai-dlc/requirements/REQ-406.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M85VQB53Y3ZZ9BTXM9A3MGRY"
+  ],
+  "sim_node_id": "01M85VF91F0CJJVJQ7WAA1VKKA",
+  "feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+  "artifact_path": ".ai-dlc/requirements/REQ-406.md",
+  "artifact_id": "REQ-406",
+  "created_at": "2026-11-24T04:06:18.531751+00:00",
+  "updated_at": "2026-11-24T04:09:46.435712+00:00"
+}

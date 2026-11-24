@@ -1,0 +1,61 @@
+{
+  "id": "01M84H1KRJFKG6VVRSPTAP9PAT",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "SG-7.9 Coding agent provider with a labelled mock, chosen by provider kind",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Add a provider package whose mock is clearly labelled, wired to runner.Agent and selected by worker.provider_kind",
+  "description": "Context: the worker runner (backend/worker/internal/runner/runner.go) defines the Agent interface, and config already validates provider_kind as mock or claude. No implementation of Agent exists. Desired behavior: a provider package supplies a mock agent that says it is a mock, a Claude CLI adapter, and a factory that picks one from provider_kind. Expected result: the runner can be built with an Agent chosen from config. Why: mock runs must never be mistaken for real development.",
+  "acceptance_criteria": [
+    "Given provider_kind is mock, When the factory is called, Then it returns the mock agent, which satisfies runner.Agent",
+    "Given the mock agent runs, When it finishes, Then the work dir holds a file that states it is a MOCK run and the cost is 0",
+    "Given provider_kind is claude, When the factory is called, Then it returns the Claude adapter",
+    "Given an unknown provider_kind, When the factory is called, Then it returns an error naming the kind"
+  ],
+  "scope": {
+    "in_scope": [
+      "new package backend/worker/internal/provider",
+      "mock agent",
+      "Claude CLI adapter behind an Exec interface",
+      "factory keyed by provider kind"
+    ],
+    "out_of_scope": [
+      "changes to the runner retry logic",
+      "real Claude invocation in tests",
+      "analysis, requirements and task generation"
+    ],
+    "preserve": [
+      "runner.Agent signature",
+      "config validation of provider_kind"
+    ]
+  },
+  "technical_constraints": [
+    "Go module github.com/worldseed/storyforge/worker at backend/worker",
+    "Never interpolate player text into a shell",
+    "The agent is passed arguments as a slice, not a shell string"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements are met and their Verify units pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-044.md`"
+  ],
+  "non_functional": [
+    "Mock output must be unmistakably labelled"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84G51W28MN6Z7X3354EYDE3",
+    "artifact:.ai-dlc/intent/INT-044.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84H148VVZZEX7HD5CATP1FV",
+  "feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+  "artifact_path": ".ai-dlc/intent/INT-044.md",
+  "artifact_id": "INT-044",
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.962854+00:00"
+}

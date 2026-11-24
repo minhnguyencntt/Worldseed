@@ -1,0 +1,632 @@
+{
+  "id": "01M842QZ5DE0AGR0D2DB6Y0PJM",
+  "trigger_node_id": "INT-003, UNIT-011 +9",
+  "node_ids": [
+    "INT-003",
+    "UNIT-011",
+    "UNIT-012",
+    "UNIT-013",
+    "UNIT-014",
+    "UNIT-015",
+    "UNIT-016",
+    "REQ-006",
+    "REQ-007",
+    "REQ-008",
+    "EVD-003"
+  ],
+  "intent_id": "INT-003",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-003",
+      "title": "SG-1 · Bootstrap Go backend with player sessions",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-011",
+      "title": "Act: Create backend module, config loader, logger and health router",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4NFNK410GKGX8R7ZN7"
+      ],
+      "depends_on": [
+        "REQ-006"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "bf70bcde6ecf74e7bf3917fdccdd9382312dda9a",
+      "from_sha": "bf70bcde6ecf74e7bf3917fdccdd9382312dda9a",
+      "started_at": "2026-11-23T11:30:30.359911+00:00",
+      "ended_at": "2026-11-23T11:31:39.917458+00:00",
+      "run_started_at": "2026-11-23T11:30:30.359911+00:00",
+      "duration_ms": 69403,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-012",
+      "title": "Act: Implement player token signing and session endpoint",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4NQJ0B2089TCPH322F"
+      ],
+      "depends_on": [
+        "REQ-007"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "bf70bcde6ecf74e7bf3917fdccdd9382312dda9a",
+      "from_sha": "2c1f7158a8227ce9bd65bdda8d0c5dc87510b7a9",
+      "started_at": "2026-11-23T11:30:30.380430+00:00",
+      "ended_at": "2026-11-23T11:31:32.713754+00:00",
+      "run_started_at": "2026-11-23T11:30:30.380430+00:00",
+      "duration_ms": 62173,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-013",
+      "title": "Act: Implement player me endpoint",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4NSYFKFZWZVGZMJP1T"
+      ],
+      "depends_on": [
+        "REQ-008"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "2c1f7158a8227ce9bd65bdda8d0c5dc87510b7a9",
+      "from_sha": "e5f72618cee2674c3404f3e4f10d754541e1a34f",
+      "started_at": "2026-11-23T11:30:30.390878+00:00",
+      "ended_at": "2026-11-23T11:30:48.763993+00:00",
+      "run_started_at": "2026-11-23T11:30:30.390878+00:00",
+      "duration_ms": 17688,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2169,
+      "estimated_cost_usd": 0.008682,
+      "partial": true,
+      "failure": "Act agent reported ok:false: BLOCKED, no changes made. UNIT-013 cannot be implemented in this worktree. The steps target backend/internal/player/handler.go (Handler.Me after CreateSession) and backend/internal/server/server.go (New, after the session route), but backend/ contains only README.md, with no Go sources, go.mod, player package, server package, or CreateSession/Verify/CookieName/Secret/Now/TTL symbols. UNIT-013 is also absent from .ai-dlc/units/ (only UNIT-001..010 exist), and no file in the worktree references it. Creating the files would mean inventing the whole player and server layer, which the How-to does not describe. Needed from Atlas/Plan: the upstream units that create the player Handler and server router (or a corrected UNIT-013 that matches this tree), and a baseline tip that includes them. Scan baseline v1 tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa differs from case HEAD e5f72618cee2674c3404f3e4f10d754541e1a34f, and the case HEAD tree only has the README."
+    },
+    {
+      "unit_id": "UNIT-014",
+      "title": "Verify: Config loader and health endpoint unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4N7G5JC4H3N390JQBG"
+      ],
+      "depends_on": [
+        "UNIT-011",
+        "REQ-006"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "c6f93c1d4221aedd08a3730894df295b555606fa",
+      "from_sha": "c6f93c1d4221aedd08a3730894df295b555606fa",
+      "tests": [
+        {
+          "id": "TestLoadFS_EnvOverrides",
+          "kind": "unit",
+          "name": "TestLoadFS_EnvOverrides",
+          "title": "LoadFS applies STORYFORGE_* environment values over YAML values",
+          "scenario": "Given a config.yaml with auth.token_secret 'yaml-secret' and git.token 'yaml-git', when LoadFS runs with STORYFORGE_TOKEN_SECRET=env-secret, STORYFORGE_GIT_TOKEN=env-git and STORYFORGE_HOSTING_PROVIDER=cloudflare, then the config fields equal the environment values",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestLoadFS_EnvOverrides",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestLoadFS_MissingSecretAndDefaults",
+          "kind": "unit",
+          "name": "TestLoadFS_MissingSecretAndDefaults",
+          "title": "LoadFS rejects a missing token secret and fills cookie and TTL defaults",
+          "scenario": "Given a config with no token_secret and no environment override, when LoadFS runs, then it returns a non-nil error. Given a config with a secret but no cookie_name or token_ttl, when LoadFS runs, then CookieName is sf_session and TokenTTL is 720h",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestLoadFS_MissingSecretAndDefaults",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestHealthz",
+          "kind": "unit",
+          "name": "TestHealthz",
+          "title": "GET /healthz returns 200 with JSON status ok",
+          "scenario": "Given a server built with New from a config that has a token secret and a discarded slog logger, when GET /healthz is served via httptest, then the status is 200, Content-Type is application/json and the body status is ok",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestHealthz",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T11:31:39.927932+00:00",
+      "ended_at": "2026-11-23T11:32:05.134563+00:00",
+      "run_started_at": "2026-11-23T11:31:39.927932+00:00",
+      "duration_ms": 25071,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-015",
+      "title": "Verify: Session endpoint and token unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4NXDP54TNMCG1XTGFN"
+      ],
+      "depends_on": [
+        "UNIT-012",
+        "REQ-007"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "689b9c8a62391321a2d4799684e371357942ab17",
+      "from_sha": "689b9c8a62391321a2d4799684e371357942ab17",
+      "tests": [
+        {
+          "id": "TestSignVerifyRoundTrip",
+          "kind": "unit",
+          "name": "TestSignVerifyRoundTrip",
+          "title": "Token signed for id 'abc' verifies one minute later within a 1h TTL and returns the same id with no error",
+          "scenario": "Given secret 's1' and id 'abc' signed at fixed time T; when Verify runs at T+1m with ttl 1h; then it returns id 'abc' and a nil error",
+          "command": "cd backend && go test -timeout 2m ./internal/player -run TestSignVerifyRoundTrip",
+          "status": "passed",
+          "detail": "--- PASS: TestSignVerifyRoundTrip (0.00s)"
+        },
+        {
+          "id": "TestCreateSession_CookieAndID",
+          "kind": "unit",
+          "name": "TestCreateSession_CookieAndID",
+          "title": "POST session responds 201 with a 32-char hex id and sets a secure session cookie whose value verifies to that id",
+          "scenario": "Given a Handler with secret 's1', cookie 'sf_session', TTL 1h and Secure true; when POST is sent to CreateSession via httptest; then status is 201, the id matches ^[0-9a-f]{32}$, the sf_session cookie is HttpOnly, Secure, Path '/', MaxAge 3600, SameSite Lax, and its value verifies to the body id",
+          "command": "cd backend && go test -timeout 2m ./internal/player -run TestCreateSession_CookieAndID",
+          "status": "passed",
+          "detail": "--- PASS: TestCreateSession_CookieAndID (0.00s)"
+        },
+        {
+          "id": "TestCreateSession_UniqueIDs",
+          "kind": "unit",
+          "name": "TestCreateSession_UniqueIDs",
+          "title": "Two session creations return different player ids",
+          "scenario": "Given a Handler; when CreateSession is called twice; then the two returned ids differ",
+          "command": "cd backend && go test -timeout 2m ./internal/player -run TestCreateSession_UniqueIDs",
+          "status": "passed",
+          "detail": "--- PASS: TestCreateSession_UniqueIDs (0.00s)"
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "c6f93c1d4221aedd08a3730894df295b555606fa",
+          "from_sha": "bf70bcde6ecf74e7bf3917fdccdd9382312dda9a",
+          "tests": [
+            {
+              "id": "TestSignVerifyRoundTrip",
+              "kind": "unit",
+              "name": "TestSignVerifyRoundTrip",
+              "title": "Verify returns the signed player id when the token is one minute old with a one-hour ttl",
+              "scenario": "Given a token signed with secret 's1' for id 'abc' at time T, when Verify runs at T+1m with ttl 1h, then it returns id 'abc' and a nil error",
+              "command": "cd backend && go test -timeout 2m ./internal/player -run TestSignVerifyRoundTrip",
+              "status": "passed",
+              "detail": "PASS in 0.00s"
+            },
+            {
+              "id": "TestCreateSession_CookieAndID",
+              "kind": "unit",
+              "name": "TestCreateSession_CookieAndID",
+              "title": "CreateSession responds 201 with a hex id and sets a secure session cookie that verifies to that id",
+              "scenario": "Given a Handler with secret 's1', cookie name 'sf_session', ttl 1h and Secure true, when POST calls CreateSession, then the status is 201, the body id matches ^[0-9a-f]{32}$, the sf_session cookie is HttpOnly, Secure, Path '/', MaxAge 3600 and SameSite Lax, and its value verifies to the body id",
+              "command": "cd backend && go test -timeout 2m ./internal/player -run TestCreateSession_CookieAndID",
+              "status": "passed",
+              "detail": "PASS in 0.00s"
+            },
+            {
+              "id": "TestCreateSession_UniqueIDs",
+              "kind": "unit",
+              "name": "TestCreateSession_UniqueIDs",
+              "title": "Two session creations return different player ids",
+              "scenario": "Given the same Handler, when CreateSession is called twice, then the two returned ids differ",
+              "command": "cd backend && go test -timeout 2m ./internal/player -run TestCreateSession_UniqueIDs",
+              "status": "passed",
+              "detail": "PASS in 0.00s"
+            }
+          ],
+          "started_at": "2026-11-23T11:31:32.725110+00:00",
+          "ended_at": "2026-11-23T11:32:01.899810+00:00",
+          "duration_ms": 28987,
+          "model": "claude-haiku-5-5"
+        }
+      ],
+      "started_at": "2026-11-23T11:31:32.725110+00:00",
+      "ended_at": "2026-11-23T11:33:53.442143+00:00",
+      "run_started_at": "2026-11-23T11:33:36.913746+00:00",
+      "duration_ms": 16350,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-016",
+      "title": "Verify: Me endpoint 401 and 200 unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M842QZ4NXKTQNJ3EH7NKK56P"
+      ],
+      "depends_on": [
+        "UNIT-013",
+        "REQ-008"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "689b9c8a62391321a2d4799684e371357942ab17",
+      "from_sha": "689b9c8a62391321a2d4799684e371357942ab17",
+      "tests": [
+        {
+          "id": "TestMe_ValidToken",
+          "kind": "unit",
+          "name": "TestMe_ValidToken",
+          "title": "GET /api/v1/player/me returns 200 with the player id for a valid session cookie",
+          "scenario": "Given a handler with a fixed clock and a cookie signed for player p1 at that clock, when GET /api/v1/player/me is requested with that cookie, then it responds 200 with body id p1",
+          "command": "cd backend && go test -timeout 2m ./internal/player -run TestMe_ValidToken",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        },
+        {
+          "id": "TestMe_Unauthorized",
+          "kind": "unit",
+          "name": "TestMe_Unauthorized",
+          "title": "GET /api/v1/player/me returns 401 for missing, tampered, wrongly signed, expired or malformed cookies",
+          "scenario": "Given a handler with a fixed clock and 1h TTL, when /api/v1/player/me is requested with no cookie, a last-char-flipped token, a token signed with another secret, a token issued 2h ago, or the garbage value xyz, then it responds 401 for each",
+          "command": "cd backend && go test -timeout 2m ./internal/player -run TestMe_Unauthorized",
+          "status": "passed",
+          "detail": "PASS: 5/5 subtests (no_cookie, last_char_flipped, signed_with_other_secret, issued_2h_ago_with_1h_TTL, garbage_value)"
+        },
+        {
+          "id": "TestSessionThenMe",
+          "kind": "unit",
+          "name": "TestSessionThenMe",
+          "title": "Session cookie from POST /api/v1/player/session is accepted by GET /api/v1/player/me and yields the same id",
+          "scenario": "Given a server built from a config with a token secret, cookie name and 1h TTL, when a session is created and its Set-Cookie is sent with GET /api/v1/player/me, then the me response is 200 with the same id as the session body",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run TestSessionThenMe",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (3): TestMe_ValidToken, TestMe_Unauthorized, TestSessionThenMe",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "e0dc20a3451f630e0aa503e55de4984d286608ac",
+          "from_sha": "c6f93c1d4221aedd08a3730894df295b555606fa",
+          "tests": [
+            {
+              "id": "TestMe_ValidToken",
+              "kind": "unit",
+              "name": "TestMe_ValidToken",
+              "title": "GET /api/v1/player/me returns 200 with id p1 for a valid signed session cookie",
+              "scenario": "Given a handler with a fixed clock and a cookie signed for p1 at that clock, when Me is called with that cookie, then it responds 200 with body id p1",
+              "command": "cd backend && go test -timeout 2m ./internal/player -run TestMe_ValidToken",
+              "status": "failed",
+              "detail": "Build failed: h.Me undefined (type *Handler has no field or method Me) at internal/player/handler_test.go:120. Needs Act to add the Me handler."
+            },
+            {
+              "id": "TestMe_Unauthorized",
+              "kind": "unit",
+              "name": "TestMe_Unauthorized",
+              "title": "GET /api/v1/player/me returns 401 for missing, tampered, wrongly signed, expired or garbage cookies",
+              "scenario": "Given a handler with a fixed clock and 1h TTL, when Me is called with no cookie, a last-char-flipped token, a token signed with secret 'other', a token issued 2h ago, or the value 'xyz', then it responds 401 for each subtest",
+              "command": "cd backend && go test -timeout 2m ./internal/player -run TestMe_Unauthorized",
+              "status": "failed",
+              "detail": "Build failed: h.Me undefined (type *Handler has no field or method Me) at internal/player/handler_test.go:174. Needs Act to add the Me handler; subtests not yet executed."
+            },
+            {
+              "id": "TestSessionThenMe",
+              "kind": "unit",
+              "name": "TestSessionThenMe",
+              "title": "A session cookie from POST /api/v1/player/session authenticates GET /api/v1/player/me with the same id",
+              "scenario": "Given a server.New handler with token secret, cookie name and 1h TTL, when POST session sets a cookie that is sent to GET /api/v1/player/me, then the me response is 200 with the session id",
+              "command": "cd backend && go test -timeout 2m ./internal/server -run TestSessionThenMe",
+              "status": "failed",
+              "detail": "server_test.go:75: me status = 404, want 200 (body=\"404 page not found\"). Route GET /api/v1/player/me is not registered in internal/server/server.go. Needs Act to add the route and handler."
+            }
+          ],
+          "started_at": "2026-11-23T11:32:05.208341+00:00",
+          "ended_at": "2026-11-23T11:33:05.881571+00:00",
+          "duration_ms": 60500,
+          "model": "claude-haiku-5-5"
+        }
+      ],
+      "started_at": "2026-11-23T11:32:05.208341+00:00",
+      "ended_at": "2026-11-23T11:33:55.872775+00:00",
+      "run_started_at": "2026-11-23T11:33:36.903910+00:00",
+      "duration_ms": 18808,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-006",
+      "title": "REQ · Backend module with YAML config, slog logging and health endpoint",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-003"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-007",
+      "title": "REQ · Anonymous player session creation with HMAC token cookie",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-003"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-008",
+      "title": "REQ · Player me endpoint validating session cookie",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-003"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-003",
+      "title": "Evidence: Backend bootstrap unit test results",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-011",
+        "UNIT-012",
+        "UNIT-013",
+        "UNIT-014",
+        "UNIT-015",
+        "UNIT-016"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-016",
+      "title": "Act: Fix Verify failure — Me endpoint 401 and 200 unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "689b9c8a62391321a2d4799684e371357942ab17",
+      "from_sha": "e0dc20a3451f630e0aa503e55de4984d286608ac",
+      "started_at": "2026-11-23T11:33:05.893133+00:00",
+      "ended_at": "2026-11-23T11:33:36.839366+00:00",
+      "run_started_at": "2026-11-23T11:33:05.893133+00:00",
+      "duration_ms": 30777,
+      "model": "claude-haiku-5-5"
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-007",
+      "dst": "UNIT-015"
+    },
+    {
+      "src": "INT-003",
+      "dst": "REQ-007"
+    },
+    {
+      "src": "REQ-008",
+      "dst": "UNIT-013"
+    },
+    {
+      "src": "UNIT-014",
+      "dst": "EVD-003"
+    },
+    {
+      "src": "UNIT-011",
+      "dst": "UNIT-014"
+    },
+    {
+      "src": "REQ-008",
+      "dst": "UNIT-016"
+    },
+    {
+      "src": "INT-003",
+      "dst": "REQ-008"
+    },
+    {
+      "src": "REQ-006",
+      "dst": "UNIT-011"
+    },
+    {
+      "src": "REQ-007",
+      "dst": "UNIT-012"
+    },
+    {
+      "src": "UNIT-015",
+      "dst": "EVD-003"
+    },
+    {
+      "src": "UNIT-011",
+      "dst": "EVD-003"
+    },
+    {
+      "src": "UNIT-012",
+      "dst": "EVD-003"
+    },
+    {
+      "src": "UNIT-016",
+      "dst": "EVD-003"
+    },
+    {
+      "src": "UNIT-012",
+      "dst": "UNIT-015"
+    },
+    {
+      "src": "INT-003",
+      "dst": "REQ-006"
+    },
+    {
+      "src": "UNIT-013",
+      "dst": "UNIT-016"
+    },
+    {
+      "src": "REQ-006",
+      "dst": "UNIT-014"
+    },
+    {
+      "src": "UNIT-013",
+      "dst": "EVD-003"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m842qz",
+  "base_sha": "e5f72618cee2674c3404f3e4f10d754541e1a34f",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M842QZ5DE0AGR0D2DB6Y0PJM:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T11:30:30.189807+00:00",
+  "updated_at": "2026-11-23T11:33:56.205724+00:00",
+  "completed_at": "2026-11-23T11:33:55.874223+00:00",
+  "duration_ms": 205685,
+  "usage_stats": {
+    "total_duration_ms": 329769,
+    "total_tokens_in": 8,
+    "total_tokens_out": 2169,
+    "total_estimated_cost_usd": 0.008682
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-011",
+    "UNIT-012",
+    "UNIT-013",
+    "UNIT-014",
+    "UNIT-015",
+    "UNIT-016"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-011",
+        "title": "Act: Create backend module, config loader, logger and health router",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-011 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-012",
+        "title": "Act: Implement player token signing and session endpoint",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-012 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-013",
+        "title": "Act: Implement player me endpoint",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-013 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-014",
+        "title": "Verify: Config loader and health endpoint unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-014 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-015",
+        "title": "Verify: Session endpoint and token unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-015 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-016",
+        "title": "Verify: Me endpoint 401 and 200 unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-003",
+            "path": ".ai-dlc/evidence/EVD-003.md",
+            "title": "Evidence: Backend bootstrap unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-016 unless acceptance outcomes recorded in EVD-003 (.ai-dlc/evidence/EVD-003.md; \"Evidence: Backend bootstrap unit test results\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T11:30:30.318142+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-011",
+    "UNIT-012",
+    "UNIT-013",
+    "UNIT-014",
+    "UNIT-015",
+    "UNIT-016"
+  ]
+}

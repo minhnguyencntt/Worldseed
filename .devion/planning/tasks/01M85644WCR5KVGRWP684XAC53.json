@@ -1,0 +1,56 @@
+{
+  "id": "01M85644WCR5KVGRWP684XAC53",
+  "intent_id": "01M8560PVSPK3BJS1C30JXENCT",
+  "title": "SG-5.4.3 Add game/tests/preload.test.ts with mocked dependencies",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "One unit test file covers preload dedup, unknown refs, fallback key and BootScene wiring",
+  "description": "Context: planPreload and resolveTextureKey live in game/src/engine/planPreload.ts and BootScene (game/frontend/src/phaser/BootScene.ts) uses both. Separate tests exist (game/tests/planPreload.test.ts, resolveTextureKey.test.ts, frontend/tests/bootScene*.test.ts), but game/tests/preload.test.ts does not exist. Desired behavior: one file with every dependency mocked covering deduplication, the unknown-reference issue, the fallback key and BootScene using the planner and fallback. Why: SG-5.4.3 asks for exactly this file.",
+  "acceptance_criteria": [
+    "Given game/tests/preload.test.ts, when `npx vitest run tests/preload.test.ts` runs in game/, then it passes",
+    "Given an asset referenced twice, when planned, then it is loaded once",
+    "Given a ref missing from the manifest, when planned, then it is reported unknown and not loaded",
+    "Given an unknown id, when resolved, then the fallback key is returned",
+    "Given BootScene.preload, when run with mocks, then only planned assets load and unknown refs warn"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/preload.test.ts",
+      "game/vitest.config.ts alias so game tests can import BootScene"
+    ],
+    "out_of_scope": [
+      "Changing planPreload or BootScene behavior",
+      "Browser or Phaser runtime tests"
+    ],
+    "preserve": [
+      "Existing planPreload, resolveTextureKey and bootScene tests",
+      "game/frontend/vitest.config.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Mock phaser, the content module, and the filesystem; no real Phaser or network",
+    "Test lives in game/tests/preload.test.ts exactly"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "preload.test.ts exists and passes",
+    "Existing game tests still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-104.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84G51W28MN6Z7X3354EYDE3",
+    "artifact:.ai-dlc/intent/INT-104.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M8562BYK0HTN62DBRPMMKS57",
+  "feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+  "artifact_path": ".ai-dlc/intent/INT-104.md",
+  "artifact_id": "INT-104",
+  "created_at": "2026-11-23T21:48:49.420649+00:00"
+}

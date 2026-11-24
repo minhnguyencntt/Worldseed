@@ -1,0 +1,68 @@
+{
+  "id": "01M855ATQG3660QSR7NFVCKN92",
+  "intent_id": "01M8556WFEASC9F9P2D8RG7ZK6",
+  "title": "Verify: BootScene preload and fallback unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for BootScene preload with Phaser mocked",
+  "description": "Extend the Phaser mock like game/frontend/tests/bootSceneEffects.test.ts with load.image, load.spritesheet and load.on fakes; mock @game/engine/preload planPreload.",
+  "acceptance_criteria": [
+    "preload test asserts load.image and load.spritesheet are called for planned entries",
+    "loaderror test asserts the key is recorded and the fallback texture is generated"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootScenePreload.test.ts"
+    ],
+    "out_of_scope": [
+      "real browser"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Plan fixture mirrors PreloadPlan type from game/src/engine/preload.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-505.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855951HMSXXX1CD8HPS76YA",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-505.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M855ATQGFDE3S902Y83KTN9B"
+  ],
+  "sim_node_id": "01M855951HRK6S0RCRQ910R6EM",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-505.md",
+  "artifact_id": "UNIT-505",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootScenePreload.test.ts",
+      "symbol": "new: preload queues planned entries",
+      "lines": "new",
+      "action": "Mock planPreload to return one image entry and one spritesheet entry; call new BootScene().preload() with fake load; assert load.image and load.spritesheet called with the entry ids and '/assets/' urls.",
+      "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts -t queues",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/bootScenePreload.test.ts",
+      "symbol": "new: loaderror records failed key",
+      "lines": "new",
+      "action": "Capture the handler passed to load.on('loaderror'), invoke it with {key:'a'}, and assert the scene marks 'a' failed and that create() generates the fallback texture.",
+      "command": "cd game/frontend && npx vitest run tests/bootScenePreload.test.ts -t loaderror",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T21:34:59.824050+00:00",
+  "updated_at": "2026-11-23T21:37:42.100356+00:00"
+}

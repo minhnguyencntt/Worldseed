@@ -1,0 +1,68 @@
+{
+  "id": "01M84WBYFR3H2KEQEP9XTJ2PDQ",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "SG-5 · Data-driven layered scene renderer and interactive object system",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Generic Phaser-facing engine builds scenes from content, with layers, validated assets, interactive objects, effects and transitions.",
+  "description": "Context: game/src holds engine/scene.ts (pure view/action logic), systems/*, a zod content schema (content/schema.ts) and a manifest loader with fallback (assets/loaders/manifestLoader.ts). The Phaser side (frontend/src/phaser/BootScene.ts) only reads state and renders nothing. Desired behavior: a generic engine under src/engine, src/scenes, src/entities and src/systems builds the bedroom from content definitions with nothing hardcoded in the scene class, renders ordered layers, preloads and validates assets with graceful fallback, supports interactive objects, dust and ambient light effects and scene transitions. Why: future AI cycles must add objects, characters and scenes by editing content and manifest only.",
+  "acceptance_criteria": [
+    "Given a scene definition, when it is built, then every object becomes an entity with no object id referenced in engine code",
+    "Given objects on all six layers, when built, then display depth follows Background < Furniture < Interactive < Characters < Effects < UI Overlay",
+    "Given a missing asset, when a scene is built, then a fallback texture is used and no exception is thrown",
+    "Given an interactive object, when hovered, clicked, focused by keyboard or hidden by a visibility condition, then the correct highlight, label, event or removal occurs",
+    "Given effects and a goto_scene event, when handled, then dust, ambient light and a fade transition run from content data"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/engine",
+      "game/src/scenes",
+      "game/src/entities",
+      "game/src/systems",
+      "game/src/assets/loaders",
+      "content schema effects field",
+      "Phaser scene adapter in frontend/src/phaser",
+      "unit tests with Phaser mocked"
+    ],
+    "out_of_scope": [
+      "New pixel art",
+      "React UI changes",
+      "Backend/Go API changes"
+    ],
+    "preserve": [
+      "Existing getSceneView and performAction behavior",
+      "Existing manifest schema and loader exports",
+      "Existing typed event bus in frontend/src/phaser/events.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 pinned in frontend; game/ package has no phaser dependency so engine code uses structural types",
+    "Tests must mock Phaser, no browser",
+    "Content validated by zod schemas"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements have Act and Verify units green",
+    "Existing game and frontend unit tests still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-095.md`"
+  ],
+  "non_functional": [
+    "Pixel-art friendly rendering preserved",
+    "No memory leaks: entities destroy their listeners"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84KNPXA9140V7Y55SNW8BJG",
+    "artifact:.ai-dlc/intent/INT-095.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M84W9646CK8S2FDWDATYVV3K",
+  "feature_id": "01M84KNPXA9140V7Y55SNW8BJG",
+  "artifact_path": ".ai-dlc/intent/INT-095.md",
+  "artifact_id": "INT-095",
+  "created_at": "2026-11-23T18:58:19.256934+00:00"
+}

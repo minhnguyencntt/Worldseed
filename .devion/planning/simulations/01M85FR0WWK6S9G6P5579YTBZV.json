@@ -1,0 +1,475 @@
+{
+  "intent_id": "01M85FR0WWK6S9G6P5579YTBZV",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85FSDYWX8JZTF58M5J5NZHW",
+      "kind": "intent",
+      "title": "SG-8.4.4 Contribution history error message with Retry",
+      "body": "Context: ContributionSheet already loads history through listMine and has a HistoryStatus of loading, ready or error, plus a Retry button driven by reloadKey. Desired behavior: when history fails, the player sees 'Could not load your suggestions' with a Retry button, and clicking Retry reloads the history and returns to the loading state. Expected result: the behavior is confirmed in code and locked by unit tests. Why: the player must be able to recover from a failed history load without closing the modal.\n\n## Acceptance criteria\n- Given listMine rejects, When the sheet opens, Then role=alert shows 'Could not load your suggestions' and a Retry button is present\n- Given the error state, When Retry is clicked, Then the error message and Retry button disappear and 'Loading your suggestions…' is shown while listMine is pending\n- Given Retry is clicked, When listMine is called again and resolves, Then listMine has been called twice and the history list is shown\n\n\n## Scope\n- In scope: ContributionSheet history error and Retry behavior\n- Out of scope: Backend changes\n- Out of scope: Submit flow\n- Out of scope: Empty and loading message copy\n- Preserve: listMine API contract\n- Preserve: HistoryStatus type\n- Preserve: Existing contribution tests\n\n\n## Technical constraints\n- React + Zustand-free local state in ContributionSheet\n- Use the real api client module, mocked only in unit tests\n\n\n## Definition of done\n- Error message and Retry present on failure\n- Retry returns to loading and reloads history\n- Unit tests pass\n\n\n## Non-functional requirements\n- Error is announced via role=alert\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Show 'Could not load your suggestions' with a Retry button when history fails, and Retry returns to loading",
+      "description": "Context: ContributionSheet already loads history through listMine and has a HistoryStatus of loading, ready or error, plus a Retry button driven by reloadKey. Desired behavior: when history fails, the player sees 'Could not load your suggestions' with a Retry button, and clicking Retry reloads the history and returns to the loading state. Expected result: the behavior is confirmed in code and locked by unit tests. Why: the player must be able to recover from a failed history load without closing the modal.",
+      "acceptance_criteria": [
+        "Given listMine rejects, When the sheet opens, Then role=alert shows 'Could not load your suggestions' and a Retry button is present",
+        "Given the error state, When Retry is clicked, Then the error message and Retry button disappear and 'Loading your suggestions…' is shown while listMine is pending",
+        "Given Retry is clicked, When listMine is called again and resolves, Then listMine has been called twice and the history list is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet history error and Retry behavior"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Submit flow",
+          "Empty and loading message copy"
+        ],
+        "preserve": [
+          "listMine API contract",
+          "HistoryStatus type",
+          "Existing contribution tests"
+        ]
+      },
+      "technical_constraints": [
+        "React + Zustand-free local state in ContributionSheet",
+        "Use the real api client module, mocked only in unit tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Error message and Retry present on failure",
+        "Retry returns to loading and reloads history",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-138.md`"
+      ],
+      "non_functional": [
+        "Error is announced via role=alert"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-138.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-138.md",
+      "artifact_id": "INT-138"
+    },
+    {
+      "id": "01M85FSDYWMZSPY8XFRFN6YRAR",
+      "kind": "requirement",
+      "title": "REQ · Failed history load shows 'Could not load your suggestions' with a Retry button",
+      "body": "Context: ContributionSheet sets historyStatus to 'error' in the listMine catch. Desired behavior: in that state it renders the HISTORY_ERROR alert and a Retry button. Expected result: the player sees the explained failure and a way to retry. Why: failures must not be silent.\n\n## Acceptance criteria\n- Given listMine rejects, When the sheet is open, Then an element with role=alert has text 'Could not load your suggestions'\n- Given listMine rejects, When the sheet is open, Then a button named 'Retry' is present\n- Given listMine resolves, When the sheet is open, Then neither the error nor Retry is shown\n\n\n## Scope\n- In scope: Error alert and Retry button rendering\n- Out of scope: Reload logic\n- Preserve: Other alerts in the sheet\n\n\n## Technical constraints\n- Message text must remain 'Could not load your suggestions'\n\n\n## Definition of done\n- Error and Retry render only in error state\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "History failure renders the error message and Retry button",
+      "description": "Context: ContributionSheet sets historyStatus to 'error' in the listMine catch. Desired behavior: in that state it renders the HISTORY_ERROR alert and a Retry button. Expected result: the player sees the explained failure and a way to retry. Why: failures must not be silent.",
+      "acceptance_criteria": [
+        "Given listMine rejects, When the sheet is open, Then an element with role=alert has text 'Could not load your suggestions'",
+        "Given listMine rejects, When the sheet is open, Then a button named 'Retry' is present",
+        "Given listMine resolves, When the sheet is open, Then neither the error nor Retry is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "Error alert and Retry button rendering"
+        ],
+        "out_of_scope": [
+          "Reload logic"
+        ],
+        "preserve": [
+          "Other alerts in the sheet"
+        ]
+      },
+      "technical_constraints": [
+        "Message text must remain 'Could not load your suggestions'"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Error and Retry render only in error state",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-341.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85FSDYWX8JZTF58M5J5NZHW",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85FSDYWX8JZTF58M5J5NZHW",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-341.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWX8JZTF58M5J5NZHW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-341.md",
+      "artifact_id": "REQ-341"
+    },
+    {
+      "id": "01M85FSDYWZ7M9WRZAGJ7Q3YRN",
+      "kind": "requirement",
+      "title": "REQ · Clicking Retry reloads history and returns to the loading state",
+      "body": "Context: the Retry button increments reloadKey, which re-runs the history effect that sets historyStatus to 'loading' and calls listMine. Desired behavior: after the click the error is gone, the loading message shows while pending, and listMine is called again. Expected result: the player sees the loading state, then the list or a new error. Why: gives clear feedback that a retry is in progress.\n\n## Acceptance criteria\n- Given the error state, When Retry is clicked and listMine is pending, Then 'Loading your suggestions…' is shown and the error alert and Retry button are absent\n- Given Retry is clicked, When the call settles, Then listMine has been called exactly twice\n- Given Retry fails again, When the second call rejects, Then the error and Retry are shown again\n\n\n## Scope\n- In scope: Retry click handler and effect re-run\n- Out of scope: Error copy\n- Preserve: Cancellation guard in the history effect\n\n\n## Technical constraints\n- Reload driven by reloadKey in the effect dependencies\n\n\n## Definition of done\n- Retry returns to loading and refetches\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Retry increments reload key, re-fetches and shows loading",
+      "description": "Context: the Retry button increments reloadKey, which re-runs the history effect that sets historyStatus to 'loading' and calls listMine. Desired behavior: after the click the error is gone, the loading message shows while pending, and listMine is called again. Expected result: the player sees the loading state, then the list or a new error. Why: gives clear feedback that a retry is in progress.",
+      "acceptance_criteria": [
+        "Given the error state, When Retry is clicked and listMine is pending, Then 'Loading your suggestions…' is shown and the error alert and Retry button are absent",
+        "Given Retry is clicked, When the call settles, Then listMine has been called exactly twice",
+        "Given Retry fails again, When the second call rejects, Then the error and Retry are shown again"
+      ],
+      "scope": {
+        "in_scope": [
+          "Retry click handler and effect re-run"
+        ],
+        "out_of_scope": [
+          "Error copy"
+        ],
+        "preserve": [
+          "Cancellation guard in the history effect"
+        ]
+      },
+      "technical_constraints": [
+        "Reload driven by reloadKey in the effect dependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Retry returns to loading and refetches",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-342.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85FSDYWX8JZTF58M5J5NZHW",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M85FSDYWX8JZTF58M5J5NZHW",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-342.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWX8JZTF58M5J5NZHW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-342.md",
+      "artifact_id": "REQ-342"
+    },
+    {
+      "id": "01M85FSDYW8EBSGBN2PFDXVYCQ",
+      "kind": "unit",
+      "title": "Act: Confirm the history error alert and Retry button render in ContributionSheet",
+      "body": "The code already renders both elements when historyStatus is 'error'. Confirm and change nothing unless the branch differs from this description.\n\n## Acceptance criteria\n- The alert text equals HISTORY_ERROR 'Could not load your suggestions'\n- Retry button is rendered only when historyStatus === 'error'\n\n\n## Scope\n- In scope: ContributionSheet error branch\n- Out of scope: Tests\n- Preserve: Existing markup\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Error branch confirmed to render alert and Retry\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify the error branch renders message and Retry",
+      "description": "The code already renders both elements when historyStatus is 'error'. Confirm and change nothing unless the branch differs from this description.",
+      "acceptance_criteria": [
+        "The alert text equals HISTORY_ERROR 'Could not load your suggestions'",
+        "Retry button is rendered only when historyStatus === 'error'"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet error branch"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing markup"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Error branch confirmed to render alert and Retry",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-682.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85FSDYWMZSPY8XFRFN6YRAR",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85FSDYWMZSPY8XFRFN6YRAR",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-682.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWMZSPY8XFRFN6YRAR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-682.md",
+      "artifact_id": "UNIT-682",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (error render branch)",
+          "lines": "L154-L158",
+          "action": "Read the two JSX lines that render the HISTORY_ERROR paragraph with role=\"alert\" and the Retry button, both gated on historyStatus === 'error'; make no change when they match.",
+          "code": "{historyStatus === 'error' && <p role=\"alert\">{HISTORY_ERROR}</p>}",
+          "expected": "Both elements are confirmed present and gated on the error status"
+        }
+      ]
+    },
+    {
+      "id": "01M85FSDYWKA4V0PVS7VER1EW3",
+      "kind": "unit",
+      "title": "Act: Confirm Retry increments reloadKey and the effect resets to loading",
+      "body": "Confirm onClick calls setReloadKey((k) => k + 1), reloadKey is in the effect deps, and the effect begins with setHistoryStatus('loading') before listMine.\n\n## Acceptance criteria\n- Retry click changes reloadKey\n- Effect sets status 'loading' before calling listMine\n\n\n## Scope\n- In scope: Retry handler and history effect\n- Out of scope: Tests\n- Preserve: cancelled guard\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Retry flow confirmed to reload and show loading\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify the Retry handler and effect behavior",
+      "description": "Confirm onClick calls setReloadKey((k) => k + 1), reloadKey is in the effect deps, and the effect begins with setHistoryStatus('loading') before listMine.",
+      "acceptance_criteria": [
+        "Retry click changes reloadKey",
+        "Effect sets status 'loading' before calling listMine"
+      ],
+      "scope": {
+        "in_scope": [
+          "Retry handler and history effect"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "cancelled guard"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Retry flow confirmed to reload and show loading",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-683.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85FSDYWZ7M9WRZAGJ7Q3YRN",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M85FSDYWZ7M9WRZAGJ7Q3YRN",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-683.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWZ7M9WRZAGJ7Q3YRN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-683.md",
+      "artifact_id": "UNIT-683",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet history useEffect",
+          "lines": "L51-L77",
+          "action": "Read the effect: confirm setHistoryStatus('loading') runs before listMine(roundId) and the dependency array is [open, roundId, reloadKey]; make no change when it matches.",
+          "code": "}, [open, roundId, reloadKey]);",
+          "expected": "Effect re-runs on reloadKey change and sets loading first"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet Retry button onClick",
+          "lines": "L156-L158",
+          "action": "Confirm onClick is () => setReloadKey((k) => k + 1) and the button label is 'Retry'.",
+          "code": "<button type=\"button\" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>",
+          "expected": "Retry click triggers a re-run of the history effect"
+        }
+      ]
+    },
+    {
+      "id": "01M85FSDYWC08X973TY6PP3TA6",
+      "kind": "unit",
+      "title": "Verify: History error message and Retry button unit tests",
+      "body": "Add unit tests for the error state rendering with listMine mocked.\n\n## Acceptance criteria\n- Rejected listMine shows the alert text and Retry\n- Resolved listMine shows neither\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock ../src/api/client with vi.mock keeping actual exports\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for error alert and Retry presence",
+      "description": "Add unit tests for the error state rendering with listMine mocked.",
+      "acceptance_criteria": [
+        "Rejected listMine shows the alert text and Retry",
+        "Resolved listMine shows neither"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client with vi.mock keeping actual exports"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-684.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85FSDYW8EBSGBN2PFDXVYCQ",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85FSDYW8EBSGBN2PFDXVYCQ",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-684.md"
+      ],
+      "depends_on": [
+        "01M85FSDYW8EBSGBN2PFDXVYCQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-684.md",
+      "artifact_id": "UNIT-684",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistoryErrorRetry.test.tsx",
+          "symbol": "new: describe('history error message')",
+          "lines": "new",
+          "action": "Create jsdom test file mirroring tests/contributionHistoryRetry.test.tsx mocks. Test 'shows error and Retry': listMine.mockRejectedValueOnce(new Error('x')), render <ContributionSheet open onClose={vi.fn()} roundId=\"round-1\" />, assert findByRole('alert') has text 'Could not load your suggestions' and getByRole('button',{name:'Retry'}) exists. Test 'hides both on success': mockResolvedValueOnce([]), wait for loading text to vanish, assert queryByRole('button',{name:'Retry'}) is null and the error text is absent. Fixture data comes from tests/fixtures/api.ts, which mirrors the listMine response type in src/api/client.ts.",
+          "command": "npx vitest run tests/contributionHistoryErrorRetry.test.tsx",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85FSDYWZSVXVYC8A7NJW84H",
+      "kind": "unit",
+      "title": "Verify: Retry returns to the loading state and reloads unit tests",
+      "body": "Test that after Retry the loading message shows while pending, listMine is called twice, and a second failure shows the error again.\n\n## Acceptance criteria\n- Pending retry shows loading and hides error and Retry\n- listMine called twice\n- Second rejection shows error and Retry again\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Use a manually controlled promise for the second listMine call; no real network\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Retry loading state and refetch",
+      "description": "Test that after Retry the loading message shows while pending, listMine is called twice, and a second failure shows the error again.",
+      "acceptance_criteria": [
+        "Pending retry shows loading and hides error and Retry",
+        "listMine called twice",
+        "Second rejection shows error and Retry again"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use a manually controlled promise for the second listMine call; no real network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-685.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85FSDYWKA4V0PVS7VER1EW3",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85FSDYWKA4V0PVS7VER1EW3",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-685.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWKA4V0PVS7VER1EW3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-685.md",
+      "artifact_id": "UNIT-685",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionHistoryRetryLoading.test.tsx",
+          "symbol": "new: describe('retry returns to loading')",
+          "lines": "new",
+          "action": "Create jsdom test file with the same vi.mock of ../src/api/client as tests/contributionHistoryRetry.test.tsx. Test 'shows loading while retry pending': first listMine rejects, second returns a never-resolving promise; click Retry; assert getByText('Loading your suggestions…') present, queryByText('Could not load your suggestions') null, queryByRole('button',{name:'Retry'}) null, listMine called 2 times. Test 'second failure shows error again': mockRejectedValueOnce twice; click Retry; assert findByRole('alert') has the error text and Retry button is present again.",
+          "command": "npx vitest run tests/contributionHistoryRetryLoading.test.tsx",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85FSDYWTM2QSVRP8NV0MWVV",
+      "kind": "evidence",
+      "title": "Evidence: History error and Retry loading unit tests pass",
+      "body": "Record the passing results of the new history error and Retry-loading unit tests as evidence for SG-8.4.4.\n\n## Acceptance criteria\n- contributionHistoryErrorRetry tests pass\n- contributionHistoryRetryLoading tests pass\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Product changes\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the error and Retry unit tests pass",
+      "description": "Record the passing results of the new history error and Retry-loading unit tests as evidence for SG-8.4.4.",
+      "acceptance_criteria": [
+        "contributionHistoryErrorRetry tests pass",
+        "contributionHistoryRetryLoading tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-138.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85FSDYWC08X973TY6PP3TA6",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85FSDYWC08X973TY6PP3TA6",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-138.md"
+      ],
+      "depends_on": [
+        "01M85FSDYWC08X973TY6PP3TA6",
+        "01M85FSDYWZSVXVYC8A7NJW84H"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-138.md",
+      "artifact_id": "EVD-138"
+    }
+  ],
+  "created_at": "2026-11-24T00:38:34.613781+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

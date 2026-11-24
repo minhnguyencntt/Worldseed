@@ -1,0 +1,360 @@
+{
+  "id": "01M84JVEXQ9K7C0CHKAAADJARS",
+  "trigger_node_id": "INT-053, UNIT-266 +6",
+  "node_ids": [
+    "INT-053",
+    "UNIT-266",
+    "UNIT-267",
+    "UNIT-268",
+    "UNIT-269",
+    "REQ-133",
+    "REQ-134",
+    "EVD-053"
+  ],
+  "intent_id": "INT-053",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-053",
+      "title": "SG-5.3 · Exporter builds frozen-only JSON export",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-266",
+      "title": "Act: Add Exporter with frozen-only filtering",
+      "kind": "unit",
+      "task_ids": [
+        "01M84JVEDWSHA688M2P7JKMDD3"
+      ],
+      "depends_on": [
+        "REQ-133"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-act",
+      "commit_sha": "d791307b61b247a3e7420719482c455557e2b76b",
+      "from_sha": "097604bf3340c481b51764708461cf432747d42d",
+      "started_at": "2026-11-23T16:12:03.193041+00:00",
+      "ended_at": "2026-11-23T16:12:17.652871+00:00",
+      "run_started_at": "2026-11-23T16:12:03.193041+00:00",
+      "duration_ms": 13371,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1967,
+      "estimated_cost_usd": 0.007874
+    },
+    {
+      "unit_id": "UNIT-267",
+      "title": "Act: Wrap source errors and guarantee a non-nil empty list in Exporter.Export",
+      "kind": "unit",
+      "task_ids": [
+        "01M84JVEDW53BHZ6SCK1C49NSQ"
+      ],
+      "depends_on": [
+        "REQ-134"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-act",
+      "commit_sha": "8aba5127bd26854fd2fa3b4d5e05df6f706b9096",
+      "from_sha": "5728352138bd9c01758529506d349690e1eb38dc",
+      "started_at": "2026-11-23T16:12:03.213732+00:00",
+      "ended_at": "2026-11-23T16:12:52.084110+00:00",
+      "run_started_at": "2026-11-23T16:12:03.213732+00:00",
+      "duration_ms": 47766,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 28,
+      "tokens_out": 6215,
+      "estimated_cost_usd": 0.024882
+    },
+    {
+      "unit_id": "UNIT-268",
+      "title": "Verify: Exporter frozen-only filtering unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84JVEDWV8T7HGTXATC8DRG7"
+      ],
+      "depends_on": [
+        "UNIT-266",
+        "REQ-133"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-verify",
+      "commit_sha": "5728352138bd9c01758529506d349690e1eb38dc",
+      "from_sha": "d791307b61b247a3e7420719482c455557e2b76b",
+      "tests": [
+        {
+          "id": "TestExporter_OnlyFrozen",
+          "kind": "unit",
+          "name": "TestExporter_OnlyFrozen",
+          "title": "Exporter includes only snapshot-frozen contributions, in snapshot order, mapped to the export shape",
+          "scenario": "Given a fake source with contributions A, B, C (player p1, fixed CreatedAt) and frozen [C, A]; When Export is called for world \"w\" and round \"ROUND-0000001\"; Then the export lists [C, A], B is absent, Author==PlayerID, Content==Prompt, and Version, WorldID and RoundID are set",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestExporter_OnlyFrozen",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        }
+      ],
+      "started_at": "2026-11-23T16:12:17.660059+00:00",
+      "ended_at": "2026-11-23T16:12:35.609138+00:00",
+      "run_started_at": "2026-11-23T16:12:17.660059+00:00",
+      "duration_ms": 16993,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 3025,
+      "estimated_cost_usd": 0.012106
+    },
+    {
+      "unit_id": "UNIT-269",
+      "title": "Verify: Exporter empty round and error propagation unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84JVEDWJZZHB0HVS3M7P4CA"
+      ],
+      "depends_on": [
+        "UNIT-267",
+        "REQ-134"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-verify",
+      "commit_sha": "3faf1fb0b709332a6d4ed5f35ff3c1c33b0a0635",
+      "from_sha": "8aba5127bd26854fd2fa3b4d5e05df6f706b9096",
+      "tests": [
+        {
+          "id": "TestExporter_EmptyRound",
+          "kind": "unit",
+          "name": "TestExporter_EmptyRound",
+          "title": "Exporter returns a non-nil empty contributions list and JSON \"contributions\":[] when no ids are frozen",
+          "scenario": "Given a fake source holding contributions but a nil frozen list, When Export is called, Then Contributions is non-nil with length 0 and the JSON contains \"contributions\":[]",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestExporter_EmptyRound",
+          "status": "passed",
+          "detail": "PASS in 0.00s"
+        },
+        {
+          "id": "TestExporter_SourceErrors/FrozenIDs_ErrNotFound_is_propagated",
+          "kind": "unit",
+          "name": "TestExporter_SourceErrors",
+          "title": "Exporter propagates an ErrNotFound from FrozenIDs so errors.Is matches",
+          "scenario": "Given an error source whose FrozenIDs returns ErrNotFound, When Export is called, Then errors.Is(err, ErrNotFound) is true",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestExporter_SourceErrors",
+          "status": "passed",
+          "detail": "PASS subtest FrozenIDs_ErrNotFound_is_propagated"
+        },
+        {
+          "id": "TestExporter_SourceErrors/ListByRound_custom_error_is_propagated",
+          "kind": "unit",
+          "name": "TestExporter_SourceErrors",
+          "title": "Exporter propagates a custom error from ListByRound so errors.Is matches",
+          "scenario": "Given an error source whose ListByRound returns a custom error, When Export is called, Then errors.Is(err, customErr) is true",
+          "command": "cd backend && go test -timeout 2m ./internal/contribution -run TestExporter_SourceErrors",
+          "status": "passed",
+          "detail": "PASS subtest ListByRound_custom_error_is_propagated"
+        }
+      ],
+      "started_at": "2026-11-23T16:12:52.091819+00:00",
+      "ended_at": "2026-11-23T16:13:19.746620+00:00",
+      "run_started_at": "2026-11-23T16:12:52.091819+00:00",
+      "duration_ms": 26741,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 4558,
+      "estimated_cost_usd": 0.018243
+    },
+    {
+      "unit_id": "REQ-133",
+      "title": "REQ · Exporter includes only frozen contributions in snapshot order",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-053"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-134",
+      "title": "REQ · Empty round yields an empty list and source errors propagate",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-053"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-053",
+      "title": "Evidence: Exporter unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-266",
+        "UNIT-267",
+        "UNIT-268",
+        "UNIT-269"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-133",
+      "dst": "UNIT-268"
+    },
+    {
+      "src": "INT-053",
+      "dst": "REQ-133"
+    },
+    {
+      "src": "REQ-133",
+      "dst": "UNIT-266"
+    },
+    {
+      "src": "UNIT-267",
+      "dst": "UNIT-269"
+    },
+    {
+      "src": "UNIT-269",
+      "dst": "EVD-053"
+    },
+    {
+      "src": "UNIT-266",
+      "dst": "UNIT-268"
+    },
+    {
+      "src": "INT-053",
+      "dst": "REQ-134"
+    },
+    {
+      "src": "UNIT-266",
+      "dst": "EVD-053"
+    },
+    {
+      "src": "UNIT-268",
+      "dst": "EVD-053"
+    },
+    {
+      "src": "UNIT-267",
+      "dst": "EVD-053"
+    },
+    {
+      "src": "REQ-134",
+      "dst": "UNIT-267"
+    },
+    {
+      "src": "REQ-134",
+      "dst": "UNIT-269"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84jve",
+  "base_sha": "097604bf3340c481b51764708461cf432747d42d",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84JVEXQ9K7C0CHKAAADJARS:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T16:12:01.847912+00:00",
+  "updated_at": "2026-11-23T16:13:20.660771+00:00",
+  "completed_at": "2026-11-23T16:13:19.747797+00:00",
+  "duration_ms": 77900,
+  "usage_stats": {
+    "total_duration_ms": 104883,
+    "total_tokens_in": 58,
+    "total_tokens_out": 15765,
+    "total_estimated_cost_usd": 0.063105
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-266",
+    "UNIT-267",
+    "UNIT-268",
+    "UNIT-269"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-266",
+        "title": "Act: Add Exporter with frozen-only filtering",
+        "evidence_refs": [
+          {
+            "id": "EVD-053",
+            "path": ".ai-dlc/evidence/EVD-053.md",
+            "title": "Evidence: Exporter unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-266 unless acceptance outcomes recorded in EVD-053 (.ai-dlc/evidence/EVD-053.md; \"Evidence: Exporter unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-267",
+        "title": "Act: Wrap source errors and guarantee a non-nil empty list in Exporter.Export",
+        "evidence_refs": [
+          {
+            "id": "EVD-053",
+            "path": ".ai-dlc/evidence/EVD-053.md",
+            "title": "Evidence: Exporter unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-267 unless acceptance outcomes recorded in EVD-053 (.ai-dlc/evidence/EVD-053.md; \"Evidence: Exporter unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-268",
+        "title": "Verify: Exporter frozen-only filtering unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-053",
+            "path": ".ai-dlc/evidence/EVD-053.md",
+            "title": "Evidence: Exporter unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-268 unless acceptance outcomes recorded in EVD-053 (.ai-dlc/evidence/EVD-053.md; \"Evidence: Exporter unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-269",
+        "title": "Verify: Exporter empty round and error propagation unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-053",
+            "path": ".ai-dlc/evidence/EVD-053.md",
+            "title": "Evidence: Exporter unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-269 unless acceptance outcomes recorded in EVD-053 (.ai-dlc/evidence/EVD-053.md; \"Evidence: Exporter unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T16:12:02.992001+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-266",
+    "UNIT-267",
+    "UNIT-268",
+    "UNIT-269"
+  ]
+}

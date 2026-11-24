@@ -1,0 +1,73 @@
+{
+  "id": "01M84XMRY55JQJJNGKSFAS9N3G",
+  "intent_id": "01M84XFR1TSRHHF744DMBNHETN",
+  "title": "Act: Add Phaser effect context and wire it into BootScene",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Phaser adapter and BootScene wiring",
+  "description": "Create createPhaserEffectContext(scene) and use it in BootScene.create.",
+  "acceptance_criteria": [
+    "Effects are built in BootScene.create from scene content",
+    "Effect handles are destroyed on scene shutdown"
+  ],
+  "scope": {
+    "in_scope": [
+      "phaser dir"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "sceneReady"
+    ]
+  },
+  "technical_constraints": [
+    "New file: `game/frontend/src/phaser/effectContext.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "A2"
+  ],
+  "definition_of_done": [
+    "Compiles under tsc",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-490.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84XJDS3CWGVF5X7FS4N8DS5",
+    "trace:01M84WZ47YBREF7B4P8J148K0X",
+    "artifact:.ai-dlc/units/UNIT-490.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84XMRY5W5ES70RHY97E8J6P"
+  ],
+  "sim_node_id": "01M84XJDS39XD4ZBKSC4MBF4V3",
+  "feature_id": "01M84WZ47YBREF7B4P8J148K0X",
+  "artifact_path": ".ai-dlc/units/UNIT-490.md",
+  "artifact_id": "UNIT-490",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/effectContext.ts",
+      "symbol": "new: createPhaserEffectContext",
+      "lines": "new",
+      "action": "Export createPhaserEffectContext(scene: Phaser.Scene): EffectRenderContext. createEffect: for 'dust' call scene.add.particles(x,y,'effect:dust',{quantity..., emitZone via area}) and setDepth(spec.depth); for 'ambientLight' scene.add.rectangle(0,0,w,h,parseInt(color.slice(1),16),alpha).setOrigin(0).setDepth(spec.depth); return { destroy } calling the object's destroy(). playTransition(ms) calls scene.cameras.main.fadeIn(ms)",
+      "expected": "Returns an EffectRenderContext"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create",
+      "lines": "L20-L28",
+      "action": "Add private effects: EffectHandle[] = []; in create() after subscribe set this.effects = buildEffects(createPhaserEffectContext(this), scene) importing scene from '../runtime/content'; in the SHUTDOWN callback destroy each handle and reset the array",
+      "expected": "Effects created on create and destroyed on shutdown"
+    }
+  ],
+  "created_at": "2026-11-23T19:20:37.061499+00:00",
+  "updated_at": "2026-11-23T19:24:32.397525+00:00"
+}

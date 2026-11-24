@@ -1,0 +1,55 @@
+{
+  "id": "01M84JF18Z1HT6RFCF64NGK74F",
+  "intent_id": "01M84JCPB7H80A4R8DA1NY7VXA",
+  "title": "SG-5 · Define frozen-contribution export for devion workseed handoff",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Documented, stable JSON export of frozen contributions per round in backend/internal/contribution",
+  "description": "Context: Worldseed hands player contributions of a closed Round to devion project workseed. backend/internal/contribution has FileStore.ListByRound and ErrFrozen, and backend/internal/round writes snapshot.yaml (round, world, frozen_at, contributions with ids) on Close. No export exists. Desired behavior: a documented export with stable JSON (round id, contribution ids, authors, content, timestamps) containing only frozen contributions, independent of removed code. Why: removal of development automation must not break the handoff.",
+  "acceptance_criteria": [
+    "Given a round with a snapshot, When the export runs, Then JSON contains round id and for each frozen contribution id, author, content and created_at",
+    "Given a round with no contributions, When exported, Then JSON has an empty contributions array, not null",
+    "Given contributions on disk that are absent from the snapshot, When exported, Then they are excluded",
+    "Given the export package, When compiled, Then it imports nothing from removed packages (worker, execution) and unit tests use mocked storage"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/contribution export code and its unit tests"
+    ],
+    "out_of_scope": [
+      "Calling devion",
+      "Changing round package",
+      "HTTP routes"
+    ],
+    "preserve": [
+      "Existing contribution Save/Get/List behavior",
+      "snapshot.yaml format"
+    ]
+  },
+  "technical_constraints": [
+    "Go module github.com/worldseed/storyforge/backend; contribution must not import internal/round (round depends on contribution)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Export documented, tested and go test ./internal/contribution passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-050.md`"
+  ],
+  "non_functional": [
+    "Deterministic output order and field names"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "artifact:.ai-dlc/intent/INT-050.md"
+  ],
+  "change": "NEW",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84JEKH540Q2ZA91C7P924G6",
+  "feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+  "artifact_path": ".ai-dlc/intent/INT-050.md",
+  "artifact_id": "INT-050",
+  "created_at": "2026-11-23T16:05:14.655121+00:00",
+  "updated_at": "2026-11-23T16:06:54.822406+00:00"
+}

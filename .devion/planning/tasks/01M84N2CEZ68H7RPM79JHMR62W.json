@@ -1,0 +1,87 @@
+{
+  "id": "01M84N2CEZ68H7RPM79JHMR62W",
+  "intent_id": "01M84N04P8VJDNN2GHPR510DJV",
+  "title": "Act: Drive the mobile drawer from useUiStore and delete legacy layout CSS",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Use drawerOpen/toggleDrawer, Tailwind drawer classes, remove legacy rules",
+  "description": "Replace the local useState drawer in GameLayout with useUiStore selectors, style the aside as a fixed bottom drawer below md with data-state, hide the toggle at md and up, pad the scene for the handle, and delete the .game-layout, .story-panel and media-query rules from styles.css.",
+  "acceptance_criteria": [
+    "GameLayout reads drawerOpen and toggleDrawer from useUiStore and has no useState.",
+    "The aside carries data-state open/closed and translate classes; the scene main has pb-12 md:pb-0.",
+    "styles.css no longer has the legacy rules; .contribution-sheet rules remain."
+  ],
+  "scope": {
+    "in_scope": [
+      "GameLayout.tsx",
+      "styles.css"
+    ],
+    "out_of_scope": [
+      "uiStore.ts",
+      "tests"
+    ],
+    "preserve": [
+      "Story button name and aria-expanded",
+      "contribution-sheet CSS"
+    ]
+  },
+  "technical_constraints": [
+    "Keep Button, ChevronUp, motion.aside",
+    "Code path: `game/frontend/src/components/GameLayout.tsx`",
+    "Code path: `game/frontend/src/styles.css`"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "Store-driven drawer; legacy CSS gone",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-315.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84N1P22063BHX7GNQ4FVJ6M",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-315.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84N2CEZMZHDS2KW218GF3RT"
+  ],
+  "sim_node_id": "01M84N1P221H58CBDE08E9QNCB",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-315.md",
+  "artifact_id": "UNIT-315",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/GameLayout.tsx",
+      "symbol": "GameLayout",
+      "lines": "L1-L28",
+      "action": "Remove the useState import and local drawerOpen; import useUiStore from '../store/uiStore' and read drawerOpen and toggleDrawer via selectors; set the Button onClick to toggleDrawer and add className 'md:hidden'.",
+      "code": "const drawerOpen = useUiStore((s) => s.drawerOpen);\nconst toggleDrawer = useUiStore((s) => s.toggleDrawer);",
+      "expected": "Clicking Story flips store drawerOpen."
+    },
+    {
+      "file": "game/frontend/src/components/GameLayout.tsx",
+      "symbol": "GameLayout motion.aside",
+      "lines": "L12-L24",
+      "action": "Remove the legacy className ternary; set data-state to open or closed and apply Tailwind drawer classes; add pb-12 md:pb-0 to the main.",
+      "code": "<motion.aside data-state={drawerOpen ? 'open' : 'closed'} className={cn('fixed inset-x-0 bottom-0 z-20 max-h-[50vh] overflow-y-auto bg-background transition-transform duration-300 md:static md:h-screen md:max-h-none md:translate-y-0', drawerOpen ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]')}>",
+      "expected": "Aside shows data-state open/closed and drawer classes."
+    },
+    {
+      "file": "game/frontend/src/styles.css",
+      "symbol": ".game-layout, .story-panel, @media (max-width: 768px)",
+      "lines": "L7-L38",
+      "action": "Delete the .game-layout rule, .story-panel rule and the whole @media (max-width: 768px) block; leave :root and .contribution-sheet rules untouched.",
+      "expected": "grep finds none of game-layout, story-panel or max-width: 768px in styles.css."
+    }
+  ],
+  "created_at": "2026-11-23T16:50:45.855824+00:00",
+  "updated_at": "2026-11-23T16:54:16.338314+00:00"
+}

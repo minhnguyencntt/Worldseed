@@ -1,0 +1,78 @@
+{
+  "id": "01M85A0KA2GZ118QDKZ2X0YDDF",
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "title": "Verify: BootScene NPC spawn and characterClick unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with Phaser mocked for multi-NPC spawn and click events.",
+  "description": "Extend the Phaser-mocked character suite with a second NPC that has an interaction.",
+  "acceptance_criteria": [
+    "Two sprites spawn at their positions and idle.",
+    "characterClick emitted only for NPCs with interaction."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootSceneCharacters.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "Existing tests in the file"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse the existing vi.mock('phaser') and vi.mock content fixtures; no real Phaser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-591.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859XCEV4139N35V585037XY",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-591.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85A0KA2APV6A9YDDW034PZW"
+  ],
+  "sim_node_id": "01M859XCEVRFM7Z0DPGSM8VFQM",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-591.md",
+  "artifact_id": "UNIT-591",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+      "symbol": "vi.mock('../src/runtime/content') scene fixture",
+      "lines": "L69-L88",
+      "action": "Append a second character to scene.characters: id 'shopkeeper', position {x:60,y:120}, scale 1, layer 'characters', animations.idle reusing {asset:'character:boy',animation:'idle'}, interaction {dialogue:'greet',events:[]}; add {id:'shopkeeper',name:'Shopkeeper'} to world.characters.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'spawns one sprite'",
+      "expected": "Fixture has a boy without interaction and an NPC with interaction."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+      "symbol": "new: it('spawns one sprite per scene character')",
+      "lines": "after the last it",
+      "action": "Create BootScene, call create(), assert add.sprite was called twice with first two args (150,140) and (60,120), and play was called on both sprites.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'spawns one sprite'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneCharacters.test.ts",
+      "symbol": "new: it('emits characterClick only for NPCs with interaction')",
+      "lines": "after the previous it",
+      "action": "Subscribe with phaserToReact.on('characterClick', spy). Using pointerDownOn(sprite) invoke the shopkeeper listener and assert spy called once with {id:'shopkeeper',dialogue:'greet'}; invoke the boy listener and assert spy still called once.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneCharacters.test.ts -t 'emits characterClick'",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T22:56:47.426266+00:00",
+  "updated_at": "2026-11-23T22:58:16.368791+00:00"
+}

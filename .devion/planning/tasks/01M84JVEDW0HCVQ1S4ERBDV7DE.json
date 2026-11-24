@@ -1,0 +1,54 @@
+{
+  "id": "01M84JVEDW0HCVQ1S4ERBDV7DE",
+  "intent_id": "01M84JSSMB017K29PX57X7B2KQ",
+  "title": "SG-5.3 · Exporter builds frozen-only JSON export",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Add an exporter that builds the Export JSON from an ExportSource using only frozen contributions",
+  "description": "Context: backend/internal/contribution already has the Export and ExportContribution types (export.go), the ExportSource interface with ListByRound and FrozenIDs (export_source.go), and FileStore.FrozenIDs (store.go). No exporter exists yet. Desired behavior: an Exporter builds an Export from the source, includes only contributions whose ids are frozen in the round snapshot, and returns an empty contributions list for an empty round. Why: the devion workseed handoff must receive only frozen contributions.",
+  "acceptance_criteria": [
+    "Given a source with contributions A, B, C and frozen ids A and C, When Export is called, Then Contributions holds exactly A and C",
+    "Given a round with no frozen ids, When Export is called, Then Contributions is a non-nil empty slice that marshals to []"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/contribution exporter"
+    ],
+    "out_of_scope": [
+      "HTTP endpoints",
+      "CLI",
+      "worker or execution code"
+    ],
+    "preserve": [
+      "Export JSON types",
+      "ExportSource interface",
+      "FileStore behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Go package contribution only; depend only on ExportSource",
+    "No import of worker or execution packages"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Exporter implemented and unit tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-053.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84JF0K0XHTV40GE5BY6073A",
+    "artifact:.ai-dlc/intent/INT-053.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84JTWM3PN70EBHM6N3PP8C2",
+  "feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+  "artifact_path": ".ai-dlc/intent/INT-053.md",
+  "artifact_id": "INT-053",
+  "created_at": "2026-11-23T16:12:01.340053+00:00",
+  "updated_at": "2026-11-23T16:13:20.206408+00:00"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "01M8470MEEEWPZ8M2YJRQNRC4V",
+  "intent_id": "01M846Z6ACXTWSSAY9C7B11N6G",
+  "title": "Act: Confirm Tick open and close dispatch against the injected clock",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Keep the Tick switch cases for SCHEDULED open and OPEN close using Clock.Now()",
+  "description": "Scheduler.Tick already dispatches Open and Close using clock.Now(). This unit keeps that code correct: the boundary comparison uses !now.Before so a time equal to StartsAt or EndsAt counts as due. No behavior change is expected unless the Verify unit finds a mismatch.",
+  "acceptance_criteria": [
+    "Given a SCHEDULED round with StartsAt not after the clock, when Tick runs, then Controller.Open is called.",
+    "Given an OPEN round with EndsAt not after the clock, when Tick runs, then Controller.Close is called."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/scheduler.go Tick switch cases"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Public API of the round package"
+    ]
+  },
+  "technical_constraints": [
+    "Clock must come from s.clock()",
+    "Code path: `backend/internal/round/scheduler.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tick switch cases use !now.Before(StartsAt) and !now.Before(EndsAt)",
+    "go build ./internal/round/ succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-087.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8470JSMGZFB110WP8KA8S89",
+    "trace:01M844TV9Q9Z7R4H4R65KZ1K3E",
+    "artifact:.ai-dlc/units/UNIT-087.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8470MEEFG32MMC8ZR9BG229"
+  ],
+  "sim_node_id": "01M8470JSM18PFQTTTXYNY7X6E",
+  "feature_id": "01M844TV9Q9Z7R4H4R65KZ1K3E",
+  "artifact_path": ".ai-dlc/units/UNIT-087.md",
+  "artifact_id": "UNIT-087",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/round/scheduler.go",
+      "symbol": "Scheduler.Tick",
+      "lines": "L63-L75",
+      "action": "Check that the case for StatusScheduled uses !now.Before(rd.StartsAt) and calls s.Controller.Open(ctx, worldID, rd.ID, OpenOptions{}), and the case for StatusOpen uses !now.Before(rd.EndsAt) and calls s.Controller.Close(ctx, worldID, rd.ID). Change nothing if both hold.",
+      "code": "case rd.Status == StatusScheduled && !now.Before(rd.StartsAt): ... case rd.Status == StatusOpen && !now.Before(rd.EndsAt): ...",
+      "expected": "The two switch cases match the snippet and go build ./internal/round/ succeeds."
+    }
+  ],
+  "created_at": "2026-11-23T12:45:08.429996+00:00",
+  "updated_at": "2026-11-23T12:45:32.260145+00:00"
+}

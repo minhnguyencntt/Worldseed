@@ -1,0 +1,475 @@
+{
+  "intent_id": "01M84QBM4AHM12RHQ41VHZ5F62",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84QCTCE7BG3P7GP9MJ02QXC",
+      "kind": "intent",
+      "title": "SG-2.4 Manifest loader checks references and falls back without crashing",
+      "body": "Context: game/src/assets/loaders/manifestLoader.ts has loadManifestFile, which validates the manifest and checks that each asset file exists on disk. It does not check that scene/object asset refs point at manifest ids, and it has no fallback: any missing file makes the whole load fail with ok:false. Desired behavior: every manifest reference is verified, missing assets are reported by id, and the loader returns a usable manifest plus a fallback asset instead of failing or throwing. Why: missing art must degrade gracefully, never crash the game.\n\n## Acceptance criteria\n- Given a scene ref that is not a manifest id, when references are checked, then the dangling ref is reported by name.\n- Given a manifest asset whose file is missing, when loaded with fallback, then the missing asset is reported and the load still returns a manifest without throwing.\n- Given an unreadable or malformed manifest, when loaded with fallback, then an empty manifest and the error are returned without throwing.\n\n\n## Scope\n- In scope: game/src/assets/loaders/manifestLoader.ts\n- In scope: reference check and fallback result\n- Out of scope: Phaser scene wiring\n- Out of scope: new art assets\n- Out of scope: changes to the manifest schema\n- Preserve: loadManifestFile behavior and its existing tests\n- Preserve: parseManifest and schema\n\n\n## Technical constraints\n- TypeScript, zod schema already in game/src/assets/manifest\n- Loader must never throw\n- Use node fs only inside the loader, as today\n\n\n## Definition of done\n- Both requirements implemented and verified by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Manifest loader verifies every manifest reference exists, reports missing assets and falls back safely",
+      "description": "Context: game/src/assets/loaders/manifestLoader.ts has loadManifestFile, which validates the manifest and checks that each asset file exists on disk. It does not check that scene/object asset refs point at manifest ids, and it has no fallback: any missing file makes the whole load fail with ok:false. Desired behavior: every manifest reference is verified, missing assets are reported by id, and the loader returns a usable manifest plus a fallback asset instead of failing or throwing. Why: missing art must degrade gracefully, never crash the game.",
+      "acceptance_criteria": [
+        "Given a scene ref that is not a manifest id, when references are checked, then the dangling ref is reported by name.",
+        "Given a manifest asset whose file is missing, when loaded with fallback, then the missing asset is reported and the load still returns a manifest without throwing.",
+        "Given an unreadable or malformed manifest, when loaded with fallback, then an empty manifest and the error are returned without throwing."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/loaders/manifestLoader.ts",
+          "reference check and fallback result"
+        ],
+        "out_of_scope": [
+          "Phaser scene wiring",
+          "new art assets",
+          "changes to the manifest schema"
+        ],
+        "preserve": [
+          "loadManifestFile behavior and its existing tests",
+          "parseManifest and schema"
+        ]
+      },
+      "technical_constraints": [
+        "TypeScript, zod schema already in game/src/assets/manifest",
+        "Loader must never throw",
+        "Use node fs only inside the loader, as today"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements implemented and verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-072.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8457KMMMN7NH1RGW812T7ZD",
+      "links": [
+        "trace:01M8457KMMMN7NH1RGW812T7ZD",
+        "artifact:.ai-dlc/intent/INT-072.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-072.md",
+      "artifact_id": "INT-072"
+    },
+    {
+      "id": "01M84QCTCEAE99VZR79EGV2YVB",
+      "kind": "requirement",
+      "title": "REQ · Loader reports object and scene asset refs that are not manifest ids",
+      "body": "Context: bedroom.yaml objects carry an asset string that must equal a manifest asset id, but only a test checks this today. Desired behavior: an exported loader helper takes the manifest and a list of refs and returns an issue for each ref that has no matching manifest id. Expected result: callers can validate content against the manifest at load time. Why: a typo in content must be reported, not crash rendering.\n\n## Acceptance criteria\n- Given refs ['a','ghost'] and a manifest with only id 'a', when checkAssetRefs runs, then one issue is returned naming 'ghost'.\n- Given all refs match manifest ids, when checkAssetRefs runs, then an empty list is returned.\n- Given an empty refs list, when checkAssetRefs runs, then an empty list is returned and nothing throws.\n\n\n## Scope\n- In scope: checkAssetRefs helper in manifestLoader.ts\n- Out of scope: reading yaml scene files in the loader\n- Preserve: existing loader exports\n\n\n## Technical constraints\n- Reuse ManifestIssue type from ../manifest\n\n\n## Definition of done\n- checkAssetRefs exported and covered by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Dangling asset references are detected and named",
+      "description": "Context: bedroom.yaml objects carry an asset string that must equal a manifest asset id, but only a test checks this today. Desired behavior: an exported loader helper takes the manifest and a list of refs and returns an issue for each ref that has no matching manifest id. Expected result: callers can validate content against the manifest at load time. Why: a typo in content must be reported, not crash rendering.",
+      "acceptance_criteria": [
+        "Given refs ['a','ghost'] and a manifest with only id 'a', when checkAssetRefs runs, then one issue is returned naming 'ghost'.",
+        "Given all refs match manifest ids, when checkAssetRefs runs, then an empty list is returned.",
+        "Given an empty refs list, when checkAssetRefs runs, then an empty list is returned and nothing throws."
+      ],
+      "scope": {
+        "in_scope": [
+          "checkAssetRefs helper in manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "reading yaml scene files in the loader"
+        ],
+        "preserve": [
+          "existing loader exports"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse ManifestIssue type from ../manifest"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "checkAssetRefs exported and covered by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-183.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84QCTCE7BG3P7GP9MJ02QXC",
+      "matched_feature_id": "01M84PBVRNWN22DRPEVFTCZB2Z",
+      "links": [
+        "parent:01M84QCTCE7BG3P7GP9MJ02QXC",
+        "trace:01M84PBVRNWN22DRPEVFTCZB2Z",
+        "artifact:.ai-dlc/requirements/REQ-183.md"
+      ],
+      "depends_on": [
+        "01M84QCTCE7BG3P7GP9MJ02QXC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-183.md",
+      "artifact_id": "REQ-183"
+    },
+    {
+      "id": "01M84QCTCEY3ZP7FV7ZQCXRWP1",
+      "kind": "requirement",
+      "title": "REQ · Loader reports missing asset files and falls back without crashing",
+      "body": "Context: loadManifestFile returns ok:false when any file is missing, giving callers nothing to render. Desired behavior: a new loadManifestWithFallback returns { manifest, missing, errors, fallbackAssetId } where manifest contains only assets whose files exist, missing lists absent assets, and an unreadable or invalid manifest yields an empty manifest with errors. Expected result: the game keeps running with a fallback asset id for anything missing. Why: no crash on missing art.\n\n## Acceptance criteria\n- Given one existing and one missing asset file, when loadManifestWithFallback runs, then manifest holds only the existing asset and missing names the other id and path.\n- Given a nonexistent manifest file, when it runs, then it returns an empty assets list and one error, and does not throw.\n- Given all files exist, when it runs, then missing is empty and the result equals the full manifest.\n\n\n## Scope\n- In scope: loadManifestWithFallback and FALLBACK_ASSET_ID in manifestLoader.ts\n- Out of scope: creating a real fallback image\n- Out of scope: Phaser texture generation\n- Preserve: loadManifestFile signature and behavior\n\n\n## Technical constraints\n- Must never throw\n- Build on loadManifestFile and parseManifest\n\n\n## Definition of done\n- loadManifestWithFallback exported and covered by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Fallback load returns a usable manifest plus a missing-asset report",
+      "description": "Context: loadManifestFile returns ok:false when any file is missing, giving callers nothing to render. Desired behavior: a new loadManifestWithFallback returns { manifest, missing, errors, fallbackAssetId } where manifest contains only assets whose files exist, missing lists absent assets, and an unreadable or invalid manifest yields an empty manifest with errors. Expected result: the game keeps running with a fallback asset id for anything missing. Why: no crash on missing art.",
+      "acceptance_criteria": [
+        "Given one existing and one missing asset file, when loadManifestWithFallback runs, then manifest holds only the existing asset and missing names the other id and path.",
+        "Given a nonexistent manifest file, when it runs, then it returns an empty assets list and one error, and does not throw.",
+        "Given all files exist, when it runs, then missing is empty and the result equals the full manifest."
+      ],
+      "scope": {
+        "in_scope": [
+          "loadManifestWithFallback and FALLBACK_ASSET_ID in manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "creating a real fallback image",
+          "Phaser texture generation"
+        ],
+        "preserve": [
+          "loadManifestFile signature and behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Must never throw",
+        "Build on loadManifestFile and parseManifest"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "loadManifestWithFallback exported and covered by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-184.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84QCTCE7BG3P7GP9MJ02QXC",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84QCTCE7BG3P7GP9MJ02QXC",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-184.md"
+      ],
+      "depends_on": [
+        "01M84QCTCE7BG3P7GP9MJ02QXC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-184.md",
+      "artifact_id": "REQ-184"
+    },
+    {
+      "id": "01M84QCTCEDGQQ58KF3831GD3H",
+      "kind": "unit",
+      "title": "Act: Add checkAssetRefs to the manifest loader",
+      "body": "Add a pure helper next to loadManifestFile that compares a list of asset refs to manifest ids.\n\n## Acceptance criteria\n- checkAssetRefs returns one issue per unknown ref\n- checkAssetRefs returns [] when all refs exist\n\n\n## Scope\n- In scope: game/src/assets/loaders/manifestLoader.ts\n- Out of scope: tests\n- Preserve: loadManifestFile\n\n\n## Technical constraints\n- No throwing, no fs access\n- Code path: `game/src/assets/loaders/manifestLoader.ts`\n\n\n## Definition of done\n- Helper exported and typechecks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export checkAssetRefs returning issues for refs missing from the manifest",
+      "description": "Add a pure helper next to loadManifestFile that compares a list of asset refs to manifest ids.",
+      "acceptance_criteria": [
+        "checkAssetRefs returns one issue per unknown ref",
+        "checkAssetRefs returns [] when all refs exist"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/loaders/manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "loadManifestFile"
+        ]
+      },
+      "technical_constraints": [
+        "No throwing, no fs access",
+        "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Helper exported and typechecks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-366.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84QCTCEAE99VZR79EGV2YVB",
+      "matched_feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+      "links": [
+        "parent:01M84QCTCEAE99VZR79EGV2YVB",
+        "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+        "artifact:.ai-dlc/units/UNIT-366.md"
+      ],
+      "depends_on": [
+        "01M84QCTCEAE99VZR79EGV2YVB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-366.md",
+      "artifact_id": "UNIT-366",
+      "steps": [
+        {
+          "file": "game/src/assets/loaders/manifestLoader.ts",
+          "symbol": "new: checkAssetRefs",
+          "lines": "after L33",
+          "action": "Append exported function checkAssetRefs(manifest: AssetManifest, refs: readonly string[]): ManifestIssue[] that builds a Set of manifest.assets ids and returns one issue per ref not in the set.",
+          "code": "export function checkAssetRefs(manifest: AssetManifest, refs: readonly string[]): ManifestIssue[] {\n  const ids = new Set(manifest.assets.map((a) => a.id));\n  return refs.flatMap((ref, index) => (ids.has(ref) ? [] : [{ path: `refs.${index}`, message: `unknown asset ref: ${ref}` }]));\n}",
+          "expected": "npx tsc --noEmit in game passes and the function is exported."
+        }
+      ]
+    },
+    {
+      "id": "01M84QCTCEG8TN0DQRSXQS50PV",
+      "kind": "unit",
+      "title": "Act: Add loadManifestWithFallback to the manifest loader",
+      "body": "Add a never-throwing loader that keeps existing assets, reports missing ones and returns an empty manifest on unreadable or invalid input.\n\n## Acceptance criteria\n- Missing files are listed and dropped from the manifest\n- Unreadable manifest yields empty assets plus errors\n\n\n## Scope\n- In scope: game/src/assets/loaders/manifestLoader.ts\n- Out of scope: tests\n- Preserve: loadManifestFile\n\n\n## Technical constraints\n- No throwing\n- Code path: `game/src/assets/loaders/manifestLoader.ts`\n\n\n## Definition of done\n- Function exported and typechecks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export loadManifestWithFallback and FALLBACK_ASSET_ID",
+      "description": "Add a never-throwing loader that keeps existing assets, reports missing ones and returns an empty manifest on unreadable or invalid input.",
+      "acceptance_criteria": [
+        "Missing files are listed and dropped from the manifest",
+        "Unreadable manifest yields empty assets plus errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/assets/loaders/manifestLoader.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "loadManifestFile"
+        ]
+      },
+      "technical_constraints": [
+        "No throwing",
+        "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Function exported and typechecks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-367.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84QCTCEY3ZP7FV7ZQCXRWP1",
+      "matched_feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+      "links": [
+        "parent:01M84QCTCEY3ZP7FV7ZQCXRWP1",
+        "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+        "artifact:.ai-dlc/units/UNIT-367.md"
+      ],
+      "depends_on": [
+        "01M84QCTCEY3ZP7FV7ZQCXRWP1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-367.md",
+      "artifact_id": "UNIT-367",
+      "steps": [
+        {
+          "file": "game/src/assets/loaders/manifestLoader.ts",
+          "symbol": "new: FALLBACK_ASSET_ID, FallbackLoadResult",
+          "lines": "after L33",
+          "action": "Export const FALLBACK_ASSET_ID = 'fallback:missing' and type FallbackLoadResult = { manifest: AssetManifest; missing: { id: string; path: string }[]; errors: ManifestIssue[]; fallbackAssetId: string }.",
+          "expected": "Types compile."
+        },
+        {
+          "file": "game/src/assets/loaders/manifestLoader.ts",
+          "symbol": "new: loadManifestWithFallback",
+          "lines": "after L33",
+          "action": "Export loadManifestWithFallback(manifestPath, assetsRoot): FallbackLoadResult. Read and JSON.parse in try/catch; on failure or parseManifest !ok return manifest {version:1, assets:[]}, errors set, missing []. Otherwise split parsed.data.assets by existsSync(join(assetsRoot, asset.path)); keep existing ones in manifest, push the rest to missing; errors []. Always set fallbackAssetId: FALLBACK_ASSET_ID.",
+          "code": "const empty: AssetManifest = { version: 1, assets: [] };",
+          "expected": "Function returns without throwing for every input."
+        }
+      ]
+    },
+    {
+      "id": "01M84QCTCEEF16XPKGNQ15E6JS",
+      "kind": "unit",
+      "title": "Verify: checkAssetRefs unit tests",
+      "body": "Test checkAssetRefs with in-memory manifests.\n\n## Acceptance criteria\n- Unknown ref reported by name\n- All-known and empty refs give []\n\n\n## Scope\n- In scope: game/tests/manifestRefs.test.ts\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- No filesystem needed\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for dangling reference detection",
+      "description": "Test checkAssetRefs with in-memory manifests.",
+      "acceptance_criteria": [
+        "Unknown ref reported by name",
+        "All-known and empty refs give []"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/manifestRefs.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No filesystem needed"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-368.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84QCTCEDGQQ58KF3831GD3H",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84QCTCEDGQQ58KF3831GD3H",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-368.md"
+      ],
+      "depends_on": [
+        "01M84QCTCEDGQQ58KF3831GD3H"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-368.md",
+      "artifact_id": "UNIT-368",
+      "steps": [
+        {
+          "file": "game/tests/manifestRefs.test.ts",
+          "symbol": "new: describe('checkAssetRefs')",
+          "lines": "new",
+          "action": "Create tests: (1) manifest {version:1, assets:[{id:'a',path:'a.svg',type:'image',dimensions:{width:10,height:10}}]} with refs ['a','ghost'] expects one issue whose message contains 'ghost'; (2) refs ['a'] expects []; (3) refs [] expects [].",
+          "command": "cd game && npx vitest run tests/manifestRefs.test.ts",
+          "expected": "3 tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84QCTCEABNC28K9Y1KJKRVE",
+      "kind": "unit",
+      "title": "Verify: loadManifestWithFallback unit tests",
+      "body": "Test missing-file reporting and non-throwing fallback using a temp directory.\n\n## Acceptance criteria\n- Missing asset reported and dropped\n- Bad manifest yields empty manifest and errors\n- Complete manifest has no missing\n\n\n## Scope\n- In scope: game/tests/manifestFallback.test.ts\n- Out of scope: product code\n- Preserve: manifestLoader.test.ts\n\n\n## Technical constraints\n- Filesystem limited to os.tmpdir temp dir\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for fallback loading with temp dir",
+      "description": "Test missing-file reporting and non-throwing fallback using a temp directory.",
+      "acceptance_criteria": [
+        "Missing asset reported and dropped",
+        "Bad manifest yields empty manifest and errors",
+        "Complete manifest has no missing"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/manifestFallback.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "manifestLoader.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Filesystem limited to os.tmpdir temp dir"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-369.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84QCTCEG8TN0DQRSXQS50PV",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84QCTCEG8TN0DQRSXQS50PV",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-369.md"
+      ],
+      "depends_on": [
+        "01M84QCTCEG8TN0DQRSXQS50PV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-369.md",
+      "artifact_id": "UNIT-369",
+      "steps": [
+        {
+          "file": "game/tests/manifestFallback.test.ts",
+          "symbol": "new: describe('loadManifestWithFallback')",
+          "lines": "new",
+          "action": "Using mkdtempSync like game/tests/manifestLoader.test.ts L23-L31: (1) manifest with assets a.svg (file written) and b.svg (not written): expect manifest.assets ids ['a'], missing [{id:'b',path:'b.svg'}], fallbackAssetId FALLBACK_ASSET_ID; (2) nonexistent manifest path: expect assets [] and errors.length 1, no throw; (3) invalid JSON: same; (4) all files present: missing [].",
+          "command": "cd game && npx vitest run tests/manifestFallback.test.ts",
+          "expected": "4 tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84QCTCEB45YM132Q1TR4NCR",
+      "kind": "evidence",
+      "title": "Evidence: Manifest loader reference and fallback unit tests",
+      "body": "Record passing results of manifestRefs and manifestFallback tests plus existing manifestLoader tests.\n\n## Acceptance criteria\n- Both new test files pass\n- Existing manifestLoader tests still pass\n\n\n## Scope\n- In scope: test run output\n- Out of scope: browser checks\n\n\n## Definition of done\n- Test output captured as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving reference check and fallback",
+      "description": "Record passing results of manifestRefs and manifestFallback tests plus existing manifestLoader tests.",
+      "acceptance_criteria": [
+        "Both new test files pass",
+        "Existing manifestLoader tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output captured as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-072.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84QCTCEEF16XPKGNQ15E6JS",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84QCTCEEF16XPKGNQ15E6JS",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-072.md"
+      ],
+      "depends_on": [
+        "01M84QCTCEEF16XPKGNQ15E6JS",
+        "01M84QCTCEABNC28K9Y1KJKRVE"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-072.md",
+      "artifact_id": "EVD-072"
+    }
+  ],
+  "created_at": "2026-11-23T17:31:38.748201+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

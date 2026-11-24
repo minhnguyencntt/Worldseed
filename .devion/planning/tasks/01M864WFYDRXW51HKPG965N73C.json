@@ -1,0 +1,67 @@
+{
+  "id": "01M864WFYDRXW51HKPG965N73C",
+  "intent_id": "01M864BB4QHPD4PRQ9S91WZ9P0",
+  "title": "Act: Replace GameLayout sidebar with full-screen scene and centered story dialog",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "GameLayout renders a full-viewport main and an overlay centered dialog for story.",
+  "description": "Remove the grid, aside, motion and drawer toggle; render story in a centered overlay.",
+  "acceptance_criteria": [
+    "No aside exists",
+    "Story is inside [data-testid=story-dialog].sf-dialog"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/components/GameLayout.tsx"
+    ],
+    "out_of_scope": [
+      "uiStore"
+    ],
+    "preserve": [
+      "header, scene, story props"
+    ]
+  },
+  "technical_constraints": [
+    "Overlay wrapper pointer-events-none; dialog pointer-events-auto",
+    "Code path: `game/frontend/src/components/GameLayout.tsx`"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "Layout implemented",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-874.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M864EG64CJQJ8X5HC8P8CNHY",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-874.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M864WFYDGJ5NEVB2CDK9B2FH"
+  ],
+  "sim_node_id": "01M864EG64CPV2H4CAPDEHZ3ZF",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-874.md",
+  "artifact_id": "UNIT-874",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/GameLayout.tsx",
+      "symbol": "GameLayout",
+      "lines": "L1-L34",
+      "action": "Remove ChevronUp, motion, useUiStore and Button imports and the drawer code; import Frame; return a div 'relative h-screen w-full overflow-hidden bg-sf-ink-1' containing main 'absolute inset-0' with header and scene, and an overlay div 'pointer-events-none absolute inset-0 z-20 flex items-center justify-center p-4' holding <Frame kind='panel' className='sf-dialog pointer-events-auto' data-testid='story-dialog'>{story}</Frame>.",
+      "code": "<div className=\"relative h-screen w-full overflow-hidden bg-sf-ink-1\"><main className=\"absolute inset-0\">{header}{scene}</main><div className=\"pointer-events-none absolute inset-0 z-20 flex items-center justify-center p-4\"><Frame kind=\"panel\" className=\"sf-dialog pointer-events-auto\" data-testid=\"story-dialog\">{story}</Frame></div></div>",
+      "expected": "Scene fills the viewport and the story dialog is centered over it."
+    }
+  ],
+  "created_at": "2026-11-24T06:46:24.461386+00:00",
+  "updated_at": "2026-11-24T06:48:53.913436+00:00"
+}

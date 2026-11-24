@@ -1,0 +1,72 @@
+{
+  "id": "01M84JQEVM86M947WAH788FFT6",
+  "intent_id": "01M84JNW4N0FKEKZE4RSX80RNZ",
+  "title": "Verify: ExportSource includes FrozenIDs and FileStore satisfies it",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Update fake source and assert FileStore implements ExportSource",
+  "description": "Update the test fake to implement the extended interface and add an explicit assertion test.",
+  "acceptance_criteria": [
+    "Fake implements ExportSource with FrozenIDs",
+    "FileStore assigned to ExportSource compiles and works"
+  ],
+  "scope": {
+    "in_scope": [
+      "export_source_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "TestExportFiles_NoRemovedImports"
+    ]
+  },
+  "technical_constraints": [
+    "Temp dir only"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-265.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JPZV26HJDJKWYNCD1PEPT",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-265.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JQEVM80BTDGXP34RA5S8W"
+  ],
+  "sim_node_id": "01M84JPZV2AXTZPRHKPCZQS45B",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-265.md",
+  "artifact_id": "UNIT-265",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/export_source_test.go",
+      "symbol": "fakeSource",
+      "lines": "L10-L19",
+      "action": "Add field frozen []string and method FrozenIDs(_ context.Context, _, _ string) ([]string, error) returning it, so fakeSource still satisfies ExportSource.",
+      "command": "cd backend && go test ./internal/contribution -run 'TestExportSource_Fake|TestFileStore_ImplementsExportSource|TestExportFiles_NoRemovedImports'",
+      "expected": "Package tests compile"
+    },
+    {
+      "file": "backend/internal/contribution/export_source_test.go",
+      "symbol": "new: TestFileStore_ImplementsExportSource",
+      "lines": "after L47",
+      "action": "Create a FileStore{Root: t.TempDir()}, assign to a variable of type ExportSource, call FrozenIDs for world 'w' round 'ROUND-0000001' and assert errors.Is(err, ErrNotFound).",
+      "command": "cd backend && go test ./internal/contribution -run 'TestExportSource_Fake|TestFileStore_ImplementsExportSource|TestExportFiles_NoRemovedImports'",
+      "expected": "All three tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T16:09:50.708355+00:00",
+  "updated_at": "2026-11-23T16:10:54.047025+00:00"
+}

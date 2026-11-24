@@ -1,0 +1,696 @@
+{
+  "intent_id": "01M85CJMBD6F8YVA6APHGQ7386",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85CMAABSK9AVR84WNWZS3QD",
+      "kind": "intent",
+      "title": "SG-8.2 Contribution textarea input validation",
+      "body": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) only silently ignores an empty trimmed prompt, has no maximum length or counter, and still allows submit when remaining is 0. Desired behavior: block blank/whitespace-only text, enforce a max length with a visible counter and inline message, and block submit at zero quota with a clear message. Expected result: invalid input never reaches submitContribution and the player sees why. Why: clear feedback and fewer wasted backend calls.\n\n## Acceptance criteria\n- Given empty or whitespace-only text, when the player tries to submit, then no request is sent and an inline message is shown\n- Given text over the maximum length, when shown, then the counter and an inline message indicate the overflow and submit is blocked\n- Given remaining quota is 0, when the sheet is open, then submit is blocked and a clear message is shown\n\n\n## Scope\n- In scope: ContributionSheet textarea validation, counter, inline messages, quota gating\n- Out of scope: Backend changes\n- Out of scope: History list changes\n- Out of scope: Dialog wrapper changes\n- Preserve: submitContribution and listMine API contracts\n- Preserve: Dialog focus and Escape behavior\n- Preserve: Existing sending/sent/failed states\n\n\n## Technical constraints\n- React + TypeScript in game/frontend\n- Backend default max_prompt_len is 500 (backend/internal/config/config.go)\n- No new dependencies\n\n\n## Definition of done\n- All three requirements delivered with passing unit tests\n\n\n## Non-functional requirements\n- Messages are exposed to assistive tech via role or aria-describedby\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Validate the contribution textarea: blank, max length with counter, zero quota",
+      "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) only silently ignores an empty trimmed prompt, has no maximum length or counter, and still allows submit when remaining is 0. Desired behavior: block blank/whitespace-only text, enforce a max length with a visible counter and inline message, and block submit at zero quota with a clear message. Expected result: invalid input never reaches submitContribution and the player sees why. Why: clear feedback and fewer wasted backend calls.",
+      "acceptance_criteria": [
+        "Given empty or whitespace-only text, when the player tries to submit, then no request is sent and an inline message is shown",
+        "Given text over the maximum length, when shown, then the counter and an inline message indicate the overflow and submit is blocked",
+        "Given remaining quota is 0, when the sheet is open, then submit is blocked and a clear message is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet textarea validation, counter, inline messages, quota gating"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "History list changes",
+          "Dialog wrapper changes"
+        ],
+        "preserve": [
+          "submitContribution and listMine API contracts",
+          "Dialog focus and Escape behavior",
+          "Existing sending/sent/failed states"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript in game/frontend",
+        "Backend default max_prompt_len is 500 (backend/internal/config/config.go)",
+        "No new dependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements delivered with passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-127.md`"
+      ],
+      "non_functional": [
+        "Messages are exposed to assistive tech via role or aria-describedby"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+      "links": [
+        "trace:01M84JF0K0XHTV40GE5BY6073A",
+        "artifact:.ai-dlc/intent/INT-127.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-127.md",
+      "artifact_id": "INT-127"
+    },
+    {
+      "id": "01M85CMAAB6YQMX4WGJD6Z87ZF",
+      "kind": "requirement",
+      "title": "REQ · Blank or whitespace-only text cannot be submitted and shows an inline message",
+      "body": "Context: handleSubmit returns silently when text.trim() is empty. Desired behavior: the Send button is disabled for blank text and an inline message explains that an idea is required when submit is attempted. Expected result: no submitContribution call for blank input. Why: the player gets feedback instead of silence.\n\n## Acceptance criteria\n- Given the textarea is empty or only whitespace, when the sheet renders, then the Send button is disabled\n- Given whitespace-only text, when the form is submitted, then submitContribution is not called and an inline message 'Write your idea before sending' is shown\n\n\n## Scope\n- In scope: Blank validation in ContributionSheet\n- Out of scope: Length and quota rules\n- Preserve: Trimmed prompt sent on valid submit\n\n\n## Technical constraints\n- Keep validation in ContributionSheet.tsx\n\n\n## Definition of done\n- Blank input blocked with a visible message\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Block empty/whitespace prompts with an inline message",
+      "description": "Context: handleSubmit returns silently when text.trim() is empty. Desired behavior: the Send button is disabled for blank text and an inline message explains that an idea is required when submit is attempted. Expected result: no submitContribution call for blank input. Why: the player gets feedback instead of silence.",
+      "acceptance_criteria": [
+        "Given the textarea is empty or only whitespace, when the sheet renders, then the Send button is disabled",
+        "Given whitespace-only text, when the form is submitted, then submitContribution is not called and an inline message 'Write your idea before sending' is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "Blank validation in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "Length and quota rules"
+        ],
+        "preserve": [
+          "Trimmed prompt sent on valid submit"
+        ]
+      },
+      "technical_constraints": [
+        "Keep validation in ContributionSheet.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Blank input blocked with a visible message",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-316.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85CMAABSK9AVR84WNWZS3QD",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M85CMAABSK9AVR84WNWZS3QD",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-316.md"
+      ],
+      "depends_on": [
+        "01M85CMAABSK9AVR84WNWZS3QD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-316.md",
+      "artifact_id": "REQ-316"
+    },
+    {
+      "id": "01M85CMAABKWM4KVBHDV31W1XR",
+      "kind": "requirement",
+      "title": "REQ · Maximum length is enforced with a visible character counter and inline message",
+      "body": "Context: the textarea has no limit while the backend rejects prompts over 500 characters. Desired behavior: a counter shows used/max, and over-limit text shows an inline message and disables Send. Expected result: over-limit prompts are never submitted. Why: avoid avoidable server rejections.\n\n## Acceptance criteria\n- Given the textarea holds N characters, then a counter reads 'N/500'\n- Given the trimmed text exceeds 500 characters, then an inline message 'Idea is too long' is shown and Send is disabled\n- Given the text is exactly 500 characters, then Send is enabled and no length message is shown\n\n\n## Scope\n- In scope: MAX_PROMPT_LENGTH constant, counter, over-limit message\n- Out of scope: Reading the limit from the backend\n- Preserve: Existing textarea id contribution-idea\n\n\n## Technical constraints\n- Constant lives in game/frontend/src/api/client.ts beside MAX_PER_PLAYER\n\n\n## Definition of done\n- Counter visible and over-limit blocked\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Enforce a max prompt length with counter and message",
+      "description": "Context: the textarea has no limit while the backend rejects prompts over 500 characters. Desired behavior: a counter shows used/max, and over-limit text shows an inline message and disables Send. Expected result: over-limit prompts are never submitted. Why: avoid avoidable server rejections.",
+      "acceptance_criteria": [
+        "Given the textarea holds N characters, then a counter reads 'N/500'",
+        "Given the trimmed text exceeds 500 characters, then an inline message 'Idea is too long' is shown and Send is disabled",
+        "Given the text is exactly 500 characters, then Send is enabled and no length message is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "MAX_PROMPT_LENGTH constant, counter, over-limit message"
+        ],
+        "out_of_scope": [
+          "Reading the limit from the backend"
+        ],
+        "preserve": [
+          "Existing textarea id contribution-idea"
+        ]
+      },
+      "technical_constraints": [
+        "Constant lives in game/frontend/src/api/client.ts beside MAX_PER_PLAYER"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Counter visible and over-limit blocked",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-317.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85CMAABSK9AVR84WNWZS3QD",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85CMAABSK9AVR84WNWZS3QD",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-317.md"
+      ],
+      "depends_on": [
+        "01M85CMAABSK9AVR84WNWZS3QD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-317.md",
+      "artifact_id": "REQ-317"
+    },
+    {
+      "id": "01M85CMAABHJ8M2T754Z46EF9P",
+      "kind": "requirement",
+      "title": "REQ · Submit is blocked with a clear message when the remaining quota is 0",
+      "body": "Context: remaining is computed from sent entries but never gates submit. Desired behavior: when remaining is 0 the Send button and textarea are disabled and a message 'No contributions left this round' is shown. Expected result: no request at zero quota. Why: the player understands why they cannot send.\n\n## Acceptance criteria\n- Given 5 sent contributions, when the sheet renders, then Send is disabled and 'No contributions left this round' is shown\n- Given 4 sent contributions, when the sheet renders, then Send is enabled and no quota message is shown\n\n\n## Scope\n- In scope: Quota gating in ContributionSheet\n- Out of scope: Backend quota logic\n- Preserve: Contributions left counter text\n\n\n## Technical constraints\n- Use existing remaining value derived from entries\n\n\n## Definition of done\n- Zero quota blocks submit with message\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Block submit at zero quota with a message",
+      "description": "Context: remaining is computed from sent entries but never gates submit. Desired behavior: when remaining is 0 the Send button and textarea are disabled and a message 'No contributions left this round' is shown. Expected result: no request at zero quota. Why: the player understands why they cannot send.",
+      "acceptance_criteria": [
+        "Given 5 sent contributions, when the sheet renders, then Send is disabled and 'No contributions left this round' is shown",
+        "Given 4 sent contributions, when the sheet renders, then Send is enabled and no quota message is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "Quota gating in ContributionSheet"
+        ],
+        "out_of_scope": [
+          "Backend quota logic"
+        ],
+        "preserve": [
+          "Contributions left counter text"
+        ]
+      },
+      "technical_constraints": [
+        "Use existing remaining value derived from entries"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Zero quota blocks submit with message",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-318.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85CMAABSK9AVR84WNWZS3QD",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M85CMAABSK9AVR84WNWZS3QD",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-318.md"
+      ],
+      "depends_on": [
+        "01M85CMAABSK9AVR84WNWZS3QD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-318.md",
+      "artifact_id": "REQ-318"
+    },
+    {
+      "id": "01M85CMAAB9Z08GVPTV7G78CZQ",
+      "kind": "unit",
+      "title": "Act: Add blank-text validation to ContributionSheet",
+      "body": "Implement blank validation in handleSubmit and render logic of ContributionSheet.\n\n## Acceptance criteria\n- Send is disabled when text.trim() is empty\n- Submitting blank text shows the inline message and does not call submitContribution\n\n\n## Scope\n- In scope: ContributionSheet.tsx\n- Out of scope: Tests\n- Preserve: Valid submit flow\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Blank prompts blocked with inline role=alert message\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Disable Send and show message for blank prompts",
+      "description": "Implement blank validation in handleSubmit and render logic of ContributionSheet.",
+      "acceptance_criteria": [
+        "Send is disabled when text.trim() is empty",
+        "Submitting blank text shows the inline message and does not call submitContribution"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Valid submit flow"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Blank prompts blocked with inline role=alert message",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-632.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85CMAAB6YQMX4WGJD6Z87ZF",
+      "matched_feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+      "links": [
+        "parent:01M85CMAAB6YQMX4WGJD6Z87ZF",
+        "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+        "artifact:.ai-dlc/units/UNIT-632.md"
+      ],
+      "depends_on": [
+        "01M85CMAAB6YQMX4WGJD6Z87ZF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-632.md",
+      "artifact_id": "UNIT-632",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (validation state)",
+          "lines": "L64-L69",
+          "action": "Add const isBlank = text.trim() === '' after the remaining declaration; in handleSubmit replace the silent 'if (prompt === \"\") return;' with setError('Write your idea before sending'); return;",
+          "code": "if (prompt === '') { setError('Write your idea before sending'); return; }",
+          "expected": "Blank submit sets the error state instead of returning silently"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "Send button",
+          "lines": "L108",
+          "action": "Add disabled={isBlank} to the Send button.",
+          "code": "<button type=\"submit\" disabled={isBlank}>Send</button>",
+          "expected": "Send is disabled while the textarea is blank"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAABSZGJ12NNMYXQNNAP",
+      "kind": "unit",
+      "title": "Act: Add max length, counter and over-limit message to ContributionSheet",
+      "body": "Add MAX_PROMPT_LENGTH constant and render a counter plus over-limit message, gating submit.\n\n## Acceptance criteria\n- Counter reads N/500\n- Over-limit text disables Send and shows 'Idea is too long'\n\n\n## Scope\n- In scope: client.ts constant\n- In scope: ContributionSheet.tsx\n- Out of scope: Tests\n- Preserve: MAX_PER_PLAYER\n\n\n## Technical constraints\n- Code path: `game/frontend/src/api/client.ts`\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- Length rule enforced in UI\n\n\n## Non-functional requirements\n- Counter linked via aria-describedby\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Counter and length gating",
+      "description": "Add MAX_PROMPT_LENGTH constant and render a counter plus over-limit message, gating submit.",
+      "acceptance_criteria": [
+        "Counter reads N/500",
+        "Over-limit text disables Send and shows 'Idea is too long'"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts constant",
+          "ContributionSheet.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "MAX_PER_PLAYER"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/api/client.ts`",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Length rule enforced in UI",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-633.md`"
+      ],
+      "non_functional": [
+        "Counter linked via aria-describedby"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85CMAABKWM4KVBHDV31W1XR",
+      "matched_feature_id": "01M85C02SB6S6PDSR020JNXF6J",
+      "links": [
+        "parent:01M85CMAABKWM4KVBHDV31W1XR",
+        "trace:01M85C02SB6S6PDSR020JNXF6J",
+        "artifact:.ai-dlc/units/UNIT-633.md"
+      ],
+      "depends_on": [
+        "01M85CMAABKWM4KVBHDV31W1XR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-633.md",
+      "artifact_id": "UNIT-633",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "MAX_PROMPT_LENGTH",
+          "lines": "after L2",
+          "action": "Export the constant matching the backend default max_prompt_len.",
+          "code": "export const MAX_PROMPT_LENGTH = 500;",
+          "expected": "Constant importable from client"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (length state)",
+          "lines": "L2, L64-L69",
+          "action": "Import MAX_PROMPT_LENGTH; add const length = text.trim().length and const tooLong = length > MAX_PROMPT_LENGTH; in handleSubmit add 'if (tooLong) { setError(\"Idea is too long\"); return; }' after the blank check.",
+          "code": "const tooLong = text.trim().length > MAX_PROMPT_LENGTH;",
+          "expected": "Over-limit submit is rejected before submitContribution"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "textarea and Send markup",
+          "lines": "L102-L108",
+          "action": "Add aria-describedby='contribution-count' to the textarea; after it render <p id='contribution-count'>{`${text.length}/${MAX_PROMPT_LENGTH}`}</p>; render <p role='alert'>Idea is too long</p> when tooLong; change Send to disabled={isBlank || tooLong}.",
+          "code": "<p id=\"contribution-count\">{`${text.length}/${MAX_PROMPT_LENGTH}`}</p>",
+          "expected": "Counter visible, message shown when over limit, Send disabled"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAABX2FS7BVS5Q5P6S0G",
+      "kind": "unit",
+      "title": "Act: Gate ContributionSheet submit on zero remaining quota",
+      "body": "Use the existing remaining value to disable input and Send and show a clear message.\n\n## Acceptance criteria\n- remaining 0 disables Send and textarea and shows the message\n- handleSubmit returns early at zero quota\n\n\n## Scope\n- In scope: ContributionSheet.tsx\n- Out of scope: Tests\n- Out of scope: Backend\n- Preserve: Contributions left text\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Definition of done\n- No submit at zero quota\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Disable submit and show message at zero quota",
+      "description": "Use the existing remaining value to disable input and Send and show a clear message.",
+      "acceptance_criteria": [
+        "remaining 0 disables Send and textarea and shows the message",
+        "handleSubmit returns early at zero quota"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Backend"
+        ],
+        "preserve": [
+          "Contributions left text"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "No submit at zero quota",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-634.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85CMAABHJ8M2T754Z46EF9P",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M85CMAABHJ8M2T754Z46EF9P",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-634.md"
+      ],
+      "depends_on": [
+        "01M85CMAABHJ8M2T754Z46EF9P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-634.md",
+      "artifact_id": "UNIT-634",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (quota)",
+          "lines": "L64-L69",
+          "action": "Add const outOfQuota = remaining <= 0; at the top of handleSubmit add 'if (outOfQuota) return;' before the blank check.",
+          "code": "const outOfQuota = remaining <= 0;",
+          "expected": "No submission possible at zero quota"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "textarea, Send and message markup",
+          "lines": "L97-L109",
+          "action": "Add disabled={outOfQuota} to the textarea; change Send to disabled={isBlank || tooLong || outOfQuota}; render <p role='status'>No contributions left this round</p> when outOfQuota.",
+          "code": "{outOfQuota && <p role=\"status\">No contributions left this round</p>}",
+          "expected": "Message shown and controls disabled at zero quota"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAAB9SHCYPHW3KWDTYW2",
+      "kind": "unit",
+      "title": "Verify: Blank-text validation unit tests",
+      "body": "Prove blank and whitespace-only prompts are blocked and never posted.\n\n## Acceptance criteria\n- Send disabled for empty and whitespace text\n- Form submit with whitespace shows message and no fetch POST\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- fetch stubbed with vi.stubGlobal as in tests/contributionDialog.test.tsx\n- Fixtures from tests/fixtures/api.ts contributionFixture, mirroring the Contribution type in src/api/client.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for blank prompt blocking",
+      "description": "Prove blank and whitespace-only prompts are blocked and never posted.",
+      "acceptance_criteria": [
+        "Send disabled for empty and whitespace text",
+        "Form submit with whitespace shows message and no fetch POST"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed with vi.stubGlobal as in tests/contributionDialog.test.tsx",
+        "Fixtures from tests/fixtures/api.ts contributionFixture, mirroring the Contribution type in src/api/client.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-635.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CMAAB9Z08GVPTV7G78CZQ",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85CMAAB9Z08GVPTV7G78CZQ",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-635.md"
+      ],
+      "depends_on": [
+        "01M85CMAAB9Z08GVPTV7G78CZQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-635.md",
+      "artifact_id": "UNIT-635",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "new: ContributionSheet blank validation",
+          "lines": "new",
+          "action": "Create the file with jsdom pragma and a stubFetch helper copied from contributionDialog.test.tsx; add test 'Given empty text, then Send is disabled' rendering ContributionSheet with roundId '' and asserting getByRole('button',{name:'Send'}) is disabled.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t blank",
+          "expected": "Disabled assertion passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: whitespace submit blocked",
+          "lines": "new",
+          "action": "Type '   ' into the 'Your idea' textarea with fireEvent.change, fireEvent.submit the form, assert the fetch mock was never called and getByRole('alert') has text 'Write your idea before sending'.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t whitespace",
+          "expected": "No fetch call and message shown"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAABT77S7GFA276N02V9",
+      "kind": "unit",
+      "title": "Verify: Max length counter and over-limit unit tests",
+      "body": "Prove the counter, the over-limit message and the boundary at exactly 500 characters.\n\n## Acceptance criteria\n- Counter shows N/500\n- 501 chars blocks, 500 chars allows\n\n\n## Scope\n- In scope: Test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- fetch stubbed; fixtures from tests/fixtures/api.ts mirroring Contribution in src/api/client.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for counter and length gating",
+      "description": "Prove the counter, the over-limit message and the boundary at exactly 500 characters.",
+      "acceptance_criteria": [
+        "Counter shows N/500",
+        "501 chars blocks, 500 chars allows"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "fetch stubbed; fixtures from tests/fixtures/api.ts mirroring Contribution in src/api/client.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-636.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CMAABSZGJ12NNMYXQNNAP",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85CMAABSZGJ12NNMYXQNNAP",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-636.md"
+      ],
+      "depends_on": [
+        "01M85CMAABSZGJ12NNMYXQNNAP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-636.md",
+      "artifact_id": "UNIT-636",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: counter text",
+          "lines": "after blank tests",
+          "action": "Type 'hello' into the textarea and assert screen.getByText('5/500') is present.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t counter",
+          "expected": "Counter assertion passes"
+        },
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: length boundary",
+          "lines": "after counter test",
+          "action": "Type 'a'.repeat(501): assert getByText('Idea is too long') and Send disabled; then change to 'a'.repeat(500): assert queryByText('Idea is too long') is null and Send enabled.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t boundary",
+          "expected": "501 blocked, 500 allowed"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAABFG8B7AZ0RXTFMYF1",
+      "kind": "unit",
+      "title": "Verify: Zero-quota gating unit tests",
+      "body": "Prove submit is blocked at 0 remaining and allowed at 1 remaining, using a mocked history response.\n\n## Acceptance criteria\n- 5 sent entries disable Send and show the message\n- 4 sent entries keep Send enabled\n\n\n## Scope\n- In scope: Test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- History fixture built from contributionFixture in tests/fixtures/api.ts, matching the listMine response (Contribution[] from GET player/me/contributions in src/api/client.ts)\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for quota blocking",
+      "description": "Prove submit is blocked at 0 remaining and allowed at 1 remaining, using a mocked history response.",
+      "acceptance_criteria": [
+        "5 sent entries disable Send and show the message",
+        "4 sent entries keep Send enabled"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "History fixture built from contributionFixture in tests/fixtures/api.ts, matching the listMine response (Contribution[] from GET player/me/contributions in src/api/client.ts)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-637.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CMAABX2FS7BVS5Q5P6S0G",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M85CMAABX2FS7BVS5Q5P6S0G",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-637.md"
+      ],
+      "depends_on": [
+        "01M85CMAABX2FS7BVS5Q5P6S0G"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-637.md",
+      "artifact_id": "UNIT-637",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: zero quota blocks",
+          "lines": "after boundary test",
+          "action": "Stub fetch so the listMine route returns 5 contributions derived from contributionFixture with distinct prompts; render with roundId 'ROUND-1'; await findByText('No contributions left this round'); assert Send and textarea are disabled and no POST was made.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t 'zero quota'",
+          "expected": "Message shown, controls disabled, no POST"
+        },
+        {
+          "file": "game/frontend/tests/contributionValidation.test.tsx",
+          "symbol": "test: one left allows send",
+          "lines": "after zero quota test",
+          "action": "Stub listMine with 4 contributions; type 'idea' and assert Send is enabled and queryByText('No contributions left this round') is null.",
+          "command": "cd game/frontend && npx vitest run tests/contributionValidation.test.tsx -t 'one left'",
+          "expected": "Send enabled, no quota message"
+        }
+      ]
+    },
+    {
+      "id": "01M85CMAABTE67YMMDCT1TX1N4",
+      "kind": "evidence",
+      "title": "Evidence: Contribution textarea validation unit tests",
+      "body": "Collect the passing results of contributionValidation.test.tsx covering blank, length and quota rules.\n\n## Acceptance criteria\n- All contributionValidation tests pass\n- Existing contribution tests still pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n- Preserve: Existing suites\n\n\n## Definition of done\n- Passing test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that validation unit tests pass",
+      "description": "Collect the passing results of contributionValidation.test.tsx covering blank, length and quota rules.",
+      "acceptance_criteria": [
+        "All contributionValidation tests pass",
+        "Existing contribution tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": [
+          "Existing suites"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-127.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85CMAAB9SHCYPHW3KWDTYW2",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M85CMAAB9SHCYPHW3KWDTYW2",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-127.md"
+      ],
+      "depends_on": [
+        "01M85CMAAB9SHCYPHW3KWDTYW2",
+        "01M85CMAABT77S7GFA276N02V9",
+        "01M85CMAABFG8B7AZ0RXTFMYF1"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-127.md",
+      "artifact_id": "EVD-127"
+    }
+  ],
+  "created_at": "2026-11-23T23:43:32.287221+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 10/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

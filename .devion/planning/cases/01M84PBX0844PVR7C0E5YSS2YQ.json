@@ -1,0 +1,854 @@
+{
+  "id": "01M84PBX0844PVR7C0E5YSS2YQ",
+  "trigger_node_id": "INT-068, UNIT-342 +9",
+  "node_ids": [
+    "INT-068",
+    "UNIT-342",
+    "UNIT-343",
+    "UNIT-344",
+    "UNIT-345",
+    "UNIT-346",
+    "UNIT-347",
+    "REQ-171",
+    "REQ-172",
+    "REQ-173",
+    "EVD-068"
+  ],
+  "intent_id": "INT-068",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-068",
+      "title": "SG-2 Typed asset manifest and validated content schemas",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-342",
+      "title": "Act: Add zod and manifest/object schemas",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJV2TV8GQQSB093N5C1"
+      ],
+      "depends_on": [
+        "REQ-171"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "174fa897a48acabf1561b4c6cfa04804c4eeabeb",
+      "from_sha": "45c984f15e7841578227c806f284e24d239ee468",
+      "started_at": "2026-11-23T17:13:28.059111+00:00",
+      "ended_at": "2026-11-23T17:14:07.528827+00:00",
+      "run_started_at": "2026-11-23T17:13:28.059111+00:00",
+      "duration_ms": 36815,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 5604,
+      "estimated_cost_usd": 0.022429
+    },
+    {
+      "unit_id": "UNIT-343",
+      "title": "Act: Author the-boys-room manifest, scene and asset folders",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJVNGG34S3RGR3S9EV7"
+      ],
+      "depends_on": [
+        "REQ-172"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "started_at": "2026-11-23T17:13:28.076176+00:00",
+      "ended_at": "2026-11-23T17:14:48.146040+00:00",
+      "run_started_at": "2026-11-23T17:13:28.076176+00:00",
+      "duration_ms": 78427,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 30,
+      "tokens_out": 14904,
+      "estimated_cost_usd": 0.05964
+    },
+    {
+      "unit_id": "UNIT-344",
+      "title": "Act: Implement the manifest loader",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJV9DK3WABC0YTENBYW"
+      ],
+      "depends_on": [
+        "REQ-173"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "c08505933b178be6d9caf31349c8b5ecfb31705f",
+      "from_sha": "174fa897a48acabf1561b4c6cfa04804c4eeabeb",
+      "started_at": "2026-11-23T17:13:28.083835+00:00",
+      "ended_at": "2026-11-23T17:14:33.124800+00:00",
+      "run_started_at": "2026-11-23T17:13:28.083835+00:00",
+      "duration_ms": 62478,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 28,
+      "tokens_out": 9717,
+      "estimated_cost_usd": 0.03889
+    },
+    {
+      "unit_id": "UNIT-345",
+      "title": "Verify: Manifest and object schema unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJVMTCNW9YGDY2RHMTH"
+      ],
+      "depends_on": [
+        "UNIT-342",
+        "REQ-171"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "c08505933b178be6d9caf31349c8b5ecfb31705f",
+      "from_sha": "c08505933b178be6d9caf31349c8b5ecfb31705f",
+      "tests": [
+        {
+          "id": "manifestSchema.spritesheet-valid",
+          "kind": "unit",
+          "name": "accepts a spritesheet entry with frames, animations, origin and interactionBounds",
+          "title": "assetManifestSchema accepts a valid spritesheet entry with frames, animations, origin and interactionBounds",
+          "scenario": "Given a spritesheet entry with frames, animations, origin and interactionBounds, When the manifest is parsed, Then it succeeds and keeps those fields",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t assetManifestSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 1 run."
+        },
+        {
+          "id": "manifestSchema.missing-id",
+          "kind": "unit",
+          "name": "rejects an entry missing id, reporting the issue at assets[0].id",
+          "title": "assetManifestSchema rejects an entry missing id with issue path ['assets', 0, 'id']",
+          "scenario": "Given a manifest whose first asset has no id, When parsed, Then it fails with an issue at path assets.0.id",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t assetManifestSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 1 run."
+        },
+        {
+          "id": "manifestSchema.negative-width",
+          "kind": "unit",
+          "name": "rejects an entry with a negative width",
+          "title": "assetManifestSchema rejects a negative width",
+          "scenario": "Given a spritesheet entry with width -1, When parsed, Then it fails with an issue at path assets.0.width",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t assetManifestSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 1 run."
+        },
+        {
+          "id": "manifestSchema.bogus-type",
+          "kind": "unit",
+          "name": "rejects an entry whose type is not a known asset type",
+          "title": "assetManifestSchema rejects an unknown asset type 'bogus'",
+          "scenario": "Given a spritesheet entry with type 'bogus', When parsed, Then it fails with an issue at path assets.0.type",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t assetManifestSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 1 run."
+        },
+        {
+          "id": "objectSchema.valid-object",
+          "kind": "unit",
+          "name": "parses an object with position, layer, bounds, actions, visibleWhen and persistentState",
+          "title": "worldObjectSchema parses a fully specified object with position, layer furniture, bounds, actions, visibleWhen and persistentState",
+          "scenario": "Given an object with position, layer 'furniture', bounds, actions ['inspect','push'], visibleWhen [{flag:'x',equals:true}] and persistentState {flag:'secret_open'}, When parsed, Then it succeeds and keeps those fields",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t worldObjectSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 2 run."
+        },
+        {
+          "id": "objectSchema.scale-default",
+          "kind": "unit",
+          "name": "defaults scale to 1 when it is omitted",
+          "title": "worldObjectSchema defaults scale to 1 when omitted",
+          "scenario": "Given a valid object without scale, When parsed, Then result scale is 1",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t worldObjectSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 2 run."
+        },
+        {
+          "id": "objectSchema.layer-sky",
+          "kind": "unit",
+          "name": "rejects a layer that is not defined",
+          "title": "worldObjectSchema rejects layer 'sky'",
+          "scenario": "Given an object with layer 'sky', When parsed, Then it fails with an issue at path layer",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t worldObjectSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 2 run."
+        },
+        {
+          "id": "objectSchema.action-fly",
+          "kind": "unit",
+          "name": "rejects an action that is not defined",
+          "title": "worldObjectSchema rejects action 'fly'",
+          "scenario": "Given an object with actions ['fly'], When parsed, Then it fails with an issue at path actions.0",
+          "command": "cd game && npx vitest run tests/manifestSchema.test.ts -t worldObjectSchema --testTimeout=10000",
+          "file": "tests/manifestSchema.test.ts",
+          "status": "passed",
+          "detail": "Passed in step 2 run."
+        }
+      ],
+      "started_at": "2026-11-23T17:14:07.538122+00:00",
+      "ended_at": "2026-11-23T17:14:47.393285+00:00",
+      "run_started_at": "2026-11-23T17:14:07.538122+00:00",
+      "duration_ms": 38544,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 7884,
+      "estimated_cost_usd": 0.031547
+    },
+    {
+      "unit_id": "UNIT-346",
+      "title": "Verify: the-boys-room content and folder unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJVT0T7MF6MPP67XECS"
+      ],
+      "depends_on": [
+        "UNIT-343",
+        "REQ-172"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "18e6a810f1a4d0530d78b94868535756edc75d02",
+      "from_sha": "18e6a810f1a4d0530d78b94868535756edc75d02",
+      "tests": [
+        {
+          "id": "boysRoomContent.test.ts::manifest.json parses against assetManifestSchema",
+          "kind": "unit",
+          "name": "manifest.json parses against assetManifestSchema",
+          "title": "the-boys-room content: manifest.json parses against assetManifestSchema",
+          "scenario": "Given the shipped the-boys-room manifest.json, When validated against assetManifestSchema, Then it parses without issues",
+          "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+          "file": "tests/boysRoomContent.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boysRoomContent.test.ts::scene.json parses against sceneSchema",
+          "kind": "unit",
+          "name": "scene.json parses against sceneSchema",
+          "title": "the-boys-room content: scene.json parses against sceneSchema",
+          "scenario": "Given the shipped the-boys-room scene.json, When validated against sceneSchema, Then it parses without issues",
+          "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+          "file": "tests/boysRoomContent.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boysRoomContent.test.ts::every scene object asset is declared in the manifest ids",
+          "kind": "unit",
+          "name": "every scene object asset is declared in the manifest ids",
+          "title": "the-boys-room content: every scene object asset is declared in the manifest ids",
+          "scenario": "Given the parsed manifest and scene, When each scene object's asset is checked, Then no scene object references an undeclared asset",
+          "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+          "file": "tests/boysRoomContent.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "boysRoomContent.test.ts::all 9 required asset directories exist under public/assets",
+          "kind": "unit",
+          "name": "all 9 required asset directories exist under public/assets",
+          "title": "the-boys-room content: all 9 required asset directories exist under public/assets",
+          "scenario": "Given the required asset directories for the-boys-room and shared UI, When each directory is checked on disk, Then none of the required directories is missing",
+          "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+          "file": "tests/boysRoomContent.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (3): manifest.json parses against assetManifestSchema, scene.json parses against sceneSchema, every scene object asset is declared in the manifest ids",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "386593944ea824b000331968fe0d63716a35eae6",
+          "from_sha": "dcdb3ff1b277c2a5bff01909dcc306b96ed1e51d",
+          "tests": [
+            {
+              "id": "manifest-parses-asset-manifest-schema",
+              "kind": "unit",
+              "name": "manifest.json parses against assetManifestSchema",
+              "title": "manifest.json parses against assetManifestSchema",
+              "scenario": "Given the shipped the-boys-room manifest.json, When it is validated against assetManifestSchema, Then it parses without issues",
+              "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+              "file": "tests/boysRoomContent.test.ts",
+              "status": "failed",
+              "detail": "assets: Expected array, received object. The shipped manifest uses a keyed object (\"backgrounds/bedroom\": {...}) with type \"image\" and a \"dimensions\" field, neither of which the schema accepts."
+            },
+            {
+              "id": "scene-parses-scene-schema",
+              "kind": "unit",
+              "name": "scene.json parses against sceneSchema",
+              "title": "scene.json parses against sceneSchema",
+              "scenario": "Given the shipped the-boys-room scene.json, When it is validated against sceneSchema, Then it parses without issues",
+              "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+              "file": "tests/boysRoomContent.test.ts",
+              "status": "failed",
+              "detail": "objects[*].actions[*]: expected 'inspect'|'push'|'search'|'leave', received object. All 5 scene objects use action objects ({id,label,events}) instead of action id strings, 10 issues in total."
+            },
+            {
+              "id": "scene-objects-assets-declared-in-manifest",
+              "kind": "unit",
+              "name": "every scene object asset is declared in the manifest ids",
+              "title": "every scene object asset is declared in the manifest ids",
+              "scenario": "Given the parsed manifest and scene, When each object's asset is checked against manifest ids, Then no object references an undeclared asset",
+              "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+              "file": "tests/boysRoomContent.test.ts",
+              "status": "failed",
+              "detail": "Blocked by the manifest schema failure: assetManifestSchema.parse throws ZodError (assets expected array). The check is not reached, so the asset-id linkage is unverified."
+            },
+            {
+              "id": "required-asset-dirs-exist",
+              "kind": "unit",
+              "name": "all 9 required asset directories exist under public/assets",
+              "title": "all 9 required asset directories exist under public/assets",
+              "scenario": "Given the 9 required asset directories for the-boys-room and shared UI, When each is checked on disk, Then none is missing",
+              "command": "cd game && npx vitest run tests/boysRoomContent.test.ts --testTimeout=10000",
+              "file": "tests/boysRoomContent.test.ts",
+              "status": "passed",
+              "detail": "All 9 directories exist under game/frontend/public/assets."
+            }
+          ],
+          "started_at": "2026-11-23T17:14:48.154945+00:00",
+          "ended_at": "2026-11-23T17:15:26.724329+00:00",
+          "duration_ms": 37136,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 14,
+          "tokens_out": 7252,
+          "estimated_cost_usd": 0.029019
+        }
+      ],
+      "started_at": "2026-11-23T17:14:48.154945+00:00",
+      "ended_at": "2026-11-23T17:16:26.966161+00:00",
+      "run_started_at": "2026-11-23T17:16:10.203982+00:00",
+      "duration_ms": 14647,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2563,
+      "estimated_cost_usd": 0.010258
+    },
+    {
+      "unit_id": "UNIT-347",
+      "title": "Verify: Manifest loader dangling-reference and missing-asset unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84PBWJV2NNMFHZXQWDYYBTS"
+      ],
+      "depends_on": [
+        "UNIT-344",
+        "REQ-173"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "18e6a810f1a4d0530d78b94868535756edc75d02",
+      "from_sha": "18e6a810f1a4d0530d78b94868535756edc75d02",
+      "tests": [
+        {
+          "id": "loadManifest > reports no errors, missing assets or dangling references for valid data when every path exists",
+          "kind": "unit",
+          "name": "loadManifest: valid data with exists=()=>true",
+          "title": "loadManifest reports no errors, missing assets or dangling references for valid data when every path exists",
+          "scenario": "Given a valid manifest and scene and exists always returns true, When loadManifest runs, Then errors, missing and dangling are empty and manifest and scene are non-null",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "loadManifest > lists every asset id as missing without throwing when no path exists",
+          "kind": "unit",
+          "name": "loadManifest: exists=()=>false",
+          "title": "loadManifest lists every asset id as missing without throwing when no path exists",
+          "scenario": "Given a valid manifest and exists always returns false, When loadManifest runs, Then it does not throw and missing contains all asset ids",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "loadManifest > reports a scene object whose asset id is absent from the manifest as dangling",
+          "kind": "unit",
+          "name": "loadManifest: scene object with asset 'nope'",
+          "title": "loadManifest reports a scene object whose asset id is absent from the manifest as dangling",
+          "scenario": "Given a scene object referencing asset 'nope' not in the manifest, When loadManifest runs, Then dangling contains that object id and asset",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "loadManifest > reports parse errors and a null manifest when manifest data is an empty object",
+          "kind": "unit",
+          "name": "loadManifest: manifestData {}",
+          "title": "loadManifest reports parse errors and a null manifest when manifest data is an empty object",
+          "scenario": "Given manifest data {}, When loadManifest runs, Then errors is non-empty and manifest is null",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "loadManifest > does not throw when manifest data is undefined",
+          "kind": "unit",
+          "name": "loadManifest: manifestData undefined",
+          "title": "loadManifest does not throw when manifest data is undefined",
+          "scenario": "Given manifest data undefined, When loadManifest runs, Then it does not throw and reports errors with a null manifest",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveAsset > returns the manifest entry for an asset that is present and not missing",
+          "kind": "unit",
+          "name": "resolveAsset: present asset",
+          "title": "resolveAsset returns the manifest entry for an asset that is present and not missing",
+          "scenario": "Given a loaded report where desk_asset is present, When resolveAsset is called with desk_asset, Then it returns that manifest entry",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveAsset > returns FALLBACK_ASSET for an id that was reported missing",
+          "kind": "unit",
+          "name": "resolveAsset: id in missing",
+          "title": "resolveAsset returns FALLBACK_ASSET for an id that was reported missing",
+          "scenario": "Given a report where desk_asset is in missing, When resolveAsset is called with desk_asset, Then it returns FALLBACK_ASSET",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveAsset > returns FALLBACK_ASSET for an id that is not in the manifest",
+          "kind": "unit",
+          "name": "resolveAsset: unknown id",
+          "title": "resolveAsset returns FALLBACK_ASSET for an id that is not in the manifest",
+          "scenario": "Given a report whose manifest lacks unknown_asset, When resolveAsset is called with unknown_asset, Then it returns FALLBACK_ASSET",
+          "command": "cd game && npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+          "file": "tests/manifestLoader.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "done",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "dcdb3ff1b277c2a5bff01909dcc306b96ed1e51d",
+          "from_sha": "c08505933b178be6d9caf31349c8b5ecfb31705f",
+          "tests": [
+            {
+              "id": "loadManifest/valid-data-no-issues",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > loadManifest > reports no errors, missing assets or dangling references for valid data when every path exists",
+              "title": "reports no errors, missing assets or dangling references for valid data when every path exists",
+              "scenario": "Given valid manifest and scene data and exists returns true, When loadManifest runs, Then errors, missing and dangling are empty and manifest and scene are set",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "loadManifest/all-missing",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > loadManifest > lists every asset id as missing without throwing when no path exists",
+              "title": "lists every asset id as missing without throwing when no path exists",
+              "scenario": "Given exists returns false for every path, When loadManifest runs, Then it does not throw and missing lists all asset ids",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "loadManifest/dangling-asset",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > loadManifest > reports a scene object whose asset id is absent from the manifest as dangling",
+              "title": "reports a scene object whose asset id is absent from the manifest as dangling",
+              "scenario": "Given a scene object referencing asset 'nope' absent from the manifest, When loadManifest runs, Then dangling contains that object id and asset",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "loadManifest/empty-manifest-object",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > loadManifest > reports parse errors and a null manifest when manifest data is an empty object",
+              "title": "reports parse errors and a null manifest when manifest data is an empty object",
+              "scenario": "Given manifestData is {}, When loadManifest runs, Then errors is non-empty and manifest is null",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "loadManifest/undefined-manifest",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > loadManifest > does not throw when manifest data is undefined",
+              "title": "does not throw when manifest data is undefined",
+              "scenario": "Given manifestData is undefined, When loadManifest runs, Then it does not throw and reports errors with a null manifest",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t loadManifest --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "resolveAsset/present-entry",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > resolveAsset > returns the manifest entry for an asset that is present and not missing",
+              "title": "returns the manifest entry for an asset that is present and not missing",
+              "scenario": "Given a loaded report where desk_asset exists, When resolveAsset is called with desk_asset, Then the manifest entry is returned",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "resolveAsset/missing-fallback",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > resolveAsset > returns FALLBACK_ASSET for an id that was reported missing",
+              "title": "returns FALLBACK_ASSET for an id that was reported missing",
+              "scenario": "Given desk_asset is reported missing, When resolveAsset is called with desk_asset, Then FALLBACK_ASSET is returned",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "resolveAsset/unknown-fallback",
+              "kind": "unit",
+              "name": "tests/manifestLoader.test.ts > resolveAsset > returns FALLBACK_ASSET for an id that is not in the manifest",
+              "title": "returns FALLBACK_ASSET for an id that is not in the manifest",
+              "scenario": "Given a loaded report, When resolveAsset is called with an id absent from the manifest, Then FALLBACK_ASSET is returned",
+              "command": "npx vitest run tests/manifestLoader.test.ts -t resolveAsset --testTimeout=10000",
+              "file": "tests/manifestLoader.test.ts",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-23T17:14:33.134017+00:00",
+          "ended_at": "2026-11-23T17:15:02.348843+00:00",
+          "duration_ms": 27892,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 10,
+          "tokens_out": 5834,
+          "estimated_cost_usd": 0.023344
+        }
+      ],
+      "started_at": "2026-11-23T17:14:33.134017+00:00",
+      "ended_at": "2026-11-23T17:16:29.818116+00:00",
+      "run_started_at": "2026-11-23T17:16:10.211843+00:00",
+      "duration_ms": 18251,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 3549,
+      "estimated_cost_usd": 0.014202
+    },
+    {
+      "unit_id": "REQ-171",
+      "title": "REQ · Typed manifest and object schemas with runtime validators",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-068"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-172",
+      "title": "REQ · The Boy's Room scene content and asset folders live outside the engine",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-068"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-173",
+      "title": "REQ · Manifest loader validates references and reports missing assets without crashing",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-068"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-068",
+      "title": "Evidence: Asset manifest schema, content and loader unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-342",
+        "UNIT-343",
+        "UNIT-344",
+        "UNIT-345",
+        "UNIT-346",
+        "UNIT-347"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-346",
+      "title": "Act: Fix Verify failure — the-boys-room content and folder unit tests",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "18e6a810f1a4d0530d78b94868535756edc75d02",
+      "from_sha": "386593944ea824b000331968fe0d63716a35eae6",
+      "started_at": "2026-11-23T17:15:26.731912+00:00",
+      "ended_at": "2026-11-23T17:16:10.057211+00:00",
+      "run_started_at": "2026-11-23T17:15:26.731912+00:00",
+      "duration_ms": 42123,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 8010,
+      "estimated_cost_usd": 0.032053
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-345",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "UNIT-344",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "REQ-171",
+      "dst": "UNIT-342"
+    },
+    {
+      "src": "REQ-172",
+      "dst": "UNIT-346"
+    },
+    {
+      "src": "UNIT-343",
+      "dst": "UNIT-346"
+    },
+    {
+      "src": "REQ-173",
+      "dst": "UNIT-344"
+    },
+    {
+      "src": "REQ-171",
+      "dst": "UNIT-345"
+    },
+    {
+      "src": "UNIT-342",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "INT-068",
+      "dst": "REQ-172"
+    },
+    {
+      "src": "UNIT-342",
+      "dst": "UNIT-345"
+    },
+    {
+      "src": "UNIT-347",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "INT-068",
+      "dst": "REQ-173"
+    },
+    {
+      "src": "REQ-172",
+      "dst": "UNIT-343"
+    },
+    {
+      "src": "UNIT-346",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "INT-068",
+      "dst": "REQ-171"
+    },
+    {
+      "src": "UNIT-343",
+      "dst": "EVD-068"
+    },
+    {
+      "src": "REQ-173",
+      "dst": "UNIT-347"
+    },
+    {
+      "src": "UNIT-344",
+      "dst": "UNIT-347"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84pbx",
+  "base_sha": "45c984f15e7841578227c806f284e24d239ee468",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84PBX0844PVR7C0E5YSS2YQ:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T17:13:26.280314+00:00",
+  "updated_at": "2026-11-23T17:16:45.919154+00:00",
+  "completed_at": "2026-11-23T17:16:29.819798+00:00",
+  "duration_ms": 183539,
+  "usage_stats": {
+    "total_duration_ms": 356323,
+    "total_tokens_in": 144,
+    "total_tokens_out": 65317,
+    "total_estimated_cost_usd": 0.261382
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 10,
+  "unit_allowlist": [
+    "UNIT-342",
+    "UNIT-343",
+    "UNIT-344",
+    "UNIT-345",
+    "UNIT-346",
+    "UNIT-347"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-342",
+        "title": "Act: Add zod and manifest/object schemas",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-342 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-343",
+        "title": "Act: Author the-boys-room manifest, scene and asset folders",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-343 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-344",
+        "title": "Act: Implement the manifest loader",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-344 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-345",
+        "title": "Verify: Manifest and object schema unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-345 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-346",
+        "title": "Verify: the-boys-room content and folder unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-346 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-347",
+        "title": "Verify: Manifest loader dangling-reference and missing-asset unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-068",
+            "path": ".ai-dlc/evidence/EVD-068.md",
+            "title": "Evidence: Asset manifest schema, content and loader unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-347 unless acceptance outcomes recorded in EVD-068 (.ai-dlc/evidence/EVD-068.md; \"Evidence: Asset manifest schema, content and loader unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T17:13:27.826470+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-342",
+    "UNIT-343",
+    "UNIT-344",
+    "UNIT-345",
+    "UNIT-346",
+    "UNIT-347"
+  ]
+}

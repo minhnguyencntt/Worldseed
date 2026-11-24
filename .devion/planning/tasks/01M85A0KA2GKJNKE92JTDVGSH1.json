@@ -1,0 +1,79 @@
+{
+  "id": "01M85A0KA2GKJNKE92JTDVGSH1",
+  "intent_id": "01M859TZEETXBGQ7HJMQ75APEV",
+  "title": "Verify: characterSchema interaction unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the optional character interaction field.",
+  "description": "Add schema tests proving interaction parsing, defaults and errors.",
+  "acceptance_criteria": [
+    "Interaction parses with defaulted events.",
+    "Missing interaction passes.",
+    "Bad dialogue type yields a path-tagged error."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/contentSchema.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Pure schema tests, no I/O"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-589.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M859XCEVABBD300X61RYZKYM",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-589.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85A0KA2GWM43B7H4BPKB3GS"
+  ],
+  "sim_node_id": "01M859XCEV6FE6EWWB049ZHT9C",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-589.md",
+  "artifact_id": "UNIT-589",
+  "steps": [
+    {
+      "file": "game/tests/contentSchema.test.ts",
+      "symbol": "new: describe('characterSchema interaction')",
+      "lines": "after the last existing describe block",
+      "action": "Add test 'keeps interaction.dialogue and defaults events': call parseWorldContent('scene', {id:'s',title:'S',dialogue:[],objects:[],characters:[{id:'npc',name:'Npc',position:{x:1,y:2},animations:{idle:{asset:'a',animation:'idle'}},interaction:{dialogue:'greet'}}]}) and assert ok and data.characters[0].interaction equals {dialogue:'greet',events:[]}.",
+      "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/tests/contentSchema.test.ts",
+      "symbol": "new: it('accepts a character without interaction')",
+      "lines": "inside the same describe",
+      "action": "Parse the same input with no interaction key; assert ok is true and characters[0].interaction is undefined.",
+      "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/tests/contentSchema.test.ts",
+      "symbol": "new: it('rejects a non-string interaction dialogue')",
+      "lines": "inside the same describe",
+      "action": "Parse input with interaction:{dialogue:5}; assert ok is false and errors contains an entry whose path is 'characters.0.interaction.dialogue'.",
+      "command": "cd game && npx vitest run tests/contentSchema.test.ts -t 'characterSchema interaction'",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T22:56:47.426266+00:00",
+  "updated_at": "2026-11-23T22:58:07.938635+00:00"
+}

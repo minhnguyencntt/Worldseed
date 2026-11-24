@@ -1,0 +1,734 @@
+{
+  "intent_id": "01M856K83CFVAYV4ZXQVP28ZQ8",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M856NGY295R1E3CT0TTTKSNJ",
+      "kind": "intent",
+      "title": "SG-5.5 Phaser scene is a thin wrapper over the generic scene builder",
+      "body": "Context: BootScene (game/frontend/src/phaser/BootScene.ts) preloads assets and builds effects, but it never calls buildScene, and no Phaser-backed RenderContext exists. Desired behavior: BootScene delegates object creation to the engine's buildScene using a Phaser RenderContext and the bundled bedroom scene content. Expected result: every object on screen comes from content, and BootScene names no object id or asset id. Why: future AI cycles must add or replace objects by editing content only.\n\n## Acceptance criteria\n- Given the bundled bedroom scene, when BootScene.create runs, then buildScene is called once with that scene and a Phaser-backed RenderContext\n- Given BootScene.ts and the Phaser render context source, when scanned, then neither contains a bedroom object id or asset id literal\n- Given a shared-store state change, when it fires, then every built SceneObject receives sync(state)\n- Given BootScene shutdown, when it fires, then every SceneObject is destroyed and the store subscription is removed\n\n\n## Scope\n- In scope: Phaser RenderContext implementation\n- In scope: BootScene wiring of buildScene, state sync and cleanup\n- In scope: Forwarding object clicks to the typed phaserToReact bus\n- Out of scope: New assets or new scene content\n- Out of scope: Character animation\n- Out of scope: React UI changes\n- Out of scope: Backend changes\n- Preserve: Existing preload, fallback texture and effects wiring in BootScene\n- Preserve: Existing buildScene, SceneObject and layerDepth behavior\n- Preserve: Typed event bus contract in events.ts\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Engine modules under game/src/engine must not import Phaser\n- Game state stays in the Zustand store, BootScene keeps no copy\n\n\n## Definition of done\n- All acceptance criteria are met\n- BootScene contains no hardcoded object\n- Existing BootScene tests still pass\n\n\n## Non-functional requirements\n- Pixel-art friendly rendering: no smoothing on sprites\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene builds all scene objects through buildScene from bundled content, with no hardcoded objects",
+      "description": "Context: BootScene (game/frontend/src/phaser/BootScene.ts) preloads assets and builds effects, but it never calls buildScene, and no Phaser-backed RenderContext exists. Desired behavior: BootScene delegates object creation to the engine's buildScene using a Phaser RenderContext and the bundled bedroom scene content. Expected result: every object on screen comes from content, and BootScene names no object id or asset id. Why: future AI cycles must add or replace objects by editing content only.",
+      "acceptance_criteria": [
+        "Given the bundled bedroom scene, when BootScene.create runs, then buildScene is called once with that scene and a Phaser-backed RenderContext",
+        "Given BootScene.ts and the Phaser render context source, when scanned, then neither contains a bedroom object id or asset id literal",
+        "Given a shared-store state change, when it fires, then every built SceneObject receives sync(state)",
+        "Given BootScene shutdown, when it fires, then every SceneObject is destroyed and the store subscription is removed"
+      ],
+      "scope": {
+        "in_scope": [
+          "Phaser RenderContext implementation",
+          "BootScene wiring of buildScene, state sync and cleanup",
+          "Forwarding object clicks to the typed phaserToReact bus"
+        ],
+        "out_of_scope": [
+          "New assets or new scene content",
+          "Character animation",
+          "React UI changes",
+          "Backend changes"
+        ],
+        "preserve": [
+          "Existing preload, fallback texture and effects wiring in BootScene",
+          "Existing buildScene, SceneObject and layerDepth behavior",
+          "Typed event bus contract in events.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Engine modules under game/src/engine must not import Phaser",
+        "Game state stays in the Zustand store, BootScene keeps no copy"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria are met",
+        "BootScene contains no hardcoded object",
+        "Existing BootScene tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-106.md`"
+      ],
+      "non_functional": [
+        "Pixel-art friendly rendering: no smoothing on sprites"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+      "links": [
+        "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+        "artifact:.ai-dlc/intent/INT-106.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-106.md",
+      "artifact_id": "INT-106"
+    },
+    {
+      "id": "01M856NGY2ZXCXWNYHPMYJM5D0",
+      "kind": "requirement",
+      "title": "REQ · A Phaser-backed RenderContext draws sprites from engine specs",
+      "body": "Context: RenderContext and RenderHandle exist in game/src/engine/renderContext.ts, but only EffectRenderContext has a Phaser implementation (effectContext.ts). Desired behavior: a Phaser implementation creates an image per RenderSpriteSpec at its position, scale and depth, with hover highlight, a name label, visibility, hit bounds and click. Expected result: SceneObject can render in Phaser. Why: it is the only missing piece between buildScene and the canvas.\n\n## Acceptance criteria\n- Given a RenderSpriteSpec, when createSprite runs, then an image is added with key resolved through resolveKey, the spec x, y, scale and depth\n- Given spec.bounds, when createSprite runs, then the image is made interactive with a hit rectangle equal to the bounds\n- Given a handle, when setHighlighted(true) and setLabelVisible(true) are called, then a tint is applied and the label text is shown, and both are cleared on false\n- Given a handle, when destroy runs, then the image and the label are destroyed\n\n\n## Scope\n- In scope: New frontend/src/phaser/renderContext.ts\n- Out of scope: Effects context changes\n- Out of scope: Character sprites\n- Preserve: effectContext.ts behavior\n- Preserve: RenderContext interface\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Resolve texture keys through an injected resolveKey function so the fallback texture applies\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- createPhaserRenderContext is exported and implements RenderContext\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "createPhaserRenderContext implements RenderContext.createSprite with Phaser images",
+      "description": "Context: RenderContext and RenderHandle exist in game/src/engine/renderContext.ts, but only EffectRenderContext has a Phaser implementation (effectContext.ts). Desired behavior: a Phaser implementation creates an image per RenderSpriteSpec at its position, scale and depth, with hover highlight, a name label, visibility, hit bounds and click. Expected result: SceneObject can render in Phaser. Why: it is the only missing piece between buildScene and the canvas.",
+      "acceptance_criteria": [
+        "Given a RenderSpriteSpec, when createSprite runs, then an image is added with key resolved through resolveKey, the spec x, y, scale and depth",
+        "Given spec.bounds, when createSprite runs, then the image is made interactive with a hit rectangle equal to the bounds",
+        "Given a handle, when setHighlighted(true) and setLabelVisible(true) are called, then a tint is applied and the label text is shown, and both are cleared on false",
+        "Given a handle, when destroy runs, then the image and the label are destroyed"
+      ],
+      "scope": {
+        "in_scope": [
+          "New frontend/src/phaser/renderContext.ts"
+        ],
+        "out_of_scope": [
+          "Effects context changes",
+          "Character sprites"
+        ],
+        "preserve": [
+          "effectContext.ts behavior",
+          "RenderContext interface"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Resolve texture keys through an injected resolveKey function so the fallback texture applies"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "createPhaserRenderContext is exported and implements RenderContext",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-262.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M856NGY295R1E3CT0TTTKSNJ",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M856NGY295R1E3CT0TTTKSNJ",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-262.md"
+      ],
+      "depends_on": [
+        "01M856NGY295R1E3CT0TTTKSNJ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-262.md",
+      "artifact_id": "REQ-262"
+    },
+    {
+      "id": "01M856NGY29MJGYB1CN9TECRXQ",
+      "kind": "requirement",
+      "title": "REQ · BootScene builds its objects from content via buildScene with none hardcoded",
+      "body": "Context: BootScene.create only builds effects. runtime/content.ts exports scene as an unvalidated SceneDef, while buildScene needs a SceneSpec. Desired behavior: content.ts also exports a schema-validated sceneSpec, and BootScene.create builds the objects with buildScene(createPhaserRenderContext(...), sceneSpec). Expected result: all objects come from bedroom.yaml. Why: the scene is content-driven.\n\n## Acceptance criteria\n- Given the bundled scene, when create runs, then buildScene is called once with sceneSpec and a context exposing createSprite\n- Given BootScene.ts and renderContext.ts, when read as text, then no object id (bed, bookshelf, etc.) or asset id literal appears\n- Given shutdown, when the SHUTDOWN callback runs, then destroy is called on every built SceneObject\n\n\n## Scope\n- In scope: content.ts sceneSpec export\n- In scope: BootScene.create and shutdown wiring\n- Out of scope: Changing bedroom.yaml\n- Out of scope: State sync\n- Preserve: scene export\n- Preserve: effects and transition wiring\n- Preserve: FALLBACK_KEY export\n\n\n## Technical constraints\n- Use sceneSchema from game/src/content/schema.ts for validation\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- BootScene builds objects via buildScene only\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene.create calls buildScene on the bundled scene and destroys the objects on shutdown",
+      "description": "Context: BootScene.create only builds effects. runtime/content.ts exports scene as an unvalidated SceneDef, while buildScene needs a SceneSpec. Desired behavior: content.ts also exports a schema-validated sceneSpec, and BootScene.create builds the objects with buildScene(createPhaserRenderContext(...), sceneSpec). Expected result: all objects come from bedroom.yaml. Why: the scene is content-driven.",
+      "acceptance_criteria": [
+        "Given the bundled scene, when create runs, then buildScene is called once with sceneSpec and a context exposing createSprite",
+        "Given BootScene.ts and renderContext.ts, when read as text, then no object id (bed, bookshelf, etc.) or asset id literal appears",
+        "Given shutdown, when the SHUTDOWN callback runs, then destroy is called on every built SceneObject"
+      ],
+      "scope": {
+        "in_scope": [
+          "content.ts sceneSpec export",
+          "BootScene.create and shutdown wiring"
+        ],
+        "out_of_scope": [
+          "Changing bedroom.yaml",
+          "State sync"
+        ],
+        "preserve": [
+          "scene export",
+          "effects and transition wiring",
+          "FALLBACK_KEY export"
+        ]
+      },
+      "technical_constraints": [
+        "Use sceneSchema from game/src/content/schema.ts for validation"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "BootScene builds objects via buildScene only",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-263.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M856NGY295R1E3CT0TTTKSNJ",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M856NGY295R1E3CT0TTTKSNJ",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-263.md"
+      ],
+      "depends_on": [
+        "01M856NGY295R1E3CT0TTTKSNJ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-263.md",
+      "artifact_id": "REQ-263"
+    },
+    {
+      "id": "01M856NGY2R46QJSMYE83ZM1QH",
+      "kind": "requirement",
+      "title": "REQ · BootScene syncs objects with the store and forwards clicks to React",
+      "body": "Context: SceneObject.sync applies visibleWhen and onInteract reports activations; BootScene.onStateChange currently only reads state. Desired behavior: after building, BootScene syncs every object with the current state and on each store change, and emits phaserToReact objectClick with the object id on activation. Expected result: persistent object state (e.g. secret door) shows after changes. Why: React and Phaser stay consistent without duplicate state.\n\n## Acceptance criteria\n- Given a non-null store state, when create runs, then sync(state) is called on each built object\n- Given a store change to a new state, when onStateChange runs, then sync(newState) is called on each object\n- Given a null state, when onStateChange runs, then no sync is called\n- Given an object's onInteract callback, when invoked with objectId, then phaserToReact.emit('objectClick', {id}) is called\n\n\n## Scope\n- In scope: BootScene.create, onStateChange\n- Out of scope: Hover events\n- Out of scope: Keyboard focus wiring\n- Preserve: readState\n- Preserve: subscription cleanup\n\n\n## Technical constraints\n- No GameState copy kept in BootScene\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- Objects reflect store state and clicks reach the bus\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "State changes call sync on each SceneObject and object activation emits objectClick",
+      "description": "Context: SceneObject.sync applies visibleWhen and onInteract reports activations; BootScene.onStateChange currently only reads state. Desired behavior: after building, BootScene syncs every object with the current state and on each store change, and emits phaserToReact objectClick with the object id on activation. Expected result: persistent object state (e.g. secret door) shows after changes. Why: React and Phaser stay consistent without duplicate state.",
+      "acceptance_criteria": [
+        "Given a non-null store state, when create runs, then sync(state) is called on each built object",
+        "Given a store change to a new state, when onStateChange runs, then sync(newState) is called on each object",
+        "Given a null state, when onStateChange runs, then no sync is called",
+        "Given an object's onInteract callback, when invoked with objectId, then phaserToReact.emit('objectClick', {id}) is called"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.create, onStateChange"
+        ],
+        "out_of_scope": [
+          "Hover events",
+          "Keyboard focus wiring"
+        ],
+        "preserve": [
+          "readState",
+          "subscription cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "No GameState copy kept in BootScene"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "Objects reflect store state and clicks reach the bus",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-264.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M856NGY295R1E3CT0TTTKSNJ",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M856NGY295R1E3CT0TTTKSNJ",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-264.md"
+      ],
+      "depends_on": [
+        "01M856NGY295R1E3CT0TTTKSNJ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-264.md",
+      "artifact_id": "REQ-264"
+    },
+    {
+      "id": "01M856NGY2VS360NP23RNKDJDY",
+      "kind": "unit",
+      "title": "Act: Add createPhaserRenderContext",
+      "body": "Create game/frontend/src/phaser/renderContext.ts exporting createPhaserRenderContext(scene, resolveKey) that returns a RenderContext whose createSprite builds a Phaser image, label text and RenderHandle.\n\n## Acceptance criteria\n- createSprite places an image using the spec position, scale, depth and resolved key\n- The handle implements highlight, label, visibility, hover, click and destroy\n\n\n## Scope\n- In scope: New renderContext.ts\n- Out of scope: Tests\n- Preserve: effectContext.ts\n\n\n## Technical constraints\n- Phaser 3.90 APIs\n- New file: `game/frontend/src/phaser/renderContext.ts`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- createPhaserRenderContext compiles under tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Implement the Phaser RenderContext",
+      "description": "Create game/frontend/src/phaser/renderContext.ts exporting createPhaserRenderContext(scene, resolveKey) that returns a RenderContext whose createSprite builds a Phaser image, label text and RenderHandle.",
+      "acceptance_criteria": [
+        "createSprite places an image using the spec position, scale, depth and resolved key",
+        "The handle implements highlight, label, visibility, hover, click and destroy"
+      ],
+      "scope": {
+        "in_scope": [
+          "New renderContext.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "effectContext.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs",
+        "New file: `game/frontend/src/phaser/renderContext.ts`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "createPhaserRenderContext compiles under tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-524.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M856NGY2ZXCXWNYHPMYJM5D0",
+      "links": [
+        "parent:01M856NGY2ZXCXWNYHPMYJM5D0",
+        "artifact:.ai-dlc/units/UNIT-524.md"
+      ],
+      "depends_on": [
+        "01M856NGY2ZXCXWNYHPMYJM5D0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-524.md",
+      "artifact_id": "UNIT-524",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/renderContext.ts",
+          "symbol": "new: createPhaserRenderContext",
+          "lines": "new",
+          "action": "Create the file importing Phaser, RenderContext, RenderHandle and RenderSpriteSpec from '@game/engine/renderContext'. Export createPhaserRenderContext(scene: Phaser.Scene, resolveKey: (id: string) => string): RenderContext whose createSprite(spec) does: image = scene.add.image(spec.x, spec.y, resolveKey(spec.key)).setOrigin(0,0).setScale(spec.scale).setDepth(spec.depth); if spec.bounds, image.setInteractive(new Phaser.Geom.Rectangle(b.x,b.y,b.width,b.height), Phaser.Geom.Rectangle.Contains); label = scene.add.text(spec.x, spec.y - 12, spec.label ?? '', {fontSize:'10px'}).setDepth(spec.depth+0.5).setVisible(false).",
+          "code": "export function createPhaserRenderContext(scene: Phaser.Scene, resolveKey: (id: string) => string): RenderContext { return { createSprite(spec) { /* as described */ } }; }",
+          "expected": "Function exported and returns an object with createSprite"
+        },
+        {
+          "file": "game/frontend/src/phaser/renderContext.ts",
+          "symbol": "createSprite returned RenderHandle",
+          "lines": "new",
+          "action": "Return a RenderHandle: setVisible(v) calls image.setVisible(v) and, when v is false, label.setVisible(false); setHighlighted(on) calls image.setTint(0xfff2b0) when on else image.clearTint(); setLabelVisible(on) calls label.setVisible(on); onHover(cb) registers image.on('pointerover', () => cb(true)) and image.on('pointerout', () => cb(false)); onClick(cb) registers image.on('pointerdown', cb); destroy() calls image.destroy() and label.destroy().",
+          "expected": "All six RenderHandle methods exist and delegate to Phaser objects"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY2TSKYRCW1P4ZE632P",
+      "kind": "unit",
+      "title": "Act: Build scene objects in BootScene.create via buildScene",
+      "body": "Add a validated sceneSpec export to runtime/content.ts and make BootScene.create build objects through buildScene with the Phaser render context, destroying them on shutdown.\n\n## Acceptance criteria\n- create calls buildScene(ctx, sceneSpec) once\n- Shutdown destroys every built object\n\n\n## Scope\n- In scope: content.ts\n- In scope: BootScene.ts\n- Out of scope: State sync\n- Preserve: Effects and transition wiring\n\n\n## Technical constraints\n- Use sceneSchema.parse\n- Code path: `game/frontend/src/runtime/content.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- R2\n- A1\n\n\n## Definition of done\n- BootScene holds sceneObjects built from content only\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Export sceneSpec and call buildScene from BootScene",
+      "description": "Add a validated sceneSpec export to runtime/content.ts and make BootScene.create build objects through buildScene with the Phaser render context, destroying them on shutdown.",
+      "acceptance_criteria": [
+        "create calls buildScene(ctx, sceneSpec) once",
+        "Shutdown destroys every built object"
+      ],
+      "scope": {
+        "in_scope": [
+          "content.ts",
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "State sync"
+        ],
+        "preserve": [
+          "Effects and transition wiring"
+        ]
+      },
+      "technical_constraints": [
+        "Use sceneSchema.parse",
+        "Code path: `game/frontend/src/runtime/content.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "R2",
+        "A1"
+      ],
+      "definition_of_done": [
+        "BootScene holds sceneObjects built from content only",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-525.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M856NGY29MJGYB1CN9TECRXQ",
+      "matched_feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+      "links": [
+        "parent:01M856NGY29MJGYB1CN9TECRXQ",
+        "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+        "artifact:.ai-dlc/units/UNIT-525.md"
+      ],
+      "depends_on": [
+        "01M856NGY29MJGYB1CN9TECRXQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-525.md",
+      "artifact_id": "UNIT-525",
+      "steps": [
+        {
+          "file": "game/frontend/src/runtime/content.ts",
+          "symbol": "new: sceneSpec",
+          "lines": "after L28",
+          "action": "Import sceneSchema and type SceneSpec from '@game/content/schema' and add an exported constant parsed from the same bedroom.yaml.",
+          "code": "export const sceneSpec: SceneSpec = sceneSchema.parse(parseYaml<unknown>('scenes/bedroom.yaml'));",
+          "expected": "sceneSpec exported alongside scene"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene fields and imports",
+          "lines": "L1-L19",
+          "action": "Import buildScene from '@game/engine/buildScene', SceneObject type from '@game/entities/SceneObject', createPhaserRenderContext from './renderContext', and sceneSpec from '../runtime/content'. Add field private sceneObjects: SceneObject[] = [];",
+          "expected": "File compiles with new imports"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L47-L60",
+          "action": "After this.effects = buildEffects(ctx, scene), add this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec). In the SHUTDOWN callback add this.sceneObjects.forEach((o) => o.destroy()); this.sceneObjects = [].",
+          "code": "this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);",
+          "expected": "Objects are built from content and destroyed on shutdown"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY2NZK099D2QTFTMCQX",
+      "kind": "unit",
+      "title": "Act: Sync SceneObjects with the store and emit objectClick",
+      "body": "After building objects, BootScene syncs them with the store state and forwards activations to phaserToReact.\n\n## Acceptance criteria\n- sync runs in create and on each store change with non-null state\n- onInteract emits objectClick\n\n\n## Scope\n- In scope: BootScene.create, onStateChange\n- Out of scope: Hover events\n- Preserve: readState\n\n\n## Technical constraints\n- No state copy in BootScene\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- R3\n- A2\n\n\n## Definition of done\n- Store changes reach every SceneObject\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire sync and onInteract in BootScene",
+      "description": "After building objects, BootScene syncs them with the store state and forwards activations to phaserToReact.",
+      "acceptance_criteria": [
+        "sync runs in create and on each store change with non-null state",
+        "onInteract emits objectClick"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.create, onStateChange"
+        ],
+        "out_of_scope": [
+          "Hover events"
+        ],
+        "preserve": [
+          "readState"
+        ]
+      },
+      "technical_constraints": [
+        "No state copy in BootScene",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "R3",
+        "A2"
+      ],
+      "definition_of_done": [
+        "Store changes reach every SceneObject",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-526.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M856NGY2R46QJSMYE83ZM1QH",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M856NGY2R46QJSMYE83ZM1QH",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-526.md"
+      ],
+      "depends_on": [
+        "01M856NGY2R46QJSMYE83ZM1QH"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-526.md",
+      "artifact_id": "UNIT-526",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L47-L60",
+          "action": "After building sceneObjects, for each object call o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })), then call this.onStateChange().",
+          "code": "this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));\nthis.onStateChange();",
+          "expected": "Activations reach the bus and initial sync happens"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.onStateChange",
+          "lines": "L62-L64",
+          "action": "Replace the body: const state = this.readState(); if (!state) return; this.sceneObjects.forEach((o) => o.sync(state));",
+          "code": "const state = this.readState();\nif (!state) return;\nthis.sceneObjects.forEach((o) => o.sync(state));",
+          "expected": "Null state is ignored; non-null state syncs every object"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY22X79G95X4CHPFM6Z",
+      "kind": "unit",
+      "title": "Verify: Phaser render context unit tests",
+      "body": "Test createSprite and the handle against a fake scene object, no real Phaser or canvas.\n\n## Acceptance criteria\n- Image created with spec values and resolved key\n- Interactive bounds, highlight, label and destroy behave as specified\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock 'phaser' with vi.mock; fake scene.add.image and scene.add.text return stub objects\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for createPhaserRenderContext with a fake Phaser scene",
+      "description": "Test createSprite and the handle against a fake scene object, no real Phaser or canvas.",
+      "acceptance_criteria": [
+        "Image created with spec values and resolved key",
+        "Interactive bounds, highlight, label and destroy behave as specified"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock 'phaser' with vi.mock; fake scene.add.image and scene.add.text return stub objects"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-527.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M856NGY2VS360NP23RNKDJDY",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M856NGY2VS360NP23RNKDJDY",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-527.md"
+      ],
+      "depends_on": [
+        "01M856NGY2VS360NP23RNKDJDY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-527.md",
+      "artifact_id": "UNIT-527",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserRenderContext.test.ts",
+          "symbol": "new: createSprite places image",
+          "lines": "new",
+          "action": "vi.mock('phaser') providing Geom.Rectangle (class storing args) and Geom.Rectangle.Contains. Build a fake scene whose add.image returns a chainable stub (setOrigin,setScale,setDepth,setInteractive,setVisible,setTint,clearTint,on,destroy as vi.fn) and add.text likewise. Call createPhaserRenderContext(scene, (id) => 'k:'+id).createSprite({key:'objects/x',x:5,y:6,scale:2,depth:3,label:'X',bounds:{x:0,y:0,width:10,height:20}}). Assert add.image called with (5,6,'k:objects/x'), setScale(2), setDepth(3), setInteractive called with a Rectangle of 0,0,10,20.",
+          "command": "cd game/frontend && npx vitest run tests/phaserRenderContext.test.ts -t 'places image'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/phaserRenderContext.test.ts",
+          "symbol": "new: handle behavior",
+          "lines": "new",
+          "action": "Add tests: setHighlighted(true) calls setTint, false calls clearTint; setLabelVisible(true) calls label.setVisible(true); setVisible(false) hides label; onHover registers pointerover/pointerout and cb receives true/false when invoked; onClick registers pointerdown; destroy calls destroy on image and label.",
+          "command": "cd game/frontend && npx vitest run tests/phaserRenderContext.test.ts",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY226PC8ZCXHCA71ZZ7",
+      "kind": "unit",
+      "title": "Verify: BootScene builds objects from content with none hardcoded",
+      "body": "Mock buildScene and the render context; assert BootScene wiring and scan source text for hardcoded ids.\n\n## Acceptance criteria\n- buildScene called once with sceneSpec\n- Shutdown destroys objects\n- No object or asset id literal in BootScene.ts or renderContext.ts\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: bootSceneEffects.test.ts\n\n\n## Technical constraints\n- Same phaser mock pattern as frontend/tests/bootSceneEffects.test.ts; fs read only of two source files\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for buildScene wiring, cleanup and no-hardcode guard",
+      "description": "Mock buildScene and the render context; assert BootScene wiring and scan source text for hardcoded ids.",
+      "acceptance_criteria": [
+        "buildScene called once with sceneSpec",
+        "Shutdown destroys objects",
+        "No object or asset id literal in BootScene.ts or renderContext.ts"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "bootSceneEffects.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Same phaser mock pattern as frontend/tests/bootSceneEffects.test.ts; fs read only of two source files"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-528.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M856NGY2TSKYRCW1P4ZE632P",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M856NGY2TSKYRCW1P4ZE632P",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-528.md"
+      ],
+      "depends_on": [
+        "01M856NGY2TSKYRCW1P4ZE632P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-528.md",
+      "artifact_id": "UNIT-528",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneBuild.test.ts",
+          "symbol": "new: BootScene build wiring",
+          "lines": "new",
+          "action": "Mock 'phaser' (Scene with events.once = vi.fn, Scenes.Events.SHUTDOWN), '@game/engine/buildScene' (buildScene: vi.fn returning two fake objects with destroy vi.fn and onInteract/sync vi.fn), '@game/engine/buildEffects', '@game/engine/playSceneTransition', '../src/phaser/renderContext'. Call new BootScene().create(); assert buildScene called once with (ctx, sceneSpec imported from '../src/runtime/content'). Capture the SHUTDOWN callback from events.once.mock.calls and invoke it; assert each fake object's destroy was called once.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneBuild.test.ts -t 'build wiring'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneBuild.test.ts",
+          "symbol": "new: no hardcoded objects",
+          "lines": "new",
+          "action": "Read BootScene.ts and renderContext.ts via node:fs readFileSync; for every object id and asset id in sceneSpec.objects assert the source text does not contain the quoted id string.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneBuild.test.ts -t 'no hardcoded'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY2JVWFBSB9G4TTV0AQ",
+      "kind": "unit",
+      "title": "Verify: BootScene state sync and objectClick forwarding",
+      "body": "With buildScene mocked to return fake objects, assert sync and objectClick behavior.\n\n## Acceptance criteria\n- create syncs with non-null state\n- onStateChange syncs new state and ignores null\n- onInteract emits objectClick\n\n\n## Scope\n- In scope: New test file\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Real useGameStore with setState; phaserToReact spied; same mocks as bootSceneBuild.test.ts\n\n\n## Dependencies\n- A3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for sync on store change and click emission",
+      "description": "With buildScene mocked to return fake objects, assert sync and objectClick behavior.",
+      "acceptance_criteria": [
+        "create syncs with non-null state",
+        "onStateChange syncs new state and ignores null",
+        "onInteract emits objectClick"
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Real useGameStore with setState; phaserToReact spied; same mocks as bootSceneBuild.test.ts"
+      ],
+      "dependencies": [
+        "A3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-529.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M856NGY2NZK099D2QTFTMCQX",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M856NGY2NZK099D2QTFTMCQX",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-529.md"
+      ],
+      "depends_on": [
+        "01M856NGY2NZK099D2QTFTMCQX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-529.md",
+      "artifact_id": "UNIT-529",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneSync.test.ts",
+          "symbol": "new: sync and null state",
+          "lines": "new",
+          "action": "Mock phaser, buildScene (returns one fake object {sync, destroy, onInteract: vi.fn()}), buildEffects, playSceneTransition, renderContext. Set useGameStore state to createInitialState(world, scene) from '@game/state/gameState'; create(); assert sync called with that state. Then setState to a second state, call boot.onStateChange(), assert sync called with the second. Then setState({state:null}), call onStateChange(), assert call count unchanged.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneSync.test.ts -t 'sync'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneSync.test.ts",
+          "symbol": "new: objectClick forwarding",
+          "lines": "new",
+          "action": "vi.spyOn(phaserToReact, 'emit'); after create(), take the callback passed to the fake object's onInteract and invoke it with {objectId:'abc', actions:[]}; assert emit called with ('objectClick', {id:'abc'}).",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneSync.test.ts",
+          "expected": "All tests in the file pass"
+        }
+      ]
+    },
+    {
+      "id": "01M856NGY279Z2FK6AQ5A1WAMN",
+      "kind": "evidence",
+      "title": "Evidence: BootScene thin-wrapper unit tests pass",
+      "body": "Collect results of the three new unit test files proving BootScene delegates to buildScene with no hardcoded objects.\n\n## Acceptance criteria\n- phaserRenderContext, bootSceneBuild and bootSceneSync tests pass\n- Existing bootScene tests still pass\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Browser checks\n\n\n## Dependencies\n- V1\n- V2\n- V3\n\n\n## Definition of done\n- All listed tests are green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the render context, build wiring and sync unit tests pass",
+      "description": "Collect results of the three new unit test files proving BootScene delegates to buildScene with no hardcoded objects.",
+      "acceptance_criteria": [
+        "phaserRenderContext, bootSceneBuild and bootSceneSync tests pass",
+        "Existing bootScene tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "definition_of_done": [
+        "All listed tests are green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-106.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M856NGY22X79G95X4CHPFM6Z",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M856NGY22X79G95X4CHPFM6Z",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-106.md"
+      ],
+      "depends_on": [
+        "01M856NGY22X79G95X4CHPFM6Z",
+        "01M856NGY226PC8ZCXHCA71ZZ7",
+        "01M856NGY2JVWFBSB9G4TTV0AQ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-106.md",
+      "artifact_id": "EVD-106"
+    }
+  ],
+  "created_at": "2026-11-23T21:59:01.535968+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 10/11 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

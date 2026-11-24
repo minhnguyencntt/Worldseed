@@ -1,0 +1,56 @@
+{
+  "id": "01M84H1KRJQAQXYWB6188BSTCG",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "REQ · Claude adapter runs the CLI through an Exec interface with a fixed argument list",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Claude adapter invokes claude with a fixed prompt and no shell",
+  "description": "Context: provider_kind claude is accepted by config but has no agent. Desired behavior: Claude.Run calls Exec.Run(ctx, workDir, \"claude\", args) with args built from a constant prompt telling it to implement the structured tasks, never player text, and returns cost 0 or the wrapped error. Expected result: a real adapter that tests can fake. Why: community prompts are untrusted.",
+  "acceptance_criteria": [
+    "Given a fake Exec, When Claude.Run is called with workDir W, Then Exec receives dir W, name claude and a non-empty args slice",
+    "Given Exec returns an error, When Claude.Run is called, Then the error is returned wrapped with provider claude",
+    "Given a nil Exec, When NewClaude is called, Then it returns an error"
+  ],
+  "scope": {
+    "in_scope": [
+      "Exec interface",
+      "Claude type, NewClaude, Run"
+    ],
+    "out_of_scope": [
+      "a real os/exec implementation of Exec",
+      "parsing agent cost"
+    ],
+    "preserve": [
+      "runner.Agent signature"
+    ]
+  },
+  "technical_constraints": [
+    "No sh -c",
+    "Prompt is a package constant"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Claude satisfies runner.Agent",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-112.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H148VVZZEX7HD5CATP1FV",
+    "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+    "artifact:.ai-dlc/requirements/REQ-112.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H1KRJFKG6VVRSPTAP9PAT"
+  ],
+  "sim_node_id": "01M84H148V713Y7GRZDSCWCRBK",
+  "feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+  "artifact_path": ".ai-dlc/requirements/REQ-112.md",
+  "artifact_id": "REQ-112",
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.963346+00:00"
+}

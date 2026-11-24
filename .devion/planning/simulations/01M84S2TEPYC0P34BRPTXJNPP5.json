@@ -1,0 +1,462 @@
+{
+  "intent_id": "01M84S2TEPYC0P34BRPTXJNPP5",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84S418QJAQR9TF1THFTNDH7",
+      "kind": "intent",
+      "title": "SG-4.1.2 Lock phaser to 3.90.x in package-lock.json",
+      "body": "Context: game/frontend/package.json declares phaser ~3.90.0, but game/frontend/package-lock.json still records phaser ^4.2.1 in the root dependencies entry (L15) and version 4.2.1 under node_modules/phaser (L3445-L3453). Desired behavior: both entries use the resolved 3.90.0 release with its registry URL and integrity. Expected result: npm ci installs phaser 3.90.0. Why: the SG-4 Phaser 3.90 integration needs a reproducible install.\n\n## Acceptance criteria\n- Given package-lock.json, when packages[\"\"].dependencies.phaser is read, then it equals ~3.90.0 and matches package.json\n- Given package-lock.json, when packages[\"node_modules/phaser\"] is read, then version is 3.90.0 with the 3.90.0 tarball URL and integrity\n\n\n## Scope\n- In scope: phaser root dependency entry in game/frontend/package-lock.json\n- In scope: node_modules/phaser entry in game/frontend/package-lock.json\n- Out of scope: package.json changes (already ~3.90.0)\n- Out of scope: Phaser source code changes\n- Out of scope: other dependencies\n- Preserve: all other lockfile entries, including eventemitter3 5.0.4\n\n\n## Technical constraints\n- Phaser must stay on the 3.90.x line\n- No network or Git credentials in the browser\n\n\n## Definition of done\n- Both lockfile entries point to phaser 3.90.0\n- Lockfile unit tests pass\n\n\n## Non-functional requirements\n- Lockfile stays valid JSON, lockfileVersion 3\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Make package-lock.json resolve phaser to 3.90.0 in both lockfile entries",
+      "description": "Context: game/frontend/package.json declares phaser ~3.90.0, but game/frontend/package-lock.json still records phaser ^4.2.1 in the root dependencies entry (L15) and version 4.2.1 under node_modules/phaser (L3445-L3453). Desired behavior: both entries use the resolved 3.90.0 release with its registry URL and integrity. Expected result: npm ci installs phaser 3.90.0. Why: the SG-4 Phaser 3.90 integration needs a reproducible install.",
+      "acceptance_criteria": [
+        "Given package-lock.json, when packages[\"\"].dependencies.phaser is read, then it equals ~3.90.0 and matches package.json",
+        "Given package-lock.json, when packages[\"node_modules/phaser\"] is read, then version is 3.90.0 with the 3.90.0 tarball URL and integrity"
+      ],
+      "scope": {
+        "in_scope": [
+          "phaser root dependency entry in game/frontend/package-lock.json",
+          "node_modules/phaser entry in game/frontend/package-lock.json"
+        ],
+        "out_of_scope": [
+          "package.json changes (already ~3.90.0)",
+          "Phaser source code changes",
+          "other dependencies"
+        ],
+        "preserve": [
+          "all other lockfile entries, including eventemitter3 5.0.4"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser must stay on the 3.90.x line",
+        "No network or Git credentials in the browser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both lockfile entries point to phaser 3.90.0",
+        "Lockfile unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-081.md`"
+      ],
+      "non_functional": [
+        "Lockfile stays valid JSON, lockfileVersion 3"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-081.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-081.md",
+      "artifact_id": "INT-081"
+    },
+    {
+      "id": "01M84S418QYD62777773CFKCG7",
+      "kind": "requirement",
+      "title": "REQ · Lockfile root dependencies entry declares phaser ~3.90.0",
+      "body": "Context: package-lock.json L15 reads \"phaser\": \"^4.2.1\", which disagrees with package.json L18 (~3.90.0). Desired behavior: the root entry equals the package.json specifier. Expected result: npm ci does not report lock/package mismatch. Why: a mismatched lock can install Phaser 4.\n\n## Acceptance criteria\n- Given package-lock.json, when the root dependencies.phaser is read, then it equals ~3.90.0\n- Given package.json and the lockfile root, when phaser specifiers are compared, then they are identical\n\n\n## Scope\n- In scope: packages[\"\"].dependencies.phaser\n- Out of scope: node_modules/phaser entry\n- Preserve: other root dependencies\n\n\n## Technical constraints\n- Specifier must be exactly ~3.90.0\n\n\n## Definition of done\n- Root entry reads ~3.90.0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Root packages[\"\"].dependencies.phaser matches package.json",
+      "description": "Context: package-lock.json L15 reads \"phaser\": \"^4.2.1\", which disagrees with package.json L18 (~3.90.0). Desired behavior: the root entry equals the package.json specifier. Expected result: npm ci does not report lock/package mismatch. Why: a mismatched lock can install Phaser 4.",
+      "acceptance_criteria": [
+        "Given package-lock.json, when the root dependencies.phaser is read, then it equals ~3.90.0",
+        "Given package.json and the lockfile root, when phaser specifiers are compared, then they are identical"
+      ],
+      "scope": {
+        "in_scope": [
+          "packages[\"\"].dependencies.phaser"
+        ],
+        "out_of_scope": [
+          "node_modules/phaser entry"
+        ],
+        "preserve": [
+          "other root dependencies"
+        ]
+      },
+      "technical_constraints": [
+        "Specifier must be exactly ~3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Root entry reads ~3.90.0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-203.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84S418QJAQR9TF1THFTNDH7",
+      "matched_feature_id": "01M847PS3RVCAJMFMJRDF5ZSY3",
+      "links": [
+        "parent:01M84S418QJAQR9TF1THFTNDH7",
+        "trace:01M847PS3RVCAJMFMJRDF5ZSY3",
+        "artifact:.ai-dlc/requirements/REQ-203.md"
+      ],
+      "depends_on": [
+        "01M84S418QJAQR9TF1THFTNDH7"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-203.md",
+      "artifact_id": "REQ-203"
+    },
+    {
+      "id": "01M84S418QNCT37YCC02V3WNGX",
+      "kind": "requirement",
+      "title": "REQ · node_modules/phaser lock entry resolves 3.90.0 with URL and integrity",
+      "body": "Context: node_modules/phaser (L3445-L3453) records 4.2.1. Desired behavior: version 3.90.0, resolved https://registry.npmjs.org/phaser/-/phaser-3.90.0.tgz, integrity sha512-/cziz/5ZIn02uDkC9RzN8VF9x3Gs3XdFFf9nkiMEQT3p7hQlWuyjy4QWosU802qqno2YSLn2BfqwOKLv/sSVfQ==, and dependencies eventemitter3 ^5.0.1 as published. Why: reproducible install of the 3.90 line.\n\n## Acceptance criteria\n- Given the lockfile, when node_modules/phaser is read, then version is 3.90.0 and resolved is the phaser-3.90.0.tgz registry URL\n- Given the lockfile, when node_modules/phaser integrity is read, then it equals the 3.90.0 sha512 value and its eventemitter3 range is satisfied by the locked 5.0.4\n\n\n## Scope\n- In scope: node_modules/phaser lockfile entry\n- Out of scope: root dependencies entry\n- Preserve: eventemitter3 5.0.4 entry\n- Preserve: license field MIT\n\n\n## Technical constraints\n- Values must come from npm registry metadata for phaser@3.90.0\n\n\n## Definition of done\n- Entry matches registry metadata for 3.90.0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "node_modules/phaser records version, resolved URL and integrity of 3.90.0",
+      "description": "Context: node_modules/phaser (L3445-L3453) records 4.2.1. Desired behavior: version 3.90.0, resolved https://registry.npmjs.org/phaser/-/phaser-3.90.0.tgz, integrity sha512-/cziz/5ZIn02uDkC9RzN8VF9x3Gs3XdFFf9nkiMEQT3p7hQlWuyjy4QWosU802qqno2YSLn2BfqwOKLv/sSVfQ==, and dependencies eventemitter3 ^5.0.1 as published. Why: reproducible install of the 3.90 line.",
+      "acceptance_criteria": [
+        "Given the lockfile, when node_modules/phaser is read, then version is 3.90.0 and resolved is the phaser-3.90.0.tgz registry URL",
+        "Given the lockfile, when node_modules/phaser integrity is read, then it equals the 3.90.0 sha512 value and its eventemitter3 range is satisfied by the locked 5.0.4"
+      ],
+      "scope": {
+        "in_scope": [
+          "node_modules/phaser lockfile entry"
+        ],
+        "out_of_scope": [
+          "root dependencies entry"
+        ],
+        "preserve": [
+          "eventemitter3 5.0.4 entry",
+          "license field MIT"
+        ]
+      },
+      "technical_constraints": [
+        "Values must come from npm registry metadata for phaser@3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Entry matches registry metadata for 3.90.0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-204.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84S418QJAQR9TF1THFTNDH7",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84S418QJAQR9TF1THFTNDH7",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-204.md"
+      ],
+      "depends_on": [
+        "01M84S418QJAQR9TF1THFTNDH7"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-204.md",
+      "artifact_id": "REQ-204"
+    },
+    {
+      "id": "01M84S418QB0DN30B52G0HG1B5",
+      "kind": "unit",
+      "title": "Act: Set root phaser specifier to ~3.90.0 in package-lock.json",
+      "body": "Change packages[\"\"].dependencies.phaser from ^4.2.1 to ~3.90.0 in game/frontend/package-lock.json.\n\n## Acceptance criteria\n- Root dependencies.phaser equals ~3.90.0\n- The lockfile remains valid JSON\n\n\n## Scope\n- In scope: lockfile L15\n- Out of scope: node_modules/phaser entry\n- Preserve: other entries\n\n\n## Technical constraints\n- Code path: `game/frontend/package-lock.json`\n\n\n## Definition of done\n- L15 reads ~3.90.0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Edit root dependencies phaser entry",
+      "description": "Change packages[\"\"].dependencies.phaser from ^4.2.1 to ~3.90.0 in game/frontend/package-lock.json.",
+      "acceptance_criteria": [
+        "Root dependencies.phaser equals ~3.90.0",
+        "The lockfile remains valid JSON"
+      ],
+      "scope": {
+        "in_scope": [
+          "lockfile L15"
+        ],
+        "out_of_scope": [
+          "node_modules/phaser entry"
+        ],
+        "preserve": [
+          "other entries"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/package-lock.json`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "L15 reads ~3.90.0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-406.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84S418QYD62777773CFKCG7",
+      "matched_feature_id": "01M84MFPVV8H5BJSSV1HW9NJ50",
+      "links": [
+        "parent:01M84S418QYD62777773CFKCG7",
+        "trace:01M84MFPVV8H5BJSSV1HW9NJ50",
+        "artifact:.ai-dlc/units/UNIT-406.md"
+      ],
+      "depends_on": [
+        "01M84S418QYD62777773CFKCG7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-406.md",
+      "artifact_id": "UNIT-406",
+      "steps": [
+        {
+          "file": "game/frontend/package-lock.json",
+          "symbol": "packages[\"\"].dependencies.phaser",
+          "lines": "L15",
+          "action": "Replace the phaser specifier value ^4.2.1 with ~3.90.0 in the root package dependencies block",
+          "code": "\"phaser\": \"^4.2.1\", -> \"phaser\": \"~3.90.0\",",
+          "expected": "Root dependencies entry reads \"phaser\": \"~3.90.0\""
+        }
+      ]
+    },
+    {
+      "id": "01M84S418Q22AV33AFEBHQ1ADH",
+      "kind": "unit",
+      "title": "Act: Update node_modules/phaser lock entry to 3.90.0",
+      "body": "Rewrite the node_modules/phaser block in game/frontend/package-lock.json with the 3.90.0 registry values.\n\n## Acceptance criteria\n- version is 3.90.0 with matching resolved URL and integrity\n- eventemitter3 range is ^5.0.1\n\n\n## Scope\n- In scope: lockfile L3445-L3453\n- Out of scope: root entry\n- Preserve: eventemitter3 5.0.4 entry\n\n\n## Technical constraints\n- Code path: `game/frontend/package-lock.json`\n\n\n## Definition of done\n- Block matches 3.90.0 registry metadata\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Edit version, resolved, integrity and dependencies",
+      "description": "Rewrite the node_modules/phaser block in game/frontend/package-lock.json with the 3.90.0 registry values.",
+      "acceptance_criteria": [
+        "version is 3.90.0 with matching resolved URL and integrity",
+        "eventemitter3 range is ^5.0.1"
+      ],
+      "scope": {
+        "in_scope": [
+          "lockfile L3445-L3453"
+        ],
+        "out_of_scope": [
+          "root entry"
+        ],
+        "preserve": [
+          "eventemitter3 5.0.4 entry"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/package-lock.json`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Block matches 3.90.0 registry metadata",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-407.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84S418QNCT37YCC02V3WNGX",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M84S418QNCT37YCC02V3WNGX",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-407.md"
+      ],
+      "depends_on": [
+        "01M84S418QNCT37YCC02V3WNGX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-407.md",
+      "artifact_id": "UNIT-407",
+      "steps": [
+        {
+          "file": "game/frontend/package-lock.json",
+          "symbol": "packages[\"node_modules/phaser\"]",
+          "lines": "L3445-L3453",
+          "action": "Replace version, resolved and integrity with the 3.90.0 values and change the eventemitter3 range from ^5.0.4 to ^5.0.1",
+          "code": "version 4.2.1 -> 3.90.0; resolved .../phaser-4.2.1.tgz -> https://registry.npmjs.org/phaser/-/phaser-3.90.0.tgz; integrity -> sha512-/cziz/5ZIn02uDkC9RzN8VF9x3Gs3XdFFf9nkiMEQT3p7hQlWuyjy4QWosU802qqno2YSLn2BfqwOKLv/sSVfQ==; eventemitter3 ^5.0.4 -> ^5.0.1",
+          "expected": "node_modules/phaser entry describes 3.90.0"
+        }
+      ]
+    },
+    {
+      "id": "01M84S418QNDRM76KWTFT1XXZ9",
+      "kind": "unit",
+      "title": "Verify: Lockfile root phaser specifier unit tests",
+      "body": "Tests read package.json and package-lock.json from disk only.\n\n## Acceptance criteria\n- Root lock phaser equals ~3.90.0\n- Root lock phaser equals package.json phaser\n\n\n## Scope\n- In scope: new test file\n- Out of scope: product code\n- Preserve: tests/phaserDependency.test.ts\n\n\n## Technical constraints\n- Use the NodeURL alias pattern from tests/phaserDependency.test.ts\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for root lock entry vs package.json",
+      "description": "Tests read package.json and package-lock.json from disk only.",
+      "acceptance_criteria": [
+        "Root lock phaser equals ~3.90.0",
+        "Root lock phaser equals package.json phaser"
+      ],
+      "scope": {
+        "in_scope": [
+          "new test file"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "tests/phaserDependency.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Use the NodeURL alias pattern from tests/phaserDependency.test.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-408.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84S418QB0DN30B52G0HG1B5",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84S418QB0DN30B52G0HG1B5",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-408.md"
+      ],
+      "depends_on": [
+        "01M84S418QB0DN30B52G0HG1B5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-408.md",
+      "artifact_id": "UNIT-408",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserLockRoot.test.ts",
+          "symbol": "new: describe('phaser lockfile root entry')",
+          "lines": "new",
+          "action": "Create the file mirroring the readJson helper in tests/phaserDependency.test.ts for both package.json and package-lock.json; add test 'root lock entry equals ~3.90.0' asserting lock.packages[''].dependencies.phaser === '~3.90.0' and test 'matches package.json' asserting it equals pkg.dependencies.phaser",
+          "command": "cd game/frontend && npx vitest run tests/phaserLockRoot.test.ts",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84S418QY4V3CHW75WPNVGTQ",
+      "kind": "unit",
+      "title": "Verify: Lockfile node_modules/phaser entry unit tests",
+      "body": "Tests read package-lock.json from disk only.\n\n## Acceptance criteria\n- version is 3.90.0 and resolved URL is the 3.90.0 tarball\n- integrity equals the 3.90.0 sha512 and eventemitter3 range is satisfied by the locked version\n\n\n## Scope\n- In scope: new test file\n- Out of scope: product code\n- Preserve: tests/phaserDependency.test.ts\n\n\n## Technical constraints\n- Expected values come from npm registry metadata of phaser@3.90.0\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for resolved version, URL and integrity",
+      "description": "Tests read package-lock.json from disk only.",
+      "acceptance_criteria": [
+        "version is 3.90.0 and resolved URL is the 3.90.0 tarball",
+        "integrity equals the 3.90.0 sha512 and eventemitter3 range is satisfied by the locked version"
+      ],
+      "scope": {
+        "in_scope": [
+          "new test file"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "tests/phaserDependency.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Expected values come from npm registry metadata of phaser@3.90.0"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-409.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84S418Q22AV33AFEBHQ1ADH",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84S418Q22AV33AFEBHQ1ADH",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-409.md"
+      ],
+      "depends_on": [
+        "01M84S418Q22AV33AFEBHQ1ADH"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-409.md",
+      "artifact_id": "UNIT-409",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserLockEntry.test.ts",
+          "symbol": "new: describe('phaser lockfile node_modules entry')",
+          "lines": "new",
+          "action": "Create the file reading package-lock.json with the NodeURL alias pattern; add test 'resolves 3.90.0' asserting entry.version === '3.90.0' and entry.resolved === 'https://registry.npmjs.org/phaser/-/phaser-3.90.0.tgz'; add test 'integrity and deps' asserting entry.integrity equals the 3.90.0 sha512 string, entry.dependencies.eventemitter3 === '^5.0.1', and packages['node_modules/eventemitter3'].version === '5.0.4'",
+          "command": "cd game/frontend && npx vitest run tests/phaserLockEntry.test.ts",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84S418QM4X496PASAWNXKV3",
+      "kind": "evidence",
+      "title": "Evidence: Phaser lockfile 3.90.x unit tests pass",
+      "body": "Evidence that the lockfile root and node_modules phaser entries resolve to 3.90.x, shown by the passing unit tests.\n\n## Acceptance criteria\n- phaserLockRoot and phaserLockEntry tests pass\n- phaserDependency test still passes\n\n\n## Scope\n- In scope: test results\n- Out of scope: code changes\n\n\n## Definition of done\n- Test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record passing lockfile unit tests",
+      "description": "Evidence that the lockfile root and node_modules phaser entries resolve to 3.90.x, shown by the passing unit tests.",
+      "acceptance_criteria": [
+        "phaserLockRoot and phaserLockEntry tests pass",
+        "phaserDependency test still passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "code changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-081.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84S418QNDRM76KWTFT1XXZ9",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84S418QNDRM76KWTFT1XXZ9",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-081.md"
+      ],
+      "depends_on": [
+        "01M84S418QNDRM76KWTFT1XXZ9",
+        "01M84S418QY4V3CHW75WPNVGTQ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-081.md",
+      "artifact_id": "EVD-081"
+    }
+  ],
+  "created_at": "2026-11-23T18:01:52.862018+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

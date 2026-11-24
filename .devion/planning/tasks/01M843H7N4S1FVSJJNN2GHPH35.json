@@ -1,0 +1,87 @@
+{
+  "id": "01M843H7N4S1FVSJJNN2GHPH35",
+  "intent_id": "01M843E57254ZA19GZD0A71MZ9",
+  "title": "Act: Port strict field validation into loader.ts loadWorld",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Replace the unchecked cast in loader.ts loadWorld with world.ts's checked parsing, keeping scenes as an array.",
+  "description": "Context: loader.ts L10-L25 reads world.yaml and scenes with plain casts. Desired behavior: reuse world.ts helpers isRecord, requireString and requireStringArray and its scene id mismatch check. Expected result: loadWorld throws descriptive errors for malformed content and returns scenes as SceneDef[].",
+  "acceptance_criteria": [
+    "loadWorld throws when world.yaml lacks a string id, title or startScene",
+    "loadWorld throws naming the missing file, such as s2.yaml, when a listed scene file is absent",
+    "loadWorld throws when a scene file's id differs from the listed id",
+    "loadWorld returns LoadedWorld whose scenes is an array in world.yaml order"
+  ],
+  "scope": {
+    "in_scope": [
+      "loader.ts loadWorld and helpers"
+    ],
+    "out_of_scope": [
+      "validateWorld",
+      "tests"
+    ],
+    "preserve": [
+      "export names loadWorld, validateWorld, LoadedWorld"
+    ]
+  },
+  "technical_constraints": [
+    "Missing scene error message must still contain '<sceneId>.yaml'",
+    "Code path: `backend/game/src/content/loader.ts`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "npm run typecheck passes in backend/game",
+    "loadWorld on the-boys-room still succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-025.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M843H7DRT3Z77WG7BSA4Y3S7",
+    "trace:01M8433BDQAHZP8634MCXQMFHC",
+    "artifact:.ai-dlc/units/UNIT-025.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M843H7N4PCVQ6DAAENMGJARC"
+  ],
+  "sim_node_id": "01M843H7DR1FFZ5RN0BBSQVY6T",
+  "feature_id": "01M8433BDQAHZP8634MCXQMFHC",
+  "artifact_path": ".ai-dlc/units/UNIT-025.md",
+  "artifact_id": "UNIT-025",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/game/src/content/loader.ts",
+      "symbol": "new: isRecord, requireString, requireStringArray",
+      "lines": "after L9",
+      "action": "Add three private helper functions above loadWorld, copied from world.ts L25-L43: isRecord(value), requireString(data, key, file), requireStringArray(data, key, file), each throwing Error with the messages `${file} missing string field: ${key}` and `${file} field must be a list of strings: ${key}`.",
+      "code": "function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null && !Array.isArray(value); }",
+      "expected": "File compiles with the three helpers available."
+    },
+    {
+      "file": "backend/game/src/content/loader.ts",
+      "symbol": "readYaml",
+      "lines": "L11-L13",
+      "action": "Wrap fs.readFileSync in try/catch and throw new Error(`missing content file: ${file}`) on failure, so the message contains the file name such as s2.yaml.",
+      "code": "before: return parse(fs.readFileSync(file, 'utf8')); -> after: let source: string; try { source = fs.readFileSync(file, 'utf8'); } catch { throw new Error(`missing content file: ${file}`); } return parse(source);",
+      "expected": "Reading a nonexistent file throws an error containing the path."
+    },
+    {
+      "file": "backend/game/src/content/loader.ts",
+      "symbol": "loadWorld",
+      "lines": "L15-L28",
+      "action": "Rewrite the body: read world.yaml into raw, throw if !isRecord(raw), throw 'world.yaml field must be a list: characters' if raw.characters is not an array, build world: WorldDef via requireString for id, title, startScene and requireStringArray for scenes and flags. For each sceneId read scenes/<sceneId>.yaml, require isRecord, require id via requireString, throw `${relPath} declares id ${id}, expected ${sceneId}` on mismatch, push the record cast as SceneDef onto an array. Remove the existsSync check. Return { ...world, scenes } where scenes stays SceneDef[].",
+      "code": "const scenes: SceneDef[] = []; for (const sceneId of world.scenes) { const relPath = path.join('scenes', `${sceneId}.yaml`); const sceneRaw = readYaml(path.join(worldDir, relPath)); if (!isRecord(sceneRaw)) throw new Error(`${relPath} must be a YAML mapping`); const id = requireString(sceneRaw, 'id', relPath); if (id !== sceneId) throw new Error(`${relPath} declares id ${id}, expected ${sceneId}`); scenes.push(sceneRaw as unknown as SceneDef); }",
+      "expected": "loadWorld('content/worlds/the-boys-room') returns scenes array containing bedroom."
+    }
+  ],
+  "created_at": "2026-11-23T11:44:18.084921+00:00",
+  "updated_at": "2026-11-23T11:45:31.525736+00:00"
+}

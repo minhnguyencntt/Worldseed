@@ -1,0 +1,478 @@
+{
+  "intent_id": "01M84JSSMB017K29PX57X7B2KQ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84JTWM3PN70EBHM6N3PP8C2",
+      "kind": "intent",
+      "title": "SG-5.3 · Exporter builds frozen-only JSON export",
+      "body": "Context: backend/internal/contribution already has the Export and ExportContribution types (export.go), the ExportSource interface with ListByRound and FrozenIDs (export_source.go), and FileStore.FrozenIDs (store.go). No exporter exists yet. Desired behavior: an Exporter builds an Export from the source, includes only contributions whose ids are frozen in the round snapshot, and returns an empty contributions list for an empty round. Why: the devion workseed handoff must receive only frozen contributions.\n\n## Acceptance criteria\n- Given a source with contributions A, B, C and frozen ids A and C, When Export is called, Then Contributions holds exactly A and C\n- Given a round with no frozen ids, When Export is called, Then Contributions is a non-nil empty slice that marshals to []\n\n\n## Scope\n- In scope: backend/internal/contribution exporter\n- Out of scope: HTTP endpoints\n- Out of scope: CLI\n- Out of scope: worker or execution code\n- Preserve: Export JSON types\n- Preserve: ExportSource interface\n- Preserve: FileStore behavior\n\n\n## Technical constraints\n- Go package contribution only; depend only on ExportSource\n- No import of worker or execution packages\n\n\n## Definition of done\n- Exporter implemented and unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add an exporter that builds the Export JSON from an ExportSource using only frozen contributions",
+      "description": "Context: backend/internal/contribution already has the Export and ExportContribution types (export.go), the ExportSource interface with ListByRound and FrozenIDs (export_source.go), and FileStore.FrozenIDs (store.go). No exporter exists yet. Desired behavior: an Exporter builds an Export from the source, includes only contributions whose ids are frozen in the round snapshot, and returns an empty contributions list for an empty round. Why: the devion workseed handoff must receive only frozen contributions.",
+      "acceptance_criteria": [
+        "Given a source with contributions A, B, C and frozen ids A and C, When Export is called, Then Contributions holds exactly A and C",
+        "Given a round with no frozen ids, When Export is called, Then Contributions is a non-nil empty slice that marshals to []"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/contribution exporter"
+        ],
+        "out_of_scope": [
+          "HTTP endpoints",
+          "CLI",
+          "worker or execution code"
+        ],
+        "preserve": [
+          "Export JSON types",
+          "ExportSource interface",
+          "FileStore behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Go package contribution only; depend only on ExportSource",
+        "No import of worker or execution packages"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exporter implemented and unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-053.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+      "links": [
+        "trace:01M84JF0K0XHTV40GE5BY6073A",
+        "artifact:.ai-dlc/intent/INT-053.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-053.md",
+      "artifact_id": "INT-053"
+    },
+    {
+      "id": "01M84JTWM3RWKS1TV4X78DD65J",
+      "kind": "requirement",
+      "title": "REQ · Exporter includes only frozen contributions in snapshot order",
+      "body": "Exporter reads ListByRound and FrozenIDs from an ExportSource and builds Export with Version ExportVersion, WorldID, RoundID and ExportContribution entries (ID, Author=PlayerID, Content=Prompt, CreatedAt) for frozen ids only, in the order FrozenIDs lists them.\n\n## Acceptance criteria\n- Given contributions A,B,C and frozen ids [C,A], When Export runs, Then Contributions IDs are [C,A]\n- Given an unfrozen contribution B, When Export runs, Then B does not appear and fields map PlayerID to author and Prompt to content\n\n\n## Scope\n- In scope: Exporter type and Export method\n- Out of scope: empty round handling beyond non-nil slice\n- Preserve: export.go types\n\n\n## Technical constraints\n- Frozen ids absent from ListByRound are skipped\n\n\n## Definition of done\n- Frozen-only filtering behaves as specified\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Exporter.Export returns only contributions whose ids are frozen",
+      "description": "Exporter reads ListByRound and FrozenIDs from an ExportSource and builds Export with Version ExportVersion, WorldID, RoundID and ExportContribution entries (ID, Author=PlayerID, Content=Prompt, CreatedAt) for frozen ids only, in the order FrozenIDs lists them.",
+      "acceptance_criteria": [
+        "Given contributions A,B,C and frozen ids [C,A], When Export runs, Then Contributions IDs are [C,A]",
+        "Given an unfrozen contribution B, When Export runs, Then B does not appear and fields map PlayerID to author and Prompt to content"
+      ],
+      "scope": {
+        "in_scope": [
+          "Exporter type and Export method"
+        ],
+        "out_of_scope": [
+          "empty round handling beyond non-nil slice"
+        ],
+        "preserve": [
+          "export.go types"
+        ]
+      },
+      "technical_constraints": [
+        "Frozen ids absent from ListByRound are skipped"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Frozen-only filtering behaves as specified",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-133.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JTWM3PN70EBHM6N3PP8C2",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84JTWM3PN70EBHM6N3PP8C2",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-133.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3PN70EBHM6N3PP8C2"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-133.md",
+      "artifact_id": "REQ-133"
+    },
+    {
+      "id": "01M84JTWM3JYDM5E9Z0M89F8MX",
+      "kind": "requirement",
+      "title": "REQ · Empty round yields an empty list and source errors propagate",
+      "body": "When the snapshot freezes no ids, or the round has no contributions, Export returns Contributions as an empty non-nil slice so JSON shows []. Errors from FrozenIDs (including ErrNotFound) and ListByRound are returned wrapped with %w.\n\n## Acceptance criteria\n- Given empty frozen ids, When Export runs, Then json.Marshal output contains \"contributions\":[]\n- Given FrozenIDs returns ErrNotFound, When Export runs, Then errors.Is(err, ErrNotFound) is true\n\n\n## Scope\n- In scope: empty-round and error paths of Export\n- Out of scope: creating snapshots\n- Preserve: Export JSON types\n\n\n## Technical constraints\n- Use fmt.Errorf with %w\n\n\n## Definition of done\n- Empty and error paths behave as specified\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Empty frozen set gives non-nil empty contributions; source errors are wrapped and returned",
+      "description": "When the snapshot freezes no ids, or the round has no contributions, Export returns Contributions as an empty non-nil slice so JSON shows []. Errors from FrozenIDs (including ErrNotFound) and ListByRound are returned wrapped with %w.",
+      "acceptance_criteria": [
+        "Given empty frozen ids, When Export runs, Then json.Marshal output contains \"contributions\":[]",
+        "Given FrozenIDs returns ErrNotFound, When Export runs, Then errors.Is(err, ErrNotFound) is true"
+      ],
+      "scope": {
+        "in_scope": [
+          "empty-round and error paths of Export"
+        ],
+        "out_of_scope": [
+          "creating snapshots"
+        ],
+        "preserve": [
+          "Export JSON types"
+        ]
+      },
+      "technical_constraints": [
+        "Use fmt.Errorf with %w"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Empty and error paths behave as specified",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-134.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JTWM3PN70EBHM6N3PP8C2",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84JTWM3PN70EBHM6N3PP8C2",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-134.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3PN70EBHM6N3PP8C2"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-134.md",
+      "artifact_id": "REQ-134"
+    },
+    {
+      "id": "01M84JTWM3BGBBRG43SPSZ30A4",
+      "kind": "unit",
+      "title": "Act: Add Exporter with frozen-only filtering",
+      "body": "Create backend/internal/contribution/exporter.go defining Exporter wrapping an ExportSource and building an Export from frozen contributions.\n\n## Acceptance criteria\n- Exporter.Export returns only frozen contributions in snapshot order\n- Fields map PlayerID to Author and Prompt to Content\n\n\n## Scope\n- In scope: exporter.go\n- Out of scope: tests\n- Preserve: export.go\n- Preserve: export_source.go\n\n\n## Technical constraints\n- No worker/execution imports\n- New file: `backend/internal/contribution/exporter.go`\n\n\n## Definition of done\n- exporter.go compiles with go build ./internal/contribution\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create exporter.go with Exporter and Export method",
+      "description": "Create backend/internal/contribution/exporter.go defining Exporter wrapping an ExportSource and building an Export from frozen contributions.",
+      "acceptance_criteria": [
+        "Exporter.Export returns only frozen contributions in snapshot order",
+        "Fields map PlayerID to Author and Prompt to Content"
+      ],
+      "scope": {
+        "in_scope": [
+          "exporter.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "export.go",
+          "export_source.go"
+        ]
+      },
+      "technical_constraints": [
+        "No worker/execution imports",
+        "New file: `backend/internal/contribution/exporter.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "exporter.go compiles with go build ./internal/contribution",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-266.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JTWM3RWKS1TV4X78DD65J",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M84JTWM3RWKS1TV4X78DD65J",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-266.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3RWKS1TV4X78DD65J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-266.md",
+      "artifact_id": "UNIT-266",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/exporter.go",
+          "symbol": "new: Exporter, NewExporter",
+          "lines": "new",
+          "action": "Create package contribution file with type Exporter struct{ Source ExportSource } and func NewExporter(src ExportSource) *Exporter, each with a doc comment",
+          "code": "type Exporter struct{ Source ExportSource }\nfunc NewExporter(src ExportSource) *Exporter { return &Exporter{Source: src} }",
+          "expected": "Package compiles with the new type"
+        },
+        {
+          "file": "backend/internal/contribution/exporter.go",
+          "symbol": "new: (*Exporter).Export",
+          "lines": "new",
+          "action": "Add Export(ctx context.Context, worldID, roundID string) (Export, error): call Source.ListByRound and Source.FrozenIDs, index the contributions by ID in a map, then for each frozen id in order append ExportContribution{ID: c.ID, Author: c.PlayerID, Content: c.Prompt, CreatedAt: c.CreatedAt} when present in the map; return Export{Version: ExportVersion, WorldID: worldID, RoundID: roundID, Contributions: out}",
+          "code": "byID := map[string]Contribution{}\nfor _, c := range list { byID[c.ID] = c }\nout := []ExportContribution{}\nfor _, id := range ids { if c, ok := byID[id]; ok { out = append(out, ExportContribution{ID: c.ID, Author: c.PlayerID, Content: c.Prompt, CreatedAt: c.CreatedAt}) } }",
+          "expected": "Export returns frozen-only contributions"
+        }
+      ]
+    },
+    {
+      "id": "01M84JTWM3VRT94DYKN0XHG9RM",
+      "kind": "unit",
+      "title": "Act: Wrap source errors and guarantee a non-nil empty list in Exporter.Export",
+      "body": "In Exporter.Export, return wrapped errors from the source and make sure Contributions is never nil.\n\n## Acceptance criteria\n- Source errors are wrapped with %w\n- Empty frozen set yields a non-nil empty slice\n\n\n## Scope\n- In scope: Exporter.Export error paths\n- Out of scope: tests\n- Preserve: frozen filtering\n\n\n## Technical constraints\n- errors.Is must still match ErrNotFound\n- New file: `backend/internal/contribution/exporter.go`\n\n\n## Definition of done\n- Error and empty paths implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add error wrapping and empty-list guarantee",
+      "description": "In Exporter.Export, return wrapped errors from the source and make sure Contributions is never nil.",
+      "acceptance_criteria": [
+        "Source errors are wrapped with %w",
+        "Empty frozen set yields a non-nil empty slice"
+      ],
+      "scope": {
+        "in_scope": [
+          "Exporter.Export error paths"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "frozen filtering"
+        ]
+      },
+      "technical_constraints": [
+        "errors.Is must still match ErrNotFound",
+        "New file: `backend/internal/contribution/exporter.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Error and empty paths implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-267.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JTWM3JYDM5E9Z0M89F8MX",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M84JTWM3JYDM5E9Z0M89F8MX",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-267.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3JYDM5E9Z0M89F8MX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-267.md",
+      "artifact_id": "UNIT-267",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/exporter.go",
+          "symbol": "(*Exporter).Export",
+          "lines": "after the Export signature",
+          "action": "Check err from FrozenIDs first and return Export{}, fmt.Errorf(\"contribution: export frozen ids: %w\", err); then check err from ListByRound and return fmt.Errorf(\"contribution: export list: %w\", err); add the fmt import. Keep out initialised as []ExportContribution{} so it is non-nil",
+          "code": "ids, err := e.Source.FrozenIDs(ctx, worldID, roundID)\nif err != nil { return Export{}, fmt.Errorf(\"contribution: export frozen ids: %w\", err) }",
+          "expected": "Errors wrapped; empty set returns []"
+        }
+      ]
+    },
+    {
+      "id": "01M84JTWM3A7H794W8JFTJVRME",
+      "kind": "unit",
+      "title": "Verify: Exporter frozen-only filtering unit tests",
+      "body": "Tests with the in-memory fakeSource from export_source_test.go.\n\n## Acceptance criteria\n- Only frozen ids appear in snapshot order\n- Fields map correctly\n\n\n## Scope\n- In scope: exporter_test.go\n- Out of scope: real filesystem\n- Preserve: existing tests\n\n\n## Technical constraints\n- Reuse fakeSource (fields contributions, frozen)\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for frozen-only export",
+      "description": "Tests with the in-memory fakeSource from export_source_test.go.",
+      "acceptance_criteria": [
+        "Only frozen ids appear in snapshot order",
+        "Fields map correctly"
+      ],
+      "scope": {
+        "in_scope": [
+          "exporter_test.go"
+        ],
+        "out_of_scope": [
+          "real filesystem"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse fakeSource (fields contributions, frozen)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-268.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JTWM3BGBBRG43SPSZ30A4",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JTWM3BGBBRG43SPSZ30A4",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-268.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3BGBBRG43SPSZ30A4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-268.md",
+      "artifact_id": "UNIT-268",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/exporter_test.go",
+          "symbol": "new: TestExporter_OnlyFrozen",
+          "lines": "new",
+          "action": "Build fakeSource with contributions A,B,C (PlayerID p1, Prompt text, fixed CreatedAt) and frozen [C,A]; call NewExporter(src).Export(ctx,\"w\",\"ROUND-0000001\"); assert Contributions IDs equal [C,A], B absent, Author==PlayerID, Content==Prompt, Version==ExportVersion, WorldID and RoundID set",
+          "command": "cd backend && go test ./internal/contribution -run TestExporter_OnlyFrozen",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84JTWM31TTAWP0YK7F2PYDP",
+      "kind": "unit",
+      "title": "Verify: Exporter empty round and error propagation unit tests",
+      "body": "Tests for empty list JSON and ErrNotFound propagation using fakes.\n\n## Acceptance criteria\n- Empty round marshals contributions as []\n- ErrNotFound propagates via errors.Is\n\n\n## Scope\n- In scope: exporter_test.go\n- Out of scope: real filesystem\n- Preserve: existing tests\n\n\n## Technical constraints\n- Define an errSource fake in the test file returning a set error\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for empty round and errors",
+      "description": "Tests for empty list JSON and ErrNotFound propagation using fakes.",
+      "acceptance_criteria": [
+        "Empty round marshals contributions as []",
+        "ErrNotFound propagates via errors.Is"
+      ],
+      "scope": {
+        "in_scope": [
+          "exporter_test.go"
+        ],
+        "out_of_scope": [
+          "real filesystem"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Define an errSource fake in the test file returning a set error"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-269.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JTWM3VRT94DYKN0XHG9RM",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JTWM3VRT94DYKN0XHG9RM",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-269.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3VRT94DYKN0XHG9RM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-269.md",
+      "artifact_id": "UNIT-269",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/exporter_test.go",
+          "symbol": "new: TestExporter_EmptyRound",
+          "lines": "new",
+          "action": "With fakeSource holding contributions but frozen nil, call Export, assert Contributions is non-nil with len 0 and json.Marshal output contains \"contributions\":[]",
+          "command": "cd backend && go test ./internal/contribution -run TestExporter_EmptyRound",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/exporter_test.go",
+          "symbol": "new: TestExporter_SourceErrors",
+          "lines": "new",
+          "action": "Define errSource implementing ExportSource whose FrozenIDs returns ErrNotFound; assert errors.Is(err, ErrNotFound); second case with ListByRound returning a custom error asserts errors.Is on it",
+          "command": "cd backend && go test ./internal/contribution -run TestExporter_SourceErrors",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84JTWM3EZG2F302Z7SRJEAA",
+      "kind": "evidence",
+      "title": "Evidence: Exporter unit tests pass",
+      "body": "Record results of the exporter unit tests covering frozen-only and empty-round behavior.\n\n## Acceptance criteria\n- Exporter tests pass in the contribution package\n- Existing export tests still pass\n\n\n## Scope\n- In scope: test run results\n- Out of scope: e2e\n\n\n## Definition of done\n- go test ./internal/contribution passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that exporter unit tests pass",
+      "description": "Record results of the exporter unit tests covering frozen-only and empty-round behavior.",
+      "acceptance_criteria": [
+        "Exporter tests pass in the contribution package",
+        "Existing export tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run results"
+        ],
+        "out_of_scope": [
+          "e2e"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "go test ./internal/contribution passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-053.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JTWM3A7H794W8JFTJVRME",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84JTWM3A7H794W8JFTJVRME",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-053.md"
+      ],
+      "depends_on": [
+        "01M84JTWM3A7H794W8JFTJVRME",
+        "01M84JTWM31TTAWP0YK7F2PYDP"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-053.md",
+      "artifact_id": "EVD-053"
+    }
+  ],
+  "created_at": "2026-11-23T16:11:51.555126+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

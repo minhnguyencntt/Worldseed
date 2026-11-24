@@ -1,0 +1,654 @@
+{
+  "id": "01M84GGJX489KR1GD3TAZ76XHQ",
+  "trigger_node_id": "INT-042, UNIT-209 +10",
+  "node_ids": [
+    "INT-042",
+    "UNIT-209",
+    "UNIT-210",
+    "UNIT-211",
+    "UNIT-212",
+    "UNIT-213",
+    "UNIT-214",
+    "UNIT-215",
+    "REQ-105",
+    "REQ-106",
+    "REQ-107",
+    "EVD-042"
+  ],
+  "intent_id": "INT-042",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-042",
+      "title": "SG-7.7 · Worker startup recovery for unfinished executions and stale locks",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-209",
+      "title": "Act: Add store.StatusRecovering",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZ2YHS83W8GW3699TT"
+      ],
+      "depends_on": [
+        "REQ-106"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "cd54f9f8aae0bfc2db787e29d66abef28086bd45",
+      "from_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+      "started_at": "2026-11-23T15:31:09.289364+00:00",
+      "ended_at": "2026-11-23T15:31:19.322789+00:00",
+      "run_started_at": "2026-11-23T15:31:09.289364+00:00",
+      "duration_ms": 8784,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 6,
+      "tokens_out": 1068,
+      "estimated_cost_usd": 0.004277
+    },
+    {
+      "unit_id": "UNIT-210",
+      "title": "Act: Implement Recoverer.Recover scan, resume and mark",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZCWXQ7044JE8V3WAS"
+      ],
+      "depends_on": [
+        "REQ-105"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "119c0e8b3ff61aa819bcba99ce38e6a5155ded2c",
+      "from_sha": "1529f5cef69595487bc58f74811a4bdf0bbede1b",
+      "started_at": "2026-11-23T15:31:09.312947+00:00",
+      "ended_at": "2026-11-23T15:32:17.419162+00:00",
+      "run_started_at": "2026-11-23T15:31:09.312947+00:00",
+      "duration_ms": 66911,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 26,
+      "tokens_out": 9415,
+      "estimated_cost_usd": 0.037681
+    },
+    {
+      "unit_id": "UNIT-211",
+      "title": "Act: Implement stale lock release and Startup",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZBZGKWBACSDBHKDN9"
+      ],
+      "depends_on": [
+        "REQ-107"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "1529f5cef69595487bc58f74811a4bdf0bbede1b",
+      "from_sha": "fceb65bed68a9e9118653173ea73e48a07077add",
+      "started_at": "2026-11-23T15:31:09.320962+00:00",
+      "ended_at": "2026-11-23T15:31:49.127699+00:00",
+      "run_started_at": "2026-11-23T15:31:09.320962+00:00",
+      "duration_ms": 38789,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 5327,
+      "estimated_cost_usd": 0.021324,
+      "partial": true,
+      "failure": "Act agent reported ok:false: Partial: Step 1 is done (backend/worker/internal/recovery/locks.go: LockFS interface, OSLockFS with ModTime/Remove, compile-time assertion that OSLockFS satisfies LockFS). gofmt, go vet and go build ./... pass. Steps 2-3 are blocked: ReleaseStaleLock and Startup need the Recoverer type (fields LockPath, StaleAfter, lockFS, now()) and Recover() from recovery.go, which does not exist in this worktree or in any commit on any branch (git log -S Recoverer is empty; no backend/worker/internal/recovery/ before this change). The UNIT-211 brief and its unit markdown are also not in .ai-dlc/units (only UNIT-001..010 exist), so the acceptance criteria could not be read. Unrelated pre-existing staged/unstaged changes are present in backend/worker/internal/store/store.go and store_test.go; I did not touch them. Nothing committed. Needed to proceed: the recovery.go Recoverer/Recover contract (the dependency unit) on this branch, and the UNIT-211 unit file."
+    },
+    {
+      "unit_id": "UNIT-212",
+      "title": "Verify: StatusRecovering persistence unit test",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZW15P6NH8TKVXMYJW"
+      ],
+      "depends_on": [
+        "UNIT-209",
+        "REQ-106"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "fceb65bed68a9e9118653173ea73e48a07077add",
+      "from_sha": "cd54f9f8aae0bfc2db787e29d66abef28086bd45",
+      "tests": [
+        {
+          "id": "TestStatusRecoveringRoundTrip",
+          "kind": "unit",
+          "name": "TestStatusRecoveringRoundTrip",
+          "title": "Saved RECOVERING execution is read back with status RECOVERING and error preserved",
+          "scenario": "Given a new store in a temp dir, when an execution with Status RECOVERING and Error \"boom\" is saved and fetched by ID, then Status equals \"RECOVERING\" and Error equals \"boom\"",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/store -run TestStatusRecoveringRoundTrip",
+          "status": "passed",
+          "detail": "PASS in 0.00s; the constant already existed, so this is a coverage-only test that passes on first run."
+        }
+      ],
+      "started_at": "2026-11-23T15:31:19.336365+00:00",
+      "ended_at": "2026-11-23T15:31:34.148097+00:00",
+      "run_started_at": "2026-11-23T15:31:19.336365+00:00",
+      "duration_ms": 13883,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2200,
+      "estimated_cost_usd": 0.008806
+    },
+    {
+      "unit_id": "UNIT-213",
+      "title": "Verify: Recover scan and resume unit tests with fake store",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZ5CYFJNCV0HK653SE"
+      ],
+      "depends_on": [
+        "UNIT-210",
+        "REQ-105"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "4758055dda08b033c65529201af467281b05e387",
+      "from_sha": "119c0e8b3ff61aa819bcba99ce38e6a5155ded2c",
+      "tests": [
+        {
+          "id": "TestRecoverResumesOnlyUnfinished",
+          "kind": "unit",
+          "name": "TestRecoverResumesOnlyUnfinished",
+          "title": "Recover resumes only PENDING, RUNNING and RECOVERING executions and saves nothing",
+          "scenario": "Given executions a-pending, b-running, c-recovering, d-done, e-failed and f-await; When Recover runs; Then resumer IDs and Result.Resumed equal [a-pending b-running c-recovering] and fs.saved is empty",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run 'TestRecoverResumesOnlyUnfinished$' -v",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRecoverListError",
+          "kind": "unit",
+          "name": "TestRecoverListError",
+          "title": "Recover returns the wrapped store list error and resumes nothing",
+          "scenario": "Given the store List call fails with errors.New(\"disk\"); When Recover runs; Then errors.Is(err, listErr) holds and the resumer records no IDs",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run 'TestRecoverListError$' -v",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T15:32:17.426422+00:00",
+      "ended_at": "2026-11-23T15:32:39.417304+00:00",
+      "run_started_at": "2026-11-23T15:32:17.426422+00:00",
+      "duration_ms": 20988,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 3841,
+      "estimated_cost_usd": 0.015372
+    },
+    {
+      "unit_id": "UNIT-214",
+      "title": "Verify: Failed resume marks RECOVERING unit tests with fake clock",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZD243M8DTDPH546AA"
+      ],
+      "depends_on": [
+        "UNIT-210",
+        "REQ-105"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "47c1bcb26526384a6db4767ecd248df8a5618125",
+      "from_sha": "4758055dda08b033c65529201af467281b05e387",
+      "tests": [
+        {
+          "id": "TestRecoverMarksFailedResume",
+          "kind": "unit",
+          "name": "TestRecoverMarksFailedResume",
+          "title": "Recover marks a failed resume as RECOVERING with the error and clock time, and only resumes the other execution",
+          "scenario": "Given a RUNNING execution whose resume fails and a second RUNNING execution whose resume succeeds, When Recover runs with a fixed clock, Then the failed one is saved as RECOVERING with error text and the fixed UpdatedAt, the resumer was called with [a-run b-run], Result.Marked is [a-run] and Result.Resumed is [b-run].",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestRecoverMarksFailedResume",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "TestRecoverSaveFailure",
+          "kind": "unit",
+          "name": "TestRecoverSaveFailure",
+          "title": "Recover returns an error wrapping the save error when persisting a failed resume fails",
+          "scenario": "Given a RUNNING execution whose resume fails and a store whose Save fails, When Recover runs, Then the returned error satisfies errors.Is with the save error.",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestRecoverSaveFailure",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T15:32:17.434255+00:00",
+      "ended_at": "2026-11-23T15:33:09.926845+00:00",
+      "run_started_at": "2026-11-23T15:32:17.434255+00:00",
+      "duration_ms": 51479,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 10281,
+      "estimated_cost_usd": 0.041142
+    },
+    {
+      "unit_id": "UNIT-215",
+      "title": "Verify: Stale lock release and Startup unit tests with fake clock",
+      "kind": "unit",
+      "task_ids": [
+        "01M84GGJMZFBKJWZZHSZVM0NCE"
+      ],
+      "depends_on": [
+        "UNIT-211",
+        "REQ-107"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "a951956a00ecae513a6424efa8465b3a537d48c3",
+      "from_sha": "a951956a00ecae513a6424efa8465b3a537d48c3",
+      "tests": [
+        {
+          "id": "TestStartupReleasesStaleLock",
+          "kind": "unit",
+          "name": "TestStartupReleasesStaleLock",
+          "title": "Startup removes a stale lock, reports LockReleased, and resumes the RUNNING execution",
+          "scenario": "Given a lock modified 2h before a fixed clock with StaleAfter 1h and one RUNNING execution, When Startup runs, Then removed is [w/lock], LockReleased is true and run-1 is resumed",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupReleasesStaleLock",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestStartupKeepsFreshOrMissingLock",
+          "kind": "unit",
+          "name": "TestStartupKeepsFreshOrMissingLock",
+          "title": "Startup keeps a fresh or missing lock, with no removal, LockReleased false and no error",
+          "scenario": "Given a lock modified 10m ago, or ModTime returning fs.ErrNotExist, When Startup runs, Then nothing is removed, LockReleased is false and err is nil",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupKeepsFreshOrMissingLock",
+          "status": "passed",
+          "detail": "PASS (subtests: fresh_lock_modified_ten_minutes_ago_is_kept, missing_lock_file_is_treated_as_no_lock)"
+        },
+        {
+          "id": "TestStartupRemoveFailureStopsRecovery",
+          "kind": "unit",
+          "name": "TestStartupRemoveFailureStopsRecovery",
+          "title": "Startup returns the stale-lock remove error and resumes no execution",
+          "scenario": "Given a stale lock whose Remove fails with 'perm' and one RUNNING execution, When Startup runs, Then errors.Is(err, removeErr) holds and the resumer recorded no IDs",
+          "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupRemoveFailureStopsRecovery",
+          "status": "passed",
+          "detail": "PASS"
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests failed (3): TestStartupReleasesStaleLock, TestStartupKeepsFreshOrMissingLock, TestStartupRemoveFailureStopsRecovery",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "draco-verify",
+          "commit_sha": "dafa481fda6240cd634c7f6c2953914c8659ab11",
+          "from_sha": "47c1bcb26526384a6db4767ecd248df8a5618125",
+          "tests": [
+            {
+              "id": "TestStartupReleasesStaleLock",
+              "kind": "unit",
+              "name": "TestStartupReleasesStaleLock",
+              "title": "Startup releases a stale lock and resumes the RUNNING execution",
+              "scenario": "Given a lock last modified 2h before the fixed clock and StaleAfter 1h, When Startup runs with one RUNNING execution, Then removed == [w/lock], LockReleased is true, and the execution is resumed",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupReleasesStaleLock",
+              "status": "failed",
+              "detail": "Build failed: Startup undefined on *Recoverer (locks_test.go:49). Implementation missing from HEAD; Act must implement Startup."
+            },
+            {
+              "id": "TestStartupKeepsFreshOrMissingLock",
+              "kind": "unit",
+              "name": "TestStartupKeepsFreshOrMissingLock",
+              "title": "Startup keeps a fresh lock and a missing lock without error",
+              "scenario": "Given a lock modified 10m ago, or ModTime returning fs.ErrNotExist, When Startup runs, Then nothing is removed, LockReleased is false and err is nil",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupKeepsFreshOrMissingLock",
+              "status": "failed",
+              "detail": "Build failed: Startup undefined on *Recoverer (locks_test.go:92). Implementation missing from HEAD; Act must implement Startup."
+            },
+            {
+              "id": "TestStartupRemoveFailureStopsRecovery",
+              "kind": "unit",
+              "name": "TestStartupRemoveFailureStopsRecovery",
+              "title": "Startup returns the remove error and does not resume executions when lock removal fails",
+              "scenario": "Given a stale lock whose Remove returns a permission error and one RUNNING execution, When Startup runs, Then errors.Is(err, removeErr) holds and the resumer recorded no IDs",
+              "command": "cd backend/worker && go test -timeout 2m ./internal/recovery -run TestStartupRemoveFailureStopsRecovery",
+              "status": "failed",
+              "detail": "Build failed: Startup undefined on *Recoverer (locks_test.go:120). Implementation missing from HEAD; Act must implement Startup."
+            }
+          ],
+          "started_at": "2026-11-23T15:33:10.104425+00:00",
+          "ended_at": "2026-11-23T15:33:55.469+00:00",
+          "duration_ms": 44356,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 20,
+          "tokens_out": 8369,
+          "estimated_cost_usd": 0.033492
+        }
+      ],
+      "started_at": "2026-11-23T15:33:10.104425+00:00",
+      "ended_at": "2026-11-23T15:34:48.656945+00:00",
+      "run_started_at": "2026-11-23T15:34:30.142855+00:00",
+      "duration_ms": 16671,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 3168,
+      "estimated_cost_usd": 0.012678
+    },
+    {
+      "unit_id": "REQ-105",
+      "title": "REQ · Recover scans the store and resumes unfinished executions",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-042"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-106",
+      "title": "REQ · A failed resume marks the execution RECOVERING with the error",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-042"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-107",
+      "title": "REQ · Startup releases a stale lock file before recovery",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-042"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-042",
+      "title": "Evidence: Startup recovery unit test results",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-209",
+        "UNIT-210",
+        "UNIT-211",
+        "UNIT-212",
+        "UNIT-213",
+        "UNIT-214",
+        "UNIT-215"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-215",
+      "title": "Act: Fix Verify failure — Stale lock release and Startup unit tests with fake clock",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "a951956a00ecae513a6424efa8465b3a537d48c3",
+      "from_sha": "dafa481fda6240cd634c7f6c2953914c8659ab11",
+      "started_at": "2026-11-23T15:33:55.477284+00:00",
+      "ended_at": "2026-11-23T15:34:30.057699+00:00",
+      "run_started_at": "2026-11-23T15:33:55.477284+00:00",
+      "duration_ms": 33662,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 5350,
+      "estimated_cost_usd": 0.021413
+    }
+  ],
+  "edges": [
+    {
+      "src": "INT-042",
+      "dst": "REQ-106"
+    },
+    {
+      "src": "UNIT-210",
+      "dst": "UNIT-214"
+    },
+    {
+      "src": "UNIT-211",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "UNIT-209",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "UNIT-210",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "REQ-107",
+      "dst": "UNIT-211"
+    },
+    {
+      "src": "REQ-106",
+      "dst": "UNIT-212"
+    },
+    {
+      "src": "UNIT-214",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "REQ-105",
+      "dst": "UNIT-214"
+    },
+    {
+      "src": "UNIT-212",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "INT-042",
+      "dst": "REQ-107"
+    },
+    {
+      "src": "REQ-107",
+      "dst": "UNIT-215"
+    },
+    {
+      "src": "UNIT-213",
+      "dst": "EVD-042"
+    },
+    {
+      "src": "INT-042",
+      "dst": "REQ-105"
+    },
+    {
+      "src": "REQ-105",
+      "dst": "UNIT-210"
+    },
+    {
+      "src": "REQ-105",
+      "dst": "UNIT-213"
+    },
+    {
+      "src": "REQ-106",
+      "dst": "UNIT-209"
+    },
+    {
+      "src": "UNIT-210",
+      "dst": "UNIT-213"
+    },
+    {
+      "src": "UNIT-211",
+      "dst": "UNIT-215"
+    },
+    {
+      "src": "UNIT-209",
+      "dst": "UNIT-212"
+    },
+    {
+      "src": "UNIT-215",
+      "dst": "EVD-042"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84ggj",
+  "base_sha": "307d7bc5703a4acb3fb22ad91da7a26ca398688d",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84GGJX489KR1GD3TAZ76XHQ:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T15:31:08.324190+00:00",
+  "updated_at": "2026-11-23T15:34:49.633350+00:00",
+  "completed_at": "2026-11-23T15:34:48.658491+00:00",
+  "duration_ms": 220334,
+  "usage_stats": {
+    "total_duration_ms": 295534,
+    "total_tokens_in": 136,
+    "total_tokens_out": 49019,
+    "total_estimated_cost_usd": 0.196185
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-209",
+    "UNIT-210",
+    "UNIT-211",
+    "UNIT-212",
+    "UNIT-213",
+    "UNIT-214",
+    "UNIT-215"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-209",
+        "title": "Act: Add store.StatusRecovering",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-209 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-210",
+        "title": "Act: Implement Recoverer.Recover scan, resume and mark",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-210 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-211",
+        "title": "Act: Implement stale lock release and Startup",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-211 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-212",
+        "title": "Verify: StatusRecovering persistence unit test",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-212 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-213",
+        "title": "Verify: Recover scan and resume unit tests with fake store",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-213 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-214",
+        "title": "Verify: Failed resume marks RECOVERING unit tests with fake clock",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-214 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-215",
+        "title": "Verify: Stale lock release and Startup unit tests with fake clock",
+        "evidence_refs": [
+          {
+            "id": "EVD-042",
+            "path": ".ai-dlc/evidence/EVD-042.md",
+            "title": "Evidence: Startup recovery unit test results"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-215 unless acceptance outcomes recorded in EVD-042 (.ai-dlc/evidence/EVD-042.md; \"Evidence: Startup recovery unit test results\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T15:31:09.143741+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-209",
+    "UNIT-210",
+    "UNIT-211",
+    "UNIT-212",
+    "UNIT-213",
+    "UNIT-214",
+    "UNIT-215"
+  ]
+}

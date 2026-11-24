@@ -1,0 +1,313 @@
+{
+  "intent_id": "01M844NGP950K1Z8RGGSQA5CF2",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M844PH6HB2Y9DG8BKVNQDSM4",
+      "kind": "intent",
+      "title": "SG-3.2 · Fix the doubled story-panel class in the game layout",
+      "body": "Context: GameLayout (game/frontend/src/components/GameLayout.tsx L9) wraps its story slot in <aside class=\"story-panel\">, and StoryPanel (game/frontend/src/components/StoryPanel.tsx L12) renders its own root <div class=\"story-panel\">. The result is two nested elements with the same class, so styles.css L17-L29 (position: fixed, transform, max-height) apply twice on mobile. Desired behavior: exactly one element carries story-panel in the composed view. Expected result: the mobile drawer slides once. Why: nested fixed and transform rules break the bottom drawer.\n\n## Acceptance criteria\n- Given the composed GameLayout with StoryPanel, when it renders, then exactly one element has the class story-panel\n- Given StoryPanel rendered alone, when it renders, then its root element does not have the class story-panel\n- Given the mobile drawer toggle, when the Story button is clicked, then only the aside element receives drawer-open\n\n\n## Scope\n- In scope: Rename the StoryPanel root class so it no longer duplicates story-panel\n- Out of scope: Redesigning the drawer\n- Out of scope: Changing the 80/20 grid\n- Out of scope: Changing story content\n- Preserve: GameLayout aside keeps story-panel and drawer-open\n- Preserve: styles.css rules for .story-panel\n- Preserve: StoryPanel props and rendered content\n- Preserve: Existing story.test.tsx and layout.test.tsx assertions\n\n\n## Technical constraints\n- Frontend only, no API changes\n- React 18 + Vitest + Testing Library under game/frontend\n\n\n## Definition of done\n- Only the GameLayout aside has class story-panel\n- Existing frontend tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Make the mobile fixed-position and transform rules apply to a single story-panel element",
+      "description": "Context: GameLayout (game/frontend/src/components/GameLayout.tsx L9) wraps its story slot in <aside class=\"story-panel\">, and StoryPanel (game/frontend/src/components/StoryPanel.tsx L12) renders its own root <div class=\"story-panel\">. The result is two nested elements with the same class, so styles.css L17-L29 (position: fixed, transform, max-height) apply twice on mobile. Desired behavior: exactly one element carries story-panel in the composed view. Expected result: the mobile drawer slides once. Why: nested fixed and transform rules break the bottom drawer.",
+      "acceptance_criteria": [
+        "Given the composed GameLayout with StoryPanel, when it renders, then exactly one element has the class story-panel",
+        "Given StoryPanel rendered alone, when it renders, then its root element does not have the class story-panel",
+        "Given the mobile drawer toggle, when the Story button is clicked, then only the aside element receives drawer-open"
+      ],
+      "scope": {
+        "in_scope": [
+          "Rename the StoryPanel root class so it no longer duplicates story-panel"
+        ],
+        "out_of_scope": [
+          "Redesigning the drawer",
+          "Changing the 80/20 grid",
+          "Changing story content"
+        ],
+        "preserve": [
+          "GameLayout aside keeps story-panel and drawer-open",
+          "styles.css rules for .story-panel",
+          "StoryPanel props and rendered content",
+          "Existing story.test.tsx and layout.test.tsx assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Frontend only, no API changes",
+        "React 18 + Vitest + Testing Library under game/frontend"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Only the GameLayout aside has class story-panel",
+        "Existing frontend tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-009.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M843NJMCH5NMK1PNJ4293CEP",
+      "links": [
+        "trace:01M843NJMCH5NMK1PNJ4293CEP",
+        "artifact:.ai-dlc/intent/INT-009.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-009.md",
+      "artifact_id": "INT-009"
+    },
+    {
+      "id": "01M844PH6H8ZAXCXFHBNEZA799",
+      "kind": "requirement",
+      "title": "REQ · Story panel class appears once in the composed layout",
+      "body": "Context: GameLayout owns the story-panel container that the mobile drawer CSS targets; StoryPanel nests a second element with the same class. Desired behavior: StoryPanel root uses a distinct class (story-content) and GameLayout remains the sole story-panel owner. Expected result: mobile position: fixed and transform apply once. Why: avoid doubled drawer positioning.\n\n## Acceptance criteria\n- Given GameLayout wrapping StoryPanel, when rendered, then document.querySelectorAll('.story-panel').length equals 1\n- Given StoryPanel rendered alone, when rendered, then its root element has class story-content and not story-panel\n- Given the drawer toggle clicked, when state is open, then the single .story-panel element has class drawer-open\n\n\n## Scope\n- In scope: StoryPanel root className\n- Out of scope: CSS redesign\n- Out of scope: New components\n- Preserve: StoryPanel content, props and callbacks\n- Preserve: GameLayout markup\n\n\n## Technical constraints\n- Do not edit styles.css rules for .story-panel\n\n\n## Definition of done\n- StoryPanel root class is story-content\n- One story-panel element in the composed layout\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "StoryPanel root must not reuse the story-panel class owned by GameLayout",
+      "description": "Context: GameLayout owns the story-panel container that the mobile drawer CSS targets; StoryPanel nests a second element with the same class. Desired behavior: StoryPanel root uses a distinct class (story-content) and GameLayout remains the sole story-panel owner. Expected result: mobile position: fixed and transform apply once. Why: avoid doubled drawer positioning.",
+      "acceptance_criteria": [
+        "Given GameLayout wrapping StoryPanel, when rendered, then document.querySelectorAll('.story-panel').length equals 1",
+        "Given StoryPanel rendered alone, when rendered, then its root element has class story-content and not story-panel",
+        "Given the drawer toggle clicked, when state is open, then the single .story-panel element has class drawer-open"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel root className"
+        ],
+        "out_of_scope": [
+          "CSS redesign",
+          "New components"
+        ],
+        "preserve": [
+          "StoryPanel content, props and callbacks",
+          "GameLayout markup"
+        ]
+      },
+      "technical_constraints": [
+        "Do not edit styles.css rules for .story-panel"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "StoryPanel root class is story-content",
+        "One story-panel element in the composed layout",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-023.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844PH6HB2Y9DG8BKVNQDSM4",
+      "matched_feature_id": "01M8447V96WTK64GW2X0GAT7S5",
+      "links": [
+        "parent:01M844PH6HB2Y9DG8BKVNQDSM4",
+        "trace:01M8447V96WTK64GW2X0GAT7S5",
+        "artifact:.ai-dlc/requirements/REQ-023.md"
+      ],
+      "depends_on": [
+        "01M844PH6HB2Y9DG8BKVNQDSM4"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-023.md",
+      "artifact_id": "REQ-023"
+    },
+    {
+      "id": "01M844PH6HPY2YD4NKQVH51T67",
+      "kind": "unit",
+      "title": "Act: Rename StoryPanel root class to story-content",
+      "body": "Change the root div className in StoryPanel from story-panel to story-content so only the GameLayout aside carries story-panel and the mobile fixed/transform rules apply once.\n\n## Acceptance criteria\n- Given StoryPanel renders, when inspected, then the root div has class story-content\n- Given GameLayout wraps StoryPanel, when rendered, then exactly one .story-panel exists\n\n\n## Scope\n- In scope: game/frontend/src/components/StoryPanel.tsx root className\n- Out of scope: styles.css changes\n- Out of scope: GameLayout changes\n- Preserve: All StoryPanel content and props\n\n\n## Technical constraints\n- One-identifier change only\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Definition of done\n- StoryPanel root div className is story-content\n- No other markup changed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Stop StoryPanel from duplicating the story-panel class",
+      "description": "Change the root div className in StoryPanel from story-panel to story-content so only the GameLayout aside carries story-panel and the mobile fixed/transform rules apply once.",
+      "acceptance_criteria": [
+        "Given StoryPanel renders, when inspected, then the root div has class story-content",
+        "Given GameLayout wraps StoryPanel, when rendered, then exactly one .story-panel exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/StoryPanel.tsx root className"
+        ],
+        "out_of_scope": [
+          "styles.css changes",
+          "GameLayout changes"
+        ],
+        "preserve": [
+          "All StoryPanel content and props"
+        ]
+      },
+      "technical_constraints": [
+        "One-identifier change only",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "StoryPanel root div className is story-content",
+        "No other markup changed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-045.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844PH6H8ZAXCXFHBNEZA799",
+      "matched_feature_id": "01M8447V977PM6AVYZ9RDEZ5TZ",
+      "links": [
+        "parent:01M844PH6H8ZAXCXFHBNEZA799",
+        "trace:01M8447V977PM6AVYZ9RDEZ5TZ",
+        "artifact:.ai-dlc/units/UNIT-045.md"
+      ],
+      "depends_on": [
+        "01M844PH6H8ZAXCXFHBNEZA799"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-045.md",
+      "artifact_id": "UNIT-045",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel",
+          "lines": "L12",
+          "action": "Change the root element's className attribute from \"story-panel\" to \"story-content\"; do not touch any other element or prop.",
+          "code": "<div className=\"story-panel\"> -> <div className=\"story-content\">",
+          "expected": "StoryPanel root renders with class story-content; npm run typecheck passes in game/frontend."
+        }
+      ]
+    },
+    {
+      "id": "01M844PH6HHSJHFWZ3C7T0J64M",
+      "kind": "unit",
+      "title": "Verify: Single story-panel class unit tests",
+      "body": "Add Testing Library tests in the existing layout test file that render GameLayout with StoryPanel and assert class uniqueness and drawer-open placement.\n\n## Acceptance criteria\n- Given GameLayout with StoryPanel, when rendered, then container.querySelectorAll('.story-panel') has length 1\n- Given the Story button clicked, when open, then the single .story-panel has class drawer-open and .story-content does not\n- Given StoryPanel alone, when rendered, then the root has story-content and not story-panel\n\n\n## Scope\n- In scope: game/frontend/tests/layout.test.tsx new tests\n- Out of scope: Product code changes\n- Out of scope: Browser or e2e tests\n- Preserve: Existing two tests in layout.test.tsx\n\n\n## Technical constraints\n- jsdom environment already declared in the file; no network or server\n\n\n## Definition of done\n- New tests pass and fail against the old StoryPanel class\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving story-panel appears once in the composed layout",
+      "description": "Add Testing Library tests in the existing layout test file that render GameLayout with StoryPanel and assert class uniqueness and drawer-open placement.",
+      "acceptance_criteria": [
+        "Given GameLayout with StoryPanel, when rendered, then container.querySelectorAll('.story-panel') has length 1",
+        "Given the Story button clicked, when open, then the single .story-panel has class drawer-open and .story-content does not",
+        "Given StoryPanel alone, when rendered, then the root has story-content and not story-panel"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/layout.test.tsx new tests"
+        ],
+        "out_of_scope": [
+          "Product code changes",
+          "Browser or e2e tests"
+        ],
+        "preserve": [
+          "Existing two tests in layout.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "jsdom environment already declared in the file; no network or server"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New tests pass and fail against the old StoryPanel class",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-046.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844PH6HPY2YD4NKQVH51T67",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844PH6HPY2YD4NKQVH51T67",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-046.md"
+      ],
+      "depends_on": [
+        "01M844PH6HPY2YD4NKQVH51T67"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-046.md",
+      "artifact_id": "UNIT-046",
+      "steps": [
+        {
+          "file": "game/frontend/tests/layout.test.tsx",
+          "symbol": "new: it('Given GameLayout wrapping StoryPanel, when rendered, then exactly one .story-panel exists')",
+          "lines": "after L41",
+          "action": "Add imports of StoryPanel from '../src/components/StoryPanel' at the top. Inside the describe block add a test rendering <GameLayout scene={<div/>} story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />} /> and assert container.querySelectorAll('.story-panel').length toBe 1.",
+          "code": "const { container } = render(<GameLayout scene={<div />} story={<StoryPanel node={undefined} history={[]} inventory={[]} onChoose={() => {}} />} />);\nexpect(container.querySelectorAll('.story-panel')).toHaveLength(1);",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+          "expected": "Test passes with ACT1 applied and fails if StoryPanel root is story-panel."
+        },
+        {
+          "file": "game/frontend/tests/layout.test.tsx",
+          "symbol": "new: it('Given the Story button clicked, when open, then only the aside has drawer-open and StoryPanel root is story-content')",
+          "lines": "after the previous new test",
+          "action": "Render the same composed layout, click the button named 'Story', then assert the single .story-panel element has class drawer-open, that container.querySelector('.story-content') is not null and does not have class story-panel.",
+          "code": "fireEvent.click(screen.getByRole('button', { name: 'Story' }));\nconst panel = container.querySelector('.story-panel');\nexpect(panel).toHaveClass('drawer-open');\nconst content = container.querySelector('.story-content');\nexpect(content).not.toBeNull();\nexpect(content).not.toHaveClass('story-panel');",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+          "expected": "All layout tests pass, including both new ones."
+        }
+      ]
+    },
+    {
+      "id": "01M844PH6H7X5SC2CG00T0QVY4",
+      "kind": "evidence",
+      "title": "Evidence: Single story-panel class unit tests",
+      "body": "Record the passing layout unit test run showing exactly one story-panel element and StoryPanel root using story-content.\n\n## Acceptance criteria\n- Given the layout test run, when it completes, then all tests in tests/layout.test.tsx pass\n- Given the new tests, when read, then they assert one .story-panel and a story-content root\n\n\n## Scope\n- In scope: Test run output for layout.test.tsx\n- Out of scope: Browser screenshots\n\n\n## Definition of done\n- Passing vitest output for layout.test.tsx is recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence bundle for the doubled story-panel class fix",
+      "description": "Record the passing layout unit test run showing exactly one story-panel element and StoryPanel root using story-content.",
+      "acceptance_criteria": [
+        "Given the layout test run, when it completes, then all tests in tests/layout.test.tsx pass",
+        "Given the new tests, when read, then they assert one .story-panel and a story-content root"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output for layout.test.tsx"
+        ],
+        "out_of_scope": [
+          "Browser screenshots"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing vitest output for layout.test.tsx is recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-009.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844PH6HHSJHFWZ3C7T0J64M",
+      "matched_feature_id": "01M844GYQJ3KBP8HDVWSRTS7HK",
+      "links": [
+        "parent:01M844PH6HHSJHFWZ3C7T0J64M",
+        "trace:01M844GYQJ3KBP8HDVWSRTS7HK",
+        "artifact:.ai-dlc/evidence/EVD-009.md"
+      ],
+      "depends_on": [
+        "01M844PH6HHSJHFWZ3C7T0J64M"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-009.md",
+      "artifact_id": "EVD-009"
+    }
+  ],
+  "created_at": "2026-11-23T12:04:40.411304+00:00",
+  "summary": "AI · 0 NEW · 5 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M84J899JZ0RNMWCJPKEE5AK9",
+  "intent_id": "01M84J5PQSYC7VX0GJTBH8SKDA",
+  "title": "Act: Remove execution type and functions from the API client",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Delete ExecutionInfo and all execution client functions from client.ts",
+  "description": "client.ts: remove ExecutionInfo, approveExecution, retryExecution, rejectExecution, listExecutions, findExecutionForRound, getCurrentRoundExecution.",
+  "acceptance_criteria": [
+    "client.ts exports no execution symbol",
+    "getCurrentRound and other round functions remain"
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts"
+    ],
+    "out_of_scope": [
+      "AdminApp"
+    ],
+    "preserve": [
+      "adminRequest, round, world, contribution, player functions"
+    ]
+  },
+  "technical_constraints": [
+    "Run after AdminApp no longer imports these",
+    "Code path: `game/frontend/src/api/client.ts`"
+  ],
+  "dependencies": [
+    "act2"
+  ],
+  "definition_of_done": [
+    "No execution code in client.ts",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-250.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M84J7NVYBM89F2VM6R4R5K4W",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-250.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84J899J85WW30SHZ30CT7Q3"
+  ],
+  "sim_node_id": "01M84J7NVY84QH12PHHJNF5JSV",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-250.md",
+  "artifact_id": "UNIT-250",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "ExecutionInfo",
+      "lines": "L26-L36",
+      "action": "Delete the ExecutionInfo interface and its doc comment",
+      "expected": "Type gone"
+    },
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "approveExecution, retryExecution, rejectExecution, listExecutions, findExecutionForRound, getCurrentRoundExecution",
+      "lines": "L106-L152",
+      "action": "Delete these seven declarations with their doc comments; keep createRound, listRoundContributions above and BASE_URL below",
+      "expected": "No execution symbol remains"
+    }
+  ],
+  "created_at": "2026-11-23T16:01:33.490699+00:00",
+  "updated_at": "2026-11-23T16:03:44.797849+00:00"
+}

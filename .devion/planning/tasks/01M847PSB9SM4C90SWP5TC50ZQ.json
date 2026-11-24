@@ -1,0 +1,73 @@
+{
+  "id": "01M847PSB9SM4C90SWP5TC50ZQ",
+  "intent_id": "01M847H43ZBM8SEWC3A33AWNS1",
+  "title": "Verify: Contribution sheet submission flow unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Mocked-fetch tests for submission, errors, remaining count and note",
+  "description": "Write TDD unit tests with vi.stubGlobal fetch for ContributionSheet and the client contribution calls.",
+  "acceptance_criteria": [
+    "Submit posts world_id and prompt",
+    "429 shows error and failed entry",
+    "Remaining count and close note render",
+    "401 triggers session then retry"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/contribution.test.tsx",
+      "tests/fixtures/api.ts"
+    ],
+    "out_of_scope": [
+      "Real server"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "fetch mocked; no network"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-112.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847PKPAX9NH4AFYKMZRJMAP",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-112.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M847PSB9SQ3DGW44W84BP9Y2"
+  ],
+  "sim_node_id": "01M847PKPA7E58TZ1XHSCX10X4",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-112.md",
+  "artifact_id": "UNIT-112",
+  "steps": [
+    {
+      "file": "game/frontend/tests/fixtures/api.ts",
+      "symbol": "new: contributionFixture",
+      "lines": "new",
+      "action": "Export contributionFixture shaped like contributionJSON in backend/internal/contribution/handler.go (id,world_id,round_id,player_id,prompt,created_at); fixture values come from that struct, not invented keys",
+      "command": "cd game/frontend && npx tsc --noEmit",
+      "expected": "Fixture type-checks against the Contribution interface"
+    },
+    {
+      "file": "game/frontend/tests/contribution.test.tsx",
+      "symbol": "new: describe('ContributionSheet')",
+      "lines": "new",
+      "action": "Add tests: (1) 'posts world_id and prompt': stub fetch resolving 201 contributionFixture, type 'Look behind the shelf' into 'Your idea', click Send, assert fetch called with '/api/v1/contributions' and body containing world_id 'the-boys-room' and the prompt, and the 'Your suggestions' list shows it; (2) 'shows 429 error': fetch resolves 429, assert text 'Slow down, try again shortly'; (3) 'shows remaining and note': render open, assert 'Contributions left: 5' and 'Ideas are considered when the Round closes.'; (4) '401 creates session and retries': fetch resolves 401, then 200 session, then 201, assert three calls in order",
+      "command": "cd game/frontend && npx vitest run tests/contribution.test.tsx",
+      "expected": "All four tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T12:57:14.345775+00:00",
+  "updated_at": "2026-11-23T13:04:06.165472+00:00"
+}

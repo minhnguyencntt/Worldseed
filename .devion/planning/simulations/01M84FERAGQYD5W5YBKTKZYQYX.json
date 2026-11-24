@@ -1,0 +1,738 @@
+{
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84FKHRASKJH02BCCVVHV99Y",
+      "kind": "intent",
+      "title": "SG-7.3 · Implement the execution runner in worker/internal",
+      "body": "Context: backend/worker has config, lock (lock.Acquire/ErrLocked) and store (store.Store, Execution, Status) packages but no runner. Desired behavior: a runner package that locks, runs an agent in an isolated worktree under a context timeout, retries up to the configured limit, stops when budget is exceeded and blocks at the approval gate before publishing unless auto-publish is on. Expected result: Runner.Run drives one execution to COMPLETED, AWAITING_APPROVAL or FAILED. Why: the worker must never corrupt production and must run one execution per World.\n\n## Acceptance criteria\n- Given the lock file exists, when Run is called, then it returns an error satisfying errors.Is(err, lock.ErrLocked) and neither the worktree nor the agent is touched\n- Given an agent that blocks, when the timeout elapses, then Run returns context.DeadlineExceeded and the execution is FAILED\n- Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent runs 3 times and the execution is not FAILED\n- Given the accumulated cost exceeds MaxBudget, when an attempt finishes, then Run stops retrying and returns ErrBudgetExceeded\n- Given AutoPublish is false and the agent succeeds, then the status is AWAITING_APPROVAL and Publish is not called; when true, Publish is called and status is COMPLETED\n\n\n## Scope\n- In scope: new package backend/worker/internal/runner\n- Out of scope: real git worktree and Claude provider implementations\n- Out of scope: admin approve endpoint\n- Out of scope: startup recovery\n- Preserve: lock, store and config package APIs\n\n\n## Technical constraints\n- Go 1.22, standard library only plus existing packages\n- Agent, Worktrees and Publisher are interfaces so tests use fakes\n\n\n## Definition of done\n- All acceptance criteria are met by runner package code\n\n\n## Non-functional requirements\n- No shell interpolation of any prompt text\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Execution runner takes the per-World lock, runs the agent in an isolated worktree with timeout, retries, budget stop and approval gate",
+      "description": "Context: backend/worker has config, lock (lock.Acquire/ErrLocked) and store (store.Store, Execution, Status) packages but no runner. Desired behavior: a runner package that locks, runs an agent in an isolated worktree under a context timeout, retries up to the configured limit, stops when budget is exceeded and blocks at the approval gate before publishing unless auto-publish is on. Expected result: Runner.Run drives one execution to COMPLETED, AWAITING_APPROVAL or FAILED. Why: the worker must never corrupt production and must run one execution per World.",
+      "acceptance_criteria": [
+        "Given the lock file exists, when Run is called, then it returns an error satisfying errors.Is(err, lock.ErrLocked) and neither the worktree nor the agent is touched",
+        "Given an agent that blocks, when the timeout elapses, then Run returns context.DeadlineExceeded and the execution is FAILED",
+        "Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent runs 3 times and the execution is not FAILED",
+        "Given the accumulated cost exceeds MaxBudget, when an attempt finishes, then Run stops retrying and returns ErrBudgetExceeded",
+        "Given AutoPublish is false and the agent succeeds, then the status is AWAITING_APPROVAL and Publish is not called; when true, Publish is called and status is COMPLETED"
+      ],
+      "scope": {
+        "in_scope": [
+          "new package backend/worker/internal/runner"
+        ],
+        "out_of_scope": [
+          "real git worktree and Claude provider implementations",
+          "admin approve endpoint",
+          "startup recovery"
+        ],
+        "preserve": [
+          "lock, store and config package APIs"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, standard library only plus existing packages",
+        "Agent, Worktrees and Publisher are interfaces so tests use fakes"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria are met by runner package code",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-038.md`"
+      ],
+      "non_functional": [
+        "No shell interpolation of any prompt text"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+      "links": [
+        "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+        "artifact:.ai-dlc/intent/INT-038.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-038.md",
+      "artifact_id": "INT-038"
+    },
+    {
+      "id": "01M84FKHRAEN1YMP5GHN5XVDJM",
+      "kind": "requirement",
+      "title": "REQ · Run takes the per-World lock, runs the agent in an isolated worktree under a timeout",
+      "body": "Context: lock.Acquire returns an error wrapping lock.ErrLocked when the lock file exists. Desired behavior: Run acquires cfg.LockPath first, persists a RUNNING execution, creates a worktree under WorkRoot/<id>, runs the agent with context.WithTimeout(cfg.Timeout), then removes the worktree on completion or failure. Expected result: a held lock yields a locked error with no side effects. Why: one execution per World and isolation from production files.\n\n## Acceptance criteria\n- Given the lock file already exists, when Run is called, then the returned error satisfies errors.Is(err, lock.ErrLocked) and Worktrees.Create is never called\n- Given a successful agent, when Run returns, then the lock file no longer exists and Worktrees.Remove was called with the worktree directory\n- Given an agent that waits for ctx.Done and Timeout 20ms, when Run is called, then the error satisfies errors.Is(err, context.DeadlineExceeded) and the stored status is FAILED\n\n\n## Scope\n- In scope: runner.go with types, New and Run\n- Out of scope: retry and budget\n- Out of scope: approval gate\n- Preserve: lock.Acquire semantics\n\n\n## Technical constraints\n- Worktree directory is filepath.Join(cfg.WorkRoot, id)\n\n\n## Definition of done\n- Run locks, isolates and times out as specified\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Run acquires the lock, returns a locked error when held, creates a worktree, applies a context timeout",
+      "description": "Context: lock.Acquire returns an error wrapping lock.ErrLocked when the lock file exists. Desired behavior: Run acquires cfg.LockPath first, persists a RUNNING execution, creates a worktree under WorkRoot/<id>, runs the agent with context.WithTimeout(cfg.Timeout), then removes the worktree on completion or failure. Expected result: a held lock yields a locked error with no side effects. Why: one execution per World and isolation from production files.",
+      "acceptance_criteria": [
+        "Given the lock file already exists, when Run is called, then the returned error satisfies errors.Is(err, lock.ErrLocked) and Worktrees.Create is never called",
+        "Given a successful agent, when Run returns, then the lock file no longer exists and Worktrees.Remove was called with the worktree directory",
+        "Given an agent that waits for ctx.Done and Timeout 20ms, when Run is called, then the error satisfies errors.Is(err, context.DeadlineExceeded) and the stored status is FAILED"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner.go with types, New and Run"
+        ],
+        "out_of_scope": [
+          "retry and budget",
+          "approval gate"
+        ],
+        "preserve": [
+          "lock.Acquire semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Worktree directory is filepath.Join(cfg.WorkRoot, id)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Run locks, isolates and times out as specified",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-092.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FKHRASKJH02BCCVVHV99Y",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M84FKHRASKJH02BCCVVHV99Y",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-092.md"
+      ],
+      "depends_on": [
+        "01M84FKHRASKJH02BCCVVHV99Y"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-092.md",
+      "artifact_id": "REQ-092"
+    },
+    {
+      "id": "01M84FKHRAXTJJ9W2XTZRXNVPW",
+      "kind": "requirement",
+      "title": "REQ · Run retries up to the configured limit and stops when the budget is exceeded",
+      "body": "Context: config exposes MaxRetries and MaxBudget. Desired behavior: Run attempts the agent up to MaxRetries+1 times, recording Execution.Attempt, summing cost returned by each attempt, and stopping with ErrBudgetExceeded as soon as total cost exceeds MaxBudget. Expected result: bounded, budget-safe agent runs. Why: avoid runaway cost and endless loops.\n\n## Acceptance criteria\n- Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent is called 3 times and the stored Attempt is 3\n- Given an agent that always fails and MaxRetries 1, when Run is called, then the agent is called 2 times, the status is FAILED and Error contains the agent error\n- Given each attempt costs 3.0 and MaxBudget 5.0, when the second attempt finishes, then Run returns an error satisfying errors.Is(err, ErrBudgetExceeded) and no third attempt runs\n\n\n## Scope\n- In scope: retry loop in Run's execute step\n- In scope: ErrBudgetExceeded\n- Out of scope: backoff delays\n- Preserve: R1 lock and timeout behavior\n\n\n## Technical constraints\n- Budget check runs after each attempt, including a failed one\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Retry and budget limits enforced\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Agent failures are retried up to MaxRetries and accumulated cost above MaxBudget stops the run",
+      "description": "Context: config exposes MaxRetries and MaxBudget. Desired behavior: Run attempts the agent up to MaxRetries+1 times, recording Execution.Attempt, summing cost returned by each attempt, and stopping with ErrBudgetExceeded as soon as total cost exceeds MaxBudget. Expected result: bounded, budget-safe agent runs. Why: avoid runaway cost and endless loops.",
+      "acceptance_criteria": [
+        "Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent is called 3 times and the stored Attempt is 3",
+        "Given an agent that always fails and MaxRetries 1, when Run is called, then the agent is called 2 times, the status is FAILED and Error contains the agent error",
+        "Given each attempt costs 3.0 and MaxBudget 5.0, when the second attempt finishes, then Run returns an error satisfying errors.Is(err, ErrBudgetExceeded) and no third attempt runs"
+      ],
+      "scope": {
+        "in_scope": [
+          "retry loop in Run's execute step",
+          "ErrBudgetExceeded"
+        ],
+        "out_of_scope": [
+          "backoff delays"
+        ],
+        "preserve": [
+          "R1 lock and timeout behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Budget check runs after each attempt, including a failed one"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Retry and budget limits enforced",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-093.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FKHRASKJH02BCCVVHV99Y",
+      "matched_feature_id": "01M8457KMMSQBY9VJAQTVZ1RNJ",
+      "links": [
+        "parent:01M84FKHRASKJH02BCCVVHV99Y",
+        "trace:01M8457KMMSQBY9VJAQTVZ1RNJ",
+        "artifact:.ai-dlc/requirements/REQ-093.md"
+      ],
+      "depends_on": [
+        "01M84FKHRASKJH02BCCVVHV99Y"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-093.md",
+      "artifact_id": "REQ-093"
+    },
+    {
+      "id": "01M84FKHRAAE8TKHVRR7P383ZZ",
+      "kind": "requirement",
+      "title": "REQ · Run blocks at the approval gate before publishing unless auto-publish is on",
+      "body": "Context: store.StatusAwaitingApproval and Config.AutoPublish exist. Desired behavior: on agent success, if AutoPublish is false Run saves status AWAITING_APPROVAL, keeps the worktree and does not call Publisher.Publish; if true it calls Publish and saves COMPLETED. Expected result: supervised publishing by default. Why: human approval of first releases.\n\n## Acceptance criteria\n- Given AutoPublish false and a successful agent, when Run is called, then the returned execution status is AWAITING_APPROVAL, the stored status matches, Publish is never called and Worktrees.Remove is not called\n- Given AutoPublish true and a successful agent, when Run is called, then Publish is called once with the worktree directory and status is COMPLETED\n- Given AutoPublish true and Publish returns an error, when Run is called, then the status is FAILED and the error is returned\n\n\n## Scope\n- In scope: gate logic in Run's finish step\n- Out of scope: Approve call that publishes later\n- Preserve: R1 and R2 behavior\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Gate behaves per criteria\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "After a successful agent run Run publishes only with AutoPublish, otherwise stops as AWAITING_APPROVAL",
+      "description": "Context: store.StatusAwaitingApproval and Config.AutoPublish exist. Desired behavior: on agent success, if AutoPublish is false Run saves status AWAITING_APPROVAL, keeps the worktree and does not call Publisher.Publish; if true it calls Publish and saves COMPLETED. Expected result: supervised publishing by default. Why: human approval of first releases.",
+      "acceptance_criteria": [
+        "Given AutoPublish false and a successful agent, when Run is called, then the returned execution status is AWAITING_APPROVAL, the stored status matches, Publish is never called and Worktrees.Remove is not called",
+        "Given AutoPublish true and a successful agent, when Run is called, then Publish is called once with the worktree directory and status is COMPLETED",
+        "Given AutoPublish true and Publish returns an error, when Run is called, then the status is FAILED and the error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "gate logic in Run's finish step"
+        ],
+        "out_of_scope": [
+          "Approve call that publishes later"
+        ],
+        "preserve": [
+          "R1 and R2 behavior"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Gate behaves per criteria",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-094.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84FKHRASKJH02BCCVVHV99Y",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M84FKHRASKJH02BCCVVHV99Y",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-094.md"
+      ],
+      "depends_on": [
+        "01M84FKHRASKJH02BCCVVHV99Y"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-094.md",
+      "artifact_id": "REQ-094"
+    },
+    {
+      "id": "01M84FKHRAFGM600DRQ668KP5R",
+      "kind": "unit",
+      "title": "Act: Create the runner package with lock, worktree and timeout",
+      "body": "Create backend/worker/internal/runner/runner.go defining Agent, Worktrees, Publisher, Config, Runner, New and Run that locks, saves RUNNING, creates the worktree, runs the agent once under the timeout and saves the final status.\n\n## Acceptance criteria\n- Run returns a lock.ErrLocked-wrapping error when the lock is held\n- Run applies cfg.Timeout via context.WithTimeout\n\n\n## Scope\n- In scope: runner.go\n- Out of scope: retry\n- Out of scope: gate\n- Preserve: lock and store packages\n\n\n## Technical constraints\n- Module path github.com/worldseed/storyforge/worker\n- New file: `backend/worker/internal/runner/runner.go`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- go build ./internal/runner passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add runner.go with interfaces, Config, New and Run",
+      "description": "Create backend/worker/internal/runner/runner.go defining Agent, Worktrees, Publisher, Config, Runner, New and Run that locks, saves RUNNING, creates the worktree, runs the agent once under the timeout and saves the final status.",
+      "acceptance_criteria": [
+        "Run returns a lock.ErrLocked-wrapping error when the lock is held",
+        "Run applies cfg.Timeout via context.WithTimeout"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner.go"
+        ],
+        "out_of_scope": [
+          "retry",
+          "gate"
+        ],
+        "preserve": [
+          "lock and store packages"
+        ]
+      },
+      "technical_constraints": [
+        "Module path github.com/worldseed/storyforge/worker",
+        "New file: `backend/worker/internal/runner/runner.go`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "go build ./internal/runner passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-183.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FKHRAEN1YMP5GHN5XVDJM",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M84FKHRAEN1YMP5GHN5XVDJM",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-183.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAEN1YMP5GHN5XVDJM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-183.md",
+      "artifact_id": "UNIT-183",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "new: interfaces Agent, Worktrees, Publisher and type Config",
+          "lines": "new",
+          "action": "Create package runner importing context, errors, fmt, path/filepath, time, github.com/worldseed/storyforge/worker/internal/lock and .../internal/store. Declare Agent, Worktrees, Publisher interfaces and Config struct.",
+          "code": "type Agent interface{ Run(ctx context.Context, workDir string) (cost float64, err error) }\ntype Worktrees interface{ Create(ctx context.Context, dir string) error; Remove(ctx context.Context, dir string) error }\ntype Publisher interface{ Publish(ctx context.Context, workDir string) error }\ntype Config struct{ LockPath, WorkRoot string; Timeout time.Duration; MaxRetries int; MaxBudget float64; AutoPublish bool }",
+          "expected": "Package compiles with the four declarations"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "new: Runner, New",
+          "lines": "new",
+          "action": "Declare Runner holding cfg Config, st *store.Store, agent Agent, trees Worktrees, pub Publisher, now func() time.Time, and New(cfg, st, agent, trees, pub, now) *Runner assigning each field.",
+          "code": "func New(cfg Config, st *store.Store, a Agent, t Worktrees, p Publisher, now func() time.Time) *Runner",
+          "expected": "New returns a populated *Runner"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "new: Runner.Run",
+          "lines": "new",
+          "action": "Implement Run(ctx, id, roundID string) (store.Execution, error): (1) l, err := lock.Acquire(cfg.LockPath); on err return store.Execution{}, fmt.Errorf(\"runner: %w\", err); defer l.Release(). (2) build e := store.Execution{ID:id, RoundID:roundID, Status:store.StatusRunning, CreatedAt:r.now(), UpdatedAt:r.now()} and st.Save(e), returning the error. (3) dir := filepath.Join(cfg.WorkRoot, id); call trees.Create(ctx, dir), on error fail. (4) tctx, cancel := context.WithTimeout(ctx, cfg.Timeout); defer cancel(). (5) e.Attempt = 1; _, err = agent.Run(tctx, dir). (6) on err set e.Status=StatusFailed, e.Error=err.Error(), UpdatedAt, Save, call trees.Remove(ctx, dir), return e, err. (7) on success set e.Status=StatusCompleted, Save, trees.Remove(ctx, dir), return e, nil.",
+          "expected": "Held lock returns lock.ErrLocked; timeout yields FAILED with DeadlineExceeded"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRASQHA7W208VE7E139",
+      "kind": "unit",
+      "title": "Act: Add the retry loop and budget stop to Run",
+      "body": "Edit runner.go so step 5 loops attempts 1..MaxRetries+1, accumulates cost and stops on budget overrun.\n\n## Acceptance criteria\n- Agent is retried up to MaxRetries times\n- Total cost above MaxBudget returns ErrBudgetExceeded\n\n\n## Scope\n- In scope: runner.go execute loop\n- Out of scope: backoff\n- Preserve: lock and timeout behavior\n\n\n## Technical constraints\n- Depends on Act: Create the runner package having been done\n- New file: `backend/worker/internal/runner/runner.go`\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- go build ./internal/runner passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Replace the single agent call with a bounded retry loop and ErrBudgetExceeded",
+      "description": "Edit runner.go so step 5 loops attempts 1..MaxRetries+1, accumulates cost and stops on budget overrun.",
+      "acceptance_criteria": [
+        "Agent is retried up to MaxRetries times",
+        "Total cost above MaxBudget returns ErrBudgetExceeded"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner.go execute loop"
+        ],
+        "out_of_scope": [
+          "backoff"
+        ],
+        "preserve": [
+          "lock and timeout behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on Act: Create the runner package having been done",
+        "New file: `backend/worker/internal/runner/runner.go`"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "go build ./internal/runner passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-184.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FKHRAXTJJ9W2XTZRXNVPW",
+      "matched_feature_id": "01M847PS3SP3J1VY4KQMCK9TTP",
+      "links": [
+        "parent:01M84FKHRAXTJJ9W2XTZRXNVPW",
+        "trace:01M847PS3SP3J1VY4KQMCK9TTP",
+        "artifact:.ai-dlc/units/UNIT-184.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAXTJJ9W2XTZRXNVPW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-184.md",
+      "artifact_id": "UNIT-184",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "var ErrBudgetExceeded",
+          "lines": "after the Config declaration",
+          "action": "Declare an exported sentinel error for budget overrun.",
+          "code": "var ErrBudgetExceeded = errors.New(\"runner: budget exceeded\")",
+          "expected": "Symbol exists"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "Runner.Run step 5 agent call",
+          "lines": "the single `e.Attempt = 1; _, err = agent.Run(tctx, dir)` statement in Run",
+          "action": "Replace with a loop: var total float64; for attempt := 1; attempt <= r.cfg.MaxRetries+1; attempt++ { e.Attempt = attempt; cost, aerr := r.agent.Run(tctx, dir); total += cost; if total > r.cfg.MaxBudget { err = fmt.Errorf(\"%w: spent %.2f of %.2f\", ErrBudgetExceeded, total, r.cfg.MaxBudget); break }; err = aerr; if aerr == nil || tctx.Err() != nil { break } }. Existing failure/success handling then runs on err.",
+          "code": "before: e.Attempt = 1; _, err = agent.Run(tctx, dir)\nafter: loop as described",
+          "expected": "Retries bounded; budget error wraps ErrBudgetExceeded and stored Attempt equals attempts made"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRAZDXS49982PXPKFQ9",
+      "kind": "unit",
+      "title": "Act: Add the approval gate before publishing",
+      "body": "Edit runner.go success handling so AutoPublish false stops at AWAITING_APPROVAL with the worktree kept, and true calls Publisher.Publish then completes.\n\n## Acceptance criteria\n- AutoPublish false never calls Publish\n- AutoPublish true publishes and completes\n\n\n## Scope\n- In scope: runner.go success branch\n- Out of scope: Approve flow\n- Preserve: failure handling\n\n\n## Technical constraints\n- Depends on Act: Create the runner package having been done\n- New file: `backend/worker/internal/runner/runner.go`\n\n\n## Dependencies\n- R3\n\n\n## Definition of done\n- go build ./internal/runner passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Branch the success path on Config.AutoPublish",
+      "description": "Edit runner.go success handling so AutoPublish false stops at AWAITING_APPROVAL with the worktree kept, and true calls Publisher.Publish then completes.",
+      "acceptance_criteria": [
+        "AutoPublish false never calls Publish",
+        "AutoPublish true publishes and completes"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner.go success branch"
+        ],
+        "out_of_scope": [
+          "Approve flow"
+        ],
+        "preserve": [
+          "failure handling"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on Act: Create the runner package having been done",
+        "New file: `backend/worker/internal/runner/runner.go`"
+      ],
+      "dependencies": [
+        "R3"
+      ],
+      "definition_of_done": [
+        "go build ./internal/runner passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-185.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84FKHRAAE8TKHVRR7P383ZZ",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M84FKHRAAE8TKHVRR7P383ZZ",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-185.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAAE8TKHVRR7P383ZZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-185.md",
+      "artifact_id": "UNIT-185",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner.go",
+          "symbol": "Runner.Run step 7 success path",
+          "lines": "the block after the failure branch that sets StatusCompleted",
+          "action": "Replace with: if !r.cfg.AutoPublish { e.Status = store.StatusAwaitingApproval; e.UpdatedAt = r.now(); save; return e, nil } (no trees.Remove). Otherwise perr := r.pub.Publish(ctx, dir); if perr != nil set StatusFailed, Error, save, Remove, return e, perr; else set StatusCompleted, save, Remove, return e, nil.",
+          "code": "if !r.cfg.AutoPublish { e.Status = store.StatusAwaitingApproval; ... return e, r.st.Save(e) }",
+          "expected": "Gate blocks publish by default"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRAFYRRYKJA9VV5ZTWZ",
+      "kind": "unit",
+      "title": "Verify: Runner lock, worktree and timeout unit tests",
+      "body": "Write runner_test.go with fake Agent, Worktrees and Publisher plus a temp dir for lock and store, proving Act A1 against R1 criteria.\n\n## Acceptance criteria\n- Locked, cleanup and timeout cases each have a passing test\n- Tests use only fakes and t.TempDir\n\n\n## Scope\n- In scope: runner_test.go\n- Out of scope: real git or agent\n- Preserve: product code\n\n\n## Technical constraints\n- fake Agent counts calls and records workDir; fake Worktrees records Create and Remove\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- go test ./internal/runner -run 'TestRun(Locked|Cleanup|Timeout)' passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with fakes for lock, worktree and timeout",
+      "description": "Write runner_test.go with fake Agent, Worktrees and Publisher plus a temp dir for lock and store, proving Act A1 against R1 criteria.",
+      "acceptance_criteria": [
+        "Locked, cleanup and timeout cases each have a passing test",
+        "Tests use only fakes and t.TempDir"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner_test.go"
+        ],
+        "out_of_scope": [
+          "real git or agent"
+        ],
+        "preserve": [
+          "product code"
+        ]
+      },
+      "technical_constraints": [
+        "fake Agent counts calls and records workDir; fake Worktrees records Create and Remove"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "go test ./internal/runner -run 'TestRun(Locked|Cleanup|Timeout)' passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-186.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FKHRAFGM600DRQ668KP5R",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FKHRAFGM600DRQ668KP5R",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-186.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAFGM600DRQ668KP5R"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-186.md",
+      "artifact_id": "UNIT-186",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner_test.go",
+          "symbol": "new: fakeAgent, fakeTrees, fakePublisher, newRunner helper",
+          "lines": "new",
+          "action": "Create package runner test file. fakeAgent has fields cost float64, errs []error, block bool, calls int; Run increments calls, if block waits on <-ctx.Done() and returns ctx.Err(), else pops errs. fakeTrees records created, removed []string. fakePublisher records calls. newRunner(t, cfg, agent) builds Config with LockPath and WorkRoot under t.TempDir(), store.New(t.TempDir()), fixed now.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunLocked",
+          "expected": "Helpers compile"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_test.go",
+          "symbol": "TestRunLocked",
+          "lines": "new",
+          "action": "Pre-create the file cfg.LockPath with os.WriteFile; call Run(ctx,\"EXEC-1\",\"ROUND-0000001\"); assert errors.Is(err, lock.ErrLocked), agent.calls==0 and len(trees.created)==0.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunLocked",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_test.go",
+          "symbol": "TestRunCleanup",
+          "lines": "new",
+          "action": "AutoPublish irrelevant; agent succeeds; call Run; assert lock file path does not exist (os.Stat gives fs.ErrNotExist), trees.created equals trees.removed equal to filepath.Join(WorkRoot,\"EXEC-1\") and agent.workDir equals the same.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunCleanup",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_test.go",
+          "symbol": "TestRunTimeout",
+          "lines": "new",
+          "action": "agent.block=true, Timeout 20ms; call Run; assert errors.Is(err, context.DeadlineExceeded) and st.Get(\"EXEC-1\").Status == store.StatusFailed.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunTimeout",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRAFRP79JYWJWDC32YA",
+      "kind": "unit",
+      "title": "Verify: Runner retry and budget unit tests",
+      "body": "Write runner_retry_test.go reusing fakes from runner_test.go to prove A2 against R2 criteria.\n\n## Acceptance criteria\n- Retry success, retry exhaustion and budget stop each tested\n- No real agent or network\n\n\n## Scope\n- In scope: runner_retry_test.go\n- Out of scope: product code\n- Preserve: runner_test.go helpers\n\n\n## Technical constraints\n- fakeAgent.errs scripts per-attempt errors; cost field returned per call\n\n\n## Dependencies\n- A2\n- V1\n\n\n## Definition of done\n- go test ./internal/runner -run 'TestRun(Retry|Budget)' passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for retries and budget stop with fake agent",
+      "description": "Write runner_retry_test.go reusing fakes from runner_test.go to prove A2 against R2 criteria.",
+      "acceptance_criteria": [
+        "Retry success, retry exhaustion and budget stop each tested",
+        "No real agent or network"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner_retry_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "runner_test.go helpers"
+        ]
+      },
+      "technical_constraints": [
+        "fakeAgent.errs scripts per-attempt errors; cost field returned per call"
+      ],
+      "dependencies": [
+        "A2",
+        "V1"
+      ],
+      "definition_of_done": [
+        "go test ./internal/runner -run 'TestRun(Retry|Budget)' passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-187.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FKHRASQHA7W208VE7E139",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FKHRASQHA7W208VE7E139",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-187.md"
+      ],
+      "depends_on": [
+        "01M84FKHRASQHA7W208VE7E139"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-187.md",
+      "artifact_id": "UNIT-187",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner_retry_test.go",
+          "symbol": "TestRunRetriesThenSucceeds",
+          "lines": "new",
+          "action": "cfg MaxRetries 2, MaxBudget 100, Timeout 5s; agent.errs = [errors.New(\"x\"), errors.New(\"y\"), nil]; Run; assert err nil, agent.calls==3 and stored Attempt==3.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunRetriesThenSucceeds",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_retry_test.go",
+          "symbol": "TestRunRetryExhausted",
+          "lines": "new",
+          "action": "MaxRetries 1; agent.errs = two errors; Run; assert agent.calls==2, stored Status FAILED and Error contains the second error text.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunRetryExhausted",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_retry_test.go",
+          "symbol": "TestRunBudgetExceeded",
+          "lines": "new",
+          "action": "agent.cost=3.0, MaxBudget 5.0, MaxRetries 5, errs all non-nil; Run; assert errors.Is(err, ErrBudgetExceeded) and agent.calls==2.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunBudgetExceeded",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRAGD08S3DZ2JQG1XYX",
+      "kind": "unit",
+      "title": "Verify: Runner approval gate unit tests",
+      "body": "Write runner_gate_test.go reusing fakes to prove A3 against R3 criteria.\n\n## Acceptance criteria\n- Gate closed, so Publish is never called and status is AWAITING_APPROVAL\n- Auto-publish success and publish failure each have a passing test\n\n\n## Scope\n- In scope: runner_gate_test.go\n- Out of scope: product code\n- Preserve: fakes\n\n\n## Technical constraints\n- fakePublisher has err field and calls counter\n\n\n## Dependencies\n- A3\n- V1\n\n\n## Definition of done\n- go test ./internal/runner -run TestRunGate passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the gate with fake publisher",
+      "description": "Write runner_gate_test.go reusing fakes to prove A3 against R3 criteria.",
+      "acceptance_criteria": [
+        "Gate closed, so Publish is never called and status is AWAITING_APPROVAL",
+        "Auto-publish success and publish failure each have a passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "runner_gate_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "fakes"
+        ]
+      },
+      "technical_constraints": [
+        "fakePublisher has err field and calls counter"
+      ],
+      "dependencies": [
+        "A3",
+        "V1"
+      ],
+      "definition_of_done": [
+        "go test ./internal/runner -run TestRunGate passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-188.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FKHRAZDXS49982PXPKFQ9",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M84FKHRAZDXS49982PXPKFQ9",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-188.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAZDXS49982PXPKFQ9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-188.md",
+      "artifact_id": "UNIT-188",
+      "steps": [
+        {
+          "file": "backend/worker/internal/runner/runner_gate_test.go",
+          "symbol": "TestRunGateBlocksPublish",
+          "lines": "new",
+          "action": "AutoPublish false, agent succeeds; Run; assert returned and stored Status == store.StatusAwaitingApproval, pub.calls==0, len(trees.removed)==0.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunGateBlocksPublish",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_gate_test.go",
+          "symbol": "TestRunGateAutoPublish",
+          "lines": "new",
+          "action": "AutoPublish true; Run; assert Status COMPLETED, pub.calls==1 with workDir equal to filepath.Join(WorkRoot,\"EXEC-1\").",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunGateAutoPublish",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/worker/internal/runner/runner_gate_test.go",
+          "symbol": "TestRunGatePublishError",
+          "lines": "new",
+          "action": "AutoPublish true, pub.err=errors.New(\"boom\"); Run; assert err contains boom via errors.Is and stored Status FAILED.",
+          "command": "cd backend/worker && go test ./internal/runner -run TestRunGatePublishError",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84FKHRAFBRZY0PFBGYAN8HW",
+      "kind": "evidence",
+      "title": "Evidence: Execution runner unit tests",
+      "body": "Evidence that the runner package tests for lock, timeout, retry, budget and approval gate pass.\n\n## Acceptance criteria\n- go test ./internal/runner reports ok\n- Every intent acceptance criterion maps to a named passing test\n\n\n## Scope\n- In scope: test output\n- Out of scope: live runs\n\n\n## Dependencies\n- V1\n- V2\n- V3\n\n\n## Definition of done\n- Test run output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Runner package unit test results",
+      "description": "Evidence that the runner package tests for lock, timeout, retry, budget and approval gate pass.",
+      "acceptance_criteria": [
+        "go test ./internal/runner reports ok",
+        "Every intent acceptance criterion maps to a named passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [
+          "live runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "definition_of_done": [
+        "Test run output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-038.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84FKHRAFYRRYKJA9VV5ZTWZ",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M84FKHRAFYRRYKJA9VV5ZTWZ",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-038.md"
+      ],
+      "depends_on": [
+        "01M84FKHRAFYRRYKJA9VV5ZTWZ",
+        "01M84FKHRAFRP79JYWJWDC32YA",
+        "01M84FKHRAGD08S3DZ2JQG1XYX"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-038.md",
+      "artifact_id": "EVD-038"
+    }
+  ],
+  "created_at": "2026-11-23T15:15:22.047758+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

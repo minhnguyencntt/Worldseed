@@ -1,0 +1,667 @@
+{
+  "intent_id": "01M84NKXW34CXFXC2KBR6J5JV6",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84NPCRCBX0Q94CQ8RJPYY81",
+      "kind": "intent",
+      "title": "SG-1.4.1 · Create the HeaderOverlay component wired to the UI store",
+      "body": "Context: game/frontend has no HeaderOverlay yet. App.tsx renders RoundBadge (which shows a bare 'Round unavailable' on failure) and Countdown directly. Desired behavior: a HeaderOverlay component takes props worldTitle, round, loading and error and shows the logo, world name, round ID, status, countdown, sound toggle and settings button, wired to useUiStore, with loading, empty and error states that explain a round API failure. Expected result: a tested, standalone component. Why: the compact header and honest round-failure messaging are required by the StoryForge redesign.\n\n## Acceptance criteria\n- Given a round, When HeaderOverlay renders, Then logo, world title, round ID, status, countdown, sound toggle and settings button are visible\n- Given the sound toggle and settings button are clicked, When the store is read, Then soundEnabled and settingsOpen have flipped\n- Given loading, no round, or an error, When HeaderOverlay renders, Then a loading, empty or error message is shown, and the error message explains the failure\n\n\n## Scope\n- In scope: New HeaderOverlay.tsx in game/frontend/src/components\n- In scope: Use of existing useUiStore, Countdown and lucide-react icons\n- Out of scope: Composing HeaderOverlay into App or GameLayout\n- Out of scope: Backend changes\n- Out of scope: Changing uiStore\n- Preserve: Existing Countdown and RoundBadge behavior and tests\n- Preserve: uiStore state shape and actions\n- Preserve: API client contracts\n\n\n## Technical constraints\n- React + TypeScript + Tailwind classes; lucide-react icons; Button from components/ui/button\n- State read via useUiStore selectors from src/store/uiStore.ts\n- Round type comes from src/api/client.ts\n\n\n## Definition of done\n- HeaderOverlay exported from game/frontend/src/components/HeaderOverlay.tsx\n- All requirement Verify units pass\n\n\n## Non-functional requirements\n- Accessible names on icon buttons\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "HeaderOverlay component in game/frontend/src/components with worldTitle, round, loading and error props",
+      "description": "Context: game/frontend has no HeaderOverlay yet. App.tsx renders RoundBadge (which shows a bare 'Round unavailable' on failure) and Countdown directly. Desired behavior: a HeaderOverlay component takes props worldTitle, round, loading and error and shows the logo, world name, round ID, status, countdown, sound toggle and settings button, wired to useUiStore, with loading, empty and error states that explain a round API failure. Expected result: a tested, standalone component. Why: the compact header and honest round-failure messaging are required by the StoryForge redesign.",
+      "acceptance_criteria": [
+        "Given a round, When HeaderOverlay renders, Then logo, world title, round ID, status, countdown, sound toggle and settings button are visible",
+        "Given the sound toggle and settings button are clicked, When the store is read, Then soundEnabled and settingsOpen have flipped",
+        "Given loading, no round, or an error, When HeaderOverlay renders, Then a loading, empty or error message is shown, and the error message explains the failure"
+      ],
+      "scope": {
+        "in_scope": [
+          "New HeaderOverlay.tsx in game/frontend/src/components",
+          "Use of existing useUiStore, Countdown and lucide-react icons"
+        ],
+        "out_of_scope": [
+          "Composing HeaderOverlay into App or GameLayout",
+          "Backend changes",
+          "Changing uiStore"
+        ],
+        "preserve": [
+          "Existing Countdown and RoundBadge behavior and tests",
+          "uiStore state shape and actions",
+          "API client contracts"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript + Tailwind classes; lucide-react icons; Button from components/ui/button",
+        "State read via useUiStore selectors from src/store/uiStore.ts",
+        "Round type comes from src/api/client.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "HeaderOverlay exported from game/frontend/src/components/HeaderOverlay.tsx",
+        "All requirement Verify units pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-065.md`"
+      ],
+      "non_functional": [
+        "Accessible names on icon buttons"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+      "links": [
+        "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+        "artifact:.ai-dlc/intent/INT-065.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-065.md",
+      "artifact_id": "INT-065"
+    },
+    {
+      "id": "01M84NPCRC73WEDDD25DW814QK",
+      "kind": "requirement",
+      "title": "REQ · HeaderOverlay shows logo, world name, round ID, status and countdown",
+      "body": "Context: round data is a Round from api/client.ts (id, number, status, starts_at, ends_at). Desired behavior: with a round supplied, the header shows the StoryForge logo, worldTitle, round.id, round.status and a Countdown to round.ends_at. Expected result: all five items present in one compact bar. Why: players must see which round is live and when it ends.\n\n## Acceptance criteria\n- Given worldTitle 'The Boy's Room' and a round, When rendered, Then the text 'StoryForge', the world title, round.id and round.status are in the document\n- Given a round with a future ends_at, When rendered, Then a role=timer element is present\n\n\n## Scope\n- In scope: Logo, world name, round ID, status, countdown rendering\n- Out of scope: Sound and settings controls\n- Out of scope: Loading/error states\n- Preserve: Countdown component API\n\n\n## Technical constraints\n- Reuse Countdown from components/Countdown.tsx\n\n\n## Definition of done\n- Round info renders from props\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "HeaderOverlay renders identity and round info from worldTitle and round props",
+      "description": "Context: round data is a Round from api/client.ts (id, number, status, starts_at, ends_at). Desired behavior: with a round supplied, the header shows the StoryForge logo, worldTitle, round.id, round.status and a Countdown to round.ends_at. Expected result: all five items present in one compact bar. Why: players must see which round is live and when it ends.",
+      "acceptance_criteria": [
+        "Given worldTitle 'The Boy's Room' and a round, When rendered, Then the text 'StoryForge', the world title, round.id and round.status are in the document",
+        "Given a round with a future ends_at, When rendered, Then a role=timer element is present"
+      ],
+      "scope": {
+        "in_scope": [
+          "Logo, world name, round ID, status, countdown rendering"
+        ],
+        "out_of_scope": [
+          "Sound and settings controls",
+          "Loading/error states"
+        ],
+        "preserve": [
+          "Countdown component API"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse Countdown from components/Countdown.tsx"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Round info renders from props",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-162.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NPCRCBX0Q94CQ8RJPYY81",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84NPCRCBX0Q94CQ8RJPYY81",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-162.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCBX0Q94CQ8RJPYY81"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-162.md",
+      "artifact_id": "REQ-162"
+    },
+    {
+      "id": "01M84NPCRCRS0HXQJ5PKW1QV8M",
+      "kind": "requirement",
+      "title": "REQ · HeaderOverlay sound toggle and settings are wired to useUiStore",
+      "body": "Context: uiStore exposes soundEnabled, settingsOpen, toggleSound and toggleSettings. Desired behavior: HeaderOverlay shows a sound button whose icon and aria-pressed reflect soundEnabled and calls toggleSound on click, and a settings button that calls toggleSettings. Expected result: clicking changes store state. Why: header controls must drive shared UI state, not local state.\n\n## Acceptance criteria\n- Given soundEnabled true, When the 'Toggle sound' button is clicked, Then store soundEnabled is false and aria-pressed reflects the state\n- Given settingsOpen false, When the 'Settings' button is clicked, Then store settingsOpen is true\n\n\n## Scope\n- In scope: Sound and settings buttons in HeaderOverlay\n- Out of scope: Settings panel content\n- Out of scope: Audio playback\n- Preserve: uiStore shape\n\n\n## Technical constraints\n- Use useUiStore selectors; lucide Volume2, VolumeX, Settings icons\n\n\n## Definition of done\n- Controls wired to the real store\n\n\n## Non-functional requirements\n- aria-label on each icon button\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Sound toggle and settings buttons read and write uiStore",
+      "description": "Context: uiStore exposes soundEnabled, settingsOpen, toggleSound and toggleSettings. Desired behavior: HeaderOverlay shows a sound button whose icon and aria-pressed reflect soundEnabled and calls toggleSound on click, and a settings button that calls toggleSettings. Expected result: clicking changes store state. Why: header controls must drive shared UI state, not local state.",
+      "acceptance_criteria": [
+        "Given soundEnabled true, When the 'Toggle sound' button is clicked, Then store soundEnabled is false and aria-pressed reflects the state",
+        "Given settingsOpen false, When the 'Settings' button is clicked, Then store settingsOpen is true"
+      ],
+      "scope": {
+        "in_scope": [
+          "Sound and settings buttons in HeaderOverlay"
+        ],
+        "out_of_scope": [
+          "Settings panel content",
+          "Audio playback"
+        ],
+        "preserve": [
+          "uiStore shape"
+        ]
+      },
+      "technical_constraints": [
+        "Use useUiStore selectors; lucide Volume2, VolumeX, Settings icons"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Controls wired to the real store",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-163.md`"
+      ],
+      "non_functional": [
+        "aria-label on each icon button"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NPCRCBX0Q94CQ8RJPYY81",
+      "matched_feature_id": "01M8457KMNZEKD0H1DQSEXK0KS",
+      "links": [
+        "parent:01M84NPCRCBX0Q94CQ8RJPYY81",
+        "trace:01M8457KMNZEKD0H1DQSEXK0KS",
+        "artifact:.ai-dlc/requirements/REQ-163.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCBX0Q94CQ8RJPYY81"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-163.md",
+      "artifact_id": "REQ-163"
+    },
+    {
+      "id": "01M84NPCRC43TNV4G86GRGM11J",
+      "kind": "requirement",
+      "title": "REQ · HeaderOverlay has loading, empty and error states explaining round API failure",
+      "body": "Context: RoundBadge currently shows 'Round unavailable' with no reason. Desired behavior: loading=true shows 'Loading round…'; error set shows 'Round unavailable: <error>' in role=alert; no round, no error and not loading shows 'No active round'. Logo, world name and controls stay visible in all states. Expected result: failure is explained. Why: users must understand why no round is shown.\n\n## Acceptance criteria\n- Given loading true, When rendered, Then 'Loading round…' is shown and no timer is present\n- Given error 'Round service returned 500', When rendered, Then a role=alert contains that text\n- Given loading false, error undefined, round undefined, When rendered, Then 'No active round' is shown\n\n\n## Scope\n- In scope: Three non-ready states and their precedence: error over loading over empty\n- Out of scope: Fetching the round\n- Out of scope: Retry button\n- Preserve: Logo and controls visible in all states\n\n\n## Technical constraints\n- error prop is string | undefined\n\n\n## Definition of done\n- All three states render distinct text\n\n\n## Non-functional requirements\n- Error uses role=alert\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "HeaderOverlay shows loading, empty and error states with a failure explanation",
+      "description": "Context: RoundBadge currently shows 'Round unavailable' with no reason. Desired behavior: loading=true shows 'Loading round…'; error set shows 'Round unavailable: <error>' in role=alert; no round, no error and not loading shows 'No active round'. Logo, world name and controls stay visible in all states. Expected result: failure is explained. Why: users must understand why no round is shown.",
+      "acceptance_criteria": [
+        "Given loading true, When rendered, Then 'Loading round…' is shown and no timer is present",
+        "Given error 'Round service returned 500', When rendered, Then a role=alert contains that text",
+        "Given loading false, error undefined, round undefined, When rendered, Then 'No active round' is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "Three non-ready states and their precedence: error over loading over empty"
+        ],
+        "out_of_scope": [
+          "Fetching the round",
+          "Retry button"
+        ],
+        "preserve": [
+          "Logo and controls visible in all states"
+        ]
+      },
+      "technical_constraints": [
+        "error prop is string | undefined"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three states render distinct text",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-164.md`"
+      ],
+      "non_functional": [
+        "Error uses role=alert"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84NPCRCBX0Q94CQ8RJPYY81",
+      "matched_feature_id": "01M84GAF91YHBCPRJZQFKHDMBG",
+      "links": [
+        "parent:01M84NPCRCBX0Q94CQ8RJPYY81",
+        "trace:01M84GAF91YHBCPRJZQFKHDMBG",
+        "artifact:.ai-dlc/requirements/REQ-164.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCBX0Q94CQ8RJPYY81"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-164.md",
+      "artifact_id": "REQ-164"
+    },
+    {
+      "id": "01M84NPCRCR6RBXAFC8NHFWEB9",
+      "kind": "unit",
+      "title": "Act: Create HeaderOverlay with logo, world, round ID, status and countdown",
+      "body": "Create the HeaderOverlay component with props and the ready-state layout.\n\n## Acceptance criteria\n- HeaderOverlay exported with props worldTitle, round, loading, error\n- Ready state shows logo, title, id, status and Countdown\n\n\n## Scope\n- In scope: New HeaderOverlay.tsx\n- Out of scope: Tests\n- Out of scope: Store controls\n- Preserve: Countdown.tsx\n\n\n## Technical constraints\n- Tailwind classes\n- New file: `game/frontend/src/components/HeaderOverlay.tsx`\n\n\n## Definition of done\n- Component compiles with tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create HeaderOverlay.tsx rendering identity and round info",
+      "description": "Create the HeaderOverlay component with props and the ready-state layout.",
+      "acceptance_criteria": [
+        "HeaderOverlay exported with props worldTitle, round, loading, error",
+        "Ready state shows logo, title, id, status and Countdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "New HeaderOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Store controls"
+        ],
+        "preserve": [
+          "Countdown.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind classes",
+        "New file: `game/frontend/src/components/HeaderOverlay.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Component compiles with tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-324.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NPCRC73WEDDD25DW814QK",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M84NPCRC73WEDDD25DW814QK",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-324.md"
+      ],
+      "depends_on": [
+        "01M84NPCRC73WEDDD25DW814QK"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-324.md",
+      "artifact_id": "UNIT-324",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "new: HeaderOverlayProps",
+          "lines": "new",
+          "action": "Create the file and export interface HeaderOverlayProps with worldTitle: string, round?: Round (type imported from '../api/client'), loading?: boolean, error?: string.",
+          "code": "export interface HeaderOverlayProps { worldTitle: string; round?: Round; loading?: boolean; error?: string }",
+          "expected": "Props interface compiles"
+        },
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "new: HeaderOverlay",
+          "lines": "new",
+          "action": "Export function HeaderOverlay returning <header className=\"absolute inset-x-0 top-0 z-10 flex items-center gap-3 px-3 py-2\"> with a <span>StoryForge</span> logo, a <span> with worldTitle, and when round is defined a <span> with round.id, a <span> with round.status and <Countdown endsAt={round.ends_at} /> imported from './Countdown'.",
+          "code": "{round && (<><span>{round.id}</span><span data-status={round.status}>{round.status}</span><Countdown endsAt={round.ends_at} /></>)}",
+          "expected": "Rendering with a round shows all five items"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRCATQGG809NPR3JK45",
+      "kind": "unit",
+      "title": "Act: Add sound toggle and settings buttons wired to useUiStore",
+      "body": "Add the sound and settings controls to the HeaderOverlay header.\n\n## Acceptance criteria\n- Sound button calls toggleSound\n- Settings button calls toggleSettings\n\n\n## Scope\n- In scope: Buttons in HeaderOverlay.tsx\n- Out of scope: Tests\n- Out of scope: Settings panel\n- Preserve: uiStore.ts\n\n\n## Technical constraints\n- Button from ./ui/button, icons from lucide-react\n- New file: `game/frontend/src/components/HeaderOverlay.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Buttons render with aria-labels\n\n\n## Non-functional requirements\n- Accessible labels\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add store-wired icon buttons to HeaderOverlay",
+      "description": "Add the sound and settings controls to the HeaderOverlay header.",
+      "acceptance_criteria": [
+        "Sound button calls toggleSound",
+        "Settings button calls toggleSettings"
+      ],
+      "scope": {
+        "in_scope": [
+          "Buttons in HeaderOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Settings panel"
+        ],
+        "preserve": [
+          "uiStore.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Button from ./ui/button, icons from lucide-react",
+        "New file: `game/frontend/src/components/HeaderOverlay.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Buttons render with aria-labels",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-325.md`"
+      ],
+      "non_functional": [
+        "Accessible labels"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NPCRCRS0HXQJ5PKW1QV8M",
+      "matched_feature_id": "01M847PS3SD6X4B1PSE3TWMH1D",
+      "links": [
+        "parent:01M84NPCRCRS0HXQJ5PKW1QV8M",
+        "trace:01M847PS3SD6X4B1PSE3TWMH1D",
+        "artifact:.ai-dlc/units/UNIT-325.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCRS0HXQJ5PKW1QV8M"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-325.md",
+      "artifact_id": "UNIT-325",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlay",
+          "lines": "after the Countdown block from ACT1",
+          "action": "Import useUiStore from '../store/uiStore', Button from './ui/button', and Volume2, VolumeX, Settings from 'lucide-react'. Read soundEnabled, toggleSound, toggleSettings via selectors. Render a Button aria-label=\"Toggle sound\" aria-pressed={soundEnabled} onClick={toggleSound} showing Volume2 when enabled else VolumeX, and a Button aria-label=\"Settings\" onClick={toggleSettings} showing Settings.",
+          "code": "<Button type=\"button\" variant=\"ghost\" aria-label=\"Toggle sound\" aria-pressed={soundEnabled} onClick={toggleSound}>{soundEnabled ? <Volume2 aria-hidden=\"true\" className=\"h-4 w-4\" /> : <VolumeX aria-hidden=\"true\" className=\"h-4 w-4\" />}</Button>",
+          "expected": "Two labelled buttons present and wired to the store"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRCJP9EZ3EQ08YXJ2YM",
+      "kind": "unit",
+      "title": "Act: Add loading, empty and error states to HeaderOverlay",
+      "body": "Replace the round block in HeaderOverlay with a state switch.\n\n## Acceptance criteria\n- error > loading > empty precedence\n- Error text includes the explanation\n\n\n## Scope\n- In scope: State branches in HeaderOverlay.tsx\n- Out of scope: Tests\n- Out of scope: Fetching\n- Preserve: Logo and controls always rendered\n\n\n## Technical constraints\n- role=alert on error\n- New file: `game/frontend/src/components/HeaderOverlay.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Three states render distinct text\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Render state messages in place of round info",
+      "description": "Replace the round block in HeaderOverlay with a state switch.",
+      "acceptance_criteria": [
+        "error > loading > empty precedence",
+        "Error text includes the explanation"
+      ],
+      "scope": {
+        "in_scope": [
+          "State branches in HeaderOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Fetching"
+        ],
+        "preserve": [
+          "Logo and controls always rendered"
+        ]
+      },
+      "technical_constraints": [
+        "role=alert on error",
+        "New file: `game/frontend/src/components/HeaderOverlay.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Three states render distinct text",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-326.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84NPCRC43TNV4G86GRGM11J",
+      "matched_feature_id": "01M84JF0K1DC68QPCZ6V752H5C",
+      "links": [
+        "parent:01M84NPCRC43TNV4G86GRGM11J",
+        "trace:01M84JF0K1DC68QPCZ6V752H5C",
+        "artifact:.ai-dlc/units/UNIT-326.md"
+      ],
+      "depends_on": [
+        "01M84NPCRC43TNV4G86GRGM11J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-326.md",
+      "artifact_id": "UNIT-326",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlay",
+          "lines": "round block added in ACT1",
+          "action": "Wrap the round block in a chain: if error is truthy render <span role=\"alert\">Round unavailable: {error}</span>; else if loading render <span>Loading round…</span>; else if round render the round block; else render <span>No active round</span>.",
+          "code": "{error ? <span role=\"alert\">Round unavailable: {error}</span> : loading ? <span>Loading round…</span> : round ? (<>…round block…</>) : <span>No active round</span>}",
+          "expected": "Each state shows its text; logo and buttons remain"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRCKB0PNCBB023DCCSR",
+      "kind": "unit",
+      "title": "Verify: HeaderOverlay round info unit tests",
+      "body": "Write unit tests from REQ1 for the ready state.\n\n## Acceptance criteria\n- Ready state text and timer asserted\n- The round info test passes when run alone\n\n\n## Scope\n- In scope: tests/headerOverlay.test.tsx\n- Out of scope: Product code\n- Preserve: Existing fixtures\n\n\n## Technical constraints\n- vitest + testing-library; no network\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for logo, world, round ID, status and countdown",
+      "description": "Write unit tests from REQ1 for the ready state.",
+      "acceptance_criteria": [
+        "Ready state text and timer asserted",
+        "The round info test passes when run alone"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerOverlay.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing fixtures"
+        ]
+      },
+      "technical_constraints": [
+        "vitest + testing-library; no network"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-327.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NPCRCR6RBXAFC8NHFWEB9",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NPCRCR6RBXAFC8NHFWEB9",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-327.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCR6RBXAFC8NHFWEB9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-327.md",
+      "artifact_id": "UNIT-327",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerOverlay.test.tsx",
+          "symbol": "new: HeaderOverlay round info",
+          "lines": "new",
+          "action": "Create describe 'HeaderOverlay round info'. Test 'shows logo, world, round id, status and timer': render <HeaderOverlay worldTitle=\"The Boy's Room\" round={roundFixture} /> with roundFixture imported from './fixtures/api' (mirrors the Round type in game/frontend/src/api/client.ts and the GET /api/v1/worlds/{id}/round/current response); assert getByText('StoryForge'), the world title, roundFixture.id, roundFixture.status and getByRole('timer').",
+          "command": "cd game/frontend && npx vitest run tests/headerOverlay.test.tsx -t \"round info\"",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRC8M6B0W55PJKRQ1KR",
+      "kind": "unit",
+      "title": "Verify: HeaderOverlay store-wired controls unit tests",
+      "body": "Write unit tests from REQ2 using the real uiStore.\n\n## Acceptance criteria\n- Clicks flip store flags\n- Both control tests pass against the real store\n\n\n## Scope\n- In scope: tests/headerOverlayControls.test.tsx\n- Out of scope: Product code\n\n\n## Technical constraints\n- Reset store with useUiStore.setState(useUiStore.getInitialState(), true)\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for sound and settings against the real store",
+      "description": "Write unit tests from REQ2 using the real uiStore.",
+      "acceptance_criteria": [
+        "Clicks flip store flags",
+        "Both control tests pass against the real store"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerOverlayControls.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Reset store with useUiStore.setState(useUiStore.getInitialState(), true)"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-328.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NPCRCATQGG809NPR3JK45",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NPCRCATQGG809NPR3JK45",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-328.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCATQGG809NPR3JK45"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-328.md",
+      "artifact_id": "UNIT-328",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerOverlayControls.test.tsx",
+          "symbol": "new: HeaderOverlay controls",
+          "lines": "new",
+          "action": "Create describe 'HeaderOverlay controls' with beforeEach resetting the store. Test 'sound button toggles soundEnabled': render with roundFixture (from ./fixtures/api, mirroring Round in src/api/client.ts), click getByRole('button',{name:'Toggle sound'}), assert useUiStore.getState().soundEnabled false and aria-pressed 'false'. Test 'settings button opens settings': click getByRole('button',{name:'Settings'}), assert settingsOpen true.",
+          "command": "cd game/frontend && npx vitest run tests/headerOverlayControls.test.tsx",
+          "expected": "Both tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRCD4JFPGQWSRYGJ0HW",
+      "kind": "unit",
+      "title": "Verify: HeaderOverlay loading, empty and error states unit tests",
+      "body": "Write unit tests from REQ3.\n\n## Acceptance criteria\n- Each state asserted\n- All three state tests pass when run together\n\n\n## Scope\n- In scope: tests/headerOverlayStates.test.tsx\n- Out of scope: Product code\n\n\n## Technical constraints\n- No network\n\n\n## Dependencies\n- ACT3\n\n\n## Definition of done\n- Tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the three non-ready states",
+      "description": "Write unit tests from REQ3.",
+      "acceptance_criteria": [
+        "Each state asserted",
+        "All three state tests pass when run together"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerOverlayStates.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No network"
+      ],
+      "dependencies": [
+        "ACT3"
+      ],
+      "definition_of_done": [
+        "Tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-329.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NPCRCJP9EZ3EQ08YXJ2YM",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84NPCRCJP9EZ3EQ08YXJ2YM",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-329.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCJP9EZ3EQ08YXJ2YM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-329.md",
+      "artifact_id": "UNIT-329",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerOverlayStates.test.tsx",
+          "symbol": "new: HeaderOverlay states",
+          "lines": "new",
+          "action": "Create describe 'HeaderOverlay states' with three tests: loading renders <HeaderOverlay worldTitle=\"W\" loading /> and asserts getByText('Loading round…') and queryByRole('timer') null; error renders error=\"Round service returned 500\" with roundFixture also passed and asserts getByRole('alert') has text 'Round unavailable: Round service returned 500' and no timer; empty renders only worldTitle and asserts getByText('No active round'). Import roundFixture from './fixtures/api' (mirrors Round in src/api/client.ts).",
+          "command": "cd game/frontend && npx vitest run tests/headerOverlayStates.test.tsx",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84NPCRCX2WK8JSE56D9XZXF",
+      "kind": "evidence",
+      "title": "Evidence: HeaderOverlay unit tests pass",
+      "body": "Collect results of the three HeaderOverlay unit test files as verification evidence.\n\n## Acceptance criteria\n- headerOverlay, headerOverlayControls and headerOverlayStates tests pass\n- No other test files are required for this evidence\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Browser checks\n\n\n## Dependencies\n- VER1\n- VER2\n- VER3\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the HeaderOverlay unit tests pass",
+      "description": "Collect results of the three HeaderOverlay unit test files as verification evidence.",
+      "acceptance_criteria": [
+        "headerOverlay, headerOverlayControls and headerOverlayStates tests pass",
+        "No other test files are required for this evidence"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2",
+        "VER3"
+      ],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-065.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84NPCRCKB0PNCBB023DCCSR",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84NPCRCKB0PNCBB023DCCSR",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-065.md"
+      ],
+      "depends_on": [
+        "01M84NPCRCKB0PNCBB023DCCSR",
+        "01M84NPCRC8M6B0W55PJKRQ1KR",
+        "01M84NPCRCD4JFPGQWSRYGJ0HW"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-065.md",
+      "artifact_id": "EVD-065"
+    }
+  ],
+  "created_at": "2026-11-23T17:01:58.105270+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

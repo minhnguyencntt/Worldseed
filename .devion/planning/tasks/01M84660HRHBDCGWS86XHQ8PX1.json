@@ -1,0 +1,71 @@
+{
+  "id": "01M84660HRHBDCGWS86XHQ8PX1",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "Verify: Round transition table and FileStore unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for transitions and round.yaml persistence",
+  "description": "Write TDD-style tests in internal/round using t.TempDir only.",
+  "acceptance_criteria": [
+    "Every legal edge passes and a table of illegal edges returns ErrIllegalTransition with status unchanged",
+    "Save then Get round-trips all fields; unsafe ids are rejected"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/round_test.go",
+      "backend/internal/round/store_test.go"
+    ],
+    "out_of_scope": [
+      "network, git"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Temp dir filesystem only"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-077.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD88GGV84CAHN3JBFDA",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-077.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HR8DD83J75DH3MMZF6"
+  ],
+  "sim_node_id": "01M8465XD8X17HZGWJA5X35QQ0",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-077.md",
+  "artifact_id": "UNIT-077",
+  "steps": [
+    {
+      "file": "backend/internal/round/round_test.go",
+      "symbol": "new: TestTransitions",
+      "lines": "new",
+      "action": "Table test: iterate Transitions and assert CanTransition true for each listed edge; assert CanTransition false for SCHEDULED→CLOSED, OPEN→SCHEDULED, COMPLETED→OPEN, CANCELLED→OPEN, CLOSED→OPEN; assert Transition returns errors.Is ErrIllegalTransition and Status is unchanged",
+      "command": "cd backend && go test ./internal/round -run TestTransitions",
+      "expected": "TestTransitions passes (go test reports PASS)"
+    },
+    {
+      "file": "backend/internal/round/store_test.go",
+      "symbol": "new: TestFileStore_RoundTrip, TestFileStore_UnsafeIDs",
+      "lines": "new",
+      "action": "Save a Round{ID:\"ROUND-0000001\",WorldID:\"the-boys-room\",Number:1,Status:StatusOpen,BaseRelease:\"1.0.0\"} into t.TempDir, assert file worlds/the-boys-room/rounds/round-0000001/round.yaml exists and Get returns equal fields; assert Save/Get with WorldID \"../x\" returns an error and no file is created",
+      "command": "cd backend && go test ./internal/round -run TestFileStore",
+      "expected": "TestFileStore tests pass (go test reports PASS)"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.276870+00:00"
+}

@@ -1,0 +1,642 @@
+{
+  "id": "01M85HVJSCGRGXZ6V6F3KD3R3X",
+  "trigger_node_id": "INT-143, UNIT-710 +9",
+  "node_ids": [
+    "INT-143",
+    "UNIT-710",
+    "UNIT-711",
+    "UNIT-712",
+    "UNIT-713",
+    "UNIT-714",
+    "UNIT-715",
+    "REQ-355",
+    "REQ-356",
+    "REQ-357",
+    "EVD-143"
+  ],
+  "intent_id": "INT-143",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-143",
+      "title": "SG-10.1 Keyboard handling in the Phaser scene with typed events",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-710",
+      "title": "Act: Add focusChange and menuClose to PhaserToReactEvents",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHST0WM1KKKD731Y8YBP"
+      ],
+      "depends_on": [
+        "REQ-355"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "8cbbe2f0face72aa2f9edc1b09ca6db99c288647",
+      "from_sha": "3dd1a6b0e431a7ffda978ffe64779743b910002a",
+      "started_at": "2026-11-24T01:13:54.540047+00:00",
+      "ended_at": "2026-11-24T01:14:21.657609+00:00",
+      "run_started_at": "2026-11-24T01:13:54.540047+00:00",
+      "duration_ms": 24488,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 1962,
+      "estimated_cost_usd": 0.007858
+    },
+    {
+      "unit_id": "UNIT-711",
+      "title": "Act: Add keyboard handler to BootScene.create and release it on shutdown",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHSTZ98FVSFFFNJ58VWN"
+      ],
+      "depends_on": [
+        "REQ-356"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "48bf95e9d1706dbb7184423147d970613cfbedb3",
+      "from_sha": "8cbbe2f0face72aa2f9edc1b09ca6db99c288647",
+      "started_at": "2026-11-24T01:13:54.567987+00:00",
+      "ended_at": "2026-11-24T01:14:41.886696+00:00",
+      "run_started_at": "2026-11-24T01:13:54.567987+00:00",
+      "duration_ms": 43886,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 5501,
+      "estimated_cost_usd": 0.022018
+    },
+    {
+      "unit_id": "UNIT-712",
+      "title": "Act: Subscribe App to menuClose to clear the selection",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHSTE4KAVRBPBY90ED1D"
+      ],
+      "depends_on": [
+        "REQ-357"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "3dd1a6b0e431a7ffda978ffe64779743b910002a",
+      "from_sha": "b01e9e3a84303f7832b49aa13d527d1079137268",
+      "started_at": "2026-11-24T01:13:54.577782+00:00",
+      "ended_at": "2026-11-24T01:14:12.176291+00:00",
+      "run_started_at": "2026-11-24T01:13:54.577782+00:00",
+      "duration_ms": 14171,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1848,
+      "estimated_cost_usd": 0.007398
+    },
+    {
+      "unit_id": "UNIT-713",
+      "title": "Verify: focusChange and menuClose events deliver payloads",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHSTBJ2W6H2TZP2T8858"
+      ],
+      "depends_on": [
+        "UNIT-710",
+        "REQ-355"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "2c514604d12f037b72dd28cab49168e38b31657f",
+      "from_sha": "48bf95e9d1706dbb7184423147d970613cfbedb3",
+      "tests": [
+        {
+          "id": "phaserEvents.focusChange.delivers",
+          "kind": "unit",
+          "name": "delivers focusChange payload to a subscribed handler",
+          "title": "phaserToReact keyboard events: delivers focusChange payload to a subscribed handler",
+          "scenario": "Given a handler subscribed to focusChange, When focusChange is emitted with {id:'bookshelf'}, Then the handler is called with that exact payload",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Added in this unit; passes."
+        },
+        {
+          "id": "phaserEvents.menuClose.unsubscribes",
+          "kind": "unit",
+          "name": "menuClose unsubscribes: no delivery after the returned unsubscribe is called",
+          "title": "phaserToReact keyboard events: menuClose unsubscribes, no delivery after the returned unsubscribe is called",
+          "scenario": "Given a handler subscribed to menuClose and one emit delivered, When unsubscribe is called and menuClose is emitted again, Then the handler has been called exactly once",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Added in this unit; passes."
+        },
+        {
+          "id": "phaserEvents.objectClick.delivers-once",
+          "kind": "unit",
+          "name": "delivers a phaser-to-react event payload to a subscribed handler exactly once",
+          "title": "typed event bus delivery: delivers a phaser-to-react event payload to a subscribed handler exactly once",
+          "scenario": "Given a handler subscribed to objectClick, When objectClick is emitted, Then the handler is called once with that payload",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing; passes."
+        },
+        {
+          "id": "phaserEvents.objectClick.unsubscribe",
+          "kind": "unit",
+          "name": "stops delivering events after the returned unsubscribe function is called",
+          "title": "typed event bus delivery: stops delivering events after the returned unsubscribe function is called",
+          "scenario": "Given a handler subscribed to objectClick and the first emit delivered, When unsubscribe is called and objectClick is emitted again, Then the handler is still called only once",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing; passes."
+        },
+        {
+          "id": "phaserEvents.characterClick.isolated",
+          "kind": "unit",
+          "name": "delivers characterClick payload once and not to objectClick handlers",
+          "title": "typed event bus delivery: delivers characterClick payload once and not to objectClick handlers",
+          "scenario": "Given characterClick and objectClick handlers, When characterClick is emitted with {id:'boy'}, Then only the characterClick handler is called, once",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing; passes."
+        },
+        {
+          "id": "phaserEvents.reactToPhaser.clear",
+          "kind": "unit",
+          "name": "delivers no events to react-to-phaser handlers after clear is called",
+          "title": "typed event bus delivery: delivers no events to react-to-phaser handlers after clear is called",
+          "scenario": "Given a transitionTo handler on the react-to-phaser bus, When the bus is cleared and transitionTo is emitted, Then no handler is called",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing; passes."
+        },
+        {
+          "id": "phaserEvents.noPhaserImport",
+          "kind": "unit",
+          "name": "keeps the event bus free of any direct phaser import",
+          "title": "typed event bus delivery: keeps the event bus free of any direct phaser import",
+          "scenario": "Given src/phaser/events.ts on disk, Then it does not import from 'phaser' directly",
+          "command": "cd game/frontend && npx vitest run tests/phaserEvents.test.ts --testTimeout=10000",
+          "file": "tests/phaserEvents.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing; passes."
+        }
+      ],
+      "started_at": "2026-11-24T01:14:21.667011+00:00",
+      "ended_at": "2026-11-24T01:14:43.979571+00:00",
+      "run_started_at": "2026-11-24T01:14:21.667011+00:00",
+      "duration_ms": 20702,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 3718,
+      "estimated_cost_usd": 0.014878
+    },
+    {
+      "unit_id": "UNIT-714",
+      "title": "Verify: BootScene keyboard unit tests for each key with Phaser mocked",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHST6DJXBMGW5J188EV3"
+      ],
+      "depends_on": [
+        "UNIT-711",
+        "REQ-356"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "2ce197391fcdfc016c6573e431016bad8059206e",
+      "from_sha": "2c514604d12f037b72dd28cab49168e38b31657f",
+      "tests": [
+        {
+          "id": "bootSceneKeyboard:registers-keydown",
+          "kind": "unit",
+          "name": "registers a callable keydown handler on the keyboard plugin during create",
+          "title": "BootScene keyboard > registers a callable keydown handler on the keyboard plugin during create",
+          "scenario": "Given BootScene.create has run, When the keyboard plugin is inspected, Then a keydown handler is registered and callable",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:tab-forward",
+          "kind": "unit",
+          "name": "moves focus forward and emits focusChange with the focused object id when Tab is pressed",
+          "title": "BootScene keyboard > moves focus forward and emits focusChange when Tab is pressed",
+          "scenario": "Given the scene has one focused object, When Tab is pressed, Then moveFocus is called with (objects, 1), preventDefault is called, and focusChange emits {id:'bookshelf'}",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:shift-tab-backward",
+          "kind": "unit",
+          "name": "moves focus backward when Shift+Tab is pressed",
+          "title": "BootScene keyboard > moves focus backward when Shift+Tab is pressed",
+          "scenario": "Given the scene has one focused object, When Shift+Tab is pressed, Then moveFocus is called with (objects, -1) and focusChange emits {id:'bookshelf'}",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:arrowleft-backward",
+          "kind": "unit",
+          "name": "moves focus backward when ArrowLeft is pressed",
+          "title": "BootScene keyboard > moves focus backward when ArrowLeft is pressed",
+          "scenario": "Given the scene has one focused object, When ArrowLeft is pressed, Then moveFocus is called with (objects, -1)",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:arrowright-forward",
+          "kind": "unit",
+          "name": "moves focus forward when ArrowRight is pressed",
+          "title": "BootScene keyboard > moves focus forward when ArrowRight is pressed",
+          "scenario": "Given the scene has one focused object, When ArrowRight is pressed, Then moveFocus is called with (objects, 1)",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:enter-handlekey",
+          "kind": "unit",
+          "name": "forwards Enter to the focused object handleKey",
+          "title": "BootScene keyboard > forwards Enter to the focused object handleKey",
+          "scenario": "Given a focused object, When Enter is pressed, Then handleKey is called with 'Enter' and focus does not move",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:space-handlekey",
+          "kind": "unit",
+          "name": "forwards Space to the focused object handleKey",
+          "title": "BootScene keyboard > forwards Space to the focused object handleKey",
+          "scenario": "Given a focused object, When the space key is pressed, Then handleKey is called with ' ' and focus does not move",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:escape-menuclose",
+          "kind": "unit",
+          "name": "emits menuClose to React when Escape is pressed",
+          "title": "BootScene keyboard > emits menuClose to React when Escape is pressed",
+          "scenario": "Given the scene is running, When Escape is pressed, Then phaserToReact emits menuClose with {} and focus and handleKey are not called",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneKeyboard:shutdown-off",
+          "kind": "unit",
+          "name": "removes the same keydown handler from the keyboard plugin when the scene shuts down",
+          "title": "BootScene keyboard > removes the same keydown handler from the keyboard plugin on shutdown",
+          "scenario": "Given create registered a SHUTDOWN callback via events.once, When that callback runs, Then input.keyboard.off is called with ('keydown', the registered handler)",
+          "command": "npx vitest run tests/bootSceneKeyboard.test.ts --testTimeout=20000",
+          "file": "tests/bootSceneKeyboard.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T01:14:41.896693+00:00",
+      "ended_at": "2026-11-24T01:15:27.394603+00:00",
+      "run_started_at": "2026-11-24T01:14:41.896693+00:00",
+      "duration_ms": 43843,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 9646,
+      "estimated_cost_usd": 0.038594
+    },
+    {
+      "unit_id": "UNIT-715",
+      "title": "Verify: menuClose closes the ActionMenu and unsubscribes on unmount",
+      "kind": "unit",
+      "task_ids": [
+        "01M85HVHST701SHQYHCMQP689M"
+      ],
+      "depends_on": [
+        "UNIT-712",
+        "REQ-357"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "2c514604d12f037b72dd28cab49168e38b31657f",
+      "from_sha": "2c514604d12f037b72dd28cab49168e38b31657f",
+      "tests": [
+        {
+          "id": "appMenuClose.test.tsx › App menuClose › closes the ActionMenu",
+          "kind": "unit",
+          "name": "App menuClose closes the ActionMenu on menuClose",
+          "title": "Given an object is selected, when menuClose is emitted, then the ActionMenu closes and its buttons disappear",
+          "scenario": "Given the playing view with bookshelf selected via objectClick, when menuClose is emitted, then Inspect/Push/Search/Leave are absent",
+          "command": "cd game/frontend && npx vitest run tests/appMenuClose.test.tsx --testTimeout=20000",
+          "file": "tests/appMenuClose.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appMenuClose.test.tsx › App menuClose › unsubscribes on unmount",
+          "kind": "unit",
+          "name": "App menuClose unsubscribes from menuClose on unmount",
+          "title": "Given App is unmounted, when it unsubscribes from menuClose, then the menuClose listener is released and no error is logged",
+          "scenario": "Given App subscribed to menuClose, when unmounted, then the returned unsubscribe is invoked once and a later menuClose emit logs no console error",
+          "command": "cd game/frontend && npx vitest run tests/appMenuClose.test.tsx --testTimeout=20000",
+          "file": "tests/appMenuClose.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T01:14:12.185619+00:00",
+      "ended_at": "2026-11-24T01:14:49.281411+00:00",
+      "run_started_at": "2026-11-24T01:14:12.185619+00:00",
+      "duration_ms": 35400,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 4889,
+      "estimated_cost_usd": 0.019567
+    },
+    {
+      "unit_id": "REQ-355",
+      "title": "REQ · Typed focusChange and menuClose events exist on the Phaser to React bus",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-143"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-356",
+      "title": "REQ · BootScene maps Tab, arrows, Enter, Space and Escape to focus, select and close events",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-143"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-357",
+      "title": "REQ · App closes the ActionMenu on menuClose and keeps it open on selection",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-143"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-143",
+      "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-710",
+        "UNIT-711",
+        "UNIT-712",
+        "UNIT-713",
+        "UNIT-714",
+        "UNIT-715"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-710",
+      "dst": "EVD-143"
+    },
+    {
+      "src": "INT-143",
+      "dst": "REQ-356"
+    },
+    {
+      "src": "UNIT-712",
+      "dst": "EVD-143"
+    },
+    {
+      "src": "REQ-357",
+      "dst": "UNIT-715"
+    },
+    {
+      "src": "REQ-355",
+      "dst": "UNIT-710"
+    },
+    {
+      "src": "INT-143",
+      "dst": "REQ-355"
+    },
+    {
+      "src": "REQ-357",
+      "dst": "UNIT-712"
+    },
+    {
+      "src": "UNIT-713",
+      "dst": "EVD-143"
+    },
+    {
+      "src": "UNIT-711",
+      "dst": "EVD-143"
+    },
+    {
+      "src": "REQ-356",
+      "dst": "UNIT-711"
+    },
+    {
+      "src": "UNIT-710",
+      "dst": "UNIT-713"
+    },
+    {
+      "src": "REQ-356",
+      "dst": "UNIT-714"
+    },
+    {
+      "src": "UNIT-714",
+      "dst": "EVD-143"
+    },
+    {
+      "src": "UNIT-712",
+      "dst": "UNIT-715"
+    },
+    {
+      "src": "INT-143",
+      "dst": "REQ-357"
+    },
+    {
+      "src": "REQ-355",
+      "dst": "UNIT-713"
+    },
+    {
+      "src": "UNIT-711",
+      "dst": "UNIT-714"
+    },
+    {
+      "src": "UNIT-715",
+      "dst": "EVD-143"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85hvj",
+  "base_sha": "b01e9e3a84303f7832b49aa13d527d1079137268",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85HVJSCGRGXZ6V6F3KD3R3X:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T01:13:51.660869+00:00",
+  "updated_at": "2026-11-24T01:15:31.056507+00:00",
+  "completed_at": "2026-11-24T01:15:27.396095+00:00",
+  "duration_ms": 95736,
+  "usage_stats": {
+    "total_duration_ms": 182502,
+    "total_tokens_in": 72,
+    "total_tokens_out": 27564,
+    "total_estimated_cost_usd": 0.110313
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-710",
+    "UNIT-711",
+    "UNIT-712",
+    "UNIT-713",
+    "UNIT-714",
+    "UNIT-715"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-710",
+        "title": "Act: Add focusChange and menuClose to PhaserToReactEvents",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-710 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-711",
+        "title": "Act: Add keyboard handler to BootScene.create and release it on shutdown",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-711 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-712",
+        "title": "Act: Subscribe App to menuClose to clear the selection",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-712 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-713",
+        "title": "Verify: focusChange and menuClose events deliver payloads",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-713 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-714",
+        "title": "Verify: BootScene keyboard unit tests for each key with Phaser mocked",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-714 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-715",
+        "title": "Verify: menuClose closes the ActionMenu and unsubscribes on unmount",
+        "evidence_refs": [
+          {
+            "id": "EVD-143",
+            "path": ".ai-dlc/evidence/EVD-143.md",
+            "title": "Evidence: Keyboard events, BootScene keys and menuClose unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-715 unless acceptance outcomes recorded in EVD-143 (.ai-dlc/evidence/EVD-143.md; \"Evidence: Keyboard events, BootScene keys and menuClose unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T01:13:54.029391+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-710",
+    "UNIT-711",
+    "UNIT-712",
+    "UNIT-713",
+    "UNIT-714",
+    "UNIT-715"
+  ]
+}

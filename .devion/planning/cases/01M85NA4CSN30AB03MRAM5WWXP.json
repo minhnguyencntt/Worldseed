@@ -1,0 +1,386 @@
+{
+  "id": "01M85NA4CSN30AB03MRAM5WWXP",
+  "trigger_node_id": "INT-154, UNIT-756 +6",
+  "node_ids": [
+    "INT-154",
+    "UNIT-756",
+    "UNIT-757",
+    "UNIT-758",
+    "UNIT-759",
+    "REQ-378",
+    "REQ-379",
+    "EVD-154"
+  ],
+  "intent_id": "INT-154",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-154",
+      "title": "SG-11.2.2 Store and release the transitionTo unsubscribe in BootScene",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-756",
+      "title": "Act: Confirm create stores the transitionTo unsubscribe in unsubscribeTransition",
+      "kind": "unit",
+      "task_ids": [
+        "01M85NA2XCT05Z4HKW3YX4G40T"
+      ],
+      "depends_on": [
+        "REQ-378"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+      "from_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+      "started_at": "2026-11-24T02:14:17.285625+00:00",
+      "ended_at": "2026-11-24T02:14:24.746955+00:00",
+      "run_started_at": "2026-11-24T02:14:17.285625+00:00",
+      "duration_ms": 5615,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 4,
+      "tokens_out": 669,
+      "estimated_cost_usd": 0.002679
+    },
+    {
+      "unit_id": "UNIT-757",
+      "title": "Act: Confirm SHUTDOWN handler calls and nulls unsubscribeTransition",
+      "kind": "unit",
+      "task_ids": [
+        "01M85NA2XC9XY9E3AMRGC5FXE7"
+      ],
+      "depends_on": [
+        "REQ-379"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+      "from_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+      "started_at": "2026-11-24T02:14:17.304726+00:00",
+      "ended_at": "2026-11-24T02:14:25.842760+00:00",
+      "run_started_at": "2026-11-24T02:14:17.304726+00:00",
+      "duration_ms": 5492,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 4,
+      "tokens_out": 543,
+      "estimated_cost_usd": 0.002175
+    },
+    {
+      "unit_id": "UNIT-758",
+      "title": "Verify: transitionTo unsubscribe is stored and restart yields one handler",
+      "kind": "unit",
+      "task_ids": [
+        "01M85NA2XCKGQQETJGA1V5M48X"
+      ],
+      "depends_on": [
+        "UNIT-756",
+        "REQ-378"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "b363a46a80bea4c02c4ba221f0b6428a1f109aad",
+      "from_sha": "58036a21231b413cf6ef868a2fb946307bea3f9d",
+      "tests": [
+        {
+          "id": "bootSceneTransitionStore.test.ts::fades out exactly once per transitionTo after create",
+          "kind": "unit",
+          "name": "fades out exactly once per transitionTo after create",
+          "title": "BootScene transitionTo subscription handle: fades out exactly once per transitionTo after create",
+          "scenario": "Given BootScene has been created with a fake main camera, When transitionTo is emitted once for library, Then the camera fades out exactly once",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 'exactly once per transitionTo' --testTimeout=10000",
+          "file": "tests/bootSceneTransitionStore.test.ts",
+          "status": "passed",
+          "detail": "1 passed, 1 skipped in the file run"
+        },
+        {
+          "id": "bootSceneTransitionStore.test.ts::fades out once on the new scene after shutdown and re-create",
+          "kind": "unit",
+          "name": "fades out once on the new scene after shutdown and re-create",
+          "title": "BootScene transitionTo subscription handle: fades out once on the new scene after shutdown and re-create",
+          "scenario": "Given the first BootScene is shut down via its SHUTDOWN callback, When a second BootScene is created and transitionTo is emitted once, Then only the second scene fades out, once, and the first scene's fadeOut is never called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts -t 're-create' --testTimeout=10000",
+          "file": "tests/bootSceneTransitionStore.test.ts",
+          "status": "passed",
+          "detail": "1 passed, 1 skipped in the file run"
+        },
+        {
+          "id": "bootSceneTransitionStore.test.ts::file-loads-with-mocks",
+          "kind": "unit",
+          "name": "file loads with the mocks",
+          "title": "BootScene transitionTo subscription handle: file loads with the mocks (Step 1)",
+          "scenario": "Given the phaser and content vi.mock blocks, When the whole file runs, Then both tests load and pass",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionStore.test.ts --testTimeout=10000",
+          "file": "tests/bootSceneTransitionStore.test.ts",
+          "status": "passed",
+          "detail": "2 passed (2)"
+        }
+      ],
+      "started_at": "2026-11-24T02:14:25.850563+00:00",
+      "ended_at": "2026-11-24T02:15:34.426075+00:00",
+      "run_started_at": "2026-11-24T02:14:25.850563+00:00",
+      "duration_ms": 66957,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 26,
+      "tokens_out": 11034,
+      "estimated_cost_usd": 0.044157
+    },
+    {
+      "unit_id": "UNIT-759",
+      "title": "Verify: transitionTo ignored after SHUTDOWN while other subscribers stay active",
+      "kind": "unit",
+      "task_ids": [
+        "01M85NA2XC78YZG7XBMASFXTR1"
+      ],
+      "depends_on": [
+        "UNIT-757",
+        "REQ-379"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "58036a21231b413cf6ef868a2fb946307bea3f9d",
+      "from_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+      "tests": [
+        {
+          "id": "bootSceneTransitionShutdown-control",
+          "kind": "unit",
+          "name": "fades the camera out on transitionTo before shutdown",
+          "title": "BootScene transitionTo shutdown > fades the camera out on transitionTo before shutdown",
+          "scenario": "Given BootScene is created and SHUTDOWN has not run, When transitionTo is emitted, Then fadeOut is called once with TRANSITION_FADE_MS",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'fades the camera out on transitionTo before shutdown'",
+          "file": "tests/bootSceneTransitionShutdown.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransitionShutdown-ignores",
+          "kind": "unit",
+          "name": "ignores transitionTo after the SHUTDOWN callback runs",
+          "title": "BootScene transitionTo shutdown > ignores transitionTo after the SHUTDOWN callback runs",
+          "scenario": "Given the SHUTDOWN callback has run, When transitionTo is emitted for library, Then fadeOut and scene.start are not called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'ignores transitionTo'",
+          "file": "tests/bootSceneTransitionShutdown.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "bootSceneTransitionShutdown-other-subscribers",
+          "kind": "unit",
+          "name": "keeps other transitionTo subscribers active after shutdown",
+          "title": "BootScene transitionTo shutdown > keeps other transitionTo subscribers active after shutdown",
+          "scenario": "Given a spy subscribed to transitionTo before create() and SHUTDOWN has run, When transitionTo is emitted with {sceneId: 'library'}, Then the spy receives the payload and fadeOut is not called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionShutdown.test.ts -t 'other transitionTo subscribers'",
+          "file": "tests/bootSceneTransitionShutdown.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T02:14:25.858727+00:00",
+      "ended_at": "2026-11-24T02:15:02.948678+00:00",
+      "run_started_at": "2026-11-24T02:14:25.858727+00:00",
+      "duration_ms": 33998,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 6873,
+      "estimated_cost_usd": 0.027503
+    },
+    {
+      "unit_id": "REQ-378",
+      "title": "REQ · BootScene.create stores the transitionTo unsubscribe function",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-154"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-379",
+      "title": "REQ · BootScene SHUTDOWN calls and clears the transitionTo unsubscribe",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-154"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-154",
+      "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-756",
+        "UNIT-757",
+        "UNIT-758",
+        "UNIT-759"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-759",
+      "dst": "EVD-154"
+    },
+    {
+      "src": "UNIT-758",
+      "dst": "EVD-154"
+    },
+    {
+      "src": "UNIT-756",
+      "dst": "EVD-154"
+    },
+    {
+      "src": "INT-154",
+      "dst": "REQ-378"
+    },
+    {
+      "src": "UNIT-756",
+      "dst": "UNIT-758"
+    },
+    {
+      "src": "REQ-378",
+      "dst": "UNIT-758"
+    },
+    {
+      "src": "REQ-378",
+      "dst": "UNIT-756"
+    },
+    {
+      "src": "REQ-379",
+      "dst": "UNIT-757"
+    },
+    {
+      "src": "UNIT-757",
+      "dst": "EVD-154"
+    },
+    {
+      "src": "UNIT-757",
+      "dst": "UNIT-759"
+    },
+    {
+      "src": "INT-154",
+      "dst": "REQ-379"
+    },
+    {
+      "src": "REQ-379",
+      "dst": "UNIT-759"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85na4",
+  "base_sha": "fe3d50ce7910faf6a3be8f3d20e80feacf61d5b1",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85NA4CSN30AB03MRAM5WWXP:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T02:14:14.169277+00:00",
+  "updated_at": "2026-11-24T02:15:36.203026+00:00",
+  "completed_at": "2026-11-24T02:15:34.427255+00:00",
+  "duration_ms": 80258,
+  "usage_stats": {
+    "total_duration_ms": 112073,
+    "total_tokens_in": 48,
+    "total_tokens_out": 19119,
+    "total_estimated_cost_usd": 0.076514
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-756",
+    "UNIT-757",
+    "UNIT-758",
+    "UNIT-759"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-756",
+        "title": "Act: Confirm create stores the transitionTo unsubscribe in unsubscribeTransition",
+        "evidence_refs": [
+          {
+            "id": "EVD-154",
+            "path": ".ai-dlc/evidence/EVD-154.md",
+            "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-756 unless acceptance outcomes recorded in EVD-154 (.ai-dlc/evidence/EVD-154.md; \"Evidence: transitionTo unsubscribe store and shutdown unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-757",
+        "title": "Act: Confirm SHUTDOWN handler calls and nulls unsubscribeTransition",
+        "evidence_refs": [
+          {
+            "id": "EVD-154",
+            "path": ".ai-dlc/evidence/EVD-154.md",
+            "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-757 unless acceptance outcomes recorded in EVD-154 (.ai-dlc/evidence/EVD-154.md; \"Evidence: transitionTo unsubscribe store and shutdown unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-758",
+        "title": "Verify: transitionTo unsubscribe is stored and restart yields one handler",
+        "evidence_refs": [
+          {
+            "id": "EVD-154",
+            "path": ".ai-dlc/evidence/EVD-154.md",
+            "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-758 unless acceptance outcomes recorded in EVD-154 (.ai-dlc/evidence/EVD-154.md; \"Evidence: transitionTo unsubscribe store and shutdown unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-759",
+        "title": "Verify: transitionTo ignored after SHUTDOWN while other subscribers stay active",
+        "evidence_refs": [
+          {
+            "id": "EVD-154",
+            "path": ".ai-dlc/evidence/EVD-154.md",
+            "title": "Evidence: transitionTo unsubscribe store and shutdown unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-759 unless acceptance outcomes recorded in EVD-154 (.ai-dlc/evidence/EVD-154.md; \"Evidence: transitionTo unsubscribe store and shutdown unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T02:14:16.747430+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-756",
+    "UNIT-757",
+    "UNIT-758",
+    "UNIT-759"
+  ]
+}

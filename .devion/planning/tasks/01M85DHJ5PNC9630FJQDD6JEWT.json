@@ -1,0 +1,62 @@
+{
+  "id": "01M85DHJ5PNC9630FJQDD6JEWT",
+  "intent_id": "01M85DDEYZSC2A83NN4WEWTV3N",
+  "title": "Verify: Zero-quota inline message unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the quota message",
+  "description": "Write unit tests from REQ1 using mocked listMine and submitContribution.",
+  "acceptance_criteria": [
+    "Message visible with 5 history entries",
+    "Message absent with 1 history entry"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file contributionQuota.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing contribution tests"
+    ]
+  },
+  "technical_constraints": [
+    "Mock ../src/api/client like tests/contributionMaxLength.test.tsx; no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-648.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85DESAQ5VM85PR112NGFZXP",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-648.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85DHJ5PBEYGFTT6DGZCEKAG"
+  ],
+  "sim_node_id": "01M85DESAQPCWPZZMRHDBQZZCB",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-648.md",
+  "artifact_id": "UNIT-648",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionQuota.test.tsx",
+      "symbol": "new: ContributionSheet quota message",
+      "lines": "new",
+      "action": "Create the test file with the vi.mock setup copied from contributionMaxLength.test.tsx, mocking listMine and submitContribution. Add test 'shows the quota message at zero remaining': listMineMock resolves 5 copies of contributionFixture with distinct prompt values, render the sheet, await screen.findByText('You have used all your suggestions this round') and assert it. Add test 'hides the message with quota left': listMineMock resolves [contributionFixture], render, wait for the 'Sent' label, assert queryByText of the message is null. Import contributionFixture from tests/fixtures/api.ts, which mirrors the Contribution type in src/api/client.ts.",
+      "command": "cd game/frontend && npx vitest run tests/contributionQuota.test.tsx -t \"quota message\"",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T23:58:29.046229+00:00",
+  "updated_at": "2026-11-23T23:59:22.714064+00:00"
+}

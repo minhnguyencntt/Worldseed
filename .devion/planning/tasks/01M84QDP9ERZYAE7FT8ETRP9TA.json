@@ -1,0 +1,72 @@
+{
+  "id": "01M84QDP9ERZYAE7FT8ETRP9TA",
+  "intent_id": "01M84QBM4AHM12RHQ41VHZ5F62",
+  "title": "Act: Add loadManifestWithFallback to the manifest loader",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export loadManifestWithFallback and FALLBACK_ASSET_ID",
+  "description": "Add a never-throwing loader that keeps existing assets, reports missing ones and returns an empty manifest on unreadable or invalid input.",
+  "acceptance_criteria": [
+    "Missing files are listed and dropped from the manifest",
+    "Unreadable manifest yields empty assets plus errors"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/assets/loaders/manifestLoader.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "loadManifestFile"
+    ]
+  },
+  "technical_constraints": [
+    "No throwing",
+    "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Function exported and typechecks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-367.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QCTCEY3ZP7FV7ZQCXRWP1",
+    "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+    "artifact:.ai-dlc/units/UNIT-367.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QDP9ESFQBGYQW9768WXNZ"
+  ],
+  "sim_node_id": "01M84QCTCEG8TN0DQRSXQS50PV",
+  "feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+  "artifact_path": ".ai-dlc/units/UNIT-367.md",
+  "artifact_id": "UNIT-367",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/loaders/manifestLoader.ts",
+      "symbol": "new: FALLBACK_ASSET_ID, FallbackLoadResult",
+      "lines": "after L33",
+      "action": "Export const FALLBACK_ASSET_ID = 'fallback:missing' and type FallbackLoadResult = { manifest: AssetManifest; missing: { id: string; path: string }[]; errors: ManifestIssue[]; fallbackAssetId: string }.",
+      "expected": "Types compile."
+    },
+    {
+      "file": "game/src/assets/loaders/manifestLoader.ts",
+      "symbol": "new: loadManifestWithFallback",
+      "lines": "after L33",
+      "action": "Export loadManifestWithFallback(manifestPath, assetsRoot): FallbackLoadResult. Read and JSON.parse in try/catch; on failure or parseManifest !ok return manifest {version:1, assets:[]}, errors set, missing []. Otherwise split parsed.data.assets by existsSync(join(assetsRoot, asset.path)); keep existing ones in manifest, push the rest to missing; errors []. Always set fallbackAssetId: FALLBACK_ASSET_ID.",
+      "code": "const empty: AssetManifest = { version: 1, assets: [] };",
+      "expected": "Function returns without throwing for every input."
+    }
+  ],
+  "created_at": "2026-11-23T17:31:53.518584+00:00",
+  "updated_at": "2026-11-23T17:33:11.205477+00:00"
+}

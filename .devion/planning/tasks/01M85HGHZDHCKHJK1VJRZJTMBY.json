@@ -1,0 +1,61 @@
+{
+  "id": "01M85HGHZDHCKHJK1VJRZJTMBY",
+  "intent_id": "01M85H9KZF7E1HJM1FD88Z6EN1",
+  "title": "SG-10 Connect Phaser pointer and keyboard events to the game store",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Two-way bridge between Phaser scene events and the Zustand game store, proven by unit tests in both directions",
+  "description": "Context: BootScene already emits objectClick (App opens ActionMenu) and re-syncs SceneObjects on every gameStore change. SceneObject already shows hover highlight/label and keyboard focus. Gaps: the typed objectHover event is declared in PhaserToReactEvents but never emitted, and the typed highlightObject event in ReactToPhaserEvents is never consumed. Desired behavior: hover and click flow Phaser to React, store changes (secret door open, inventory) flow back into the scene, and unit tests cover both directions. Why: the Phaser scene and React UI must stay consistent without duplicated state.",
+  "acceptance_criteria": [
+    "Given a scene object, when the pointer hovers it, then the highlight and label show and objectHover is emitted with its id; on pointer out objectHover carries null",
+    "Given a clicked object, when objectClick is emitted, then App selects it and shows its ActionMenu",
+    "Given a store change such as secret_door_open flag or an inventory item, when the state updates, then every SceneObject receives sync with the new state",
+    "Given a highlightObject event from React, when it is emitted, then the matching scene object takes focus highlight and label and null clears it",
+    "Given unit tests, when run, then they cover Phaser to React and store to Phaser directions"
+  ],
+  "scope": {
+    "in_scope": [
+      "SceneObject hover listener",
+      "BootScene objectHover emission and highlightObject subscription",
+      "Unit tests in both directions"
+    ],
+    "out_of_scope": [
+      "New assets or content",
+      "Backend or API changes",
+      "Reworking the ActionMenu"
+    ],
+    "preserve": [
+      "Existing objectClick bridge and App ActionMenu",
+      "useGameStore as single source of GameState",
+      "Phaser mocked in unit tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use the typed phaserToReact and reactToPhaser buses in game/frontend/src/phaser/events.ts",
+    "BootScene must not keep its own copy of GameState"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements have passing unit tests",
+    "Existing bootScene and appObjectClick tests still pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-142.md`"
+  ],
+  "non_functional": [
+    "Subscriptions are released on scene SHUTDOWN"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84MX32EZVQDSR0N94BTQ8B0",
+    "artifact:.ai-dlc/intent/INT-142.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85HBTVZHY0X56A3E3VFWX6N",
+  "feature_id": "01M84MX32EZVQDSR0N94BTQ8B0",
+  "artifact_path": ".ai-dlc/intent/INT-142.md",
+  "artifact_id": "INT-142",
+  "created_at": "2026-11-24T01:07:50.381689+00:00"
+}

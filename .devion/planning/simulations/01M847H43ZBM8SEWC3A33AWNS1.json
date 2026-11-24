@@ -1,0 +1,1178 @@
+{
+  "intent_id": "01M847H43ZBM8SEWC3A33AWNS1",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "kind": "intent",
+      "title": "SG-6 · Add contribution UI and admin console",
+      "body": "Context: the game frontend in game/frontend has a playable 80/20 App but no API client, contribution UI, countdown or admin routes. The backend already serves POST /api/v1/player/session, POST /api/v1/contributions, GET /api/v1/player/me/contributions, GET /api/v1/worlds/{id}/round/current and the Bearer-protected /api/v1/admin/* round and execution routes. Desired behavior: a Suggest What Happens Next sheet, a Round countdown and badge, and a token-gated admin console with lifecycle stepper and approve/retry controls. Expected result: all of it works against the existing API with Vitest tests using mocked fetch. Why: players feed the story and the admin runs the cycle without a terminal.\n\n## Acceptance criteria\n- Given the playing view, when the player opens the sheet and submits a prompt, then POST /api/v1/contributions is called and the entry appears in history\n- Given a current Round, then the countdown shows time left and a status badge with the Round status\n- Given no admin token entered, then admin routes render only the token form and make no admin request\n- Given an admin Round, then the stepper marks the current stage among OPEN to COMPLETED\n- Given a FAILED execution or AWAITING_APPROVAL execution, when Retry or Approve is clicked, then the matching admin endpoint is called with the Bearer token\n\n\n## Scope\n- In scope: game/frontend React components, API client and Vitest tests\n- Out of scope: Backend changes\n- Out of scope: New backend endpoints such as reject, logs or test results\n- Out of scope: New runtime dependencies\n- Preserve: Existing App intro gate, GameLayout, StoryPanel behavior and tests\n- Preserve: Only the typed admin token is used as a secret\n\n\n## Technical constraints\n- Frontend lives in game/frontend (no top-level frontend/ exists)\n- fetch only, no secrets in env or bundle\n- Vitest with mocked fetch\n\n\n## Definition of done\n- All five requirements delivered with passing unit tests\n- npm test and tsc --noEmit pass in game/frontend\n\n\n## Non-functional requirements\n- Accessible roles and labels on controls\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Players suggest ideas through a sheet and see the Round countdown; admins operate Rounds behind a token entry",
+      "description": "Context: the game frontend in game/frontend has a playable 80/20 App but no API client, contribution UI, countdown or admin routes. The backend already serves POST /api/v1/player/session, POST /api/v1/contributions, GET /api/v1/player/me/contributions, GET /api/v1/worlds/{id}/round/current and the Bearer-protected /api/v1/admin/* round and execution routes. Desired behavior: a Suggest What Happens Next sheet, a Round countdown and badge, and a token-gated admin console with lifecycle stepper and approve/retry controls. Expected result: all of it works against the existing API with Vitest tests using mocked fetch. Why: players feed the story and the admin runs the cycle without a terminal.",
+      "acceptance_criteria": [
+        "Given the playing view, when the player opens the sheet and submits a prompt, then POST /api/v1/contributions is called and the entry appears in history",
+        "Given a current Round, then the countdown shows time left and a status badge with the Round status",
+        "Given no admin token entered, then admin routes render only the token form and make no admin request",
+        "Given an admin Round, then the stepper marks the current stage among OPEN to COMPLETED",
+        "Given a FAILED execution or AWAITING_APPROVAL execution, when Retry or Approve is clicked, then the matching admin endpoint is called with the Bearer token"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend React components, API client and Vitest tests"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "New backend endpoints such as reject, logs or test results",
+          "New runtime dependencies"
+        ],
+        "preserve": [
+          "Existing App intro gate, GameLayout, StoryPanel behavior and tests",
+          "Only the typed admin token is used as a secret"
+        ]
+      },
+      "technical_constraints": [
+        "Frontend lives in game/frontend (no top-level frontend/ exists)",
+        "fetch only, no secrets in env or bundle",
+        "Vitest with mocked fetch"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All five requirements delivered with passing unit tests",
+        "npm test and tsc --noEmit pass in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-022.md`"
+      ],
+      "non_functional": [
+        "Accessible roles and labels on controls"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8457KMMMN7NH1RGW812T7ZD",
+      "links": [
+        "trace:01M8457KMMMN7NH1RGW812T7ZD",
+        "artifact:.ai-dlc/intent/INT-022.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-022.md",
+      "artifact_id": "INT-022"
+    },
+    {
+      "id": "01M847PKPAYCRTA7YKYH03X49C",
+      "kind": "requirement",
+      "title": "REQ · Suggest What Happens Next sheet submits prompts and shows history",
+      "body": "Context: no contribution UI exists. Desired behavior: a Suggest What Happens Next button in the playing view opens a sheet with a textarea; submit creates an anonymous session if needed then POSTs the prompt; the sheet shows remaining contributions, a note that ideas are considered when the Round closes, and history with sending, sent and failed states. Expected result: errors from 401/409/429 show readable messages. Why: players steer the next release.\n\n## Acceptance criteria\n- Given the sheet is open, when a prompt is submitted, then fetch POST /api/v1/contributions receives world_id and prompt and the history lists it as sent\n- Given the API answers 429 or 409, then the sheet shows an error message and the history entry is failed\n- Given the sheet, then the text 'considered when the Round closes' and the remaining count are visible\n- Given a 401 on submit, then a session is created via POST /api/v1/player/session and the submit is retried once\n\n\n## Scope\n- In scope: API client contribution calls\n- In scope: ContributionSheet component\n- In scope: App button wiring\n- Out of scope: Backend remaining-count endpoint\n- Preserve: Existing game flow\n\n\n## Technical constraints\n- Remaining = MAX_PER_PLAYER constant (5) minus history length since the API exposes no count\n- credentials: include for cookies\n\n\n## Definition of done\n- Sheet usable from the playing view\n\n\n## Non-functional requirements\n- Textarea has an accessible label\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Contribution sheet submits via API, shows remaining count, Round-close note, history, error states",
+      "description": "Context: no contribution UI exists. Desired behavior: a Suggest What Happens Next button in the playing view opens a sheet with a textarea; submit creates an anonymous session if needed then POSTs the prompt; the sheet shows remaining contributions, a note that ideas are considered when the Round closes, and history with sending, sent and failed states. Expected result: errors from 401/409/429 show readable messages. Why: players steer the next release.",
+      "acceptance_criteria": [
+        "Given the sheet is open, when a prompt is submitted, then fetch POST /api/v1/contributions receives world_id and prompt and the history lists it as sent",
+        "Given the API answers 429 or 409, then the sheet shows an error message and the history entry is failed",
+        "Given the sheet, then the text 'considered when the Round closes' and the remaining count are visible",
+        "Given a 401 on submit, then a session is created via POST /api/v1/player/session and the submit is retried once"
+      ],
+      "scope": {
+        "in_scope": [
+          "API client contribution calls",
+          "ContributionSheet component",
+          "App button wiring"
+        ],
+        "out_of_scope": [
+          "Backend remaining-count endpoint"
+        ],
+        "preserve": [
+          "Existing game flow"
+        ]
+      },
+      "technical_constraints": [
+        "Remaining = MAX_PER_PLAYER constant (5) minus history length since the API exposes no count",
+        "credentials: include for cookies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Sheet usable from the playing view",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-054.md`"
+      ],
+      "non_functional": [
+        "Textarea has an accessible label"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "matched_feature_id": "01M844GYQJ0W0MES1YFTTSS1AF",
+      "links": [
+        "parent:01M847PKPAN16XY59HSTF7AK6Q",
+        "trace:01M844GYQJ0W0MES1YFTTSS1AF",
+        "artifact:.ai-dlc/requirements/REQ-054.md"
+      ],
+      "depends_on": [
+        "01M847PKPAN16XY59HSTF7AK6Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-054.md",
+      "artifact_id": "REQ-054"
+    },
+    {
+      "id": "01M847PKPAVAYQQN0S91J5S7EP",
+      "kind": "requirement",
+      "title": "REQ · Countdown and Round status badge show the current Round",
+      "body": "Context: the API serves {id,number,status,starts_at,ends_at}. Desired behavior: a Countdown component ticking each second to ends_at showing HH:MM:SS, 'Round closed' at zero, and a RoundBadge showing status text; App fetches the Round on mount. Why: players know when ideas close.\n\n## Acceptance criteria\n- Given ends_at 90 seconds ahead, then the countdown shows 00:01:30 and after 1 second 00:01:29\n- Given ends_at in the past, then it shows 'Round closed'\n- Given status OPEN, then the badge shows OPEN\n- Given the Round fetch fails, then the badge shows 'Round unavailable'\n\n\n## Scope\n- In scope: getCurrentRound, Countdown, RoundBadge, App fetch\n- Out of scope: Admin views\n- Preserve: Game layout\n\n\n## Technical constraints\n- Clock injectable via now prop for tests\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Badge and countdown visible in playing view\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Countdown with time left plus status badge from /round/current",
+      "description": "Context: the API serves {id,number,status,starts_at,ends_at}. Desired behavior: a Countdown component ticking each second to ends_at showing HH:MM:SS, 'Round closed' at zero, and a RoundBadge showing status text; App fetches the Round on mount. Why: players know when ideas close.",
+      "acceptance_criteria": [
+        "Given ends_at 90 seconds ahead, then the countdown shows 00:01:30 and after 1 second 00:01:29",
+        "Given ends_at in the past, then it shows 'Round closed'",
+        "Given status OPEN, then the badge shows OPEN",
+        "Given the Round fetch fails, then the badge shows 'Round unavailable'"
+      ],
+      "scope": {
+        "in_scope": [
+          "getCurrentRound, Countdown, RoundBadge, App fetch"
+        ],
+        "out_of_scope": [
+          "Admin views"
+        ],
+        "preserve": [
+          "Game layout"
+        ]
+      },
+      "technical_constraints": [
+        "Clock injectable via now prop for tests"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Badge and countdown visible in playing view",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-055.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M847PKPAN16XY59HSTF7AK6Q",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-055.md"
+      ],
+      "depends_on": [
+        "01M847PKPAN16XY59HSTF7AK6Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-055.md",
+      "artifact_id": "REQ-055"
+    },
+    {
+      "id": "01M847PKPA59ZECN0A8K36FYBP",
+      "kind": "requirement",
+      "title": "REQ · Admin routes sit behind token entry and manage the Round",
+      "body": "Context: no admin UI exists. Desired behavior: hash route #/admin renders AdminApp; without a token only a password-type token form shows; with a token it shows the World, the Round id/number/status, duration and max-contribution fields, Open and Close buttons calling POST /api/v1/admin/rounds/{id}/open|close?world=, and the contributions list from GET .../contributions. The token is held in component state only. Why: admins operate Rounds.\n\n## Acceptance criteria\n- Given no token, then only the token form renders and no admin fetch occurs\n- Given a token submitted, then GET /api/v1/admin/rounds/{id} runs with header Authorization: Bearer <token>\n- Given the Round, when Open or Close is clicked, then the matching POST runs with the world query\n- Given contributions, then the list shows each prompt\n- Given a 401 response, then the token form shows 'Invalid token'\n\n\n## Scope\n- In scope: AdminApp, TokenGate, admin client calls, hash routing in main/App\n- Out of scope: Persisting the token\n- Out of scope: Duration saved to server beyond POST /admin/rounds create\n- Preserve: Player routes\n\n\n## Technical constraints\n- Admin Get uses ?world= query; duration sent as Go duration string on create\n- Token never written to storage\n\n\n## Dependencies\n- REQ-2\n\n\n## Definition of done\n- #/admin gated\n\n\n## Non-functional requirements\n- Password input type\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Token form, current World and Round, config fields, open/close, contributions list",
+      "description": "Context: no admin UI exists. Desired behavior: hash route #/admin renders AdminApp; without a token only a password-type token form shows; with a token it shows the World, the Round id/number/status, duration and max-contribution fields, Open and Close buttons calling POST /api/v1/admin/rounds/{id}/open|close?world=, and the contributions list from GET .../contributions. The token is held in component state only. Why: admins operate Rounds.",
+      "acceptance_criteria": [
+        "Given no token, then only the token form renders and no admin fetch occurs",
+        "Given a token submitted, then GET /api/v1/admin/rounds/{id} runs with header Authorization: Bearer <token>",
+        "Given the Round, when Open or Close is clicked, then the matching POST runs with the world query",
+        "Given contributions, then the list shows each prompt",
+        "Given a 401 response, then the token form shows 'Invalid token'"
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp, TokenGate, admin client calls, hash routing in main/App"
+        ],
+        "out_of_scope": [
+          "Persisting the token",
+          "Duration saved to server beyond POST /admin/rounds create"
+        ],
+        "preserve": [
+          "Player routes"
+        ]
+      },
+      "technical_constraints": [
+        "Admin Get uses ?world= query; duration sent as Go duration string on create",
+        "Token never written to storage"
+      ],
+      "dependencies": [
+        "REQ-2"
+      ],
+      "definition_of_done": [
+        "#/admin gated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-056.md`"
+      ],
+      "non_functional": [
+        "Password input type"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M847PKPAN16XY59HSTF7AK6Q",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-056.md"
+      ],
+      "depends_on": [
+        "01M847PKPAN16XY59HSTF7AK6Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-056.md",
+      "artifact_id": "REQ-056"
+    },
+    {
+      "id": "01M847PKPA89CR1J6CV9SR0SCA",
+      "kind": "requirement",
+      "title": "REQ · Lifecycle stepper and execution details show Round progress",
+      "body": "Context: round statuses and /api/v1/admin/executions ({id,world_id,round_id,status,error,updated_at}) exist. Desired behavior: LifecycleStepper renders OPEN, CLOSED, ANALYZING, DEVELOPING, TESTING, PUBLISHING, COMPLETED, marking earlier stages done, the current stage with aria-current='step', and later stages pending; an ExecutionPanel shows contribution count, execution duration, agent logs, test results and release version when present, and the failure reason from error. Why: admins see where the cycle is.\n\n## Acceptance criteria\n- Given status DEVELOPING, then DEVELOPING has aria-current step, OPEN to ANALYZING are done and TESTING onward pending\n- Given each of the seven statuses, then exactly that stage is current\n- Given an execution with error 'build failed', then 'build failed' is shown as the failure reason\n- Given log, test and release fields present, then they render, and absent fields render 'Not available'\n- Given contributions N, then 'Contributions: N' is shown\n\n\n## Scope\n- In scope: LifecycleStepper, ExecutionPanel, listExecutions\n- Out of scope: Backend fields for logs/tests/release\n- Preserve: AdminApp\n\n\n## Technical constraints\n- Statuses PLANNING and BUILDING map to the DEVELOPING and TESTING stages respectively; FAILED shows the stage of the last known state as failed\n\n\n## Dependencies\n- REQ-3\n\n\n## Definition of done\n- Stepper visible in AdminApp\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Stepper OPEN to COMPLETED with current stage, count, duration, logs, tests, release, failure",
+      "description": "Context: round statuses and /api/v1/admin/executions ({id,world_id,round_id,status,error,updated_at}) exist. Desired behavior: LifecycleStepper renders OPEN, CLOSED, ANALYZING, DEVELOPING, TESTING, PUBLISHING, COMPLETED, marking earlier stages done, the current stage with aria-current='step', and later stages pending; an ExecutionPanel shows contribution count, execution duration, agent logs, test results and release version when present, and the failure reason from error. Why: admins see where the cycle is.",
+      "acceptance_criteria": [
+        "Given status DEVELOPING, then DEVELOPING has aria-current step, OPEN to ANALYZING are done and TESTING onward pending",
+        "Given each of the seven statuses, then exactly that stage is current",
+        "Given an execution with error 'build failed', then 'build failed' is shown as the failure reason",
+        "Given log, test and release fields present, then they render, and absent fields render 'Not available'",
+        "Given contributions N, then 'Contributions: N' is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "LifecycleStepper, ExecutionPanel, listExecutions"
+        ],
+        "out_of_scope": [
+          "Backend fields for logs/tests/release"
+        ],
+        "preserve": [
+          "AdminApp"
+        ]
+      },
+      "technical_constraints": [
+        "Statuses PLANNING and BUILDING map to the DEVELOPING and TESTING stages respectively; FAILED shows the stage of the last known state as failed"
+      ],
+      "dependencies": [
+        "REQ-3"
+      ],
+      "definition_of_done": [
+        "Stepper visible in AdminApp",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-057.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M847PKPAN16XY59HSTF7AK6Q",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-057.md"
+      ],
+      "depends_on": [
+        "01M847PKPAN16XY59HSTF7AK6Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-057.md",
+      "artifact_id": "REQ-057"
+    },
+    {
+      "id": "01M847PKPA6EJA1MF33N4F6QYV",
+      "kind": "requirement",
+      "title": "REQ · Admin can approve and retry executions",
+      "body": "Context: POST /api/v1/admin/executions/{id}/approve works for AWAITING_APPROVAL and /retry for FAILED, answering 409 otherwise. Desired behavior: ExecutionPanel shows Approve when status is AWAITING_APPROVAL and Retry when FAILED, calls the endpoint, reloads executions, and shows the 409 message on conflict. There is no reject endpoint, so no Reject call is made. Why: admin supervises publishing.\n\n## Acceptance criteria\n- Given AWAITING_APPROVAL, when Approve is clicked, then POST /api/v1/admin/executions/{id}/approve runs with the Bearer header\n- Given FAILED, when Retry is clicked, then POST .../retry runs\n- Given other statuses, then neither button renders\n- Given a 409, then the error text is shown and buttons remain\n\n\n## Scope\n- In scope: approveExecution, retryExecution, buttons\n- Out of scope: Reject endpoint\n- Preserve: Stepper\n\n\n## Technical constraints\n- Reject is excluded because the backend lacks it\n\n\n## Dependencies\n- REQ-4\n\n\n## Definition of done\n- Controls working\n\n\n## Clarifying questions\n- The backend has no reject endpoint; should Reject be added later as a backend ticket?\n",
+      "issue_type": "Story",
+      "summary": "Approve and Retry buttons call execution endpoints with the Bearer token",
+      "description": "Context: POST /api/v1/admin/executions/{id}/approve works for AWAITING_APPROVAL and /retry for FAILED, answering 409 otherwise. Desired behavior: ExecutionPanel shows Approve when status is AWAITING_APPROVAL and Retry when FAILED, calls the endpoint, reloads executions, and shows the 409 message on conflict. There is no reject endpoint, so no Reject call is made. Why: admin supervises publishing.",
+      "acceptance_criteria": [
+        "Given AWAITING_APPROVAL, when Approve is clicked, then POST /api/v1/admin/executions/{id}/approve runs with the Bearer header",
+        "Given FAILED, when Retry is clicked, then POST .../retry runs",
+        "Given other statuses, then neither button renders",
+        "Given a 409, then the error text is shown and buttons remain"
+      ],
+      "scope": {
+        "in_scope": [
+          "approveExecution, retryExecution, buttons"
+        ],
+        "out_of_scope": [
+          "Reject endpoint"
+        ],
+        "preserve": [
+          "Stepper"
+        ]
+      },
+      "technical_constraints": [
+        "Reject is excluded because the backend lacks it"
+      ],
+      "dependencies": [
+        "REQ-4"
+      ],
+      "definition_of_done": [
+        "Controls working",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-058.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [
+        "The backend has no reject endpoint; should Reject be added later as a backend ticket?"
+      ],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M847PKPAN16XY59HSTF7AK6Q",
+      "matched_feature_id": "01M847EPY0T932QF8DS54N3MM3",
+      "links": [
+        "parent:01M847PKPAN16XY59HSTF7AK6Q",
+        "trace:01M847EPY0T932QF8DS54N3MM3",
+        "artifact:.ai-dlc/requirements/REQ-058.md"
+      ],
+      "depends_on": [
+        "01M847PKPAN16XY59HSTF7AK6Q"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-058.md",
+      "artifact_id": "REQ-058"
+    },
+    {
+      "id": "01M847PKPAX9NH4AFYKMZRJMAP",
+      "kind": "unit",
+      "title": "Act: Add API client and ContributionSheet wired into App",
+      "body": "Implement api/client.ts with createSession, submitContribution, listMine, ApiError; the ContributionSheet component; and a Suggest What Happens Next button in App that toggles it.\n\n## Acceptance criteria\n- client.submitContribution POSTs JSON {world_id,prompt} with credentials include\n- Sheet renders remaining count and Round-close note\n- App shows the Suggest What Happens Next button after Begin\n\n\n## Scope\n- In scope: game/frontend/src/api/client.ts\n- In scope: ContributionSheet.tsx\n- In scope: App.tsx\n- In scope: styles.css\n- Out of scope: Tests\n- Preserve: IntroScreen gate\n\n\n## Technical constraints\n- No new dependencies\n- New file: `game/frontend/src/api/client.ts`\n- New file: `game/frontend/src/components/ContributionSheet.tsx`\n- Code path: `game/frontend/src/App.tsx`\n- Code path: `game/frontend/src/styles.css`\n\n\n## Dependencies\n- REQ-1\n\n\n## Definition of done\n- Component compiles under tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create client.ts contribution calls, ContributionSheet and the App button",
+      "description": "Implement api/client.ts with createSession, submitContribution, listMine, ApiError; the ContributionSheet component; and a Suggest What Happens Next button in App that toggles it.",
+      "acceptance_criteria": [
+        "client.submitContribution POSTs JSON {world_id,prompt} with credentials include",
+        "Sheet renders remaining count and Round-close note",
+        "App shows the Suggest What Happens Next button after Begin"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/api/client.ts",
+          "ContributionSheet.tsx",
+          "App.tsx",
+          "styles.css"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "IntroScreen gate"
+        ]
+      },
+      "technical_constraints": [
+        "No new dependencies",
+        "New file: `game/frontend/src/api/client.ts`",
+        "New file: `game/frontend/src/components/ContributionSheet.tsx`",
+        "Code path: `game/frontend/src/App.tsx`",
+        "Code path: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [
+        "REQ-1"
+      ],
+      "definition_of_done": [
+        "Component compiles under tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-107.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M847PKPAYCRTA7YKYH03X49C",
+      "matched_feature_id": "01M843H7J6H3R1PKJXC4B6PQGN",
+      "links": [
+        "parent:01M847PKPAYCRTA7YKYH03X49C",
+        "trace:01M843H7J6H3R1PKJXC4B6PQGN",
+        "artifact:.ai-dlc/units/UNIT-107.md"
+      ],
+      "depends_on": [
+        "01M847PKPAYCRTA7YKYH03X49C"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-107.md",
+      "artifact_id": "UNIT-107",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: ApiError, request, createSession, submitContribution, listMine, WORLD_ID, MAX_PER_PLAYER",
+          "lines": "new",
+          "action": "Create the module: export WORLD_ID='the-boys-room', MAX_PER_PLAYER=5, class ApiError(status,message); request(path,init) prefixes import.meta.env.VITE_API_BASE_URL ?? '', sets credentials 'include', throws ApiError on !res.ok; createSession POSTs /api/v1/player/session; submitContribution(prompt) POSTs /api/v1/contributions with body {world_id:WORLD_ID,prompt}, on ApiError 401 calls createSession and retries once; listMine(roundId) GETs /api/v1/player/me/contributions?round_id=",
+          "code": "export interface Contribution { id: string; world_id: string; round_id: string; player_id: string; prompt: string; created_at: string }",
+          "expected": "Functions return parsed Contribution JSON and throw ApiError with the HTTP status"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "new: ContributionSheet",
+          "lines": "new",
+          "action": "Create component with props {open,onClose,roundId}; dialog role 'dialog' name 'Suggest What Happens Next' with textarea labelled 'Your idea', Send button, remaining count text 'Contributions left: N', note 'Ideas are considered when the Round closes.', and a list named 'Your suggestions' where each entry shows prompt and state sending/sent/failed; on submit call submitContribution and show error text from ApiError (429 -> 'Slow down, try again shortly', 409 -> 'Limit reached or duplicate idea', other -> 'Could not send')",
+          "expected": "Sheet renders states and updates history after submit"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App",
+          "lines": "L10-L47",
+          "action": "Add useState sheetOpen; inside the scene fragment render a button 'Suggest What Happens Next' that sets sheetOpen true and render <ContributionSheet open={sheetOpen} onClose={()=>setSheetOpen(false)} roundId={round?.id ?? ''} /> where round comes from props-less placeholder undefined until REQ-2 supplies it",
+          "expected": "Button visible after Begin and opens the sheet"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": "new: .contribution-sheet",
+          "lines": "after L30",
+          "action": "Append .contribution-sheet rules: fixed bottom sheet, max-height 70vh, overflow-y auto, padding 1rem, textarea width 100%",
+          "expected": "Sheet styled as bottom panel"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPAK6EAWZ4S4T00SEBR",
+      "kind": "unit",
+      "title": "Act: Add Countdown, RoundBadge and Round fetch in App",
+      "body": "Add getCurrentRound to the client, Countdown and RoundBadge components, and wire them into App using the fetched Round.\n\n## Acceptance criteria\n- Countdown formats HH:MM:SS from an injectable clock\n- Badge renders status text\n- App passes round.id to ContributionSheet\n\n\n## Scope\n- In scope: client.ts\n- In scope: Countdown.tsx\n- In scope: RoundBadge.tsx\n- In scope: App.tsx\n- Out of scope: Tests\n- Preserve: Existing App tests keep passing with fetch failing gracefully\n\n\n## Technical constraints\n- No new dependencies\n- New file: `game/frontend/src/api/client.ts`\n- New file: `game/frontend/src/components/Countdown.tsx`\n- New file: `game/frontend/src/components/RoundBadge.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- REQ-2\n\n\n## Definition of done\n- tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Countdown and badge components with getCurrentRound",
+      "description": "Add getCurrentRound to the client, Countdown and RoundBadge components, and wire them into App using the fetched Round.",
+      "acceptance_criteria": [
+        "Countdown formats HH:MM:SS from an injectable clock",
+        "Badge renders status text",
+        "App passes round.id to ContributionSheet"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts",
+          "Countdown.tsx",
+          "RoundBadge.tsx",
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing App tests keep passing with fetch failing gracefully"
+        ]
+      },
+      "technical_constraints": [
+        "No new dependencies",
+        "New file: `game/frontend/src/api/client.ts`",
+        "New file: `game/frontend/src/components/Countdown.tsx`",
+        "New file: `game/frontend/src/components/RoundBadge.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "REQ-2"
+      ],
+      "definition_of_done": [
+        "tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-108.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M847PKPAVAYQQN0S91J5S7EP",
+      "matched_feature_id": "01M8470M8THDHMM041AZFSGBHQ",
+      "links": [
+        "parent:01M847PKPAVAYQQN0S91J5S7EP",
+        "trace:01M8470M8THDHMM041AZFSGBHQ",
+        "artifact:.ai-dlc/units/UNIT-108.md"
+      ],
+      "depends_on": [
+        "01M847PKPAVAYQQN0S91J5S7EP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-108.md",
+      "artifact_id": "UNIT-108",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: RoundInfo, getCurrentRound",
+          "lines": "after submitContribution",
+          "action": "Export interface RoundInfo {id:string;number:number;status:string;starts_at:string;ends_at:string} and getCurrentRound() GETting /api/v1/worlds/the-boys-room/round/current via request",
+          "expected": "Returns RoundInfo or throws ApiError"
+        },
+        {
+          "file": "game/frontend/src/components/Countdown.tsx",
+          "symbol": "new: Countdown, formatRemaining",
+          "lines": "new",
+          "action": "Export formatRemaining(ms) returning 'HH:MM:SS' zero-padded or 'Round closed' when ms<=0; Countdown({endsAt, now=()=>Date.now()}) uses useState/useEffect with setInterval 1000 and clears it on unmount, rendering <time role='timer'>",
+          "expected": "Timer text updates each second"
+        },
+        {
+          "file": "game/frontend/src/components/RoundBadge.tsx",
+          "symbol": "new: RoundBadge",
+          "lines": "new",
+          "action": "Export RoundBadge({status}) rendering <span className='round-badge' data-status={status}>{status ?? 'Round unavailable'}</span>",
+          "expected": "Badge shows the status or fallback"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App",
+          "lines": "L10-L47",
+          "action": "Add useState round and useEffect calling getCurrentRound().then(setRound).catch(()=>setRound(undefined)); render <RoundBadge status={round?.status}/> and, when round exists, <Countdown endsAt={round.ends_at}/> above SceneView",
+          "expected": "Playing view shows badge and countdown"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPAJG67NAEV9C7MA943",
+      "kind": "unit",
+      "title": "Act: Add token-gated AdminApp with Round controls",
+      "body": "Implement admin client functions taking a token, the TokenGate form, AdminApp round view and route selection by location.hash.\n\n## Acceptance criteria\n- Admin calls send the Bearer header\n- AdminApp renders gate until token set\n- Route #/admin renders AdminApp\n\n\n## Scope\n- In scope: client.ts\n- In scope: TokenGate.tsx\n- In scope: AdminApp.tsx\n- In scope: main.tsx\n- Out of scope: Tests\n- Preserve: Default route renders App\n\n\n## Technical constraints\n- No router dependency\n- New file: `game/frontend/src/api/client.ts`\n- New file: `game/frontend/src/components/TokenGate.tsx`\n- New file: `game/frontend/src/components/AdminApp.tsx`\n- Code path: `game/frontend/src/main.tsx`\n- Code path: `game/frontend/src/styles.css`\n\n\n## Dependencies\n- REQ-3\n\n\n## Definition of done\n- tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Admin client calls, TokenGate, AdminApp and hash route",
+      "description": "Implement admin client functions taking a token, the TokenGate form, AdminApp round view and route selection by location.hash.",
+      "acceptance_criteria": [
+        "Admin calls send the Bearer header",
+        "AdminApp renders gate until token set",
+        "Route #/admin renders AdminApp"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts",
+          "TokenGate.tsx",
+          "AdminApp.tsx",
+          "main.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Default route renders App"
+        ]
+      },
+      "technical_constraints": [
+        "No router dependency",
+        "New file: `game/frontend/src/api/client.ts`",
+        "New file: `game/frontend/src/components/TokenGate.tsx`",
+        "New file: `game/frontend/src/components/AdminApp.tsx`",
+        "Code path: `game/frontend/src/main.tsx`",
+        "Code path: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [
+        "REQ-3"
+      ],
+      "definition_of_done": [
+        "tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-109.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M847PKPA59ZECN0A8K36FYBP",
+      "matched_feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+      "links": [
+        "parent:01M847PKPA59ZECN0A8K36FYBP",
+        "trace:01M844GYQJJMHCJZGB2V33H3N6",
+        "artifact:.ai-dlc/units/UNIT-109.md"
+      ],
+      "depends_on": [
+        "01M847PKPA59ZECN0A8K36FYBP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-109.md",
+      "artifact_id": "UNIT-109",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: adminRequest, getAdminRound, openRound, closeRound, listRoundContributions",
+          "lines": "after getCurrentRound",
+          "action": "Add adminRequest(token,path,init) adding header Authorization 'Bearer '+token to request; getAdminRound(token,id) GET /api/v1/admin/rounds/{id}?world=the-boys-room; openRound/closeRound POST .../{id}/open|close?world=the-boys-room; listRoundContributions(token,id) GET .../{id}/contributions?world=the-boys-room returning AdminContribution[] (Contribution plus prompt_hash)",
+          "expected": "Each call carries the Bearer header"
+        },
+        {
+          "file": "game/frontend/src/components/TokenGate.tsx",
+          "symbol": "new: TokenGate",
+          "lines": "new",
+          "action": "Export TokenGate({onToken,error}) form with <input type='password' aria-label='Admin token'> and button 'Enter'; calls onToken(value) on submit and renders error text when set",
+          "expected": "Form submits the typed token"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "new: AdminApp",
+          "lines": "new",
+          "action": "Export AdminApp with token state (memory only), roundId state initialised from getCurrentRound().id; when token is empty render TokenGate; else load getAdminRound and listRoundContributions, render heading with world 'the-boys-room', Round id/number/status, number inputs 'Duration (hours)' and 'Max contributions per player', buttons 'Open round' and 'Close round' calling openRound/closeRound then reloading, and a list named 'Contributions' of prompts; on ApiError 401 clear token and pass error 'Invalid token' to TokenGate",
+          "expected": "Gate then console renders"
+        },
+        {
+          "file": "game/frontend/src/main.tsx",
+          "symbol": "render",
+          "lines": "L10-L11",
+          "action": "Replace render(<App />) with render(window.location.hash.startsWith('#/admin') ? <AdminApp /> : <App />) importing AdminApp",
+          "code": "createRoot(rootEl).render(<App />) -> createRoot(rootEl).render(window.location.hash.startsWith('#/admin') ? <AdminApp /> : <App />)",
+          "expected": "#/admin shows the admin console"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPAPADHWSERYT79FQ77",
+      "kind": "unit",
+      "title": "Act: Add LifecycleStepper and ExecutionPanel to AdminApp",
+      "body": "Implement the stepper and panel components and render them in AdminApp using the Round status, contribution count and the execution for the Round.\n\n## Acceptance criteria\n- Seven stages render in order\n- Panel shows duration from updated_at difference\n- Failure reason shown\n\n\n## Scope\n- In scope: client.ts\n- In scope: LifecycleStepper.tsx\n- In scope: ExecutionPanel.tsx\n- In scope: AdminApp.tsx\n- Out of scope: Tests\n- Preserve: Open/Close controls\n\n\n## Technical constraints\n- No new deps\n- New file: `game/frontend/src/api/client.ts`\n- New file: `game/frontend/src/components/LifecycleStepper.tsx`\n- New file: `game/frontend/src/components/ExecutionPanel.tsx`\n- New file: `game/frontend/src/components/AdminApp.tsx`\n\n\n## Dependencies\n- REQ-4\n\n\n## Definition of done\n- tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Stepper, execution panel and listExecutions client call",
+      "description": "Implement the stepper and panel components and render them in AdminApp using the Round status, contribution count and the execution for the Round.",
+      "acceptance_criteria": [
+        "Seven stages render in order",
+        "Panel shows duration from updated_at difference",
+        "Failure reason shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts",
+          "LifecycleStepper.tsx",
+          "ExecutionPanel.tsx",
+          "AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Open/Close controls"
+        ]
+      },
+      "technical_constraints": [
+        "No new deps",
+        "New file: `game/frontend/src/api/client.ts`",
+        "New file: `game/frontend/src/components/LifecycleStepper.tsx`",
+        "New file: `game/frontend/src/components/ExecutionPanel.tsx`",
+        "New file: `game/frontend/src/components/AdminApp.tsx`"
+      ],
+      "dependencies": [
+        "REQ-4"
+      ],
+      "definition_of_done": [
+        "tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-110.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M847PKPA89CR1J6CV9SR0SCA",
+      "links": [
+        "parent:01M847PKPA89CR1J6CV9SR0SCA",
+        "artifact:.ai-dlc/units/UNIT-110.md"
+      ],
+      "depends_on": [
+        "01M847PKPA89CR1J6CV9SR0SCA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-110.md",
+      "artifact_id": "UNIT-110",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: ExecutionInfo, listExecutions",
+          "lines": "after listRoundContributions",
+          "action": "Export ExecutionInfo {id,world_id,round_id,status,error,updated_at, log?:string, tests?:string, release_version?:string} and listExecutions(token) GET /api/v1/admin/executions via adminRequest",
+          "expected": "Returns ExecutionInfo[]"
+        },
+        {
+          "file": "game/frontend/src/components/LifecycleStepper.tsx",
+          "symbol": "new: LifecycleStepper, STAGES, stageIndex",
+          "lines": "new",
+          "action": "Export STAGES=['OPEN','CLOSED','ANALYZING','DEVELOPING','TESTING','PUBLISHING','COMPLETED']; stageIndex(status) maps PLANNING->DEVELOPING and BUILDING->TESTING, else index of status, -1 otherwise; component renders <ol aria-label='Round lifecycle'> of <li data-state='done|current|pending'> with aria-current='step' on current",
+          "expected": "One current stage per status"
+        },
+        {
+          "file": "game/frontend/src/components/ExecutionPanel.tsx",
+          "symbol": "new: ExecutionPanel",
+          "lines": "new",
+          "action": "Export ExecutionPanel({execution,contributionCount}) rendering 'Contributions: N', 'Duration: ' computed from updated_at (or 'Not available' without execution), sections 'Agent logs', 'Test results', 'Release version' each showing the field or 'Not available', and 'Failure reason: <error>' when error is non-empty",
+          "expected": "Fields render or fallback"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp",
+          "lines": "new file from ACT-3",
+          "action": "Load listExecutions(token) and pick the one whose round_id equals roundId; render <LifecycleStepper status={round.status}/> and <ExecutionPanel execution={execution} contributionCount={contributions.length}/> below the Round header",
+          "expected": "Stepper and panel appear in the console"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPATC0GA5A377M1ME09",
+      "kind": "unit",
+      "title": "Act: Add Approve and Retry controls to ExecutionPanel",
+      "body": "Add approveExecution and retryExecution client functions and render the buttons in ExecutionPanel, wired from AdminApp.\n\n## Acceptance criteria\n- Buttons conditional on status\n- Click calls the endpoint and reloads\n- 409 message shown\n\n\n## Scope\n- In scope: client.ts\n- In scope: ExecutionPanel.tsx\n- In scope: AdminApp.tsx\n- Out of scope: Tests\n- Out of scope: Reject\n- Preserve: Existing panel fields\n\n\n## Technical constraints\n- Use adminRequest\n- New file: `game/frontend/src/api/client.ts`\n- New file: `game/frontend/src/components/ExecutionPanel.tsx`\n- New file: `game/frontend/src/components/AdminApp.tsx`\n\n\n## Dependencies\n- REQ-5\n\n\n## Definition of done\n- tsc passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Client calls and status-conditional buttons",
+      "description": "Add approveExecution and retryExecution client functions and render the buttons in ExecutionPanel, wired from AdminApp.",
+      "acceptance_criteria": [
+        "Buttons conditional on status",
+        "Click calls the endpoint and reloads",
+        "409 message shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "client.ts",
+          "ExecutionPanel.tsx",
+          "AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Reject"
+        ],
+        "preserve": [
+          "Existing panel fields"
+        ]
+      },
+      "technical_constraints": [
+        "Use adminRequest",
+        "New file: `game/frontend/src/api/client.ts`",
+        "New file: `game/frontend/src/components/ExecutionPanel.tsx`",
+        "New file: `game/frontend/src/components/AdminApp.tsx`"
+      ],
+      "dependencies": [
+        "REQ-5"
+      ],
+      "definition_of_done": [
+        "tsc passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-111.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M847PKPA6EJA1MF33N4F6QYV",
+      "links": [
+        "parent:01M847PKPA6EJA1MF33N4F6QYV",
+        "artifact:.ai-dlc/units/UNIT-111.md"
+      ],
+      "depends_on": [
+        "01M847PKPA6EJA1MF33N4F6QYV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-111.md",
+      "artifact_id": "UNIT-111",
+      "steps": [
+        {
+          "file": "game/frontend/src/api/client.ts",
+          "symbol": "new: approveExecution, retryExecution",
+          "lines": "after listExecutions",
+          "action": "Add approveExecution(token,id) and retryExecution(token,id) POSTing /api/v1/admin/executions/{id}/approve and /retry via adminRequest, returning ExecutionInfo",
+          "expected": "Calls carry the Bearer header"
+        },
+        {
+          "file": "game/frontend/src/components/ExecutionPanel.tsx",
+          "symbol": "ExecutionPanel",
+          "lines": "from ACT-4",
+          "action": "Add props onApprove and onRetry and optional actionError; render button 'Approve' when execution.status==='AWAITING_APPROVAL' and button 'Retry' when 'FAILED', each calling its prop with execution.id; render actionError in role='alert'",
+          "expected": "Conditional buttons"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp",
+          "lines": "from ACT-4",
+          "action": "Pass onApprove/onRetry that call approveExecution/retryExecution(token,id), then reload executions; catch ApiError and set actionError to its message",
+          "expected": "Click triggers the endpoint and refresh"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPA7E58TZ1XHSCX10X4",
+      "kind": "unit",
+      "title": "Verify: Contribution sheet submission flow unit tests",
+      "body": "Write TDD unit tests with vi.stubGlobal fetch for ContributionSheet and the client contribution calls.\n\n## Acceptance criteria\n- Submit posts world_id and prompt\n- 429 shows error and failed entry\n- Remaining count and close note render\n- 401 triggers session then retry\n\n\n## Scope\n- In scope: game/frontend/tests/contribution.test.tsx\n- In scope: tests/fixtures/api.ts\n- Out of scope: Real server\n\n\n## Technical constraints\n- fetch mocked; no network\n\n\n## Dependencies\n- ACT-1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked-fetch tests for submission, errors, remaining count and note",
+      "description": "Write TDD unit tests with vi.stubGlobal fetch for ContributionSheet and the client contribution calls.",
+      "acceptance_criteria": [
+        "Submit posts world_id and prompt",
+        "429 shows error and failed entry",
+        "Remaining count and close note render",
+        "401 triggers session then retry"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contribution.test.tsx",
+          "tests/fixtures/api.ts"
+        ],
+        "out_of_scope": [
+          "Real server"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "fetch mocked; no network"
+      ],
+      "dependencies": [
+        "ACT-1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-112.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPAX9NH4AFYKMZRJMAP",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M847PKPAX9NH4AFYKMZRJMAP",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-112.md"
+      ],
+      "depends_on": [
+        "01M847PKPAX9NH4AFYKMZRJMAP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-112.md",
+      "artifact_id": "UNIT-112",
+      "steps": [
+        {
+          "file": "game/frontend/tests/fixtures/api.ts",
+          "symbol": "new: contributionFixture",
+          "lines": "new",
+          "action": "Export contributionFixture shaped like contributionJSON in backend/internal/contribution/handler.go (id,world_id,round_id,player_id,prompt,created_at); fixture values come from that struct, not invented keys",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Fixture type-checks against the Contribution interface"
+        },
+        {
+          "file": "game/frontend/tests/contribution.test.tsx",
+          "symbol": "new: describe('ContributionSheet')",
+          "lines": "new",
+          "action": "Add tests: (1) 'posts world_id and prompt': stub fetch resolving 201 contributionFixture, type 'Look behind the shelf' into 'Your idea', click Send, assert fetch called with '/api/v1/contributions' and body containing world_id 'the-boys-room' and the prompt, and the 'Your suggestions' list shows it; (2) 'shows 429 error': fetch resolves 429, assert text 'Slow down, try again shortly'; (3) 'shows remaining and note': render open, assert 'Contributions left: 5' and 'Ideas are considered when the Round closes.'; (4) '401 creates session and retries': fetch resolves 401, then 200 session, then 201, assert three calls in order",
+          "command": "cd game/frontend && npx vitest run tests/contribution.test.tsx",
+          "expected": "All four tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPA81CXSMYZHEGHRSA7",
+      "kind": "unit",
+      "title": "Verify: Countdown and Round badge unit tests",
+      "body": "Unit tests with vi.useFakeTimers and mocked fetch.\n\n## Acceptance criteria\n- 00:01:30 then 00:01:29\n- Past end shows closed\n- Badge OPEN and fallback\n\n\n## Scope\n- In scope: game/frontend/tests/countdown.test.tsx\n\n\n## Technical constraints\n- Fake timers; no network\n\n\n## Dependencies\n- ACT-2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Fake-timer tests for countdown and badge",
+      "description": "Unit tests with vi.useFakeTimers and mocked fetch.",
+      "acceptance_criteria": [
+        "00:01:30 then 00:01:29",
+        "Past end shows closed",
+        "Badge OPEN and fallback"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/countdown.test.tsx"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Fake timers; no network"
+      ],
+      "dependencies": [
+        "ACT-2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-113.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPAK6EAWZ4S4T00SEBR",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M847PKPAK6EAWZ4S4T00SEBR",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-113.md"
+      ],
+      "depends_on": [
+        "01M847PKPAK6EAWZ4S4T00SEBR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-113.md",
+      "artifact_id": "UNIT-113",
+      "steps": [
+        {
+          "file": "game/frontend/tests/fixtures/api.ts",
+          "symbol": "new: roundFixture",
+          "lines": "after contributionFixture",
+          "action": "Export roundFixture shaped like world.Round in backend/internal/world/world.go (id,number,status,starts_at,ends_at json keys)",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Fixture type-checks as RoundInfo"
+        },
+        {
+          "file": "game/frontend/tests/countdown.test.tsx",
+          "symbol": "new: describe('Countdown and RoundBadge')",
+          "lines": "new",
+          "action": "Tests: formatRemaining(90000)==='00:01:30' and formatRemaining(0)==='Round closed'; Countdown with now fixed 90s before endsAt and fake timers advanced 1000ms shows '00:01:29' using an incrementing now stub; RoundBadge status 'OPEN' shows OPEN and undefined shows 'Round unavailable'",
+          "command": "cd game/frontend && npx vitest run tests/countdown.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPA9V8B9C26XHASZ0SK",
+      "kind": "unit",
+      "title": "Verify: Admin token gate and round controls unit tests",
+      "body": "Unit tests for AdminApp and admin client calls with stubbed fetch.\n\n## Acceptance criteria\n- No fetch before token\n- Bearer header sent\n- Open and Close POST\n- 401 shows Invalid token\n\n\n## Scope\n- In scope: game/frontend/tests/admin.test.tsx\n\n\n## Technical constraints\n- fetch mocked\n\n\n## Dependencies\n- ACT-3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked-fetch tests for gate, Bearer header, open/close, contributions",
+      "description": "Unit tests for AdminApp and admin client calls with stubbed fetch.",
+      "acceptance_criteria": [
+        "No fetch before token",
+        "Bearer header sent",
+        "Open and Close POST",
+        "401 shows Invalid token"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/admin.test.tsx"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "fetch mocked"
+      ],
+      "dependencies": [
+        "ACT-3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-114.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPAJG67NAEV9C7MA943",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M847PKPAJG67NAEV9C7MA943",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-114.md"
+      ],
+      "depends_on": [
+        "01M847PKPAJG67NAEV9C7MA943"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-114.md",
+      "artifact_id": "UNIT-114",
+      "steps": [
+        {
+          "file": "game/frontend/tests/fixtures/api.ts",
+          "symbol": "new: adminContributionFixture",
+          "lines": "after roundFixture",
+          "action": "Export adminContributionFixture matching contributionJSON in backend/internal/admin/rounds.go (adds prompt_hash)",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Type-checks"
+        },
+        {
+          "file": "game/frontend/tests/admin.test.tsx",
+          "symbol": "new: describe('AdminApp')",
+          "lines": "new",
+          "action": "Tests with a url-routing fetch stub: (1) renders only 'Admin token' input and fetch not called after getCurrentRound; (2) after typing token 'secret' and Enter, fetch called for /api/v1/admin/rounds/<id>?world=the-boys-room with headers Authorization 'Bearer secret' and the Round status shows; (3) click 'Open round' asserts POST .../open?world=the-boys-room, 'Close round' asserts POST .../close; (4) contributions list shows adminContributionFixture.prompt; (5) admin fetch 401 shows 'Invalid token'",
+          "command": "cd game/frontend && npx vitest run tests/admin.test.tsx",
+          "expected": "All five tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPABGKN817NTJ41K2X0",
+      "kind": "unit",
+      "title": "Verify: Lifecycle stepper renders each stage unit tests",
+      "body": "Pure component unit tests, no fetch needed.\n\n## Acceptance criteria\n- Each of seven statuses marks one current\n- DEVELOPING marks earlier done and later pending\n- Failure and fallback texts render\n\n\n## Scope\n- In scope: game/frontend/tests/stepper.test.tsx\n\n\n## Technical constraints\n- No network\n\n\n## Dependencies\n- ACT-4\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for every stage state and execution panel fields",
+      "description": "Pure component unit tests, no fetch needed.",
+      "acceptance_criteria": [
+        "Each of seven statuses marks one current",
+        "DEVELOPING marks earlier done and later pending",
+        "Failure and fallback texts render"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/stepper.test.tsx"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No network"
+      ],
+      "dependencies": [
+        "ACT-4"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-115.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPAPADHWSERYT79FQ77",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M847PKPAPADHWSERYT79FQ77",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-115.md"
+      ],
+      "depends_on": [
+        "01M847PKPAPADHWSERYT79FQ77"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-115.md",
+      "artifact_id": "UNIT-115",
+      "steps": [
+        {
+          "file": "game/frontend/tests/fixtures/api.ts",
+          "symbol": "new: executionFixture",
+          "lines": "after adminContributionFixture",
+          "action": "Export executionFixture shaped like Execution in backend/internal/execution/execution.go (id,world_id,round_id,status,error,updated_at json keys)",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Type-checks"
+        },
+        {
+          "file": "game/frontend/tests/stepper.test.tsx",
+          "symbol": "new: describe('LifecycleStepper and ExecutionPanel')",
+          "lines": "new",
+          "action": "Tests: it.each over the seven STAGES renders LifecycleStepper status=stage and asserts exactly one li has aria-current 'step' with that text; status 'DEVELOPING' asserts OPEN..ANALYZING data-state done and TESTING..COMPLETED pending; status 'BUILDING' marks TESTING current; ExecutionPanel with executionFixture error 'build failed' shows 'Failure reason: build failed'; without log/tests/release fields shows 'Not available' three times; contributionCount 3 shows 'Contributions: 3'",
+          "command": "cd game/frontend && npx vitest run tests/stepper.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPA0Q2XHSX3W9R9FR7S",
+      "kind": "unit",
+      "title": "Verify: Approve and retry action unit tests",
+      "body": "Unit tests for the action buttons with stubbed fetch.\n\n## Acceptance criteria\n- Approve POST\n- Approve click sends the POST request for the Retry action too: Retry POST is covered by its own test\n- No buttons otherwise\n- A 409 message is shown in an alert\n\n\n## Scope\n- In scope: game/frontend/tests/actions.test.tsx\n\n\n## Technical constraints\n- fetch mocked\n\n\n## Dependencies\n- ACT-5\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked-fetch tests for approve, retry and conflicts",
+      "description": "Unit tests for the action buttons with stubbed fetch.",
+      "acceptance_criteria": [
+        "Approve POST",
+        "Approve click sends the POST request for the Retry action too: Retry POST is covered by its own test",
+        "No buttons otherwise",
+        "A 409 message is shown in an alert"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/actions.test.tsx"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "fetch mocked"
+      ],
+      "dependencies": [
+        "ACT-5"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-116.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPATC0GA5A377M1ME09",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M847PKPATC0GA5A377M1ME09",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-116.md"
+      ],
+      "depends_on": [
+        "01M847PKPATC0GA5A377M1ME09"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-116.md",
+      "artifact_id": "UNIT-116",
+      "steps": [
+        {
+          "file": "game/frontend/tests/actions.test.tsx",
+          "symbol": "new: describe('ExecutionPanel actions')",
+          "lines": "new",
+          "action": "Tests rendering ExecutionPanel with executionFixture overridden status: 'AWAITING_APPROVAL' shows Approve and click calls onApprove with the id; 'FAILED' shows Retry and click calls onRetry; 'RUNNING' shows neither; actionError 'execution: illegal state' renders in role alert; plus a client test stubbing fetch asserting approveExecution('t','EX1') POSTs /api/v1/admin/executions/EX1/approve with Authorization 'Bearer t' and retryExecution hits /retry",
+          "command": "cd game/frontend && npx vitest run tests/actions.test.tsx",
+          "expected": "All tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M847PKPAPA9YEA3RMHD0MHKD",
+      "kind": "evidence",
+      "title": "Evidence: Contribution UI and admin console unit tests",
+      "body": "Evidence that the contribution, countdown, admin, stepper and action unit tests pass with mocked fetch.\n\n## Acceptance criteria\n- All five test files pass\n- tsc --noEmit passes\n\n\n## Scope\n- In scope: Test run output\n\n\n## Dependencies\n- VER-1\n- VER-2\n- VER-3\n- VER-4\n- VER-5\n\n\n## Definition of done\n- Passing results recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing unit test results for SG-6",
+      "description": "Evidence that the contribution, countdown, admin, stepper and action unit tests pass with mocked fetch.",
+      "acceptance_criteria": [
+        "All five test files pass",
+        "tsc --noEmit passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER-1",
+        "VER-2",
+        "VER-3",
+        "VER-4",
+        "VER-5"
+      ],
+      "definition_of_done": [
+        "Passing results recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-022.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M847PKPA7E58TZ1XHSCX10X4",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M847PKPA7E58TZ1XHSCX10X4",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-022.md"
+      ],
+      "depends_on": [
+        "01M847PKPA7E58TZ1XHSCX10X4",
+        "01M847PKPA81CXSMYZHEGHRSA7",
+        "01M847PKPA9V8B9C26XHASZ0SK",
+        "01M847PKPABGKN817NTJ41K2X0",
+        "01M847PKPA0Q2XHSX3W9R9FR7S"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-022.md",
+      "artifact_id": "EVD-022"
+    }
+  ],
+  "created_at": "2026-11-23T12:57:11.362393+00:00",
+  "summary": "AI · 2 NEW · 15 UPDATE · 0 UNCHANGED · 11/17 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

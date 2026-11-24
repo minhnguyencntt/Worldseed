@@ -1,0 +1,63 @@
+{
+  "id": "01M84660HRDNX372KK3DMG2EEV",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "Verify: Scheduler behavior with a fake clock unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Fake clock and fake controller tests",
+  "description": "Test Tick decisions only; no real timers.",
+  "acceptance_criteria": [
+    "Open called once for due SCHEDULED round",
+    "Close called once for expired OPEN round",
+    "No calls for future rounds or other statuses"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/scheduler_test.go"
+    ],
+    "out_of_scope": [
+      "Run ticker"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "fakeClock, fakeController, fakeLister"
+  ],
+  "dependencies": [
+    "A3"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-079.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD8XTF5N91DVZMTHW96",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-079.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HRHP0C1HDJ514BWDK3"
+  ],
+  "sim_node_id": "01M8465XD8PYPJE9TRJEX4JQMR",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-079.md",
+  "artifact_id": "UNIT-079",
+  "steps": [
+    {
+      "file": "backend/internal/round/scheduler_test.go",
+      "symbol": "new: TestTick_OpensDueRound, TestTick_ClosesExpiredRound, TestTick_IgnoresFutureAndOtherStatuses",
+      "lines": "new",
+      "action": "Clock fixed at 2026-01-01T12:00Z. Rounds: SCHEDULED starts 11:00 -> expect Open call; OPEN ends 11:59 -> expect Close call; advance clock field to prove future SCHEDULED (starts 13:00) and OPEN (ends 13:00), COMPLETED rounds produce zero calls; controller error on Open is returned from Tick while Close still runs",
+      "command": "cd backend && go test ./internal/round -run TestTick",
+      "expected": "TestTick tests pass (go test reports PASS)"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.277221+00:00"
+}

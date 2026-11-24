@@ -1,0 +1,60 @@
+{
+  "id": "01M84JQEVMBYP4EW0JR7SPGMJA",
+  "intent_id": "01M84JNW4N0FKEKZE4RSX80RNZ",
+  "title": "SG-5.2 Frozen-ids reader on the contribution file store",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Add FrozenIDs to the contribution FileStore and assert it implements ExportSource",
+  "description": "Context: backend/internal/contribution/store.go has FileStore (Save, Get, ListByRound) and export_source.go declares ExportSource with ListByRound and a compile-time assertion for *FileStore. A closed round's frozen contribution list lives in worlds/<world>/rounds/<round-lowercase>/snapshot.yaml (round.Snapshot, entries with id). Desired behavior: FileStore reads that file, returns the frozen contribution ids, returns ErrNotFound cleanly when no snapshot exists, and validates world and round ids. Why: the devion workseed handoff export needs only frozen contributions.",
+  "acceptance_criteria": [
+    "Given a round dir with snapshot.yaml listing ids a and b, when FrozenIDs(ctx, world, round) is called, then it returns [a b] in snapshot order",
+    "Given a round with no snapshot.yaml, when FrozenIDs is called, then it returns an error satisfying errors.Is(err, ErrNotFound)",
+    "Given a world or round id that is not a safe path segment, when FrozenIDs is called, then it returns an error and reads no file",
+    "Given the contribution package, when it compiles, then *FileStore is asserted to implement ExportSource including FrozenIDs"
+  ],
+  "scope": {
+    "in_scope": [
+      "FileStore.FrozenIDs",
+      "ExportSource interface method FrozenIDs"
+    ],
+    "out_of_scope": [
+      "Exporter assembling the JSON",
+      "Any worker or execution code",
+      "Changing snapshot writing in the round package"
+    ],
+    "preserve": [
+      "Existing Save, Get, ListByRound, ListByPlayer behavior",
+      "Export and ExportContribution JSON types",
+      "Snapshot file format in internal/round/snapshot.go"
+    ]
+  },
+  "technical_constraints": [
+    "Go backend; use gopkg.in/yaml.v3 already used by the round package",
+    "Use safepath.Segment for id validation like ListByRound",
+    "Round dir uses strings.ToLower(roundID)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "FrozenIDs implemented and compiles",
+    "ExportSource asserted on *FileStore",
+    "Unit tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-052.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84JF0K0XHTV40GE5BY6073A",
+    "artifact:.ai-dlc/intent/INT-052.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84JPZV1ERKEMBS962V38YZ6",
+  "feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+  "artifact_path": ".ai-dlc/intent/INT-052.md",
+  "artifact_id": "INT-052",
+  "created_at": "2026-11-23T16:09:50.708355+00:00",
+  "updated_at": "2026-11-23T16:10:54.152448+00:00"
+}

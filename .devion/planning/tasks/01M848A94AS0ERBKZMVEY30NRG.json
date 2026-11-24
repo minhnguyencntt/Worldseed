@@ -1,0 +1,53 @@
+{
+  "id": "01M848A94AS0ERBKZMVEY30NRG",
+  "intent_id": "01M8488A5EB9Q4CM9CCCXWRTPV",
+  "title": "REQ · A deriveStage helper maps Round and execution status to a lifecycle stage",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Pure function returns the current stage from Round status and optional execution status",
+  "description": "Context: stageIndex maps only Round status. Desired behavior: deriveStage(roundStatus, executionStatus?) returns the later of the Round-derived stage and the execution-derived stage (RUNNING→DEVELOPING, AWAITING_APPROVAL or APPROVED→PUBLISHING, COMPLETED→COMPLETED; QUEUED/FAILED add nothing). Expected result: a stage string usable as LifecycleStepper status. Why: Round status alone lags execution progress.",
+  "acceptance_criteria": [
+    "Given roundStatus CLOSED and executionStatus RUNNING, when deriveStage is called, then it returns DEVELOPING.",
+    "Given roundStatus OPEN and no execution status, when deriveStage is called, then it returns OPEN.",
+    "Given roundStatus PUBLISHING and executionStatus RUNNING, when deriveStage is called, then it returns PUBLISHING (never moves backwards)."
+  ],
+  "scope": {
+    "in_scope": [
+      "deriveStage export in LifecycleStepper.tsx"
+    ],
+    "out_of_scope": [
+      "Backend status changes"
+    ],
+    "preserve": [
+      "STAGES, stageIndex, LifecycleStepper behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Execution statuses per backend/internal/execution/execution.go"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "deriveStage exported and typed",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-061.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M848A5WARVRGRFVR6QT6PM23",
+    "trace:01M8457KMNQV27GGDGKH8GE5YH",
+    "artifact:.ai-dlc/requirements/REQ-061.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M848A94AKVAK4YFP3B4E00WK"
+  ],
+  "sim_node_id": "01M848A5WAYHB82XABKARPT3MZ",
+  "feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+  "artifact_path": ".ai-dlc/requirements/REQ-061.md",
+  "artifact_id": "REQ-061",
+  "created_at": "2026-11-23T13:07:53.098049+00:00",
+  "updated_at": "2026-11-23T13:10:50.233119+00:00"
+}

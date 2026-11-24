@@ -1,0 +1,77 @@
+{
+  "id": "01M85GXWBGFWY9RE09MKBGATTY",
+  "intent_id": "01M85GR7583MAZARA7PCZ2GT1K",
+  "title": "Act: Subscribe App to the objectClick event from Phaser",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add a phaserToReact objectClick subscription that sets selectedId.",
+  "description": "Edit game/frontend/src/App.tsx to subscribe to phaserToReact objectClick and select that object, unsubscribing on unmount.",
+  "acceptance_criteria": [
+    "Given objectClick is emitted with an id, when App is mounted, then selectedId becomes that id.",
+    "Given App unmounts, when cleanup runs, then the subscription is removed."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/App.tsx effect and import"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "BootScene emission code"
+    ],
+    "preserve": [
+      "Existing loadRound effect and early-return ordering"
+    ]
+  },
+  "technical_constraints": [
+    "Hook must be declared before the `if (!begun)` early return",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "useEffect returns the unsubscribe function from phaserToReact.on",
+    "App.tsx compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-701.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85GTKHE2NX21A3KTFP1BRGA",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-701.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85GXWBGQKB3TFCVKPVHDGDW"
+  ],
+  "sim_node_id": "01M85GTKHE43GSGHTP3DR2PS3B",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-701.md",
+  "artifact_id": "UNIT-701",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "imports",
+      "lines": "L10-L12",
+      "action": "Add an import of phaserToReact from './phaser/events' next to the existing runtime imports.",
+      "code": "import { phaserToReact } from './phaser/events';",
+      "expected": "phaserToReact is available in App.tsx."
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App (objectClick effect)",
+      "lines": "after L43",
+      "action": "Insert a useEffect after the loadRound effect that calls phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)) and returns the unsubscribe function, with an empty dependency array.",
+      "code": "useEffect(() => phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)), []);",
+      "expected": "Emitting objectClick sets selectedId so ActionMenu opens; unmount removes the listener."
+    }
+  ],
+  "created_at": "2026-11-24T00:57:38.416384+00:00",
+  "updated_at": "2026-11-24T01:03:42.708476+00:00"
+}

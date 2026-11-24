@@ -1,0 +1,89 @@
+{
+  "id": "01M85D0KRYR1PBAB8JN29GC8EE",
+  "intent_id": "01M85CW82JT3S0XRB3QDHD06T9",
+  "title": "Verify: Blank and whitespace-only submit shows the inline message unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the blank branch with the API client mocked",
+  "description": "Prove with mocked client that blank text shows the alert and never calls submitContribution.",
+  "acceptance_criteria": [
+    "Empty submit shows alert and no API call",
+    "Whitespace-only submit shows alert and no API call",
+    "Textarea has aria-invalid and aria-describedby"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file game/frontend/tests/contributionBlank.test.tsx"
+    ],
+    "out_of_scope": [
+      "Running app or browser"
+    ],
+    "preserve": [
+      "Existing contribution.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('../src/api/client') with importActual to keep ApiError and MAX_PER_PLAYER; no network"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Tests pass in isolation",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-640.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CXX8YEWCFD7DQJKCF99G2",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-640.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85D0KRYGACBACCP7P1J0ZYZ"
+  ],
+  "sim_node_id": "01M85CXX8YBJN3YQWCESE4JCDT",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-640.md",
+  "artifact_id": "UNIT-640",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "new: test setup",
+      "lines": "new",
+      "action": "Create the file; vi.mock '../src/api/client' spreading importActual and replacing submitContribution and listMine with vi.fn. listMine resolves with the list from the fixture in game/frontend/tests/fixtures/api.ts (contributionFixture), which mirrors the Contribution type returned by listMine in game/frontend/src/api/client.ts; do not inline the payload. Render <ContributionSheet open onClose={vi.fn()} roundId=\"ROUND-0000001\" /> and call cleanup in afterEach.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx",
+      "expected": "File loads with mocks in place."
+    },
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "it: empty text shows 'Enter an idea first' and does not submit",
+      "lines": "new",
+      "action": "Add test: click the 'Send' button with the textarea empty; assert screen.getByRole('alert') has text 'Enter an idea first' and submitContribution toHaveBeenCalledTimes(0).",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"empty text\"",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "it: whitespace-only text shows the message and does not submit",
+      "lines": "new",
+      "action": "Add test: fireEvent.change the textarea (label 'Your idea') to '   \\n  ', click Send; assert the alert text 'Enter an idea first' and submitContribution not called.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"whitespace-only\"",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "it: textarea is marked invalid and described by the alert",
+      "lines": "new",
+      "action": "Add test: after blank Send assert the textarea has attribute aria-invalid='true' and aria-describedby equal to the alert element id.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"marked invalid\"",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T23:49:13.630566+00:00",
+  "updated_at": "2026-11-23T23:50:39.816927+00:00"
+}

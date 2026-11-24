@@ -1,0 +1,94 @@
+{
+  "id": "01M847PSB923MYQM3M94FSD1FD",
+  "intent_id": "01M847H43ZBM8SEWC3A33AWNS1",
+  "title": "Act: Add Countdown, RoundBadge and Round fetch in App",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Countdown and badge components with getCurrentRound",
+  "description": "Add getCurrentRound to the client, Countdown and RoundBadge components, and wire them into App using the fetched Round.",
+  "acceptance_criteria": [
+    "Countdown formats HH:MM:SS from an injectable clock",
+    "Badge renders status text",
+    "App passes round.id to ContributionSheet"
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts",
+      "Countdown.tsx",
+      "RoundBadge.tsx",
+      "App.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Existing App tests keep passing with fetch failing gracefully"
+    ]
+  },
+  "technical_constraints": [
+    "No new dependencies",
+    "New file: `game/frontend/src/api/client.ts`",
+    "New file: `game/frontend/src/components/Countdown.tsx`",
+    "New file: `game/frontend/src/components/RoundBadge.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "REQ-2"
+  ],
+  "definition_of_done": [
+    "tsc passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-108.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847PKPAVAYQQN0S91J5S7EP",
+    "trace:01M8470M8THDHMM041AZFSGBHQ",
+    "artifact:.ai-dlc/units/UNIT-108.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M847PSB9HQKYRPMQGH2DC9BT"
+  ],
+  "sim_node_id": "01M847PKPAK6EAWZ4S4T00SEBR",
+  "feature_id": "01M8470M8THDHMM041AZFSGBHQ",
+  "artifact_path": ".ai-dlc/units/UNIT-108.md",
+  "artifact_id": "UNIT-108",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "new: RoundInfo, getCurrentRound",
+      "lines": "after submitContribution",
+      "action": "Export interface RoundInfo {id:string;number:number;status:string;starts_at:string;ends_at:string} and getCurrentRound() GETting /api/v1/worlds/the-boys-room/round/current via request",
+      "expected": "Returns RoundInfo or throws ApiError"
+    },
+    {
+      "file": "game/frontend/src/components/Countdown.tsx",
+      "symbol": "new: Countdown, formatRemaining",
+      "lines": "new",
+      "action": "Export formatRemaining(ms) returning 'HH:MM:SS' zero-padded or 'Round closed' when ms<=0; Countdown({endsAt, now=()=>Date.now()}) uses useState/useEffect with setInterval 1000 and clears it on unmount, rendering <time role='timer'>",
+      "expected": "Timer text updates each second"
+    },
+    {
+      "file": "game/frontend/src/components/RoundBadge.tsx",
+      "symbol": "new: RoundBadge",
+      "lines": "new",
+      "action": "Export RoundBadge({status}) rendering <span className='round-badge' data-status={status}>{status ?? 'Round unavailable'}</span>",
+      "expected": "Badge shows the status or fallback"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App",
+      "lines": "L10-L47",
+      "action": "Add useState round and useEffect calling getCurrentRound().then(setRound).catch(()=>setRound(undefined)); render <RoundBadge status={round?.status}/> and, when round exists, <Countdown endsAt={round.ends_at}/> above SceneView",
+      "expected": "Playing view shows badge and countdown"
+    }
+  ],
+  "created_at": "2026-11-23T12:57:14.345775+00:00",
+  "updated_at": "2026-11-23T13:04:06.164652+00:00"
+}

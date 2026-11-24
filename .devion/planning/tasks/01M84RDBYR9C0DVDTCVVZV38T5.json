@@ -1,0 +1,70 @@
+{
+  "id": "01M84RDBYR9C0DVDTCVVZV38T5",
+  "intent_id": "01M84R9PSM7D3GVQ7YH6138B8V",
+  "title": "SG-4 · Integrate Phaser 3.90 with a lifecycle-safe React host and typed events",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Phaser 3.90 runs inside a React host with one game instance, pixel-art settings, resize handling, a typed event bus and Zustand-owned shared state.",
+  "description": "Context: game/frontend is a React 18 + Vite + zustand app. SceneView.tsx renders the bedroom as an <img> plus absolutely positioned hotspot buttons. useGame.ts keeps GameState in React useState, and uiStore.ts holds only UI flags. Phaser is not installed and no src/phaser folder exists. Desired behavior: install Phaser 3.90 and add a PhaserHost React component that owns exactly one Phaser.Game, with pixel-art config, resize and device-pixel-ratio handling. Add a typed event bus for Phaser to React and React to Phaser messages. Move shared GameState into a Zustand store that Phaser reads without duplicating it. Expected result: unit tests with Phaser mocked prove single-instance creation, cleanup on unmount, resize handling and typed event delivery. Why: it is the base for the layered Phaser scene work in later sub-goals.",
+  "acceptance_criteria": [
+    "Given package.json, When dependencies are read, Then phaser resolves to a 3.90.x version.",
+    "Given PhaserHost mounts under React.StrictMode, When effects run twice, Then the Phaser game factory returns exactly one live instance and destroys the first before the second is created.",
+    "Given PhaserHost unmounts, When cleanup runs, Then game.destroy(true) is called once and no instance remains.",
+    "Given the game config, When it is built, Then pixelArt and roundPixels are true and scale mode is FIT with integer-friendly zoom.",
+    "Given a typed event is emitted on the bus, When a listener is subscribed, Then the listener receives the exact typed payload and no payload after unsubscribe.",
+    "Given GameState changes in the Zustand store, When a Phaser scene reads it, Then it gets the store value and keeps no copy."
+  ],
+  "scope": {
+    "in_scope": [
+      "phaser dependency",
+      "PhaserHost component",
+      "pixel-art game config and scale helper",
+      "typed event bus",
+      "Zustand game store read by a Phaser scene",
+      "unit tests with Phaser mocked"
+    ],
+    "out_of_scope": [
+      "layered bedroom rendering",
+      "sprites and animations",
+      "Go backend changes",
+      "replacing SceneView in App"
+    ],
+    "preserve": [
+      "useGame return shape: state, scene, view, act, choose",
+      "existing tests under game/frontend/tests",
+      "localStorage persistence behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90",
+    "TypeScript",
+    "Zustand for shared state",
+    "Tests under game/frontend/tests, run with vitest run",
+    "Unit tests must mock the phaser module"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements delivered with Act and Verify units",
+    "Unit tests pass and tsc --noEmit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-078.md`"
+  ],
+  "non_functional": [
+    "No duplicate Phaser instances or listener leaks"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+    "artifact:.ai-dlc/intent/INT-078.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84RBYVYSS7BQ1KMY5Z5F13R",
+  "feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+  "artifact_path": ".ai-dlc/intent/INT-078.md",
+  "artifact_id": "INT-078",
+  "created_at": "2026-11-23T17:49:11.512406+00:00",
+  "updated_at": "2026-11-23T17:53:31.054880+00:00"
+}

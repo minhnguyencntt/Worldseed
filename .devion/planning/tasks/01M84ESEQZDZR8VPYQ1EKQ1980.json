@@ -1,0 +1,59 @@
+{
+  "id": "01M84ESEQZDZR8VPYQ1EKQ1980",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "REQ · Worker loads config, logs structured JSON and enforces a per-World file lock",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Config loader, slog JSON logger and exclusive file lock per World",
+  "description": "Context: no worker module exists. Desired behavior: config.LoadFS reads a worker YAML (world, repo_path, work_root, poll_interval, exec_timeout, max_retries, max_budget_usd, auto_publish, provider) with defaults and validation, logging.New builds a JSON slog logger, and lock.Acquire gives one development execution per World. Expected result: a second acquire fails until release. Why: prevents concurrent executions on one World.",
+  "acceptance_criteria": [
+    "Given a YAML missing optional fields, when loaded, then defaults apply (poll_interval 30s, exec_timeout 30m, max_retries 2, auto_publish false)",
+    "Given an empty world, non-positive timeout or negative budget, when loaded, then an error names the field",
+    "Given a held lock for a World, when Acquire is called again, then ErrLocked is returned",
+    "Given a released lock, when Acquire is called, then it succeeds and the lock file contains the owner"
+  ],
+  "scope": {
+    "in_scope": [
+      "worker/go.mod",
+      "worker/internal/config",
+      "worker/internal/logging",
+      "worker/internal/lock"
+    ],
+    "out_of_scope": [
+      "Recovery of stale locks"
+    ],
+    "preserve": [
+      "backend config style (LoadFS, yaml.v3)"
+    ]
+  },
+  "technical_constraints": [
+    "Lock via os.OpenFile O_CREATE|O_EXCL, no flock dependency"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Config, logger and lock packages compile and behave as specified",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-081.md`"
+  ],
+  "non_functional": [
+    "Lock file removal only by its owner"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14SVHM4ZBNMJTXVGTXW",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-081.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZR9YFPGAMECA789RV"
+  ],
+  "sim_node_id": "01M84ES14SC88WKQZYFJBGJWHM",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-081.md",
+  "artifact_id": "REQ-081",
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.169397+00:00"
+}

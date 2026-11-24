@@ -1,0 +1,63 @@
+{
+  "id": "01M84QJA91XS1604QAA373NM6B",
+  "intent_id": "01M84QGDC7G1SSDXBGSFJKSGWR",
+  "title": "Act: Confirm loader reads fs only through node:fs named imports",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Ensure loadManifestFile/Fallback use mockable readFileSync and existsSync",
+  "description": "The loader already imports existsSync and readFileSync from node:fs and join from node:path, so vi.mock('node:fs') can intercept them. Confirm no other fs access exists; no code change is expected.",
+  "acceptance_criteria": [
+    "Loader imports only readFileSync and existsSync from node:fs",
+    "No other I/O or clock use exists in the loader"
+  ],
+  "scope": {
+    "in_scope": [
+      "manifestLoader.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Public exports"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/src/assets/loaders/manifestLoader.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Loader confirmed mockable",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-370.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QHEF589XHBYMA09P9T3R1",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-370.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QJA912BADAT0Y2QREB132"
+  ],
+  "sim_node_id": "01M84QHEF50FDTSZN2JH08BXHG",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-370.md",
+  "artifact_id": "UNIT-370",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/loaders/manifestLoader.ts",
+      "symbol": "loadManifestFile, loadManifestWithFallback",
+      "lines": "L1-L2",
+      "action": "Confirm the only I/O imports are existsSync and readFileSync from 'node:fs' and make no edit if so",
+      "expected": "Both functions use only these two fs calls"
+    }
+  ],
+  "created_at": "2026-11-23T17:34:25.057745+00:00",
+  "updated_at": "2026-11-23T17:35:11.130899+00:00"
+}

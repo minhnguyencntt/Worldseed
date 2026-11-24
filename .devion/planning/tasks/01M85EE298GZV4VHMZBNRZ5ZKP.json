@@ -1,0 +1,81 @@
+{
+  "id": "01M85EE298GZV4VHMZBNRZ5ZKP",
+  "intent_id": "01M85E6Q0K21M8MDX15NX69JJ0",
+  "title": "Verify: Send disabled for blank, over-limit, zero-quota and in-flight unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests assert every disabled condition and fix existing tests that clicked a now-disabled Send.",
+  "description": "New test file with mocked ../src/api/client (submitContribution, listMine) following the pattern in tests/contributionQuotaGate.test.tsx.",
+  "acceptance_criteria": [
+    "Send is disabled for blank, whitespace-only, over-limit and zero-quota states.",
+    "Send is disabled while a submission is pending and enabled for valid text with quota."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/contributionSubmitDisabled.test.tsx",
+      "Adapting blank/max-length tests that click a disabled Send"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing assertions on messages"
+    ]
+  },
+  "technical_constraints": [
+    "Mock listMine and submitContribution with vi.mock; no network"
+  ],
+  "dependencies": [
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "New tests pass; adapted existing tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-663.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85E9YAHCQPYMYT3FV0EJMGA",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-663.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85EE298ANFZ2D8DJC08NE9P"
+  ],
+  "sim_node_id": "01M85E9YAHGGEYRDWQ5JVNQED1",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-663.md",
+  "artifact_id": "UNIT-663",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionSubmitDisabled.test.tsx",
+      "symbol": "new: ContributionSheet Send disabled states",
+      "lines": "new",
+      "action": "Create the suite with the vi.mock block copied from tests/contributionQuotaGate.test.tsx. Tests: (1) listMine resolves [], no text -> Send disabled; (2) type '   ' -> disabled; (3) type 'x'.repeat(MAX_PROMPT_LENGTH+1) -> disabled; (4) listMine resolves historyOf(MAX_PER_PLAYER) using contributionFixture from tests/fixtures/api -> disabled with valid text; (5) type 'hello', submitMock returns a never-resolving promise, fireEvent.submit the form -> Send disabled; (6) type 'hello' with quota -> enabled.",
+      "command": "cd game/frontend && npx vitest run tests/contributionSubmitDisabled.test.tsx",
+      "expected": "All six tests pass."
+    },
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "blank submit tests (L35-L60)",
+      "lines": "L35-L60",
+      "action": "Replace fireEvent.click on the Send button with fireEvent.submit on the form element (screen.getByRole('button',{name:'Send'}).closest('form')) in tests that expect 'Enter an idea first', since Send is now disabled for blank text.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx",
+      "expected": "Blank tests still assert the inline message and zero submit calls."
+    },
+    {
+      "file": "game/frontend/tests/contributionMaxLength.test.tsx",
+      "symbol": "over-limit tests (L85-L125)",
+      "lines": "L85-L125",
+      "action": "Where a test clicks Send with over-limit text, use fireEvent.submit on the form instead and keep the assertions that submitMock is not called.",
+      "command": "cd game/frontend && npx vitest run tests/contributionMaxLength.test.tsx",
+      "expected": "Over-limit tests pass against the disabled button."
+    }
+  ],
+  "created_at": "2026-11-24T00:14:03.048777+00:00",
+  "updated_at": "2026-11-24T00:15:44.747501+00:00"
+}

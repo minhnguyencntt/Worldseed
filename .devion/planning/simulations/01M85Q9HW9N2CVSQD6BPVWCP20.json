@@ -1,0 +1,733 @@
+{
+  "intent_id": "01M85Q9HW9N2CVSQD6BPVWCP20",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85QC21CNKWZD3CN5ZD6TGVD",
+      "kind": "intent",
+      "title": "SG-1.1 Define the shared palette and 480x270 render constants",
+      "body": "Context: game/frontend/src/phaser/config.ts exports GAME_WIDTH=640 and GAME_HEIGHT=360 and computeZoom. No palette module exists. tailwind.config.ts only maps HSL CSS variables. Desired behavior: a single palette file lists at most 48 hex colours in named warm and cool ramps, exported as constants and as Tailwind colours; config.ts uses 480x270; computeZoom is unit tested for whole-number zoom across window sizes and DPR values. Expected result: later SG-1.2 and SG-1.3 art code and UI tokens can import one palette and one render size. Why: the pixel-art overhaul needs a single source of truth for colour and native resolution.\n\n## Acceptance criteria\n- Given the palette module, when its colours are counted, then there are at most 48 unique hex values grouped in named warm and cool ramps.\n- Given the palette module, when imported by Tailwind config, then each palette colour is available as a Tailwind colour.\n- Given config.ts, when read, then GAME_WIDTH is 480 and GAME_HEIGHT is 270 and buildGameConfig uses them.\n- Given several window sizes and DPR values, when computeZoom runs, then it returns a whole number of at least 1.\n- Given the existing test suite, when run for the touched files, then no test assumes 640x360.\n\n\n## Scope\n- In scope: Palette module\n- In scope: Tailwind colour export\n- In scope: 480x270 constants\n- In scope: computeZoom tests\n- Out of scope: Grid-to-pixel functions (SG-1.2)\n- Out of scope: PNG script and manifest update (SG-1.3)\n- Out of scope: New rooms, story content, backend, audio, deployment, repo clean-up\n- Preserve: Phaser ~3.90.0 pin and its guard tests\n- Preserve: Existing hsl Tailwind tokens\n- Preserve: pixelArt, roundPixels and FIT scale settings\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.\n- One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.\n- One shared palette of at most 48 colours, defined once.\n- Tests are unit tests with dependencies mocked.\n\n\n## Definition of done\n- All requirements below delivered with passing unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "One shared palette module (max 48 colours) and 480x270 render constants with tested whole-number zoom",
+      "description": "Context: game/frontend/src/phaser/config.ts exports GAME_WIDTH=640 and GAME_HEIGHT=360 and computeZoom. No palette module exists. tailwind.config.ts only maps HSL CSS variables. Desired behavior: a single palette file lists at most 48 hex colours in named warm and cool ramps, exported as constants and as Tailwind colours; config.ts uses 480x270; computeZoom is unit tested for whole-number zoom across window sizes and DPR values. Expected result: later SG-1.2 and SG-1.3 art code and UI tokens can import one palette and one render size. Why: the pixel-art overhaul needs a single source of truth for colour and native resolution.",
+      "acceptance_criteria": [
+        "Given the palette module, when its colours are counted, then there are at most 48 unique hex values grouped in named warm and cool ramps.",
+        "Given the palette module, when imported by Tailwind config, then each palette colour is available as a Tailwind colour.",
+        "Given config.ts, when read, then GAME_WIDTH is 480 and GAME_HEIGHT is 270 and buildGameConfig uses them.",
+        "Given several window sizes and DPR values, when computeZoom runs, then it returns a whole number of at least 1.",
+        "Given the existing test suite, when run for the touched files, then no test assumes 640x360."
+      ],
+      "scope": {
+        "in_scope": [
+          "Palette module",
+          "Tailwind colour export",
+          "480x270 constants",
+          "computeZoom tests"
+        ],
+        "out_of_scope": [
+          "Grid-to-pixel functions (SG-1.2)",
+          "PNG script and manifest update (SG-1.3)",
+          "New rooms, story content, backend, audio, deployment, repo clean-up"
+        ],
+        "preserve": [
+          "Phaser ~3.90.0 pin and its guard tests",
+          "Existing hsl Tailwind tokens",
+          "pixelArt, roundPixels and FIT scale settings"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.",
+        "One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.",
+        "One shared palette of at most 48 colours, defined once.",
+        "Tests are unit tests with dependencies mocked."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements below delivered with passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-156.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85MNPTJCZY8SCT0WFZBV56X",
+      "links": [
+        "trace:01M85MNPTJCZY8SCT0WFZBV56X",
+        "artifact:.ai-dlc/intent/INT-156.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-156.md",
+      "artifact_id": "INT-156"
+    },
+    {
+      "id": "01M85QC21CXRG6PHDEH5Z77DFD",
+      "kind": "requirement",
+      "title": "REQ · One palette file defines at most 48 colours in warm and cool ramps and exports constants",
+      "body": "Context: no palette exists in game/frontend/src. Desired behavior: game/frontend/src/lib/palette.ts defines 8 ramps of 6 hex colours (4 warm: wood, brass, parchment, lamp; 4 cool: indigo, plum, moon, hoodie), exported as PALETTE_RAMPS, a flat PALETTE array and WARM_RAMPS / COOL_RAMPS name lists. Expected result: any module imports the same colours. Why: art and UI must share one palette.\n\n## Acceptance criteria\n- Given PALETTE, when its length is read, then it is at most 48 and every entry matches /^#[0-9a-f]{6}$/.\n- Given PALETTE, when deduplicated, then no colour repeats.\n- Given WARM_RAMPS and COOL_RAMPS, when read, then each name exists in PALETTE_RAMPS and the two lists do not overlap.\n\n\n## Scope\n- In scope: palette.ts constants\n- Out of scope: Using the palette in art code\n- Preserve: Existing CSS variables\n\n\n## Technical constraints\n- One shared palette of at most 48 colours, defined once and used by art and UI.\n\n\n## Definition of done\n- palette.ts exists and exports the constants\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Single palette module with named ramps and exported constants",
+      "description": "Context: no palette exists in game/frontend/src. Desired behavior: game/frontend/src/lib/palette.ts defines 8 ramps of 6 hex colours (4 warm: wood, brass, parchment, lamp; 4 cool: indigo, plum, moon, hoodie), exported as PALETTE_RAMPS, a flat PALETTE array and WARM_RAMPS / COOL_RAMPS name lists. Expected result: any module imports the same colours. Why: art and UI must share one palette.",
+      "acceptance_criteria": [
+        "Given PALETTE, when its length is read, then it is at most 48 and every entry matches /^#[0-9a-f]{6}$/.",
+        "Given PALETTE, when deduplicated, then no colour repeats.",
+        "Given WARM_RAMPS and COOL_RAMPS, when read, then each name exists in PALETTE_RAMPS and the two lists do not overlap."
+      ],
+      "scope": {
+        "in_scope": [
+          "palette.ts constants"
+        ],
+        "out_of_scope": [
+          "Using the palette in art code"
+        ],
+        "preserve": [
+          "Existing CSS variables"
+        ]
+      },
+      "technical_constraints": [
+        "One shared palette of at most 48 colours, defined once and used by art and UI."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "palette.ts exists and exports the constants",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-383.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85QC21CNKWZD3CN5ZD6TGVD",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M85QC21CNKWZD3CN5ZD6TGVD",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-383.md"
+      ],
+      "depends_on": [
+        "01M85QC21CNKWZD3CN5ZD6TGVD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-383.md",
+      "artifact_id": "REQ-383"
+    },
+    {
+      "id": "01M85QC21CV9HFS98HZHTXB7J1",
+      "kind": "requirement",
+      "title": "REQ · The palette is exported as Tailwind colours",
+      "body": "Context: tailwind.config.ts L4 extends colors with hsl(var(--x)) tokens only. Desired behavior: palette.ts exports paletteTailwindColors (ramp name -> step 1..6 -> hex) and tailwind.config.ts adds it under colors.pal, giving classes such as bg-pal-wood-3. Expected result: UI can use palette colours via utilities. Why: UI and art must use the same colours.\n\n## Acceptance criteria\n- Given paletteTailwindColors, when read, then every PALETTE colour appears exactly once as a value.\n- Given tailwind.config, when theme.extend.colors.pal is read, then it equals paletteTailwindColors.\n- Given tailwind.config, when theme.extend.colors.background is read, then it is still hsl(var(--background)).\n\n\n## Scope\n- In scope: paletteTailwindColors export\n- In scope: tailwind.config.ts colors.pal\n- Out of scope: Replacing existing tokens\n- Out of scope: Restyling components\n- Preserve: Existing token colours and content globs\n- Preserve: tailwindConfig.test.ts expectations\n\n\n## Technical constraints\n- Tailwind stays; palette defined once and reused, not duplicated.\n\n\n## Dependencies\n- REQ-PAL\n\n\n## Definition of done\n- Tailwind config exposes pal colours\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Palette colours available as Tailwind utilities",
+      "description": "Context: tailwind.config.ts L4 extends colors with hsl(var(--x)) tokens only. Desired behavior: palette.ts exports paletteTailwindColors (ramp name -> step 1..6 -> hex) and tailwind.config.ts adds it under colors.pal, giving classes such as bg-pal-wood-3. Expected result: UI can use palette colours via utilities. Why: UI and art must use the same colours.",
+      "acceptance_criteria": [
+        "Given paletteTailwindColors, when read, then every PALETTE colour appears exactly once as a value.",
+        "Given tailwind.config, when theme.extend.colors.pal is read, then it equals paletteTailwindColors.",
+        "Given tailwind.config, when theme.extend.colors.background is read, then it is still hsl(var(--background))."
+      ],
+      "scope": {
+        "in_scope": [
+          "paletteTailwindColors export",
+          "tailwind.config.ts colors.pal"
+        ],
+        "out_of_scope": [
+          "Replacing existing tokens",
+          "Restyling components"
+        ],
+        "preserve": [
+          "Existing token colours and content globs",
+          "tailwindConfig.test.ts expectations"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind stays; palette defined once and reused, not duplicated."
+      ],
+      "dependencies": [
+        "REQ-PAL"
+      ],
+      "definition_of_done": [
+        "Tailwind config exposes pal colours",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-384.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85QC21CNKWZD3CN5ZD6TGVD",
+      "matched_feature_id": "01M84N2BMB0A9J37ENYEPPEGFS",
+      "links": [
+        "parent:01M85QC21CNKWZD3CN5ZD6TGVD",
+        "trace:01M84N2BMB0A9J37ENYEPPEGFS",
+        "artifact:.ai-dlc/requirements/REQ-384.md"
+      ],
+      "depends_on": [
+        "01M85QC21CNKWZD3CN5ZD6TGVD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-384.md",
+      "artifact_id": "REQ-384"
+    },
+    {
+      "id": "01M85QC21CPD2QTQJ5GP18X4S1",
+      "kind": "requirement",
+      "title": "REQ · Render constants are 480x270 and computeZoom always returns a whole number of at least 1",
+      "body": "Context: config.ts has 640x360 and computeZoom returns NaN when dpr is NaN (Math.max(1, NaN)). Desired behavior: GAME_WIDTH=480, GAME_HEIGHT=270, computeZoom treats non-finite or non-positive dpr as 1 and floors to an integer of at least 1. Expected result: whole-number zoom for any window size and DPR. Why: pixel-perfect rendering.\n\n## Acceptance criteria\n- Given config.ts, when GAME_WIDTH and GAME_HEIGHT are read, then they are 480 and 270 and buildGameConfig width/height equal them.\n- Given (1280,720,1), (1920,1080,1), (1920,1080,2), (1366,768,1), (1280,720,1.5), when computeZoom runs, then results are 2, 4, 8, 2, 4.\n- Given (479,269,1) or dpr 0, NaN or negative, when computeZoom runs, then the result is 1.\n\n\n## Scope\n- In scope: config.ts constants\n- In scope: computeZoom dpr guard\n- Out of scope: Changing scale mode\n- Out of scope: PhaserHost behaviour\n- Preserve: pixelArt, roundPixels, antialias false, FIT, zoom parameter\n- Preserve: PhaserHost use of computeZoom\n\n\n## Technical constraints\n- Phaser stays on 3.90.x.\n- One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.\n\n\n## Definition of done\n- Constants changed and computeZoom guarded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "480x270 constants and tested, safe computeZoom",
+      "description": "Context: config.ts has 640x360 and computeZoom returns NaN when dpr is NaN (Math.max(1, NaN)). Desired behavior: GAME_WIDTH=480, GAME_HEIGHT=270, computeZoom treats non-finite or non-positive dpr as 1 and floors to an integer of at least 1. Expected result: whole-number zoom for any window size and DPR. Why: pixel-perfect rendering.",
+      "acceptance_criteria": [
+        "Given config.ts, when GAME_WIDTH and GAME_HEIGHT are read, then they are 480 and 270 and buildGameConfig width/height equal them.",
+        "Given (1280,720,1), (1920,1080,1), (1920,1080,2), (1366,768,1), (1280,720,1.5), when computeZoom runs, then results are 2, 4, 8, 2, 4.",
+        "Given (479,269,1) or dpr 0, NaN or negative, when computeZoom runs, then the result is 1."
+      ],
+      "scope": {
+        "in_scope": [
+          "config.ts constants",
+          "computeZoom dpr guard"
+        ],
+        "out_of_scope": [
+          "Changing scale mode",
+          "PhaserHost behaviour"
+        ],
+        "preserve": [
+          "pixelArt, roundPixels, antialias false, FIT, zoom parameter",
+          "PhaserHost use of computeZoom"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x.",
+        "One native scene resolution of 480x270, whole-number scaling, nearest-neighbour."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Constants changed and computeZoom guarded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-385.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85QC21CNKWZD3CN5ZD6TGVD",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85QC21CNKWZD3CN5ZD6TGVD",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-385.md"
+      ],
+      "depends_on": [
+        "01M85QC21CNKWZD3CN5ZD6TGVD"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-385.md",
+      "artifact_id": "REQ-385"
+    },
+    {
+      "id": "01M85QC21CPZPWBYV5A3KXZF8S",
+      "kind": "unit",
+      "title": "Act: Create the shared palette module",
+      "body": "Create palette.ts with 8 ramps of 6 colours and the exported constants.\n\n## Acceptance criteria\n- palette.ts exports PALETTE_RAMPS, PALETTE, WARM_RAMPS, COOL_RAMPS with 48 unique hex values.\n- No other file defines palette colours.\n\n\n## Scope\n- In scope: game/frontend/src/lib/palette.ts\n- Out of scope: Tailwind wiring\n- Out of scope: tests\n- Preserve: Existing lib files\n\n\n## Technical constraints\n- One shared palette of at most 48 colours, defined once.\n- New file: `game/frontend/src/lib/palette.ts`\n\n\n## Dependencies\n- REQ-PAL\n\n\n## Definition of done\n- palette.ts compiles under tsc --noEmit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add game/frontend/src/lib/palette.ts",
+      "description": "Create palette.ts with 8 ramps of 6 colours and the exported constants.",
+      "acceptance_criteria": [
+        "palette.ts exports PALETTE_RAMPS, PALETTE, WARM_RAMPS, COOL_RAMPS with 48 unique hex values.",
+        "No other file defines palette colours."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/lib/palette.ts"
+        ],
+        "out_of_scope": [
+          "Tailwind wiring",
+          "tests"
+        ],
+        "preserve": [
+          "Existing lib files"
+        ]
+      },
+      "technical_constraints": [
+        "One shared palette of at most 48 colours, defined once.",
+        "New file: `game/frontend/src/lib/palette.ts`"
+      ],
+      "dependencies": [
+        "REQ-PAL"
+      ],
+      "definition_of_done": [
+        "palette.ts compiles under tsc --noEmit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-766.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85QC21CXRG6PHDEH5Z77DFD",
+      "matched_feature_id": "01M84T6537TTHDFGGZN902Z65D",
+      "links": [
+        "parent:01M85QC21CXRG6PHDEH5Z77DFD",
+        "trace:01M84T6537TTHDFGGZN902Z65D",
+        "artifact:.ai-dlc/units/UNIT-766.md"
+      ],
+      "depends_on": [
+        "01M85QC21CXRG6PHDEH5Z77DFD"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-766.md",
+      "artifact_id": "UNIT-766",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/palette.ts",
+          "symbol": "new: PALETTE_RAMPS",
+          "lines": "new",
+          "action": "Create the file and export const PALETTE_RAMPS as a Record<string, readonly string[]> with the eight ramps below, each ordered dark to light with exactly 6 lowercase hex strings.",
+          "code": "export const PALETTE_RAMPS = {\n  indigo: ['#0b0a1e','#15133a','#221f57','#34307a','#4d49a0','#7571c4'],\n  plum: ['#1f0f24','#38183f','#56235e','#79347f','#a0529f','#c985c2'],\n  moon: ['#1b2b4a','#2a4470','#3f629a','#6288c2','#95b4de','#cfe0f5'],\n  hoodie: ['#0f2a5c','#173f8a','#2159b8','#3a7de0','#69a3f0','#a6caf8'],\n  wood: ['#2a160d','#472613','#6b3b1d','#8f5528','#b97a3d','#dba468'],\n  brass: ['#4a3410','#735217','#a37a1f','#cfa22c','#ecc84a','#fbe888'],\n  parchment: ['#6b5a45','#957f60','#bba580','#d9c79f','#efe3c0','#fbf4df'],\n  lamp: ['#5c1f0a','#8f3410','#c4511a','#ee7a2a','#f9a84a','#fdd58a'],\n} as const;",
+          "expected": "PALETTE_RAMPS has 8 keys, 6 colours each."
+        },
+        {
+          "file": "game/frontend/src/lib/palette.ts",
+          "symbol": "new: PALETTE, WARM_RAMPS, COOL_RAMPS",
+          "lines": "after PALETTE_RAMPS",
+          "action": "Export WARM_RAMPS = ['wood','brass','parchment','lamp'] and COOL_RAMPS = ['indigo','plum','moon','hoodie'] as const arrays, and export const PALETTE: readonly string[] = Object.values(PALETTE_RAMPS).flat().",
+          "code": "export const WARM_RAMPS = ['wood','brass','parchment','lamp'] as const;\nexport const COOL_RAMPS = ['indigo','plum','moon','hoodie'] as const;\nexport const PALETTE: readonly string[] = Object.values(PALETTE_RAMPS).flat();",
+          "expected": "PALETTE.length is 48."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CVCTMF6A9RKHRNATR",
+      "kind": "unit",
+      "title": "Act: Export palette Tailwind colours and register them in tailwind.config.ts",
+      "body": "Derive the Tailwind colour object from PALETTE_RAMPS and add it to the Tailwind theme.\n\n## Acceptance criteria\n- paletteTailwindColors maps ramp -> step number -> hex.\n- tailwind.config.ts theme.extend.colors.pal equals it and old tokens remain.\n\n\n## Scope\n- In scope: palette.ts export\n- In scope: tailwind.config.ts\n- Out of scope: Component restyling\n- Out of scope: tests\n- Preserve: Existing hsl tokens, content globs, plugins\n\n\n## Technical constraints\n- Tailwind stays; derive from the single palette, do not copy hex values.\n- New file: `game/frontend/src/lib/palette.ts`\n- Code path: `game/frontend/tailwind.config.ts`\n\n\n## Dependencies\n- ACT-PAL\n\n\n## Definition of done\n- tsc --noEmit passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add paletteTailwindColors and colors.pal",
+      "description": "Derive the Tailwind colour object from PALETTE_RAMPS and add it to the Tailwind theme.",
+      "acceptance_criteria": [
+        "paletteTailwindColors maps ramp -> step number -> hex.",
+        "tailwind.config.ts theme.extend.colors.pal equals it and old tokens remain."
+      ],
+      "scope": {
+        "in_scope": [
+          "palette.ts export",
+          "tailwind.config.ts"
+        ],
+        "out_of_scope": [
+          "Component restyling",
+          "tests"
+        ],
+        "preserve": [
+          "Existing hsl tokens, content globs, plugins"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind stays; derive from the single palette, do not copy hex values.",
+        "New file: `game/frontend/src/lib/palette.ts`",
+        "Code path: `game/frontend/tailwind.config.ts`"
+      ],
+      "dependencies": [
+        "ACT-PAL"
+      ],
+      "definition_of_done": [
+        "tsc --noEmit passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-767.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85QC21CV9HFS98HZHTXB7J1",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M85QC21CV9HFS98HZHTXB7J1",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-767.md"
+      ],
+      "depends_on": [
+        "01M85QC21CV9HFS98HZHTXB7J1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-767.md",
+      "artifact_id": "UNIT-767",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/palette.ts",
+          "symbol": "new: paletteTailwindColors",
+          "lines": "after PALETTE",
+          "action": "Export paletteTailwindColors built from PALETTE_RAMPS: each ramp name maps to an object whose keys are '1'..'6' and values are the hex.",
+          "code": "export const paletteTailwindColors: Record<string, Record<string, string>> = Object.fromEntries(\n  Object.entries(PALETTE_RAMPS).map(([name, steps]) => [\n    name,\n    Object.fromEntries(steps.map((hex, i) => [String(i + 1), hex])),\n  ]),\n);",
+          "expected": "paletteTailwindColors.wood['3'] is '#6b3b1d'."
+        },
+        {
+          "file": "game/frontend/tailwind.config.ts",
+          "symbol": "default export colors",
+          "lines": "L1-L4",
+          "action": "Import paletteTailwindColors from './src/lib/palette' after line 2 and add pal: paletteTailwindColors inside theme.extend.colors next to muted and border, leaving other keys unchanged.",
+          "code": "import { paletteTailwindColors } from './src/lib/palette';\n... muted:'hsl(var(--muted))', border:'hsl(var(--border))', pal: paletteTailwindColors }",
+          "expected": "theme.extend.colors.pal is defined; background is still hsl(var(--background))."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CN6AM1N00EP43HD28",
+      "kind": "unit",
+      "title": "Act: Switch config.ts to 480x270 and guard computeZoom against invalid dpr",
+      "body": "Edit GAME_WIDTH/GAME_HEIGHT and make computeZoom safe for invalid dpr.\n\n## Acceptance criteria\n- GAME_WIDTH is 480 and GAME_HEIGHT is 270.\n- computeZoom returns an integer >= 1 for NaN, 0 and negative dpr.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/config.ts\n- Out of scope: PhaserHost, scale mode, tests\n- Preserve: buildGameConfig render and scale options\n- Preserve: computeZoom signature (w,h,dpr)\n\n\n## Technical constraints\n- Phaser stays on 3.90.x.\n- One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.\n- Code path: `game/frontend/src/phaser/config.ts`\n\n\n## Dependencies\n- REQ-RES\n\n\n## Definition of done\n- tsc --noEmit passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Change render constants and normalise dpr",
+      "description": "Edit GAME_WIDTH/GAME_HEIGHT and make computeZoom safe for invalid dpr.",
+      "acceptance_criteria": [
+        "GAME_WIDTH is 480 and GAME_HEIGHT is 270.",
+        "computeZoom returns an integer >= 1 for NaN, 0 and negative dpr."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/config.ts"
+        ],
+        "out_of_scope": [
+          "PhaserHost, scale mode, tests"
+        ],
+        "preserve": [
+          "buildGameConfig render and scale options",
+          "computeZoom signature (w,h,dpr)"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x.",
+        "One native scene resolution of 480x270, whole-number scaling, nearest-neighbour.",
+        "Code path: `game/frontend/src/phaser/config.ts`"
+      ],
+      "dependencies": [
+        "REQ-RES"
+      ],
+      "definition_of_done": [
+        "tsc --noEmit passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-768.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85QC21CPD2QTQJ5GP18X4S1",
+      "matched_feature_id": "01M84T6537DBQNPBEZT7AT0RE7",
+      "links": [
+        "parent:01M85QC21CPD2QTQJ5GP18X4S1",
+        "trace:01M84T6537DBQNPBEZT7AT0RE7",
+        "artifact:.ai-dlc/units/UNIT-768.md"
+      ],
+      "depends_on": [
+        "01M85QC21CPD2QTQJ5GP18X4S1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-768.md",
+      "artifact_id": "UNIT-768",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/config.ts",
+          "symbol": "GAME_WIDTH, GAME_HEIGHT",
+          "lines": "L3-L4",
+          "action": "Change the values from 640 and 360 to 480 and 270.",
+          "code": "export const GAME_WIDTH = 480;\nexport const GAME_HEIGHT = 270;",
+          "expected": "buildGameConfig returns width 480 and height 270."
+        },
+        {
+          "file": "game/frontend/src/phaser/config.ts",
+          "symbol": "computeZoom",
+          "lines": "L6-L8",
+          "action": "Add const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1 and use ratio instead of dpr in the formula.",
+          "code": "const ratio = Number.isFinite(dpr) && dpr > 0 ? dpr : 1;\nreturn Math.max(1, Math.floor(Math.min((w * ratio) / GAME_WIDTH, (h * ratio) / GAME_HEIGHT)));",
+          "expected": "computeZoom(1280,720,NaN) returns 2."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CGRCR9JW7QX02H8E2",
+      "kind": "unit",
+      "title": "Verify: Palette module unit tests",
+      "body": "Write TDD-style tests for the palette module from the requirement.\n\n## Acceptance criteria\n- Tests assert at most 48 unique lowercase hex colours.\n- Tests assert warm and cool ramp names exist and do not overlap.\n\n\n## Scope\n- In scope: game/frontend/tests/palette.test.ts\n- Out of scope: Product code edits\n- Preserve: Other tests\n\n\n## Technical constraints\n- Unit tests only; no browser or server.\n\n\n## Dependencies\n- ACT-PAL\n\n\n## Definition of done\n- palette tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for palette size, format, uniqueness and ramps",
+      "description": "Write TDD-style tests for the palette module from the requirement.",
+      "acceptance_criteria": [
+        "Tests assert at most 48 unique lowercase hex colours.",
+        "Tests assert warm and cool ramp names exist and do not overlap."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/palette.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code edits"
+        ],
+        "preserve": [
+          "Other tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; no browser or server."
+      ],
+      "dependencies": [
+        "ACT-PAL"
+      ],
+      "definition_of_done": [
+        "palette tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-769.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QC21CPZPWBYV5A3KXZF8S",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85QC21CPZPWBYV5A3KXZF8S",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-769.md"
+      ],
+      "depends_on": [
+        "01M85QC21CPZPWBYV5A3KXZF8S"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-769.md",
+      "artifact_id": "UNIT-769",
+      "steps": [
+        {
+          "file": "game/frontend/tests/palette.test.ts",
+          "symbol": "new: palette module",
+          "lines": "new",
+          "action": "Create the file importing PALETTE, PALETTE_RAMPS, WARM_RAMPS, COOL_RAMPS from '../src/lib/palette'. Add test 'has at most 48 unique hex colours' asserting PALETTE.length <= 48, new Set(PALETTE).size === PALETTE.length, and every entry matches /^#[0-9a-f]{6}$/.",
+          "command": "cd game/frontend && npx vitest run tests/palette.test.ts",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/palette.test.ts",
+          "symbol": "warm and cool ramps",
+          "lines": "after first test",
+          "action": "Add test 'names warm and cool ramps' asserting every name in WARM_RAMPS and COOL_RAMPS is a key of PALETTE_RAMPS, the two lists share no name, and together they cover Object.keys(PALETTE_RAMPS).",
+          "command": "cd game/frontend && npx vitest run tests/palette.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CX9C20D35AVF2QS5P",
+      "kind": "unit",
+      "title": "Verify: Palette Tailwind colour export unit tests",
+      "body": "Test the Tailwind export against the palette.\n\n## Acceptance criteria\n- Tests assert every palette colour appears once in paletteTailwindColors.\n- Tests assert tailwind config exposes pal and keeps old tokens.\n\n\n## Scope\n- In scope: game/frontend/tests/paletteTailwind.test.ts\n- Out of scope: Product code edits\n- Preserve: tailwindConfig.test.ts\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- ACT-TW\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for paletteTailwindColors and tailwind.config pal",
+      "description": "Test the Tailwind export against the palette.",
+      "acceptance_criteria": [
+        "Tests assert every palette colour appears once in paletteTailwindColors.",
+        "Tests assert tailwind config exposes pal and keeps old tokens."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/paletteTailwind.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code edits"
+        ],
+        "preserve": [
+          "tailwindConfig.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "ACT-TW"
+      ],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-770.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QC21CVCTMF6A9RKHRNATR",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85QC21CVCTMF6A9RKHRNATR",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-770.md"
+      ],
+      "depends_on": [
+        "01M85QC21CVCTMF6A9RKHRNATR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-770.md",
+      "artifact_id": "UNIT-770",
+      "steps": [
+        {
+          "file": "game/frontend/tests/paletteTailwind.test.ts",
+          "symbol": "new: paletteTailwindColors",
+          "lines": "new",
+          "action": "Create the file importing PALETTE and paletteTailwindColors from '../src/lib/palette'. Add test 'flattens to every palette colour once' asserting Object.values(paletteTailwindColors).flatMap(Object.values) sorted equals [...PALETTE] sorted.",
+          "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/paletteTailwind.test.ts",
+          "symbol": "tailwind.config pal",
+          "lines": "after first test",
+          "action": "Import tailwindConfig from '../tailwind.config'. Add test asserting tailwindConfig.theme?.extend?.colors?.pal toEqual paletteTailwindColors and colors.background toBe 'hsl(var(--background))'.",
+          "command": "cd game/frontend && npx vitest run tests/paletteTailwind.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CCTN6NCWT8WQ9WP57",
+      "kind": "unit",
+      "title": "Verify: 480x270 constants and computeZoom unit tests",
+      "body": "Test constants and computeZoom with Phaser mocked, and confirm no existing test assumes 640x360.\n\n## Acceptance criteria\n- Tests assert 480x270 constants and config width/height.\n- Tests assert computeZoom results for several sizes and DPR values and the clamp/invalid cases.\n\n\n## Scope\n- In scope: game/frontend/tests/computeZoom.test.ts\n- In scope: game/frontend/tests/phaserConfig.test.ts\n- Out of scope: Product code edits\n- Preserve: Existing phaserConfig and phaserHost tests (they use computeZoom, not literal sizes)\n\n\n## Technical constraints\n- Phaser mocked with vi.mock('phaser'); unit tests only.\n\n\n## Dependencies\n- ACT-RES\n\n\n## Definition of done\n- tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for constants and whole-number zoom across sizes and DPR",
+      "description": "Test constants and computeZoom with Phaser mocked, and confirm no existing test assumes 640x360.",
+      "acceptance_criteria": [
+        "Tests assert 480x270 constants and config width/height.",
+        "Tests assert computeZoom results for several sizes and DPR values and the clamp/invalid cases."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/computeZoom.test.ts",
+          "game/frontend/tests/phaserConfig.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code edits"
+        ],
+        "preserve": [
+          "Existing phaserConfig and phaserHost tests (they use computeZoom, not literal sizes)"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser mocked with vi.mock('phaser'); unit tests only."
+      ],
+      "dependencies": [
+        "ACT-RES"
+      ],
+      "definition_of_done": [
+        "tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-771.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QC21CN6AM1N00EP43HD28",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85QC21CN6AM1N00EP43HD28",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-771.md"
+      ],
+      "depends_on": [
+        "01M85QC21CN6AM1N00EP43HD28"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-771.md",
+      "artifact_id": "UNIT-771",
+      "steps": [
+        {
+          "file": "game/frontend/tests/computeZoom.test.ts",
+          "symbol": "new: computeZoom table",
+          "lines": "new",
+          "action": "Create the file with the same vi.mock('phaser', ...) block as tests/phaserConfig.test.ts L1-L15. Add test.each cases [w,h,dpr,expected]: [1280,720,1,2],[1920,1080,1,4],[1920,1080,2,8],[1366,768,1,2],[1280,720,1.5,4],[1000,600,2,4],[479,269,1,1]; assert computeZoom(w,h,dpr) toBe expected and Number.isInteger.",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts",
+          "expected": "All cases pass."
+        },
+        {
+          "file": "game/frontend/tests/computeZoom.test.ts",
+          "symbol": "invalid dpr",
+          "lines": "after table",
+          "action": "Add test.each over dpr values 0, -1, NaN, Infinity with viewport (1280,720) asserting the result equals computeZoom(1280,720,1) (2).",
+          "command": "cd game/frontend && npx vitest run tests/computeZoom.test.ts",
+          "expected": "Invalid dpr values yield 2."
+        },
+        {
+          "file": "game/frontend/tests/phaserConfig.test.ts",
+          "symbol": "Phaser game config",
+          "lines": "after L27",
+          "action": "Import GAME_WIDTH, GAME_HEIGHT from '../src/phaser/config'. Add test 'uses the 480x270 native resolution' asserting GAME_WIDTH toBe 480, GAME_HEIGHT toBe 270, and buildGameConfig(document.createElement('div'), []) toMatchObject({width:480,height:270}).",
+          "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts tests/phaserHost.test.tsx",
+          "expected": "Config tests and PhaserHost tests pass with no literal 640x360 expectation."
+        }
+      ]
+    },
+    {
+      "id": "01M85QC21CJM9EPRJPN559HTJX",
+      "kind": "evidence",
+      "title": "Evidence: Palette and 480x270 render constants unit tests pass",
+      "body": "Collect results of the palette, Tailwind export, computeZoom and config unit tests as evidence for SG-1.1.\n\n## Acceptance criteria\n- Palette, paletteTailwind, computeZoom, phaserConfig and phaserHost test files all pass.\n- tailwindConfig and phaser pin guard tests still pass.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Code changes\n- Preserve: Phaser 3.90 guard tests\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- VER-PAL\n- VER-TW\n- VER-RES\n\n\n## Definition of done\n- Recorded passing results for the listed files\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that palette, Tailwind export and render constant tests pass",
+      "description": "Collect results of the palette, Tailwind export, computeZoom and config unit tests as evidence for SG-1.1.",
+      "acceptance_criteria": [
+        "Palette, paletteTailwind, computeZoom, phaserConfig and phaserHost test files all pass.",
+        "tailwindConfig and phaser pin guard tests still pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Code changes"
+        ],
+        "preserve": [
+          "Phaser 3.90 guard tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "VER-PAL",
+        "VER-TW",
+        "VER-RES"
+      ],
+      "definition_of_done": [
+        "Recorded passing results for the listed files",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-156.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85QC21CGRCR9JW7QX02H8E2",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85QC21CGRCR9JW7QX02H8E2",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-156.md"
+      ],
+      "depends_on": [
+        "01M85QC21CGRCR9JW7QX02H8E2",
+        "01M85QC21CX9C20D35AVF2QS5P",
+        "01M85QC21CCTN6NCWT8WQ9WP57"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-156.md",
+      "artifact_id": "EVD-156"
+    }
+  ],
+  "created_at": "2026-11-24T02:51:49.132135+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

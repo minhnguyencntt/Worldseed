@@ -1,0 +1,81 @@
+{
+  "id": "01M85F83DHH1VC2J2XPAVG92RE",
+  "intent_id": "01M85F23G77XTZTBV1HJ0M6MAE",
+  "title": "Act: Add HistoryStatus state and loading/error messages to ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Introduce the HistoryStatus type and status writer in the history effect",
+  "description": "Add type HistoryStatus and a single useState written only inside the history effect; render loading and error messages.",
+  "acceptance_criteria": [
+    "Loading message shown while pending",
+    "Error message shown in role=alert on rejection"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet.tsx status state and messages"
+    ],
+    "out_of_scope": [
+      "Retry",
+      "Tests"
+    ],
+    "preserve": [
+      "Existing effect merge logic"
+    ]
+  },
+  "technical_constraints": [
+    "One status state; effect is sole writer",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Component renders loading, ready and error states",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-672.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85F3V33FW55BK8TGFVDGV2K",
+    "trace:01M85BP7N24T9QWJ03PSGJH9G9",
+    "artifact:.ai-dlc/units/UNIT-672.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85F83DHQVBQX1875C7NWS25"
+  ],
+  "sim_node_id": "01M85F3V34RGH7HKCSJX7CNZ80",
+  "feature_id": "01M85BP7N24T9QWJ03PSGJH9G9",
+  "artifact_path": ".ai-dlc/units/UNIT-672.md",
+  "artifact_id": "UNIT-672",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "new: HistoryStatus",
+      "lines": "after L18",
+      "action": "Add the exported type HistoryStatus and constants for the two messages used by the render.",
+      "code": "export type HistoryStatus = 'loading' | 'ready' | 'error';\nconst HISTORY_LOADING = 'Loading your suggestions…';\nconst HISTORY_ERROR = 'Could not load your suggestions';",
+      "expected": "Type and constants compile"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet history effect",
+      "lines": "L37-L66",
+      "action": "Add const [historyStatus, setHistoryStatus] = useState<HistoryStatus>('loading'); in the effect call setHistoryStatus('loading') after the early return, setHistoryStatus('ready') after the setEntries merge in .then, and setHistoryStatus('error') in .catch replacing the best-effort comment.",
+      "code": "if (!open || roundId === '') return;\nsetHistoryStatus('loading');\n// .then: ...setEntries(...); setHistoryStatus('ready');\n// .catch: setHistoryStatus('error');",
+      "expected": "Status changes only inside the effect"
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet render",
+      "lines": "before L144",
+      "action": "Render <p role=\"status\">{HISTORY_LOADING}</p> when historyStatus === 'loading' and <p role=\"alert\">{HISTORY_ERROR}</p> when historyStatus === 'error', placed above the <ul aria-label=\"Your suggestions\">.",
+      "expected": "Messages appear in the dialog above the list"
+    }
+  ],
+  "created_at": "2026-11-24T00:28:16.177688+00:00",
+  "updated_at": "2026-11-24T00:30:32.047898+00:00"
+}

@@ -1,0 +1,91 @@
+{
+  "id": "01M84FCFTPK8F8FW6B27XR0CH0",
+  "intent_id": "01M84FAX57EP7AEAK5DCCEZWXM",
+  "title": "Act: Add work root, max budget, auto-publish and provider kind fields with defaults",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend WorkerConfig and LoadFS defaults",
+  "description": "Add four fields to WorkerConfig, default constants, default assignment in LoadFS and example YAML keys.",
+  "acceptance_criteria": [
+    "WorkerConfig has WorkRoot, MaxBudget, AutoPublish, ProviderKind with yaml tags",
+    "LoadFS applies defaults for omitted keys"
+  ],
+  "scope": {
+    "in_scope": [
+      "config.go",
+      "config.example.yaml"
+    ],
+    "out_of_scope": [
+      "validation"
+    ],
+    "preserve": [
+      "existing defaults"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/worker/internal/config/config.go`",
+    "Code path: `backend/worker/configs/config.example.yaml`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Fields and defaults implemented",
+    "Example YAML lists new keys",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-179.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FC8A0GG5J4RA6ERE3528F",
+    "trace:01M844GYQJJMHCJZGB2V33H3N6",
+    "artifact:.ai-dlc/units/UNIT-179.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FCFTPTMDXATW02V8DKCN1"
+  ],
+  "sim_node_id": "01M84FC8A04C2KN2XHXFF9PNG0",
+  "feature_id": "01M844GYQJJMHCJZGB2V33H3N6",
+  "artifact_path": ".ai-dlc/units/UNIT-179.md",
+  "artifact_id": "UNIT-179",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "const block",
+      "lines": "L14-L23",
+      "action": "Add constants defaultWorkRoot = \".storyforge/work\", defaultMaxBudget = 5.0, defaultProviderKind = \"mock\" inside the existing const block.",
+      "code": "defaultWorkRoot     = \".storyforge/work\"\ndefaultMaxBudget    = 5.0\ndefaultProviderKind = \"mock\"",
+      "expected": "Constants compile alongside the existing ones."
+    },
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "WorkerConfig",
+      "lines": "L33-L39",
+      "action": "Append four fields after MaxRetries.",
+      "code": "WorkRoot     string  `yaml:\"work_root\"`\nMaxBudget    float64 `yaml:\"max_budget\"`\nAutoPublish  bool    `yaml:\"auto_publish\"`\nProviderKind string  `yaml:\"provider_kind\"`",
+      "expected": "yaml keys work_root, max_budget, auto_publish, provider_kind unmarshal into the struct."
+    },
+    {
+      "file": "backend/worker/internal/config/config.go",
+      "symbol": "LoadFS",
+      "lines": "L74-L89",
+      "action": "After the MaxRetries default, set WorkRoot to defaultWorkRoot when empty, MaxBudget to defaultMaxBudget when 0, ProviderKind to defaultProviderKind when empty. AutoPublish stays as parsed (false default).",
+      "code": "if cfg.Worker.WorkRoot == \"\" { cfg.Worker.WorkRoot = defaultWorkRoot }\nif cfg.Worker.MaxBudget == 0 { cfg.Worker.MaxBudget = defaultMaxBudget }\nif cfg.Worker.ProviderKind == \"\" { cfg.Worker.ProviderKind = defaultProviderKind }",
+      "expected": "Omitted keys yield documented defaults."
+    },
+    {
+      "file": "backend/worker/configs/config.example.yaml",
+      "symbol": "worker",
+      "lines": "L1-L6",
+      "action": "Append under worker: work_root, max_budget, auto_publish and provider_kind lines.",
+      "code": "  work_root: \".storyforge/work\"\n  max_budget: 5\n  auto_publish: false\n  provider_kind: \"mock\"",
+      "expected": "Example config lists all new keys with defaults."
+    }
+  ],
+  "created_at": "2026-11-23T15:11:25.526520+00:00",
+  "updated_at": "2026-11-23T15:12:19.730945+00:00"
+}

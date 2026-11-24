@@ -1,0 +1,61 @@
+{
+  "id": "01M85W69059K3YHJF9PV87JRY2",
+  "intent_id": "01M85VZRSMWJ59VE4P4369DJ4X",
+  "title": "SG-2 Author inventory item icon sources and register them",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Add palette-indexed inventory icon grids, generate them to PNG and register them in the manifest",
+  "description": "Context: the last check found SG-2 unmet only because no inventory item icons exist. The art sources (game/frontend/src/art) hold the room, boy, secret door and dust grids, but nothing for items, and the manifest (game/public/assets/worlds/the-boys-room/manifest.json) has no item entries. Desired behavior: palette-indexed icon grids for at least six items (enough for the 3x2 inventory grid) are authored, generated to PNG by the existing art:generate script, registered at their declared size, and covered by the existing manifest palette and size test. Why: the SG-2 'Done when' lists inventory item icons explicitly.",
+  "acceptance_criteria": [
+    "Given the art sources, When generateAssets runs, Then at least six ids with the prefix item/ are produced as single-frame PNGs.",
+    "Given the committed manifest, When compared to generated entries, Then every item/ entry matches exactly and each PNG size equals its declared dimensions.",
+    "Given every item icon frame, When converted through the palette, Then every pixel is a palette colour and no svg is referenced."
+  ],
+  "scope": {
+    "in_scope": [
+      "Item icon grid sources",
+      "Generating the PNGs and manifest entries with art:generate",
+      "Extending the manifest palette and size test to the icons"
+    ],
+    "out_of_scope": [
+      "Rendering icons in the Story Panel inventory grid",
+      "New rooms, new story content, backend changes, audio, deployment, repository clean-up",
+      "Rebuilding the room, boy or interface art that already exists"
+    ],
+    "preserve": [
+      "Existing ART_SOURCES entries and their committed manifest entries",
+      "Phaser 3.90.x pin and the existing guard tests",
+      "Shared palette of at most 48 colours"
+    ]
+  },
+  "technical_constraints": [
+    "All art is raster pixel art generated in the repo from source data by the deterministic art:generate script; no downloaded art or image services.",
+    "One shared palette of at most 48 colours, defined once in game/frontend/src/lib/palette.ts.",
+    "Tests are unit tests with all dependencies mocked.",
+    "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix and Zustand stay."
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All requirements below are met and their Verify units pass.",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-166.md`"
+  ],
+  "non_functional": [
+    "Generation is deterministic: identical input gives identical bytes."
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M85TDR9D0794KHV7H7G8BVSN",
+    "artifact:.ai-dlc/intent/INT-166.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85W1TAV13VR8NPHC3CT5PNP",
+  "feature_id": "01M85TDR9D0794KHV7H7G8BVSN",
+  "artifact_path": ".ai-dlc/intent/INT-166.md",
+  "artifact_id": "INT-166",
+  "created_at": "2026-11-24T04:14:27.845012+00:00",
+  "updated_at": "2026-11-24T04:19:01.372572+00:00"
+}

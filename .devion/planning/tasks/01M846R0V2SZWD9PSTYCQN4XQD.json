@@ -1,0 +1,80 @@
+{
+  "id": "01M846R0V2SZWD9PSTYCQN4XQD",
+  "intent_id": "01M846M3DV6T8M0JTNKMDEHCEB",
+  "title": "Act: Mount admin round routes and expose the scheduler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Wire round.Service into server.New and start the scheduler in main",
+  "description": "In server.New build round.FileStore, round.Service and admin.RoundHandler and mount five round routes under the admin group. Expose a NewScheduler builder and start it from main.",
+  "acceptance_criteria": [
+    "Five routes mounted behind token",
+    "Scheduler runs in main with cfg.Round.SchedulerInterval"
+  ],
+  "scope": {
+    "in_scope": [
+      "server.go",
+      "main.go"
+    ],
+    "out_of_scope": [
+      "UI"
+    ],
+    "preserve": [
+      "execution routes"
+    ]
+  },
+  "technical_constraints": [
+    "Use existing gitCLI and contribution store",
+    "Code path: `backend/internal/server/server.go`",
+    "Code path: `backend/cmd/server/main.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "go build ./... succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-084.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M846QZA4NKEHH2MSA5WA6Q06",
+    "trace:01M845WDCXSZHWN3BS35Z9PG69",
+    "artifact:.ai-dlc/units/UNIT-084.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M846R0V2EGY2KSKYRM24GGJA"
+  ],
+  "sim_node_id": "01M846QZA4RC9NJVF6YD4G31SX",
+  "feature_id": "01M845WDCXSZHWN3BS35Z9PG69",
+  "artifact_path": ".ai-dlc/units/UNIT-084.md",
+  "artifact_id": "UNIT-084",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New",
+      "lines": "L84-L96",
+      "action": "Before r.Route(\"/api/v1/admin\"...), build rs := &round.Service{Store:&round.FileStore{Root:cfg.Storage.RepoPath}, Committer:gitCLI, Revisions:gitCLI, Contributions:store} and rh := &admin.RoundHandler{Rounds:&roundAdmin{Svc:rs}, Lister:store}. Inside the admin group add ar.Post(\"/rounds\", rh.Create), ar.Post(\"/rounds/{id}/open\", rh.Open), ar.Post(\"/rounds/{id}/close\", rh.Close), ar.Get(\"/rounds/{id}\", rh.Get), ar.Get(\"/rounds/{id}/contributions\", rh.Contributions). Import internal/round.",
+      "expected": "The five round routes no longer return 404"
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "new: NewScheduler",
+      "lines": "after L97",
+      "action": "Add func NewScheduler(cfg *config.Config) *round.Scheduler returning &round.Scheduler{Controller: the round.Service built from cfg, Rounds: the round.FileStore, Worlds: func() ([]string, error) listing IDs from world.Repo.List, Interval: cfg.Round.SchedulerInterval}. Extract the round.Service construction into helper newRoundService(cfg) used by both New and NewScheduler.",
+      "expected": "NewScheduler returns a scheduler with the configured interval"
+    },
+    {
+      "file": "backend/cmd/server/main.go",
+      "symbol": "main",
+      "lines": "L26-L27",
+      "action": "Before http.ListenAndServe, create ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM); defer stop(); then go server.NewScheduler(cfg).Run(ctx).",
+      "expected": "go build ./cmd/server succeeds"
+    }
+  ],
+  "created_at": "2026-11-23T12:40:26.210176+00:00",
+  "updated_at": "2026-11-23T12:44:02.659582+00:00"
+}

@@ -1,0 +1,960 @@
+{
+  "intent_id": "01M842YVXQ6YESCRGFAQREM4JH",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8433B95W2P1XC6347WY79MQ",
+      "kind": "intent",
+      "title": "SG-2 Implement game runtime and The Boy's Room content",
+      "body": "Context: the repo currently holds only the Go backend (backend/) and context.md; there is no game module yet, so the TypeScript game package is created in the new folder backend/game/ (the only existing top-level folder is backend/). Desired behavior: backend/game/src/engine, backend/game/src/state and backend/game/src/systems hold pure functions over a serializable GameState covering scenes, clickable objects with actions (inspect, push, search, leave), dialogue, choices, events, inventory, conditions, world flags and scene transitions. A YAML loader plus validator reads backend/game/content/worlds/the-boys-room/world.yaml and scenes/bedroom.yaml and reports unknown scene/object/character/flag references. Expected result: bedroom content with the opening question, bed, bookshelf with a persistent hidden door, desk, old computer, window and door, all covered by Vitest. Why: players must be able to play and the community must be able to extend content without rewriting the engine.\n\n## Acceptance criteria\n- Given a GameState, when any runtime function is called, then it returns a new state object and never mutates its input, and the state survives JSON.stringify/JSON.parse unchanged.\n- Given the content files, when the loader runs, then it returns a typed world, and unknown scene, object, character or flag references yield error strings naming the reference.\n- Given the bedroom scene, when it is loaded, then it contains the opening dialogue 'I don't know what to do next. What should we do?', bed, bookshelf, desk, old computer, window and door.\n- Given the bookshelf search action was performed, when state is serialized, restored and the scene viewed again, then the secret door is still open.\n- Given Vitest unit tests, when they run, then each system, the reference validator with invalid fixtures and persistence are covered and pass.\n\n\n## Scope\n- In scope: backend/game/ TypeScript runtime modules\n- In scope: YAML loader and validator\n- In scope: the-boys-room world and bedroom YAML\n- In scope: Vitest unit tests\n- Out of scope: React rendering\n- Out of scope: backend API changes\n- Out of scope: worker and round lifecycle\n- Out of scope: pixel art assets\n- Preserve: Existing Go code in backend/ (go.mod, cmd, internal) unchanged\n\n\n## Technical constraints\n- TypeScript with Vitest\n- Content is declarative YAML parsed with the yaml npm package\n- All runtime functions are pure over serializable state\n- No database\n\n\n## Definition of done\n- All four requirements have Act and Verify units completed\n- Vitest suite passes\n\n\n## Non-functional requirements\n- Strict TypeScript typing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Pure TypeScript game runtime, YAML content loader/validator and bedroom content for The Boy's Room",
+      "description": "Context: the repo currently holds only the Go backend (backend/) and context.md; there is no game module yet, so the TypeScript game package is created in the new folder backend/game/ (the only existing top-level folder is backend/). Desired behavior: backend/game/src/engine, backend/game/src/state and backend/game/src/systems hold pure functions over a serializable GameState covering scenes, clickable objects with actions (inspect, push, search, leave), dialogue, choices, events, inventory, conditions, world flags and scene transitions. A YAML loader plus validator reads backend/game/content/worlds/the-boys-room/world.yaml and scenes/bedroom.yaml and reports unknown scene/object/character/flag references. Expected result: bedroom content with the opening question, bed, bookshelf with a persistent hidden door, desk, old computer, window and door, all covered by Vitest. Why: players must be able to play and the community must be able to extend content without rewriting the engine.",
+      "acceptance_criteria": [
+        "Given a GameState, when any runtime function is called, then it returns a new state object and never mutates its input, and the state survives JSON.stringify/JSON.parse unchanged.",
+        "Given the content files, when the loader runs, then it returns a typed world, and unknown scene, object, character or flag references yield error strings naming the reference.",
+        "Given the bedroom scene, when it is loaded, then it contains the opening dialogue 'I don't know what to do next. What should we do?', bed, bookshelf, desk, old computer, window and door.",
+        "Given the bookshelf search action was performed, when state is serialized, restored and the scene viewed again, then the secret door is still open.",
+        "Given Vitest unit tests, when they run, then each system, the reference validator with invalid fixtures and persistence are covered and pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/ TypeScript runtime modules",
+          "YAML loader and validator",
+          "the-boys-room world and bedroom YAML",
+          "Vitest unit tests"
+        ],
+        "out_of_scope": [
+          "React rendering",
+          "backend API changes",
+          "worker and round lifecycle",
+          "pixel art assets"
+        ],
+        "preserve": [
+          "Existing Go code in backend/ (go.mod, cmd, internal) unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "TypeScript with Vitest",
+        "Content is declarative YAML parsed with the yaml npm package",
+        "All runtime functions are pure over serializable state",
+        "No database"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All four requirements have Act and Verify units completed",
+        "Vitest suite passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-004.md`"
+      ],
+      "non_functional": [
+        "Strict TypeScript typing"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "artifact:.ai-dlc/intent/INT-004.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-004.md",
+      "artifact_id": "INT-004"
+    },
+    {
+      "id": "01M8433B95WHTSSMZ54677R31K",
+      "kind": "requirement",
+      "title": "REQ · Pure runtime systems over serializable game state",
+      "body": "Context: no game runtime exists. Desired behavior: a GameState (currentScene, inventory, discoveredObjects, completedQuests, relationships, flags, history, activeDialogue) and pure systems that evaluate conditions, apply events, run object actions, advance dialogue and switch scenes. Expected result: every function takes state and returns a new state. Why: deterministic, testable, persistable gameplay.\n\n## Acceptance criteria\n- Given a state and an action with events set_flag, add_item, goto_scene, when performAction runs, then the returned state has the flag, item and new currentScene and the original state is unchanged.\n- Given a condition {flag,equals} or {has_item}, when evaluated, then it returns true or false matching the state.\n- Given a dialogue node with choices, when a choice is selected, then its events are applied, history records it and the next node becomes active.\n- Given an action whose conditions fail, when performed, then the state is returned unchanged.\n\n\n## Scope\n- In scope: backend/game/src/state\n- In scope: backend/game/src/systems\n- In scope: backend/game/src/engine scene logic\n- Out of scope: YAML parsing\n- Out of scope: UI\n\n\n## Technical constraints\n- Pure functions, no I/O\n- Action ids limited to inspect, push, search, leave\n\n\n## Definition of done\n- Modules compile under tsc strict\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "State, conditions, flags, inventory, events, dialogue/choices and scene transitions as pure functions",
+      "description": "Context: no game runtime exists. Desired behavior: a GameState (currentScene, inventory, discoveredObjects, completedQuests, relationships, flags, history, activeDialogue) and pure systems that evaluate conditions, apply events, run object actions, advance dialogue and switch scenes. Expected result: every function takes state and returns a new state. Why: deterministic, testable, persistable gameplay.",
+      "acceptance_criteria": [
+        "Given a state and an action with events set_flag, add_item, goto_scene, when performAction runs, then the returned state has the flag, item and new currentScene and the original state is unchanged.",
+        "Given a condition {flag,equals} or {has_item}, when evaluated, then it returns true or false matching the state.",
+        "Given a dialogue node with choices, when a choice is selected, then its events are applied, history records it and the next node becomes active.",
+        "Given an action whose conditions fail, when performed, then the state is returned unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/src/state",
+          "backend/game/src/systems",
+          "backend/game/src/engine scene logic"
+        ],
+        "out_of_scope": [
+          "YAML parsing",
+          "UI"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Pure functions, no I/O",
+        "Action ids limited to inspect, push, search, leave"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Modules compile under tsc strict",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-009.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8433B95W2P1XC6347WY79MQ",
+      "matched_feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+      "links": [
+        "parent:01M8433B95W2P1XC6347WY79MQ",
+        "trace:01M8414WGR17QT0BMYRJPZ02TC",
+        "artifact:.ai-dlc/requirements/REQ-009.md"
+      ],
+      "depends_on": [
+        "01M8433B95W2P1XC6347WY79MQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-009.md",
+      "artifact_id": "REQ-009"
+    },
+    {
+      "id": "01M8433B959NCHSF7NF75F93T8",
+      "kind": "requirement",
+      "title": "REQ · YAML content loader and reference validator",
+      "body": "Context: content is declarative YAML. Desired behavior: loadWorld(dir) reads world.yaml and each listed scene file and returns {world,scenes}; validateWorld returns error strings for unknown scene, object, character and flag references. Expected result: content authors get precise errors. Why: coding agents add content safely.\n\n## Acceptance criteria\n- Given a valid content directory, when loadWorld runs, then it returns the world and every scene listed in world.yaml.\n- Given a goto_scene event to an unknown scene, when validated, then an error names the scene.\n- Given a say event with unknown character, an event on an unknown object, or an unknown flag, when validated, then an error names that reference.\n- Given a missing scene file or malformed YAML, when loaded, then loadWorld throws an error naming the file.\n\n\n## Scope\n- In scope: backend/game/src/engine/loader.ts\n- In scope: backend/game/src/engine/validator.ts\n- Out of scope: runtime event logic\n\n\n## Technical constraints\n- yaml npm package\n- node:fs readFileSync\n\n\n## Dependencies\n- REQ-RT\n\n\n## Definition of done\n- Validator returns string[]\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Load world.yaml and scenes/*.yaml and report invalid references",
+      "description": "Context: content is declarative YAML. Desired behavior: loadWorld(dir) reads world.yaml and each listed scene file and returns {world,scenes}; validateWorld returns error strings for unknown scene, object, character and flag references. Expected result: content authors get precise errors. Why: coding agents add content safely.",
+      "acceptance_criteria": [
+        "Given a valid content directory, when loadWorld runs, then it returns the world and every scene listed in world.yaml.",
+        "Given a goto_scene event to an unknown scene, when validated, then an error names the scene.",
+        "Given a say event with unknown character, an event on an unknown object, or an unknown flag, when validated, then an error names that reference.",
+        "Given a missing scene file or malformed YAML, when loaded, then loadWorld throws an error naming the file."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/src/engine/loader.ts",
+          "backend/game/src/engine/validator.ts"
+        ],
+        "out_of_scope": [
+          "runtime event logic"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "yaml npm package",
+        "node:fs readFileSync"
+      ],
+      "dependencies": [
+        "REQ-RT"
+      ],
+      "definition_of_done": [
+        "Validator returns string[]",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-010.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8433B95W2P1XC6347WY79MQ",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M8433B95W2P1XC6347WY79MQ",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-010.md"
+      ],
+      "depends_on": [
+        "01M8433B95W2P1XC6347WY79MQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-010.md",
+      "artifact_id": "REQ-010"
+    },
+    {
+      "id": "01M8433B95001CZJPE8KDBNVVY",
+      "kind": "requirement",
+      "title": "REQ · The Boy's Room world and bedroom content",
+      "body": "Context: content directory does not exist. Desired behavior: world the-boys-room starting in bedroom; the boy asks 'I don't know what to do next. What should we do?'; objects bed, bookshelf (search opens hidden door via flag secret_door_open), desk, old computer, window, door, each with inspect/push/search/leave actions where relevant. Why: playable first scene.\n\n## Acceptance criteria\n- Given the content, when loaded and validated, then validateWorld returns no errors.\n- Given the opening dialogue node, when read, then its text equals \"I don't know what to do next. What should we do?\" spoken by the boy.\n- Given the scene, when read, then objects bed, bookshelf, desk, old-computer, window and door exist.\n- Given the bookshelf search action, when performed, then flag secret_door_open becomes true.\n\n\n## Scope\n- In scope: backend/game/content/worlds/the-boys-room/world.yaml\n- In scope: scenes/bedroom.yaml\n- Out of scope: art\n- Out of scope: other scenes\n\n\n## Technical constraints\n- Schema must match types in backend/game/src/state/types.ts\n\n\n## Dependencies\n- REQ-LD\n\n\n## Definition of done\n- Content validates\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Author world.yaml and bedroom.yaml with opening dialogue and six objects",
+      "description": "Context: content directory does not exist. Desired behavior: world the-boys-room starting in bedroom; the boy asks 'I don't know what to do next. What should we do?'; objects bed, bookshelf (search opens hidden door via flag secret_door_open), desk, old computer, window, door, each with inspect/push/search/leave actions where relevant. Why: playable first scene.",
+      "acceptance_criteria": [
+        "Given the content, when loaded and validated, then validateWorld returns no errors.",
+        "Given the opening dialogue node, when read, then its text equals \"I don't know what to do next. What should we do?\" spoken by the boy.",
+        "Given the scene, when read, then objects bed, bookshelf, desk, old-computer, window and door exist.",
+        "Given the bookshelf search action, when performed, then flag secret_door_open becomes true."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/content/worlds/the-boys-room/world.yaml",
+          "scenes/bedroom.yaml"
+        ],
+        "out_of_scope": [
+          "art",
+          "other scenes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Schema must match types in backend/game/src/state/types.ts"
+      ],
+      "dependencies": [
+        "REQ-LD"
+      ],
+      "definition_of_done": [
+        "Content validates",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-011.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8433B95W2P1XC6347WY79MQ",
+      "matched_feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+      "links": [
+        "parent:01M8433B95W2P1XC6347WY79MQ",
+        "trace:01M8414WGR17QT0BMYRJPZ02TC",
+        "artifact:.ai-dlc/requirements/REQ-011.md"
+      ],
+      "depends_on": [
+        "01M8433B95W2P1XC6347WY79MQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-011.md",
+      "artifact_id": "REQ-011"
+    },
+    {
+      "id": "01M8433B955T3649BM2P38XHPW",
+      "kind": "requirement",
+      "title": "REQ · Persistent world state serialization",
+      "body": "Context: state is plain data. Desired behavior: serializeState/deserializeState convert GameState to and from JSON with validation, and the scene view reflects restored flags. Expected result: opening the secret door, saving, restoring and returning to the room shows it still open. Why: the world must remember meaningful actions.\n\n## Acceptance criteria\n- Given a state, when serialized and deserialized, then the result deep-equals the original.\n- Given malformed JSON or missing fields, when deserialized, then an error is thrown.\n- Given the bookshelf searched, when state is round-tripped and getSceneView is called, then bookshelf open is true.\n\n\n## Scope\n- In scope: backend/game/src/state/persistence.ts\n- Out of scope: browser storage, backend save API\n\n\n## Technical constraints\n- Pure JSON string conversion, no storage access\n\n\n## Dependencies\n- REQ-RT\n\n\n## Definition of done\n- Round trip works\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Serialize and restore GameState so changes such as an open secret door persist",
+      "description": "Context: state is plain data. Desired behavior: serializeState/deserializeState convert GameState to and from JSON with validation, and the scene view reflects restored flags. Expected result: opening the secret door, saving, restoring and returning to the room shows it still open. Why: the world must remember meaningful actions.",
+      "acceptance_criteria": [
+        "Given a state, when serialized and deserialized, then the result deep-equals the original.",
+        "Given malformed JSON or missing fields, when deserialized, then an error is thrown.",
+        "Given the bookshelf searched, when state is round-tripped and getSceneView is called, then bookshelf open is true."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/src/state/persistence.ts"
+        ],
+        "out_of_scope": [
+          "browser storage, backend save API"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Pure JSON string conversion, no storage access"
+      ],
+      "dependencies": [
+        "REQ-RT"
+      ],
+      "definition_of_done": [
+        "Round trip works",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-012.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8433B95W2P1XC6347WY79MQ",
+      "matched_feature_id": "01M8414WGRJ0XKJKMXR6WKP2MR",
+      "links": [
+        "parent:01M8433B95W2P1XC6347WY79MQ",
+        "trace:01M8414WGRJ0XKJKMXR6WKP2MR",
+        "artifact:.ai-dlc/requirements/REQ-012.md"
+      ],
+      "depends_on": [
+        "01M8433B95W2P1XC6347WY79MQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-012.md",
+      "artifact_id": "REQ-012"
+    },
+    {
+      "id": "01M8433B95K04QQ4KN93TBBHPJ",
+      "kind": "unit",
+      "title": "Act: Implement state model and pure runtime systems",
+      "body": "Create the game TypeScript package under backend/game and the pure runtime modules. Context: backend/game does not exist. Desired behavior: types define content and state shapes; systems operate immutably. Expected result: modules importable by loader and tests.\n\n## Acceptance criteria\n- Given the package, when tsc --noEmit runs, then it compiles with strict mode.\n- Given any system function, when called, then the input state is not mutated.\n\n\n## Scope\n- In scope: backend/game/package.json\n- In scope: tsconfig\n- In scope: state types\n- In scope: systems\n- In scope: engine scene functions\n- Out of scope: tests\n- Out of scope: YAML loading\n- Preserve: existing Go code in backend/\n\n\n## Technical constraints\n- Dependencies: yaml; devDependencies: typescript, vitest\n- package.json scripts: test = vitest run, typecheck = tsc --noEmit\n- New file: `backend/game/package.json`\n- New file: `backend/game/tsconfig.json`\n- New file: `backend/game/vitest.config.ts`\n- New file: `backend/game/src/state/types.ts`\n- New file: `backend/game/src/state/gameState.ts`\n- New file: `backend/game/src/systems/conditions.ts`\n- New file: `backend/game/src/systems/inventory.ts`\n- New file: `backend/game/src/systems/events.ts`\n- New file: `backend/game/src/systems/dialogue.ts`\n- New file: `backend/game/src/engine/scene.ts`\n\n\n## Dependencies\n- REQ-RT\n\n\n## Definition of done\n- tsc --noEmit passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game package config, types, state, conditions, inventory, events, dialogue and scene engine",
+      "description": "Create the game TypeScript package under backend/game and the pure runtime modules. Context: backend/game does not exist. Desired behavior: types define content and state shapes; systems operate immutably. Expected result: modules importable by loader and tests.",
+      "acceptance_criteria": [
+        "Given the package, when tsc --noEmit runs, then it compiles with strict mode.",
+        "Given any system function, when called, then the input state is not mutated."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/package.json",
+          "tsconfig",
+          "state types",
+          "systems",
+          "engine scene functions"
+        ],
+        "out_of_scope": [
+          "tests",
+          "YAML loading"
+        ],
+        "preserve": [
+          "existing Go code in backend/"
+        ]
+      },
+      "technical_constraints": [
+        "Dependencies: yaml; devDependencies: typescript, vitest",
+        "package.json scripts: test = vitest run, typecheck = tsc --noEmit",
+        "New file: `backend/game/package.json`",
+        "New file: `backend/game/tsconfig.json`",
+        "New file: `backend/game/vitest.config.ts`",
+        "New file: `backend/game/src/state/types.ts`",
+        "New file: `backend/game/src/state/gameState.ts`",
+        "New file: `backend/game/src/systems/conditions.ts`",
+        "New file: `backend/game/src/systems/inventory.ts`",
+        "New file: `backend/game/src/systems/events.ts`",
+        "New file: `backend/game/src/systems/dialogue.ts`",
+        "New file: `backend/game/src/engine/scene.ts`"
+      ],
+      "dependencies": [
+        "REQ-RT"
+      ],
+      "definition_of_done": [
+        "tsc --noEmit passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-017.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8433B95WHTSSMZ54677R31K",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M8433B95WHTSSMZ54677R31K",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-017.md"
+      ],
+      "depends_on": [
+        "01M8433B95WHTSSMZ54677R31K"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-017.md",
+      "artifact_id": "UNIT-017",
+      "steps": [
+        {
+          "file": "backend/game/package.json",
+          "symbol": "new: package manifest",
+          "lines": "new",
+          "action": "Create package.json with type module, scripts test='vitest run' and typecheck='tsc --noEmit', dependency yaml, devDependencies typescript and vitest; also create tsconfig.json (strict true, module ESNext, moduleResolution Bundler, target ES2022, include src and tests) and vitest.config.ts using defineConfig with test.include ['tests/**/*.test.ts'].",
+          "code": "{\"name\":\"worldseed-game\",\"private\":true,\"type\":\"module\",\"scripts\":{\"test\":\"vitest run\",\"typecheck\":\"tsc --noEmit\"},\"dependencies\":{\"yaml\":\"^2.5.0\"},\"devDependencies\":{\"typescript\":\"^5.5.0\",\"vitest\":\"^2.0.0\"}}",
+          "expected": "npm install in backend/game succeeds and vitest/tsc binaries exist."
+        },
+        {
+          "file": "backend/game/tsconfig.json",
+          "symbol": "new: tsconfig",
+          "lines": "new",
+          "action": "Create tsconfig.json with compilerOptions strict true, module ESNext, moduleResolution Bundler, target ES2022, noEmit true, types [] and include ['src','tests'].",
+          "code": "{\"compilerOptions\":{\"strict\":true,\"module\":\"ESNext\",\"moduleResolution\":\"Bundler\",\"target\":\"ES2022\",\"noEmit\":true,\"skipLibCheck\":true},\"include\":[\"src\",\"tests\"]}",
+          "expected": "tsc --noEmit runs in strict mode."
+        },
+        {
+          "file": "backend/game/vitest.config.ts",
+          "symbol": "new: vitest config",
+          "lines": "new",
+          "action": "Create vitest.config.ts exporting default defineConfig({test:{include:['tests/**/*.test.ts']}}) imported from 'vitest/config'.",
+          "code": "import { defineConfig } from 'vitest/config';\nexport default defineConfig({ test: { include: ['tests/**/*.test.ts'] } });",
+          "expected": "vitest discovers only files under tests/."
+        },
+        {
+          "file": "backend/game/src/state/types.ts",
+          "symbol": "new: Condition, GameEvent, ActionDef, ObjectDef, DialogueNode, SceneDef, WorldDef, GameState",
+          "lines": "new",
+          "action": "Export types: Condition = {flag:string;equals?:boolean}|{hasItem:string}; GameEvent = set_flag{flag,value}|add_item{item}|remove_item{item}|goto_scene{scene}|say{character,text}|show_text{text}|discover{object}; ActionDef{id:'inspect'|'push'|'search'|'leave';label;conditions?:Condition[];events:GameEvent[]}; ObjectDef{id,name,description,actions,openWhenFlag?}; DialogueNode{id,speaker,text,choices:{text;next?;events?}[]}; SceneDef{id,title,objects,openingDialogue?:string(node id),dialogue:DialogueNode[]}; WorldDef{id,title,startScene,scenes:string[],characters:{id,name}[],flags:string[]}; GameState{currentScene,inventory:string[],discoveredObjects:string[],completedQuests:string[],relationships:Record<string,number>,flags:Record<string,boolean>,history:string[],activeDialogue:string|null}.",
+          "expected": "File compiles; types exported."
+        },
+        {
+          "file": "backend/game/src/state/gameState.ts",
+          "symbol": "new: createInitialState, setFlag, addHistory",
+          "lines": "new",
+          "action": "Implement createInitialState(world:WorldDef,scene:SceneDef):GameState with currentScene=world.startScene, empty collections, activeDialogue=scene.openingDialogue??null; setFlag(state,flag,value) returning {...state,flags:{...state.flags,[flag]:value}}; addHistory(state,line) returning a new state with line appended.",
+          "expected": "Functions return new objects; inputs unchanged."
+        },
+        {
+          "file": "backend/game/src/systems/conditions.ts",
+          "symbol": "new: evaluateCondition, evaluateAll",
+          "lines": "new",
+          "action": "evaluateCondition(state,c) returns state.flags[c.flag]===(c.equals??true) for flag conditions and state.inventory.includes(c.hasItem) for hasItem conditions; evaluateAll(state,conds?) returns true when conds is undefined/empty or every condition passes.",
+          "expected": "Boolean results per state."
+        },
+        {
+          "file": "backend/game/src/systems/inventory.ts",
+          "symbol": "new: addItem, removeItem, hasItem",
+          "lines": "new",
+          "action": "addItem returns state with item appended only if absent; removeItem returns state with item filtered out; hasItem returns state.inventory.includes(item).",
+          "expected": "Duplicates are never added."
+        },
+        {
+          "file": "backend/game/src/systems/events.ts",
+          "symbol": "new: applyEvent, applyEvents",
+          "lines": "new",
+          "action": "applyEvent switches on event.type: set_flag->setFlag, add_item->addItem, remove_item->removeItem, goto_scene->{...state,currentScene:event.scene,activeDialogue:null} with history 'Went to <scene>', say->addHistory '<character>: <text>', show_text->addHistory text, discover->add object id to discoveredObjects once; applyEvents reduces a list in order.",
+          "expected": "Events applied in order, immutably."
+        },
+        {
+          "file": "backend/game/src/systems/dialogue.ts",
+          "symbol": "new: getActiveNode, chooseOption",
+          "lines": "new",
+          "action": "getActiveNode(state,scene) returns the DialogueNode matching state.activeDialogue or undefined; chooseOption(state,scene,index) applies the choice's events via applyEvents, appends history of the choice text, and sets activeDialogue to choice.next??null; returns state unchanged when node or index is invalid.",
+          "expected": "Choice advances dialogue and records history."
+        },
+        {
+          "file": "backend/game/src/engine/scene.ts",
+          "symbol": "new: getSceneView, performAction",
+          "lines": "new",
+          "action": "getSceneView(state,scene) returns objects each with only the actions whose conditions pass, plus an open:boolean computed from openWhenFlag in state.flags; performAction(state,scene,objectId,actionId) finds the action, returns state unchanged if object/action missing or evaluateAll fails, otherwise returns applyEvents(state,action.events).",
+          "expected": "Failed conditions leave state identical."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B951PX8S2TVEYX6E1D4",
+      "kind": "unit",
+      "title": "Act: Implement YAML loader and reference validator",
+      "body": "Implement loader and validator using the types from backend/game/src/state/types.ts.\n\n## Acceptance criteria\n- Given content, when loaded, then typed objects are returned.\n- Given bad references, when validated, then errors are listed.\n\n\n## Scope\n- In scope: loader\n- In scope: validator\n- Out of scope: tests\n\n\n## Technical constraints\n- Use yaml parse\n- New file: `backend/game/src/engine/loader.ts`\n- New file: `backend/game/src/engine/validator.ts`\n\n\n## Dependencies\n- REQ-LD\n- ACT-RT\n\n\n## Definition of done\n- Loader and validator typecheck\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add loadWorld and validateWorld",
+      "description": "Implement loader and validator using the types from backend/game/src/state/types.ts.",
+      "acceptance_criteria": [
+        "Given content, when loaded, then typed objects are returned.",
+        "Given bad references, when validated, then errors are listed."
+      ],
+      "scope": {
+        "in_scope": [
+          "loader",
+          "validator"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Use yaml parse",
+        "New file: `backend/game/src/engine/loader.ts`",
+        "New file: `backend/game/src/engine/validator.ts`"
+      ],
+      "dependencies": [
+        "REQ-LD",
+        "ACT-RT"
+      ],
+      "definition_of_done": [
+        "Loader and validator typecheck",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-018.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8433B959NCHSF7NF75F93T8",
+      "matched_feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+      "links": [
+        "parent:01M8433B959NCHSF7NF75F93T8",
+        "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+        "artifact:.ai-dlc/units/UNIT-018.md"
+      ],
+      "depends_on": [
+        "01M8433B959NCHSF7NF75F93T8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-018.md",
+      "artifact_id": "UNIT-018",
+      "steps": [
+        {
+          "file": "backend/game/src/engine/loader.ts",
+          "symbol": "new: loadWorld",
+          "lines": "new",
+          "action": "Export loadWorld(worldDir:string):{world:WorldDef;scenes:Record<string,SceneDef>}; read join(worldDir,'world.yaml') then for each id in world.scenes read join(worldDir,'scenes',id+'.yaml'); wrap readFileSync/parse in try/catch rethrowing Error(`Failed to load ${path}: ${message}`).",
+          "expected": "Returns both objects for valid dirs; throws naming the file otherwise."
+        },
+        {
+          "file": "backend/game/src/engine/validator.ts",
+          "symbol": "new: validateWorld",
+          "lines": "new",
+          "action": "Export validateWorld(world,scenes):string[]; push errors: `unknown scene: X` for world.startScene or goto_scene not in scenes; `unknown character: X` for say.character or dialogue speaker not in world.characters (or 'narrator'); `unknown object: X` for discover.object not in the scene objects; `unknown flag: X` for set_flag/condition flags not in world.flags. Walk every scene object action events, conditions, openWhenFlag and dialogue choice events and next ids (`unknown dialogue node: X`).",
+          "expected": "Empty array for valid content; one message per bad reference."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B95PQ2AFP28XSAEJK9H",
+      "kind": "unit",
+      "title": "Act: Author the-boys-room world and bedroom YAML",
+      "body": "Write the declarative content matching the runtime types.\n\n## Acceptance criteria\n- Given the YAML, when loaded, then it matches SceneDef and WorldDef.\n- Given the bookshelf, when searched, then secret_door_open is set.\n\n\n## Scope\n- In scope: two YAML files\n- Out of scope: tests\n\n\n## Technical constraints\n- Flags declared in world.yaml\n- New file: `backend/game/content/worlds/the-boys-room/world.yaml`\n- New file: `backend/game/content/worlds/the-boys-room/scenes/bedroom.yaml`\n\n\n## Dependencies\n- REQ-CT\n- ACT-LD\n\n\n## Definition of done\n- Files exist and validate\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create world.yaml and bedroom.yaml",
+      "description": "Write the declarative content matching the runtime types.",
+      "acceptance_criteria": [
+        "Given the YAML, when loaded, then it matches SceneDef and WorldDef.",
+        "Given the bookshelf, when searched, then secret_door_open is set."
+      ],
+      "scope": {
+        "in_scope": [
+          "two YAML files"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Flags declared in world.yaml",
+        "New file: `backend/game/content/worlds/the-boys-room/world.yaml`",
+        "New file: `backend/game/content/worlds/the-boys-room/scenes/bedroom.yaml`"
+      ],
+      "dependencies": [
+        "REQ-CT",
+        "ACT-LD"
+      ],
+      "definition_of_done": [
+        "Files exist and validate",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-019.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8433B95001CZJPE8KDBNVVY",
+      "matched_feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+      "links": [
+        "parent:01M8433B95001CZJPE8KDBNVVY",
+        "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+        "artifact:.ai-dlc/units/UNIT-019.md"
+      ],
+      "depends_on": [
+        "01M8433B95001CZJPE8KDBNVVY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-019.md",
+      "artifact_id": "UNIT-019",
+      "steps": [
+        {
+          "file": "backend/game/content/worlds/the-boys-room/world.yaml",
+          "symbol": "new: world definition",
+          "lines": "new",
+          "action": "Create world.yaml with id the-boys-room, title \"The Boy's Room\", startScene bedroom, scenes [bedroom], characters [{id: boy, name: The Boy}], flags [secret_door_open, computer_on].",
+          "expected": "Parses into WorldDef."
+        },
+        {
+          "file": "backend/game/content/worlds/the-boys-room/scenes/bedroom.yaml",
+          "symbol": "new: bedroom scene",
+          "lines": "new",
+          "action": "Create bedroom.yaml with id bedroom, openingDialogue intro, dialogue node intro (speaker boy, text \"I don't know what to do next. What should we do?\", choices: 'Look around the room' next null, 'Let's explore' next null); objects: bed, bookshelf (openWhenFlag secret_door_open; actions inspect, push, search with search events [set_flag secret_door_open true, show_text 'A hidden door swings open behind the books.'], leave), desk, old-computer (inspect, search with set_flag computer_on), window, door (inspect, leave). Each object has name, description and at least an inspect action with show_text.",
+          "code": "id: bedroom\nopeningDialogue: intro\ndialogue:\n  - id: intro\n    speaker: boy\n    text: \"I don't know what to do next. What should we do?\"\n    choices:\n      - text: Look around the room\n      - text: Let's explore",
+          "expected": "validateWorld returns [] for the loaded content."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B95JQDP9ZET0MARJS7Z",
+      "kind": "unit",
+      "title": "Act: Implement state serialization with validation",
+      "body": "Add persistence module over GameState.\n\n## Acceptance criteria\n- Given state, when round-tripped, then equal.\n- Given invalid input, when parsed, then it throws.\n\n\n## Scope\n- In scope: persistence module\n- Out of scope: tests\n\n\n## Technical constraints\n- No I/O\n- New file: `backend/game/src/state/persistence.ts`\n\n\n## Dependencies\n- REQ-PS\n- ACT-RT\n\n\n## Definition of done\n- Typechecks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add serializeState and deserializeState",
+      "description": "Add persistence module over GameState.",
+      "acceptance_criteria": [
+        "Given state, when round-tripped, then equal.",
+        "Given invalid input, when parsed, then it throws."
+      ],
+      "scope": {
+        "in_scope": [
+          "persistence module"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No I/O",
+        "New file: `backend/game/src/state/persistence.ts`"
+      ],
+      "dependencies": [
+        "REQ-PS",
+        "ACT-RT"
+      ],
+      "definition_of_done": [
+        "Typechecks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-020.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8433B955T3649BM2P38XHPW",
+      "matched_feature_id": "01M842QZ3FZX17KV950M11H86B",
+      "links": [
+        "parent:01M8433B955T3649BM2P38XHPW",
+        "trace:01M842QZ3FZX17KV950M11H86B",
+        "artifact:.ai-dlc/units/UNIT-020.md"
+      ],
+      "depends_on": [
+        "01M8433B955T3649BM2P38XHPW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-020.md",
+      "artifact_id": "UNIT-020",
+      "steps": [
+        {
+          "file": "backend/game/src/state/persistence.ts",
+          "symbol": "new: serializeState",
+          "lines": "new",
+          "action": "Export serializeState(state:GameState):string returning JSON.stringify(state).",
+          "expected": "Returns JSON text."
+        },
+        {
+          "file": "backend/game/src/state/persistence.ts",
+          "symbol": "new: deserializeState",
+          "lines": "new",
+          "action": "Export deserializeState(json:string):GameState; JSON.parse it, throw Error('Invalid game state: <field>') unless currentScene is a string, inventory/discoveredObjects/completedQuests/history are arrays, flags and relationships are objects, and activeDialogue is string or null; return the parsed object.",
+          "expected": "Valid input round-trips; invalid input throws."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B952PFRKBEHS5GCSB32",
+      "kind": "unit",
+      "title": "Verify: Runtime systems unit tests",
+      "body": "Write Vitest tests for each runtime system from the requirement spec, using in-memory state only.\n\n## Acceptance criteria\n- Given the tests, when run, then every system has passing cases for success and no-op paths.\n- Given each test, when it passes a frozen state, then immutability is asserted.\n\n\n## Scope\n- In scope: backend/game/tests/systems.test.ts\n- Out of scope: YAML loading\n\n\n## Technical constraints\n- No filesystem or network\n\n\n## Dependencies\n- ACT-RT\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for conditions, inventory, events, dialogue and scene engine",
+      "description": "Write Vitest tests for each runtime system from the requirement spec, using in-memory state only.",
+      "acceptance_criteria": [
+        "Given the tests, when run, then every system has passing cases for success and no-op paths.",
+        "Given each test, when it passes a frozen state, then immutability is asserted."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/systems.test.ts"
+        ],
+        "out_of_scope": [
+          "YAML loading"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No filesystem or network"
+      ],
+      "dependencies": [
+        "ACT-RT"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-021.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8433B95K04QQ4KN93TBBHPJ",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M8433B95K04QQ4KN93TBBHPJ",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-021.md"
+      ],
+      "depends_on": [
+        "01M8433B95K04QQ4KN93TBBHPJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-021.md",
+      "artifact_id": "UNIT-021",
+      "steps": [
+        {
+          "file": "backend/game/tests/systems.test.ts",
+          "symbol": "new: conditions and inventory tests",
+          "lines": "new",
+          "action": "Add tests 'evaluateCondition flag true/false' and 'addItem does not duplicate' using a hand-built GameState literal (currentScene 'bedroom', empty collections); assert true/false results and inventory length 1 after adding 'key' twice.",
+          "command": "cd backend/game && npx vitest run tests/systems.test.ts -t 'condition|addItem'",
+          "expected": "Tests pass."
+        },
+        {
+          "file": "backend/game/tests/systems.test.ts",
+          "symbol": "new: events and performAction tests",
+          "lines": "new",
+          "action": "Add tests 'performAction applies set_flag add_item goto_scene' (inputs: an inline SceneDef with one object whose search action has those three events; assert flags.x true, inventory ['key'], currentScene changed, original state deep-equal to a Object.freeze'd copy) and 'performAction no-op when condition fails' (assert returned state toBe input).",
+          "command": "cd backend/game && npx vitest run tests/systems.test.ts -t 'performAction'",
+          "expected": "Tests pass; input unchanged."
+        },
+        {
+          "file": "backend/game/tests/systems.test.ts",
+          "symbol": "new: dialogue tests",
+          "lines": "new",
+          "action": "Add test 'chooseOption applies events and advances' with a two-node SceneDef: choosing index 0 sets flag, activeDialogue becomes 'n2', history contains the choice text; and 'chooseOption invalid index returns same state'.",
+          "command": "cd backend/game && npx vitest run tests/systems.test.ts -t 'chooseOption'",
+          "expected": "Tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B954W9CCFBHGG24FXEH",
+      "kind": "unit",
+      "title": "Verify: Loader and reference validator unit tests",
+      "body": "Test loader and validator using temp directories and in-memory objects.\n\n## Acceptance criteria\n- Given invalid fixtures, when validated, then each bad reference produces its error.\n- Given a missing file, when loaded, then an error names the file.\n\n\n## Scope\n- In scope: backend/game/tests/validator.test.ts\n- In scope: backend/game/tests/fixtures\n\n\n## Technical constraints\n- Temp dir via os.tmpdir only\n\n\n## Dependencies\n- ACT-LD\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for loadWorld and validateWorld with invalid fixtures",
+      "description": "Test loader and validator using temp directories and in-memory objects.",
+      "acceptance_criteria": [
+        "Given invalid fixtures, when validated, then each bad reference produces its error.",
+        "Given a missing file, when loaded, then an error names the file."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/validator.test.ts",
+          "backend/game/tests/fixtures"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Temp dir via os.tmpdir only"
+      ],
+      "dependencies": [
+        "ACT-LD"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-022.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8433B951PX8S2TVEYX6E1D4",
+      "matched_feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+      "links": [
+        "parent:01M8433B951PX8S2TVEYX6E1D4",
+        "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+        "artifact:.ai-dlc/units/UNIT-022.md"
+      ],
+      "depends_on": [
+        "01M8433B951PX8S2TVEYX6E1D4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-022.md",
+      "artifact_id": "UNIT-022",
+      "steps": [
+        {
+          "file": "backend/game/tests/validator.test.ts",
+          "symbol": "new: validateWorld invalid reference tests",
+          "lines": "new",
+          "action": "Create fixtures backend/game/tests/fixtures/invalid-world.ts exporting a WorldDef (characters [boy], flags [a]) and a SceneDef containing goto_scene 'nowhere', say by 'ghost', set_flag 'zzz', and discover 'nope'; add test in validator.test.ts asserting validateWorld output contains 'unknown scene: nowhere', 'unknown character: ghost', 'unknown flag: zzz', 'unknown object: nope'.",
+          "command": "cd backend/game && npx vitest run tests/validator.test.ts -t 'invalid'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "backend/game/tests/validator.test.ts",
+          "symbol": "new: loadWorld tests",
+          "lines": "new",
+          "action": "Add tests that write a minimal world.yaml and scenes/s.yaml to fs.mkdtempSync(os.tmpdir()) and assert loadWorld returns scenes.s; and a test with world.yaml listing a missing scene asserting the thrown message contains 's2.yaml'; and a valid-fixture test asserting validateWorld returns [].",
+          "command": "cd backend/game && npx vitest run tests/validator.test.ts -t 'loadWorld|valid'",
+          "expected": "Tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B9562QGTAJCC11Z78FP",
+      "kind": "unit",
+      "title": "Verify: Bedroom content validity unit tests",
+      "body": "Load the real content files with loadWorld and assert required structure.\n\n## Acceptance criteria\n- Given shipped content, when validated, then no errors.\n- Given the scene, then required objects and opening text exist.\n\n\n## Scope\n- In scope: backend/game/tests/content.test.ts\n\n\n## Technical constraints\n- Read-only access to backend/game/content\n\n\n## Dependencies\n- ACT-CT\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests that the shipped content loads, validates and has required objects",
+      "description": "Load the real content files with loadWorld and assert required structure.",
+      "acceptance_criteria": [
+        "Given shipped content, when validated, then no errors.",
+        "Given the scene, then required objects and opening text exist."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/content.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Read-only access to backend/game/content"
+      ],
+      "dependencies": [
+        "ACT-CT"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-023.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8433B95PQ2AFP28XSAEJK9H",
+      "matched_feature_id": "01M8414WGRNTE6GPNS1RZ3XY2F",
+      "links": [
+        "parent:01M8433B95PQ2AFP28XSAEJK9H",
+        "trace:01M8414WGRNTE6GPNS1RZ3XY2F",
+        "artifact:.ai-dlc/units/UNIT-023.md"
+      ],
+      "depends_on": [
+        "01M8433B95PQ2AFP28XSAEJK9H"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-023.md",
+      "artifact_id": "UNIT-023",
+      "steps": [
+        {
+          "file": "backend/game/tests/content.test.ts",
+          "symbol": "new: bedroom content tests",
+          "lines": "new",
+          "action": "Add tests using loadWorld(resolve(__dirname,'../content/worlds/the-boys-room')): 'content has no reference errors' asserts validateWorld returns []; 'opening dialogue text' asserts the intro node text equals \"I don't know what to do next. What should we do?\" and speaker 'boy'; 'has required objects' asserts object ids include bed, bookshelf, desk, old-computer, window, door; 'bookshelf search sets flag' calls performAction on an initial state and asserts flags.secret_door_open true.",
+          "command": "cd backend/game && npx vitest run tests/content.test.ts",
+          "expected": "All four tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B95BGGWTSF34VMGN1SC",
+      "kind": "unit",
+      "title": "Verify: State persistence unit tests",
+      "body": "Test serialization and the bookshelf door persistence using real bedroom content read from disk.\n\n## Acceptance criteria\n- Given round trip, then deep equality.\n- Given restored state, then bookshelf open is true.\n\n\n## Scope\n- In scope: backend/game/tests/persistence.test.ts\n\n\n## Technical constraints\n- No storage APIs\n\n\n## Dependencies\n- ACT-PS\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Tests for round trip and persisted open secret door",
+      "description": "Test serialization and the bookshelf door persistence using real bedroom content read from disk.",
+      "acceptance_criteria": [
+        "Given round trip, then deep equality.",
+        "Given restored state, then bookshelf open is true."
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/persistence.test.ts"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No storage APIs"
+      ],
+      "dependencies": [
+        "ACT-PS"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-024.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8433B95JQDP9ZET0MARJS7Z",
+      "matched_feature_id": "01M8414WGS5H96JYKP42Z167W8",
+      "links": [
+        "parent:01M8433B95JQDP9ZET0MARJS7Z",
+        "trace:01M8414WGS5H96JYKP42Z167W8",
+        "artifact:.ai-dlc/units/UNIT-024.md"
+      ],
+      "depends_on": [
+        "01M8433B95JQDP9ZET0MARJS7Z",
+        "01M8433B95PQ2AFP28XSAEJK9H"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-024.md",
+      "artifact_id": "UNIT-024",
+      "steps": [
+        {
+          "file": "backend/game/tests/persistence.test.ts",
+          "symbol": "new: round trip and invalid input tests",
+          "lines": "new",
+          "action": "Add 'round trip equals original' (state with flags {a:true}, inventory ['key']; expect deserializeState(serializeState(s)) toEqual s) and 'invalid input throws' (inputs '{}' and 'not json'; expect toThrow).",
+          "command": "cd backend/game && npx vitest run tests/persistence.test.ts -t 'round trip|invalid'",
+          "expected": "Tests pass."
+        },
+        {
+          "file": "backend/game/tests/persistence.test.ts",
+          "symbol": "new: secret door persists",
+          "lines": "new",
+          "action": "Add test 'secret door stays open after restore': loadWorld the-boys-room content, createInitialState, performAction(bookshelf,'search'), restore via deserializeState(serializeState(...)), assert getSceneView(...).objects.find(o=>o.id==='bookshelf').open is true.",
+          "command": "cd backend/game && npx vitest run tests/persistence.test.ts -t 'secret door'",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M8433B956XF9M7MV5AV470W3",
+      "kind": "evidence",
+      "title": "Evidence: SG-2 runtime and content unit test results",
+      "body": "Record the results of the Verify units: runtime systems, loader and validator, bedroom content and persistence tests, mapped to the intent acceptance criteria.\n\n## Acceptance criteria\n- Given the Verify units, when their commands run, then all pass.\n- Given the intent criteria, when mapped, then each is covered by a named test.\n\n\n## Scope\n- In scope: test result summary\n- Out of scope: new code\n\n\n## Dependencies\n- VER-RT\n- VER-LD\n- VER-CT\n- VER-PS\n\n\n## Definition of done\n- All Vitest files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing Vitest results proving SG-2 acceptance criteria",
+      "description": "Record the results of the Verify units: runtime systems, loader and validator, bedroom content and persistence tests, mapped to the intent acceptance criteria.",
+      "acceptance_criteria": [
+        "Given the Verify units, when their commands run, then all pass.",
+        "Given the intent criteria, when mapped, then each is covered by a named test."
+      ],
+      "scope": {
+        "in_scope": [
+          "test result summary"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER-RT",
+        "VER-LD",
+        "VER-CT",
+        "VER-PS"
+      ],
+      "definition_of_done": [
+        "All Vitest files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-004.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8433B952PFRKBEHS5GCSB32",
+      "matched_feature_id": "01M8414WGSVNT11K12NB2BB3Y9",
+      "links": [
+        "parent:01M8433B952PFRKBEHS5GCSB32",
+        "trace:01M8414WGSVNT11K12NB2BB3Y9",
+        "artifact:.ai-dlc/evidence/EVD-004.md"
+      ],
+      "depends_on": [
+        "01M8433B952PFRKBEHS5GCSB32",
+        "01M8433B954W9CCFBHGG24FXEH",
+        "01M8433B9562QGTAJCC11Z78FP",
+        "01M8433B95BGGWTSF34VMGN1SC"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-004.md",
+      "artifact_id": "EVD-004"
+    }
+  ],
+  "created_at": "2026-11-23T11:36:43.124751+00:00",
+  "summary": "AI · 1 NEW · 13 UPDATE · 0 UNCHANGED · 14/14 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

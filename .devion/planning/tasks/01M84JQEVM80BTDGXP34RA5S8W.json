@@ -1,0 +1,68 @@
+{
+  "id": "01M84JQEVM80BTDGXP34RA5S8W",
+  "intent_id": "01M84JNW4N0FKEKZE4RSX80RNZ",
+  "title": "Act: Add FrozenIDs to the ExportSource interface",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Declare FrozenIDs in ExportSource, keep FileStore assertion",
+  "description": "Extend the interface in export_source.go; the existing assertion then enforces FileStore implements it.",
+  "acceptance_criteria": [
+    "ExportSource declares FrozenIDs",
+    "Assertion on *FileStore retained"
+  ],
+  "scope": {
+    "in_scope": [
+      "export_source.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "ListByRound signature"
+    ]
+  },
+  "technical_constraints": [
+    "No new imports other than context",
+    "Code path: `backend/internal/contribution/export_source.go`"
+  ],
+  "dependencies": [
+    "REQ2",
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Interface extended and package builds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-263.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JPZV25TGMBR1S7AQ7Y81C",
+    "trace:01M84JF0K214J0YTJ8H6WV9DFZ",
+    "artifact:.ai-dlc/units/UNIT-263.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JQEVMP6C9KWAC3RMMS9AV"
+  ],
+  "sim_node_id": "01M84JPZV26HJDJKWYNCD1PEPT",
+  "feature_id": "01M84JF0K214J0YTJ8H6WV9DFZ",
+  "artifact_path": ".ai-dlc/units/UNIT-263.md",
+  "artifact_id": "UNIT-263",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/export_source.go",
+      "symbol": "ExportSource",
+      "lines": "L5-L12",
+      "action": "Add method FrozenIDs(ctx context.Context, worldID, roundID string) ([]string, error) with a doc comment saying it returns the ids frozen in the round's snapshot.yaml or ErrNotFound; leave 'var _ ExportSource = (*FileStore)(nil)' unchanged.",
+      "code": "FrozenIDs(ctx context.Context, worldID, roundID string) ([]string, error)",
+      "expected": "go build ./internal/contribution succeeds (non-test code only; the test fake is updated in Verify)"
+    }
+  ],
+  "created_at": "2026-11-23T16:09:50.708355+00:00",
+  "updated_at": "2026-11-23T16:10:54.046685+00:00"
+}

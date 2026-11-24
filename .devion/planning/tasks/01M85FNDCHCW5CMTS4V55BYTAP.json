@@ -1,0 +1,87 @@
+{
+  "id": "01M85FNDCHCW5CMTS4V55BYTAP",
+  "intent_id": "01M85FJG0B4EDH5WQNHF3MYD83",
+  "title": "Verify: Empty history message unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for showing and hiding the empty history message",
+  "description": "Write unit tests from the spec with listMine and submitContribution mocked via vi.mock of ../src/api/client, following tests/contributionHistoryStatus.test.tsx.",
+  "acceptance_criteria": [
+    "Empty ready state shows the message.",
+    "Adding an entry hides it.",
+    "Loading and error states do not show it."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/contributionHistoryEmpty.test.tsx"
+    ],
+    "out_of_scope": [
+      "Browser or real API"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "vitest + @testing-library/react with jsdom; all API calls mocked"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass in seconds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-681.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FKMQ22QMTSVVGZVQAB3GW",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-681.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85FNDCHKD5Y8S61HATTEM0Z"
+  ],
+  "sim_node_id": "01M85FKMQ2DH3EJ2W3FC2PK6ZW",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-681.md",
+  "artifact_id": "UNIT-681",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionHistoryEmpty.test.tsx",
+      "symbol": "new: describe('history empty state')",
+      "lines": "new",
+      "action": "Create the file with '// @vitest-environment jsdom', mock '../src/api/client' via vi.mock(importOriginal) replacing listMine and submitContribution with vi.fn(), reset mocks in beforeEach and cleanup in afterEach, and render <ContributionSheet open onClose={vi.fn()} roundId=\"round-1\" />. Submission responses use contributionFixture from tests/fixtures/api.ts, which mirrors the Contribution type returned by submitContribution in src/api/client.ts.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistoryEmpty.test.tsx",
+      "expected": "File is collected by vitest."
+    },
+    {
+      "file": "game/frontend/tests/contributionHistoryEmpty.test.tsx",
+      "symbol": "it('shows the empty message when history loads empty')",
+      "lines": "new",
+      "action": "Mock listMine to resolve []; render; assert await screen.findByText('No suggestions yet this round') is truthy.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistoryEmpty.test.tsx -t 'shows the empty message'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/contributionHistoryEmpty.test.tsx",
+      "symbol": "it('hides the empty message after an entry is added')",
+      "lines": "new",
+      "action": "Mock listMine to resolve [] and submitContribution to resolve contributionFixture; render, wait for the empty message, type 'A new idea' into the textbox labelled 'Your idea' with userEvent or fireEvent, click Send; assert the message is gone (waitFor queryByText is null) and 'A new idea' is listed.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistoryEmpty.test.tsx -t 'hides the empty message'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/contributionHistoryEmpty.test.tsx",
+      "symbol": "it('does not show the empty message while loading or on error')",
+      "lines": "new",
+      "action": "Case 1: listMine returns a never-resolving promise; assert queryByText('No suggestions yet this round') is null. Case 2: listMine rejects; await the alert 'Could not load your suggestions' and assert the empty message is null. Also assert that a non-empty history ([contributionFixture]) does not show it.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistoryEmpty.test.tsx",
+      "expected": "All tests in the file pass."
+    }
+  ],
+  "created_at": "2026-11-24T00:35:32.369187+00:00",
+  "updated_at": "2026-11-24T00:36:42.825213+00:00"
+}

@@ -1,0 +1,71 @@
+{
+  "id": "01M84QZEP0DVWDAEWHMR8CKCJD",
+  "intent_id": "01M84QY4V6THB1MT4RPP17W4WD",
+  "title": "Verify: Committed manifest paths vs present files with fs mocked unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for findMissingAssetPaths using the committed manifest read through mocked node:fs.",
+  "description": "New test file tests/manifestFilesMocked.test.ts mocks node:fs, serves the committed manifest.json text via the mock, and asserts the helper against a file list.",
+  "acceptance_criteria": [
+    "Full list yields no missing paths",
+    "List missing one path yields exactly that path",
+    "fs is mocked and no asset file is read"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/manifestFilesMocked.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('node:fs'); committed manifest text obtained via vi.importActual('node:fs') once in a hoisted factory, or imported as JSON"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test file passes via vitest filter",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-383.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QYXA78NS5BB922D3NQ0KC",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-383.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QZEP0475NQNYXGKDZ3QS6"
+  ],
+  "sim_node_id": "01M84QYXA78KZYW5WEQ7PDX2H6",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-383.md",
+  "artifact_id": "UNIT-383",
+  "steps": [
+    {
+      "file": "game/tests/manifestFilesMocked.test.ts",
+      "symbol": "new: committed manifest paths are all in the file list",
+      "lines": "new",
+      "action": "Create the test: mock node:fs with readFileSync returning the committed manifest.json text (obtained via vi.importActual in the mock factory) and existsSync mocked; call parseManifest on JSON.parse(readFileSync(...)); build files = manifest.assets.map(a=>a.path); assert findMissingAssetPaths(manifest, files) equals [].",
+      "command": "cd game && npx vitest run tests/manifestFilesMocked.test.ts",
+      "expected": "Test passes; helper returns []."
+    },
+    {
+      "file": "game/tests/manifestFilesMocked.test.ts",
+      "symbol": "new: reports a path missing from the file list",
+      "lines": "new",
+      "action": "Add test: remove 'worlds/the-boys-room/furniture/bed.svg' from files; assert findMissingAssetPaths returns ['worlds/the-boys-room/furniture/bed.svg']. Add test that the manifest has at least one asset so the check is not vacuous.",
+      "command": "cd game && npx vitest run tests/manifestFilesMocked.test.ts",
+      "expected": "All tests in the file pass."
+    }
+  ],
+  "created_at": "2026-11-23T17:41:35.552274+00:00",
+  "updated_at": "2026-11-23T17:42:34.893622+00:00"
+}

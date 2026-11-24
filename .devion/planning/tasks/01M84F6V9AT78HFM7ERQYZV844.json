@@ -1,0 +1,55 @@
+{
+  "id": "01M84F6V9AT78HFM7ERQYZV844",
+  "intent_id": "01M84F2Y7B1BMD41PYYF9Y78WM",
+  "title": "REQ · Worker holds an exclusive file lock so only one runs per World",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "File lock Acquire fails with ErrLocked while another holder exists",
+  "description": "Context: the worker must run one execution per World at a time. Desired behavior: lock.Acquire(path) creates the lock file exclusively and Release removes it. Expected result: a second Acquire returns ErrLocked. Why: prevents concurrent executions.",
+  "acceptance_criteria": [
+    "Given no lock file, when Acquire runs, then it succeeds and the file contains the pid",
+    "Given a held lock, when Acquire runs again, then it returns an error satisfying errors.Is(err, ErrLocked)",
+    "Given Release was called, when Acquire runs again, then it succeeds"
+  ],
+  "scope": {
+    "in_scope": [
+      "lock package"
+    ],
+    "out_of_scope": [
+      "stale-lock recovery"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "os.OpenFile with O_CREATE|O_EXCL; no external dependencies"
+  ],
+  "dependencies": [
+    "R1 module go.mod"
+  ],
+  "definition_of_done": [
+    "lock package builds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-088.md`"
+  ],
+  "non_functional": [
+    "Release is idempotent"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84F6ECBAZP4CBGQX6YZJDH1",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-088.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84F6V9AR7QYR4QNN63AH3H7"
+  ],
+  "sim_node_id": "01M84F6ECBG3X1TXCB6B3YRA2N",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-088.md",
+  "artifact_id": "REQ-088",
+  "created_at": "2026-11-23T15:08:20.650605+00:00",
+  "updated_at": "2026-11-23T15:10:14.971735+00:00"
+}

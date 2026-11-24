@@ -1,0 +1,56 @@
+{
+  "id": "01M84FKXC1DRG6A6K9VZWP4Z09",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "REQ · Run retries up to the configured limit and stops when the budget is exceeded",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Agent failures are retried up to MaxRetries and accumulated cost above MaxBudget stops the run",
+  "description": "Context: config exposes MaxRetries and MaxBudget. Desired behavior: Run attempts the agent up to MaxRetries+1 times, recording Execution.Attempt, summing cost returned by each attempt, and stopping with ErrBudgetExceeded as soon as total cost exceeds MaxBudget. Expected result: bounded, budget-safe agent runs. Why: avoid runaway cost and endless loops.",
+  "acceptance_criteria": [
+    "Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent is called 3 times and the stored Attempt is 3",
+    "Given an agent that always fails and MaxRetries 1, when Run is called, then the agent is called 2 times, the status is FAILED and Error contains the agent error",
+    "Given each attempt costs 3.0 and MaxBudget 5.0, when the second attempt finishes, then Run returns an error satisfying errors.Is(err, ErrBudgetExceeded) and no third attempt runs"
+  ],
+  "scope": {
+    "in_scope": [
+      "retry loop in Run's execute step",
+      "ErrBudgetExceeded"
+    ],
+    "out_of_scope": [
+      "backoff delays"
+    ],
+    "preserve": [
+      "R1 lock and timeout behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Budget check runs after each attempt, including a failed one"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "Retry and budget limits enforced",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-093.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FKHRASKJH02BCCVVHV99Y",
+    "trace:01M8457KMMSQBY9VJAQTVZ1RNJ",
+    "artifact:.ai-dlc/requirements/REQ-093.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FKXC1JJEMCVEYCCPG5BCQ"
+  ],
+  "sim_node_id": "01M84FKHRAXTJJ9W2XTZRXNVPW",
+  "feature_id": "01M8457KMMSQBY9VJAQTVZ1RNJ",
+  "artifact_path": ".ai-dlc/requirements/REQ-093.md",
+  "artifact_id": "REQ-093",
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.980403+00:00"
+}

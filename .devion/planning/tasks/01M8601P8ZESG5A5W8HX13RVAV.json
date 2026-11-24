@@ -1,0 +1,74 @@
+{
+  "id": "01M8601P8ZESG5A5W8HX13RVAV",
+  "intent_id": "01M85ZKPM7T0R3TNQPAN9AHTG3",
+  "title": "Verify: placeholder styling removed unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Test CSS and dialog classes",
+  "description": "Read styles.css from disk and render the dialog.",
+  "acceptance_criteria": [
+    "Given styles.css, then it does not contain contribution-sheet",
+    "Given the open dialog, then its content has class sf-frame-parchment"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/noPlaceholderStyles.test.tsx",
+      "tests/layout.test.tsx"
+    ],
+    "out_of_scope": [
+      "browser"
+    ],
+    "preserve": [
+      "frame kit selectors assertions"
+    ]
+  },
+  "technical_constraints": [
+    "Mock api client as contribution tests do via tests/fixtures/api.ts"
+  ],
+  "dependencies": [
+    "ACT-STYLES"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-867.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85ZPR8Y057R3PVZTM2N5CXN",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-867.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8601P8Z6GGWHF9YKG5VRTGW"
+  ],
+  "sim_node_id": "01M85ZPR8YJ9RGY12QTBF1AK8T",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-867.md",
+  "artifact_id": "UNIT-867",
+  "steps": [
+    {
+      "file": "game/frontend/tests/layout.test.tsx",
+      "symbol": "stylesheet test",
+      "lines": "L47-L56",
+      "action": "Change the last assertion expect(css).toContain('.contribution-sheet') to expect(css).not.toContain('.contribution-sheet').",
+      "code": "toContain -> not.toContain",
+      "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+      "expected": "Stylesheet test passes"
+    },
+    {
+      "file": "game/frontend/tests/noPlaceholderStyles.test.tsx",
+      "symbol": "new: dialog uses kit class",
+      "lines": "new",
+      "action": "Render ContributionSheet open=true with the client mocked as tests/contributionDialog.test.tsx does; assert screen.getByRole('dialog') has class sf-frame-parchment and not contribution-sheet.",
+      "command": "cd game/frontend && npx vitest run tests/noPlaceholderStyles.test.tsx",
+      "expected": "Dialog class assertions pass"
+    }
+  ],
+  "created_at": "2026-11-24T05:21:51.903863+00:00",
+  "updated_at": "2026-11-24T05:24:51.486154+00:00"
+}

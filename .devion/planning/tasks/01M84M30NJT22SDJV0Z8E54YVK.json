@@ -1,0 +1,94 @@
+{
+  "id": "01M84M30NJT22SDJV0Z8E54YVK",
+  "intent_id": "01M84KZ6N8S896GNJRVFEDFN3R",
+  "title": "Act: Add Tailwind, PostCSS configs, directives and design tokens",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create Tailwind and PostCSS configs and update styles.css",
+  "description": "Add devDependencies, create the two config files and prepend directives plus token variables to src/styles.css, keeping all existing rules.",
+  "acceptance_criteria": [
+    "Given the frontend, when vite loads, then postcss.config.js registers tailwindcss and autoprefixer",
+    "Given styles.css, when read, then directives and tokens precede the existing rules"
+  ],
+  "scope": {
+    "in_scope": [
+      "package.json",
+      "tailwind.config.ts",
+      "postcss.config.js",
+      "src/styles.css"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Existing CSS rules"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/frontend/package.json`",
+    "New file: `game/frontend/tailwind.config.ts`",
+    "New file: `game/frontend/postcss.config.js`",
+    "Code path: `game/frontend/src/styles.css`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Config files created; npm install succeeds",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-286.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84M278HCVTAGTN213NNWC96",
+    "trace:01M84KNPXBEDA2ZY1P6TS4HYMA",
+    "artifact:.ai-dlc/units/UNIT-286.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84M30NJF81T9QCTZDR2X8E7"
+  ],
+  "sim_node_id": "01M84M278HK4N2FTG948R3ZPVX",
+  "feature_id": "01M84KNPXBEDA2ZY1P6TS4HYMA",
+  "artifact_path": ".ai-dlc/units/UNIT-286.md",
+  "artifact_id": "UNIT-286",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/package.json",
+      "symbol": "devDependencies",
+      "lines": "L16-L27",
+      "action": "Add tailwindcss, postcss, autoprefixer and tailwindcss-animate to devDependencies, then run npm install in game/frontend",
+      "code": "\"tailwindcss\": \"^3.4.10\", \"postcss\": \"^8.4.41\", \"autoprefixer\": \"^10.4.20\", \"tailwindcss-animate\": \"^1.0.7\"",
+      "expected": "npm install exits 0 and node_modules/tailwindcss exists"
+    },
+    {
+      "file": "game/frontend/postcss.config.js",
+      "symbol": "new: default export",
+      "lines": "new",
+      "action": "Create ESM PostCSS config registering tailwindcss and autoprefixer plugins",
+      "code": "export default { plugins: { tailwindcss: {}, autoprefixer: {} } };",
+      "expected": "Vite picks up the config automatically"
+    },
+    {
+      "file": "game/frontend/tailwind.config.ts",
+      "symbol": "new: default export Config",
+      "lines": "new",
+      "action": "Create Tailwind config with darkMode 'class', content globs, theme.extend.colors background/foreground/primary/muted/border using hsl(var(--name)), borderRadius lg using var(--radius), and plugin tailwindcss-animate",
+      "code": "import type { Config } from 'tailwindcss';\nimport animate from 'tailwindcss-animate';\nexport default { darkMode: 'class', content: ['./index.html','./src/**/*.{ts,tsx}'], theme: { extend: { colors: { background:'hsl(var(--background))', foreground:'hsl(var(--foreground))', primary:{DEFAULT:'hsl(var(--primary))',foreground:'hsl(var(--primary-foreground))'}, muted:'hsl(var(--muted))', border:'hsl(var(--border))' }, borderRadius: { lg:'var(--radius)' } } }, plugins: [animate] } satisfies Config;",
+      "expected": "tsc accepts the file and the config exports content containing ./src/**/*.{ts,tsx}"
+    },
+    {
+      "file": "game/frontend/src/styles.css",
+      "symbol": "top of file",
+      "lines": "before L1",
+      "action": "Insert @tailwind base; @tailwind components; @tailwind utilities; and a :root block defining --background, --foreground, --primary, --primary-foreground, --muted, --border and --radius with warm dark pixel-RPG HSL values; do not remove any existing rule",
+      "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n:root { --background: 24 20% 10%; --foreground: 38 40% 90%; --primary: 32 85% 55%; --primary-foreground: 24 20% 10%; --muted: 24 15% 18%; --border: 24 15% 28%; --radius: 0.25rem; }",
+      "expected": "styles.css begins with the three directives and still contains .game-layout"
+    }
+  ],
+  "created_at": "2026-11-23T16:33:37.970438+00:00",
+  "updated_at": "2026-11-23T16:36:24.347810+00:00"
+}

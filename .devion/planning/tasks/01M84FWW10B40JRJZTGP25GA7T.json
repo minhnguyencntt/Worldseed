@@ -1,0 +1,56 @@
+{
+  "id": "01M84FWW10B40JRJZTGP25GA7T",
+  "intent_id": "01M84FTKD5XMM4BXW2DYCC40ZD",
+  "title": "REQ · A report writer persists validated, atomically written JSON reports",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "New report package writes <dir>/<id>.json",
+  "description": "Context: no report package exists. Desired behavior: report.Writer{dir}.Write(Report) validates ID with store.ValidateID, creates the directory, and atomically writes indented JSON containing execution id, round id, status, attempts, error, started_at, finished_at and duration_ms. Expected result: a structured file per execution. Why: persisted execution summaries.",
+  "acceptance_criteria": [
+    "Given a valid Report, When Write is called, Then <dir>/<id>.json decodes to the same field values",
+    "Given an invalid ID, When Write is called, Then it returns an error wrapping store.ErrInvalidID and the directory has no files"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/report/report.go"
+    ],
+    "out_of_scope": [
+      "Runner wiring"
+    ],
+    "preserve": [
+      "store package API"
+    ]
+  },
+  "technical_constraints": [
+    "Atomic temp file then rename like store.Save"
+  ],
+  "dependencies": [
+    "req1"
+  ],
+  "definition_of_done": [
+    "Writer implemented",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-096.md`"
+  ],
+  "non_functional": [
+    "Atomic write"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FWGD6BXK2Z44NCRKQNJ85",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-096.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FWW10ZDAVH5ZEBW2K928Y"
+  ],
+  "sim_node_id": "01M84FWGD6C49KEF8PDQGRPYH0",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-096.md",
+  "artifact_id": "REQ-096",
+  "created_at": "2026-11-23T15:20:22.304558+00:00",
+  "updated_at": "2026-11-23T15:22:04.073458+00:00"
+}

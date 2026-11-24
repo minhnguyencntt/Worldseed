@@ -1,0 +1,74 @@
+{
+  "id": "01M84X7K92231J7JD4BXSSJ026",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "Act: Add focus, blur, handleKey and focus cycling",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Keyboard access in SceneObject and buildScene",
+  "description": "Add focus API to SceneObject and a moveFocus helper exported from buildScene.ts.",
+  "acceptance_criteria": [
+    "SceneObject.handleKey emits on Enter/Space when focused",
+    "moveFocus skips hidden objects and wraps"
+  ],
+  "scope": {
+    "in_scope": [
+      "SceneObject.ts",
+      "buildScene.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "buildScene sorted output"
+    ]
+  },
+  "technical_constraints": [
+    "No DOM access",
+    "Code path: `game/src/entities/SceneObject.ts`",
+    "Code path: `game/src/engine/buildScene.ts`"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "tsc --noEmit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-484.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84X58HR1HFWWS5R05BMJ8X3",
+    "artifact:.ai-dlc/units/UNIT-484.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84X7K927VF2X2MV0RV1CEZ8"
+  ],
+  "sim_node_id": "01M84X58HR630D30C5H3KVFWXE",
+  "artifact_path": ".ai-dlc/units/UNIT-484.md",
+  "artifact_id": "UNIT-484",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/entities/SceneObject.ts",
+      "symbol": "SceneObject.focus, blur, handleKey, isVisible, isFocused",
+      "lines": "after activate method added in the previous unit",
+      "action": "Add private focused = false; focus(): if visible set focused true, setHighlighted(true), setLabelVisible(true); blur(): set focused false, setHighlighted(false), setLabelVisible(false); handleKey(key: string): if focused && isActivationKey(key) call this.activate(); add getters isVisible() and isFocused(); import isActivationKey from '../systems/interaction'",
+      "expected": "Focused objects activate on Enter and Space only"
+    },
+    {
+      "file": "game/src/engine/buildScene.ts",
+      "symbol": "new: moveFocus",
+      "lines": "after L8",
+      "action": "Export moveFocus(objects: SceneObject[], delta: 1 | -1): void: collect visible = objects.filter(o => o.isVisible()); current = visible.findIndex(o => o.isFocused()); next = nextFocusIndex(visible.length, current, delta) (when current is -1 and delta is 1 start at 0 by using current = -1 so result is 0); blur all objects; if next >= 0 call visible[next].focus(); import nextFocusIndex from '../systems/interaction'",
+      "code": "const next = nextFocusIndex(visible.length, current, delta); objects.forEach((o) => o.blur()); if (next >= 0) visible[next].focus();",
+      "expected": "Focus advances over visible objects and wraps"
+    }
+  ],
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.565181+00:00"
+}

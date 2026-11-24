@@ -1,0 +1,77 @@
+{
+  "id": "01M85Z6KQ4YMGTBNY1H20PEDAT",
+  "intent_id": "01M85YRXQEN9TWD6B1NFMQ938P",
+  "title": "Act: Delete ActionMenu and leftover hotspot-path styles",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Remove ActionMenu.tsx and any .action-menu CSS.",
+  "description": "After ObjectOverlay replaced it, delete the unanchored ActionMenu component and remaining references.",
+  "acceptance_criteria": [
+    "ActionMenu.tsx is gone",
+    "No import of ActionMenu remains"
+  ],
+  "scope": {
+    "in_scope": [
+      "Delete ActionMenu.tsx",
+      "CSS cleanup"
+    ],
+    "out_of_scope": [
+      "getSceneView helper"
+    ],
+    "preserve": [
+      "useGame.view"
+    ]
+  },
+  "technical_constraints": [
+    "Do not read .devion/worktrees",
+    "Code path: `game/frontend/src/components/ActionMenu.tsx`",
+    "Code path: `game/frontend/src/styles.css`"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "tsc passes without ActionMenu",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-853.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85YXV0AAVW255AWCJ9JC242",
+    "trace:01M84J88PS9Z45DYPYF6VK3D3K",
+    "artifact:.ai-dlc/units/UNIT-853.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85Z6KQ4SG5RKWKHNAEK6MBA"
+  ],
+  "sim_node_id": "01M85YXV0AJBPGPRK1XB9MTCVA",
+  "feature_id": "01M84J88PS9Z45DYPYF6VK3D3K",
+  "artifact_path": ".ai-dlc/units/UNIT-853.md",
+  "artifact_id": "UNIT-853",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ActionMenu.tsx",
+      "symbol": "ActionMenu",
+      "lines": "L1-L27",
+      "action": "Delete the file; it is no longer imported by App.tsx after the ObjectOverlay swap.",
+      "command": "cd game/frontend && npx tsc --noEmit",
+      "expected": "no unresolved ActionMenu import"
+    },
+    {
+      "file": "game/frontend/src/styles.css",
+      "symbol": ".action-menu rules",
+      "lines": "search",
+      "action": "Remove any .action-menu and .actions selectors if present; leave Tailwind directives untouched.",
+      "command": "cd game/frontend && grep -n 'action-menu' src/styles.css",
+      "expected": "no matches"
+    }
+  ],
+  "created_at": "2026-11-24T05:07:04.548674+00:00",
+  "updated_at": "2026-11-24T05:13:51.835890+00:00"
+}

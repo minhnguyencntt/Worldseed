@@ -1,0 +1,94 @@
+{
+  "id": "01M85N053JZ9BX2TAG7406Z3TA",
+  "intent_id": "01M85MW9835357XVCB9VHZVCE4",
+  "title": "Verify: BootScene fades out and starts the scene on transitionTo unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with Phaser mocked prove the transitionTo fade-out and scene start.",
+  "description": "Write a new unit test file with a fake Phaser (modeled on game/frontend/tests/bootScenePlayAnimation.test.ts) whose cameras.main exposes fadeOut and once spies, whose scene exposes start, and which provides Cameras.Scene2D.Events.FADE_OUT_COMPLETE = 'camerafadeoutcomplete'. No browser or real Phaser is used.",
+  "acceptance_criteria": [
+    "fadeOut is called once with TRANSITION_FADE_MS after transitionTo is emitted.",
+    "scene.start is not called before the fade-out-complete callback runs and is called once with the sceneId afterwards.",
+    "Nothing is called when transitionTo was not emitted."
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file bootSceneTransition.test.ts"
+    ],
+    "out_of_scope": [
+      "Shutdown unsubscribe tests"
+    ],
+    "preserve": [
+      "Existing BootScene tests"
+    ]
+  },
+  "technical_constraints": [
+    "Vitest; Phaser fully mocked; content module mocked as in bootScenePlayAnimation.test.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass in seconds using only the named file",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-755.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85MXSA1XHT0B2RDK3N0YTJM",
+    "trace:01M85MNPTKR7SF3S2S84FNG1HX",
+    "artifact:.ai-dlc/units/UNIT-755.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85N053JTAEEFZ5KZKSHZQG9"
+  ],
+  "sim_node_id": "01M85MXSA1FR0DKEBS4JNWQGWK",
+  "artifact_path": ".ai-dlc/units/UNIT-755.md",
+  "artifact_id": "UNIT-755",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "new: vi.mock('phaser') fake scene",
+      "lines": "new",
+      "action": "Copy the phaser and content mocks from bootScenePlayAnimation.test.ts. Extend the fake Scene with cameras = { main: { fadeIn: vi.fn(), fadeOut: vi.fn(), once: vi.fn() } }, scene = { start: vi.fn() }, and add Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } } to the default export.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts -t 'fades the camera out'",
+      "expected": "BootScene can be constructed and create() runs against the fake."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "describe('BootScene transitionTo') beforeEach",
+      "lines": "new",
+      "action": "In beforeEach call reactToPhaser.clear(), build a BootScene, set up a store state as bootScenePlayAnimation.test.ts does, and call create().",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts -t 'fades the camera out'",
+      "expected": "Scene subscribed with a clean bus."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "it('fades the camera out on transitionTo')",
+      "lines": "new",
+      "action": "Emit reactToPhaser.emit('transitionTo', { sceneId: 'library' }); assert cameras.main.fadeOut toHaveBeenCalledTimes(1) and toHaveBeenCalledWith(TRANSITION_FADE_MS) imported from BootScene; assert scene.start not called.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts -t 'fades the camera out'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "it('starts the scene only after fade-out completes')",
+      "lines": "new",
+      "action": "Emit transitionTo { sceneId: 'library' }; read the callback from cameras.main.once.mock.calls where call[0] === 'camerafadeoutcomplete'; assert scene.start not called; invoke the callback; assert scene.start toHaveBeenCalledTimes(1) with 'library'.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts -t 'only after fade-out'",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneTransition.test.ts",
+      "symbol": "it('does nothing without a transitionTo event')",
+      "lines": "new",
+      "action": "Without emitting, assert fadeOut and scene.start were not called.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneTransition.test.ts",
+      "expected": "All three tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T02:08:47.218098+00:00",
+  "updated_at": "2026-11-24T02:10:50.014913+00:00"
+}

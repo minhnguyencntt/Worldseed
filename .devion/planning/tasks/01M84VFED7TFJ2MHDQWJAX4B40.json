@@ -1,0 +1,63 @@
+{
+  "id": "01M84VFED7TFJ2MHDQWJAX4B40",
+  "intent_id": "01M84VCG55BW90F4DH1D9SZJNX",
+  "title": "Verify: runUntrack exit code and script unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for runUntrack success, failure and script wiring",
+  "description": "Add tests/untrackScript.test.ts covering runUntrack with fake runner and log/err spies, and a check that the script source uses runUntrack.",
+  "acceptance_criteria": [
+    "Success logs count and returns 0",
+    "Failure logs error and returns 1",
+    "Script source references runUntrack and no longer calls untrackNodeModules directly"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/untrackScript.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Read script file with node:fs readFileSync; no git execution"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-455.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VE2X8CJ9QD9NWVASFZFRG",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-455.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VFED748M3G6M5V3HMCP8T"
+  ],
+  "sim_node_id": "01M84VE2X8VJ49CXQWAFQT15T0",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-455.md",
+  "artifact_id": "UNIT-455",
+  "steps": [
+    {
+      "file": "game/frontend/tests/untrackScript.test.ts",
+      "symbol": "new: runUntrack tests",
+      "lines": "new",
+      "action": "Create a vitest file with three tests. (1) fake runner returning 'node_modules/a\\0' then '' for ls-files; vi.fn log and err; expect return 0, log called with 'untracked 1 paths', err not called. (2) fake runner whose second ls-files listing is 'node_modules/a\\0'; expect return 1 and err called with a message containing 'node_modules/a'. (3) readFileSync of scripts/untrackNodeModules.ts contains 'runUntrack' and 'process.exitCode'.",
+      "command": "npx vitest run tests/untrackScript.test.ts",
+      "expected": "Three tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T18:42:45.287596+00:00",
+  "updated_at": "2026-11-23T18:43:48.016327+00:00"
+}

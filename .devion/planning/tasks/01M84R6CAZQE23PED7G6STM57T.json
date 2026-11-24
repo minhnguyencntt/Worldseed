@@ -1,0 +1,63 @@
+{
+  "id": "01M84R6CAZQE23PED7G6STM57T",
+  "intent_id": "01M84R226PWCRN5TRKJH56WBAQ",
+  "title": "Verify: Spritesheet frame and animation validation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test schema checks",
+  "description": "Test parseManifest on in-memory sheets and on the committed manifest.",
+  "acceptance_criteria": [
+    "Bad frameCount reported",
+    "Bad animation index reported",
+    "Committed manifest ok"
+  ],
+  "scope": {
+    "in_scope": [
+      "new test"
+    ],
+    "out_of_scope": [
+      "app startup"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Pure in-memory plus read of manifest.json"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-392.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84R4895G5R8WGRXNBNTKK3T",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-392.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84R6CAZSZ49T8KA206J0WP9"
+  ],
+  "sim_node_id": "01M84R48954VGD1BN858VNTJKT",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-392.md",
+  "artifact_id": "UNIT-392",
+  "steps": [
+    {
+      "file": "game/tests/sg3SheetValidation.test.ts",
+      "symbol": "new: describe('spritesheet validation')",
+      "lines": "new",
+      "action": "Import parseManifest from ../src/assets/manifest. Case 1: sheet 64x48 frames 32/48/3 → ok false with an error path 'assets.0.frames.frameCount'. Case 2: sheet 64x48 frames 32/48/2 with animation idle frames [0,5] → error path 'assets.0.animations.idle.frames'. Case 3: frameHeight 60 on height 48 → error path containing 'frameHeight'. Case 4: JSON.parse of public/assets/worlds/the-boys-room/manifest.json → ok true.",
+      "command": "cd game && npx vitest run tests/sg3SheetValidation.test.ts",
+      "expected": "All four cases pass"
+    }
+  ],
+  "created_at": "2026-11-23T17:45:22.527004+00:00",
+  "updated_at": "2026-11-23T17:46:57.202531+00:00"
+}

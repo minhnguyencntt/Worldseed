@@ -1,0 +1,68 @@
+{
+  "id": "01M84FWW10G4S56TFMP1DDSV3X",
+  "intent_id": "01M84FTKD5XMM4BXW2DYCC40ZD",
+  "title": "Verify: report writer unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for report.Writer",
+  "description": "Prove the writer persists reports and rejects bad ids using a temp dir.",
+  "acceptance_criteria": [
+    "Round-trip equals input",
+    "Invalid id rejected with no files"
+  ],
+  "scope": {
+    "in_scope": [
+      "report_test.go"
+    ],
+    "out_of_scope": [
+      "runner"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "t.TempDir only"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-193.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FWGD6W8054QXV1CP1KJF1",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-193.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FWW103PXFBCZ01NA84FM9"
+  ],
+  "sim_node_id": "01M84FWGD6Y8A4Y62XPYGX0P10",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-193.md",
+  "artifact_id": "UNIT-193",
+  "steps": [
+    {
+      "file": "backend/worker/internal/report/report_test.go",
+      "symbol": "new: TestWriteRoundTrip",
+      "lines": "new",
+      "action": "With dir=t.TempDir()/executions, Write Report{ExecutionID:\"exec-1\",RoundID:\"ROUND-0000001\",Status:store.StatusFailed,Attempts:2,Error:\"boom\"}; read exec-1.json, json.Unmarshal, assert all fields equal",
+      "command": "cd backend/worker && go test ./internal/report -run TestWriteRoundTrip",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/report/report_test.go",
+      "symbol": "new: TestWriteInvalidID",
+      "lines": "new",
+      "action": "Write Report with ExecutionID \"../evil\"; assert errors.Is(err, store.ErrInvalidID) and os.ReadDir of the dir and its parent show no new json file",
+      "command": "cd backend/worker && go test ./internal/report -run TestWriteInvalidID",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:20:22.304558+00:00",
+  "updated_at": "2026-11-23T15:22:04.054069+00:00"
+}

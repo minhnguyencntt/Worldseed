@@ -1,0 +1,81 @@
+{
+  "id": "01M85W6905GK116DS2GRX9EYPT",
+  "intent_id": "01M85VZRSMWJ59VE4P4369DJ4X",
+  "title": "Verify: Item icon grids are 16x16, outlined, shaded and palette-only",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for itemIcons sources",
+  "description": "Write game/frontend/tests/itemIcons.test.ts, modelled on tests/roomSources.test.ts, proving ids, sizes, outline, shading and ART_SOURCES wiring from the requirement.",
+  "acceptance_criteria": [
+    "Test asserts six unique item/ ids.",
+    "Test asserts each frame is 16x16 with the outline index and at least two other non-zero indices.",
+    "Test asserts gridToRgba succeeds for every item frame and ART_SOURCES includes them."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/itemIcons.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, no I/O; shared palette only."
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "itemIcons.test.ts passes.",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-822.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85W1TAV9YFVJJB2GKDWKX8M",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-822.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85W6905JX9T4WWNZ2YAGF7N"
+  ],
+  "sim_node_id": "01M85W1TAVGXP0SQKS2MNT6QBC",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-822.md",
+  "artifact_id": "UNIT-822",
+  "steps": [
+    {
+      "file": "game/frontend/tests/itemIcons.test.ts",
+      "symbol": "new: describe('item icon sources')",
+      "lines": "new",
+      "action": "Import ITEM_SOURCES from ../src/art/itemIcons, ART_SOURCES from ../src/art/sources, rampIndex from ../src/art/draw, gridToRgba from ../src/lib/gridToRgba and PALETTE from ../src/lib/palette. Add it('has six unique item/ ids') expecting ids toEqual the six names old-key, note, book, coin, flashlight, photo prefixed item/ and Set size 6.",
+      "command": "cd game/frontend && npx vitest run tests/itemIcons.test.ts -t 'unique'",
+      "expected": "The unique-ids test passes."
+    },
+    {
+      "file": "game/frontend/tests/itemIcons.test.ts",
+      "symbol": "it.each(ITEM_SOURCES) size, outline and shading",
+      "lines": "new",
+      "action": "For each source assert frames.length is 1, the grid has 16 rows each of length 16, the flattened set contains rampIndex('indigo', 0), and the set has at least 3 distinct values including 0 or two non-outline indices. Also assert gridToRgba(frame, PALETTE) does not throw.",
+      "command": "cd game/frontend && npx vitest run tests/itemIcons.test.ts",
+      "expected": "All per-icon tests pass."
+    },
+    {
+      "file": "game/frontend/tests/itemIcons.test.ts",
+      "symbol": "it('is included in ART_SOURCES')",
+      "lines": "new",
+      "action": "Assert every ITEM_SOURCES id appears in ART_SOURCES.map(s => s.id).",
+      "command": "cd game/frontend && npx vitest run tests/itemIcons.test.ts -t 'ART_SOURCES'",
+      "expected": "The wiring test passes."
+    }
+  ],
+  "created_at": "2026-11-24T04:14:27.845012+00:00",
+  "updated_at": "2026-11-24T04:19:01.299126+00:00"
+}

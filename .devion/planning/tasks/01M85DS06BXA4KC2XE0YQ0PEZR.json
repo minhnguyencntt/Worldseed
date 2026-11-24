@@ -1,0 +1,64 @@
+{
+  "id": "01M85DS06BXA4KC2XE0YQ0PEZR",
+  "intent_id": "01M85DMTYJM04X7TE2GR7YQVXV",
+  "title": "Verify: Zero-quota Send disabled and submit blocked unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for disabled Send and no backend call at 0",
+  "description": "Write tests with the backend mocked proving Send is disabled and submitContribution is never called at zero quota, and still called above 0.",
+  "acceptance_criteria": [
+    "Send is disabled at remaining 0",
+    "fireEvent.submit at 0 does not call submitContribution",
+    "Submit above 0 calls submitContribution once"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file for zero-quota gating"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing contribution tests"
+    ]
+  },
+  "technical_constraints": [
+    "Mock ../src/api/client; no real network"
+  ],
+  "dependencies": [
+    "ACT-2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-653.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85DP5ZQWJ506DDGX20RW2M6",
+    "trace:01M85DHGKTD3RWYBTYK2WNA4HC",
+    "artifact:.ai-dlc/units/UNIT-653.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85DS06B6ZGR7FT02NM7F43K"
+  ],
+  "sim_node_id": "01M85DP5ZQNAF4CBPD1D8H2157",
+  "artifact_path": ".ai-dlc/units/UNIT-653.md",
+  "artifact_id": "UNIT-653",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionQuotaGate.test.tsx",
+      "symbol": "new: ContributionSheet zero-quota gating",
+      "lines": "new",
+      "action": "Create the test file mocking ../src/api/client as in contributionMaxLength.test.tsx. Test 1: listMine resolves 5 items from contributionFixture (tests/fixtures/api, matching listMine's return type), await the message, assert getByRole('button',{name:'Send'}) is disabled. Test 2: same setup, type 'hello' in 'Your idea', fireEvent.submit on the form, assert submitContribution not called. Test 3: listMine resolves 1 item, type 'hello', click Send, assert submitContribution toHaveBeenCalledTimes(1) with 'hello'.",
+      "command": "cd game/frontend && npx vitest run tests/contributionQuotaGate.test.tsx",
+      "expected": "All three tests pass"
+    }
+  ],
+  "created_at": "2026-11-24T00:02:32.779311+00:00",
+  "updated_at": "2026-11-24T00:03:44.710566+00:00"
+}

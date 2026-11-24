@@ -1,0 +1,73 @@
+{
+  "id": "01M85STRXC6NWQZEDQFHFWXJ5W",
+  "intent_id": "01M85SHYJTCGKNGQ56NSZS65QJ",
+  "title": "Verify: Draw helpers and room size registry unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for draw.ts and roomSizes.ts",
+  "description": "Write tests from the R1 acceptance criteria with no I/O.",
+  "acceptance_criteria": [
+    "createGrid, fillRect, outlineRect, shadeRect, dither and rampIndex behave as specified",
+    "ROOM_ART_SIZES lists 13 positive integer sizes and the shell heights sum to 270"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/roomDraw.test.ts"
+    ],
+    "out_of_scope": [
+      "Concrete grids"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only, nothing mocked is needed beyond pure imports",
+    "Shared palette of at most 48 colours is read from src/lib/palette.ts, never copied"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "roomDraw tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-795.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SMTB5MWMFV3B2Z46HHZC9",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-795.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85STRXC54N2GNTGQG9TCQR9"
+  ],
+  "sim_node_id": "01M85SMTB5V53ECTNSZ9VT8N03",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-795.md",
+  "artifact_id": "UNIT-795",
+  "steps": [
+    {
+      "file": "game/frontend/tests/roomDraw.test.ts",
+      "symbol": "new: draw helpers",
+      "lines": "new",
+      "action": "Create the file. Test rampIndex('wood',2) equals PALETTE.indexOf(PALETTE_RAMPS.wood[2]); rampIndex('indigo',6) throws; createGrid(4,3,7) equals three rows of [7,7,7,7]; fillRect(createGrid(3,3,0),1,1,5,5,9) clips so only cells (1,1),(2,1),(1,2),(2,2) are 9; outlineRect(createGrid(4,4,0),0,0,4,4,5) leaves the 2x2 centre 0; shadeRect over 1x4 with ramp 'wood', 4 and 1 gives indices wood 4,3,2,1 descending; dither(createGrid(2,2,0),0,0,2,2,1,2) gives [[1,2],[2,1]].",
+      "command": "cd game/frontend && npx vitest run tests/roomDraw.test.ts",
+      "expected": "All helper tests pass"
+    },
+    {
+      "file": "game/frontend/tests/roomDraw.test.ts",
+      "symbol": "describe ROOM_ART_SIZES",
+      "lines": "after helper tests",
+      "action": "Add a test that Object.keys(ROOM_ART_SIZES) sorted equals the 13 ids, every width and height is a positive integer, and wall.height + wainscot.height + floor.height === 270 with all three widths 480.",
+      "command": "cd game/frontend && npx vitest run tests/roomDraw.test.ts",
+      "expected": "Registry test passes"
+    }
+  ],
+  "created_at": "2026-11-24T03:33:13.772213+00:00",
+  "updated_at": "2026-11-24T03:38:50.013912+00:00"
+}

@@ -1,0 +1,545 @@
+{
+  "intent_id": "01M843E57254ZA19GZD0A71MZ9",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M843H7DR38ARYRFZB12T1VVH",
+      "kind": "intent",
+      "title": "SG-2.1 · Merge duplicate content loader/validator into one module",
+      "body": "Context: backend/game/src/content has two overlapping implementations of loadWorld and validateWorld. loader.ts returns scenes as an array and validates a LoadedWorld. world.ts returns scenes as a record and validates (WorldDef, SceneDef[]). It does field checks on load. tests/content.test.ts imports loader.ts and tests/validator.test.ts imports world.ts. Desired behavior: one module survives, all imports point to it, and the validator tests cover the surviving one. Expected result: no duplicate implementation remains and unknown scene, object, character and flag references are tested. Why: two diverging validators make content errors unreliable for the later AI development worker.\n\n## Acceptance criteria\n- Given the repo after the change, when src/content is listed, then only one module exports loadWorld and validateWorld and src/content/world.ts no longer exists\n- Given every file under backend/game/src and backend/game/tests, when imports are searched, then none reference content/world\n- Given a world whose scene uses an unknown goto_scene target, say character, set_flag flag and discover object, when validateWorld runs, then it returns unknown scene, unknown character, unknown flag and unknown object errors\n- Given the real the-boys-room content, when loadWorld and validateWorld run, then validateWorld returns an empty array\n\n\n## Scope\n- In scope: backend/game/src/content/loader.ts\n- In scope: delete backend/game/src/content/world.ts\n- In scope: backend/game/tests/validator.test.ts\n- In scope: backend/game/tests/loader.test.ts\n- Out of scope: Go backend\n- Out of scope: engine, systems and state modules\n- Out of scope: content YAML changes\n- Preserve: content.test.ts behavior on the-boys-room\n- Preserve: LoadedWorld.scenes remains an array of SceneDef\n- Preserve: existing error message formats such as 'unknown scene: X'\n\n\n## Technical constraints\n- TypeScript with vitest and the yaml package; no new dependencies\n- Surviving module path is backend/game/src/content/loader.ts\n\n\n## Definition of done\n- Only one loader/validator implementation exists\n- npm test and npm run typecheck pass in backend/game\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Merge src/content/loader.ts and src/content/world.ts into a single loader and validator, update every import, and cover unknown scene, object, character and flag references in tests.",
+      "description": "Context: backend/game/src/content has two overlapping implementations of loadWorld and validateWorld. loader.ts returns scenes as an array and validates a LoadedWorld. world.ts returns scenes as a record and validates (WorldDef, SceneDef[]). It does field checks on load. tests/content.test.ts imports loader.ts and tests/validator.test.ts imports world.ts. Desired behavior: one module survives, all imports point to it, and the validator tests cover the surviving one. Expected result: no duplicate implementation remains and unknown scene, object, character and flag references are tested. Why: two diverging validators make content errors unreliable for the later AI development worker.",
+      "acceptance_criteria": [
+        "Given the repo after the change, when src/content is listed, then only one module exports loadWorld and validateWorld and src/content/world.ts no longer exists",
+        "Given every file under backend/game/src and backend/game/tests, when imports are searched, then none reference content/world",
+        "Given a world whose scene uses an unknown goto_scene target, say character, set_flag flag and discover object, when validateWorld runs, then it returns unknown scene, unknown character, unknown flag and unknown object errors",
+        "Given the real the-boys-room content, when loadWorld and validateWorld run, then validateWorld returns an empty array"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/src/content/loader.ts",
+          "delete backend/game/src/content/world.ts",
+          "backend/game/tests/validator.test.ts",
+          "backend/game/tests/loader.test.ts"
+        ],
+        "out_of_scope": [
+          "Go backend",
+          "engine, systems and state modules",
+          "content YAML changes"
+        ],
+        "preserve": [
+          "content.test.ts behavior on the-boys-room",
+          "LoadedWorld.scenes remains an array of SceneDef",
+          "existing error message formats such as 'unknown scene: X'"
+        ]
+      },
+      "technical_constraints": [
+        "TypeScript with vitest and the yaml package; no new dependencies",
+        "Surviving module path is backend/game/src/content/loader.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Only one loader/validator implementation exists",
+        "npm test and npm run typecheck pass in backend/game",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-005.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8414WGQ1RMYSRBG9KKP4J3W",
+      "links": [
+        "trace:01M8414WGQ1RMYSRBG9KKP4J3W",
+        "artifact:.ai-dlc/intent/INT-005.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-005.md",
+      "artifact_id": "INT-005"
+    },
+    {
+      "id": "01M843H7DRT3Z77WG7BSA4Y3S7",
+      "kind": "requirement",
+      "title": "REQ · Single loadWorld with strict field validation",
+      "body": "Context: loader.ts loadWorld casts YAML without checking fields, while world.ts checks string fields, mapping shape and scene id match. Desired behavior: the surviving loadWorld returns scenes as SceneDef[] and throws the stricter errors. Expected result: malformed world.yaml or scene files fail loudly in one place. Why: invalid content must be caught at load time.\n\n## Acceptance criteria\n- Given a world.yaml missing the id string field, when loadWorld runs, then it throws an error mentioning 'id'\n- Given world.yaml listing scene s2 with no scenes/s2.yaml, when loadWorld runs, then it throws an error mentioning s2.yaml\n- Given scenes/s.yaml declaring id other, when loadWorld runs for scene s, then it throws an error mentioning 'expected s'\n- Given valid files, when loadWorld runs, then scenes is an array containing the scene with id s\n\n\n## Scope\n- In scope: loadWorld in loader.ts\n- Out of scope: validateWorld\n- Preserve: LoadedWorld type with scenes: SceneDef[]\n\n\n## Technical constraints\n- No new dependencies\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- loadWorld enforces field checks and returns scenes as an array\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "loadWorld in loader.ts keeps the array scenes shape and gains world.ts's strict field and scene-id checks.",
+      "description": "Context: loader.ts loadWorld casts YAML without checking fields, while world.ts checks string fields, mapping shape and scene id match. Desired behavior: the surviving loadWorld returns scenes as SceneDef[] and throws the stricter errors. Expected result: malformed world.yaml or scene files fail loudly in one place. Why: invalid content must be caught at load time.",
+      "acceptance_criteria": [
+        "Given a world.yaml missing the id string field, when loadWorld runs, then it throws an error mentioning 'id'",
+        "Given world.yaml listing scene s2 with no scenes/s2.yaml, when loadWorld runs, then it throws an error mentioning s2.yaml",
+        "Given scenes/s.yaml declaring id other, when loadWorld runs for scene s, then it throws an error mentioning 'expected s'",
+        "Given valid files, when loadWorld runs, then scenes is an array containing the scene with id s"
+      ],
+      "scope": {
+        "in_scope": [
+          "loadWorld in loader.ts"
+        ],
+        "out_of_scope": [
+          "validateWorld"
+        ],
+        "preserve": [
+          "LoadedWorld type with scenes: SceneDef[]"
+        ]
+      },
+      "technical_constraints": [
+        "No new dependencies"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "loadWorld enforces field checks and returns scenes as an array",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-013.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M843H7DR38ARYRFZB12T1VVH",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M843H7DR38ARYRFZB12T1VVH",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-013.md"
+      ],
+      "depends_on": [
+        "01M843H7DR38ARYRFZB12T1VVH"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-013.md",
+      "artifact_id": "REQ-013"
+    },
+    {
+      "id": "01M843H7DRBB0ACNV8M4E7VDBF",
+      "kind": "requirement",
+      "title": "REQ · One validator, world.ts removed, imports updated",
+      "body": "Context: validateWorld(world, scenes) in world.ts duplicates validateWorld(LoadedWorld) in loader.ts and is imported only by tests/validator.test.ts. Desired behavior: remove world.ts and test the loader.ts validator. Expected result: a single validator with tests for every reference kind. Why: avoids drift between two validators.\n\n## Acceptance criteria\n- Given src/content, when listed, then world.ts is absent\n- Given the invalid fixture world, when validateWorld runs, then errors contain unknown scene: nowhere, unknown character: ghost, unknown flag: zzz and unknown object: nope\n- Given the valid fixture world, when validateWorld runs, then it returns []\n- Given the real the-boys-room content, when validated, then it returns []\n\n\n## Scope\n- In scope: delete world.ts\n- In scope: validator.test.ts import and calls\n- Out of scope: fixture content changes\n- Preserve: content.test.ts tests\n\n\n## Technical constraints\n- Fixtures stay WorldDef plus SceneDef; tests compose them into a LoadedWorld\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- No file imports content/world\n- Validator tests pass against loader.ts\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "world.ts is deleted and validator tests target loader.ts, covering unknown scene, object, character and flag references.",
+      "description": "Context: validateWorld(world, scenes) in world.ts duplicates validateWorld(LoadedWorld) in loader.ts and is imported only by tests/validator.test.ts. Desired behavior: remove world.ts and test the loader.ts validator. Expected result: a single validator with tests for every reference kind. Why: avoids drift between two validators.",
+      "acceptance_criteria": [
+        "Given src/content, when listed, then world.ts is absent",
+        "Given the invalid fixture world, when validateWorld runs, then errors contain unknown scene: nowhere, unknown character: ghost, unknown flag: zzz and unknown object: nope",
+        "Given the valid fixture world, when validateWorld runs, then it returns []",
+        "Given the real the-boys-room content, when validated, then it returns []"
+      ],
+      "scope": {
+        "in_scope": [
+          "delete world.ts",
+          "validator.test.ts import and calls"
+        ],
+        "out_of_scope": [
+          "fixture content changes"
+        ],
+        "preserve": [
+          "content.test.ts tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fixtures stay WorldDef plus SceneDef; tests compose them into a LoadedWorld"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "No file imports content/world",
+        "Validator tests pass against loader.ts",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-014.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M843H7DR38ARYRFZB12T1VVH",
+      "matched_feature_id": "01M8433BDP45EKJRRRV3JF2B9G",
+      "links": [
+        "parent:01M843H7DR38ARYRFZB12T1VVH",
+        "trace:01M8433BDP45EKJRRRV3JF2B9G",
+        "artifact:.ai-dlc/requirements/REQ-014.md"
+      ],
+      "depends_on": [
+        "01M843H7DR38ARYRFZB12T1VVH"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-014.md",
+      "artifact_id": "REQ-014"
+    },
+    {
+      "id": "01M843H7DR1FFZ5RN0BBSQVY6T",
+      "kind": "unit",
+      "title": "Act: Port strict field validation into loader.ts loadWorld",
+      "body": "Context: loader.ts L10-L25 reads world.yaml and scenes with plain casts. Desired behavior: reuse world.ts helpers isRecord, requireString and requireStringArray and its scene id mismatch check. Expected result: loadWorld throws descriptive errors for malformed content and returns scenes as SceneDef[].\n\n## Acceptance criteria\n- loadWorld throws when world.yaml lacks a string id, title or startScene\n- loadWorld throws naming the missing file, such as s2.yaml, when a listed scene file is absent\n- loadWorld throws when a scene file's id differs from the listed id\n- loadWorld returns LoadedWorld whose scenes is an array in world.yaml order\n\n\n## Scope\n- In scope: loader.ts loadWorld and helpers\n- Out of scope: validateWorld\n- Out of scope: tests\n- Preserve: export names loadWorld, validateWorld, LoadedWorld\n\n\n## Technical constraints\n- Missing scene error message must still contain '<sceneId>.yaml'\n- Code path: `backend/game/src/content/loader.ts`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- npm run typecheck passes in backend/game\n- loadWorld on the-boys-room still succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Replace the unchecked cast in loader.ts loadWorld with world.ts's checked parsing, keeping scenes as an array.",
+      "description": "Context: loader.ts L10-L25 reads world.yaml and scenes with plain casts. Desired behavior: reuse world.ts helpers isRecord, requireString and requireStringArray and its scene id mismatch check. Expected result: loadWorld throws descriptive errors for malformed content and returns scenes as SceneDef[].",
+      "acceptance_criteria": [
+        "loadWorld throws when world.yaml lacks a string id, title or startScene",
+        "loadWorld throws naming the missing file, such as s2.yaml, when a listed scene file is absent",
+        "loadWorld throws when a scene file's id differs from the listed id",
+        "loadWorld returns LoadedWorld whose scenes is an array in world.yaml order"
+      ],
+      "scope": {
+        "in_scope": [
+          "loader.ts loadWorld and helpers"
+        ],
+        "out_of_scope": [
+          "validateWorld",
+          "tests"
+        ],
+        "preserve": [
+          "export names loadWorld, validateWorld, LoadedWorld"
+        ]
+      },
+      "technical_constraints": [
+        "Missing scene error message must still contain '<sceneId>.yaml'",
+        "Code path: `backend/game/src/content/loader.ts`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "npm run typecheck passes in backend/game",
+        "loadWorld on the-boys-room still succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-025.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M843H7DRT3Z77WG7BSA4Y3S7",
+      "matched_feature_id": "01M8433BDQAHZP8634MCXQMFHC",
+      "links": [
+        "parent:01M843H7DRT3Z77WG7BSA4Y3S7",
+        "trace:01M8433BDQAHZP8634MCXQMFHC",
+        "artifact:.ai-dlc/units/UNIT-025.md"
+      ],
+      "depends_on": [
+        "01M843H7DRT3Z77WG7BSA4Y3S7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-025.md",
+      "artifact_id": "UNIT-025",
+      "steps": [
+        {
+          "file": "backend/game/src/content/loader.ts",
+          "symbol": "new: isRecord, requireString, requireStringArray",
+          "lines": "after L9",
+          "action": "Add three private helper functions above loadWorld, copied from world.ts L25-L43: isRecord(value), requireString(data, key, file), requireStringArray(data, key, file), each throwing Error with the messages `${file} missing string field: ${key}` and `${file} field must be a list of strings: ${key}`.",
+          "code": "function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === 'object' && value !== null && !Array.isArray(value); }",
+          "expected": "File compiles with the three helpers available."
+        },
+        {
+          "file": "backend/game/src/content/loader.ts",
+          "symbol": "readYaml",
+          "lines": "L11-L13",
+          "action": "Wrap fs.readFileSync in try/catch and throw new Error(`missing content file: ${file}`) on failure, so the message contains the file name such as s2.yaml.",
+          "code": "before: return parse(fs.readFileSync(file, 'utf8')); -> after: let source: string; try { source = fs.readFileSync(file, 'utf8'); } catch { throw new Error(`missing content file: ${file}`); } return parse(source);",
+          "expected": "Reading a nonexistent file throws an error containing the path."
+        },
+        {
+          "file": "backend/game/src/content/loader.ts",
+          "symbol": "loadWorld",
+          "lines": "L15-L28",
+          "action": "Rewrite the body: read world.yaml into raw, throw if !isRecord(raw), throw 'world.yaml field must be a list: characters' if raw.characters is not an array, build world: WorldDef via requireString for id, title, startScene and requireStringArray for scenes and flags. For each sceneId read scenes/<sceneId>.yaml, require isRecord, require id via requireString, throw `${relPath} declares id ${id}, expected ${sceneId}` on mismatch, push the record cast as SceneDef onto an array. Remove the existsSync check. Return { ...world, scenes } where scenes stays SceneDef[].",
+          "code": "const scenes: SceneDef[] = []; for (const sceneId of world.scenes) { const relPath = path.join('scenes', `${sceneId}.yaml`); const sceneRaw = readYaml(path.join(worldDir, relPath)); if (!isRecord(sceneRaw)) throw new Error(`${relPath} must be a YAML mapping`); const id = requireString(sceneRaw, 'id', relPath); if (id !== sceneId) throw new Error(`${relPath} declares id ${id}, expected ${sceneId}`); scenes.push(sceneRaw as unknown as SceneDef); }",
+          "expected": "loadWorld('content/worlds/the-boys-room') returns scenes array containing bedroom."
+        }
+      ]
+    },
+    {
+      "id": "01M843H7DREZM1JBZD9660Y4FY",
+      "kind": "unit",
+      "title": "Act: Remove duplicate world.ts module",
+      "body": "Context: world.ts is only imported by tests/validator.test.ts; no src file imports it. Desired behavior: delete it. The surviving loader.ts validateWorld(world: LoadedWorld) already reports unknown scene (start scene and goto_scene), character (say and speaker), flag (set_flag, openWhenFlag, conditions) and object (discover) references. Expected result: no code path references content/world.\n\n## Acceptance criteria\n- src/content/world.ts does not exist\n- Nothing under backend/game/src imports content/world\n\n\n## Scope\n- In scope: delete world.ts\n- Out of scope: tests\n- Preserve: loader.ts exports\n\n\n## Technical constraints\n- Use git rm\n- Code path: `backend/game/src/content/world.ts`\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- world.ts removed; grep for content/world in src returns nothing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Delete src/content/world.ts so loader.ts is the only loader and validator.",
+      "description": "Context: world.ts is only imported by tests/validator.test.ts; no src file imports it. Desired behavior: delete it. The surviving loader.ts validateWorld(world: LoadedWorld) already reports unknown scene (start scene and goto_scene), character (say and speaker), flag (set_flag, openWhenFlag, conditions) and object (discover) references. Expected result: no code path references content/world.",
+      "acceptance_criteria": [
+        "src/content/world.ts does not exist",
+        "Nothing under backend/game/src imports content/world"
+      ],
+      "scope": {
+        "in_scope": [
+          "delete world.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "loader.ts exports"
+        ]
+      },
+      "technical_constraints": [
+        "Use git rm",
+        "Code path: `backend/game/src/content/world.ts`"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "world.ts removed; grep for content/world in src returns nothing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-026.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M843H7DRBB0ACNV8M4E7VDBF",
+      "matched_feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+      "links": [
+        "parent:01M843H7DRBB0ACNV8M4E7VDBF",
+        "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+        "artifact:.ai-dlc/units/UNIT-026.md"
+      ],
+      "depends_on": [
+        "01M843H7DRBB0ACNV8M4E7VDBF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-026.md",
+      "artifact_id": "UNIT-026",
+      "steps": [
+        {
+          "file": "backend/game/src/content/world.ts",
+          "symbol": "module world.ts (loadWorld, validateWorld, LoadedWorld)",
+          "lines": "L1-L166",
+          "action": "Delete the whole file with `git rm backend/game/src/content/world.ts`; do not edit loader.ts in this step.",
+          "command": "test ! -e backend/game/src/content/world.ts && ! grep -rn \"content/world\" backend/game/src",
+          "expected": "File is absent and no src file references it."
+        }
+      ]
+    },
+    {
+      "id": "01M843H7DRSCY8ABJ62BD5EW7T",
+      "kind": "unit",
+      "title": "Verify: loadWorld strict loading unit tests",
+      "body": "Context: loadWorld now checks fields and scene ids. Desired behavior: tests assert each error and the array result using files in an os temp dir only. Expected result: tests/loader.test.ts passes.\n\n## Acceptance criteria\n- Missing id in world.yaml makes loadWorld throw /id/\n- Missing s2.yaml makes loadWorld throw /s2\\.yaml/\n- Scene id mismatch makes loadWorld throw /expected s/\n- Valid files give an array scenes with scenes[0].id === 's'\n\n\n## Scope\n- In scope: backend/game/tests/loader.test.ts\n- Out of scope: product code\n- Preserve: existing tests\n\n\n## Technical constraints\n- Use fs.mkdtempSync under os.tmpdir(); no network or real content dir\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- npx vitest run tests/loader.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for loader.ts loadWorld error and success paths using temp directories.",
+      "description": "Context: loadWorld now checks fields and scene ids. Desired behavior: tests assert each error and the array result using files in an os temp dir only. Expected result: tests/loader.test.ts passes.",
+      "acceptance_criteria": [
+        "Missing id in world.yaml makes loadWorld throw /id/",
+        "Missing s2.yaml makes loadWorld throw /s2\\.yaml/",
+        "Scene id mismatch makes loadWorld throw /expected s/",
+        "Valid files give an array scenes with scenes[0].id === 's'"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/loader.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use fs.mkdtempSync under os.tmpdir(); no network or real content dir"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "npx vitest run tests/loader.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-027.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843H7DR1FFZ5RN0BBSQVY6T",
+      "matched_feature_id": "01M8414WGS5H96JYKP42Z167W8",
+      "links": [
+        "parent:01M843H7DR1FFZ5RN0BBSQVY6T",
+        "trace:01M8414WGS5H96JYKP42Z167W8",
+        "artifact:.ai-dlc/units/UNIT-027.md"
+      ],
+      "depends_on": [
+        "01M843H7DR1FFZ5RN0BBSQVY6T"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-027.md",
+      "artifact_id": "UNIT-027",
+      "steps": [
+        {
+          "file": "backend/game/tests/loader.test.ts",
+          "symbol": "new: makeWorldDir",
+          "lines": "new",
+          "action": "Create the file importing describe, it, expect from vitest, fs, os, path and loadWorld from '../src/content/loader'; add helper makeWorldDir(files: Record<string,string>) that mkdtemps a dir and writes each relative path with mkdirSync recursive.",
+          "command": "npx tsc --noEmit",
+          "expected": "Typecheck passes with the new test file and helper compiling."
+        },
+        {
+          "file": "backend/game/tests/loader.test.ts",
+          "symbol": "new: describe loadWorld; it 'throws when id is missing'",
+          "lines": "new",
+          "action": "Write world.yaml without the id line (title W, startScene s, scenes [s], characters [], flags []) plus a valid scenes/s.yaml, and expect(() => loadWorld(dir)).toThrow(/id/).",
+          "command": "npx vitest run tests/loader.test.ts -t \"id is missing\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "backend/game/tests/loader.test.ts",
+          "symbol": "it 'throws naming s2.yaml and on scene id mismatch'; it 'returns scenes array'",
+          "lines": "new",
+          "action": "Add three tests: world listing s and s2 with only s.yaml expects toThrow(/s2\\.yaml/); s.yaml declaring `id: other` expects toThrow(/expected s/); a valid world expects Array.isArray(loaded.scenes) and loaded.scenes[0].id toBe 's'.",
+          "command": "npx vitest run tests/loader.test.ts",
+          "expected": "All four tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M843H7DR276APDZ9XBZDSRB3",
+      "kind": "unit",
+      "title": "Verify: loader.ts validateWorld reference unit tests",
+      "body": "Context: validator.test.ts imports from content/world, now removed. Desired behavior: it imports loader.ts, composes LoadedWorld from fixtures and asserts errors. Expected result: validator tests pass against the surviving validator.\n\n## Acceptance criteria\n- Invalid fixture yields unknown scene: nowhere, unknown character: ghost, unknown flag: zzz, unknown object: nope\n- Valid fixture yields []\n- Unknown start scene and unknown dialogue next are reported\n- Real the-boys-room content yields [] (existing content.test.ts)\n\n\n## Scope\n- In scope: backend/game/tests/validator.test.ts\n- Out of scope: product code\n- Preserve: fixtures and content.test.ts\n\n\n## Technical constraints\n- Fixtures remain in tests/fixtures; compose { ...invalidWorld, scenes: [invalidScene] }\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- npx vitest run tests/validator.test.ts tests/content.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Point validator.test.ts at loader.ts and assert unknown scene, object, character and flag errors.",
+      "description": "Context: validator.test.ts imports from content/world, now removed. Desired behavior: it imports loader.ts, composes LoadedWorld from fixtures and asserts errors. Expected result: validator tests pass against the surviving validator.",
+      "acceptance_criteria": [
+        "Invalid fixture yields unknown scene: nowhere, unknown character: ghost, unknown flag: zzz, unknown object: nope",
+        "Valid fixture yields []",
+        "Unknown start scene and unknown dialogue next are reported",
+        "Real the-boys-room content yields [] (existing content.test.ts)"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/game/tests/validator.test.ts"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "fixtures and content.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Fixtures remain in tests/fixtures; compose { ...invalidWorld, scenes: [invalidScene] }"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "npx vitest run tests/validator.test.ts tests/content.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-028.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843H7DREZM1JBZD9660Y4FY",
+      "matched_feature_id": "01M8414WGS5H96JYKP42Z167W8",
+      "links": [
+        "parent:01M843H7DREZM1JBZD9660Y4FY",
+        "trace:01M8414WGS5H96JYKP42Z167W8",
+        "artifact:.ai-dlc/units/UNIT-028.md"
+      ],
+      "depends_on": [
+        "01M843H7DREZM1JBZD9660Y4FY"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-028.md",
+      "artifact_id": "UNIT-028",
+      "steps": [
+        {
+          "file": "backend/game/tests/validator.test.ts",
+          "symbol": "imports",
+          "lines": "L5",
+          "action": "Change the import path from '../src/content/world' to '../src/content/loader' and remove the makeWorldDir helper and the 'loadWorld and validateWorld with a valid world' loadWorld tests (L7-L16, L35-L72) since tests/loader.test.ts covers loadWorld, keeping the valid-fixture validateWorld test.",
+          "code": "before: import { loadWorld, validateWorld } from '../src/content/world'; -> after: import { validateWorld } from '../src/content/loader';",
+          "command": "! grep -n \"content/world\" backend/game/tests/validator.test.ts",
+          "expected": "File imports only validateWorld from loader and no reference to content/world remains."
+        },
+        {
+          "file": "backend/game/tests/validator.test.ts",
+          "symbol": "describe 'validateWorld invalid reference detection'",
+          "lines": "L18-L27",
+          "action": "Change the call validateWorld(invalidWorld, [invalidScene]) to validateWorld({ ...invalidWorld, scenes: [invalidScene] }) keeping the four toContain assertions; change the valid test to validateWorld({ ...validWorld, scenes: [validScene] }) expecting [].",
+          "command": "npx vitest run tests/validator.test.ts",
+          "expected": "Invalid and valid fixture tests pass."
+        },
+        {
+          "file": "backend/game/tests/validator.test.ts",
+          "symbol": "new: it 'reports unknown start scene and unknown dialogue next'",
+          "lines": "after L27",
+          "action": "Add a test with { ...validWorld, startScene: 'missing', scenes: [{ ...validScene, dialogue: [{ id: 'd1', speaker: 'boy', text: 'Hi', choices: [{ text: 'Go', next: 'nope' }] }] }] } expecting errors toContain 'unknown scene: missing' and 'unknown dialogue: nope'. Check DialogueChoice in backend/game/src/state/types.ts for the exact choice field names before writing.",
+          "command": "npx vitest run tests/validator.test.ts tests/content.test.ts",
+          "expected": "All validator and content tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M843H7DRC6RX8PWWVMRWT883",
+      "kind": "evidence",
+      "title": "Evidence: Single loader and validator unit test results",
+      "body": "Collect the passing output of tests/loader.test.ts, tests/validator.test.ts and tests/content.test.ts proving the merged loader.ts satisfies the intent acceptance criteria.\n\n## Acceptance criteria\n- Test output shows tests/loader.test.ts passing\n- Test output shows tests/validator.test.ts and tests/content.test.ts passing\n\n\n## Scope\n- In scope: test run output\n- Out of scope: new code\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Passing vitest output for the three test files is recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test output showing loader and validator tests pass on the merged module.",
+      "description": "Collect the passing output of tests/loader.test.ts, tests/validator.test.ts and tests/content.test.ts proving the merged loader.ts satisfies the intent acceptance criteria.",
+      "acceptance_criteria": [
+        "Test output shows tests/loader.test.ts passing",
+        "Test output shows tests/validator.test.ts and tests/content.test.ts passing"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Passing vitest output for the three test files is recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-005.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M843H7DRSCY8ABJ62BD5EW7T",
+      "matched_feature_id": "01M8414WGSVNT11K12NB2BB3Y9",
+      "links": [
+        "parent:01M843H7DRSCY8ABJ62BD5EW7T",
+        "trace:01M8414WGSVNT11K12NB2BB3Y9",
+        "artifact:.ai-dlc/evidence/EVD-005.md"
+      ],
+      "depends_on": [
+        "01M843H7DRSCY8ABJ62BD5EW7T",
+        "01M843H7DR276APDZ9XBZDSRB3"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-005.md",
+      "artifact_id": "EVD-005"
+    }
+  ],
+  "created_at": "2026-11-23T11:44:17.928180+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

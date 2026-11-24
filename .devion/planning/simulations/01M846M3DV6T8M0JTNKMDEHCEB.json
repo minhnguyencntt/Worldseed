@@ -1,0 +1,509 @@
+{
+  "intent_id": "01M846M3DV6T8M0JTNKMDEHCEB",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M846QZA4J1ZAEADNP44GYC3N",
+      "kind": "intent",
+      "title": "SG-5.1 · One owner for round types, admin routes agree with them",
+      "body": "Context: backend/internal/round/round.go is now the only declaration of Status, Round and CanTransition, and go build ./... passes. But internal/admin.RoundService speaks world.Round while round.Service speaks round.Round, and server.New never mounts the admin round routes, so TestNew_AdminRoundsAreMounted fails with 404. Desired: the round, lifecycle and scheduler files agree on the same types and the backend serves them. Why: SG-5 lifecycle must be reachable.\n\n## Acceptance criteria\n- Given the backend tree, when go build ./... and go vet ./... run, then both succeed with Status, Round and CanTransition declared only in internal/round/round.go\n- Given server.New with admin.token tok, when each admin round endpoint is called with Bearer tok, then the response is not 404\n- Given a round.Service error, when an admin round handler maps it, then ErrNotFound gives 404 and ErrIllegalTransition or ErrActiveRound gives 409\n\n\n## Scope\n- In scope: adapter from round.Service to admin.RoundService\n- In scope: mount admin round routes in server.New\n- In scope: start round.Scheduler\n- Out of scope: frontend\n- Out of scope: worker\n- Out of scope: new round states\n- Preserve: round.Round and Transitions table\n- Preserve: existing execution admin routes\n- Preserve: admin.Middleware token auth\n\n\n## Technical constraints\n- Go, chi, no database\n- round package remains sole owner of Status, Round, CanTransition\n\n\n## Definition of done\n- go build ./... and go test ./internal/server ./internal/round ./internal/admin pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Round Status, Round and CanTransition have one owner and the admin API is built on them",
+      "description": "Context: backend/internal/round/round.go is now the only declaration of Status, Round and CanTransition, and go build ./... passes. But internal/admin.RoundService speaks world.Round while round.Service speaks round.Round, and server.New never mounts the admin round routes, so TestNew_AdminRoundsAreMounted fails with 404. Desired: the round, lifecycle and scheduler files agree on the same types and the backend serves them. Why: SG-5 lifecycle must be reachable.",
+      "acceptance_criteria": [
+        "Given the backend tree, when go build ./... and go vet ./... run, then both succeed with Status, Round and CanTransition declared only in internal/round/round.go",
+        "Given server.New with admin.token tok, when each admin round endpoint is called with Bearer tok, then the response is not 404",
+        "Given a round.Service error, when an admin round handler maps it, then ErrNotFound gives 404 and ErrIllegalTransition or ErrActiveRound gives 409"
+      ],
+      "scope": {
+        "in_scope": [
+          "adapter from round.Service to admin.RoundService",
+          "mount admin round routes in server.New",
+          "start round.Scheduler"
+        ],
+        "out_of_scope": [
+          "frontend",
+          "worker",
+          "new round states"
+        ],
+        "preserve": [
+          "round.Round and Transitions table",
+          "existing execution admin routes",
+          "admin.Middleware token auth"
+        ]
+      },
+      "technical_constraints": [
+        "Go, chi, no database",
+        "round package remains sole owner of Status, Round, CanTransition"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./... and go test ./internal/server ./internal/round ./internal/admin pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-016.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M845WDCWPKE3DX0JEY7MF1GB",
+      "links": [
+        "trace:01M845WDCWPKE3DX0JEY7MF1GB",
+        "artifact:.ai-dlc/intent/INT-016.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-016.md",
+      "artifact_id": "INT-016"
+    },
+    {
+      "id": "01M846QZA470YSMV5VSXC7K8SA",
+      "kind": "requirement",
+      "title": "REQ · Admin round service adapts round.Service with consistent types and errors",
+      "body": "Context: admin.RoundService returns world.Round and uses admin.ErrNotFound/ErrConflict/ErrInvalid; round.Service returns round.Round and round.ErrNotFound/ErrIllegalTransition/ErrActiveRound. Desired: one adapter in internal/server converts round.Round to world.Round and maps errors. Expected: handlers return correct statuses.\n\n## Acceptance criteria\n- Given a round.Round with status OPEN, when converted, then world.Round has the same ID, Number, StartsAt, EndsAt and Status string OPEN\n- Given round.ErrNotFound, round.ErrIllegalTransition or round.ErrActiveRound, when the adapter returns it, then errors.Is matches admin.ErrNotFound, admin.ErrConflict, admin.ErrConflict respectively\n\n\n## Scope\n- In scope: internal/server/rounds_adapter.go\n- Out of scope: changing admin handlers\n- Preserve: admin.RoundService interface\n- Preserve: world.Round JSON shape\n\n\n## Technical constraints\n- Do not redeclare round types\n\n\n## Definition of done\n- Adapter compiles and satisfies admin.RoundService\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "An adapter makes round.Service satisfy admin.RoundService",
+      "description": "Context: admin.RoundService returns world.Round and uses admin.ErrNotFound/ErrConflict/ErrInvalid; round.Service returns round.Round and round.ErrNotFound/ErrIllegalTransition/ErrActiveRound. Desired: one adapter in internal/server converts round.Round to world.Round and maps errors. Expected: handlers return correct statuses.",
+      "acceptance_criteria": [
+        "Given a round.Round with status OPEN, when converted, then world.Round has the same ID, Number, StartsAt, EndsAt and Status string OPEN",
+        "Given round.ErrNotFound, round.ErrIllegalTransition or round.ErrActiveRound, when the adapter returns it, then errors.Is matches admin.ErrNotFound, admin.ErrConflict, admin.ErrConflict respectively"
+      ],
+      "scope": {
+        "in_scope": [
+          "internal/server/rounds_adapter.go"
+        ],
+        "out_of_scope": [
+          "changing admin handlers"
+        ],
+        "preserve": [
+          "admin.RoundService interface",
+          "world.Round JSON shape"
+        ]
+      },
+      "technical_constraints": [
+        "Do not redeclare round types"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Adapter compiles and satisfies admin.RoundService",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-042.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M846QZA4J1ZAEADNP44GYC3N",
+      "matched_feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+      "links": [
+        "parent:01M846QZA4J1ZAEADNP44GYC3N",
+        "trace:01M8457KMM85WJCJXJHN26TC5R",
+        "artifact:.ai-dlc/requirements/REQ-042.md"
+      ],
+      "depends_on": [
+        "01M846QZA4J1ZAEADNP44GYC3N"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-042.md",
+      "artifact_id": "REQ-042"
+    },
+    {
+      "id": "01M846QZA4NKEHH2MSA5WA6Q06",
+      "kind": "requirement",
+      "title": "REQ · Admin round routes mounted and scheduler started in the server",
+      "body": "Context: server.New mounts only execution routes under /api/v1/admin. Desired: also mount POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions using round.Service built from round.FileStore, gitCLI and contribution store; main starts round.Scheduler with cfg.Round.SchedulerInterval.\n\n## Acceptance criteria\n- Given admin token tok, when each of the five round endpoints is requested with Bearer tok, then status is not 404\n- Given no Authorization header, when a round endpoint is requested, then status is 401\n- Given cfg.Round.SchedulerInterval, when the scheduler is built, then its Interval equals that value and Worlds lists world IDs from world.Repo\n\n\n## Scope\n- In scope: internal/server/server.go\n- In scope: cmd/server/main.go\n- Out of scope: frontend admin UI\n- Preserve: execution routes\n- Preserve: player and contribution routes\n\n\n## Technical constraints\n- Round files live under cfg.Storage.RepoPath\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- TestNew_AdminRoundsAreMounted passes\n\n\n## Non-functional requirements\n- Scheduler stops when the process context is cancelled\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "server.New mounts admin round routes behind token auth and exposes the scheduler",
+      "description": "Context: server.New mounts only execution routes under /api/v1/admin. Desired: also mount POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id}, GET /rounds/{id}/contributions using round.Service built from round.FileStore, gitCLI and contribution store; main starts round.Scheduler with cfg.Round.SchedulerInterval.",
+      "acceptance_criteria": [
+        "Given admin token tok, when each of the five round endpoints is requested with Bearer tok, then status is not 404",
+        "Given no Authorization header, when a round endpoint is requested, then status is 401",
+        "Given cfg.Round.SchedulerInterval, when the scheduler is built, then its Interval equals that value and Worlds lists world IDs from world.Repo"
+      ],
+      "scope": {
+        "in_scope": [
+          "internal/server/server.go",
+          "cmd/server/main.go"
+        ],
+        "out_of_scope": [
+          "frontend admin UI"
+        ],
+        "preserve": [
+          "execution routes",
+          "player and contribution routes"
+        ]
+      },
+      "technical_constraints": [
+        "Round files live under cfg.Storage.RepoPath"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "TestNew_AdminRoundsAreMounted passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-043.md`"
+      ],
+      "non_functional": [
+        "Scheduler stops when the process context is cancelled"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M846QZA4J1ZAEADNP44GYC3N",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M846QZA4J1ZAEADNP44GYC3N",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-043.md"
+      ],
+      "depends_on": [
+        "01M846QZA4J1ZAEADNP44GYC3N"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-043.md",
+      "artifact_id": "REQ-043"
+    },
+    {
+      "id": "01M846QZA4NB76AKFJ27QWJ28K",
+      "kind": "unit",
+      "title": "Act: Add round.Service adapter for admin.RoundService",
+      "body": "Add internal/server/rounds_adapter.go with a roundAdmin struct wrapping *round.Service and the conversion round.Round -> world.Round, mapping round errors to admin errors.\n\n## Acceptance criteria\n- roundAdmin satisfies admin.RoundService\n- Errors map to admin sentinel errors via fmt.Errorf %w\n\n\n## Scope\n- In scope: new adapter file\n- Out of scope: handlers\n- Preserve: round package\n\n\n## Technical constraints\n- No duplicate type declarations\n- New file: `backend/internal/server/rounds_adapter.go`\n\n\n## Definition of done\n- go build ./internal/server succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create roundAdmin adapter with type conversion and error mapping",
+      "description": "Add internal/server/rounds_adapter.go with a roundAdmin struct wrapping *round.Service and the conversion round.Round -> world.Round, mapping round errors to admin errors.",
+      "acceptance_criteria": [
+        "roundAdmin satisfies admin.RoundService",
+        "Errors map to admin sentinel errors via fmt.Errorf %w"
+      ],
+      "scope": {
+        "in_scope": [
+          "new adapter file"
+        ],
+        "out_of_scope": [
+          "handlers"
+        ],
+        "preserve": [
+          "round package"
+        ]
+      },
+      "technical_constraints": [
+        "No duplicate type declarations",
+        "New file: `backend/internal/server/rounds_adapter.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./internal/server succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-083.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M846QZA470YSMV5VSXC7K8SA",
+      "links": [
+        "parent:01M846QZA470YSMV5VSXC7K8SA",
+        "artifact:.ai-dlc/units/UNIT-083.md"
+      ],
+      "depends_on": [
+        "01M846QZA470YSMV5VSXC7K8SA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-083.md",
+      "artifact_id": "UNIT-083",
+      "steps": [
+        {
+          "file": "backend/internal/server/rounds_adapter.go",
+          "symbol": "new: toWorldRound and mapRoundErr",
+          "lines": "new",
+          "action": "Create the package server file with func toWorldRound(r round.Round) world.Round copying ID, Number, string(Status), StartsAt, EndsAt, and func mapRoundErr(err error) error that wraps round.ErrNotFound as admin.ErrNotFound and round.ErrIllegalTransition and round.ErrActiveRound as admin.ErrConflict via fmt.Errorf(\"%w: %v\", ...), otherwise returns err unchanged.",
+          "code": "func mapRoundErr(err error) error { switch { case errors.Is(err, round.ErrNotFound): return fmt.Errorf(\"%w: %v\", admin.ErrNotFound, err); case errors.Is(err, round.ErrIllegalTransition), errors.Is(err, round.ErrActiveRound): return fmt.Errorf(\"%w: %v\", admin.ErrConflict, err) }; return err }",
+          "expected": "File compiles with both helpers"
+        },
+        {
+          "file": "backend/internal/server/rounds_adapter.go",
+          "symbol": "new: roundAdmin (Create, Open, Close, Get)",
+          "lines": "new",
+          "action": "Add type roundAdmin struct{Svc *round.Service} and implement the four admin.RoundService methods: Create calls Svc.Create(ctx, in.WorldID, in.StartsAt, in.Duration, in.BaseRelease); Open calls Svc.Open(ctx, worldID, roundID, round.OpenOptions{}) then Svc.Get; Close calls Svc.Close then Svc.Get; Get calls Svc.Get. Each returns toWorldRound(result) and mapRoundErr(err). Add var _ admin.RoundService = (*roundAdmin)(nil).",
+          "expected": "go build ./internal/server succeeds and the interface assertion holds"
+        }
+      ]
+    },
+    {
+      "id": "01M846QZA4RC9NJVF6YD4G31SX",
+      "kind": "unit",
+      "title": "Act: Mount admin round routes and expose the scheduler",
+      "body": "In server.New build round.FileStore, round.Service and admin.RoundHandler and mount five round routes under the admin group. Expose a NewScheduler builder and start it from main.\n\n## Acceptance criteria\n- Five routes mounted behind token\n- Scheduler runs in main with cfg.Round.SchedulerInterval\n\n\n## Scope\n- In scope: server.go\n- In scope: main.go\n- Out of scope: UI\n- Preserve: execution routes\n\n\n## Technical constraints\n- Use existing gitCLI and contribution store\n- Code path: `backend/internal/server/server.go`\n- Code path: `backend/cmd/server/main.go`\n\n\n## Definition of done\n- go build ./... succeeds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire round.Service into server.New and start the scheduler in main",
+      "description": "In server.New build round.FileStore, round.Service and admin.RoundHandler and mount five round routes under the admin group. Expose a NewScheduler builder and start it from main.",
+      "acceptance_criteria": [
+        "Five routes mounted behind token",
+        "Scheduler runs in main with cfg.Round.SchedulerInterval"
+      ],
+      "scope": {
+        "in_scope": [
+          "server.go",
+          "main.go"
+        ],
+        "out_of_scope": [
+          "UI"
+        ],
+        "preserve": [
+          "execution routes"
+        ]
+      },
+      "technical_constraints": [
+        "Use existing gitCLI and contribution store",
+        "Code path: `backend/internal/server/server.go`",
+        "Code path: `backend/cmd/server/main.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "go build ./... succeeds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-084.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M846QZA4NKEHH2MSA5WA6Q06",
+      "matched_feature_id": "01M845WDCXSZHWN3BS35Z9PG69",
+      "links": [
+        "parent:01M846QZA4NKEHH2MSA5WA6Q06",
+        "trace:01M845WDCXSZHWN3BS35Z9PG69",
+        "artifact:.ai-dlc/units/UNIT-084.md"
+      ],
+      "depends_on": [
+        "01M846QZA4NKEHH2MSA5WA6Q06"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-084.md",
+      "artifact_id": "UNIT-084",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "L84-L96",
+          "action": "Before r.Route(\"/api/v1/admin\"...), build rs := &round.Service{Store:&round.FileStore{Root:cfg.Storage.RepoPath}, Committer:gitCLI, Revisions:gitCLI, Contributions:store} and rh := &admin.RoundHandler{Rounds:&roundAdmin{Svc:rs}, Lister:store}. Inside the admin group add ar.Post(\"/rounds\", rh.Create), ar.Post(\"/rounds/{id}/open\", rh.Open), ar.Post(\"/rounds/{id}/close\", rh.Close), ar.Get(\"/rounds/{id}\", rh.Get), ar.Get(\"/rounds/{id}/contributions\", rh.Contributions). Import internal/round.",
+          "expected": "The five round routes no longer return 404"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "new: NewScheduler",
+          "lines": "after L97",
+          "action": "Add func NewScheduler(cfg *config.Config) *round.Scheduler returning &round.Scheduler{Controller: the round.Service built from cfg, Rounds: the round.FileStore, Worlds: func() ([]string, error) listing IDs from world.Repo.List, Interval: cfg.Round.SchedulerInterval}. Extract the round.Service construction into helper newRoundService(cfg) used by both New and NewScheduler.",
+          "expected": "NewScheduler returns a scheduler with the configured interval"
+        },
+        {
+          "file": "backend/cmd/server/main.go",
+          "symbol": "main",
+          "lines": "L26-L27",
+          "action": "Before http.ListenAndServe, create ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM); defer stop(); then go server.NewScheduler(cfg).Run(ctx).",
+          "expected": "go build ./cmd/server succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M846QZA4HVQVHM4WV5JV4KF2",
+      "kind": "unit",
+      "title": "Verify: Round admin adapter unit tests",
+      "body": "Test toWorldRound and mapRoundErr in internal/server with pure inputs; no network or real git.\n\n## Acceptance criteria\n- toWorldRound copies fields\n- mapRoundErr maps sentinel errors\n\n\n## Scope\n- In scope: internal/server/rounds_adapter_test.go\n- Out of scope: HTTP\n\n\n## Technical constraints\n- No network or real git\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for conversion and error mapping",
+      "description": "Test toWorldRound and mapRoundErr in internal/server with pure inputs; no network or real git.",
+      "acceptance_criteria": [
+        "toWorldRound copies fields",
+        "mapRoundErr maps sentinel errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "internal/server/rounds_adapter_test.go"
+        ],
+        "out_of_scope": [
+          "HTTP"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "No network or real git"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-085.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M846QZA4NB76AKFJ27QWJ28K",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M846QZA4NB76AKFJ27QWJ28K",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-085.md"
+      ],
+      "depends_on": [
+        "01M846QZA4NB76AKFJ27QWJ28K"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-085.md",
+      "artifact_id": "UNIT-085",
+      "steps": [
+        {
+          "file": "backend/internal/server/rounds_adapter_test.go",
+          "symbol": "new: TestToWorldRound",
+          "lines": "new",
+          "action": "Build a round.Round{ID:\"ROUND-0000001\",Number:1,Status:round.StatusOpen,StartsAt,EndsAt fixed times} and assert toWorldRound returns a world.Round with identical ID, Number, StartsAt, EndsAt and Status \"OPEN\".",
+          "command": "cd backend && go test ./internal/server -run TestToWorldRound",
+          "expected": "TestToWorldRound passes"
+        },
+        {
+          "file": "backend/internal/server/rounds_adapter_test.go",
+          "symbol": "new: TestMapRoundErr",
+          "lines": "new",
+          "action": "Table test: round.ErrNotFound -> errors.Is admin.ErrNotFound; fmt.Errorf-wrapped round.ErrIllegalTransition and round.ErrActiveRound -> errors.Is admin.ErrConflict; errors.New(\"boom\") returned unchanged.",
+          "command": "cd backend && go test ./internal/server -run TestMapRoundErr",
+          "expected": "TestMapRoundErr passes"
+        }
+      ]
+    },
+    {
+      "id": "01M846QZA4BZSMCK5JD2VMZQFX",
+      "kind": "unit",
+      "title": "Verify: Admin round route wiring unit tests",
+      "body": "Run and extend server tests using httptest handlers and a temp repo; no live ports.\n\n## Acceptance criteria\n- Routes not 404 with token\n- 401 without token\n- NewScheduler uses configured interval\n\n\n## Scope\n- In scope: internal/server/server_test.go\n\n\n## Technical constraints\n- httptest only\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Server-level tests for mounted routes, auth and scheduler config",
+      "description": "Run and extend server tests using httptest handlers and a temp repo; no live ports.",
+      "acceptance_criteria": [
+        "Routes not 404 with token",
+        "401 without token",
+        "NewScheduler uses configured interval"
+      ],
+      "scope": {
+        "in_scope": [
+          "internal/server/server_test.go"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "httptest only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-086.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M846QZA4RC9NJVF6YD4G31SX",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M846QZA4RC9NJVF6YD4G31SX",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-086.md"
+      ],
+      "depends_on": [
+        "01M846QZA4RC9NJVF6YD4G31SX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-086.md",
+      "artifact_id": "UNIT-086",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AdminRoundsAreMounted",
+          "lines": "L286-L318",
+          "action": "Keep the existing test unchanged; it requests POST /rounds, POST /rounds/ROUND-0000001/open and /close, GET /rounds/ROUND-0000001 and /contributions with Bearer tok and asserts status != 404.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsAreMounted",
+          "expected": "PASS for all five subtests"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "new: TestNewScheduler_UsesConfig",
+          "lines": "after L318",
+          "action": "Build cfg with Round.SchedulerInterval 7s and Storage.RepoPath t.TempDir(); call NewScheduler(cfg) and assert Interval == 7*time.Second and Controller and Rounds are non-nil.",
+          "command": "cd backend && go test ./internal/server -run TestNewScheduler_UsesConfig",
+          "expected": "TestNewScheduler_UsesConfig passes"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AdminRoundsRequireToken",
+          "lines": "L240-L277",
+          "action": "Keep the existing assertions that requests without Authorization are rejected with 401, covering the round paths.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsRequireToken",
+          "expected": "TestNew_AdminRoundsRequireToken passes"
+        }
+      ]
+    },
+    {
+      "id": "01M846QZA4CS74BWDJC7Z4F627",
+      "kind": "evidence",
+      "title": "Evidence: Round types single owner and admin wiring unit tests",
+      "body": "Record passing results of the adapter and server wiring unit tests and the compile check.\n\n## Acceptance criteria\n- Adapter and server tests pass\n- go build ./... and go vet ./... succeed\n\n\n## Scope\n- In scope: test output\n\n\n## Definition of done\n- Outputs captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect unit test results for the adapter and routing",
+      "description": "Record passing results of the adapter and server wiring unit tests and the compile check.",
+      "acceptance_criteria": [
+        "Adapter and server tests pass",
+        "go build ./... and go vet ./... succeed"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Outputs captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-016.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M846QZA4HVQVHM4WV5JV4KF2",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M846QZA4HVQVHM4WV5JV4KF2",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-016.md"
+      ],
+      "depends_on": [
+        "01M846QZA4HVQVHM4WV5JV4KF2",
+        "01M846QZA4BZSMCK5JD2VMZQFX"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-016.md",
+      "artifact_id": "EVD-016"
+    }
+  ],
+  "created_at": "2026-11-23T12:40:25.328731+00:00",
+  "summary": "AI · 1 NEW · 7 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

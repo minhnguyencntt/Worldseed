@@ -1,0 +1,71 @@
+{
+  "id": "01M85BP94QYY25S6JFEBSQ5E9H",
+  "intent_id": "01M85BFNY225DS00FCQQBNTW4P",
+  "title": "Verify: App round loading, empty, error and retry unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "App tests with getCurrentRound mocked for success, 404, 500, network and retry",
+  "description": "Mock ./api/client getCurrentRound; no network.",
+  "acceptance_criteria": [
+    "Loading and success states are each asserted with getCurrentRound mocked",
+    "Empty (404) and error (500, network) states are each asserted",
+    "Retry after a failure reloads the round and shows it"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file appRound.test.tsx"
+    ],
+    "out_of_scope": [
+      "Phaser"
+    ],
+    "preserve": [
+      "appHeader.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Fixture roundFixture mirrors backend world.Round; ApiError constructed from the real class; mock Phaser-dependent children as in tests/appHeader.test.tsx"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-619.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M85BJPWTHH2YCT410ECQNGTM",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-619.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85BP94QTJDEEM3TQR2MB7RN"
+  ],
+  "sim_node_id": "01M85BJPWTNVCKT47EQ2XW9WZG",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-619.md",
+  "artifact_id": "UNIT-619",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appRound.test.tsx",
+      "symbol": "new: App round states",
+      "lines": "new",
+      "action": "vi.mock('../src/api/client', importActual with getCurrentRound as vi.fn()). Reuse the mock setup and Begin click from tests/appHeader.test.tsx. Cases: pending promise shows 'Loading round…'; roundFixture shows 'round-1' and 'OPEN'; reject new ApiError(404,'404 Not Found') shows 'No active round' and no alert; reject ApiError(500,'500 x') shows alert containing 'Round service returned 500'; reject TypeError shows 'Could not reach the server'; reject then resolve roundFixture, click Retry, assert 'round-1' appears and getCurrentRound called twice.",
+      "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx",
+      "expected": "All six cases pass"
+    },
+    {
+      "file": "game/frontend/tests/appRound.test.tsx",
+      "symbol": "describeRoundError tests",
+      "lines": "new",
+      "action": "Add direct unit tests of describeRoundError for ApiError with and without detail, TypeError, and a plain string input.",
+      "command": "cd game/frontend && npx vitest run tests/appRound.test.tsx -t describeRoundError",
+      "expected": "Messages match the mapping"
+    }
+  ],
+  "created_at": "2026-11-23T23:26:06.487302+00:00",
+  "updated_at": "2026-11-23T23:27:57.932542+00:00"
+}

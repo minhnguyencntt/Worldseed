@@ -1,0 +1,86 @@
+{
+  "id": "01M85D0KRYGACBACCP7P1J0ZYZ",
+  "intent_id": "01M85CW82JT3S0XRB3QDHD06T9",
+  "title": "Act: Show 'Enter an idea first' for blank submit in ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add validation state, blank branch and inline alert",
+  "description": "Implement the blank-text validation message in ContributionSheet so blank submit is blocked visibly.",
+  "acceptance_criteria": [
+    "Blank or whitespace-only submit renders role=alert 'Enter an idea first'",
+    "submitContribution is not reached for blank text"
+  ],
+  "scope": {
+    "in_scope": [
+      "ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Other components"
+    ],
+    "preserve": [
+      "Existing error alert",
+      "API client"
+    ]
+  },
+  "technical_constraints": [
+    "Keep existing imports; no new dependencies",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Blank branch sets validation message and returns",
+    "Message rendered with role=alert and linked to textarea",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-638.md`"
+  ],
+  "non_functional": [
+    "aria-invalid and aria-describedby on the textarea"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CXX8YFZXSDQBKBG3EG1D7",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-638.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85D0KRY6RZK0QF350W1CFX7"
+  ],
+  "sim_node_id": "01M85CXX8YEWCFD7DQJKCF99G2",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-638.md",
+  "artifact_id": "UNIT-638",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (state)",
+      "lines": "after L37",
+      "action": "Add a new state hook `validation` holding the inline validation message, undefined by default, and a module constant BLANK_MESSAGE with the text 'Enter an idea first' placed after STATE_LABEL (L24).",
+      "code": "const BLANK_MESSAGE = 'Enter an idea first';\n...\nconst [validation, setValidation] = useState<string | undefined>(undefined);",
+      "expected": "Component compiles with the new state and constant."
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet::handleSubmit",
+      "lines": "L66-L69",
+      "action": "Replace the silent `if (prompt === '') return;` with a branch that calls setValidation(BLANK_MESSAGE) and then returns, so submitContribution is never called for blank text.",
+      "code": "if (prompt === '') return;  ->  if (prompt === '') { setValidation(BLANK_MESSAGE); return; }",
+      "expected": "Blank or whitespace-only submit stores the message and does not call the API."
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet render (textarea and alert)",
+      "lines": "L102-L111",
+      "action": "On the textarea add aria-invalid={validation !== undefined} and aria-describedby={validation ? 'contribution-idea-error' : undefined}. Directly after the closing </form> render the message paragraph only when validation is set.",
+      "code": "{validation && <p id=\"contribution-idea-error\" role=\"alert\">{validation}</p>}",
+      "expected": "Inline alert 'Enter an idea first' appears after a blank submit and is linked to the textarea."
+    }
+  ],
+  "created_at": "2026-11-23T23:49:13.630566+00:00",
+  "updated_at": "2026-11-23T23:50:39.815749+00:00"
+}

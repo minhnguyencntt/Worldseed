@@ -1,0 +1,64 @@
+{
+  "id": "01M85KECM0JYG09HVD6KNVXGN5",
+  "intent_id": "01M85K9F2Z1HDMTP8XNSKJEWFA",
+  "title": "Verify: Store changes after shutdown do not reach the scene unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests that the subscription is released on shutdown.",
+  "description": "Add tests/bootSceneShutdownUnsubscribe.test.ts with the same mocks, asserting no scene calls after shutdown.",
+  "acceptance_criteria": [
+    "After shutdown setFocusedObject does not call focus on objects.",
+    "State updates after shutdown do not call sync."
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "All Phaser, content and engine dependencies mocked"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-737.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85KATM0Z6RT1HGMHW9WXYCW",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-737.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85KECM0029DGTT80T5M87AS"
+  ],
+  "sim_node_id": "01M85KATM0RCXE3TB1TSDT1QMF",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-737.md",
+  "artifact_id": "UNIT-737",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneShutdownUnsubscribe.test.ts",
+      "symbol": "new: BootScene shutdown unsubscribe",
+      "lines": "new",
+      "action": "Reuse mocks from tests/bootSceneFocusClear.test.ts. Test 'ignores store changes after shutdown': boot.create(), invoke the 'shutdown' callback, vi.clearAllMocks on fake, call useGameStore.getState().setFocusedObject('bookshelf'); assert fake.focus and fake.sync not called. Test 'focus reset does not trigger sync': spy on boot.onStateChange via vi.spyOn, invoke shutdown, assert the spy was not called after the shutdown callback returned.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneShutdownUnsubscribe.test.ts",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T01:41:36.512693+00:00",
+  "updated_at": "2026-11-24T01:42:29.798959+00:00"
+}

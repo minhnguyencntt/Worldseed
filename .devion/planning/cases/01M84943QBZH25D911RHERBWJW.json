@@ -1,0 +1,220 @@
+{
+  "id": "01M84943QBZH25D911RHERBWJW",
+  "trigger_node_id": "INT-029, UNIT-137 +3",
+  "node_ids": [
+    "INT-029",
+    "UNIT-137",
+    "UNIT-138",
+    "REQ-069",
+    "EVD-029"
+  ],
+  "intent_id": "INT-029",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-029",
+      "title": "SG-6.4.2 · Add onReject prop and Reject button to ExecutionPanel",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-137",
+      "title": "Act: Add onReject prop and Reject button to ExecutionPanel",
+      "kind": "unit",
+      "task_ids": [
+        "01M84943JE1RMM3B6Z9JE5PFMW"
+      ],
+      "depends_on": [
+        "REQ-069"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-act",
+      "commit_sha": "b03f37b605d0f81ed2952db4d844026bba4eff28",
+      "from_sha": "6505b59a29d875356e01b6532adc2e2e798febd6",
+      "started_at": "2026-11-23T13:22:00.432348+00:00",
+      "ended_at": "2026-11-23T13:22:18.025788+00:00",
+      "run_started_at": "2026-11-23T13:22:00.432348+00:00",
+      "duration_ms": 17049,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "UNIT-138",
+      "title": "Verify: ExecutionPanel Reject button unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84943JESVM8NJM534JBQZJE"
+      ],
+      "depends_on": [
+        "UNIT-137",
+        "REQ-069"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "draco-verify",
+      "commit_sha": "f52e026425f7f8708f5d65e53e7c2b56e33c5cc9",
+      "from_sha": "b03f37b605d0f81ed2952db4d844026bba4eff28",
+      "tests": [
+        {
+          "id": "executionReject.shows-reject-awaiting-approval",
+          "kind": "unit",
+          "name": "ExecutionPanel Reject button shows Reject for AWAITING_APPROVAL and calls onReject with the id",
+          "title": "shows Reject for AWAITING_APPROVAL and calls onReject with the id",
+          "scenario": "Given an AWAITING_APPROVAL execution with onReject, when the user clicks Reject, then onReject is called once with 'EX1' and onApprove/onRetry are not called",
+          "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx --testTimeout=10000 -t \"shows Reject for AWAITING_APPROVAL\"",
+          "file": "tests/executionReject.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "executionReject.hides-reject",
+          "kind": "unit",
+          "name": "ExecutionPanel Reject button hides Reject without onReject or for non-awaiting statuses",
+          "title": "hides Reject without onReject or for non-awaiting statuses",
+          "scenario": "Given AWAITING_APPROVAL without onReject, FAILED with onReject, and RUNNING with onReject, then no Reject button is in the document in each case",
+          "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx --testTimeout=10000 -t \"hides Reject\"",
+          "file": "tests/executionReject.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "executionReject.approve-retry-unchanged",
+          "kind": "unit",
+          "name": "ExecutionPanel Reject button Approve and Retry still call their callbacks",
+          "title": "Approve and Retry still call their callbacks",
+          "scenario": "Given AWAITING_APPROVAL, when Approve is clicked, then onApprove is called with 'EX1'; given FAILED, when Retry is clicked, then onRetry is called with 'EX1' and onReject is never called",
+          "command": "cd game/frontend && npx vitest run tests/executionReject.test.tsx --testTimeout=10000",
+          "file": "tests/executionReject.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T13:22:18.034950+00:00",
+      "ended_at": "2026-11-23T13:22:49.280269+00:00",
+      "run_started_at": "2026-11-23T13:22:18.034950+00:00",
+      "duration_ms": 30691,
+      "model": "claude-haiku-5-5"
+    },
+    {
+      "unit_id": "REQ-069",
+      "title": "REQ · ExecutionPanel shows a Reject button only for AWAITING_APPROVAL runs when onReject is given",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-029"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-029",
+      "title": "Evidence: ExecutionPanel Reject button unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-137",
+        "UNIT-138"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-069",
+      "dst": "UNIT-138"
+    },
+    {
+      "src": "INT-029",
+      "dst": "REQ-069"
+    },
+    {
+      "src": "UNIT-138",
+      "dst": "EVD-029"
+    },
+    {
+      "src": "UNIT-137",
+      "dst": "EVD-029"
+    },
+    {
+      "src": "REQ-069",
+      "dst": "UNIT-137"
+    },
+    {
+      "src": "UNIT-137",
+      "dst": "UNIT-138"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84943",
+  "base_sha": "6505b59a29d875356e01b6532adc2e2e798febd6",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84943QBZH25D911RHERBWJW:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T13:21:59.531341+00:00",
+  "updated_at": "2026-11-23T13:22:50.098318+00:00",
+  "completed_at": "2026-11-23T13:22:49.281098+00:00",
+  "duration_ms": 49750,
+  "usage_stats": {
+    "total_duration_ms": 47752
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 12,
+  "unit_allowlist": [
+    "UNIT-137",
+    "UNIT-138"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-137",
+        "title": "Act: Add onReject prop and Reject button to ExecutionPanel",
+        "evidence_refs": [
+          {
+            "id": "EVD-029",
+            "path": ".ai-dlc/evidence/EVD-029.md",
+            "title": "Evidence: ExecutionPanel Reject button unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-137 unless acceptance outcomes recorded in EVD-029 (.ai-dlc/evidence/EVD-029.md; \"Evidence: ExecutionPanel Reject button unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-138",
+        "title": "Verify: ExecutionPanel Reject button unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-029",
+            "path": ".ai-dlc/evidence/EVD-029.md",
+            "title": "Evidence: ExecutionPanel Reject button unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-138 unless acceptance outcomes recorded in EVD-029 (.ai-dlc/evidence/EVD-029.md; \"Evidence: ExecutionPanel Reject button unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T13:22:00.327115+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-137",
+    "UNIT-138"
+  ]
+}

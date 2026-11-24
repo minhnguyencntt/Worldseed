@@ -1,0 +1,484 @@
+{
+  "intent_id": "01M8471WDMNZZFD9PS77RZ5FV4",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84736MHWJZX7BE19R4Y6PPE",
+      "kind": "intent",
+      "title": "SG-5.3 · Round service wired into admin routes and scheduler",
+      "body": "Context: backend/internal/server/server.go already builds round.Service (newRoundService), adapts it with roundAdmin and roundDefaults, and mounts the five admin round routes under admin.Middleware. cmd/server/main.go already runs server.NewScheduler(cfg).Run(ctx). Desired behavior: this wiring is confirmed against the code and covered by passing route tests. Expected result: go test ./internal/server passes. Why: sub-goal SG-5.3 must be met without duplicating work that exists.\n\n## Acceptance criteria\n- Given a token-less request, when any admin round route is called, then the response is 401\n- Given Bearer token and an existing round, when each admin round route is called, then the response is not 404\n- Given main starts, when the server runs, then the scheduler Run loop is started on the shared context\n\n\n## Scope\n- In scope: backend/internal/server/server.go wiring\n- In scope: backend/cmd/server/main.go scheduler start\n- Out of scope: Changing round lifecycle logic\n- Out of scope: Frontend or worker changes\n- Preserve: Existing admin handler contracts\n- Preserve: Git-backed storage, no database\n\n\n## Technical constraints\n- Go with chi router\n- No database\n\n\n## Definition of done\n- Admin round routes mounted behind token middleware\n- Scheduler started in main\n- Route tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Admin round routes sit behind the admin token and the scheduler starts in main",
+      "description": "Context: backend/internal/server/server.go already builds round.Service (newRoundService), adapts it with roundAdmin and roundDefaults, and mounts the five admin round routes under admin.Middleware. cmd/server/main.go already runs server.NewScheduler(cfg).Run(ctx). Desired behavior: this wiring is confirmed against the code and covered by passing route tests. Expected result: go test ./internal/server passes. Why: sub-goal SG-5.3 must be met without duplicating work that exists.",
+      "acceptance_criteria": [
+        "Given a token-less request, when any admin round route is called, then the response is 401",
+        "Given Bearer token and an existing round, when each admin round route is called, then the response is not 404",
+        "Given main starts, when the server runs, then the scheduler Run loop is started on the shared context"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go wiring",
+          "backend/cmd/server/main.go scheduler start"
+        ],
+        "out_of_scope": [
+          "Changing round lifecycle logic",
+          "Frontend or worker changes"
+        ],
+        "preserve": [
+          "Existing admin handler contracts",
+          "Git-backed storage, no database"
+        ]
+      },
+      "technical_constraints": [
+        "Go with chi router",
+        "No database"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Admin round routes mounted behind token middleware",
+        "Scheduler started in main",
+        "Route tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-018.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8470M8SGE3C49YK0A5ZFJDC",
+      "links": [
+        "trace:01M8470M8SGE3C49YK0A5ZFJDC",
+        "artifact:.ai-dlc/intent/INT-018.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-018.md",
+      "artifact_id": "INT-018"
+    },
+    {
+      "id": "01M84736MHXKQGT1Z2G5BR27X1",
+      "kind": "requirement",
+      "title": "REQ · Admin round endpoints are mounted behind the admin token",
+      "body": "Context: server.New registers POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id} and GET /rounds/{id}/contributions inside r.Route(\"/api/v1/admin\") with admin.Middleware(cfg.Admin.Token). Desired behavior: each route reaches its admin.RoundHandler method only with a valid bearer token. Expected result: unauthenticated calls get 401, authenticated calls reach the handler. Why: protects round control from the public.\n\n## Acceptance criteria\n- Given no Authorization header, when POST /api/v1/admin/rounds is called, then status is 401\n- Given Bearer tok and an existing round, when GET /api/v1/admin/rounds/ROUND-0000001 is called, then status is not 404\n\n\n## Scope\n- In scope: Admin round route registration in server.New\n- Out of scope: Handler logic changes\n- Preserve: Executions routes in the same admin group\n\n\n## Technical constraints\n- Routes stay under admin.Middleware\n\n\n## Definition of done\n- Five round routes registered in the admin group\n\n\n## Non-functional requirements\n- Admin token never logged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "create, open, close, get and contributions routes require the admin token",
+      "description": "Context: server.New registers POST /rounds, POST /rounds/{id}/open, POST /rounds/{id}/close, GET /rounds/{id} and GET /rounds/{id}/contributions inside r.Route(\"/api/v1/admin\") with admin.Middleware(cfg.Admin.Token). Desired behavior: each route reaches its admin.RoundHandler method only with a valid bearer token. Expected result: unauthenticated calls get 401, authenticated calls reach the handler. Why: protects round control from the public.",
+      "acceptance_criteria": [
+        "Given no Authorization header, when POST /api/v1/admin/rounds is called, then status is 401",
+        "Given Bearer tok and an existing round, when GET /api/v1/admin/rounds/ROUND-0000001 is called, then status is not 404"
+      ],
+      "scope": {
+        "in_scope": [
+          "Admin round route registration in server.New"
+        ],
+        "out_of_scope": [
+          "Handler logic changes"
+        ],
+        "preserve": [
+          "Executions routes in the same admin group"
+        ]
+      },
+      "technical_constraints": [
+        "Routes stay under admin.Middleware"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Five round routes registered in the admin group",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-046.md`"
+      ],
+      "non_functional": [
+        "Admin token never logged"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84736MHWJZX7BE19R4Y6PPE",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84736MHWJZX7BE19R4Y6PPE",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-046.md"
+      ],
+      "depends_on": [
+        "01M84736MHWJZX7BE19R4Y6PPE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-046.md",
+      "artifact_id": "REQ-046"
+    },
+    {
+      "id": "01M84736MH3BDGT7B77C05MQAT",
+      "kind": "requirement",
+      "title": "REQ · Scheduler is built from config and started in main",
+      "body": "Context: server.NewScheduler wires round.Service, round.FileStore, a world lister and cfg.Round.SchedulerInterval; main.go launches it with go Run(ctx). Desired behavior: scheduler is constructed from config with controller and store set. Expected result: NewScheduler returns a scheduler with the configured interval. Why: rounds must open and close automatically.\n\n## Acceptance criteria\n- Given round.scheduler_interval 7s, when NewScheduler is built, then Interval is 7s\n- Given a temp repo_path, when NewScheduler is built, then Controller and Rounds are non-nil\n\n\n## Scope\n- In scope: server.NewScheduler\n- In scope: main.go scheduler start\n- Out of scope: Scheduler tick logic\n- Preserve: Graceful shutdown on interrupt\n\n\n## Technical constraints\n- Scheduler uses the injected config only\n\n\n## Definition of done\n- NewScheduler wired and started in main\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "main runs the round scheduler built by server.NewScheduler",
+      "description": "Context: server.NewScheduler wires round.Service, round.FileStore, a world lister and cfg.Round.SchedulerInterval; main.go launches it with go Run(ctx). Desired behavior: scheduler is constructed from config with controller and store set. Expected result: NewScheduler returns a scheduler with the configured interval. Why: rounds must open and close automatically.",
+      "acceptance_criteria": [
+        "Given round.scheduler_interval 7s, when NewScheduler is built, then Interval is 7s",
+        "Given a temp repo_path, when NewScheduler is built, then Controller and Rounds are non-nil"
+      ],
+      "scope": {
+        "in_scope": [
+          "server.NewScheduler",
+          "main.go scheduler start"
+        ],
+        "out_of_scope": [
+          "Scheduler tick logic"
+        ],
+        "preserve": [
+          "Graceful shutdown on interrupt"
+        ]
+      },
+      "technical_constraints": [
+        "Scheduler uses the injected config only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "NewScheduler wired and started in main",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-047.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84736MHWJZX7BE19R4Y6PPE",
+      "matched_feature_id": "01M8457KMNQV27GGDGKH8GE5YH",
+      "links": [
+        "parent:01M84736MHWJZX7BE19R4Y6PPE",
+        "trace:01M8457KMNQV27GGDGKH8GE5YH",
+        "artifact:.ai-dlc/requirements/REQ-047.md"
+      ],
+      "depends_on": [
+        "01M84736MHWJZX7BE19R4Y6PPE"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-047.md",
+      "artifact_id": "REQ-047"
+    },
+    {
+      "id": "01M84736MHBY7W9Z3XBW9V60YE",
+      "kind": "unit",
+      "title": "Act: Confirm admin round route registration in server.New",
+      "body": "Read server.New admin group and confirm POST /rounds, open, close, GET /rounds/{id} and contributions map to rh.Create, Open, Close, Get, Contributions; correct any missing route.\n\n## Acceptance criteria\n- All five round routes registered in the admin group\n- go build ./... succeeds\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- Out of scope: admin handlers\n- Preserve: executions routes\n\n\n## Technical constraints\n- Routes stay inside r.Route admin group using ar.Use(admin.Middleware)\n- Code path: `backend/internal/server/server.go`\n\n\n## Definition of done\n- Routes registered; build passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify the five admin round routes are registered behind the middleware and fix any gap",
+      "description": "Read server.New admin group and confirm POST /rounds, open, close, GET /rounds/{id} and contributions map to rh.Create, Open, Close, Get, Contributions; correct any missing route.",
+      "acceptance_criteria": [
+        "All five round routes registered in the admin group",
+        "go build ./... succeeds"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go"
+        ],
+        "out_of_scope": [
+          "admin handlers"
+        ],
+        "preserve": [
+          "executions routes"
+        ]
+      },
+      "technical_constraints": [
+        "Routes stay inside r.Route admin group using ar.Use(admin.Middleware)",
+        "Code path: `backend/internal/server/server.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Routes registered; build passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-091.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84736MHXKQGT1Z2G5BR27X1",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M84736MHXKQGT1Z2G5BR27X1",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-091.md"
+      ],
+      "depends_on": [
+        "01M84736MHXKQGT1Z2G5BR27X1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-091.md",
+      "artifact_id": "UNIT-091",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New (admin r.Route block)",
+          "lines": "L103-L115",
+          "action": "Confirm ar.Post(\"/rounds\", rh.Create), ar.Post(\"/rounds/{id}/open\", rh.Open), ar.Post(\"/rounds/{id}/close\", rh.Close), ar.Get(\"/rounds/{id}\", rh.Get) and ar.Get(\"/rounds/{id}/contributions\", rh.Contributions) exist after ar.Use(admin.Middleware(cfg.Admin.Token)); add any that is missing.",
+          "code": "ar.Post(\"/rounds/{id}/open\", rh.Open)",
+          "expected": "All five routes present; go build ./... succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84736MHCQG5YV92GE44Z0DM",
+      "kind": "unit",
+      "title": "Act: Confirm scheduler construction and start in main",
+      "body": "Read server.NewScheduler and cmd/server/main.go and confirm the scheduler is built from cfg and run in a goroutine with the signal context.\n\n## Acceptance criteria\n- NewScheduler sets Controller, Rounds, Worlds and Interval\n- main calls go server.NewScheduler(cfg).Run(ctx)\n\n\n## Scope\n- In scope: backend/internal/server/server.go\n- In scope: backend/cmd/server/main.go\n- Out of scope: Scheduler.Tick\n- Preserve: Shutdown handling\n\n\n## Technical constraints\n- Run takes the NotifyContext ctx\n- Code path: `backend/internal/server/server.go`\n- Code path: `backend/cmd/server/main.go`\n\n\n## Definition of done\n- Scheduler wired; build passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify NewScheduler and main start the scheduler and fix any gap",
+      "description": "Read server.NewScheduler and cmd/server/main.go and confirm the scheduler is built from cfg and run in a goroutine with the signal context.",
+      "acceptance_criteria": [
+        "NewScheduler sets Controller, Rounds, Worlds and Interval",
+        "main calls go server.NewScheduler(cfg).Run(ctx)"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server.go",
+          "backend/cmd/server/main.go"
+        ],
+        "out_of_scope": [
+          "Scheduler.Tick"
+        ],
+        "preserve": [
+          "Shutdown handling"
+        ]
+      },
+      "technical_constraints": [
+        "Run takes the NotifyContext ctx",
+        "Code path: `backend/internal/server/server.go`",
+        "Code path: `backend/cmd/server/main.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Scheduler wired; build passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-092.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84736MH3BDGT7B77C05MQAT",
+      "matched_feature_id": "01M8470M8T9BC85XFQSVAAYGZG",
+      "links": [
+        "parent:01M84736MH3BDGT7B77C05MQAT",
+        "trace:01M8470M8T9BC85XFQSVAAYGZG",
+        "artifact:.ai-dlc/units/UNIT-092.md"
+      ],
+      "depends_on": [
+        "01M84736MH3BDGT7B77C05MQAT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-092.md",
+      "artifact_id": "UNIT-092",
+      "steps": [
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "NewScheduler",
+          "lines": "L140-L162",
+          "action": "Confirm the returned round.Scheduler sets Controller to newRoundService(cfg), Rounds to &round.FileStore{Root: cfg.Storage.RepoPath}, Worlds from repo.List and Interval to cfg.Round.SchedulerInterval; set any missing field.",
+          "code": "Interval: cfg.Round.SchedulerInterval,",
+          "expected": "All four fields set"
+        },
+        {
+          "file": "backend/cmd/server/main.go",
+          "symbol": "main",
+          "lines": "L30-L33",
+          "action": "Confirm go server.NewScheduler(cfg).Run(ctx) is called after signal.NotifyContext and before ListenAndServe; add it if missing.",
+          "code": "go server.NewScheduler(cfg).Run(ctx)",
+          "expected": "Scheduler goroutine starts with server"
+        }
+      ]
+    },
+    {
+      "id": "01M84736MH9KK3G588ERBC5T7V",
+      "kind": "unit",
+      "title": "Verify: Admin round route auth and mounting unit tests",
+      "body": "Run and, where absent, add tests in server_test.go that exercise the admin round routes with an in-memory httptest recorder and a temp dir repo.\n\n## Acceptance criteria\n- Missing token returns 401 on each route\n- Bearer tok returns a non-404 response on each route\n\n\n## Scope\n- In scope: backend/internal/server/server_test.go\n- Out of scope: Real server or ports\n- Preserve: Existing tests\n\n\n## Technical constraints\n- httptest only, temp dir filesystem\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove admin round routes require the token and are mounted",
+      "description": "Run and, where absent, add tests in server_test.go that exercise the admin round routes with an in-memory httptest recorder and a temp dir repo.",
+      "acceptance_criteria": [
+        "Missing token returns 401 on each route",
+        "Bearer tok returns a non-404 response on each route"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "Real server or ports"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "httptest only, temp dir filesystem"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-093.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84736MHBY7W9Z3XBW9V60YE",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M84736MHBY7W9Z3XBW9V60YE",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-093.md"
+      ],
+      "depends_on": [
+        "01M84736MHBY7W9Z3XBW9V60YE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-093.md",
+      "artifact_id": "UNIT-093",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AdminRoundsRequireToken",
+          "lines": "L240-L279",
+          "action": "Confirm the test sends each of the five admin round requests without Authorization and asserts status 401; add any missing endpoint case.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsRequireToken",
+          "expected": "Test passes, all 401"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_AdminRoundsAreMounted",
+          "lines": "L288-L329",
+          "action": "Confirm the test sends Bearer tok to each of the five endpoints against a temp-dir repo holding round-0000001 and asserts status != 404.",
+          "command": "cd backend && go test ./internal/server -run TestNew_AdminRoundsAreMounted",
+          "expected": "Test passes for all five subtests"
+        }
+      ]
+    },
+    {
+      "id": "01M84736MHJEY987XX9WHT6AEY",
+      "kind": "unit",
+      "title": "Verify: NewScheduler wiring unit tests",
+      "body": "Run and, where absent, add a unit test for NewScheduler using a temp dir repo path and no real clock or network.\n\n## Acceptance criteria\n- Interval equals configured 7s\n- Controller and Rounds are non-nil\n\n\n## Scope\n- In scope: backend/internal/server/server_test.go\n- Out of scope: Running the scheduler loop\n- Preserve: Existing tests\n\n\n## Technical constraints\n- No goroutines started\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove NewScheduler uses config values",
+      "description": "Run and, where absent, add a unit test for NewScheduler using a temp dir repo path and no real clock or network.",
+      "acceptance_criteria": [
+        "Interval equals configured 7s",
+        "Controller and Rounds are non-nil"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal/server/server_test.go"
+        ],
+        "out_of_scope": [
+          "Running the scheduler loop"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "No goroutines started"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-094.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84736MHCQG5YV92GE44Z0DM",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M84736MHCQG5YV92GE44Z0DM",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-094.md"
+      ],
+      "depends_on": [
+        "01M84736MHCQG5YV92GE44Z0DM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-094.md",
+      "artifact_id": "UNIT-094",
+      "steps": [
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNewScheduler_UsesConfig",
+          "lines": "L331-L346",
+          "action": "Confirm the test builds config.Config with SchedulerInterval 7s and a t.TempDir() RepoPath, calls NewScheduler and asserts Interval == 7s and Controller and Rounds non-nil; add the assertions if absent.",
+          "command": "cd backend && go test ./internal/server -run TestNewScheduler_UsesConfig",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84736MHYJNADX92XGHQ9Y5R",
+      "kind": "evidence",
+      "title": "Evidence: SG-5.3 admin round wiring unit tests pass",
+      "body": "Evidence from go test ./internal/server showing the route auth, mounting and scheduler tests pass.\n\n## Acceptance criteria\n- go test ./internal/server exits 0\n- Route and scheduler tests are listed as passing\n\n\n## Scope\n- In scope: Test output\n- Out of scope: Integration runs\n\n\n## Definition of done\n- Passing test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record that the server package tests pass",
+      "description": "Evidence from go test ./internal/server showing the route auth, mounting and scheduler tests pass.",
+      "acceptance_criteria": [
+        "go test ./internal/server exits 0",
+        "Route and scheduler tests are listed as passing"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output"
+        ],
+        "out_of_scope": [
+          "Integration runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-018.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84736MH9KK3G588ERBC5T7V",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M84736MH9KK3G588ERBC5T7V",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-018.md"
+      ],
+      "depends_on": [
+        "01M84736MH9KK3G588ERBC5T7V",
+        "01M84736MHJEY987XX9WHT6AEY"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-018.md",
+      "artifact_id": "EVD-018"
+    }
+  ],
+  "created_at": "2026-11-23T12:46:33.447485+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

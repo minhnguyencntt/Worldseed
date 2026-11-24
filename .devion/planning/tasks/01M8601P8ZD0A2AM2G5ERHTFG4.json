@@ -1,0 +1,67 @@
+{
+  "id": "01M8601P8ZD0A2AM2G5ERHTFG4",
+  "intent_id": "01M85ZKPM7T0R3TNQPAN9AHTG3",
+  "title": "Act: Guard the BootScene transitionTo handler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Ignore empty or unknown sceneId",
+  "description": "Add an early return in the transitionTo subscriber.",
+  "acceptance_criteria": [
+    "Given empty or unknown id, when handled, then nothing happens",
+    "Given a known id, when handled, then fade and start occur"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.ts"
+    ],
+    "out_of_scope": [
+      "others"
+    ],
+    "preserve": [
+      "Phaser 3.90.x"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser stays on 3.90.x",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "REQ-IGNORE"
+  ],
+  "definition_of_done": [
+    "Guard in place",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-861.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85ZPR8YE703C3BDE0TE7KFT",
+    "trace:01M85MNPTK9MD24VZM2PVPN53G",
+    "artifact:.ai-dlc/units/UNIT-861.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8601P8ZAQDBJAF83Z6BFP5W"
+  ],
+  "sim_node_id": "01M85ZPR8YCXR35PR54PPA5ZDN",
+  "feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+  "artifact_path": ".ai-dlc/units/UNIT-861.md",
+  "artifact_id": "UNIT-861",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create transitionTo handler",
+      "lines": "L77-L81",
+      "action": "At the top of the reactToPhaser.on('transitionTo') callback add a guard returning when sceneId is empty or this.scene.get(sceneId) is falsy, before the camera lines.",
+      "code": "if (!sceneId || !this.scene.get(sceneId)) return;",
+      "expected": "Empty and unknown ids do nothing"
+    }
+  ],
+  "created_at": "2026-11-24T05:21:51.903863+00:00",
+  "updated_at": "2026-11-24T05:24:51.485130+00:00"
+}

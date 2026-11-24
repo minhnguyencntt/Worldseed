@@ -1,0 +1,64 @@
+{
+  "id": "01M84JZMY3J9M4RK191BRSVWF9",
+  "intent_id": "01M84JY602RQMMN2PB98QWRQ70",
+  "title": "Act: Confirm Exporter.Export frozen-only, empty and error behavior",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Confirm the tests' target exporter code needs no change",
+  "description": "Exporter.Export in exporter.go already filters by frozen ids, returns a non-nil empty slice and wraps source errors. Read it and change nothing unless it disagrees with the acceptance criteria.",
+  "acceptance_criteria": [
+    "Given Export is read, When compared to the requirement, Then it filters frozen ids in order, never returns nil Contributions and wraps errors with %w",
+    "Given the package, When built, Then go build passes"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/contribution/exporter.go"
+    ],
+    "out_of_scope": [
+      "Test files"
+    ],
+    "preserve": [
+      "Export signature"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `backend/internal/contribution/exporter.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Exporter confirmed to satisfy the requirement",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-270.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JZ5W6YZAZXAMTD9GVCRR3",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-270.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JZMY362KT882J0RKA3MTK"
+  ],
+  "sim_node_id": "01M84JZ5W6WX280ACTKDHDZVF1",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-270.md",
+  "artifact_id": "UNIT-270",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/exporter.go",
+      "symbol": "Exporter.Export",
+      "lines": "L25-L58",
+      "action": "Read Export and confirm it calls FrozenIDs then ListByRound, wraps each error with fmt.Errorf %w, initializes out := []ExportContribution{} and maps ID, PlayerID to Author, Prompt to Content, CreatedAt",
+      "command": "cd backend && go build ./internal/contribution/",
+      "expected": "Behavior matches the requirement; no edit required"
+    }
+  ],
+  "created_at": "2026-11-23T16:14:19.075413+00:00",
+  "updated_at": "2026-11-23T16:14:46.833853+00:00"
+}

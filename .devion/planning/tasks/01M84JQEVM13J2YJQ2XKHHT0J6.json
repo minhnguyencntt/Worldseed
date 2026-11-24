@@ -1,0 +1,68 @@
+{
+  "id": "01M84JQEVM13J2YJQ2XKHHT0J6",
+  "intent_id": "01M84JNW4N0FKEKZE4RSX80RNZ",
+  "title": "Act: Implement FileStore.FrozenIDs",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add FrozenIDs reading snapshot.yaml in store.go",
+  "description": "Add FrozenIDs to FileStore in backend/internal/contribution/store.go next to ListByRound.",
+  "acceptance_criteria": [
+    "FrozenIDs returns ids from snapshot.yaml in order",
+    "Missing snapshot returns ErrNotFound",
+    "Unsafe ids are rejected"
+  ],
+  "scope": {
+    "in_scope": [
+      "store.go"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "Other FileStore methods"
+    ]
+  },
+  "technical_constraints": [
+    "Use safepath.Segment and yaml.v3",
+    "Code path: `backend/internal/contribution/store.go`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Method compiles and follows ListByRound id validation style",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-262.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84JPZV28TWT9DHNQ4X6FSF4",
+    "trace:01M84JF0K214J0YTJ8H6WV9DFZ",
+    "artifact:.ai-dlc/units/UNIT-262.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84JQEVMZN2204SH5BRMGXWQ"
+  ],
+  "sim_node_id": "01M84JPZV2PF1M4QMY5D5W6QQF",
+  "feature_id": "01M84JF0K214J0YTJ8H6WV9DFZ",
+  "artifact_path": ".ai-dlc/units/UNIT-262.md",
+  "artifact_id": "UNIT-262",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/contribution/store.go",
+      "symbol": "FileStore.FrozenIDs",
+      "lines": "after L169",
+      "action": "Add method FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error): validate worldID and roundID with safepath.Segment (wrap errors as 'contribution: world id: %w' / 'contribution: round id: %w'), read filepath.Join(s.Root,\"worlds\",worldID,\"rounds\",strings.ToLower(roundID),\"snapshot.yaml\"), map errors.Is(err, fs.ErrNotExist) to ErrNotFound, yaml.Unmarshal into a local struct {Contributions []struct{ID string `yaml:\"id\"`} `yaml:\"contributions\"`}, return ids in order (empty non-nil slice when none). Add import gopkg.in/yaml.v3.",
+      "code": "func (s *FileStore) FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error) { ... }",
+      "expected": "go build ./internal/contribution succeeds"
+    }
+  ],
+  "created_at": "2026-11-23T16:09:50.708355+00:00",
+  "updated_at": "2026-11-23T16:10:54.046389+00:00"
+}

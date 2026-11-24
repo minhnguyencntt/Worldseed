@@ -1,0 +1,70 @@
+{
+  "id": "01M85BBD42S6YPNJ6FD6YQEAJF",
+  "intent_id": "01M85B5WN14APWMN80QG7DSQG9",
+  "title": "Verify: Second NPC spawn and idle animation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for manifest idle resolution and BootScene NPC spawn",
+  "description": "Write game/tests/npcIdle.test.ts for the resolver and game/frontend/tests/bootSceneNpc.test.ts for spawn, mocking Phaser and content like bootSceneCharacters.test.ts.",
+  "acceptance_criteria": [
+    "Resolver returns character:npc idle",
+    "BootScene creates two sprites and NPC plays character:npc:idle"
+  ],
+  "scope": {
+    "in_scope": [
+      "Two new test files"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock phaser and ../src/runtime/content"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-612.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85B7WWWXD8EVZ4AXB9AXG1P",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-612.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85BBD42ZT150SWQYZW1D45X"
+  ],
+  "sim_node_id": "01M85B7WWWKK0BAYPNBFMYGGSY",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-612.md",
+  "artifact_id": "UNIT-612",
+  "steps": [
+    {
+      "file": "game/tests/npcIdle.test.ts",
+      "symbol": "new: resolves NPC idle from manifest",
+      "lines": "new",
+      "action": "Create an in-memory manifest with a character:npc spritesheet defining idle, a CharacterSpec with idle ref character:npc/idle, call resolveCharacterAnimation(spec,'idle',manifest) and characterAnimationKey on the result; assert asset character:npc and key 'character:npc:idle'.",
+      "command": "cd game && npx vitest run tests/npcIdle.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/bootSceneNpc.test.ts",
+      "symbol": "new: spawns second NPC",
+      "lines": "new",
+      "action": "Copy the vi.mock('phaser') and vi.mock('../src/runtime/content') setup from bootSceneCharacters.test.ts, add npc to world.characters, scene.characters and manifest; call new BootScene().create() and assert add.sprite called twice and the second sprite's play was called with 'character:npc:idle'.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneNpc.test.ts",
+      "expected": "Test passes: two sprites, NPC idle key played"
+    }
+  ],
+  "created_at": "2026-11-23T23:20:10.114552+00:00",
+  "updated_at": "2026-11-23T23:21:25.287477+00:00"
+}

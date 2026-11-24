@@ -1,0 +1,53 @@
+{
+  "id": "01M845SAYTXSC6SA3F0DVFWQE7",
+  "intent_id": "01M845QSXVR8TFAF8A3Q73J967",
+  "title": "REQ · Player contribution history is routed at GET /api/v1/player/me/contributions",
+  "kind": "requirement",
+  "issue_type": "Story",
+  "summary": "Router serves Mine at the player/me path and drops the legacy mine path",
+  "description": "Context: server.New registers r.Get(\"/api/v1/contributions/mine\", ch.Mine) at line 77. Desired behavior: register ch.Mine at /api/v1/player/me/contributions and remove the legacy registration. Expected result: the legacy path falls through to /contributions/{id} and responds 404 for the unknown id \"mine\". Why: consistent player-scoped API.",
+  "acceptance_criteria": [
+    "Given a session cookie and round_id, when GET /api/v1/player/me/contributions is called, then status is 200 and body is a JSON array",
+    "Given a session cookie, when GET /api/v1/contributions/mine is called, then status is 404",
+    "Given no cookie, when GET /api/v1/player/me/contributions is called, then status is 401"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go route registration"
+    ],
+    "out_of_scope": [
+      "Handler logic"
+    ],
+    "preserve": [
+      "Other routes"
+    ]
+  },
+  "technical_constraints": [
+    "Route must be registered after ch is constructed"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Route moved",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-034.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M845SA7XNWY9ZMQYB39VFR9J",
+    "trace:01M8457KMM85WJCJXJHN26TC5R",
+    "artifact:.ai-dlc/requirements/REQ-034.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [
+    "01M845SAYTJDTCJ7HD9Y2NKYPK"
+  ],
+  "sim_node_id": "01M845SA7X2XZ5SNR9CVW2S92R",
+  "feature_id": "01M8457KMM85WJCJXJHN26TC5R",
+  "artifact_path": ".ai-dlc/requirements/REQ-034.md",
+  "artifact_id": "REQ-034",
+  "created_at": "2026-11-23T12:23:40.762531+00:00",
+  "updated_at": "2026-11-23T12:24:26.719726+00:00"
+}

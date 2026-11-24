@@ -1,0 +1,78 @@
+{
+  "id": "01M84WBYFSQ51XZ8WNWEP3X1KM",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "Verify: Layer ordering and content-to-entity creation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Prove buildScene orders layers and maps content to entities with a mocked render context.",
+  "description": "Unit tests with a fake RenderContext and a mocked Phaser module cover layer depth ordering, content to entity creation and visibility filtering.",
+  "acceptance_criteria": [
+    "Depth order test passes for all six layers",
+    "Position, scale and visibility cases pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/layers.test.ts",
+      "game/tests/buildScene.test.ts",
+      "game/frontend/tests/worldScene.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Phaser mocked via vi.mock('phaser'); fake RenderContext records calls"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-472.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84W9646RXE7SH3PGZMY63FW",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-472.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84WBYFS4J9RGPWWG5TY3RF7"
+  ],
+  "sim_node_id": "01M84W96466CAD5MZFVGZJW0HJ",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-472.md",
+  "artifact_id": "UNIT-472",
+  "steps": [
+    {
+      "file": "game/tests/layers.test.ts",
+      "symbol": "new: layerDepth ordering",
+      "lines": "new",
+      "action": "Add test 'orders layers background<furniture<objects<characters<effects<ui' asserting LAYER_ORDER.map(layerDepth) is strictly increasing and layerDepth(undefined) equals LAYER_DEPTH.objects.",
+      "command": "cd game && npx vitest run tests/layers.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/tests/buildScene.test.ts",
+      "symbol": "new: buildScene content to entity",
+      "lines": "new",
+      "action": "Build a fake RenderContext recording addImage/setDepth/setScale calls; use a SceneDef built from tests/fixtures/valid-world.ts shaped data with objects on every layer, one with visibleWhen {flag:'x'} and flag unset. Assert entity count excludes the hidden one, depths are sorted ascending, position and scale are forwarded, and appending an extra ObjectDef adds one entity.",
+      "command": "cd game && npx vitest run tests/buildScene.test.ts",
+      "expected": "All cases pass"
+    },
+    {
+      "file": "game/frontend/tests/worldScene.test.ts",
+      "symbol": "new: WorldScene create",
+      "lines": "new",
+      "action": "Mock phaser like tests/bootScene.test.ts with Scene having add.image and events.once spies; set useGameStore state from createInitialState(world, scene); call new WorldScene().create() and assert add.image was called once per visible bedroom object and SHUTDOWN handler registered.",
+      "command": "cd game/frontend && npx vitest run tests/worldScene.test.ts",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T18:58:19.256934+00:00",
+  "updated_at": "2026-11-23T19:05:38.583448+00:00"
+}

@@ -1,0 +1,69 @@
+{
+  "id": "01M84GGJMZD243M8DTDPH546AA",
+  "intent_id": "01M84GCPQV4VDXPM8F6AXV18ZS",
+  "title": "Verify: Failed resume marks RECOVERING unit tests with fake clock",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for the mark-on-failure path.",
+  "description": "Tests in recovery_mark_test.go using the fakes from recovery_test.go and a fixed clock.",
+  "acceptance_criteria": [
+    "Failed resume saves RECOVERING with error and clock time",
+    "Next execution still resumed",
+    "Save failure is returned"
+  ],
+  "scope": {
+    "in_scope": [
+      "recovery_mark_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Fixed clock time.Date(2026,1,2,3,4,5,0,time.UTC)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-214.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GG45V0BQMV423AW3AC0H7",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-214.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GGJMZCWXQ7044JE8V3WAS"
+  ],
+  "sim_node_id": "01M84GG45VTKTZZ73Y98EYHTGX",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-214.md",
+  "artifact_id": "UNIT-214",
+  "steps": [
+    {
+      "file": "backend/worker/internal/recovery/recovery_mark_test.go",
+      "symbol": "new: TestRecoverMarksFailedResume",
+      "lines": "new",
+      "action": "Seed a-run(RUNNING), b-run(RUNNING); fakeResumer.errFor[\"a-run\"]=errors.New(\"agent gone\"); call Recover with fixed clock; assert fs.saved has one record with ID a-run, Status RECOVERING, Error \"agent gone\", UpdatedAt equal to the fixed clock; assert resumer IDs are [a-run b-run]; Result.Marked equals [a-run] and Resumed equals [b-run].",
+      "command": "cd backend/worker && go test ./internal/recovery -run TestRecoverMarksFailedResume",
+      "expected": "Test passes."
+    },
+    {
+      "file": "backend/worker/internal/recovery/recovery_mark_test.go",
+      "symbol": "new: TestRecoverSaveFailure",
+      "lines": "new",
+      "action": "Make fakeStore.saveErr non-nil and resumer fail for a-run; assert Recover returns an error satisfying errors.Is with saveErr.",
+      "command": "cd backend/worker && go test ./internal/recovery -run TestRecoverSaveFailure",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T15:31:08.063019+00:00",
+  "updated_at": "2026-11-23T15:34:49.112706+00:00"
+}

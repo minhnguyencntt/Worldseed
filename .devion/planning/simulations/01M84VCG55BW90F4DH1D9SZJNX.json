@@ -1,0 +1,483 @@
+{
+  "intent_id": "01M84VCG55BW90F4DH1D9SZJNX",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84VE2X846VJ8Z0X9P2D2EPH",
+      "kind": "intent",
+      "title": "SG-4.2.4 · Untrack the 15,329 tracked node_modules files via a tested cleanup script",
+      "body": "Context: game/frontend still has 15,329 tracked files under node_modules (including phaser and its type-generation test files) plus the vitest results cache, which is currently an unmerged (UU) index entry. src/lib/trackedNodeModules.ts already has trackedNodeModulesPaths, parseGitLsFiles, checkTrackedFiles and untrackNodeModules (git rm -r --cached), and scripts/untrackNodeModules.ts runs it through the npm script untrack:node-modules. Desired behavior: the cleanup verifies its own result, fails loudly if any path stays tracked, and reports counts, all covered by unit tests with a mocked git runner. Why: so the tracked dependency files can be removed reliably, and the guard run by npm test stays green.\n\n## Acceptance criteria\n- Given a git runner that lists tracked node_modules files, when the cleanup runs, then it issues git rm -r --cached and re-lists the index to confirm none remain\n- Given the index still lists a node_modules path after the rm, when the cleanup runs, then it throws naming the leftover paths\n- Given the CLI helper, when cleanup succeeds, then it logs the untracked count and returns exit code 0, and on failure it logs the error and returns 1\n- Given unit tests use a fake git runner, when they run, then no real git command executes and no file is deleted from disk\n\n\n## Scope\n- In scope: src/lib/trackedNodeModules.ts verified cleanup and CLI helper\n- In scope: scripts/untrackNodeModules.ts\n- In scope: unit tests with a fake git runner\n- Out of scope: Changing .gitignore rules\n- Out of scope: Changing the assertNoTrackedNodeModules guard or the test script\n- Out of scope: Deleting files from disk\n- Preserve: Existing untrackNodeModules behavior and its tests\n- Preserve: npm script untrack:node-modules\n- Preserve: Phaser pinned to 3.90.x\n\n\n## Technical constraints\n- Use only git rm --cached, never delete working-tree files\n- Git access goes through the injected GitRunner type\n\n\n## Definition of done\n- All acceptance criteria are covered by passing unit tests\n- npm run typecheck passes\n\n\n## Non-functional requirements\n- Cleanup tests run in seconds with no real git\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A verified, unit-tested cleanup removes every tracked node_modules path from the git index and keeps files on disk",
+      "description": "Context: game/frontend still has 15,329 tracked files under node_modules (including phaser and its type-generation test files) plus the vitest results cache, which is currently an unmerged (UU) index entry. src/lib/trackedNodeModules.ts already has trackedNodeModulesPaths, parseGitLsFiles, checkTrackedFiles and untrackNodeModules (git rm -r --cached), and scripts/untrackNodeModules.ts runs it through the npm script untrack:node-modules. Desired behavior: the cleanup verifies its own result, fails loudly if any path stays tracked, and reports counts, all covered by unit tests with a mocked git runner. Why: so the tracked dependency files can be removed reliably, and the guard run by npm test stays green.",
+      "acceptance_criteria": [
+        "Given a git runner that lists tracked node_modules files, when the cleanup runs, then it issues git rm -r --cached and re-lists the index to confirm none remain",
+        "Given the index still lists a node_modules path after the rm, when the cleanup runs, then it throws naming the leftover paths",
+        "Given the CLI helper, when cleanup succeeds, then it logs the untracked count and returns exit code 0, and on failure it logs the error and returns 1",
+        "Given unit tests use a fake git runner, when they run, then no real git command executes and no file is deleted from disk"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/trackedNodeModules.ts verified cleanup and CLI helper",
+          "scripts/untrackNodeModules.ts",
+          "unit tests with a fake git runner"
+        ],
+        "out_of_scope": [
+          "Changing .gitignore rules",
+          "Changing the assertNoTrackedNodeModules guard or the test script",
+          "Deleting files from disk"
+        ],
+        "preserve": [
+          "Existing untrackNodeModules behavior and its tests",
+          "npm script untrack:node-modules",
+          "Phaser pinned to 3.90.x"
+        ]
+      },
+      "technical_constraints": [
+        "Use only git rm --cached, never delete working-tree files",
+        "Git access goes through the injected GitRunner type"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria are covered by passing unit tests",
+        "npm run typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-091.md`"
+      ],
+      "non_functional": [
+        "Cleanup tests run in seconds with no real git"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84T653733GNHNR148NM3TA2",
+      "links": [
+        "trace:01M84T653733GNHNR148NM3TA2",
+        "artifact:.ai-dlc/intent/INT-091.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-091.md",
+      "artifact_id": "INT-091"
+    },
+    {
+      "id": "01M84VE2X84MXH3MKN8BPA56D0",
+      "kind": "requirement",
+      "title": "REQ · Cleanup re-checks the index and fails when node_modules paths stay tracked",
+      "body": "Context: untrackNodeModules runs git rm -r --cached but never confirms the result, and unmerged (UU) paths such as node_modules/.vite/vitest/results.json appear up to three times in git ls-files. Desired behavior: a new untrackAndVerify(run) counts unique tracked dependency paths before, runs untrackNodeModules, re-lists, and throws when any remain. Why: to prove all 15,329 files are removed.\n\n## Acceptance criteria\n- Given a runner listing 3 node_modules paths, when untrackAndVerify runs and the second listing is empty, then it returns {before:3, after:0}\n- Given the second listing still contains node_modules/phaser/package.json, when it runs, then it throws an error containing that path\n- Given a path listed three times for merge stages, when counting, then it is counted once\n\n\n## Scope\n- In scope: untrackAndVerify in src/lib/trackedNodeModules.ts\n- Out of scope: Changing untrackNodeModules itself\n- Preserve: untrackNodeModules call sequence\n\n\n## Technical constraints\n- Reuse checkTrackedFiles and untrackNodeModules\n\n\n## Definition of done\n- untrackAndVerify exported and typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "untrackAndVerify untracks dependency paths and confirms none remain, de-duplicating unmerged entries",
+      "description": "Context: untrackNodeModules runs git rm -r --cached but never confirms the result, and unmerged (UU) paths such as node_modules/.vite/vitest/results.json appear up to three times in git ls-files. Desired behavior: a new untrackAndVerify(run) counts unique tracked dependency paths before, runs untrackNodeModules, re-lists, and throws when any remain. Why: to prove all 15,329 files are removed.",
+      "acceptance_criteria": [
+        "Given a runner listing 3 node_modules paths, when untrackAndVerify runs and the second listing is empty, then it returns {before:3, after:0}",
+        "Given the second listing still contains node_modules/phaser/package.json, when it runs, then it throws an error containing that path",
+        "Given a path listed three times for merge stages, when counting, then it is counted once"
+      ],
+      "scope": {
+        "in_scope": [
+          "untrackAndVerify in src/lib/trackedNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "Changing untrackNodeModules itself"
+        ],
+        "preserve": [
+          "untrackNodeModules call sequence"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse checkTrackedFiles and untrackNodeModules"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "untrackAndVerify exported and typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-226.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84VE2X846VJ8Z0X9P2D2EPH",
+      "matched_feature_id": "01M84T6537GC5YKDGR64QW90RD",
+      "links": [
+        "parent:01M84VE2X846VJ8Z0X9P2D2EPH",
+        "trace:01M84T6537GC5YKDGR64QW90RD",
+        "artifact:.ai-dlc/requirements/REQ-226.md"
+      ],
+      "depends_on": [
+        "01M84VE2X846VJ8Z0X9P2D2EPH"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-226.md",
+      "artifact_id": "REQ-226"
+    },
+    {
+      "id": "01M84VE2X8Z495VV7MV930DPST",
+      "kind": "requirement",
+      "title": "REQ · The CLI script reports the result and exits non-zero on failure",
+      "body": "Context: scripts/untrackNodeModules.ts calls untrackNodeModules directly with no output and no verification. Desired behavior: a testable runUntrack(run, log, err) returns 0 and logs the count on success, or logs the error and returns 1; the script sets process.exitCode from it. Why: so the npm script gives a clear pass or fail.\n\n## Acceptance criteria\n- Given untrackAndVerify succeeds with before=3, when runUntrack runs, then log receives a message containing 3 and it returns 0\n- Given untrackAndVerify throws, when runUntrack runs, then err receives the message and it returns 1\n- Given the script, when run, then it sets process.exitCode from runUntrack\n\n\n## Scope\n- In scope: runUntrack in src/lib/trackedNodeModules.ts\n- In scope: scripts/untrackNodeModules.ts\n- Out of scope: package.json script names\n- Preserve: npm script untrack:node-modules\n\n\n## Technical constraints\n- Script keeps execFileSync('git') as the real runner\n\n\n## Definition of done\n- Script uses runUntrack\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "runUntrack wraps untrackAndVerify for the npm script, logging results and returning an exit code",
+      "description": "Context: scripts/untrackNodeModules.ts calls untrackNodeModules directly with no output and no verification. Desired behavior: a testable runUntrack(run, log, err) returns 0 and logs the count on success, or logs the error and returns 1; the script sets process.exitCode from it. Why: so the npm script gives a clear pass or fail.",
+      "acceptance_criteria": [
+        "Given untrackAndVerify succeeds with before=3, when runUntrack runs, then log receives a message containing 3 and it returns 0",
+        "Given untrackAndVerify throws, when runUntrack runs, then err receives the message and it returns 1",
+        "Given the script, when run, then it sets process.exitCode from runUntrack"
+      ],
+      "scope": {
+        "in_scope": [
+          "runUntrack in src/lib/trackedNodeModules.ts",
+          "scripts/untrackNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "package.json script names"
+        ],
+        "preserve": [
+          "npm script untrack:node-modules"
+        ]
+      },
+      "technical_constraints": [
+        "Script keeps execFileSync('git') as the real runner"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Script uses runUntrack",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-227.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84VE2X846VJ8Z0X9P2D2EPH",
+      "matched_feature_id": "01M84GAF91YHBCPRJZQFKHDMBG",
+      "links": [
+        "parent:01M84VE2X846VJ8Z0X9P2D2EPH",
+        "trace:01M84GAF91YHBCPRJZQFKHDMBG",
+        "artifact:.ai-dlc/requirements/REQ-227.md"
+      ],
+      "depends_on": [
+        "01M84VE2X846VJ8Z0X9P2D2EPH"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-227.md",
+      "artifact_id": "REQ-227"
+    },
+    {
+      "id": "01M84VE2X833021322FP4QE1J8",
+      "kind": "unit",
+      "title": "Act: Add untrackAndVerify to the trackedNodeModules helper",
+      "body": "Add untrackAndVerify(run: GitRunner) to src/lib/trackedNodeModules.ts after untrackNodeModules, reusing checkTrackedFiles and untrackNodeModules.\n\n## Acceptance criteria\n- untrackAndVerify returns {before, after:0} when nothing remains\n- untrackAndVerify throws listing leftover paths when the index still has them\n\n\n## Scope\n- In scope: src/lib/trackedNodeModules.ts\n- Out of scope: Tests\n- Preserve: Existing exports\n\n\n## Technical constraints\n- Dedupe with a Set\n- Code path: `game/frontend/src/lib/trackedNodeModules.ts`\n\n\n## Definition of done\n- Function exported and typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add verified cleanup that counts, untracks, re-lists and throws on leftovers",
+      "description": "Add untrackAndVerify(run: GitRunner) to src/lib/trackedNodeModules.ts after untrackNodeModules, reusing checkTrackedFiles and untrackNodeModules.",
+      "acceptance_criteria": [
+        "untrackAndVerify returns {before, after:0} when nothing remains",
+        "untrackAndVerify throws listing leftover paths when the index still has them"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/trackedNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "Existing exports"
+        ]
+      },
+      "technical_constraints": [
+        "Dedupe with a Set",
+        "Code path: `game/frontend/src/lib/trackedNodeModules.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Function exported and typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-452.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84VE2X84MXH3MKN8BPA56D0",
+      "matched_feature_id": "01M84T6537706VR5FGDE69V8GW",
+      "links": [
+        "parent:01M84VE2X84MXH3MKN8BPA56D0",
+        "trace:01M84T6537706VR5FGDE69V8GW",
+        "artifact:.ai-dlc/units/UNIT-452.md"
+      ],
+      "depends_on": [
+        "01M84VE2X84MXH3MKN8BPA56D0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-452.md",
+      "artifact_id": "UNIT-452",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "new: untrackAndVerify",
+          "lines": "after L17",
+          "action": "Add exported function untrackAndVerify(run: GitRunner): { before: number; after: number } that computes before as the unique count of checkTrackedFiles(run), calls untrackNodeModules(run), computes the unique remaining list from checkTrackedFiles(run), throws Error listing the first 10 when it is non-empty, otherwise returns after 0.",
+          "code": "export function untrackAndVerify(run: GitRunner): { before: number; after: number } {\n  const before = new Set(checkTrackedFiles(run)).size;\n  untrackNodeModules(run);\n  const left = [...new Set(checkTrackedFiles(run))];\n  if (left.length > 0) throw new Error(`${left.length} paths still tracked: ${left.slice(0, 10).join(', ')}`);\n  return { before, after: 0 };\n}",
+          "expected": "untrackAndVerify is exported and tsc passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84VE2X8CJ9QD9NWVASFZFRG",
+      "kind": "unit",
+      "title": "Act: Add runUntrack and use it in the cleanup script",
+      "body": "Add runUntrack(run, log, err) to the helper file and make the script set process.exitCode from it.\n\n## Acceptance criteria\n- runUntrack returns 0 and logs the count on success\n- runUntrack returns 1 and logs the error on failure\n\n\n## Scope\n- In scope: src/lib/trackedNodeModules.ts\n- In scope: scripts/untrackNodeModules.ts\n- Out of scope: Tests\n- Preserve: npm script name\n\n\n## Technical constraints\n- Depends on untrackAndVerify\n- Code path: `game/frontend/src/lib/trackedNodeModules.ts`\n- Code path: `game/frontend/scripts/untrackNodeModules.ts`\n\n\n## Definition of done\n- Script calls runUntrack\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add runUntrack exit-code helper and call it from scripts/untrackNodeModules.ts",
+      "description": "Add runUntrack(run, log, err) to the helper file and make the script set process.exitCode from it.",
+      "acceptance_criteria": [
+        "runUntrack returns 0 and logs the count on success",
+        "runUntrack returns 1 and logs the error on failure"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/trackedNodeModules.ts",
+          "scripts/untrackNodeModules.ts"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "npm script name"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on untrackAndVerify",
+        "Code path: `game/frontend/src/lib/trackedNodeModules.ts`",
+        "Code path: `game/frontend/scripts/untrackNodeModules.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Script calls runUntrack",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-453.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84VE2X8Z495VV7MV930DPST",
+      "matched_feature_id": "01M84GAF918PB05VJE7944AM4P",
+      "links": [
+        "parent:01M84VE2X8Z495VV7MV930DPST",
+        "trace:01M84GAF918PB05VJE7944AM4P",
+        "artifact:.ai-dlc/units/UNIT-453.md"
+      ],
+      "depends_on": [
+        "01M84VE2X8Z495VV7MV930DPST"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-453.md",
+      "artifact_id": "UNIT-453",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/trackedNodeModules.ts",
+          "symbol": "new: runUntrack",
+          "lines": "after untrackAndVerify",
+          "action": "Add exported runUntrack(run: GitRunner, log: (m: string) => void, err: (m: string) => void): number that calls untrackAndVerify in try, logs `untracked ${before} paths` and returns 0, and in catch calls err with the Error message and returns 1.",
+          "code": "export function runUntrack(run: GitRunner, log: (m: string) => void, err: (m: string) => void): number {\n  try {\n    const { before } = untrackAndVerify(run);\n    log(`untracked ${before} paths`);\n    return 0;\n  } catch (e) {\n    err(e instanceof Error ? e.message : String(e));\n    return 1;\n  }\n}",
+          "expected": "runUntrack exported"
+        },
+        {
+          "file": "game/frontend/scripts/untrackNodeModules.ts",
+          "symbol": "top-level script",
+          "lines": "L1-L3",
+          "action": "Import runUntrack instead of untrackNodeModules and set process.exitCode to runUntrack(runner, console.log, console.error) where runner is (args) => execFileSync('git', args, { encoding: 'utf8' }).",
+          "code": "process.exitCode = runUntrack((args) => execFileSync('git', args, { encoding: 'utf8' }), console.log, console.error);",
+          "expected": "Script sets exit code from runUntrack"
+        }
+      ]
+    },
+    {
+      "id": "01M84VE2X83N0SVJTC65DE2XC5",
+      "kind": "unit",
+      "title": "Verify: untrackAndVerify unit tests with a fake git runner",
+      "body": "Add tests to tests/trackedNodeModules.test.ts proving untrackAndVerify with a fake GitRunner that returns scripted ls-files output.\n\n## Acceptance criteria\n- Returns {before:3, after:0} when second listing is empty\n- Throws naming leftover path\n- Counts triple-listed unmerged path once\n\n\n## Scope\n- In scope: game/frontend/tests/trackedNodeModules.test.ts\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fake runner only, no real git\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for before count, leftover failure and dedupe",
+      "description": "Add tests to tests/trackedNodeModules.test.ts proving untrackAndVerify with a fake GitRunner that returns scripted ls-files output.",
+      "acceptance_criteria": [
+        "Returns {before:3, after:0} when second listing is empty",
+        "Throws naming leftover path",
+        "Counts triple-listed unmerged path once"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/trackedNodeModules.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fake runner only, no real git"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-454.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VE2X833021322FP4QE1J8",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84VE2X833021322FP4QE1J8",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-454.md"
+      ],
+      "depends_on": [
+        "01M84VE2X833021322FP4QE1J8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-454.md",
+      "artifact_id": "UNIT-454",
+      "steps": [
+        {
+          "file": "game/frontend/tests/trackedNodeModules.test.ts",
+          "symbol": "describe('untrackAndVerify')",
+          "lines": "after L88",
+          "action": "Add a describe with three tests using a fake runner that returns, for args[0]==='ls-files', the first scripted NUL-separated listing then the second, and '' for rm calls. Test 1: first listing 'node_modules/a\\0node_modules/b\\0node_modules/c\\0', second '' → expect {before:3, after:0}. Test 2: second listing 'node_modules/phaser/package.json\\0' → expect toThrow('node_modules/phaser/package.json'). Test 3: first listing repeats 'node_modules/.vite/vitest/results.json\\0' three times → expect before 1.",
+          "command": "npx vitest run tests/trackedNodeModules.test.ts",
+          "expected": "All untrackAndVerify tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84VE2X8VJ49CXQWAFQT15T0",
+      "kind": "unit",
+      "title": "Verify: runUntrack exit code and script unit tests",
+      "body": "Add tests/untrackScript.test.ts covering runUntrack with fake runner and log/err spies, and a check that the script source uses runUntrack.\n\n## Acceptance criteria\n- Success logs count and returns 0\n- Failure logs error and returns 1\n- Script source references runUntrack and no longer calls untrackNodeModules directly\n\n\n## Scope\n- In scope: game/frontend/tests/untrackScript.test.ts\n- Out of scope: Product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Read script file with node:fs readFileSync; no git execution\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for runUntrack success, failure and script wiring",
+      "description": "Add tests/untrackScript.test.ts covering runUntrack with fake runner and log/err spies, and a check that the script source uses runUntrack.",
+      "acceptance_criteria": [
+        "Success logs count and returns 0",
+        "Failure logs error and returns 1",
+        "Script source references runUntrack and no longer calls untrackNodeModules directly"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/untrackScript.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Read script file with node:fs readFileSync; no git execution"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-455.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VE2X8CJ9QD9NWVASFZFRG",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84VE2X8CJ9QD9NWVASFZFRG",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-455.md"
+      ],
+      "depends_on": [
+        "01M84VE2X8CJ9QD9NWVASFZFRG"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-455.md",
+      "artifact_id": "UNIT-455",
+      "steps": [
+        {
+          "file": "game/frontend/tests/untrackScript.test.ts",
+          "symbol": "new: runUntrack tests",
+          "lines": "new",
+          "action": "Create a vitest file with three tests. (1) fake runner returning 'node_modules/a\\0' then '' for ls-files; vi.fn log and err; expect return 0, log called with 'untracked 1 paths', err not called. (2) fake runner whose second ls-files listing is 'node_modules/a\\0'; expect return 1 and err called with a message containing 'node_modules/a'. (3) readFileSync of scripts/untrackNodeModules.ts contains 'runUntrack' and 'process.exitCode'.",
+          "command": "npx vitest run tests/untrackScript.test.ts",
+          "expected": "Three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84VE2X8FF2MNBJ9RYQ4VEQP",
+      "kind": "evidence",
+      "title": "Evidence: verified untrack cleanup unit tests with a fake git runner",
+      "body": "Collect passing output from tests/trackedNodeModules.test.ts and tests/untrackScript.test.ts as evidence.\n\n## Acceptance criteria\n- Both test files pass\n- Typecheck passes\n\n\n## Scope\n- In scope: Test output\n- Out of scope: Real git index changes\n\n\n## Definition of done\n- Passing output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving the verified cleanup and CLI helper",
+      "description": "Collect passing output from tests/trackedNodeModules.test.ts and tests/untrackScript.test.ts as evidence.",
+      "acceptance_criteria": [
+        "Both test files pass",
+        "Typecheck passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output"
+        ],
+        "out_of_scope": [
+          "Real git index changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-091.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84VE2X83N0SVJTC65DE2XC5",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84VE2X83N0SVJTC65DE2XC5",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-091.md"
+      ],
+      "depends_on": [
+        "01M84VE2X83N0SVJTC65DE2XC5",
+        "01M84VE2X8VJ49CXQWAFQT15T0"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-091.md",
+      "artifact_id": "EVD-091"
+    }
+  ],
+  "created_at": "2026-11-23T18:42:22.389175+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

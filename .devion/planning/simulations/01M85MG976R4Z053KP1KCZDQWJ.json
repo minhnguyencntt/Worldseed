@@ -1,0 +1,487 @@
+{
+  "intent_id": "01M85MG976R4Z053KP1KCZDQWJ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85MJ2194JBRMXQM56QPECC0",
+      "kind": "intent",
+      "title": "SG-11.2 BootScene listens for transitionTo and fades to the requested scene",
+      "body": "Context: events.ts already declares ReactToPhaserEvents.transitionTo { sceneId } and BootScene already listens for playAnimation, but nothing consumes transitionTo. Desired behavior: BootScene.create subscribes to transitionTo, runs a camera fade-out and then starts the requested scene, and releases the subscription in its SHUTDOWN handler. Expected result: React can drive scene changes through the typed bus. Why: SG-11 drives animations and transitions from game actions.\n\n## Acceptance criteria\n- Given BootScene.create ran, when transitionTo { sceneId } is emitted, then the main camera fades out\n- Given the fade-out completes, when FADE_OUT_COMPLETE fires, then scene.start is called with the requested sceneId\n- Given the SHUTDOWN callback ran, when transitionTo is emitted, then no fade or scene start occurs\n\n\n## Scope\n- In scope: BootScene transitionTo subscription\n- In scope: fade then scene start\n- In scope: unsubscribe on SHUTDOWN\n- Out of scope: Emitting transitionTo from App\n- Out of scope: new scenes or content\n- Out of scope: backend changes\n- Preserve: playAnimation handling\n- Preserve: existing sceneReady and effect behavior\n- Preserve: event bus API\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Use the existing reactToPhaser bus from frontend/src/phaser/events.ts\n\n\n## Definition of done\n- Both requirements have Act and Verify units complete\n- Unit tests pass with Phaser mocked\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene subscribes to transitionTo, fades the camera out and starts the requested scene, and unsubscribes on shutdown",
+      "description": "Context: events.ts already declares ReactToPhaserEvents.transitionTo { sceneId } and BootScene already listens for playAnimation, but nothing consumes transitionTo. Desired behavior: BootScene.create subscribes to transitionTo, runs a camera fade-out and then starts the requested scene, and releases the subscription in its SHUTDOWN handler. Expected result: React can drive scene changes through the typed bus. Why: SG-11 drives animations and transitions from game actions.",
+      "acceptance_criteria": [
+        "Given BootScene.create ran, when transitionTo { sceneId } is emitted, then the main camera fades out",
+        "Given the fade-out completes, when FADE_OUT_COMPLETE fires, then scene.start is called with the requested sceneId",
+        "Given the SHUTDOWN callback ran, when transitionTo is emitted, then no fade or scene start occurs"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene transitionTo subscription",
+          "fade then scene start",
+          "unsubscribe on SHUTDOWN"
+        ],
+        "out_of_scope": [
+          "Emitting transitionTo from App",
+          "new scenes or content",
+          "backend changes"
+        ],
+        "preserve": [
+          "playAnimation handling",
+          "existing sceneReady and effect behavior",
+          "event bus API"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Use the existing reactToPhaser bus from frontend/src/phaser/events.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements have Act and Verify units complete",
+        "Unit tests pass with Phaser mocked",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-152.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-152.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-152.md",
+      "artifact_id": "INT-152"
+    },
+    {
+      "id": "01M85MJ2194SAZFCB0R30GHKQ9",
+      "kind": "requirement",
+      "title": "REQ · BootScene fades to the requested scene on transitionTo",
+      "body": "Context: BootScene.create subscribes to playAnimation only. Desired behavior: subscribe to transitionTo and run a fade transition to the requested scene. Expected result: emitting transitionTo { sceneId: 'library' } fades out then starts 'library'. Why: lets React change scenes.\n\n## Acceptance criteria\n- Given BootScene.create ran, when transitionTo { sceneId: 'library' } is emitted, then cameras.main.fadeOut is called once\n- Given the fade-out completed, when FADE_OUT_COMPLETE fires, then scene.start is called with 'library'\n\n\n## Scope\n- In scope: transitionTo subscription\n- In scope: fade-out then scene.start\n- Out of scope: App emitting the event\n- Preserve: playAnimation subscription\n\n\n## Technical constraints\n- Fade duration is the scene's transition effect durationMs, defaulting to 400\n\n\n## Definition of done\n- Subscription stored in a field for cleanup\n- Scene start only after FADE_OUT_COMPLETE\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "transitionTo triggers a camera fade-out and then starts the requested scene",
+      "description": "Context: BootScene.create subscribes to playAnimation only. Desired behavior: subscribe to transitionTo and run a fade transition to the requested scene. Expected result: emitting transitionTo { sceneId: 'library' } fades out then starts 'library'. Why: lets React change scenes.",
+      "acceptance_criteria": [
+        "Given BootScene.create ran, when transitionTo { sceneId: 'library' } is emitted, then cameras.main.fadeOut is called once",
+        "Given the fade-out completed, when FADE_OUT_COMPLETE fires, then scene.start is called with 'library'"
+      ],
+      "scope": {
+        "in_scope": [
+          "transitionTo subscription",
+          "fade-out then scene.start"
+        ],
+        "out_of_scope": [
+          "App emitting the event"
+        ],
+        "preserve": [
+          "playAnimation subscription"
+        ]
+      },
+      "technical_constraints": [
+        "Fade duration is the scene's transition effect durationMs, defaulting to 400"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Subscription stored in a field for cleanup",
+        "Scene start only after FADE_OUT_COMPLETE",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-375.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85MJ2194JBRMXQM56QPECC0",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85MJ2194JBRMXQM56QPECC0",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-375.md"
+      ],
+      "depends_on": [
+        "01M85MJ2194JBRMXQM56QPECC0"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-375.md",
+      "artifact_id": "REQ-375"
+    },
+    {
+      "id": "01M85MJ219PN6P7R5848SX6Y3J",
+      "kind": "requirement",
+      "title": "REQ · BootScene unsubscribes transitionTo when the scene shuts down",
+      "body": "Context: the SHUTDOWN handler already releases the playAnimation subscription. Desired behavior: also release transitionTo so a dead scene does not react. Expected result: after shutdown, transitionTo emits do nothing.\n\n## Acceptance criteria\n- Given the SHUTDOWN callback ran, when transitionTo is emitted, then fadeOut is not called\n- Given another transitionTo subscriber registered before create, when shutdown ran, then it still receives events\n\n\n## Scope\n- In scope: unsubscribe in SHUTDOWN handler\n- Out of scope: other subscriptions\n- Preserve: existing shutdown cleanup\n\n\n## Technical constraints\n- Call only the unsubscribe function returned by reactToPhaser.on, never clear()\n\n\n## Definition of done\n- Unsubscribe field reset to null\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "SHUTDOWN handler releases the transitionTo subscription",
+      "description": "Context: the SHUTDOWN handler already releases the playAnimation subscription. Desired behavior: also release transitionTo so a dead scene does not react. Expected result: after shutdown, transitionTo emits do nothing.",
+      "acceptance_criteria": [
+        "Given the SHUTDOWN callback ran, when transitionTo is emitted, then fadeOut is not called",
+        "Given another transitionTo subscriber registered before create, when shutdown ran, then it still receives events"
+      ],
+      "scope": {
+        "in_scope": [
+          "unsubscribe in SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "other subscriptions"
+        ],
+        "preserve": [
+          "existing shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Call only the unsubscribe function returned by reactToPhaser.on, never clear()"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Unsubscribe field reset to null",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-376.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85MJ2194JBRMXQM56QPECC0",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M85MJ2194JBRMXQM56QPECC0",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-376.md"
+      ],
+      "depends_on": [
+        "01M85MJ2194JBRMXQM56QPECC0"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-376.md",
+      "artifact_id": "REQ-376"
+    },
+    {
+      "id": "01M85MJ219WPZY1T2ZFAKMS4N9",
+      "kind": "unit",
+      "title": "Act: Subscribe BootScene to transitionTo with fade-out and scene start",
+      "body": "In BootScene.ts add a private unsubscribeTransition field, subscribe in create after the playAnimation subscription, and add a handler that fades out then starts the scene.\n\n## Acceptance criteria\n- transitionTo emit calls cameras.main.fadeOut\n- FADE_OUT_COMPLETE calls scene.start with the sceneId\n\n\n## Scope\n- In scope: BootScene.ts\n- Out of scope: tests\n- Out of scope: App\n- Preserve: playAnimation\n\n\n## Technical constraints\n- Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Handler implemented in BootScene.ts\n- Type-check passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add transitionTo subscription and handler in BootScene",
+      "description": "In BootScene.ts add a private unsubscribeTransition field, subscribe in create after the playAnimation subscription, and add a handler that fades out then starts the scene.",
+      "acceptance_criteria": [
+        "transitionTo emit calls cameras.main.fadeOut",
+        "FADE_OUT_COMPLETE calls scene.start with the sceneId"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "tests",
+          "App"
+        ],
+        "preserve": [
+          "playAnimation"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Handler implemented in BootScene.ts",
+        "Type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-750.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85MJ2194SAZFCB0R30GHKQ9",
+      "matched_feature_id": "01M84GAF920NPK8B6GMWTR3AX4",
+      "links": [
+        "parent:01M85MJ2194SAZFCB0R30GHKQ9",
+        "trace:01M84GAF920NPK8B6GMWTR3AX4",
+        "artifact:.ai-dlc/units/UNIT-750.md"
+      ],
+      "depends_on": [
+        "01M85MJ2194SAZFCB0R30GHKQ9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-750.md",
+      "artifact_id": "UNIT-750",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene (fields)",
+          "lines": "after L31",
+          "action": "Add a private field unsubscribeTransition typed (() => void) | null initialised to null, next to unsubscribeAnimation.",
+          "code": "private unsubscribeTransition: (() => void) | null = null;",
+          "expected": "Field exists and compiles."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.transitionToScene",
+          "lines": "after L151",
+          "action": "Add private method transitionToScene(sceneId: string) that reads the durationMs of the first scene.effects entry with type 'transition' (default 400), calls this.cameras.main.fadeOut(durationMs), and registers this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId)).",
+          "code": "private transitionToScene(sceneId: string): void {\n  const spec = (scene.effects ?? []).find((e) => e.type === 'transition');\n  const durationMs = spec && spec.type === 'transition' ? spec.durationMs : 400;\n  this.cameras.main.fadeOut(durationMs);\n  this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));\n}",
+          "expected": "Method compiles and is the only place that fades out."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "after L73",
+          "action": "Subscribe to the transitionTo event and store the returned unsubscribe in this.unsubscribeTransition.",
+          "code": "this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => this.transitionToScene(sceneId));",
+          "expected": "Emitting transitionTo calls transitionToScene."
+        }
+      ]
+    },
+    {
+      "id": "01M85MJ2193CEGBBNHGN2F386M",
+      "kind": "unit",
+      "title": "Act: Unsubscribe transitionTo in the BootScene SHUTDOWN handler",
+      "body": "In the SHUTDOWN callback in BootScene.create, call and null the unsubscribeTransition function next to the playAnimation release.\n\n## Acceptance criteria\n- After SHUTDOWN, transitionTo no longer reaches BootScene\n- Other subscribers stay registered\n\n\n## Scope\n- In scope: BootScene.ts SHUTDOWN handler\n- Out of scope: tests\n- Preserve: existing cleanup\n\n\n## Technical constraints\n- Do not call reactToPhaser.clear()\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT-1 adds the unsubscribeTransition field\n\n\n## Definition of done\n- Unsubscribe called and set to null\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Release the transitionTo subscription on shutdown",
+      "description": "In the SHUTDOWN callback in BootScene.create, call and null the unsubscribeTransition function next to the playAnimation release.",
+      "acceptance_criteria": [
+        "After SHUTDOWN, transitionTo no longer reaches BootScene",
+        "Other subscribers stay registered"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "existing cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Do not call reactToPhaser.clear()",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT-1 adds the unsubscribeTransition field"
+      ],
+      "definition_of_done": [
+        "Unsubscribe called and set to null",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-751.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85MJ219PN6P7R5848SX6Y3J",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M85MJ219PN6P7R5848SX6Y3J",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-751.md"
+      ],
+      "depends_on": [
+        "01M85MJ219PN6P7R5848SX6Y3J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-751.md",
+      "artifact_id": "UNIT-751",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN callback",
+          "lines": "L88-L89",
+          "action": "After this.unsubscribeAnimation = null, add a call to this.unsubscribeTransition?.() and set this.unsubscribeTransition = null.",
+          "code": "this.unsubscribeTransition?.();\nthis.unsubscribeTransition = null;",
+          "expected": "Subscription is released on SHUTDOWN."
+        }
+      ]
+    },
+    {
+      "id": "01M85MJ219AM9NJR1FMHQK8D7B",
+      "kind": "unit",
+      "title": "Verify: BootScene fades out and starts the scene on transitionTo unit tests",
+      "body": "Add a test file modelled on bootScenePlayAnimation.test.ts with Phaser mocked, asserting fadeOut and scene.start behavior.\n\n## Acceptance criteria\n- fadeOut called with the duration when transitionTo emitted\n- scene.start called with sceneId after FADE_OUT_COMPLETE\n\n\n## Scope\n- In scope: frontend/tests/bootSceneTransitionTo.test.ts\n- Out of scope: real Phaser or browser\n- Preserve: existing tests\n\n\n## Technical constraints\n- Copy the vi.mock('phaser') and content mock from bootScenePlayAnimationShutdown.test.ts; add cameras.main.fadeOut and once as vi.fn, scene = { start: vi.fn() }, and Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } }\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for transitionTo fade and scene start with Phaser mocked",
+      "description": "Add a test file modelled on bootScenePlayAnimation.test.ts with Phaser mocked, asserting fadeOut and scene.start behavior.",
+      "acceptance_criteria": [
+        "fadeOut called with the duration when transitionTo emitted",
+        "scene.start called with sceneId after FADE_OUT_COMPLETE"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/bootSceneTransitionTo.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser or browser"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Copy the vi.mock('phaser') and content mock from bootScenePlayAnimationShutdown.test.ts; add cameras.main.fadeOut and once as vi.fn, scene = { start: vi.fn() }, and Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } }"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-752.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85MJ219WPZY1T2ZFAKMS4N9",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85MJ219WPZY1T2ZFAKMS4N9",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-752.md"
+      ],
+      "depends_on": [
+        "01M85MJ219WPZY1T2ZFAKMS4N9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-752.md",
+      "artifact_id": "UNIT-752",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionTo.test.ts",
+          "symbol": "new: BootScene transitionTo",
+          "lines": "new",
+          "action": "Create the file with the phaser mock extended as described and a describe block with two tests. Test 1: after boot.create(), reactToPhaser.emit('transitionTo', { sceneId: 'library' }) and assert cameras.main.fadeOut toHaveBeenCalledTimes(1). Test 2: after the emit, take the callback registered via cameras.main.once for 'camerafadeoutcomplete', invoke it, and assert scene.start toHaveBeenCalledWith('library') and that it was not called before invoking.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionTo.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85MJ219SHR0WWQSCFWC0RXP",
+      "kind": "unit",
+      "title": "Verify: transitionTo unsubscribe on shutdown unit tests",
+      "body": "Add a test file modelled on bootScenePlayAnimationShutdown.test.ts asserting no fade after shutdown.\n\n## Acceptance criteria\n- No fadeOut after the SHUTDOWN callback\n- Pre-registered transitionTo subscriber still receives events\n\n\n## Scope\n- In scope: frontend/tests/bootSceneTransitionToShutdown.test.ts\n- Out of scope: real Phaser\n- Preserve: existing tests\n\n\n## Technical constraints\n- Same mocks as VER-1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that transitionTo is ignored after SHUTDOWN and other subscribers stay active",
+      "description": "Add a test file modelled on bootScenePlayAnimationShutdown.test.ts asserting no fade after shutdown.",
+      "acceptance_criteria": [
+        "No fadeOut after the SHUTDOWN callback",
+        "Pre-registered transitionTo subscriber still receives events"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/tests/bootSceneTransitionToShutdown.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Same mocks as VER-1"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-753.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85MJ2193CEGBBNHGN2F386M",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85MJ2193CEGBBNHGN2F386M",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-753.md"
+      ],
+      "depends_on": [
+        "01M85MJ2193CEGBBNHGN2F386M"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-753.md",
+      "artifact_id": "UNIT-753",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionToShutdown.test.ts",
+          "symbol": "new: BootScene transitionTo shutdown",
+          "lines": "new",
+          "action": "Create the file with the same mocks as bootSceneTransitionTo.test.ts. In beforeEach subscribe otherHandler via reactToPhaser.on('transitionTo') then boot.create(). Test 1: run the shutdown callback found in events.once mock calls, clear fadeOut mock, emit transitionTo { sceneId: 'library' }, assert fadeOut not called. Test 2: after shutdown, emit and assert otherHandler toHaveBeenCalledWith({ sceneId: 'library' }).",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionToShutdown.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85MJ2199W2RAXCBCY7EPWJP",
+      "kind": "evidence",
+      "title": "Evidence: BootScene transitionTo fade and unsubscribe unit tests",
+      "body": "Evidence that the transitionTo fade, scene start and shutdown unsubscribe unit tests pass.\n\n## Acceptance criteria\n- bootSceneTransitionTo tests pass\n- bootSceneTransitionToShutdown tests pass\n\n\n## Scope\n- In scope: test results\n- Out of scope: new code\n\n\n## Definition of done\n- Both test files green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect passing unit test results for transitionTo handling",
+      "description": "Evidence that the transitionTo fade, scene start and shutdown unsubscribe unit tests pass.",
+      "acceptance_criteria": [
+        "bootSceneTransitionTo tests pass",
+        "bootSceneTransitionToShutdown tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-152.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85MJ219AM9NJR1FMHQK8D7B",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85MJ219AM9NJR1FMHQK8D7B",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-152.md"
+      ],
+      "depends_on": [
+        "01M85MJ219AM9NJR1FMHQK8D7B",
+        "01M85MJ219SHR0WWQSCFWC0RXP"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-152.md",
+      "artifact_id": "EVD-152"
+    }
+  ],
+  "created_at": "2026-11-24T02:02:05.482662+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

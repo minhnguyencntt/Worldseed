@@ -1,0 +1,74 @@
+{
+  "id": "01M85Z6KQ4AVAGDGE1KK82CSX0",
+  "intent_id": "01M85YRXQEN9TWD6B1NFMQ938P",
+  "title": "Verify: hotspot path removed and App selection uses the overlay unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests proving no hotspot-path names remain and App shows the overlay.",
+  "description": "A source scan test with fs reading of the src tree and updated appObjectClick and appMenuClose tests.",
+  "acceptance_criteria": [
+    "No forbidden names in source",
+    "App selection renders overlay"
+  ],
+  "scope": {
+    "in_scope": [
+      "frontend/tests/noHotspotPath.test.ts",
+      "frontend/tests/appObjectClick.test.tsx",
+      "frontend/tests/appMenuClose.test.tsx"
+    ],
+    "out_of_scope": [
+      "Real browser"
+    ],
+    "preserve": [
+      "Other tests"
+    ]
+  },
+  "technical_constraints": [
+    "fs reads only real source files in the repo; Phaser mocked"
+  ],
+  "dependencies": [
+    "ACT4"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-857.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85YXV0AJBPGPRK1XB9MTCVA",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-857.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85Z6KQ4YMGTBNY1H20PEDAT"
+  ],
+  "sim_node_id": "01M85YXV0A3E0TKYDSFZCNRYGG",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-857.md",
+  "artifact_id": "UNIT-857",
+  "steps": [
+    {
+      "file": "game/frontend/tests/noHotspotPath.test.ts",
+      "symbol": "new: no hotspot path",
+      "lines": "new",
+      "action": "Walk game/frontend/src and game/src with node:fs; assert no file contains HOTSPOTS, ASSET_PATHS, ActionMenu or a component named SceneView (word-boundary regex /\\bSceneView\\b/), and that components/ActionMenu.tsx does not exist.",
+      "command": "cd game/frontend && npx vitest run tests/noHotspotPath.test.ts",
+      "expected": "scan finds no matches"
+    },
+    {
+      "file": "game/frontend/tests/appObjectClick.test.tsx",
+      "symbol": "App objectClick bridge",
+      "lines": "L50-end",
+      "action": "Change assertions that query the ActionMenu region to query the overlay buttons after emitting objectClick and objectHover for the bookshelf with the Phaser host mocked.",
+      "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx tests/appMenuClose.test.tsx",
+      "expected": "both files pass using the overlay"
+    }
+  ],
+  "created_at": "2026-11-24T05:07:04.548674+00:00",
+  "updated_at": "2026-11-24T05:13:51.836563+00:00"
+}

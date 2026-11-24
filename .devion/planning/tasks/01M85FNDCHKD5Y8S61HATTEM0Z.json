@@ -1,0 +1,74 @@
+{
+  "id": "01M85FNDCHKD5Y8S61HATTEM0Z",
+  "intent_id": "01M85FJG0B4EDH5WQNHF3MYD83",
+  "title": "Act: Render the empty history message in ContributionSheet",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add a conditional empty-state paragraph above the suggestions list",
+  "description": "Add a paragraph rendered only when historyStatus === 'ready' and entries.length === 0, with the text 'No suggestions yet this round'. Product code only.",
+  "acceptance_criteria": [
+    "The message renders when status is ready and entries is empty.",
+    "The message is absent when status is loading or error, or entries is non-empty."
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/src/components/ContributionSheet.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Existing markup and messages"
+    ]
+  },
+  "technical_constraints": [
+    "No new state",
+    "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Empty message renders per condition",
+    "TypeScript compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-680.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FKMQ2QFGZ80RDKAXZVR6W",
+    "trace:01M85BP7N2NAS1X6Z3121BWPPZ",
+    "artifact:.ai-dlc/units/UNIT-680.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85FNDCHJXJENERJK9GFTDXV"
+  ],
+  "sim_node_id": "01M85FKMQ22QMTSVVGZVQAB3GW",
+  "feature_id": "01M85BP7N2NAS1X6Z3121BWPPZ",
+  "artifact_path": ".ai-dlc/units/UNIT-680.md",
+  "artifact_id": "UNIT-680",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "const HISTORY_ERROR",
+      "lines": "after L22",
+      "action": "Add a module constant HISTORY_EMPTY holding the empty-state text, next to HISTORY_LOADING and HISTORY_ERROR.",
+      "code": "const HISTORY_EMPTY = 'No suggestions yet this round';",
+      "expected": "HISTORY_EMPTY is defined with the exact text 'No suggestions yet this round'."
+    },
+    {
+      "file": "game/frontend/src/components/ContributionSheet.tsx",
+      "symbol": "ContributionSheet (JSX)",
+      "lines": "L153-L159",
+      "action": "After the historyStatus === 'error' Retry button block and before the <ul aria-label=\"Your suggestions\">, add a conditional paragraph shown only when historyStatus is 'ready' and entries.length is 0.",
+      "code": "{historyStatus === 'ready' && entries.length === 0 && <p role=\"status\">{HISTORY_EMPTY}</p>}",
+      "expected": "After an empty successful load the sheet shows 'No suggestions yet this round'; it disappears once any entry is in entries."
+    }
+  ],
+  "created_at": "2026-11-24T00:35:32.369187+00:00",
+  "updated_at": "2026-11-24T00:36:42.825016+00:00"
+}

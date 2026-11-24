@@ -1,0 +1,59 @@
+{
+  "id": "01M84J3CJW2PQ6XW5TDSR50NMQ",
+  "intent_id": "01M84J1R4N0QKR7CQJ9WV8VQ4D",
+  "title": "SG-3 · Remove worker config keys",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Worker and execution settings are gone from backend config, example YAML and cmd wiring",
+  "description": "Context: the worker module and execution backend were deleted in earlier sub-goals. Desired behavior: backend/internal/config, backend/configs/config.example.yaml and backend/cmd/server/main.go hold no worker or execution settings, and config tests match. Expected result: loading still works for the remaining keys (server, auth, git, hosting, storage, contribution, admin, round) and no code reads a removed key. Why: development automation must not live in this repo. Reading the repo shows config.go, config.example.yaml and main.go already contain no worker keys, so the work is to confirm this and lock it with tests.",
+  "acceptance_criteria": [
+    "Given backend/internal/config/config.go, when Config and its nested structs are inspected, then no worker, execution, work root, budget, auto-publish or agent-provider field exists",
+    "Given backend/configs/config.example.yaml, when it is parsed, then it has no worker or execution top-level key",
+    "Given a minimal YAML with only auth.token_secret, when LoadFS runs, then it succeeds and the contribution, round and storage defaults are applied",
+    "Given backend/cmd/server/main.go, when it is read, then it only uses config.Load, cfg.Server.Addr, server.NewScheduler and server.New"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/config/config.go",
+      "backend/internal/config/config_test.go",
+      "backend/configs/config.example.yaml",
+      "backend/cmd/server/main.go"
+    ],
+    "out_of_scope": [
+      "game/",
+      "backend/internal/contribution",
+      "frontend code",
+      "docs"
+    ],
+    "preserve": [
+      "Existing env overrides STORYFORGE_*",
+      "Defaults for contribution, round, storage and auth",
+      "hosting.provider key, which is the git hosting provider and not an agent provider"
+    ]
+  },
+  "technical_constraints": [
+    "Go module under backend/; tests are unit tests using testing/fstest"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All slices below are implemented and verified by unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-048.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GGJ4PZQ8FYNWGF2F71FCN",
+    "artifact:.ai-dlc/intent/INT-048.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84J30C66D7SAYKA2PDTBGN3",
+  "feature_id": "01M84GGJ4PZQ8FYNWGF2F71FCN",
+  "artifact_path": ".ai-dlc/intent/INT-048.md",
+  "artifact_id": "INT-048",
+  "created_at": "2026-11-23T15:58:53.020085+00:00",
+  "updated_at": "2026-11-23T15:59:57.642920+00:00"
+}

@@ -1,0 +1,54 @@
+{
+  "id": "01M855M98Q0WY8S4ZYMDT11EQA",
+  "intent_id": "01M855H3R01K80M8S2X4GRETZJ",
+  "title": "SG-5.4.1 planPreload and resolveTextureKey engine functions",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Add planPreload and resolveTextureKey as importable engine functions in game/src/engine.",
+  "description": "Context: a search of game/ for planPreload and resolveTextureKey returns nothing. The manifest loader (game/src/assets/loaders/manifestLoader.ts) already exports FALLBACK_ASSET_ID and checkAssetRefs. Desired behavior: a pure planPreload dedupes the asset ids a scene references and reports unknown references, and a pure resolveTextureKey returns the fallback asset id for unknown ids. Expected result: both functions are importable from game/src/engine. Why: the asset preload step (SG-5.4) needs them.",
+  "acceptance_criteria": [
+    "Given a scene that references the same asset id more than once, when planPreload runs, then each known id appears once in the plan.",
+    "Given a scene that references an id that is not in the manifest, when planPreload runs, then that id is reported as unknown.",
+    "Given an id that is not in the manifest, when resolveTextureKey runs, then it returns the fallback asset id."
+  ],
+  "scope": {
+    "in_scope": [
+      "New pure engine module game/src/engine/planPreload.ts"
+    ],
+    "out_of_scope": [
+      "BootScene wiring",
+      "Phaser loading calls",
+      "Changes to the manifest loader"
+    ],
+    "preserve": [
+      "Existing engine modules and the manifest loader behavior"
+    ]
+  },
+  "technical_constraints": [
+    "No node:fs import in the engine module, because the frontend bundles engine code",
+    "Reuse the AssetManifest, SceneDef and EffectSpec types"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both functions are exported from game/src/engine/planPreload.ts",
+    "The game typecheck passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-102.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84ESEAGPPDS6300VDZMTFWQ",
+    "artifact:.ai-dlc/intent/INT-102.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M855JJ7HRFGMTC3X5J10QAVW",
+  "feature_id": "01M84ESEAGPPDS6300VDZMTFWQ",
+  "artifact_path": ".ai-dlc/intent/INT-102.md",
+  "artifact_id": "INT-102",
+  "created_at": "2026-11-23T21:40:09.623183+00:00",
+  "updated_at": "2026-11-23T21:41:42.598785+00:00"
+}

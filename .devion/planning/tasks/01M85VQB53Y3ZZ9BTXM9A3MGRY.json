@@ -1,0 +1,71 @@
+{
+  "id": "01M85VQB53Y3ZZ9BTXM9A3MGRY",
+  "intent_id": "01M85V8DJ1E8EVGVFR4YDYKYK2",
+  "title": "SG-2.3 Switch content and manifest to the PNGs and remove the SVGs",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "World content and manifest reference only generated PNG ids; all placeholder SVGs are deleted",
+  "description": "Context: SG-2.1 (room grids) and SG-2.2 (boy sheet and portrait) are done, but game/frontend/src/art/sources.ts ART_SOURCES still omits the room grids. bedroom.yaml and manifest.json still reference 320x180 SVG ids, and BootScene and the generator already exist. Desired behaviour: the scene is laid out at 480x270 from PNG ids only, BootScene preloads them with no fallback texture, and every SVG under public/assets (bedroom.svg included) is gone. Expected result: no .svg path remains in manifest or content. Why: it finishes the art replacement in SG-2.",
+  "acceptance_criteria": [
+    "Given the committed manifest and bedroom.yaml, when their asset refs are listed, then none ends in .svg and every ref resolves to a manifest id",
+    "Given the generated PNGs, when each is checked against the manifest, then its size equals the declared size and it uses only palette colours",
+    "Given BootScene preload, when it runs with the real manifest, then every scene asset loads and no fallback texture is resolved",
+    "Given the repository, when assets are listed, then no .svg file exists under game/public/assets or game/frontend/public/assets"
+  ],
+  "scope": {
+    "in_scope": [
+      "Sources for the remaining scene assets, regeneration of PNGs and manifest",
+      "Re-laid-out bedroom.yaml at 480x270 and manifest cleanup",
+      "Vite serving game/public",
+      "Deleting every placeholder SVG and the unused SceneView path"
+    ],
+    "out_of_scope": [
+      "New rooms",
+      "New story content",
+      "Backend changes",
+      "Audio",
+      "Deployment",
+      "Repository clean-up",
+      "Inventory icons, UI frame kit, lighting work"
+    ],
+    "preserve": [
+      "Phaser ~3.90.0 pin",
+      "Go API contracts and contribution flow",
+      "Data-driven scene building",
+      "Existing BootScene animation, transition and keyboard behaviour"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix and Zustand stay",
+    "Art is raster pixel art generated deterministically in-repo; no downloaded art",
+    "One native resolution 480x270, whole-number scaling, nearest neighbour",
+    "Shared palette of at most 48 colours",
+    "No object, position or asset id hardcoded in a scene class",
+    "Tests are unit tests with dependencies mocked"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All four requirements are done and verified",
+    "No .svg remains under public/assets",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-165.md`"
+  ],
+  "non_functional": [
+    "Generation output is byte-for-byte deterministic"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+    "artifact:.ai-dlc/intent/INT-165.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M85VF91FDNG28BRPBAC6PX22",
+  "feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+  "artifact_path": ".ai-dlc/intent/INT-165.md",
+  "artifact_id": "INT-165",
+  "created_at": "2026-11-24T04:06:18.531751+00:00",
+  "updated_at": "2026-11-24T04:09:46.437143+00:00"
+}

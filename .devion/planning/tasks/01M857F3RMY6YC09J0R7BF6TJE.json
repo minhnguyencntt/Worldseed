@@ -1,0 +1,54 @@
+{
+  "id": "01M857F3RMY6YC09J0R7BF6TJE",
+  "intent_id": "01M857A93XADX044DZJ6R66BZM",
+  "title": "SG-5.5.2 Update BootScene tests for sceneSpec mock and constructor arity",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "BootScene tests mock runtime/content with sceneSpec and type-check cleanly",
+  "description": "Context: BootScene.create now calls buildScene(..., sceneSpec) and createPhaserEffectContext(scene, resolveKey), but some bootScene*.test.ts files mock '../src/runtime/content' without sceneSpec and call the effect context factory with one argument. Desired behavior: every bootScene*.test.ts mock includes sceneSpec and passes the right arguments. Expected result: the tests pass and have no type errors. Why: keeps the thin-wrapper BootScene refactor covered by green, type-safe tests.",
+  "acceptance_criteria": [
+    "Given bootSceneFallback.test.ts and bootScenePreload.test.ts, When they mock '../src/runtime/content', Then the mock exposes scene, manifest and sceneSpec",
+    "Given bootSceneEffects.test.ts, When it calls createPhaserEffectContext, Then it passes the scene and a resolveKey function and tsc reports no arity error",
+    "Given the bootScene*.test.ts files, When they run under vitest, Then all pass"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/bootScene*.test.ts",
+      "type-only fixes in BootScene.ts, effectContext.ts, content.ts"
+    ],
+    "out_of_scope": [
+      "BootScene behavior changes",
+      "backend"
+    ],
+    "preserve": [
+      "BootScene runtime behavior",
+      "existing passing assertions"
+    ]
+  },
+  "technical_constraints": [
+    "Vitest and phaser mocked; no browser",
+    "Tests live in game/frontend/tests"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Updated bootScene tests pass",
+    "No type errors in bootScene*.test.ts",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-109.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-109.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M857CBAKN74938S5CZW047N8",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-109.md",
+  "artifact_id": "INT-109",
+  "created_at": "2026-11-23T22:12:17.300485+00:00"
+}

@@ -1,0 +1,80 @@
+{
+  "id": "01M84J3CJWGCHSA279NCASHMM9",
+  "intent_id": "01M84J1R4N0QKR7CQJ9WV8VQ4D",
+  "title": "Verify: Remaining config keys load and cmd uses no removed key unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests prove the example config and defaults load and no source reads a removed key",
+  "description": "Add tests proving REQ2 acceptance criteria using the example file, fstest and file reads of Go sources in a temp-free read-only way.",
+  "acceptance_criteria": [
+    "Example config loads with expected values",
+    "Minimal config gets defaults",
+    "No Go source under cmd or internal/server mentions worker config fields"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/config/config_test.go",
+      "backend/internal/server/removed_code_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "No network, no running server"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-247.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84J30C61Z3B72GDW7YN6C6R",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-247.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84J3CJWCNHYFBBRBZJ4WVFB"
+  ],
+  "sim_node_id": "01M84J30C6HZJ05NQK0QKEK6HB",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-247.md",
+  "artifact_id": "UNIT-247",
+  "steps": [
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestLoad_ExampleConfig",
+      "lines": "after L181",
+      "action": "Add a test calling Load(\"../../configs/config.example.yaml\"). Assert no error, Server.Addr is \":8080\", Round.Duration is 24*time.Hour and Contribution.MaxPromptLen is 500.",
+      "command": "cd backend && go test ./internal/config -run TestLoad_ExampleConfig",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/config/config_test.go",
+      "symbol": "new: TestLoadFS_MinimalDefaults",
+      "lines": "after L181",
+      "action": "Add a test loading 'auth:\\n  token_secret: s\\n' via LoadFS with a getenv returning ''. Assert Round.SchedulerInterval is 30*time.Second, Storage.ContentDir is \"game/content\" and Contribution.RateMax is 3.",
+      "command": "cd backend && go test ./internal/config -run TestLoadFS_MinimalDefaults",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/internal/server/removed_code_test.go",
+      "symbol": "new: TestNoWorkerConfigReferences",
+      "lines": "after L50",
+      "action": "Add a test that walks ../server and ../../cmd/server for *.go files (skipping removed_code_test.go), and fails if any contains cfg.Worker, WorkRoot, MaxBudget or AutoPublish.",
+      "command": "cd backend && go test ./internal/server -run TestNoWorkerConfigReferences",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:58:53.020085+00:00",
+  "updated_at": "2026-11-23T15:59:57.618514+00:00"
+}

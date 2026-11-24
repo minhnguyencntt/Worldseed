@@ -1,0 +1,57 @@
+{
+  "id": "01M8485RY0THT34HXKMKN41XFA",
+  "intent_id": "01M8484541C7KDE7W3W3SF735R",
+  "title": "SG-6.1 · Add a listExecutions admin client function",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Admin client can list executions and find the one for the current Round",
+  "description": "Context: game/frontend/src/api/client.ts already has adminRequest, getCurrentRound, approveExecution, retryExecution and the ExecutionInfo type, but nothing calls GET /api/v1/admin/executions. Desired behavior: add listExecutions and a current-Round ExecutionInfo lookup, covered by a unit test with mocked fetch. Why: the admin console needs execution data to show Round progress.",
+  "acceptance_criteria": [
+    "Given an admin token, when listExecutions is called, then GET /api/v1/admin/executions is requested with a Bearer Authorization header and the parsed ExecutionInfo array is returned",
+    "Given executions for several rounds, when the current-Round lookup runs, then the ExecutionInfo whose round_id equals the current Round id is returned, or undefined when none matches",
+    "Given a mocked fetch, when the unit tests run, then they pass without any network access"
+  ],
+  "scope": {
+    "in_scope": [
+      "listExecutions in client.ts",
+      "current-Round ExecutionInfo lookup in client.ts",
+      "unit test with mocked fetch"
+    ],
+    "out_of_scope": [
+      "Backend changes",
+      "AdminApp UI wiring",
+      "New endpoints"
+    ],
+    "preserve": [
+      "Existing client.ts exports and behavior",
+      "ApiError handling in readJSON"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse adminRequest and ExecutionInfo",
+    "Endpoint is GET /api/v1/admin/executions (backend/internal/server/server.go)"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both functions exported from client.ts",
+    "Unit tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-023.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "trace:01M847PS3RV2W9XR6T9VQV11Y7",
+    "artifact:.ai-dlc/intent/INT-023.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M8485NVW43X4GMKASEZHX6MB",
+  "feature_id": "01M847PS3RV2W9XR6T9VQV11Y7",
+  "artifact_path": ".ai-dlc/intent/INT-023.md",
+  "artifact_id": "INT-023",
+  "created_at": "2026-11-23T13:05:25.440216+00:00",
+  "updated_at": "2026-11-23T13:06:31.837166+00:00"
+}

@@ -1,0 +1,555 @@
+{
+  "intent_id": "01M84965YYKGGNFFABT1YYSSX6",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8498ZM21V0ENJ8W5RTZDDY8",
+      "kind": "intent",
+      "title": "SG-6.4.3 · Wire approve, retry and reject handlers into AdminApp's ExecutionPanel",
+      "body": "Context: ExecutionPanel already accepts onApprove, onRetry, onReject and actionError props. The client already exports approveExecution, retryExecution and rejectExecution. AdminApp renders ExecutionPanel without any handlers, so the buttons never appear. Desired behavior: each handler calls the matching client function with the admin token and execution id, reloads Round, contributions and execution afterwards, and shows an error message on failure. Why: the admin can then act on executions from the console.\n\n## Acceptance criteria\n- Given an AWAITING_APPROVAL execution, when the admin clicks Approve or Reject, then the matching client endpoint is called with the id and the Bearer token, and the data reloads\n- Given a FAILED execution, when the admin clicks Retry, then the retry endpoint is called and the data reloads\n- Given an action endpoint answers an error, when the admin clicks the button, then an error message is shown in the Execution region\n\n\n## Scope\n- In scope: game/frontend/src/components/AdminApp.tsx handlers and error state\n- Out of scope: Backend changes, including a reject route\n- Out of scope: Changes to ExecutionPanel or api/client.ts\n- Preserve: Existing round open/close controls\n- Preserve: 401 returns to the token gate\n- Preserve: Existing admin tests\n\n\n## Technical constraints\n- UI only; reuse approveExecution, retryExecution, rejectExecution from api/client.ts\n- Reload through the existing reloads counter\n\n\n## Definition of done\n- All requirements, units and evidence complete\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "AdminApp passes onApprove, onRetry and onReject to ExecutionPanel; each calls its client function, reloads and shows errors",
+      "description": "Context: ExecutionPanel already accepts onApprove, onRetry, onReject and actionError props. The client already exports approveExecution, retryExecution and rejectExecution. AdminApp renders ExecutionPanel without any handlers, so the buttons never appear. Desired behavior: each handler calls the matching client function with the admin token and execution id, reloads Round, contributions and execution afterwards, and shows an error message on failure. Why: the admin can then act on executions from the console.",
+      "acceptance_criteria": [
+        "Given an AWAITING_APPROVAL execution, when the admin clicks Approve or Reject, then the matching client endpoint is called with the id and the Bearer token, and the data reloads",
+        "Given a FAILED execution, when the admin clicks Retry, then the retry endpoint is called and the data reloads",
+        "Given an action endpoint answers an error, when the admin clicks the button, then an error message is shown in the Execution region"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/AdminApp.tsx handlers and error state"
+        ],
+        "out_of_scope": [
+          "Backend changes, including a reject route",
+          "Changes to ExecutionPanel or api/client.ts"
+        ],
+        "preserve": [
+          "Existing round open/close controls",
+          "401 returns to the token gate",
+          "Existing admin tests"
+        ]
+      },
+      "technical_constraints": [
+        "UI only; reuse approveExecution, retryExecution, rejectExecution from api/client.ts",
+        "Reload through the existing reloads counter"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements, units and evidence complete",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-030.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+      "links": [
+        "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+        "artifact:.ai-dlc/intent/INT-030.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-030.md",
+      "artifact_id": "INT-030"
+    },
+    {
+      "id": "01M8498ZM2PWF2Z3V7JG300DMC",
+      "kind": "requirement",
+      "title": "REQ · AdminApp passes approve, retry and reject handlers that call the client and reload",
+      "body": "AdminApp currently renders ExecutionPanel with only execution and contributionCount. It must pass onApprove, onRetry and onReject. Each calls approveExecution, retryExecution or rejectExecution with the admin token and the execution id, then increments the reloads counter so the Round, contributions and execution are fetched again.\n\n## Acceptance criteria\n- Given an AWAITING_APPROVAL execution, when Approve is clicked, then POST /api/v1/admin/executions/{id}/approve is sent and the data is fetched again\n- Given a FAILED execution, when Retry is clicked, then POST /api/v1/admin/executions/{id}/retry is sent and the data is fetched again\n- Given an AWAITING_APPROVAL execution, when Reject is clicked, then POST /api/v1/admin/executions/{id}/reject is sent and the data is fetched again\n\n\n## Scope\n- In scope: AdminApp.tsx execution handlers\n- Out of scope: Backend\n- Out of scope: ExecutionPanel markup\n- Preserve: runRoundAction behavior\n\n\n## Technical constraints\n- Reuse the reloads counter\n\n\n## Definition of done\n- Handlers wired and verified by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Handlers call the matching client function then reload data",
+      "description": "AdminApp currently renders ExecutionPanel with only execution and contributionCount. It must pass onApprove, onRetry and onReject. Each calls approveExecution, retryExecution or rejectExecution with the admin token and the execution id, then increments the reloads counter so the Round, contributions and execution are fetched again.",
+      "acceptance_criteria": [
+        "Given an AWAITING_APPROVAL execution, when Approve is clicked, then POST /api/v1/admin/executions/{id}/approve is sent and the data is fetched again",
+        "Given a FAILED execution, when Retry is clicked, then POST /api/v1/admin/executions/{id}/retry is sent and the data is fetched again",
+        "Given an AWAITING_APPROVAL execution, when Reject is clicked, then POST /api/v1/admin/executions/{id}/reject is sent and the data is fetched again"
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp.tsx execution handlers"
+        ],
+        "out_of_scope": [
+          "Backend",
+          "ExecutionPanel markup"
+        ],
+        "preserve": [
+          "runRoundAction behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the reloads counter"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Handlers wired and verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-070.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": false,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8498ZM21V0ENJ8W5RTZDDY8",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M8498ZM21V0ENJ8W5RTZDDY8",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-070.md"
+      ],
+      "depends_on": [
+        "01M8498ZM21V0ENJ8W5RTZDDY8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-070.md",
+      "artifact_id": "REQ-070"
+    },
+    {
+      "id": "01M8498ZM25C6JCDW7QJDYC4HX",
+      "kind": "requirement",
+      "title": "REQ · AdminApp shows an error message when an execution action fails",
+      "body": "When an execution action rejects, AdminApp stores the message in an actionError state and passes it as the actionError prop to ExecutionPanel, which renders it with role alert. A 401 still returns to the token gate. A later successful action clears the message.\n\n## Acceptance criteria\n- Given the approve endpoint answers 500, when Approve is clicked, then the Execution region shows an alert containing the error message\n- Given an action endpoint answers 401, when a button is clicked, then the token gate is shown with 'Invalid token'\n- Given a previous action failed, when a later action succeeds, then the action error is no longer shown\n\n\n## Scope\n- In scope: actionError state in AdminApp.tsx\n- Out of scope: Backend\n- Preserve: handleError 401 behavior\n- Preserve: top-level error paragraph for load failures\n\n\n## Technical constraints\n- Use the existing actionError prop of ExecutionPanel\n\n\n## Definition of done\n- Errors shown and verified by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Failed execution actions show a message in the Execution region and 401 returns to the token gate",
+      "description": "When an execution action rejects, AdminApp stores the message in an actionError state and passes it as the actionError prop to ExecutionPanel, which renders it with role alert. A 401 still returns to the token gate. A later successful action clears the message.",
+      "acceptance_criteria": [
+        "Given the approve endpoint answers 500, when Approve is clicked, then the Execution region shows an alert containing the error message",
+        "Given an action endpoint answers 401, when a button is clicked, then the token gate is shown with 'Invalid token'",
+        "Given a previous action failed, when a later action succeeds, then the action error is no longer shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "actionError state in AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "Backend"
+        ],
+        "preserve": [
+          "handleError 401 behavior",
+          "top-level error paragraph for load failures"
+        ]
+      },
+      "technical_constraints": [
+        "Use the existing actionError prop of ExecutionPanel"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Errors shown and verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-071.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8498ZM21V0ENJ8W5RTZDDY8",
+      "matched_feature_id": "01M848ZFYJ9EC0MXARTWXXZ6SP",
+      "links": [
+        "parent:01M8498ZM21V0ENJ8W5RTZDDY8",
+        "trace:01M848ZFYJ9EC0MXARTWXXZ6SP",
+        "artifact:.ai-dlc/requirements/REQ-071.md"
+      ],
+      "depends_on": [
+        "01M8498ZM21V0ENJ8W5RTZDDY8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-071.md",
+      "artifact_id": "REQ-071"
+    },
+    {
+      "id": "01M8498ZM2HEKP5F4415HP9H95",
+      "kind": "unit",
+      "title": "Act: Add execution action handlers to AdminApp",
+      "body": "Import approveExecution, retryExecution, rejectExecution in AdminApp.tsx. Add a runExecutionAction helper modelled on runRoundAction, and pass onApprove, onRetry and onReject to ExecutionPanel.\n\n## Acceptance criteria\n- ExecutionPanel receives onApprove, onRetry and onReject from AdminApp\n- Each handler awaits the client call and then increments reloads\n\n\n## Scope\n- In scope: AdminApp.tsx\n- Out of scope: Tests\n- Preserve: runRoundAction\n\n\n## Technical constraints\n- Types: (token: string, id: string) => Promise<ExecutionInfo>\n- Code path: `game/frontend/src/components/AdminApp.tsx`\n\n\n## Definition of done\n- Handlers passed to ExecutionPanel\n- npm run typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "runExecutionAction calls the client function, reloads and is passed to ExecutionPanel",
+      "description": "Import approveExecution, retryExecution, rejectExecution in AdminApp.tsx. Add a runExecutionAction helper modelled on runRoundAction, and pass onApprove, onRetry and onReject to ExecutionPanel.",
+      "acceptance_criteria": [
+        "ExecutionPanel receives onApprove, onRetry and onReject from AdminApp",
+        "Each handler awaits the client call and then increments reloads"
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "Tests"
+        ],
+        "preserve": [
+          "runRoundAction"
+        ]
+      },
+      "technical_constraints": [
+        "Types: (token: string, id: string) => Promise<ExecutionInfo>",
+        "Code path: `game/frontend/src/components/AdminApp.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Handlers passed to ExecutionPanel",
+        "npm run typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-139.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8498ZM2PWF2Z3V7JG300DMC",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8498ZM2PWF2Z3V7JG300DMC",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-139.md"
+      ],
+      "depends_on": [
+        "01M8498ZM2PWF2Z3V7JG300DMC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-139.md",
+      "artifact_id": "UNIT-139",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "import block from '../api/client'",
+          "lines": "L2-L15",
+          "action": "Add approveExecution, rejectExecution and retryExecution to the value imports from '../api/client' in alphabetical position.",
+          "code": "import { ApiError, approveExecution, closeRound, ..., openRound, rejectExecution, retryExecution, WORLD_ID, ... }",
+          "expected": "The three client functions are importable in AdminApp.tsx"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "type ExecutionAction and AdminApp.runExecutionAction",
+          "lines": "after L17 (type) and after runRoundAction L90-L98",
+          "action": "Add type ExecutionAction = (token: string, id: string) => Promise<ExecutionInfo>. Inside AdminApp, after runRoundAction, add async function runExecutionAction(action: ExecutionAction, id: string) that awaits action(token, id) in try and then calls setReloads((n) => n + 1); in catch it calls handleError(err).",
+          "code": "async function runExecutionAction(action: ExecutionAction, id: string) {\n  try {\n    await action(token, id);\n    setReloads((n) => n + 1);\n  } catch (err) {\n    handleError(err);\n  }\n}",
+          "expected": "Calling it posts to the endpoint and triggers a reload"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp return: <ExecutionPanel>",
+          "lines": "L130",
+          "action": "Pass onApprove={(id) => runExecutionAction(approveExecution, id)}, onRetry={(id) => runExecutionAction(retryExecution, id)} and onReject={(id) => runExecutionAction(rejectExecution, id)} to ExecutionPanel.",
+          "code": "<ExecutionPanel execution={execution} contributionCount={contributions.length} onApprove={...} onRetry={...} onReject={...} />",
+          "expected": "Approve/Reject buttons render for AWAITING_APPROVAL and Retry for FAILED"
+        }
+      ]
+    },
+    {
+      "id": "01M8498ZM2PWA58GE2MRFB8CPP",
+      "kind": "unit",
+      "title": "Act: Show execution action failures through actionError",
+      "body": "Add actionError state to AdminApp.tsx, set it in runExecutionAction's catch for non-401 errors, clear it on success, and pass it to ExecutionPanel as actionError.\n\n## Acceptance criteria\n- A failed action shows its message in the Execution region\n- A 401 still shows the token gate\n- A successful action clears the message\n\n\n## Scope\n- In scope: AdminApp.tsx\n- Out of scope: Tests\n- Out of scope: ExecutionPanel\n- Preserve: handleError for load failures\n\n\n## Technical constraints\n- Depends on the runExecutionAction helper from the handler unit\n- Code path: `game/frontend/src/components/AdminApp.tsx`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- actionError state wired\n- npm run typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "AdminApp keeps an actionError state set on failed actions and cleared on success",
+      "description": "Add actionError state to AdminApp.tsx, set it in runExecutionAction's catch for non-401 errors, clear it on success, and pass it to ExecutionPanel as actionError.",
+      "acceptance_criteria": [
+        "A failed action shows its message in the Execution region",
+        "A 401 still shows the token gate",
+        "A successful action clears the message"
+      ],
+      "scope": {
+        "in_scope": [
+          "AdminApp.tsx"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "ExecutionPanel"
+        ],
+        "preserve": [
+          "handleError for load failures"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on the runExecutionAction helper from the handler unit",
+        "Code path: `game/frontend/src/components/AdminApp.tsx`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "actionError state wired",
+        "npm run typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-140.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8498ZM25C6JCDW7QJDYC4HX",
+      "matched_feature_id": "01M848ZFYJ5E173P68XH1YEFX4",
+      "links": [
+        "parent:01M8498ZM25C6JCDW7QJDYC4HX",
+        "trace:01M848ZFYJ5E173P68XH1YEFX4",
+        "artifact:.ai-dlc/units/UNIT-140.md"
+      ],
+      "depends_on": [
+        "01M8498ZM25C6JCDW7QJDYC4HX"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-140.md",
+      "artifact_id": "UNIT-140",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp state",
+          "lines": "L33",
+          "action": "Add const [actionError, setActionError] = useState<string | undefined>(undefined); after the reloads state.",
+          "code": "const [actionError, setActionError] = useState<string | undefined>(undefined);",
+          "expected": "State exists, initially undefined"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp.runExecutionAction",
+          "lines": "the helper added by the handlers unit",
+          "action": "In the try block call setActionError(undefined) after the action succeeds. In the catch block, if err is an ApiError with status 401 call handleError(err); otherwise call setActionError(err instanceof Error ? err.message : 'Request failed').",
+          "code": "catch (err) {\n  if (err instanceof ApiError && err.status === 401) handleError(err);\n  else setActionError(err instanceof Error ? err.message : 'Request failed');\n}",
+          "expected": "Non-401 failures set actionError; 401 returns to the gate"
+        },
+        {
+          "file": "game/frontend/src/components/AdminApp.tsx",
+          "symbol": "AdminApp return: <ExecutionPanel>",
+          "lines": "L130",
+          "action": "Add the prop actionError={actionError} to ExecutionPanel.",
+          "code": "<ExecutionPanel ... actionError={actionError} />",
+          "expected": "The message renders with role alert in the Execution region"
+        }
+      ]
+    },
+    {
+      "id": "01M8498ZM2Q95D5AZJ6YWZ5MCD",
+      "kind": "unit",
+      "title": "Verify: AdminApp execution handlers call the client and reload unit tests",
+      "body": "Add game/frontend/tests/adminActions.test.tsx modelled on tests/adminExecution.test.tsx. It stubs fetch by URL and Bearer token, counts the GET calls to the executions endpoint to prove the reload, and uses fixtures from tests/fixtures/api.ts.\n\n## Acceptance criteria\n- Approve, Reject and Retry each POST to the matching URL with the Bearer token\n- Each action is followed by a second GET of the executions endpoint\n\n\n## Scope\n- In scope: game/frontend/tests/adminActions.test.tsx\n- In scope: game/frontend/tests/fixtures/api.ts\n- Out of scope: Real network or browser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fixtures mirror execution.Execution JSON in backend/internal/execution/execution.go; routes mirror backend/internal/server/server.go\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with a mocked fetch for approve, retry and reject",
+      "description": "Add game/frontend/tests/adminActions.test.tsx modelled on tests/adminExecution.test.tsx. It stubs fetch by URL and Bearer token, counts the GET calls to the executions endpoint to prove the reload, and uses fixtures from tests/fixtures/api.ts.",
+      "acceptance_criteria": [
+        "Approve, Reject and Retry each POST to the matching URL with the Bearer token",
+        "Each action is followed by a second GET of the executions endpoint"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/adminActions.test.tsx",
+          "game/frontend/tests/fixtures/api.ts"
+        ],
+        "out_of_scope": [
+          "Real network or browser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fixtures mirror execution.Execution JSON in backend/internal/execution/execution.go; routes mirror backend/internal/server/server.go"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-141.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8498ZM2HEKP5F4415HP9H95",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M8498ZM2HEKP5F4415HP9H95",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-141.md"
+      ],
+      "depends_on": [
+        "01M8498ZM2HEKP5F4415HP9H95"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-141.md",
+      "artifact_id": "UNIT-141",
+      "steps": [
+        {
+          "file": "game/frontend/tests/fixtures/api.ts",
+          "symbol": "new: awaitingExecutionFixture",
+          "lines": "after L47",
+          "action": "Export awaitingExecutionFixture as { ...executionFixture, status: 'AWAITING_APPROVAL' }, mirroring execution.Execution in backend/internal/execution/execution.go.",
+          "code": "export const awaitingExecutionFixture = { ...executionFixture, status: 'AWAITING_APPROVAL' };",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Fixture importable by tests and type-check passes"
+        },
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "new: describe('AdminApp execution actions') / it('Approve posts and reloads')",
+          "lines": "new",
+          "action": "Copy the stubFetch and enterToken helpers from adminExecution.test.tsx, extended to answer POST /api/v1/admin/executions/exec-1/approve with json(awaitingExecutionFixture). Render AdminApp, enter token 'secret', click the Approve button and assert fetch was called with that URL, method POST and Authorization 'Bearer secret'. Then await waitFor that the GET executions call count is 2.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t Approve",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "it('Reject posts and reloads')",
+          "lines": "new",
+          "action": "Same as the approve test with status AWAITING_APPROVAL, clicking the Reject button and asserting the /reject URL with POST and a second executions GET.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t Reject",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "it('Retry posts and reloads')",
+          "lines": "new",
+          "action": "Use failedExecutionFixture, click the Retry button and assert POST to /api/v1/admin/executions/exec-1/retry and a second executions GET.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t Retry",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8498ZM2R7NQ7KW35DKJ58RV",
+      "kind": "unit",
+      "title": "Verify: AdminApp execution action error display unit tests",
+      "body": "Extend tests/adminActions.test.tsx with failure cases using the same URL-routing fetch stub.\n\n## Acceptance criteria\n- A 500 from an action shows an alert in the Execution region\n- A 401 from an action shows the token gate with Invalid token\n- A later successful action clears the alert\n\n\n## Scope\n- In scope: game/frontend/tests/adminActions.test.tsx\n- Out of scope: Real network or browser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Fixtures mirror backend execution JSON\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests with a mocked fetch for failed actions, 401 and error clearing",
+      "description": "Extend tests/adminActions.test.tsx with failure cases using the same URL-routing fetch stub.",
+      "acceptance_criteria": [
+        "A 500 from an action shows an alert in the Execution region",
+        "A 401 from an action shows the token gate with Invalid token",
+        "A later successful action clears the alert"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/adminActions.test.tsx"
+        ],
+        "out_of_scope": [
+          "Real network or browser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Fixtures mirror backend execution JSON"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-142.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8498ZM2PWA58GE2MRFB8CPP",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M8498ZM2PWA58GE2MRFB8CPP",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-142.md"
+      ],
+      "depends_on": [
+        "01M8498ZM2PWA58GE2MRFB8CPP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-142.md",
+      "artifact_id": "UNIT-142",
+      "steps": [
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "it('shows an alert when the action fails')",
+          "lines": "new",
+          "action": "Make the stub answer the approve POST with json({error:'boom'}, 500). Render, enter token 'secret', click Approve, then use findByRole on the Execution region and assert within it an alert whose text contains '500'.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"action fails\"",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "it('returns to the token gate on 401')",
+          "lines": "new",
+          "action": "Make the stub answer the approve POST with json({error:'unauthorized'}, 401). Click Approve and assert findByLabelText('Admin token') and the text 'Invalid token' are present.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t 401",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/adminActions.test.tsx",
+          "symbol": "it('clears the action error after a successful action')",
+          "lines": "new",
+          "action": "The stub answers the first approve POST with 500 and the second with json(awaitingExecutionFixture). Click Approve twice, awaiting the alert after the first click. Then waitFor that the alert no longer exists in the Execution region.",
+          "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t clears",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8498ZM22EF6ZD7YZABW1QE3",
+      "kind": "evidence",
+      "title": "Evidence: AdminApp execution action handler unit tests",
+      "body": "Record the results of tests/adminActions.test.tsx: approve, retry and reject call the client and reload, failures show an error, 401 returns to the token gate.\n\n## Acceptance criteria\n- All tests in tests/adminActions.test.tsx pass\n- tests/admin.test.tsx, adminExecution.test.tsx and adminStepper.test.tsx still pass\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: E2E checks\n- Preserve: Existing tests\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Passing vitest output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving the AdminApp execution action wiring",
+      "description": "Record the results of tests/adminActions.test.tsx: approve, retry and reject call the client and reload, failures show an error, 401 returns to the token gate.",
+      "acceptance_criteria": [
+        "All tests in tests/adminActions.test.tsx pass",
+        "tests/admin.test.tsx, adminExecution.test.tsx and adminStepper.test.tsx still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "E2E checks"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Passing vitest output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-030.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8498ZM2Q95D5AZJ6YWZ5MCD",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M8498ZM2Q95D5AZJ6YWZ5MCD",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-030.md"
+      ],
+      "depends_on": [
+        "01M8498ZM2Q95D5AZJ6YWZ5MCD",
+        "01M8498ZM2R7NQ7KW35DKJ58RV"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-030.md",
+      "artifact_id": "EVD-030"
+    }
+  ],
+  "created_at": "2026-11-23T13:24:41.285038+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 7/8 Ready",
+  "ready_for_development": false,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

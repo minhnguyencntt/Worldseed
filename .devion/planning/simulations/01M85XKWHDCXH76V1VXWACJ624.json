@@ -1,0 +1,751 @@
+{
+  "intent_id": "01M85XKWHDCXH76V1VXWACJ624",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85XR2FK1NJ7A8C5W7X7X5MA",
+      "kind": "intent",
+      "title": "SG-5.1 Rebuild HeaderOverlay on the kit",
+      "body": "Context: HeaderOverlay (game/frontend/src/components/HeaderOverlay.tsx) already shows StoryForge, the world title, round id, status, Countdown, a Retry button on error, and sound and settings buttons wired to useUiStore. It is unstyled text inside .sf-frame-bar. The Suggest What Happens Next button is a separate frame button in App.tsx. Desired behavior: the header shows a gold logo, a world-name plaque, a status pill with dot and round id, the countdown, a gold + SUGGEST WHAT HAPPENS NEXT button that opens the contribution dialog, and sound and settings icons. Expected result: the header reads real round data and the old standalone Suggest button is gone. Why: the SG-5 goal replaces the placeholder look with the framed interface.\n\n## Acceptance criteria\n- Given a loaded round, when the header renders, then it shows the logo, the world-name plaque, a status pill containing a status dot, the round id and the status, and the countdown timer.\n- Given the header is rendered, when the player clicks the gold suggest button, then the contribution dialog opens.\n- Given the round is loading, failed or missing, when the header renders, then the pill shows the loading, error with Retry, or no-active-round state.\n- Given the header is rendered, when the player clicks the sound or settings icon, then uiStore soundEnabled or settingsOpen changes.\n\n\n## Scope\n- In scope: HeaderOverlay layout and styling on the frame kit\n- In scope: gold suggest button inside the header\n- In scope: status pill with dot\n- In scope: header tests\n- Out of scope: StoryPanel (SG-5.2)\n- Out of scope: new art\n- Out of scope: backend changes\n- Out of scope: audio\n- Preserve: Round and error props of HeaderOverlay\n- Preserve: uiStore actions\n- Preserve: ContributionSheet flow and focus return\n- Preserve: Countdown behavior\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix and Zustand stay.\n- Keep the Go API contracts and the contribution flow; no mock data in place of real API calls.\n- Colours come from the shared palette tokens; fonts are bundled npm packages; no downloaded art or CDN links.\n- Tests are unit tests with all dependencies mocked.\n\n\n## Definition of done\n- All requirements are done and their Verify units pass.\n\n\n## Non-functional requirements\n- Keyboard operable buttons with accessible names\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "HeaderOverlay becomes a wood bar with brass corners built on the frame kit, with every control the Done-when lists.",
+      "description": "Context: HeaderOverlay (game/frontend/src/components/HeaderOverlay.tsx) already shows StoryForge, the world title, round id, status, Countdown, a Retry button on error, and sound and settings buttons wired to useUiStore. It is unstyled text inside .sf-frame-bar. The Suggest What Happens Next button is a separate frame button in App.tsx. Desired behavior: the header shows a gold logo, a world-name plaque, a status pill with dot and round id, the countdown, a gold + SUGGEST WHAT HAPPENS NEXT button that opens the contribution dialog, and sound and settings icons. Expected result: the header reads real round data and the old standalone Suggest button is gone. Why: the SG-5 goal replaces the placeholder look with the framed interface.",
+      "acceptance_criteria": [
+        "Given a loaded round, when the header renders, then it shows the logo, the world-name plaque, a status pill containing a status dot, the round id and the status, and the countdown timer.",
+        "Given the header is rendered, when the player clicks the gold suggest button, then the contribution dialog opens.",
+        "Given the round is loading, failed or missing, when the header renders, then the pill shows the loading, error with Retry, or no-active-round state.",
+        "Given the header is rendered, when the player clicks the sound or settings icon, then uiStore soundEnabled or settingsOpen changes."
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay layout and styling on the frame kit",
+          "gold suggest button inside the header",
+          "status pill with dot",
+          "header tests"
+        ],
+        "out_of_scope": [
+          "StoryPanel (SG-5.2)",
+          "new art",
+          "backend changes",
+          "audio"
+        ],
+        "preserve": [
+          "Round and error props of HeaderOverlay",
+          "uiStore actions",
+          "ContributionSheet flow and focus return",
+          "Countdown behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix and Zustand stay.",
+        "Keep the Go API contracts and the contribution flow; no mock data in place of real API calls.",
+        "Colours come from the shared palette tokens; fonts are bundled npm packages; no downloaded art or CDN links.",
+        "Tests are unit tests with all dependencies mocked."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements are done and their Verify units pass.",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-169.md`"
+      ],
+      "non_functional": [
+        "Keyboard operable buttons with accessible names"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84WZ47XPQ76F80J2AGZ7GBY",
+      "links": [
+        "trace:01M84WZ47XPQ76F80J2AGZ7GBY",
+        "artifact:.ai-dlc/intent/INT-169.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-169.md",
+      "artifact_id": "INT-169"
+    },
+    {
+      "id": "01M85XR2FKJBQY1P1X0VJAK6B6",
+      "kind": "requirement",
+      "title": "REQ · Header is a wood bar with brass corners, gold logo, world plaque, status pill with dot and countdown",
+      "body": "Context: HeaderOverlay renders plain spans in .sf-frame-bar. Desired behavior: gold logo text, the world title inside a plaque frame (Frame kind plaque), and a pill holding a status dot, the round id and status, then the Countdown, with brass corner decoration. Expected result: visible kit structure with test ids. Why: matches the reference header.\n\n## Acceptance criteria\n- Given a round with status OPEN, when the header renders, then a pill with test id round-pill contains a dot with data-status OPEN, the round id and the status text.\n- Given a world title, when the header renders, then the title is inside an element with data-frame plaque.\n- Given a round, when the header renders, then the logo text StoryForge, the header banner with brass corners class, and one timer are present.\n\n\n## Scope\n- In scope: HeaderOverlay markup\n- In scope: CSS for logo, pill, dot and brass corners using palette tokens\n- Out of scope: Suggest button\n- Out of scope: new PNG art\n- Preserve: Countdown component\n- Preserve: existing text StoryForge, round id and status strings\n\n\n## Technical constraints\n- Tailwind and tokens only; colours from palette tokens.\n- Phaser 3.90.x pin untouched.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Header markup uses Frame plaque and the pill\n- styles added\n\n\n## Non-functional requirements\n- Pixelated rendering kept\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A loaded round shows logo, plaque, pill with dot, round id, status and countdown on the kit.",
+      "description": "Context: HeaderOverlay renders plain spans in .sf-frame-bar. Desired behavior: gold logo text, the world title inside a plaque frame (Frame kind plaque), and a pill holding a status dot, the round id and status, then the Countdown, with brass corner decoration. Expected result: visible kit structure with test ids. Why: matches the reference header.",
+      "acceptance_criteria": [
+        "Given a round with status OPEN, when the header renders, then a pill with test id round-pill contains a dot with data-status OPEN, the round id and the status text.",
+        "Given a world title, when the header renders, then the title is inside an element with data-frame plaque.",
+        "Given a round, when the header renders, then the logo text StoryForge, the header banner with brass corners class, and one timer are present."
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay markup",
+          "CSS for logo, pill, dot and brass corners using palette tokens"
+        ],
+        "out_of_scope": [
+          "Suggest button",
+          "new PNG art"
+        ],
+        "preserve": [
+          "Countdown component",
+          "existing text StoryForge, round id and status strings"
+        ]
+      },
+      "technical_constraints": [
+        "Tailwind and tokens only; colours from palette tokens.",
+        "Phaser 3.90.x pin untouched."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Header markup uses Frame plaque and the pill",
+        "styles added",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-419.md`"
+      ],
+      "non_functional": [
+        "Pixelated rendering kept"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85XR2FK1NJ7A8C5W7X7X5MA",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85XR2FK1NJ7A8C5W7X7X5MA",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-419.md"
+      ],
+      "depends_on": [
+        "01M85XR2FK1NJ7A8C5W7X7X5MA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-419.md",
+      "artifact_id": "REQ-419"
+    },
+    {
+      "id": "01M85XR2FKKED7ZHEBF5ADG3ZD",
+      "kind": "requirement",
+      "title": "REQ · Gold + SUGGEST WHAT HAPPENS NEXT header button opens the contribution dialog",
+      "body": "Context: the Suggest button is a frame button in App.tsx scene slot with triggerRef. Desired behavior: move it into HeaderOverlay as a gold button labelled + SUGGEST WHAT HAPPENS NEXT, keeping the accessible name Suggest What Happens Next and focus return. Expected result: one suggest button, in the header; App no longer renders the old one. Why: matches the reference and removes the replaced path.\n\n## Acceptance criteria\n- Given the header with onSuggest, when the player clicks the button named Suggest What Happens Next, then onSuggest is called once.\n- Given App after Begin, when the player clicks that button, then the contribution dialog opens and exactly one such button exists.\n- Given the dialog closes, when Escape is pressed, then focus returns to the header button.\n\n\n## Scope\n- In scope: gold Button variant\n- In scope: HeaderOverlay props onSuggest and suggestRef\n- In scope: App wiring and removal of the old button\n- Out of scope: ContributionSheet internals\n- Preserve: contribution API flow\n- Preserve: focus return via returnFocusRef\n\n\n## Technical constraints\n- Keep contribution flow and Go API contracts.\n- Radix dialog stays.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Old button removed from App.tsx\n\n\n## Non-functional requirements\n- Accessible name unchanged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The suggest button lives in the header, is gold, and opens the existing dialog.",
+      "description": "Context: the Suggest button is a frame button in App.tsx scene slot with triggerRef. Desired behavior: move it into HeaderOverlay as a gold button labelled + SUGGEST WHAT HAPPENS NEXT, keeping the accessible name Suggest What Happens Next and focus return. Expected result: one suggest button, in the header; App no longer renders the old one. Why: matches the reference and removes the replaced path.",
+      "acceptance_criteria": [
+        "Given the header with onSuggest, when the player clicks the button named Suggest What Happens Next, then onSuggest is called once.",
+        "Given App after Begin, when the player clicks that button, then the contribution dialog opens and exactly one such button exists.",
+        "Given the dialog closes, when Escape is pressed, then focus returns to the header button."
+      ],
+      "scope": {
+        "in_scope": [
+          "gold Button variant",
+          "HeaderOverlay props onSuggest and suggestRef",
+          "App wiring and removal of the old button"
+        ],
+        "out_of_scope": [
+          "ContributionSheet internals"
+        ],
+        "preserve": [
+          "contribution API flow",
+          "focus return via returnFocusRef"
+        ]
+      },
+      "technical_constraints": [
+        "Keep contribution flow and Go API contracts.",
+        "Radix dialog stays."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Old button removed from App.tsx",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-420.md`"
+      ],
+      "non_functional": [
+        "Accessible name unchanged"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85XR2FK1NJ7A8C5W7X7X5MA",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85XR2FK1NJ7A8C5W7X7X5MA",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-420.md"
+      ],
+      "depends_on": [
+        "01M85XR2FK1NJ7A8C5W7X7X5MA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-420.md",
+      "artifact_id": "REQ-420"
+    },
+    {
+      "id": "01M85XR2FKYHH6SDGJWK9AX7C1",
+      "kind": "requirement",
+      "title": "REQ · Pill and icon controls cover loading, error with retry, empty and sound and settings states",
+      "body": "Context: error, loading and empty states render as bare spans, and icon buttons are plain frame buttons. Desired behavior: the state messages appear inside the same pill (test id round-pill with data-state loading, error or empty), Retry stays a frame button, and sound and settings icons sit in a labelled control group. Expected result: every status is covered and wired to real props and uiStore. Why: the Done-when requires tests for loading, error and retry.\n\n## Acceptance criteria\n- Given loading, when rendered, then the pill has data-state loading with text Loading round… and no timer.\n- Given error, when rendered, then the pill has data-state error with role alert text Round unavailable: <error> and Retry calls onRetry once.\n- Given no round, when rendered, then the pill has data-state empty with No active round.\n- Given the icon group, when sound or settings is clicked, then uiStore changes.\n\n\n## Scope\n- In scope: HeaderOverlay state markup\n- In scope: icon group\n- Out of scope: App round loading logic\n- Preserve: messages text\n- Preserve: Retry behavior\n- Preserve: uiStore wiring\n\n\n## Technical constraints\n- No mock data in place of API; Zustand store stays.\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- States render in the pill\n\n\n## Non-functional requirements\n- role alert kept\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Status pill shows each state on the kit and icon buttons stay wired to uiStore.",
+      "description": "Context: error, loading and empty states render as bare spans, and icon buttons are plain frame buttons. Desired behavior: the state messages appear inside the same pill (test id round-pill with data-state loading, error or empty), Retry stays a frame button, and sound and settings icons sit in a labelled control group. Expected result: every status is covered and wired to real props and uiStore. Why: the Done-when requires tests for loading, error and retry.",
+      "acceptance_criteria": [
+        "Given loading, when rendered, then the pill has data-state loading with text Loading round… and no timer.",
+        "Given error, when rendered, then the pill has data-state error with role alert text Round unavailable: <error> and Retry calls onRetry once.",
+        "Given no round, when rendered, then the pill has data-state empty with No active round.",
+        "Given the icon group, when sound or settings is clicked, then uiStore changes."
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay state markup",
+          "icon group"
+        ],
+        "out_of_scope": [
+          "App round loading logic"
+        ],
+        "preserve": [
+          "messages text",
+          "Retry behavior",
+          "uiStore wiring"
+        ]
+      },
+      "technical_constraints": [
+        "No mock data in place of API; Zustand store stays."
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "States render in the pill",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-421.md`"
+      ],
+      "non_functional": [
+        "role alert kept"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85XR2FK1NJ7A8C5W7X7X5MA",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85XR2FK1NJ7A8C5W7X7X5MA",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-421.md"
+      ],
+      "depends_on": [
+        "01M85XR2FK1NJ7A8C5W7X7X5MA"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-421.md",
+      "artifact_id": "REQ-421"
+    },
+    {
+      "id": "01M85XR2FKDQE4VDTEW312HYRM",
+      "kind": "unit",
+      "title": "Act: Restructure HeaderOverlay into logo, plaque and status pill with dot",
+      "body": "Edit HeaderOverlay.tsx to use Frame for the plaque, add the round-pill with dot, and add CSS classes in styles.css.\n\n## Acceptance criteria\n- The header renders the logo, plaque, pill with dot and Countdown for a loaded round.\n- The text StoryForge, round id and status remain as separate text nodes.\n\n\n## Scope\n- In scope: HeaderOverlay.tsx\n- In scope: styles.css\n- Out of scope: tests\n- Preserve: props interface\n- Preserve: Countdown\n\n\n## Technical constraints\n- Palette tokens only (var(--sf-color-brass-4) etc.).\n- Tailwind, React stay.\n- Code path: `game/frontend/src/components/HeaderOverlay.tsx`\n- Code path: `game/frontend/src/styles.css`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Header renders new structure with test ids header-bar, round-pill, round-dot\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rebuild the header markup and add the pill, dot and brass-corner styles.",
+      "description": "Edit HeaderOverlay.tsx to use Frame for the plaque, add the round-pill with dot, and add CSS classes in styles.css.",
+      "acceptance_criteria": [
+        "The header renders the logo, plaque, pill with dot and Countdown for a loaded round.",
+        "The text StoryForge, round id and status remain as separate text nodes."
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay.tsx",
+          "styles.css"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "props interface",
+          "Countdown"
+        ]
+      },
+      "technical_constraints": [
+        "Palette tokens only (var(--sf-color-brass-4) etc.).",
+        "Tailwind, React stay.",
+        "Code path: `game/frontend/src/components/HeaderOverlay.tsx`",
+        "Code path: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Header renders new structure with test ids header-bar, round-pill, round-dot",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-838.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85XR2FKJBQY1P1X0VJAK6B6",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M85XR2FKJBQY1P1X0VJAK6B6",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-838.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKJBQY1P1X0VJAK6B6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-838.md",
+      "artifact_id": "UNIT-838",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlay",
+          "lines": "L18-L47",
+          "action": "Import Frame from './ui/Frame'. On the <header> add data-testid=\"header-bar\" and class sf-brass-corners. Wrap the logo in <span className=\"sf-logo font-pixel\">StoryForge</span>. Wrap the world title in <Frame kind=\"plaque\" as=\"span\" className=\"px-3 py-1\">{worldTitle}</Frame>. In the round branch replace the three bare spans with <span data-testid=\"round-pill\" className=\"sf-pill\"><span data-testid=\"round-dot\" data-status={round.status} className=\"sf-dot\" aria-hidden=\"true\" /><span>{round.id}</span><span data-status={round.status}>{round.status}</span></span> followed by <Countdown endsAt={round.ends_at} />.",
+          "code": "<span data-testid=\"round-pill\" className=\"sf-pill\">...</span>",
+          "expected": "A loaded round renders the pill with dot, id and status, plus the timer."
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": "new: .sf-logo, .sf-pill, .sf-dot, .sf-brass-corners",
+          "lines": "after L45",
+          "action": "Append classes: .sf-logo {color: var(--sf-color-brass-5); text-transform: uppercase; letter-spacing: 1px;} .sf-pill {display:inline-flex; align-items:center; gap: var(--sf-space-2); padding: 2px var(--sf-space-3); background: var(--sf-color-ink-2); color: var(--sf-color-parchment-5);} .sf-dot {width:8px; height:8px; background: var(--sf-color-lamp-4);} .sf-dot[data-status='OPEN'] {background: var(--sf-color-brass-5);} .sf-brass-corners {position: relative;} .sf-brass-corners::before, .sf-brass-corners::after {content:''; position:absolute; top:0; width:8px; height:8px; background: var(--sf-color-brass-4);} .sf-brass-corners::before {left:0;} .sf-brass-corners::after {right:0;}",
+          "expected": "Classes exist and use only palette token variables."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FKKMN19W5Z29T3M456",
+      "kind": "unit",
+      "title": "Act: Add gold button variant, header suggest button and App wiring",
+      "body": "Wire onSuggest and suggestRef through HeaderOverlay from App.\n\n## Acceptance criteria\n- Header shows the gold suggest button with the accessible name Suggest What Happens Next.\n- App has no other suggest button.\n\n\n## Scope\n- In scope: button.tsx\n- In scope: styles.css\n- In scope: HeaderOverlay.tsx\n- In scope: App.tsx\n- Out of scope: tests\n- Preserve: ContributionSheet props\n\n\n## Technical constraints\n- Palette tokens only; Tailwind and React stay.\n- Code path: `game/frontend/src/components/ui/button.tsx`\n- Code path: `game/frontend/src/styles.css`\n- Code path: `game/frontend/src/components/HeaderOverlay.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- Button lives in header only\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add the gold variant, render it in the header, and remove the old App button.",
+      "description": "Wire onSuggest and suggestRef through HeaderOverlay from App.",
+      "acceptance_criteria": [
+        "Header shows the gold suggest button with the accessible name Suggest What Happens Next.",
+        "App has no other suggest button."
+      ],
+      "scope": {
+        "in_scope": [
+          "button.tsx",
+          "styles.css",
+          "HeaderOverlay.tsx",
+          "App.tsx"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "ContributionSheet props"
+        ]
+      },
+      "technical_constraints": [
+        "Palette tokens only; Tailwind and React stay.",
+        "Code path: `game/frontend/src/components/ui/button.tsx`",
+        "Code path: `game/frontend/src/styles.css`",
+        "Code path: `game/frontend/src/components/HeaderOverlay.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Button lives in header only",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-839.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85XR2FKKED7ZHEBF5ADG3ZD",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85XR2FKKED7ZHEBF5ADG3ZD",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-839.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKKED7ZHEBF5ADG3ZD"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-839.md",
+      "artifact_id": "UNIT-839",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ui/button.tsx",
+          "symbol": "ButtonVariant, variantClasses",
+          "lines": "L6, L16-L20",
+          "action": "Extend ButtonVariant to 'default' | 'ghost' | 'frame' | 'gold'. Add to variantClasses the entry gold: 'sf-btn sf-btn-gold inline-flex items-center gap-2 font-pixel text-sf-sm'. In Button, treat variant 'gold' like 'frame' when building frameProps (condition variant === 'frame' || variant === 'gold').",
+          "code": "gold: 'sf-btn sf-btn-gold inline-flex items-center gap-2 font-pixel text-sf-sm'",
+          "expected": "<Button variant=\"gold\"> renders with class sf-btn-gold and data-state."
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": "new: .sf-btn-gold",
+          "lines": "after L45",
+          "action": "Append .sf-btn-gold { background: var(--sf-color-brass-5); color: var(--sf-color-wood-1); text-transform: uppercase; }",
+          "expected": "Gold styling uses brass and wood tokens."
+        },
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlayProps, HeaderOverlay",
+          "lines": "L7-L13, before the sound button",
+          "action": "Import type Ref from react. Add props onSuggest?: () => void and suggestRef?: Ref<HTMLButtonElement>. Before the sound Button render <Button type=\"button\" variant=\"gold\" ref={suggestRef} aria-label=\"Suggest What Happens Next\" onClick={onSuggest}>+ SUGGEST WHAT HAPPENS NEXT</Button>.",
+          "expected": "Header shows the gold button and calls onSuggest on click."
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App return, import Button",
+          "lines": "L11, L68-L81",
+          "action": "Pass onSuggest={() => setSheetOpen(true)} and suggestRef={triggerRef} to <HeaderOverlay>. Delete the <Button ...>Suggest What Happens Next</Button> element in the scene fragment and the now-unused Button import.",
+          "expected": "Only the header holds the suggest button; ContributionSheet still receives returnFocusRef={triggerRef}."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FK6854J72DJ083W85R",
+      "kind": "unit",
+      "title": "Act: Render loading, error, empty states in the pill and group icon controls",
+      "body": "Change the ternary in HeaderOverlay so each state is inside the sf-pill and the icon buttons sit in a group. Done after ACT1 in the same file.\n\n## Acceptance criteria\n- Each state has a pill with data-state.\n- Icon buttons are inside a role group labelled Header controls.\n\n\n## Scope\n- In scope: HeaderOverlay.tsx\n- Out of scope: tests\n- Preserve: message strings\n- Preserve: aria-labels Toggle sound and Settings\n\n\n## Technical constraints\n- React, Tailwind stay.\n- Code path: `game/frontend/src/components/HeaderOverlay.tsx`\n\n\n## Dependencies\n- REQ3\n- ACT1\n\n\n## Definition of done\n- Markup done\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Move state branches into the pill with data-state and group the icons.",
+      "description": "Change the ternary in HeaderOverlay so each state is inside the sf-pill and the icon buttons sit in a group. Done after ACT1 in the same file.",
+      "acceptance_criteria": [
+        "Each state has a pill with data-state.",
+        "Icon buttons are inside a role group labelled Header controls."
+      ],
+      "scope": {
+        "in_scope": [
+          "HeaderOverlay.tsx"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "message strings",
+          "aria-labels Toggle sound and Settings"
+        ]
+      },
+      "technical_constraints": [
+        "React, Tailwind stay.",
+        "Code path: `game/frontend/src/components/HeaderOverlay.tsx`"
+      ],
+      "dependencies": [
+        "REQ3",
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Markup done",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-840.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85XR2FKYHH6SDGJWK9AX7C1",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85XR2FKYHH6SDGJWK9AX7C1",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-840.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKYHH6SDGJWK9AX7C1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-840.md",
+      "artifact_id": "UNIT-840",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlay state branches",
+          "lines": "L24-L40 (as changed by ACT1)",
+          "action": "Make error branch: <span data-testid=\"round-pill\" data-state=\"error\" className=\"sf-pill\"><span role=\"alert\">Round unavailable: {error}</span></span> followed by the existing Retry Button when onRetry is set. Loading: <span data-testid=\"round-pill\" data-state=\"loading\" className=\"sf-pill\">Loading round…</span>. Empty: <span data-testid=\"round-pill\" data-state=\"empty\" className=\"sf-pill\">No active round</span>. Ready pill gets data-state=\"ready\".",
+          "expected": "Every state is rendered in a pill with data-state."
+        },
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "icon buttons",
+          "lines": "sound and settings Buttons",
+          "action": "Wrap the sound and settings Buttons in <div role=\"group\" aria-label=\"Header controls\" className=\"ml-auto flex items-center gap-2\"> and keep their aria-label, aria-pressed and onClick unchanged.",
+          "expected": "Both icons are in the labelled group and still toggle uiStore."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FKG01WYYENGHV78CG5",
+      "kind": "unit",
+      "title": "Verify: Header bar, plaque, pill with dot and countdown unit tests",
+      "body": "New test file proving REQ1 acceptance criteria with the real uiStore and the roundFixture.\n\n## Acceptance criteria\n- Pill, dot, plaque and timer assertions pass.\n- Existing headerOverlay.test.tsx still passes.\n\n\n## Scope\n- In scope: tests/headerKit.test.tsx\n- Out of scope: product code\n- Preserve: tests/headerOverlay.test.tsx\n\n\n## Technical constraints\n- Unit tests, no network.\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests assert the header structure for a loaded round.",
+      "description": "New test file proving REQ1 acceptance criteria with the real uiStore and the roundFixture.",
+      "acceptance_criteria": [
+        "Pill, dot, plaque and timer assertions pass.",
+        "Existing headerOverlay.test.tsx still passes."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerKit.test.tsx"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "tests/headerOverlay.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests, no network."
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-841.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85XR2FKDQE4VDTEW312HYRM",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85XR2FKDQE4VDTEW312HYRM",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-841.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKDQE4VDTEW312HYRM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-841.md",
+      "artifact_id": "UNIT-841",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerKit.test.tsx",
+          "symbol": "new: describe('HeaderOverlay kit structure')",
+          "lines": "new",
+          "action": "Create the file importing render, screen, cleanup from @testing-library/react, HeaderOverlay and roundFixture from ./fixtures/api (a Round mirroring the backend round JSON in backend round handlers). Add test 'pill holds dot, id and status': render <HeaderOverlay worldTitle=\"The Boy's Room\" round={roundFixture} />; assert getByTestId('round-pill') contains text round-1 and OPEN; assert getByTestId('round-dot') has attribute data-status=OPEN. Add test 'plaque and logo': assert getByText(\"The Boy's Room\").closest('[data-frame=\"plaque\"]') is not null, getByText('StoryForge') present, getByTestId('header-bar') has class sf-brass-corners, getAllByRole('timer') length 1.",
+          "command": "cd game/frontend && npx vitest run tests/headerKit.test.tsx",
+          "expected": "Both tests pass."
+        },
+        {
+          "file": "game/frontend/tests/headerOverlay.test.tsx",
+          "symbol": "HeaderOverlay round info",
+          "lines": "L1-L25",
+          "action": "Run the existing suite unchanged to confirm text queries for StoryForge, world title, round id, status and timer still match.",
+          "command": "cd game/frontend && npx vitest run tests/headerOverlay.test.tsx",
+          "expected": "Existing test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FK7J8HTQ30CGGJYN67",
+      "kind": "unit",
+      "title": "Verify: Suggest button opens the contribution dialog unit tests",
+      "body": "Component test for HeaderOverlay plus App test with api client and Phaser mocked.\n\n## Acceptance criteria\n- onSuggest called once on click.\n- App opens the dialog from the header button and renders exactly one such button.\n- Focus returns to the header button on Escape.\n\n\n## Scope\n- In scope: tests/headerSuggest.test.tsx\n- In scope: tests/appHeaderSuggest.test.tsx\n- Out of scope: product code\n- Preserve: tests/appContributionFocus.test.tsx\n\n\n## Technical constraints\n- Mock ../src/api/client getCurrentRound and listMine; mock phaser, createGame, BootScene and ResizeObserver exactly as tests/appContributionFocus.test.tsx does.\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests cover the header button callback and the App dialog opening.",
+      "description": "Component test for HeaderOverlay plus App test with api client and Phaser mocked.",
+      "acceptance_criteria": [
+        "onSuggest called once on click.",
+        "App opens the dialog from the header button and renders exactly one such button.",
+        "Focus returns to the header button on Escape."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerSuggest.test.tsx",
+          "tests/appHeaderSuggest.test.tsx"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "tests/appContributionFocus.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/api/client getCurrentRound and listMine; mock phaser, createGame, BootScene and ResizeObserver exactly as tests/appContributionFocus.test.tsx does."
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-842.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85XR2FKKMN19W5Z29T3M456",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85XR2FKKMN19W5Z29T3M456",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-842.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKKMN19W5Z29T3M456"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-842.md",
+      "artifact_id": "UNIT-842",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerSuggest.test.tsx",
+          "symbol": "new: describe('HeaderOverlay suggest button')",
+          "lines": "new",
+          "action": "Create test 'clicking the suggest button calls onSuggest once': render <HeaderOverlay worldTitle=\"W\" round={roundFixture} onSuggest={fn} /> with fn = vi.fn(); fireEvent.click(getByRole('button',{name:'Suggest What Happens Next'})); expect fn toHaveBeenCalledTimes(1); expect button text content '+ SUGGEST WHAT HAPPENS NEXT' and class sf-btn-gold. roundFixture from tests/fixtures/api.ts (mirrors backend Round JSON).",
+          "command": "cd game/frontend && npx vitest run tests/headerSuggest.test.tsx",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/appHeaderSuggest.test.tsx",
+          "symbol": "new: describe('App header suggest button')",
+          "lines": "new",
+          "action": "Copy the mocks from tests/appContributionFocus.test.tsx L1-L38. Add test: render App, click Begin, await getCurrentRound, expect getAllByRole('button',{name:'Suggest What Happens Next'}) length 1 and it is inside getByRole('banner'); click it; expect getByRole('dialog') toBeInTheDocument(). Add test: press Escape (fireEvent.keyDown on dialog, key Escape) and waitFor document.activeElement equals the button.",
+          "command": "cd game/frontend && npx vitest run tests/appHeaderSuggest.test.tsx tests/appContributionFocus.test.tsx",
+          "expected": "New and existing focus tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FKGHVT2HZBAWR0NK2P",
+      "kind": "unit",
+      "title": "Verify: Header loading, error, retry, empty and icon control unit tests",
+      "body": "New test file asserting REQ3 criteria with the real uiStore.\n\n## Acceptance criteria\n- Loading, error, retry and empty pill state tests pass.\n- The sound and settings icon test changes the real uiStore and passes.\n\n\n## Scope\n- In scope: tests/headerKitStates.test.tsx\n- Out of scope: product code\n- Preserve: existing headerOverlay*.test.tsx\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- ACT3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests cover each pill state and the icon controls.",
+      "description": "New test file asserting REQ3 criteria with the real uiStore.",
+      "acceptance_criteria": [
+        "Loading, error, retry and empty pill state tests pass.",
+        "The sound and settings icon test changes the real uiStore and passes."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/headerKitStates.test.tsx"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing headerOverlay*.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "ACT3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-843.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85XR2FK6854J72DJ083W85R",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85XR2FK6854J72DJ083W85R",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-843.md"
+      ],
+      "depends_on": [
+        "01M85XR2FK6854J72DJ083W85R"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-843.md",
+      "artifact_id": "UNIT-843",
+      "steps": [
+        {
+          "file": "game/frontend/tests/headerKitStates.test.tsx",
+          "symbol": "new: describe('HeaderOverlay pill states')",
+          "lines": "new",
+          "action": "Create tests: (1) render <HeaderOverlay worldTitle=\"W\" loading />; expect getByTestId('round-pill') data-state loading, text Loading round…, queryByRole('timer') null. (2) render with error=\"Round service returned 500\" and onRetry=vi.fn(); expect pill data-state error, getByRole('alert') text 'Round unavailable: Round service returned 500'; click button Retry; expect onRetry called once. (3) render with nothing; expect data-state empty and 'No active round'. (4) beforeEach useUiStore.setState({soundEnabled:true,settingsOpen:false}); render with roundFixture; within getByRole('group',{name:'Header controls'}) click Toggle sound and Settings; expect store soundEnabled false and settingsOpen true.",
+          "command": "cd game/frontend && npx vitest run tests/headerKitStates.test.tsx tests/headerOverlayStates.test.tsx tests/headerRetry.test.tsx tests/headerOverlayControls.test.tsx",
+          "expected": "New and existing header state tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85XR2FKR0S21MNY5K480Z7P",
+      "kind": "evidence",
+      "title": "Evidence: HeaderOverlay kit, suggest button and state unit tests pass",
+      "body": "Record results of the three header Verify units plus the existing header tests.\n\n## Acceptance criteria\n- headerKit, headerSuggest, appHeaderSuggest and headerKitStates tests pass.\n- Existing header and app header tests pass.\n\n\n## Scope\n- In scope: test run output\n- Out of scope: code changes\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- VER1\n- VER2\n- VER3\n\n\n## Definition of done\n- Test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the header unit tests pass.",
+      "description": "Record results of the three header Verify units plus the existing header tests.",
+      "acceptance_criteria": [
+        "headerKit, headerSuggest, appHeaderSuggest and headerKitStates tests pass.",
+        "Existing header and app header tests pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "code changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2",
+        "VER3"
+      ],
+      "definition_of_done": [
+        "Test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-169.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85XR2FKG01WYYENGHV78CG5",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85XR2FKG01WYYENGHV78CG5",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-169.md"
+      ],
+      "depends_on": [
+        "01M85XR2FKG01WYYENGHV78CG5",
+        "01M85XR2FK7J8HTQ30CGGJYN67",
+        "01M85XR2FKGHVT2HZBAWR0NK2P"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-169.md",
+      "artifact_id": "EVD-169"
+    }
+  ],
+  "created_at": "2026-11-24T04:43:27.055136+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

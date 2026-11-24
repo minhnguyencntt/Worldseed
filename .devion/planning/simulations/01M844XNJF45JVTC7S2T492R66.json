@@ -1,0 +1,485 @@
+{
+  "intent_id": "01M844XNJF45JVTC7S2T492R66",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M844Z4RRWGB99KE0MDQ8JTXM",
+      "kind": "intent",
+      "title": "SG-3.4 · Frontend type-checks and entry point resolves",
+      "body": "Context: game/frontend holds the Vite React app (index.html -> src/main.tsx -> src/App.tsx). `npx tsc --noEmit` in game/frontend currently reports 3 errors, all in tests/layout.test.tsx (node:fs, node:path and process cannot be resolved because @types/node is not installed or configured). App render tests already exist in tests/app.test.tsx. Desired behavior: type-check is clean and the entry point is proven to resolve to App. Why: SG-3 playable frontend must be assembled and verifiable.\n\n## Acceptance criteria\n- Given game/frontend, when `npx tsc --noEmit` runs, then it exits 0 with no errors\n- Given index.html, when its module script src is read, then it is /src/main.tsx and that file exists and renders App into #root\n- Given the App component, when rendered in a test, then the intro screen shows and Begin reveals the game view\n\n\n## Scope\n- In scope: game/frontend/package.json\n- In scope: game/frontend/tsconfig.json\n- In scope: game/frontend/src/main.tsx\n- In scope: new unit tests for entry and typecheck config\n- Out of scope: Backend changes\n- Out of scope: New gameplay or UI features\n- Out of scope: Rewriting existing App tests\n- Preserve: Existing App, layout, scene and story tests\n- Preserve: Existing src/App.tsx behavior\n\n\n## Technical constraints\n- Keep React 18, Vite 5, Vitest 2, strict TypeScript\n- No API or backend changes\n\n\n## Definition of done\n- tsc --noEmit exits 0\n- All frontend unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Assembled game frontend passes tsc --noEmit, its entry point resolves to App, and an App render test covers it",
+      "description": "Context: game/frontend holds the Vite React app (index.html -> src/main.tsx -> src/App.tsx). `npx tsc --noEmit` in game/frontend currently reports 3 errors, all in tests/layout.test.tsx (node:fs, node:path and process cannot be resolved because @types/node is not installed or configured). App render tests already exist in tests/app.test.tsx. Desired behavior: type-check is clean and the entry point is proven to resolve to App. Why: SG-3 playable frontend must be assembled and verifiable.",
+      "acceptance_criteria": [
+        "Given game/frontend, when `npx tsc --noEmit` runs, then it exits 0 with no errors",
+        "Given index.html, when its module script src is read, then it is /src/main.tsx and that file exists and renders App into #root",
+        "Given the App component, when rendered in a test, then the intro screen shows and Begin reveals the game view"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json",
+          "game/frontend/tsconfig.json",
+          "game/frontend/src/main.tsx",
+          "new unit tests for entry and typecheck config"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "New gameplay or UI features",
+          "Rewriting existing App tests"
+        ],
+        "preserve": [
+          "Existing App, layout, scene and story tests",
+          "Existing src/App.tsx behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Keep React 18, Vite 5, Vitest 2, strict TypeScript",
+        "No API or backend changes"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tsc --noEmit exits 0",
+        "All frontend unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-011.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8447V96QXHVS5N1QX4EJ2EM",
+      "links": [
+        "trace:01M8447V96QXHVS5N1QX4EJ2EM",
+        "artifact:.ai-dlc/intent/INT-011.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-011.md",
+      "artifact_id": "INT-011"
+    },
+    {
+      "id": "01M844Z4RRW89VKT7Z40BCSHP7",
+      "kind": "requirement",
+      "title": "REQ · Frontend tsc --noEmit passes with Node test types",
+      "body": "Context: tests/layout.test.tsx imports node:fs and node:path and uses process.cwd(), but tsconfig types is [\"vite/client\",\"vitest/globals\"] and @types/node is not installed, giving TS2307/TS2591. Desired behavior: tsc --noEmit is clean. Expected result: zero type errors. Why: type-check is a gate for the assembled frontend.\n\n## Acceptance criteria\n- Given package.json, when devDependencies are read, then @types/node is listed\n- Given tsconfig.json, when compilerOptions.types is read, then it includes \"node\" alongside \"vite/client\" and \"vitest/globals\"\n- Given game/frontend, when tsc --noEmit runs, then no TS2307 or TS2591 errors remain\n\n\n## Scope\n- In scope: Add @types/node devDependency\n- In scope: Add node to tsconfig types\n- Out of scope: Changing test logic in layout.test.tsx\n- Preserve: strict mode\n- Preserve: @game/* path alias\n\n\n## Technical constraints\n- Do not loosen strict or skipLibCheck settings\n\n\n## Definition of done\n- tsc --noEmit reports 0 errors\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Declare Node types so tests using node:fs, node:path and process type-check",
+      "description": "Context: tests/layout.test.tsx imports node:fs and node:path and uses process.cwd(), but tsconfig types is [\"vite/client\",\"vitest/globals\"] and @types/node is not installed, giving TS2307/TS2591. Desired behavior: tsc --noEmit is clean. Expected result: zero type errors. Why: type-check is a gate for the assembled frontend.",
+      "acceptance_criteria": [
+        "Given package.json, when devDependencies are read, then @types/node is listed",
+        "Given tsconfig.json, when compilerOptions.types is read, then it includes \"node\" alongside \"vite/client\" and \"vitest/globals\"",
+        "Given game/frontend, when tsc --noEmit runs, then no TS2307 or TS2591 errors remain"
+      ],
+      "scope": {
+        "in_scope": [
+          "Add @types/node devDependency",
+          "Add node to tsconfig types"
+        ],
+        "out_of_scope": [
+          "Changing test logic in layout.test.tsx"
+        ],
+        "preserve": [
+          "strict mode",
+          "@game/* path alias"
+        ]
+      },
+      "technical_constraints": [
+        "Do not loosen strict or skipLibCheck settings"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tsc --noEmit reports 0 errors",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-027.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844Z4RRWGB99KE0MDQ8JTXM",
+      "matched_feature_id": "01M843NJMDS7XG831NQ6KW7HPB",
+      "links": [
+        "parent:01M844Z4RRWGB99KE0MDQ8JTXM",
+        "trace:01M843NJMDS7XG831NQ6KW7HPB",
+        "artifact:.ai-dlc/requirements/REQ-027.md"
+      ],
+      "depends_on": [
+        "01M844Z4RRWGB99KE0MDQ8JTXM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-027.md",
+      "artifact_id": "REQ-027"
+    },
+    {
+      "id": "01M844Z4RRJ0W8H4JZWJHS0AME",
+      "kind": "requirement",
+      "title": "REQ · Entry point resolves to App and is covered by a render test",
+      "body": "Context: index.html loads /src/main.tsx, which calls createRoot(document.getElementById('root')!).render(<App />) with a non-null assertion that gives an opaque error if #root is absent. Desired behavior: main.tsx fails with a clear message when #root is missing and mounts App otherwise; tests prove the chain index.html -> main.tsx -> App renders. Why: entry point must resolve.\n\n## Acceptance criteria\n- Given index.html, when read, then it has a div#root and a module script with src /src/main.tsx\n- Given a document with #root, when main.tsx is imported, then createRoot is called with that element and render receives the App element\n- Given a document without #root, when main.tsx is imported, then it throws an error whose message is 'Root element #root not found'\n- Given App rendered in a test, when no interaction occurs, then the intro Begin button is shown\n\n\n## Scope\n- In scope: Guard in src/main.tsx\n- In scope: New entry unit tests\n- Out of scope: Changing App.tsx\n- Preserve: Import of ./styles.css\n- Preserve: Default export App\n\n\n## Technical constraints\n- Keep createRoot from react-dom/client\n\n\n## Definition of done\n- Entry tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "index.html loads src/main.tsx which mounts App into #root, proven by unit tests",
+      "description": "Context: index.html loads /src/main.tsx, which calls createRoot(document.getElementById('root')!).render(<App />) with a non-null assertion that gives an opaque error if #root is absent. Desired behavior: main.tsx fails with a clear message when #root is missing and mounts App otherwise; tests prove the chain index.html -> main.tsx -> App renders. Why: entry point must resolve.",
+      "acceptance_criteria": [
+        "Given index.html, when read, then it has a div#root and a module script with src /src/main.tsx",
+        "Given a document with #root, when main.tsx is imported, then createRoot is called with that element and render receives the App element",
+        "Given a document without #root, when main.tsx is imported, then it throws an error whose message is 'Root element #root not found'",
+        "Given App rendered in a test, when no interaction occurs, then the intro Begin button is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "Guard in src/main.tsx",
+          "New entry unit tests"
+        ],
+        "out_of_scope": [
+          "Changing App.tsx"
+        ],
+        "preserve": [
+          "Import of ./styles.css",
+          "Default export App"
+        ]
+      },
+      "technical_constraints": [
+        "Keep createRoot from react-dom/client"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Entry tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-028.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844Z4RRWGB99KE0MDQ8JTXM",
+      "matched_feature_id": "01M843NJMD87BN8FQ0BJJVS341",
+      "links": [
+        "parent:01M844Z4RRWGB99KE0MDQ8JTXM",
+        "trace:01M843NJMD87BN8FQ0BJJVS341",
+        "artifact:.ai-dlc/requirements/REQ-028.md"
+      ],
+      "depends_on": [
+        "01M844Z4RRWGB99KE0MDQ8JTXM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-028.md",
+      "artifact_id": "REQ-028"
+    },
+    {
+      "id": "01M844Z4RR4F1A2FVG14X9MBJM",
+      "kind": "unit",
+      "title": "Act: Declare @types/node and node types in tsconfig",
+      "body": "Add @types/node to devDependencies in game/frontend/package.json and add \"node\" to compilerOptions.types in game/frontend/tsconfig.json so layout.test.tsx type-checks.\n\n## Acceptance criteria\n- package.json devDependencies contains @types/node\n- tsconfig.json types contains node\n- tsc --noEmit exits 0\n\n\n## Scope\n- In scope: package.json\n- In scope: tsconfig.json\n- Out of scope: Test files\n- Preserve: Other dependencies\n\n\n## Technical constraints\n- Code path: `game/frontend/package.json`\n- Code path: `game/frontend/tsconfig.json`\n\n\n## Definition of done\n- tsc --noEmit exits 0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add @types/node and enable node types for the frontend type-check",
+      "description": "Add @types/node to devDependencies in game/frontend/package.json and add \"node\" to compilerOptions.types in game/frontend/tsconfig.json so layout.test.tsx type-checks.",
+      "acceptance_criteria": [
+        "package.json devDependencies contains @types/node",
+        "tsconfig.json types contains node",
+        "tsc --noEmit exits 0"
+      ],
+      "scope": {
+        "in_scope": [
+          "package.json",
+          "tsconfig.json"
+        ],
+        "out_of_scope": [
+          "Test files"
+        ],
+        "preserve": [
+          "Other dependencies"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/package.json`",
+        "Code path: `game/frontend/tsconfig.json`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tsc --noEmit exits 0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-053.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844Z4RRW89VKT7Z40BCSHP7",
+      "matched_feature_id": "01M843NJMDZ2QMVJ1QHTK36TVB",
+      "links": [
+        "parent:01M844Z4RRW89VKT7Z40BCSHP7",
+        "trace:01M843NJMDZ2QMVJ1QHTK36TVB",
+        "artifact:.ai-dlc/units/UNIT-053.md"
+      ],
+      "depends_on": [
+        "01M844Z4RRW89VKT7Z40BCSHP7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-053.md",
+      "artifact_id": "UNIT-053",
+      "steps": [
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "devDependencies",
+          "lines": "L16-L27",
+          "action": "Add the entry \"@types/node\": \"^20.14.0\" to devDependencies, placed first in alphabetical order before \"@testing-library/jest-dom\" is not required; insert after \"@testing-library/user-event\" line.",
+          "code": "\"@types/node\": \"^20.14.0\",",
+          "expected": "devDependencies lists @types/node; run npm install in game/frontend to install it."
+        },
+        {
+          "file": "game/frontend/tsconfig.json",
+          "symbol": "compilerOptions.types",
+          "lines": "L10",
+          "action": "Change the types array to also include \"node\".",
+          "code": "\"types\": [\"vite/client\", \"vitest/globals\"] -> \"types\": [\"vite/client\", \"vitest/globals\", \"node\"]",
+          "expected": "TS2307 and TS2591 errors in tests/layout.test.tsx disappear."
+        }
+      ]
+    },
+    {
+      "id": "01M844Z4RR1JNK7CQARYX0BXJ4",
+      "kind": "unit",
+      "title": "Act: Guard the missing #root in main.tsx",
+      "body": "Replace the non-null assertion on document.getElementById('root') with an explicit check that throws 'Root element #root not found'.\n\n## Acceptance criteria\n- main.tsx throws Error('Root element #root not found') when #root is missing\n- main.tsx still renders <App /> when #root exists\n\n\n## Scope\n- In scope: src/main.tsx\n- Out of scope: App.tsx\n- Preserve: ./styles.css import\n\n\n## Technical constraints\n- Code path: `game/frontend/src/main.tsx`\n\n\n## Definition of done\n- tsc --noEmit still exits 0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "main.tsx throws a clear error when #root is absent",
+      "description": "Replace the non-null assertion on document.getElementById('root') with an explicit check that throws 'Root element #root not found'.",
+      "acceptance_criteria": [
+        "main.tsx throws Error('Root element #root not found') when #root is missing",
+        "main.tsx still renders <App /> when #root exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/main.tsx"
+        ],
+        "out_of_scope": [
+          "App.tsx"
+        ],
+        "preserve": [
+          "./styles.css import"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/main.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "tsc --noEmit still exits 0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-054.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844Z4RRJ0W8H4JZWJHS0AME",
+      "matched_feature_id": "01M844TV9Q2EB912YVFDDXVRMY",
+      "links": [
+        "parent:01M844Z4RRJ0W8H4JZWJHS0AME",
+        "trace:01M844TV9Q2EB912YVFDDXVRMY",
+        "artifact:.ai-dlc/units/UNIT-054.md"
+      ],
+      "depends_on": [
+        "01M844Z4RRJ0W8H4JZWJHS0AME"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-054.md",
+      "artifact_id": "UNIT-054",
+      "steps": [
+        {
+          "file": "game/frontend/src/main.tsx",
+          "symbol": "module top level (createRoot call)",
+          "lines": "L4",
+          "action": "Replace the createRoot line with a lookup of the root element, throw if it is null, then call createRoot(rootEl).render(<App />).",
+          "code": "createRoot(document.getElementById('root')!).render(<App />); -> const rootEl = document.getElementById('root');\nif (!rootEl) {\n  throw new Error('Root element #root not found');\n}\ncreateRoot(rootEl).render(<App />);",
+          "expected": "Missing #root throws the named error; present #root renders App."
+        }
+      ]
+    },
+    {
+      "id": "01M844Z4RR2QH7P1EEPRPCPXZA",
+      "kind": "unit",
+      "title": "Verify: Type-check config unit tests",
+      "body": "Test that tsconfig.json types includes node and package.json lists @types/node, so the tsc gate is satisfied.\n\n## Acceptance criteria\n- Test asserts tsconfig types contains node, vite/client and vitest/globals\n- Test asserts @types/node is in devDependencies\n\n\n## Scope\n- In scope: tests/typecheck.test.ts\n- Out of scope: Running tsc inside the test\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Reads files from disk only; no network or child processes\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove tsconfig and package.json declare Node types",
+      "description": "Test that tsconfig.json types includes node and package.json lists @types/node, so the tsc gate is satisfied.",
+      "acceptance_criteria": [
+        "Test asserts tsconfig types contains node, vite/client and vitest/globals",
+        "Test asserts @types/node is in devDependencies"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/typecheck.test.ts"
+        ],
+        "out_of_scope": [
+          "Running tsc inside the test"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Reads files from disk only; no network or child processes"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-055.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844Z4RR4F1A2FVG14X9MBJM",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844Z4RR4F1A2FVG14X9MBJM",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-055.md"
+      ],
+      "depends_on": [
+        "01M844Z4RR4F1A2FVG14X9MBJM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-055.md",
+      "artifact_id": "UNIT-055",
+      "steps": [
+        {
+          "file": "game/frontend/tests/typecheck.test.ts",
+          "symbol": "new: describe('type-check config')",
+          "lines": "new",
+          "action": "Create the file; read tsconfig.json and package.json with readFileSync(join(process.cwd(), ...)) and JSON.parse. Add test 'tsconfig types include node' asserting compilerOptions.types toEqual expect.arrayContaining(['node','vite/client','vitest/globals']), and test 'package declares @types/node' asserting devDependencies['@types/node'] is defined.",
+          "code": "expect(tsconfig.compilerOptions.types).toEqual(expect.arrayContaining(['node','vite/client','vitest/globals']));",
+          "command": "cd game/frontend && npx vitest run tests/typecheck.test.ts",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M844Z4RR5KBR9HXNWYQZTSK3",
+      "kind": "unit",
+      "title": "Verify: Entry point and App render unit tests",
+      "body": "Test the entry chain with react-dom/client mocked.\n\n## Acceptance criteria\n- index.html has div#root and script /src/main.tsx\n- main.tsx calls createRoot with #root and renders App\n- main.tsx throws when #root is missing\n- App renders the Begin button\n\n\n## Scope\n- In scope: tests/entry.test.tsx\n- Out of scope: Browser or dev server\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock react-dom/client with vi.mock; no real server\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for index.html, main.tsx mount and guard, and App render",
+      "description": "Test the entry chain with react-dom/client mocked.",
+      "acceptance_criteria": [
+        "index.html has div#root and script /src/main.tsx",
+        "main.tsx calls createRoot with #root and renders App",
+        "main.tsx throws when #root is missing",
+        "App renders the Begin button"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/entry.test.tsx"
+        ],
+        "out_of_scope": [
+          "Browser or dev server"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock react-dom/client with vi.mock; no real server"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-056.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844Z4RR1JNK7CQARYX0BXJ4",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844Z4RR1JNK7CQARYX0BXJ4",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-056.md"
+      ],
+      "depends_on": [
+        "01M844Z4RR1JNK7CQARYX0BXJ4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-056.md",
+      "artifact_id": "UNIT-056",
+      "steps": [
+        {
+          "file": "game/frontend/tests/entry.test.tsx",
+          "symbol": "new: describe('entry point')",
+          "lines": "new",
+          "action": "Create file with '// @vitest-environment jsdom'. vi.mock('react-dom/client', () => ({ createRoot: vi.fn(() => ({ render: vi.fn() })) })). Test 1 reads index.html via readFileSync(join(process.cwd(),'index.html'),'utf8') and expects it to contain 'id=\"root\"' and 'src=\"/src/main.tsx\"', and existsSync of src/main.tsx true. Test 2: vi.resetModules, set document.body.innerHTML='<div id=\"root\"></div>', await import('../src/main'), expect createRoot toHaveBeenCalledWith the #root element and the render mock toHaveBeenCalledOnce. Test 3: set body empty, vi.resetModules, expect(import('../src/main')).rejects.toThrow('Root element #root not found'). Test 4: render(<App />) and expect screen.getByRole('button',{name:'Begin'}) in the document.",
+          "code": "await expect(import('../src/main')).rejects.toThrow('Root element #root not found');",
+          "command": "cd game/frontend && npx vitest run tests/entry.test.tsx",
+          "expected": "All four tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M844Z4RRETYHQRAE1Z1RZWGB",
+      "kind": "evidence",
+      "title": "Evidence: Frontend type-check and entry point unit tests",
+      "body": "Collect results of tests/typecheck.test.ts and tests/entry.test.tsx as evidence for SG-3.4.\n\n## Acceptance criteria\n- typecheck.test.ts passes\n- entry.test.tsx passes\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n\n\n## Definition of done\n- Both test files pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that type-check config and entry point unit tests pass",
+      "description": "Collect results of tests/typecheck.test.ts and tests/entry.test.tsx as evidence for SG-3.4.",
+      "acceptance_criteria": [
+        "typecheck.test.ts passes",
+        "entry.test.tsx passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both test files pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-011.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844Z4RR2QH7P1EEPRPCPXZA",
+      "matched_feature_id": "01M844GYQJ3KBP8HDVWSRTS7HK",
+      "links": [
+        "parent:01M844Z4RR2QH7P1EEPRPCPXZA",
+        "trace:01M844GYQJ3KBP8HDVWSRTS7HK",
+        "artifact:.ai-dlc/evidence/EVD-011.md"
+      ],
+      "depends_on": [
+        "01M844Z4RR2QH7P1EEPRPCPXZA",
+        "01M844Z4RR5KBR9HXNWYQZTSK3"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-011.md",
+      "artifact_id": "EVD-011"
+    }
+  ],
+  "created_at": "2026-11-23T12:09:22.775762+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

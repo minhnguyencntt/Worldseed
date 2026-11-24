@@ -1,0 +1,58 @@
+{
+  "id": "01M85E1MYW8MS4APETVY373P97",
+  "intent_id": "01M85DVS0S49NMJFR6Q9K4AB6W",
+  "title": "SG-8.2.4 Validation unit tests assert real dialog behaviour",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Rewrite ContributionSheet validation unit tests to assert real dialog behaviour and fail when the validation code is removed",
+  "description": "Context: ContributionSheet (game/frontend/src/components/ContributionSheet.tsx) already blocks blank text, over-limit text and zero quota. Desired behavior: the unit tests assert the inline messages, counter text, disabled or blocked submit, and that submitContribution is never called. Expected result: each test fails if the matching guard in the component is removed. Why: tests that pass without the guards give false confidence.",
+  "acceptance_criteria": [
+    "Given blank or whitespace text, when Send is clicked, then the inline message 'Enter an idea first' shows and submitContribution has 0 calls",
+    "Given text over MAX_PROMPT_LENGTH, when Send is clicked, then the over-limit message and the counter text show and submitContribution has 0 calls",
+    "Given zero remaining quota, when the sheet renders, then Send is disabled, the quota message shows and a form submit does not call submitContribution"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/contributionBlank.test.tsx",
+      "game/frontend/tests/contributionMaxLength.test.tsx",
+      "game/frontend/tests/contributionQuotaGate.test.tsx",
+      "game/frontend/tests/contributionQuotaMessage.test.tsx"
+    ],
+    "out_of_scope": [
+      "Backend API changes",
+      "New validation rules",
+      "Browser or e2e tests"
+    ],
+    "preserve": [
+      "Existing ContributionSheet behaviour and messages",
+      "vi.mock of ../src/api/client with importOriginal"
+    ]
+  },
+  "technical_constraints": [
+    "Use vitest and @testing-library/react in jsdom",
+    "Mock only the API client; render the real ContributionSheet"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All three requirements have passing unit tests that fail when their guard is removed",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-132.md`"
+  ],
+  "non_functional": [
+    "Each test file runs in seconds"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-132.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "READY",
+  "depends_on": [],
+  "sim_node_id": "01M85DXK44ZV6AYH754ECHSB93",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-132.md",
+  "artifact_id": "INT-132",
+  "created_at": "2026-11-24T00:07:16.188112+00:00"
+}

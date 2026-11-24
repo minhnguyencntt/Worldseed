@@ -1,0 +1,62 @@
+{
+  "id": "01M848A94A2W47PVK3FBX7W411",
+  "intent_id": "01M8488A5EB9Q4CM9CCCXWRTPV",
+  "title": "Verify: AdminApp lifecycle stepper unit tests with mocked fetch",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Tests AdminApp stepper stage for OPEN, RUNNING execution, 404 and 401 with a stubbed fetch",
+  "description": "Component tests written from R2's acceptance criteria; fetch is a vi.fn stub, no network.",
+  "acceptance_criteria": [
+    "OPEN current step",
+    "DEVELOPING for RUNNING execution",
+    "404 tolerated",
+    "401 shows Invalid token"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "tests/admin.test.tsx"
+    ]
+  },
+  "technical_constraints": [],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-124.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M848A5WA8KHY9G80DK1PGYBB",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-124.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M848A94ANYR2A9BVJDJ9SJGP"
+  ],
+  "sim_node_id": "01M848A5WAWF6TNSMGG2MY4PE4",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-124.md",
+  "artifact_id": "UNIT-124",
+  "steps": [
+    {
+      "file": "game/frontend/tests/adminStepper.test.tsx",
+      "symbol": "new: describe('AdminApp lifecycle stepper')",
+      "lines": "new",
+      "action": "Create the file with `// @vitest-environment jsdom`, modelled on tests/admin.test.tsx (json helper, enterToken helper, vi.stubGlobal('fetch')). Import roundFixture, adminContributionFixture, executionFixture from './fixtures/api' (round shape mirrors world.Round JSON; execution shape mirrors execution.Execution in backend/internal/execution/execution.go). Stub routes: current round URL → roundFixture; with Bearer secret: admin round URL → round under test, contributions URL → [adminContributionFixture], '/api/v1/admin/executions' → configurable response. Tests: (1) round OPEN, executions [] → within list 'Round lifecycle' the single [aria-current=step] text is 'OPEN'; (2) round {…roundFixture,status:'CLOSED'}, executions [executionFixture with status RUNNING] → current step 'DEVELOPING'; (3) executions responds 404, round OPEN → current step 'OPEN' and screen.queryByRole('alert') is null; (4) executions responds 401 → findByRole('alert') has text 'Invalid token'.",
+      "command": "cd game/frontend && npx vitest run tests/adminStepper.test.tsx",
+      "expected": "All four tests pass without network."
+    }
+  ],
+  "created_at": "2026-11-23T13:07:53.098049+00:00",
+  "updated_at": "2026-11-23T13:10:50.222776+00:00"
+}

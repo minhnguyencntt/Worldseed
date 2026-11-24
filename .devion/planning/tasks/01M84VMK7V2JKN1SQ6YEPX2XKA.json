@@ -1,0 +1,70 @@
+{
+  "id": "01M84VMK7V2JKN1SQ6YEPX2XKA",
+  "intent_id": "01M84VJ0308BY7F4NKQQ4SW42J",
+  "title": "Verify: parseGitLsFiles and checkTrackedFiles dedupe conflict entries",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with a mocked listing including conflict stages.",
+  "description": "Add tests proving the parser dedupes conflict stage entries and checkTrackedFiles reports each path once.",
+  "acceptance_criteria": [
+    "Mocked listing with stages 1-3 yields one path.",
+    "checkTrackedFiles reports results.json once."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/trackedNodeModules.test.ts"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Fake GitRunner, no real git"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-458.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VK5Y6348EH2A3256G9VYJ",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-458.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VMK7V1515DA2ZXZ6SZ60B"
+  ],
+  "sim_node_id": "01M84VK5Y68ZFR7M0KPSM68WY6",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-458.md",
+  "artifact_id": "UNIT-458",
+  "steps": [
+    {
+      "file": "game/frontend/tests/trackedNodeModules.test.ts",
+      "symbol": "describe('parseGitLsFiles') > it('deduplicates conflict stage entries')",
+      "lines": "after L104",
+      "action": "Add a test calling parseGitLsFiles with '100644 aaa 1\\tnode_modules/.vite/vitest/results.json\\n100644 bbb 2\\tnode_modules/.vite/vitest/results.json\\n100644 ccc 3\\tnode_modules/.vite/vitest/results.json\\n' and expecting ['node_modules/.vite/vitest/results.json']; add a second case with NUL-separated triplicate plain path expecting one entry.",
+      "command": "npx vitest run tests/trackedNodeModules.test.ts -t parseGitLsFiles",
+      "expected": "Both cases pass."
+    },
+    {
+      "file": "game/frontend/tests/trackedNodeModules.test.ts",
+      "symbol": "describe('checkTrackedFiles') > it('reports a conflicted path once')",
+      "lines": "after L106",
+      "action": "Add a test with a fake runner returning the triplicate 'node_modules/.vite/vitest/results.json' NUL listing plus 'src/a.ts'; assert the result equals ['node_modules/.vite/vitest/results.json'].",
+      "command": "npx vitest run tests/trackedNodeModules.test.ts -t checkTrackedFiles",
+      "expected": "Result has the path exactly once."
+    }
+  ],
+  "created_at": "2026-11-23T18:45:34.075766+00:00",
+  "updated_at": "2026-11-23T18:46:24.827402+00:00"
+}

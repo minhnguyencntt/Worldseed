@@ -1,0 +1,72 @@
+{
+  "id": "01M85S3FJWKRBD7HV3JEKR8V5M",
+  "intent_id": "01M85RXTNZB1TQE3PDK3QXNYRX",
+  "title": "Act: Add defaultArtPaths to generateArt.ts",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Export defaultArtPaths(scriptDir) returning manifestPath and assetsRoot",
+  "description": "Add a pure exported function in game/frontend/scripts/generateArt.ts that resolves the app manifest and assets root relative to the script directory.",
+  "acceptance_criteria": [
+    "defaultArtPaths('/repo/game/frontend/scripts').manifestPath equals '/repo/game/public/assets/worlds/the-boys-room/manifest.json'",
+    "defaultArtPaths('/repo/game/frontend/scripts').assetsRoot equals '/repo/game/public/assets'"
+  ],
+  "scope": {
+    "in_scope": [
+      "generateArt.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "runGenerateArt"
+    ]
+  },
+  "technical_constraints": [
+    "Hard constraint: deterministic in-repo art only",
+    "Use node:path resolve",
+    "Code path: `game/frontend/scripts/generateArt.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Function exported with documented return shape",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-786.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85RZB16RFMVB48K5RT4WRKP",
+    "artifact:.ai-dlc/units/UNIT-786.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85S3FJW6T771BZSX433VY3Z"
+  ],
+  "sim_node_id": "01M85RZB1674NJB9SVK57MENSM",
+  "artifact_path": ".ai-dlc/units/UNIT-786.md",
+  "artifact_id": "UNIT-786",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "imports",
+      "lines": "L1-L2",
+      "action": "Change the node:path import to also import resolve alongside dirname.",
+      "code": "import { dirname, resolve } from 'node:path';",
+      "expected": "resolve is available in the module"
+    },
+    {
+      "file": "game/frontend/scripts/generateArt.ts",
+      "symbol": "new: defaultArtPaths",
+      "lines": "after L13",
+      "action": "Add exported interface ArtPaths { assetsRoot: string; manifestPath: string } and function defaultArtPaths(scriptDir: string): ArtPaths returning assetsRoot resolve(scriptDir, '../../public/assets') and manifestPath resolve(scriptDir, '../../public/assets/worlds/the-boys-room/manifest.json').",
+      "code": "export function defaultArtPaths(scriptDir: string): ArtPaths {\n  const assetsRoot = resolve(scriptDir, '../../public/assets');\n  return { assetsRoot, manifestPath: resolve(assetsRoot, 'worlds/the-boys-room/manifest.json') };\n}",
+      "expected": "Function returns both absolute paths for a given scriptDir"
+    }
+  ],
+  "created_at": "2026-11-24T03:20:30.556703+00:00",
+  "updated_at": "2026-11-24T03:23:33.059858+00:00"
+}

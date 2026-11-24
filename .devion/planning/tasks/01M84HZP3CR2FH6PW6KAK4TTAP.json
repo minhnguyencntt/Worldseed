@@ -1,0 +1,73 @@
+{
+  "id": "01M84HZP3CR2FH6PW6KAK4TTAP",
+  "intent_id": "01M84HWKHFJ1GPYXND4WWA7V9V",
+  "title": "Act: Confirm kept route registrations in server.New are untouched",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Keep player, world, contribution and round routes as they are",
+  "description": "Read New and confirm the kept registrations remain; restore any that were altered during removal.",
+  "acceptance_criteria": [
+    "All kept routes remain registered with the same handlers",
+    "Admin round routes stay mounted behind admin.Middleware"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go"
+    ],
+    "out_of_scope": [
+      "handlers"
+    ],
+    "preserve": [
+      "all kept patterns"
+    ]
+  },
+  "technical_constraints": [
+    "No pattern changes",
+    "Code path: `backend/internal/server/server.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Kept registrations unchanged",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-239.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84HZ5N2P0RYMXHSCAMTCYSY",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-239.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84HZP3C7XAC85F9D37HCCPP"
+  ],
+  "sim_node_id": "01M84HZ5N2XWXB9504SPQDH6ZW",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-239.md",
+  "artifact_id": "UNIT-239",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New",
+      "lines": "L43-L77",
+      "action": "Confirm r.Get /api/v1/worlds/{id}/round/current -> wh.CurrentRound, r.Post /api/v1/contributions -> ch.Create, r.Get /api/v1/player/me/contributions -> ch.Mine, r.Get /api/v1/contributions/{id} -> ch.Get exist unchanged",
+      "code": "no change expected",
+      "expected": "Four kept routes present with the same handlers"
+    },
+    {
+      "file": "backend/internal/server/server.go",
+      "symbol": "New",
+      "lines": "L79-L96",
+      "action": "Confirm r.Route(\"/api/v1/admin\") still applies admin.Middleware(cfg.Admin.Token) and loops adminRoundRoutes(rh) via ar.Method",
+      "code": "no change expected",
+      "expected": "Admin round routes mounted behind the token"
+    }
+  ],
+  "created_at": "2026-11-23T15:56:51.692264+00:00",
+  "updated_at": "2026-11-23T15:57:47.478091+00:00"
+}

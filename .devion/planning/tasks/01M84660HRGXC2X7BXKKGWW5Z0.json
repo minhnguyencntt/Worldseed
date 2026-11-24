@@ -1,0 +1,82 @@
+{
+  "id": "01M84660HRGXC2X7BXKKGWW5Z0",
+  "intent_id": "01M845Z0YADDSY4YXE0PREH0G1",
+  "title": "Verify: Lifecycle, snapshot freeze and Git head unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with fake committer, fixed clock and temp dir",
+  "description": "Test Open/Close/Create, snapshot immutability, Head and ErrFrozen with fakes.",
+  "acceptance_criteria": [
+    "Open sets 24h window and base release",
+    "Close writes snapshot, records fake SHA, status CLOSED, and a second Close fails",
+    "FileStore.Save into a frozen round returns ErrFrozen and creates no file",
+    "CLI.Head returns trimmed SHA from a fake Runner"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/round/lifecycle_test.go",
+      "backend/internal/contribution/store_test.go",
+      "backend/internal/gitrepo/gitrepo_test.go"
+    ],
+    "out_of_scope": [
+      "real git"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Fake committer records calls; fake clock; t.TempDir"
+  ],
+  "dependencies": [
+    "A2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-078.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8465XD8S0XZ4Z5G51RC5NWT",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-078.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84660HRZ4M51T5HN2JSNGD6"
+  ],
+  "sim_node_id": "01M8465XD8B20D8QB8GAMT4H58",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-078.md",
+  "artifact_id": "UNIT-078",
+  "steps": [
+    {
+      "file": "backend/internal/round/lifecycle_test.go",
+      "symbol": "new: TestOpen_SetsWindow, TestClose_FreezesSnapshot, TestClose_RequiresOpen, TestCreate_RejectsActiveRound",
+      "lines": "new",
+      "action": "Use fakeGit{head:\"abc123\"} recording Commit paths, a fixed Now, a stub Contributions returning two contributions. Assert Open yields EndsAt=StartsAt+24h and BaseRelease \"1.0.0\"; Close creates snapshot.yaml with 2 entries (mode 0o444), FreezeCommit==\"abc123\", Status CLOSED, committed paths include snapshot.yaml; Close on SCHEDULED round returns ErrIllegalTransition and no snapshot.yaml; second Close errors and snapshot bytes unchanged; Create with an OPEN round present returns ErrActiveRound",
+      "command": "cd backend && go test ./internal/round -run 'TestOpen|TestClose|TestCreate'",
+      "expected": "Lifecycle tests pass (go test reports PASS)"
+    },
+    {
+      "file": "backend/internal/contribution/store_test.go",
+      "symbol": "new: TestFileStore_SaveRejectsFrozenRound, TestFileStore_ListByRound",
+      "lines": "after existing tests",
+      "action": "With fakeCommitter and t.TempDir, create worlds/w/rounds/round-0000001/snapshot.yaml then Save a Contribution for that round; assert errors.Is ErrFrozen and no *.md created; separately save two contributions and assert ListByRound returns both oldest first",
+      "command": "cd backend && go test ./internal/contribution -run 'TestFileStore_SaveRejectsFrozenRound|TestFileStore_ListByRound'",
+      "expected": "Frozen and ListByRound tests pass (go test reports PASS)"
+    },
+    {
+      "file": "backend/internal/gitrepo/gitrepo_test.go",
+      "symbol": "new: TestHead_ReturnsTrimmedSHA",
+      "lines": "after existing tests",
+      "action": "Fake Runner returns \"deadbeef\\n\"; assert Head returns \"deadbeef\" and args were rev-parse HEAD; a failing runner returns an error",
+      "command": "cd backend && go test ./internal/gitrepo -run TestHead",
+      "expected": "TestHead passes (go test reports PASS)"
+    }
+  ],
+  "created_at": "2026-11-23T12:30:36.088471+00:00",
+  "updated_at": "2026-11-23T12:37:23.277043+00:00"
+}

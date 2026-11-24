@@ -1,0 +1,489 @@
+{
+  "intent_id": "01M8560PVSPK3BJS1C30JXENCT",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8562BYK0HTN62DBRPMMKS57",
+      "kind": "intent",
+      "title": "SG-5.4.3 Add game/tests/preload.test.ts with mocked dependencies",
+      "body": "Context: planPreload and resolveTextureKey live in game/src/engine/planPreload.ts and BootScene (game/frontend/src/phaser/BootScene.ts) uses both. Separate tests exist (game/tests/planPreload.test.ts, resolveTextureKey.test.ts, frontend/tests/bootScene*.test.ts), but game/tests/preload.test.ts does not exist. Desired behavior: one file with every dependency mocked covering deduplication, the unknown-reference issue, the fallback key and BootScene using the planner and fallback. Why: SG-5.4.3 asks for exactly this file.\n\n## Acceptance criteria\n- Given game/tests/preload.test.ts, when `npx vitest run tests/preload.test.ts` runs in game/, then it passes\n- Given an asset referenced twice, when planned, then it is loaded once\n- Given a ref missing from the manifest, when planned, then it is reported unknown and not loaded\n- Given an unknown id, when resolved, then the fallback key is returned\n- Given BootScene.preload, when run with mocks, then only planned assets load and unknown refs warn\n\n\n## Scope\n- In scope: game/tests/preload.test.ts\n- In scope: game/vitest.config.ts alias so game tests can import BootScene\n- Out of scope: Changing planPreload or BootScene behavior\n- Out of scope: Browser or Phaser runtime tests\n- Preserve: Existing planPreload, resolveTextureKey and bootScene tests\n- Preserve: game/frontend/vitest.config.ts\n\n\n## Technical constraints\n- Mock phaser, the content module, and the filesystem; no real Phaser or network\n- Test lives in game/tests/preload.test.ts exactly\n\n\n## Definition of done\n- preload.test.ts exists and passes\n- Existing game tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "One unit test file covers preload dedup, unknown refs, fallback key and BootScene wiring",
+      "description": "Context: planPreload and resolveTextureKey live in game/src/engine/planPreload.ts and BootScene (game/frontend/src/phaser/BootScene.ts) uses both. Separate tests exist (game/tests/planPreload.test.ts, resolveTextureKey.test.ts, frontend/tests/bootScene*.test.ts), but game/tests/preload.test.ts does not exist. Desired behavior: one file with every dependency mocked covering deduplication, the unknown-reference issue, the fallback key and BootScene using the planner and fallback. Why: SG-5.4.3 asks for exactly this file.",
+      "acceptance_criteria": [
+        "Given game/tests/preload.test.ts, when `npx vitest run tests/preload.test.ts` runs in game/, then it passes",
+        "Given an asset referenced twice, when planned, then it is loaded once",
+        "Given a ref missing from the manifest, when planned, then it is reported unknown and not loaded",
+        "Given an unknown id, when resolved, then the fallback key is returned",
+        "Given BootScene.preload, when run with mocks, then only planned assets load and unknown refs warn"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/preload.test.ts",
+          "game/vitest.config.ts alias so game tests can import BootScene"
+        ],
+        "out_of_scope": [
+          "Changing planPreload or BootScene behavior",
+          "Browser or Phaser runtime tests"
+        ],
+        "preserve": [
+          "Existing planPreload, resolveTextureKey and bootScene tests",
+          "game/frontend/vitest.config.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Mock phaser, the content module, and the filesystem; no real Phaser or network",
+        "Test lives in game/tests/preload.test.ts exactly"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "preload.test.ts exists and passes",
+        "Existing game tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-104.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84G51W28MN6Z7X3354EYDE3",
+      "links": [
+        "trace:01M84G51W28MN6Z7X3354EYDE3",
+        "artifact:.ai-dlc/intent/INT-104.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-104.md",
+      "artifact_id": "INT-104"
+    },
+    {
+      "id": "01M8562BYKE6N706V3CARG7FWZ",
+      "kind": "requirement",
+      "title": "REQ · preload.test.ts proves planner dedup, unknown refs and fallback key",
+      "body": "Context: planPreload dedupes via a Set and splits load/unknown against the manifest; resolveTextureKey returns the fallback for undefined or unknown ids. Desired behavior: preload.test.ts asserts these with an in-memory manifest. Expected result: the three behaviors are covered in the requested file. Why: SG-5.4.3 done-when.\n\n## Acceptance criteria\n- Given two objects with asset 'A' in the manifest, when planPreload runs, then load equals ['A'] and unknown is []\n- Given asset 'Z' and dust asset 'Y' not in the manifest, when planPreload runs, then unknown equals ['Z','Y'] and load is []\n- Given id 'Z' or undefined, when resolveTextureKey runs with fallback 'fb', then 'fb' is returned; given 'A', then 'A'\n\n\n## Scope\n- In scope: Engine-level assertions in preload.test.ts\n- Out of scope: BootScene assertions\n- Preserve: planPreload semantics\n\n\n## Technical constraints\n- Use in-memory AssetManifest and fixtures/valid-world\n\n\n## Definition of done\n- Cases pass via vitest\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Engine-level preload cases are asserted in game/tests/preload.test.ts",
+      "description": "Context: planPreload dedupes via a Set and splits load/unknown against the manifest; resolveTextureKey returns the fallback for undefined or unknown ids. Desired behavior: preload.test.ts asserts these with an in-memory manifest. Expected result: the three behaviors are covered in the requested file. Why: SG-5.4.3 done-when.",
+      "acceptance_criteria": [
+        "Given two objects with asset 'A' in the manifest, when planPreload runs, then load equals ['A'] and unknown is []",
+        "Given asset 'Z' and dust asset 'Y' not in the manifest, when planPreload runs, then unknown equals ['Z','Y'] and load is []",
+        "Given id 'Z' or undefined, when resolveTextureKey runs with fallback 'fb', then 'fb' is returned; given 'A', then 'A'"
+      ],
+      "scope": {
+        "in_scope": [
+          "Engine-level assertions in preload.test.ts"
+        ],
+        "out_of_scope": [
+          "BootScene assertions"
+        ],
+        "preserve": [
+          "planPreload semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Use in-memory AssetManifest and fixtures/valid-world"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Cases pass via vitest",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-257.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8562BYK0HTN62DBRPMMKS57",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M8562BYK0HTN62DBRPMMKS57",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-257.md"
+      ],
+      "depends_on": [
+        "01M8562BYK0HTN62DBRPMMKS57"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-257.md",
+      "artifact_id": "REQ-257"
+    },
+    {
+      "id": "01M8562BYKJVGBVD49WBCG1X9G",
+      "kind": "requirement",
+      "title": "REQ · preload.test.ts proves BootScene uses the planner and fallback",
+      "body": "Context: BootScene imports '@game/...' aliases, which game/vitest.config.ts does not define, so game/tests cannot import it. Desired behavior: add the alias and test BootScene with phaser, content and fallback loader mocked. Expected result: tests show only planned assets load, unknown refs warn, and resolveKey returns 'fallback:missing' for unknown or failed ids. Why: SG-5.4.3 done-when.\n\n## Acceptance criteria\n- Given scene refs 'objects/bed' (known) and 'objects/ghost' (unknown), when preload runs, then load.image is called once for the bed and console.warn reports ghost\n- Given preload ran, when generateTexture is inspected, then it was called with 'fallback:missing'\n- Given an unknown or loaderror-failed id, when resolveKey runs, then 'fallback:missing' is returned; known id returns itself\n\n\n## Scope\n- In scope: @game alias in game/vitest.config.ts\n- In scope: BootScene assertions in preload.test.ts\n- Out of scope: Changing BootScene\n- Preserve: Existing game test include pattern\n\n\n## Technical constraints\n- vi.mock('phaser') and the content module; no real Phaser\n\n\n## Definition of done\n- BootScene cases pass from game/tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene.preload and resolveKey are asserted from game/tests with mocks",
+      "description": "Context: BootScene imports '@game/...' aliases, which game/vitest.config.ts does not define, so game/tests cannot import it. Desired behavior: add the alias and test BootScene with phaser, content and fallback loader mocked. Expected result: tests show only planned assets load, unknown refs warn, and resolveKey returns 'fallback:missing' for unknown or failed ids. Why: SG-5.4.3 done-when.",
+      "acceptance_criteria": [
+        "Given scene refs 'objects/bed' (known) and 'objects/ghost' (unknown), when preload runs, then load.image is called once for the bed and console.warn reports ghost",
+        "Given preload ran, when generateTexture is inspected, then it was called with 'fallback:missing'",
+        "Given an unknown or loaderror-failed id, when resolveKey runs, then 'fallback:missing' is returned; known id returns itself"
+      ],
+      "scope": {
+        "in_scope": [
+          "@game alias in game/vitest.config.ts",
+          "BootScene assertions in preload.test.ts"
+        ],
+        "out_of_scope": [
+          "Changing BootScene"
+        ],
+        "preserve": [
+          "Existing game test include pattern"
+        ]
+      },
+      "technical_constraints": [
+        "vi.mock('phaser') and the content module; no real Phaser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BootScene cases pass from game/tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-258.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8562BYK0HTN62DBRPMMKS57",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M8562BYK0HTN62DBRPMMKS57",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-258.md"
+      ],
+      "depends_on": [
+        "01M8562BYK0HTN62DBRPMMKS57"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-258.md",
+      "artifact_id": "REQ-258"
+    },
+    {
+      "id": "01M8562BYKM8PQ2AV8Q47PCQD5",
+      "kind": "unit",
+      "title": "Act: Confirm planPreload and resolveTextureKey are importable pure exports",
+      "body": "planPreload and resolveTextureKey are already named, pure exports in planPreload.ts. This Act confirms them as the unit under test; no behavior change is planned.\n\n## Acceptance criteria\n- planPreload and resolveTextureKey are named exports with no side effects\n- Product code imports remain unchanged\n\n\n## Scope\n- In scope: game/src/engine/planPreload.ts read-only confirmation\n- Out of scope: Behavior changes\n- Preserve: Function signatures\n\n\n## Technical constraints\n- Code path: `game/src/engine/planPreload.ts`\n\n\n## Definition of done\n- Exports confirmed unchanged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify engine exports need no change so the test can import them",
+      "description": "planPreload and resolveTextureKey are already named, pure exports in planPreload.ts. This Act confirms them as the unit under test; no behavior change is planned.",
+      "acceptance_criteria": [
+        "planPreload and resolveTextureKey are named exports with no side effects",
+        "Product code imports remain unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/planPreload.ts read-only confirmation"
+        ],
+        "out_of_scope": [
+          "Behavior changes"
+        ],
+        "preserve": [
+          "Function signatures"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/src/engine/planPreload.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exports confirmed unchanged",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-514.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8562BYKE6N706V3CARG7FWZ",
+      "matched_feature_id": "01M855M826NDNXVQQ7BDH6EZ6F",
+      "links": [
+        "parent:01M8562BYKE6N706V3CARG7FWZ",
+        "trace:01M855M826NDNXVQQ7BDH6EZ6F",
+        "artifact:.ai-dlc/units/UNIT-514.md"
+      ],
+      "depends_on": [
+        "01M8562BYKE6N706V3CARG7FWZ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-514.md",
+      "artifact_id": "UNIT-514",
+      "steps": [
+        {
+          "file": "game/src/engine/planPreload.ts",
+          "symbol": "planPreload",
+          "lines": "L4-L13",
+          "action": "Confirm planPreload(scene, manifest) is exported, dedupes with a Set named refs and returns { load, unknown }; make no edit.",
+          "expected": "Function matches the described contract"
+        },
+        {
+          "file": "game/src/engine/planPreload.ts",
+          "symbol": "resolveTextureKey",
+          "lines": "L15-L17",
+          "action": "Confirm resolveTextureKey(id, manifest, fallbackId) is exported and returns fallbackId when id is undefined or not in manifest.assets; make no edit.",
+          "expected": "Function matches the described contract"
+        }
+      ]
+    },
+    {
+      "id": "01M8562BYK7KXW4R54ERZ6RJM5",
+      "kind": "unit",
+      "title": "Act: Add @game alias to game/vitest.config.ts",
+      "body": "BootScene imports '@game/engine/planPreload' etc. The game vitest config has no alias, so importing it from game/tests fails. Add the alias mirroring game/frontend/vitest.config.ts.\n\n## Acceptance criteria\n- '@game/engine/planPreload' resolves to game/src/engine/planPreload under game's vitest\n- Include pattern tests/**/*.test.ts stays unchanged\n\n\n## Scope\n- In scope: game/vitest.config.ts\n- Out of scope: Frontend config\n- Preserve: test.include value\n\n\n## Technical constraints\n- Keep node environment\n- Code path: `game/vitest.config.ts`\n\n\n## Definition of done\n- Alias present and existing game tests unaffected\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Let game/tests import frontend BootScene which uses '@game/*' imports",
+      "description": "BootScene imports '@game/engine/planPreload' etc. The game vitest config has no alias, so importing it from game/tests fails. Add the alias mirroring game/frontend/vitest.config.ts.",
+      "acceptance_criteria": [
+        "'@game/engine/planPreload' resolves to game/src/engine/planPreload under game's vitest",
+        "Include pattern tests/**/*.test.ts stays unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/vitest.config.ts"
+        ],
+        "out_of_scope": [
+          "Frontend config"
+        ],
+        "preserve": [
+          "test.include value"
+        ]
+      },
+      "technical_constraints": [
+        "Keep node environment",
+        "Code path: `game/vitest.config.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Alias present and existing game tests unaffected",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-515.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8562BYKJVGBVD49WBCG1X9G",
+      "matched_feature_id": "01M84MFPVV8H5BJSSV1HW9NJ50",
+      "links": [
+        "parent:01M8562BYKJVGBVD49WBCG1X9G",
+        "trace:01M84MFPVV8H5BJSSV1HW9NJ50",
+        "artifact:.ai-dlc/units/UNIT-515.md"
+      ],
+      "depends_on": [
+        "01M8562BYKJVGBVD49WBCG1X9G"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-515.md",
+      "artifact_id": "UNIT-515",
+      "steps": [
+        {
+          "file": "game/vitest.config.ts",
+          "symbol": "default export defineConfig",
+          "lines": "L1-L2",
+          "action": "Add import { fileURLToPath, URL } from 'node:url' and add resolve.alias '@game' pointing to fileURLToPath(new URL('./src', import.meta.url)) beside the existing test block.",
+          "code": "import { fileURLToPath, URL } from 'node:url';\nimport { defineConfig } from 'vitest/config';\n\nexport default defineConfig({\n  resolve: { alias: { '@game': fileURLToPath(new URL('./src', import.meta.url)) } },\n  test: { include: ['tests/**/*.test.ts'] },\n});",
+          "expected": "'@game/...' imports resolve in game/tests"
+        }
+      ]
+    },
+    {
+      "id": "01M8562BYK2RT6C8BCZTQQM0R7",
+      "kind": "unit",
+      "title": "Verify: preload.test.ts planner and resolver unit tests",
+      "body": "Create game/tests/preload.test.ts with an in-memory manifest and the valid-world fixture; no filesystem or Phaser involved.\n\n## Acceptance criteria\n- Dedup, unknown and fallback-key tests pass\n- Tests use only in-memory data\n\n\n## Scope\n- In scope: game/tests/preload.test.ts planner describe block\n- Out of scope: BootScene block\n- Preserve: Existing test files\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create preload.test.ts with dedup, unknown and fallback-key cases",
+      "description": "Create game/tests/preload.test.ts with an in-memory manifest and the valid-world fixture; no filesystem or Phaser involved.",
+      "acceptance_criteria": [
+        "Dedup, unknown and fallback-key tests pass",
+        "Tests use only in-memory data"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/preload.test.ts planner describe block"
+        ],
+        "out_of_scope": [
+          "BootScene block"
+        ],
+        "preserve": [
+          "Existing test files"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-516.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8562BYKM8PQ2AV8Q47PCQD5",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M8562BYKM8PQ2AV8Q47PCQD5",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-516.md"
+      ],
+      "depends_on": [
+        "01M8562BYKM8PQ2AV8Q47PCQD5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-516.md",
+      "artifact_id": "UNIT-516",
+      "steps": [
+        {
+          "file": "game/tests/preload.test.ts",
+          "symbol": "new: describe('planPreload dedup and unknown')",
+          "lines": "new",
+          "action": "Create the file importing planPreload from '../src/engine/planPreload', validScene from './fixtures/valid-world' and an in-memory manifest with one asset id 'A'. Add test 'dedupes' (two objects asset 'A' => load ['A'], unknown []) and test 'reports unknown' (object asset 'Z' and dust effect asset 'Y' => unknown ['Z','Y'], load []).",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t 'planPreload'",
+          "expected": "Both tests pass"
+        },
+        {
+          "file": "game/tests/preload.test.ts",
+          "symbol": "new: describe('resolveTextureKey fallback')",
+          "lines": "after planner describe",
+          "action": "Add tests: resolveTextureKey('Z', manifest, 'fb') === 'fb'; resolveTextureKey(undefined, manifest, 'fb') === 'fb'; resolveTextureKey('A', manifest, 'fb') === 'A'.",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t 'resolveTextureKey'",
+          "expected": "Fallback key returned for unknown or undefined id"
+        }
+      ]
+    },
+    {
+      "id": "01M8562BYK23H0DBZKPYDY8WQZ",
+      "kind": "unit",
+      "title": "Verify: preload.test.ts BootScene planner and fallback unit tests",
+      "body": "Extend game/tests/preload.test.ts with a BootScene block mirroring the mocking pattern in game/frontend/tests/bootScenePreload.test.ts (the BootScene.preload and resolveKey contract in game/frontend/src/phaser/BootScene.ts).\n\n## Acceptance criteria\n- Only the known referenced asset is loaded\n- Unknown ref triggers console.warn\n- Fallback key used for unknown or failed ids\n\n\n## Scope\n- In scope: BootScene describe block in preload.test.ts\n- Out of scope: Real Phaser\n- Preserve: Planner tests\n\n\n## Technical constraints\n- vi.mock('phaser'), vi.mock of '../frontend/src/runtime/content' and '../frontend/src/store/gameStore' if needed\n\n\n## Definition of done\n- Command passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add BootScene cases with phaser and content mocked",
+      "description": "Extend game/tests/preload.test.ts with a BootScene block mirroring the mocking pattern in game/frontend/tests/bootScenePreload.test.ts (the BootScene.preload and resolveKey contract in game/frontend/src/phaser/BootScene.ts).",
+      "acceptance_criteria": [
+        "Only the known referenced asset is loaded",
+        "Unknown ref triggers console.warn",
+        "Fallback key used for unknown or failed ids"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene describe block in preload.test.ts"
+        ],
+        "out_of_scope": [
+          "Real Phaser"
+        ],
+        "preserve": [
+          "Planner tests"
+        ]
+      },
+      "technical_constraints": [
+        "vi.mock('phaser'), vi.mock of '../frontend/src/runtime/content' and '../frontend/src/store/gameStore' if needed"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Command passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-517.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8562BYK7KXW4R54ERZ6RJM5",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M8562BYK7KXW4R54ERZ6RJM5",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-517.md"
+      ],
+      "depends_on": [
+        "01M8562BYK7KXW4R54ERZ6RJM5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-517.md",
+      "artifact_id": "UNIT-517",
+      "steps": [
+        {
+          "file": "game/tests/preload.test.ts",
+          "symbol": "new: BootScene mocks",
+          "lines": "top of file, before imports of BootScene",
+          "action": "Add vi.mock('phaser') returning default { Scene: class { events = { once: vi.fn() } }, Scenes: { Events: { SHUTDOWN: 'shutdown' } } } and vi.mock('../frontend/src/runtime/content') returning a scene with objects asset 'objects/bed' and 'objects/ghost' and a manifest declaring only 'objects/bed' (path 'worlds/the-boys-room/furniture/bed.svg', type 'image'). Import BootScene from '../frontend/src/phaser/BootScene'.",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t 'BootScene'",
+          "expected": "BootScene imports under node env without real Phaser"
+        },
+        {
+          "file": "game/tests/preload.test.ts",
+          "symbol": "new: describe('BootScene uses planner and fallback')",
+          "lines": "after resolver describe",
+          "action": "Build a BootScene, stub boot.load = { image: vi.fn(), on: vi.fn() } and boot.make = { graphics } returning a chainable fake with generateTexture and destroy as vi.fn(); spy console.warn. Call preload() and assert image called once with ('objects/bed','assets/worlds/the-boys-room/furniture/bed.svg'), warn called with 'unknown asset ref: objects/ghost', generateTexture called with ('fallback:missing',8,8). Assert resolveKey('objects/ghost') and resolveKey('nope') equal 'fallback:missing' and resolveKey('objects/bed') equals 'objects/bed'.",
+          "command": "cd game && npx vitest run tests/preload.test.ts",
+          "expected": "All BootScene assertions pass"
+        }
+      ]
+    },
+    {
+      "id": "01M8562BYKBPKBQNWRNT511KJ6",
+      "kind": "evidence",
+      "title": "Evidence: preload.test.ts unit tests pass",
+      "body": "Evidence of the result of running preload.test.ts, covering dedup, unknown ref, fallback key and BootScene wiring.\n\n## Acceptance criteria\n- Vitest run of tests/preload.test.ts reports all tests passed\n- Existing planPreload and resolveTextureKey tests still pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser checks\n\n\n## Definition of done\n- Passing output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record that game/tests/preload.test.ts passes with mocked dependencies",
+      "description": "Evidence of the result of running preload.test.ts, covering dedup, unknown ref, fallback key and BootScene wiring.",
+      "acceptance_criteria": [
+        "Vitest run of tests/preload.test.ts reports all tests passed",
+        "Existing planPreload and resolveTextureKey tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-104.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8562BYK2RT6C8BCZTQQM0R7",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M8562BYK2RT6C8BCZTQQM0R7",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-104.md"
+      ],
+      "depends_on": [
+        "01M8562BYK2RT6C8BCZTQQM0R7",
+        "01M8562BYK23H0DBZKPYDY8WQZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-104.md",
+      "artifact_id": "EVD-104"
+    }
+  ],
+  "created_at": "2026-11-23T21:48:19.876613+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,485 @@
+{
+  "id": "01M85R5VWTJJFTZH5NDFWY09CS",
+  "trigger_node_id": "INT-158, UNIT-776 +6",
+  "node_ids": [
+    "INT-158",
+    "UNIT-776",
+    "UNIT-777",
+    "UNIT-778",
+    "UNIT-779",
+    "REQ-388",
+    "REQ-389",
+    "EVD-158"
+  ],
+  "intent_id": "INT-158",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-158",
+      "title": "SG-1.2 Write pure grid-to-pixels and sprite-sheet functions",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-776",
+      "title": "Act: Create gridToRgba in the frontend lib",
+      "kind": "unit",
+      "task_ids": [
+        "01M85R5TTJFNF6Y89G40P8FHQJ"
+      ],
+      "depends_on": [
+        "REQ-388"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "a9d8f7ca62c8d6e194fc47507a14cce4d3c76a2a",
+      "from_sha": "a9d8f7ca62c8d6e194fc47507a14cce4d3c76a2a",
+      "started_at": "2026-11-24T03:04:23.578362+00:00",
+      "ended_at": "2026-11-24T03:04:51.934222+00:00",
+      "run_started_at": "2026-11-24T03:04:23.578362+00:00",
+      "duration_ms": 24353,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 2385,
+      "estimated_cost_usd": 0.009548
+    },
+    {
+      "unit_id": "UNIT-777",
+      "title": "Act: Create buildSpriteSheet in the frontend lib",
+      "kind": "unit",
+      "task_ids": [
+        "01M85R5TTJDT3AGTTRAD1D4CJB"
+      ],
+      "depends_on": [
+        "REQ-389"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-act",
+      "commit_sha": "a9d8f7ca62c8d6e194fc47507a14cce4d3c76a2a",
+      "from_sha": "7baddc36aec5a55ef9bfa13f164e3757b5dee1bf",
+      "started_at": "2026-11-24T03:04:23.599190+00:00",
+      "ended_at": "2026-11-24T03:04:50.835093+00:00",
+      "run_started_at": "2026-11-24T03:04:23.599190+00:00",
+      "duration_ms": 23197,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 2544,
+      "estimated_cost_usd": 0.010186
+    },
+    {
+      "unit_id": "UNIT-778",
+      "title": "Verify: gridToRgba unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85R5TTJB9PPWXTH66K68X7C"
+      ],
+      "depends_on": [
+        "UNIT-776",
+        "REQ-388"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "8982adbd7207e64fc7ea8ba97d9c8729afc9603f",
+      "from_sha": "a9d8f7ca62c8d6e194fc47507a14cce4d3c76a2a",
+      "tests": [
+        {
+          "id": "gridToRgba-returns-size",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > dimensions and palette > returns width, height and RGBA data sized to the grid",
+          "title": "returns width, height and RGBA data sized to the grid",
+          "scenario": "Given a 3x2 grid, When converted, Then width=3, height=2 and data holds 24 bytes",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-palette-only-colours",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > dimensions and palette > only emits palette colours with full alpha for every palette index",
+          "title": "only emits palette colours with full alpha for every palette index",
+          "scenario": "Given a grid using palette indices 0..47, When converted, Then each pixel maps to a PALETTE hex colour with alpha 255",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-throws-index-equal-length",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > throws when a palette index equals the palette length",
+          "title": "throws when a palette index equals the palette length",
+          "scenario": "Given [[PALETTE.length]], When converted, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-throws-negative-index",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > throws when a palette index is negative",
+          "title": "throws when a palette index is negative",
+          "scenario": "Given [[-1]], When converted, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-throws-non-integer-index",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > throws when a palette index is not an integer",
+          "title": "throws when a palette index is not an integer",
+          "scenario": "Given [[1.5]], When converted, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-throws-ragged-grid",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > throws when rows have different lengths",
+          "title": "throws when rows have different lengths",
+          "scenario": "Given ragged grid [[0,1],[0]], When converted, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-throws-empty-grid",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > throws when the grid is empty",
+          "title": "throws when the grid is empty",
+          "scenario": "Given an empty grid [], When converted, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "gridToRgba-deterministic",
+          "kind": "unit",
+          "name": "gridToRgba.test.ts > gridToRgba > errors and determinism > produces identical pixel data when converting the same grid twice",
+          "title": "produces identical pixel data when converting the same grid twice",
+          "scenario": "Given the same grid, When converted twice, Then both results hold equal pixel data",
+          "command": "cd game/frontend && npx vitest run tests/gridToRgba.test.ts --testTimeout=10000",
+          "file": "tests/gridToRgba.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T03:04:51.952343+00:00",
+      "ended_at": "2026-11-24T03:05:25.993279+00:00",
+      "run_started_at": "2026-11-24T03:04:51.952343+00:00",
+      "duration_ms": 31938,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 5099,
+      "estimated_cost_usd": 0.020407
+    },
+    {
+      "unit_id": "UNIT-779",
+      "title": "Verify: buildSpriteSheet unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M85R5TTJKF6C9J9TYPWY7NP2"
+      ],
+      "depends_on": [
+        "UNIT-777",
+        "REQ-389"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "cascade-verify",
+      "commit_sha": "8982adbd7207e64fc7ea8ba97d9c8729afc9603f",
+      "from_sha": "8982adbd7207e64fc7ea8ba97d9c8729afc9603f",
+      "tests": [
+        {
+          "id": "spriteSheet.size-and-count",
+          "kind": "unit",
+          "name": "size and count",
+          "title": "buildSpriteSheet size and layout: four 32x48 frames produce a 128x48 sheet with frameCount 4",
+          "scenario": "Given four 32x48 RGBA frames built from gridToRgba, When buildSpriteSheet is called, Then the sheet is 128x48 with frameWidth 32, frameHeight 48, frameCount 4",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.placement",
+          "kind": "unit",
+          "name": "placement",
+          "title": "buildSpriteSheet size and layout: each frame i is drawn at x offset i*32 with its palette colour",
+          "scenario": "Given frame i filled with palette index i, When the sheet is built, Then the pixel at (i*32+5, 10) equals the RGB of PALETTE[i]",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.palette",
+          "kind": "unit",
+          "name": "palette",
+          "title": "buildSpriteSheet palette, errors, determinism: every pixel of the 4-frame sheet is a PALETTE colour",
+          "scenario": "Given the 4-frame sheet, When every pixel's RGB is read, Then each one is in the set of PALETTE colours",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.empty-throws",
+          "kind": "unit",
+          "name": "errors (empty)",
+          "title": "buildSpriteSheet palette, errors, determinism: an empty frame list throws",
+          "scenario": "Given an empty frames array, When buildSpriteSheet is called, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.mismatch-throws",
+          "kind": "unit",
+          "name": "errors (mismatched sizes)",
+          "title": "buildSpriteSheet palette, errors, determinism: frames of 2x2 and 3x2 in one sheet throw",
+          "scenario": "Given a 2x2 frame and a 3x2 frame, When buildSpriteSheet is called, Then it throws",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.determinism",
+          "kind": "unit",
+          "name": "determinism",
+          "title": "buildSpriteSheet palette, errors, determinism: two calls on the same frames give equal pixel data",
+          "scenario": "Given the same four frames, When buildSpriteSheet is called twice, Then Array.from(data) is equal for both results",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "spriteSheet.non-mutation",
+          "kind": "unit",
+          "name": "non-mutation",
+          "title": "buildSpriteSheet palette, errors, determinism: input frame data arrays are unchanged after the call",
+          "scenario": "Given four frames with recorded data, When buildSpriteSheet is called, Then each frame's data is unchanged",
+          "command": "cd game/frontend && npx vitest run tests/spriteSheet.test.ts --testTimeout=20000",
+          "file": "tests/spriteSheet.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-24T03:04:51.944215+00:00",
+      "ended_at": "2026-11-24T03:05:27.697300+00:00",
+      "run_started_at": "2026-11-24T03:04:51.944215+00:00",
+      "duration_ms": 34051,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 5473,
+      "estimated_cost_usd": 0.021902
+    },
+    {
+      "unit_id": "REQ-388",
+      "title": "REQ · gridToRgba converts a palette-indexed grid to RGBA and rejects out-of-range indices",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-158"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-389",
+      "title": "REQ · buildSpriteSheet lays equal-size frames into one horizontal sheet with size and frame metadata",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-158"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-158",
+      "title": "Evidence: gridToRgba and buildSpriteSheet unit tests",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-776",
+        "UNIT-777",
+        "UNIT-778",
+        "UNIT-779"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "REQ-389",
+      "dst": "UNIT-777"
+    },
+    {
+      "src": "REQ-388",
+      "dst": "UNIT-776"
+    },
+    {
+      "src": "REQ-388",
+      "dst": "UNIT-778"
+    },
+    {
+      "src": "UNIT-778",
+      "dst": "EVD-158"
+    },
+    {
+      "src": "REQ-389",
+      "dst": "UNIT-779"
+    },
+    {
+      "src": "UNIT-777",
+      "dst": "UNIT-779"
+    },
+    {
+      "src": "UNIT-776",
+      "dst": "EVD-158"
+    },
+    {
+      "src": "UNIT-777",
+      "dst": "EVD-158"
+    },
+    {
+      "src": "INT-158",
+      "dst": "REQ-388"
+    },
+    {
+      "src": "UNIT-779",
+      "dst": "EVD-158"
+    },
+    {
+      "src": "UNIT-776",
+      "dst": "UNIT-778"
+    },
+    {
+      "src": "INT-158",
+      "dst": "REQ-389"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85r5v",
+  "base_sha": "7baddc36aec5a55ef9bfa13f164e3757b5dee1bf",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85R5VWTJJFTZH5NDFWY09CS:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T03:04:20.122751+00:00",
+  "updated_at": "2026-11-24T03:05:29.539083+00:00",
+  "completed_at": "2026-11-24T03:05:27.698621+00:00",
+  "duration_ms": 67576,
+  "usage_stats": {
+    "total_duration_ms": 113550,
+    "total_tokens_in": 48,
+    "total_tokens_out": 15501,
+    "total_estimated_cost_usd": 0.062043
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-776",
+    "UNIT-777",
+    "UNIT-778",
+    "UNIT-779"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-776",
+        "title": "Act: Create gridToRgba in the frontend lib",
+        "evidence_refs": [
+          {
+            "id": "EVD-158",
+            "path": ".ai-dlc/evidence/EVD-158.md",
+            "title": "Evidence: gridToRgba and buildSpriteSheet unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-776 unless acceptance outcomes recorded in EVD-158 (.ai-dlc/evidence/EVD-158.md; \"Evidence: gridToRgba and buildSpriteSheet unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-777",
+        "title": "Act: Create buildSpriteSheet in the frontend lib",
+        "evidence_refs": [
+          {
+            "id": "EVD-158",
+            "path": ".ai-dlc/evidence/EVD-158.md",
+            "title": "Evidence: gridToRgba and buildSpriteSheet unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-777 unless acceptance outcomes recorded in EVD-158 (.ai-dlc/evidence/EVD-158.md; \"Evidence: gridToRgba and buildSpriteSheet unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-778",
+        "title": "Verify: gridToRgba unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-158",
+            "path": ".ai-dlc/evidence/EVD-158.md",
+            "title": "Evidence: gridToRgba and buildSpriteSheet unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-778 unless acceptance outcomes recorded in EVD-158 (.ai-dlc/evidence/EVD-158.md; \"Evidence: gridToRgba and buildSpriteSheet unit tests\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-779",
+        "title": "Verify: buildSpriteSheet unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-158",
+            "path": ".ai-dlc/evidence/EVD-158.md",
+            "title": "Evidence: gridToRgba and buildSpriteSheet unit tests"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-779 unless acceptance outcomes recorded in EVD-158 (.ai-dlc/evidence/EVD-158.md; \"Evidence: gridToRgba and buildSpriteSheet unit tests\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T03:04:23.019375+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-776",
+    "UNIT-777",
+    "UNIT-778",
+    "UNIT-779"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "01M85Z6KQ47J45RGZXYDDA8V9P",
+  "intent_id": "01M85YRXQEN9TWD6B1NFMQ938P",
+  "title": "Act: Add keyboard focus flow, ARIA labels and live region to ObjectOverlay",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add aria labels, the live region and DOM focus movement to the overlay.",
+  "description": "ObjectOverlay renders a role=group region with aria-label, per-button aria-label, an aria-live polite region from focusedObjectId, and moves focus to the first action on Enter for a focused object.",
+  "acceptance_criteria": [
+    "Live region text derives from store focus and content",
+    "Buttons carry combined aria-labels",
+    "Escape emits menuClose"
+  ],
+  "scope": {
+    "in_scope": [
+      "ObjectOverlay a11y",
+      "Escape handling"
+    ],
+    "out_of_scope": [
+      "BootScene key mapping changes"
+    ],
+    "preserve": [
+      "focusChange and menuClose events"
+    ]
+  },
+  "technical_constraints": [
+    "Labels from the same game state",
+    "Radix and Tailwind stay",
+    "New file: `game/frontend/src/components/ObjectOverlay.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Live region present while focus is set",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-852.md`"
+  ],
+  "non_functional": [
+    "aria-live polite"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85YXV0AQBAJENDYY3Y8ZRJ4",
+    "trace:01M85C02SBR2NF26GC1VJ182TZ",
+    "artifact:.ai-dlc/units/UNIT-852.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85Z6KQ4J20MB3C0CS0F9VZ0"
+  ],
+  "sim_node_id": "01M85YXV0A9DZ29J8KB3D8WEF2",
+  "feature_id": "01M85C02SBR2NF26GC1VJ182TZ",
+  "artifact_path": ".ai-dlc/units/UNIT-852.md",
+  "artifact_id": "UNIT-852",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/ObjectOverlay.tsx",
+      "symbol": "ObjectOverlay",
+      "lines": "new section",
+      "action": "Add role='group' and aria-label={object.name} on the action container; aria-label={`${action.label} ${object.name}`} on each button; always render a visually-hidden div role='status' aria-live='polite' whose text is `${name}. Actions: ${labels.join(', ')}` for the active object and '' otherwise; add onKeyDown on the container: Escape calls phaserToReact.emit('menuClose',{}).",
+      "code": "<div role=\"status\" aria-live=\"polite\" className=\"sr-only\">{announcement}</div>",
+      "command": "cd game/frontend && npx tsc --noEmit",
+      "expected": "type-checks"
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App objectClick handler",
+      "lines": "L44",
+      "action": "On objectClick also keep selectedId; pass a focusFirstAction flag to ObjectOverlay when selectedId equals activeId so its first button receives DOM focus through a ref in a useEffect.",
+      "command": "cd game/frontend && npx tsc --noEmit",
+      "expected": "type-checks"
+    }
+  ],
+  "created_at": "2026-11-24T05:07:04.548674+00:00",
+  "updated_at": "2026-11-24T05:13:51.835707+00:00"
+}

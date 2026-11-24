@@ -1,0 +1,65 @@
+{
+  "id": "01M84H1KRJGZ6YN1D1MQS4JJBX",
+  "intent_id": "01M84GZGJMDAJB58G65Y37M2N3",
+  "title": "Verify: Provider factory unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for provider.New",
+  "description": "Assert kind selection and errors.",
+  "acceptance_criteria": [
+    "mock gives Mock",
+    "claude gives Claude",
+    "unknown kind errors naming it",
+    "claude with nil Exec errors"
+  ],
+  "scope": {
+    "in_scope": [
+      "provider_test.go"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Reuse fakeExec from claude_test.go",
+    "New file: `backend/worker/internal/provider/provider_test.go`"
+  ],
+  "dependencies": [
+    "A3"
+  ],
+  "definition_of_done": [
+    "tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-227.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84H148VRQMQACEETB7RFPWB",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-227.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84H1KRJ5MKARHTQMTZ996H7"
+  ],
+  "sim_node_id": "01M84H148VQVGK899JVKBT7KTH",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-227.md",
+  "artifact_id": "UNIT-227",
+  "steps": [
+    {
+      "file": "backend/worker/internal/provider/provider_test.go",
+      "symbol": "new: TestNew",
+      "lines": "new",
+      "action": "Table test over kinds: New(\"mock\", nil) returns a value of type Mock; New(\"claude\", &fakeExec{}) returns *Claude; New(\"gpt\", nil) returns an error whose text contains gpt; New(\"claude\", nil) returns an error. Use type assertions.",
+      "command": "cd backend/worker && go test ./internal/provider -run 'TestNew$'",
+      "expected": "TestNew passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:40:26.258069+00:00",
+  "updated_at": "2026-11-23T15:42:13.942477+00:00"
+}

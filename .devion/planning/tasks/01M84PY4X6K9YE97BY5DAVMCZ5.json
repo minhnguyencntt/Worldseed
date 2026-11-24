@@ -1,0 +1,79 @@
+{
+  "id": "01M84PY4X6K9YE97BY5DAVMCZ5",
+  "intent_id": "01M84PV3VYA96WCSHDGMXNRYQA",
+  "title": "Verify: Relocated the-boys-room content and loader validation unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Update content/layout/loader tests",
+  "description": "Prove R2 with unit tests; update existing path assertions and temp-dir fixtures to include the new required fields.",
+  "acceptance_criteria": [
+    "New path loads six objects with layer and position",
+    "Missing position throws",
+    "Old content dir absent"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/content.test.ts",
+      "tests/layout.test.ts",
+      "tests/loader.test.ts"
+    ],
+    "out_of_scope": [
+      "app code"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "Temp dir only for loader fixtures"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-358.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84PX17S6TWW9S23DXETZDHE",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-358.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84PY4X6M83QXW6J5KGCXYTJ"
+  ],
+  "sim_node_id": "01M84PX17SEKESJK9SXM5R1N66",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-358.md",
+  "artifact_id": "UNIT-358",
+  "steps": [
+    {
+      "file": "game/tests/content.test.ts",
+      "symbol": "WORLD_DIR and bedroom tests",
+      "lines": "L8-L50",
+      "action": "Change WORLD_DIR to resolve(__dirname, '../src/content/worlds/the-boys-room'); add test asserting loadWorld(WORLD_DIR).scenes[0].objects has length 6 and every object has a layer and position.",
+      "command": "cd game && npx vitest run tests/content.test.ts",
+      "expected": "Tests pass"
+    },
+    {
+      "file": "game/tests/layout.test.ts",
+      "symbol": "layout and load tests",
+      "lines": "L10-L25",
+      "action": "Change paths to src/content/worlds/the-boys-room/world.yaml and add expect(existsSync(join(gameDir,'content'))).toBe(false).",
+      "command": "cd game && npx vitest run tests/layout.test.ts",
+      "expected": "Tests pass"
+    },
+    {
+      "file": "game/tests/loader.test.ts",
+      "symbol": "temp-dir scene fixtures; new test 'rejects object without position'",
+      "lines": "L7-L60",
+      "action": "Add position {x:0,y:0}, asset and layer 'objects' to any object in temp scene fixtures; add a test writing a scene whose object lacks position and asserting loadWorld throws a message containing 'position'.",
+      "command": "cd game && npx vitest run tests/loader.test.ts",
+      "expected": "Tests pass"
+    }
+  ],
+  "created_at": "2026-11-23T17:23:24.198246+00:00",
+  "updated_at": "2026-11-23T17:25:59.158371+00:00"
+}

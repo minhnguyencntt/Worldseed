@@ -1,0 +1,380 @@
+{
+  "id": "01M84J3CW5YYWR0XTA880SRA7V",
+  "trigger_node_id": "INT-048, UNIT-244 +6",
+  "node_ids": [
+    "INT-048",
+    "UNIT-244",
+    "UNIT-245",
+    "UNIT-246",
+    "UNIT-247",
+    "REQ-122",
+    "REQ-123",
+    "EVD-048"
+  ],
+  "intent_id": "INT-048",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-048",
+      "title": "SG-3 · Remove worker config keys",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-244",
+      "title": "Act: Confirm config.go and the example YAML hold no worker keys",
+      "kind": "unit",
+      "task_ids": [
+        "01M84J3CJW0EDFVJ01EAJRBGJK"
+      ],
+      "depends_on": [
+        "REQ-122"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-act",
+      "commit_sha": "47b6b84bf0695104945ef366a1d5308b625bff92",
+      "from_sha": "9b9446a0c0d4122b37e25fc4bc9fa48d2e86edbd",
+      "started_at": "2026-11-23T15:58:54.631988+00:00",
+      "ended_at": "2026-11-23T15:59:03.235713+00:00",
+      "run_started_at": "2026-11-23T15:58:54.631988+00:00",
+      "duration_ms": 7210,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 4,
+      "tokens_out": 1084,
+      "estimated_cost_usd": 0.004339
+    },
+    {
+      "unit_id": "UNIT-245",
+      "title": "Act: Confirm cmd/server/main.go reads only kept config fields",
+      "kind": "unit",
+      "task_ids": [
+        "01M84J3CJWCNHYFBBRBZJ4WVFB"
+      ],
+      "depends_on": [
+        "REQ-123"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-act",
+      "commit_sha": "47b6b84bf0695104945ef366a1d5308b625bff92",
+      "from_sha": "47b6b84bf0695104945ef366a1d5308b625bff92",
+      "started_at": "2026-11-23T15:58:54.652497+00:00",
+      "ended_at": "2026-11-23T15:59:15.471182+00:00",
+      "run_started_at": "2026-11-23T15:58:54.652497+00:00",
+      "duration_ms": 19851,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 2423,
+      "estimated_cost_usd": 0.009703
+    },
+    {
+      "unit_id": "UNIT-246",
+      "title": "Verify: Config carries no worker or execution keys unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84J3CJWVM4BY3DNMCW33VZQ"
+      ],
+      "depends_on": [
+        "UNIT-244",
+        "REQ-122"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-verify",
+      "commit_sha": "3d3a59fc4561fcf4f949a8198d050978e9328c37",
+      "from_sha": "47b6b84bf0695104945ef366a1d5308b625bff92",
+      "tests": [
+        {
+          "id": "TestConfig_HasNoWorkerFields",
+          "kind": "unit",
+          "name": "TestConfig_HasNoWorkerFields",
+          "title": "Config struct has exactly the eight sections and no worker or execution field",
+          "scenario": "Given the Config struct type, when its fields are enumerated, then the set equals Server, Auth, Git, Hosting, Storage, Contribution, Admin and Round",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestConfig_HasNoWorkerFields -v",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestExampleYAML_TopLevelKeys",
+          "kind": "unit",
+          "name": "TestExampleYAML_TopLevelKeys",
+          "title": "Example config has exactly the eight top-level keys and no worker key",
+          "scenario": "Given backend/configs/config.example.yaml, when it is unmarshalled into map[string]any, then its keys are exactly admin, auth, contribution, git, hosting, round, server and storage",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestExampleYAML_TopLevelKeys -v",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestLoadFS_IgnoresWorkerSection",
+          "kind": "unit",
+          "name": "TestLoadFS_IgnoresWorkerSection",
+          "title": "Loading a config with a worker section ignores it and still reads the auth secret",
+          "scenario": "Given a YAML file with auth.token_secret 's' and a worker block, when LoadFS is called, then it returns no error and Auth.TokenSecret is 's'",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run TestLoadFS_IgnoresWorkerSection -v",
+          "status": "passed",
+          "detail": "PASS"
+        }
+      ],
+      "started_at": "2026-11-23T15:59:03.243239+00:00",
+      "ended_at": "2026-11-23T15:59:28.977102+00:00",
+      "run_started_at": "2026-11-23T15:59:03.243239+00:00",
+      "duration_ms": 23918,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 4403,
+      "estimated_cost_usd": 0.01762
+    },
+    {
+      "unit_id": "UNIT-247",
+      "title": "Verify: Remaining config keys load and cmd uses no removed key unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M84J3CJWGCHSA279NCASHMM9"
+      ],
+      "depends_on": [
+        "UNIT-245",
+        "REQ-123"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "sextant-verify",
+      "commit_sha": "a07e620a1f032d0fb649c446db470e2baa4ff50b",
+      "from_sha": "3d3a59fc4561fcf4f949a8198d050978e9328c37",
+      "tests": [
+        {
+          "id": "TestLoad_ExampleConfig",
+          "kind": "unit",
+          "name": "TestLoad_ExampleConfig",
+          "title": "loads config.example.yaml with the documented server address, round duration and prompt limit",
+          "scenario": "Given backend/configs/config.example.yaml, when Load reads it, then no error, Server.Addr is \":8080\", Round.Duration is 24h and Contribution.MaxPromptLen is 500",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run 'TestLoad_ExampleConfig$' -v",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestLoadFS_MinimalDefaults",
+          "kind": "unit",
+          "name": "TestLoadFS_MinimalDefaults",
+          "title": "fills scheduler interval, content dir and rate limit defaults from a minimal config",
+          "scenario": "Given YAML containing only auth.token_secret and a getenv returning empty strings, when LoadFS is called, then Round.SchedulerInterval is 30s, Storage.ContentDir is \"game/content\" and Contribution.RateMax is 3",
+          "command": "cd backend && go test -timeout 2m ./internal/config -run 'TestLoadFS_MinimalDefaults$' -v",
+          "status": "passed",
+          "detail": "PASS"
+        },
+        {
+          "id": "TestNoWorkerConfigReferences",
+          "kind": "unit",
+          "name": "TestNoWorkerConfigReferences",
+          "title": "no Go source in the server package or cmd/server references removed worker config keys",
+          "scenario": "Given the *.go files under ../server and ../../cmd/server (excluding removed_code_test.go), when each is read, then none contains cfg.Worker, WorkRoot, MaxBudget or AutoPublish",
+          "command": "cd backend && go test -timeout 2m ./internal/server -run 'TestNoWorkerConfigReferences$' -v",
+          "status": "passed",
+          "detail": "PASS"
+        }
+      ],
+      "started_at": "2026-11-23T15:59:15.478395+00:00",
+      "ended_at": "2026-11-23T15:59:57.133588+00:00",
+      "run_started_at": "2026-11-23T15:59:15.478395+00:00",
+      "duration_ms": 39063,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 12,
+      "tokens_out": 6122,
+      "estimated_cost_usd": 0.024498
+    },
+    {
+      "unit_id": "REQ-122",
+      "title": "REQ · Config structs, example YAML and cmd wiring contain no worker or execution keys",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-048"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-123",
+      "title": "REQ · Config loading still works for the remaining keys and no code reads a removed key",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-048"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-048",
+      "title": "Evidence: Config worker-key removal unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-244",
+        "UNIT-245",
+        "UNIT-246",
+        "UNIT-247"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-244",
+      "dst": "UNIT-246"
+    },
+    {
+      "src": "UNIT-244",
+      "dst": "EVD-048"
+    },
+    {
+      "src": "UNIT-247",
+      "dst": "EVD-048"
+    },
+    {
+      "src": "INT-048",
+      "dst": "REQ-123"
+    },
+    {
+      "src": "REQ-123",
+      "dst": "UNIT-245"
+    },
+    {
+      "src": "UNIT-245",
+      "dst": "EVD-048"
+    },
+    {
+      "src": "UNIT-245",
+      "dst": "UNIT-247"
+    },
+    {
+      "src": "REQ-122",
+      "dst": "UNIT-246"
+    },
+    {
+      "src": "REQ-123",
+      "dst": "UNIT-247"
+    },
+    {
+      "src": "REQ-122",
+      "dst": "UNIT-244"
+    },
+    {
+      "src": "INT-048",
+      "dst": "REQ-122"
+    },
+    {
+      "src": "UNIT-246",
+      "dst": "EVD-048"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m84j3c",
+  "base_sha": "9b9446a0c0d4122b37e25fc4bc9fa48d2e86edbd",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M84J3CW5YYWR0XTA880SRA7V:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T15:58:53.317615+00:00",
+  "updated_at": "2026-11-23T15:59:58.087982+00:00",
+  "completed_at": "2026-11-23T15:59:57.134598+00:00",
+  "duration_ms": 63817,
+  "usage_stats": {
+    "total_duration_ms": 90053,
+    "total_tokens_in": 40,
+    "total_tokens_out": 14032,
+    "total_estimated_cost_usd": 0.05616
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-244",
+    "UNIT-245",
+    "UNIT-246",
+    "UNIT-247"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-244",
+        "title": "Act: Confirm config.go and the example YAML hold no worker keys",
+        "evidence_refs": [
+          {
+            "id": "EVD-048",
+            "path": ".ai-dlc/evidence/EVD-048.md",
+            "title": "Evidence: Config worker-key removal unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-244 unless acceptance outcomes recorded in EVD-048 (.ai-dlc/evidence/EVD-048.md; \"Evidence: Config worker-key removal unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-245",
+        "title": "Act: Confirm cmd/server/main.go reads only kept config fields",
+        "evidence_refs": [
+          {
+            "id": "EVD-048",
+            "path": ".ai-dlc/evidence/EVD-048.md",
+            "title": "Evidence: Config worker-key removal unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-245 unless acceptance outcomes recorded in EVD-048 (.ai-dlc/evidence/EVD-048.md; \"Evidence: Config worker-key removal unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-246",
+        "title": "Verify: Config carries no worker or execution keys unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-048",
+            "path": ".ai-dlc/evidence/EVD-048.md",
+            "title": "Evidence: Config worker-key removal unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-246 unless acceptance outcomes recorded in EVD-048 (.ai-dlc/evidence/EVD-048.md; \"Evidence: Config worker-key removal unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-247",
+        "title": "Verify: Remaining config keys load and cmd uses no removed key unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-048",
+            "path": ".ai-dlc/evidence/EVD-048.md",
+            "title": "Evidence: Config worker-key removal unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-247 unless acceptance outcomes recorded in EVD-048 (.ai-dlc/evidence/EVD-048.md; \"Evidence: Config worker-key removal unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T15:58:54.407537+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-244",
+    "UNIT-245",
+    "UNIT-246",
+    "UNIT-247"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M855ATQGFDE3S902Y83KTN9B",
+  "intent_id": "01M8556WFEASC9F9P2D8RG7ZK6",
+  "title": "Act: Wire preload and fallback texture into BootScene",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add BootScene.preload and bundled manifest export",
+  "description": "Export the parsed manifest from runtime/content.ts and add preload() to BootScene using planPreload and a generated fallback texture on loaderror.",
+  "acceptance_criteria": [
+    "preload queues planned entries",
+    "loaderror registers a fallback texture"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.ts",
+      "runtime/content.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "create() behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 loader API",
+    "Code path: `game/frontend/src/runtime/content.ts`",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "tsc --noEmit passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-503.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M855951H6AM5JA1MTKQTHJSG",
+    "trace:01M847PS3SD6X4B1PSE3TWMH1D",
+    "artifact:.ai-dlc/units/UNIT-503.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M855ATQGM0TNSPXT7ZEEC64C"
+  ],
+  "sim_node_id": "01M855951HMSXXX1CD8HPS76YA",
+  "feature_id": "01M847PS3SD6X4B1PSE3TWMH1D",
+  "artifact_path": ".ai-dlc/units/UNIT-503.md",
+  "artifact_id": "UNIT-503",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/runtime/content.ts",
+      "symbol": "new: manifest",
+      "lines": "after L35",
+      "action": "Add an eager import.meta.glob with query '?raw' of '../../../public/assets/worlds/the-boys-room/manifest.json', JSON.parse the single result, run parseManifest from '@game/assets/manifest'; export const manifest as the data when ok, otherwise {version:1, assets:[]}.",
+      "expected": "manifest is exported and typed AssetManifest"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.preload",
+      "lines": "after L18",
+      "action": "Add preload(): compute plan = planPreload(manifest, scene); for each entry call this.load.image(id, '/assets/' + path) or this.load.spritesheet(id, url, {frameWidth, frameHeight}) from entry.frames; on this.load.on('loaderror', f => this.failed.add(f.key)); add private failed = new Set<string>() and in create() generate the fallback texture with this.textures.generateTexture or graphics under FALLBACK_ASSET_ID when absent.",
+      "expected": "Entries queued; failed keys recorded; fallback texture present"
+    }
+  ],
+  "created_at": "2026-11-23T21:34:59.824050+00:00",
+  "updated_at": "2026-11-23T21:37:05.407694+00:00"
+}

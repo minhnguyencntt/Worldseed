@@ -1,0 +1,76 @@
+{
+  "id": "01M84RDBYRCWS48TGCD6A3GMR6",
+  "intent_id": "01M84R9PSM7D3GVQ7YH6138B8V",
+  "title": "Verify: PhaserHost single instance, cleanup, config and resize unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with phaser and createGame mocked prove lifecycle, config and resize.",
+  "description": "Write tests from REQ1 acceptance criteria. Phaser is mocked and no browser is used.",
+  "acceptance_criteria": [
+    "Given StrictMode, When PhaserHost mounts, Then one live game and one destroy of the first.",
+    "Given resize, When the ResizeObserver mock fires, Then scale.refresh is called."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/phaserHost.test.tsx",
+      "tests/phaserConfig.test.ts"
+    ],
+    "out_of_scope": [
+      "real WebGL"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "vi.mock('phaser') and vi.mock of createGame",
+    "Stub global ResizeObserver"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Both test files pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-397.md`"
+  ],
+  "non_functional": [
+    "Run in seconds"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84RBYVY5294KY011BRXX7BT",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-397.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84RDBYR6FHVPY9R8E9BC3V7"
+  ],
+  "sim_node_id": "01M84RBYVYFWR24T78WDHMJP99",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-397.md",
+  "artifact_id": "UNIT-397",
+  "steps": [
+    {
+      "file": "game/frontend/tests/phaserHost.test.tsx",
+      "symbol": "new: phaserHost lifecycle tests",
+      "lines": "new",
+      "action": "vi.mock('../src/phaser/createGame') so createGame returns a fresh fake {destroy: vi.fn(), scale:{refresh: vi.fn()}} per call, recorded in an array. Stub global.ResizeObserver with a class that captures its callback and exposes disconnect. Add tests: (1) render <React.StrictMode><PhaserHost/></React.StrictMode>, assert the first fake destroy was called with true and the last fake was not destroyed; (2) render then unmount, assert destroy toHaveBeenCalledWith(true) once; (3) invoke the captured ResizeObserver callback, assert scale.refresh was called.",
+      "command": "cd game/frontend && npx vitest run tests/phaserHost.test.tsx",
+      "expected": "All three tests pass."
+    },
+    {
+      "file": "game/frontend/tests/phaserConfig.test.ts",
+      "symbol": "new: config tests",
+      "lines": "new",
+      "action": "vi.mock('phaser', () => ({default:{AUTO:0, Scale:{FIT:3, CENTER_BOTH:1}, Game: class {}, Scene: class {}}})). Test buildGameConfig(document.createElement('div'), []) has render.pixelArt true, render.roundPixels true, scale.mode 3. Test computeZoom(1000,600,2) returns an integer >= 1 and computeZoom(10,10,1) returns 1.",
+      "command": "cd game/frontend && npx vitest run tests/phaserConfig.test.ts",
+      "expected": "Config tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T17:49:11.512406+00:00",
+  "updated_at": "2026-11-23T17:53:30.916360+00:00"
+}

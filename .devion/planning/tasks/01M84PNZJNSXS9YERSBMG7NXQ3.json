@@ -1,0 +1,67 @@
+{
+  "id": "01M84PNZJNSXS9YERSBMG7NXQ3",
+  "intent_id": "01M84PJKVYD83E6XVXMVKM7BSB",
+  "title": "Act: Add manifest zod schemas and inferred types",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create schema.ts",
+  "description": "Create game/src/assets/manifest/schema.ts defining schemas and exported inferred types.",
+  "acceptance_criteria": [
+    "Module exports assetSchema and manifestSchema as zod schemas",
+    "Module exports types AssetEntry, AssetManifest, AnimationDef, FrameSpec and InteractionBounds"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/assets/manifest/schema.ts"
+    ],
+    "out_of_scope": [
+      "validate.ts"
+    ],
+    "preserve": [
+      "Existing src"
+    ]
+  },
+  "technical_constraints": [
+    "zod",
+    "New file: `game/src/assets/manifest/schema.ts`"
+  ],
+  "dependencies": [
+    "zod dependency"
+  ],
+  "definition_of_done": [
+    "Schemas compile under tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-349.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84PMTKFG94MZKFRYEFNXZJW",
+    "trace:01M84PBVRN7AG0MQPQ43CW3GAD",
+    "artifact:.ai-dlc/units/UNIT-349.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84PNZJN0ZBV3MYEWZ2RA2VQ"
+  ],
+  "sim_node_id": "01M84PMTKFVNV0VSKER3EQ818E",
+  "feature_id": "01M84PBVRN7AG0MQPQ43CW3GAD",
+  "artifact_path": ".ai-dlc/units/UNIT-349.md",
+  "artifact_id": "UNIT-349",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/assets/manifest/schema.ts",
+      "symbol": "new: schema module",
+      "lines": "new",
+      "action": "Create the file importing { z } from 'zod'. Define dimensionsSchema {width,height} as positive ints; originSchema {x,y} numbers 0..1; boundsSchema {x,y numbers, width,height positive numbers}; frameSpecSchema {frameWidth,frameHeight positive ints, frameCount positive int, optional margin,spacing non-negative ints}; animationSchema {frames: nonempty array of non-negative ints, frameRate positive number, repeat int >= -1 default -1}; assetSchema {id nonempty string, path nonempty string, type enum image|spritesheet|audio, dimensions optional, frames optional, animations optional record of animationSchema, origin optional, interactionBounds optional}; manifestSchema {version literal 1, assets array of assetSchema}. Add superRefine on assetSchema: type spritesheet requires frames and dimensions. Export z.infer types AssetEntry, AssetManifest, AnimationDef, FrameSpec, InteractionBounds, Origin, Dimensions",
+      "code": "export const assetSchema = z.object({...}).superRefine(...)",
+      "expected": "Module compiles and exports schemas and types"
+    }
+  ],
+  "created_at": "2026-11-23T17:18:56.597636+00:00",
+  "updated_at": "2026-11-23T17:21:30.031676+00:00"
+}

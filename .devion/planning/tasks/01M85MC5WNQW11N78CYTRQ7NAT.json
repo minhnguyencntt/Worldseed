@@ -1,0 +1,67 @@
+{
+  "id": "01M85MC5WNQW11N78CYTRQ7NAT",
+  "intent_id": "01M85M6TB0FXBH96WEK6JRZR6H",
+  "title": "Act: Unsubscribe playAnimation in the BootScene SHUTDOWN handler",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Release the playAnimation subscription and clear character map on shutdown",
+  "description": "Call the stored unsubscribe in the SHUTDOWN handler.",
+  "acceptance_criteria": [
+    "After shutdown playAnimation no longer reaches the scene",
+    "Character map is cleared"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.ts SHUTDOWN handler"
+    ],
+    "out_of_scope": [
+      "Other cleanup"
+    ],
+    "preserve": [
+      "Existing cleanup"
+    ]
+  },
+  "technical_constraints": [
+    "Depends on ACT1 fields existing",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Shutdown releases the subscription",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-747.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85M8HCD8YK230JR64NK8J2W",
+    "trace:01M8457KMNMG7R836YVYDX5S2D",
+    "artifact:.ai-dlc/units/UNIT-747.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85MC5WNM4XSJYB754FWE5RC"
+  ],
+  "sim_node_id": "01M85M8HCD62GAN2VFF178B4F9",
+  "feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+  "artifact_path": ".ai-dlc/units/UNIT-747.md",
+  "artifact_id": "UNIT-747",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.create SHUTDOWN handler",
+      "lines": "L73-L83",
+      "action": "At the start of the SHUTDOWN callback call this.unsubscribeAnimation?.(); set this.unsubscribeAnimation = null; and after characterSprites reset call this.characterAnims.clear().",
+      "code": "this.unsubscribeAnimation?.();\nthis.unsubscribeAnimation = null;\n...\nthis.characterAnims.clear();",
+      "expected": "Emitting playAnimation after SHUTDOWN triggers no sprite.play"
+    }
+  ],
+  "created_at": "2026-11-24T01:57:52.661770+00:00",
+  "updated_at": "2026-11-24T01:59:48.543283+00:00"
+}

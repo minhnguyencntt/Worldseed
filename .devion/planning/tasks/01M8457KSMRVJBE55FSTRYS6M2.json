@@ -1,0 +1,84 @@
+{
+  "id": "01M8457KSMRVJBE55FSTRYS6M2",
+  "intent_id": "01M84522HNMQHD166PMNC6CKQ8",
+  "title": "Act: Implement the Markdown contribution store and path sanitizer",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Each contribution becomes a distinct Markdown file; traversal is rejected.",
+  "description": "Context: the service needs a Store. Desired behavior: Store writes worlds/<world>/rounds/<round>/contributions/<id>.md with a generated ID under a mutex, refuses overwrite, commits via the Git interface, and rejects unsafe path segments. Expected result: concurrent submissions never collide. Why: immutability and safety.",
+  "acceptance_criteria": [
+    "Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt",
+    "Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged",
+    "Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written"
+  ],
+  "scope": {
+    "in_scope": [
+      "Each contribution becomes a distinct Markdown file; traversal is rejected."
+    ],
+    "out_of_scope": [
+      "Writing tests",
+      "Frontend changes"
+    ],
+    "preserve": [
+      "Existing player session handlers in backend/internal/player",
+      "GET /healthz"
+    ]
+  },
+  "technical_constraints": [
+    "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+    "Git writes go through an interface wrapping the Git CLI",
+    "New file: `backend/internal/safepath/safepath.go`",
+    "New file: `backend/internal/contribution/store.go`",
+    "New file: `backend/internal/contribution/model.go`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Product code compiles with go build ./...",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-058.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8457J1JTVW8SDQ5J6EMM3J0",
+    "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+    "artifact:.ai-dlc/units/UNIT-058.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M8457KSMSC1HMEX0YJ6HET0D"
+  ],
+  "sim_node_id": "01M8457J1JB2B78YCWET88CZS7",
+  "feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+  "artifact_path": ".ai-dlc/units/UNIT-058.md",
+  "artifact_id": "UNIT-058",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/internal/safepath/safepath.go",
+      "symbol": "new: Segment",
+      "lines": "new",
+      "action": "Create package safepath with ErrUnsafe and Segment(s string) error that accepts only ^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$ and returns ErrUnsafe otherwise.",
+      "expected": "Segment(\"..\"), \"a/b\" and \"\" return ErrUnsafe; \"ROUND-0000001\" returns nil"
+    },
+    {
+      "file": "backend/internal/contribution/model.go",
+      "symbol": "new: Contribution, NewID, render, parse",
+      "lines": "new",
+      "action": "Define Contribution{ID, WorldID, RoundID, PlayerID, Prompt string; CreatedAt time.Time}; NewID returns \"CON-\"+32 hex chars from crypto/rand; render produces YAML front matter (id, world, round, player, created_at RFC3339) then a blank line and the prompt; parse reverses it.",
+      "expected": "render then parse yields an equal Contribution"
+    },
+    {
+      "file": "backend/internal/contribution/store.go",
+      "symbol": "new: FileStore, Save, Get, ListByPlayer, CountByPlayer, HasPrompt",
+      "lines": "new",
+      "action": "Create FileStore{Root string; Git gitrepo.Committer; mu sync.Mutex} implementing Store. Save validates WorldID and RoundID with safepath.Segment, assigns NewID when ID is empty, locks mu, creates dir worlds/<world>/rounds/<lower-case round>/contributions, opens <id>.md with os.O_CREATE|os.O_EXCL|os.O_WRONLY (0o644), writes render output, then calls Git.Commit(ctx, []string{relPath}, \"contribution <id>\"). Get(id) validates id then walks worlds/*/rounds/*/contributions for <id>.md; ListByPlayer, CountByPlayer and HasPrompt read matching files.",
+      "expected": "Files are created exclusively and committed through the interface"
+    }
+  ],
+  "created_at": "2026-11-23T12:13:59.988368+00:00",
+  "updated_at": "2026-11-23T12:22:20.021424+00:00"
+}

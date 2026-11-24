@@ -1,0 +1,64 @@
+{
+  "id": "01M84QVT4TK33XE36PK24X3Z0W",
+  "intent_id": "01M84QSF4JRV5CYHA98320FFEM",
+  "title": "Verify: ui folders each hold a real crisp SVG unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests read the three ui folders and assert real, non-empty, crisp SVGs.",
+  "description": "Read-only unit tests over the on-disk tree under game/public/assets/ui; no app is started.",
+  "acceptance_criteria": [
+    "Given each of icons, frames and cursors, When listed, Then at least one .svg exists and is non-empty",
+    "Given each SVG, When read, Then it has width, height and crispEdges"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/publicAssetUi.test.ts"
+    ],
+    "out_of_scope": [
+      "Browser checks"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use node:fs and import.meta.url like game/tests/publicAssetSvgs.test.ts"
+  ],
+  "dependencies": [
+    "ACT1"
+  ],
+  "definition_of_done": [
+    "Test file passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-380.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84QTWE6F7FRD6F294G7N7RD",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-380.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84QVT4TGR1N2RVGZNW5XR9G"
+  ],
+  "sim_node_id": "01M84QTWE6RKQ0DVSPWETJC0HN",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-380.md",
+  "artifact_id": "UNIT-380",
+  "steps": [
+    {
+      "file": "game/tests/publicAssetUi.test.ts",
+      "symbol": "new: describe('ui asset folders')",
+      "lines": "new",
+      "action": "Create a test with it.each(['icons','frames','cursors']) that lists ../public/assets/ui/<dir> via readdirSync, filters .svg, asserts length >= 1 and statSync size > 0 for each. Add a second it.each that reads each SVG and asserts it contains '<svg', a width=\"N\" attribute, a height=\"N\" attribute and shape-rendering=\"crispEdges\".",
+      "command": "cd game && npx vitest run tests/publicAssetUi.test.ts",
+      "expected": "All tests in publicAssetUi.test.ts pass (six cases)"
+    }
+  ],
+  "created_at": "2026-11-23T17:39:36.218088+00:00",
+  "updated_at": "2026-11-23T17:40:36.919849+00:00"
+}

@@ -1,0 +1,317 @@
+{
+  "intent_id": "01M848Y893SC3716E86HDAH89B",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M848ZDTFVXHW8Z22SRPFGGS8",
+      "kind": "intent",
+      "title": "SG-6.4.2 · Add onReject prop and Reject button to ExecutionPanel",
+      "body": "Context: game/frontend/src/components/ExecutionPanel.tsx already renders Approve (AWAITING_APPROVAL, onApprove) and Retry (FAILED, onRetry), and api/client.ts already has rejectExecution. Desired behavior: add an optional onReject prop and a Reject button visible only when status is AWAITING_APPROVAL and onReject is provided. Expected result: clicking Reject calls onReject with the execution id. Why: the admin must be able to reject a publication from the panel. AdminApp wiring is out of scope (SG-6.4 sibling).\n\n## Acceptance criteria\n- Given an execution with status AWAITING_APPROVAL and an onReject prop, when ExecutionPanel renders, then a button named Reject is shown\n- Given the Reject button is clicked, when the click handler runs, then onReject is called once with the execution id\n- Given a status other than AWAITING_APPROVAL (FAILED, RUNNING), when ExecutionPanel renders, then no Reject button is shown\n- Given AWAITING_APPROVAL but no onReject prop, when ExecutionPanel renders, then no Reject button is shown and Approve still works\n\n\n## Scope\n- In scope: ExecutionPanel onReject prop and Reject button\n- Out of scope: AdminApp wiring of rejectExecution\n- Out of scope: backend changes\n- Out of scope: API client changes\n- Preserve: Approve and Retry behavior\n- Preserve: actionError alert rendering\n- Preserve: existing props\n\n\n## Technical constraints\n- React + TypeScript in game/frontend\n- onReject is optional so existing callers compile unchanged\n\n\n## Definition of done\n- Reject button implemented per acceptance criteria\n- Existing ExecutionPanel tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "ExecutionPanel gets an optional onReject prop and a Reject button shown only when the run is awaiting approval.",
+      "description": "Context: game/frontend/src/components/ExecutionPanel.tsx already renders Approve (AWAITING_APPROVAL, onApprove) and Retry (FAILED, onRetry), and api/client.ts already has rejectExecution. Desired behavior: add an optional onReject prop and a Reject button visible only when status is AWAITING_APPROVAL and onReject is provided. Expected result: clicking Reject calls onReject with the execution id. Why: the admin must be able to reject a publication from the panel. AdminApp wiring is out of scope (SG-6.4 sibling).",
+      "acceptance_criteria": [
+        "Given an execution with status AWAITING_APPROVAL and an onReject prop, when ExecutionPanel renders, then a button named Reject is shown",
+        "Given the Reject button is clicked, when the click handler runs, then onReject is called once with the execution id",
+        "Given a status other than AWAITING_APPROVAL (FAILED, RUNNING), when ExecutionPanel renders, then no Reject button is shown",
+        "Given AWAITING_APPROVAL but no onReject prop, when ExecutionPanel renders, then no Reject button is shown and Approve still works"
+      ],
+      "scope": {
+        "in_scope": [
+          "ExecutionPanel onReject prop and Reject button"
+        ],
+        "out_of_scope": [
+          "AdminApp wiring of rejectExecution",
+          "backend changes",
+          "API client changes"
+        ],
+        "preserve": [
+          "Approve and Retry behavior",
+          "actionError alert rendering",
+          "existing props"
+        ]
+      },
+      "technical_constraints": [
+        "React + TypeScript in game/frontend",
+        "onReject is optional so existing callers compile unchanged"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Reject button implemented per acceptance criteria",
+        "Existing ExecutionPanel tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-028.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M848PZA283BFVYPDZ2SA6V7T",
+      "links": [
+        "trace:01M848PZA283BFVYPDZ2SA6V7T",
+        "artifact:.ai-dlc/intent/INT-028.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-028.md",
+      "artifact_id": "INT-028"
+    },
+    {
+      "id": "01M848ZDTF1C81VJJ931S8NJG6",
+      "kind": "requirement",
+      "title": "REQ · ExecutionPanel shows a Reject button only for AWAITING_APPROVAL runs when onReject is given",
+      "body": "Context: ExecutionPanel computes canApprove and canRetry from execution.status and optional callbacks. Desired behavior: add canReject = status === 'AWAITING_APPROVAL' && onReject !== undefined and render a Reject button in the execution-actions div that calls onReject(id). Expected result: Reject appears next to Approve only while awaiting approval. Why: admin needs to decline publication.\n\n## Acceptance criteria\n- Given AWAITING_APPROVAL and onReject, when rendered, then a Reject button is present next to Approve\n- Given the Reject click, when handled, then onReject is called with the execution id exactly once\n- Given FAILED or RUNNING status or no onReject, when rendered, then Reject is absent\n\n\n## Scope\n- In scope: ExecutionPanel.tsx props and markup\n- Out of scope: AdminApp wiring\n- Preserve: Approve/Retry gating\n- Preserve: execution-actions wrapper condition covers all three buttons\n\n\n## Technical constraints\n- Optional prop only\n\n\n## Definition of done\n- Component updated; type-check passes\n\n\n## Non-functional requirements\n- Button is a native button type=button for accessibility\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Optional onReject prop drives a Reject button gated on AWAITING_APPROVAL status.",
+      "description": "Context: ExecutionPanel computes canApprove and canRetry from execution.status and optional callbacks. Desired behavior: add canReject = status === 'AWAITING_APPROVAL' && onReject !== undefined and render a Reject button in the execution-actions div that calls onReject(id). Expected result: Reject appears next to Approve only while awaiting approval. Why: admin needs to decline publication.",
+      "acceptance_criteria": [
+        "Given AWAITING_APPROVAL and onReject, when rendered, then a Reject button is present next to Approve",
+        "Given the Reject click, when handled, then onReject is called with the execution id exactly once",
+        "Given FAILED or RUNNING status or no onReject, when rendered, then Reject is absent"
+      ],
+      "scope": {
+        "in_scope": [
+          "ExecutionPanel.tsx props and markup"
+        ],
+        "out_of_scope": [
+          "AdminApp wiring"
+        ],
+        "preserve": [
+          "Approve/Retry gating",
+          "execution-actions wrapper condition covers all three buttons"
+        ]
+      },
+      "technical_constraints": [
+        "Optional prop only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Component updated; type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-068.md`"
+      ],
+      "non_functional": [
+        "Button is a native button type=button for accessibility"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M848ZDTFVXHW8Z22SRPFGGS8",
+      "matched_feature_id": "01M844GYQJ0W0MES1YFTTSS1AF",
+      "links": [
+        "parent:01M848ZDTFVXHW8Z22SRPFGGS8",
+        "trace:01M844GYQJ0W0MES1YFTTSS1AF",
+        "artifact:.ai-dlc/requirements/REQ-068.md"
+      ],
+      "depends_on": [
+        "01M848ZDTFVXHW8Z22SRPFGGS8"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-068.md",
+      "artifact_id": "REQ-068"
+    },
+    {
+      "id": "01M848ZDTF479DPC3EMHAVMA3V",
+      "kind": "unit",
+      "title": "Act: Add onReject prop and Reject button to ExecutionPanel",
+      "body": "Modify game/frontend/src/components/ExecutionPanel.tsx: extend ExecutionPanelProps with onReject, destructure it, compute canReject, include it in the actions wrapper condition and render the button.\n\n## Acceptance criteria\n- Reject button renders only when status is AWAITING_APPROVAL and onReject is defined\n- Clicking Reject calls onReject with the execution id (empty string when id missing, like Approve)\n\n\n## Scope\n- In scope: game/frontend/src/components/ExecutionPanel.tsx\n- Out of scope: AdminApp.tsx\n- Out of scope: tests\n- Preserve: Approve and Retry rendering\n\n\n## Technical constraints\n- Match the existing Approve/Retry code style\n- Code path: `game/frontend/src/components/ExecutionPanel.tsx`\n\n\n## Definition of done\n- ExecutionPanel.tsx compiles with tsc --noEmit\n- Reject gating matches the requirement\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Edit ExecutionPanel.tsx to add onReject, canReject and the Reject button.",
+      "description": "Modify game/frontend/src/components/ExecutionPanel.tsx: extend ExecutionPanelProps with onReject, destructure it, compute canReject, include it in the actions wrapper condition and render the button.",
+      "acceptance_criteria": [
+        "Reject button renders only when status is AWAITING_APPROVAL and onReject is defined",
+        "Clicking Reject calls onReject with the execution id (empty string when id missing, like Approve)"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/ExecutionPanel.tsx"
+        ],
+        "out_of_scope": [
+          "AdminApp.tsx",
+          "tests"
+        ],
+        "preserve": [
+          "Approve and Retry rendering"
+        ]
+      },
+      "technical_constraints": [
+        "Match the existing Approve/Retry code style",
+        "Code path: `game/frontend/src/components/ExecutionPanel.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "ExecutionPanel.tsx compiles with tsc --noEmit",
+        "Reject gating matches the requirement",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-135.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M848ZDTF1C81VJJ931S8NJG6",
+      "matched_feature_id": "01M847PS3SP3J1VY4KQMCK9TTP",
+      "links": [
+        "parent:01M848ZDTF1C81VJJ931S8NJG6",
+        "trace:01M847PS3SP3J1VY4KQMCK9TTP",
+        "artifact:.ai-dlc/units/UNIT-135.md"
+      ],
+      "depends_on": [
+        "01M848ZDTF1C81VJJ931S8NJG6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-135.md",
+      "artifact_id": "UNIT-135",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ExecutionPanel.tsx",
+          "symbol": "ExecutionPanelProps",
+          "lines": "L15-L21",
+          "action": "Add the optional callback prop onReject to ExecutionPanelProps directly after onRetry.",
+          "code": "onReject?: (id: string) => void;",
+          "expected": "ExecutionPanelProps accepts onReject; existing callers still type-check."
+        },
+        {
+          "file": "game/frontend/src/components/ExecutionPanel.tsx",
+          "symbol": "ExecutionPanel",
+          "lines": "L41-L88",
+          "action": "Destructure onReject in the parameter list, add const canReject after canRetry, change the wrapper condition to include canReject, and render a Reject button after the Retry button.",
+          "code": "const canReject = execution?.status === 'AWAITING_APPROVAL' && onReject !== undefined;\n{(canApprove || canRetry || canReject) && (...)}\n{canReject && (<button type=\"button\" onClick={() => onReject?.(id ?? '')}>Reject</button>)}",
+          "expected": "A Reject button renders for AWAITING_APPROVAL with onReject and is absent otherwise."
+        }
+      ]
+    },
+    {
+      "id": "01M848ZDTFZ846AVSQY0261SCP",
+      "kind": "unit",
+      "title": "Verify: ExecutionPanel Reject button unit tests",
+      "body": "Add game/frontend/tests/reject.test.tsx rendering ExecutionPanel with executionFixture from tests/fixtures/api.ts (mirrors the ExecutionInfo type in src/api/client.ts) and vi.fn callbacks; no network.\n\n## Acceptance criteria\n- Test asserts Reject shown and onReject called with 'EX1' for AWAITING_APPROVAL\n- Test asserts Reject absent for FAILED, RUNNING, and for AWAITING_APPROVAL without onReject\n\n\n## Scope\n- In scope: game/frontend/tests/reject.test.tsx\n- Out of scope: product code\n- Preserve: tests/actions.test.tsx unchanged\n\n\n## Technical constraints\n- vitest + @testing-library/react + user-event; fixture from tests/fixtures/api.ts, not inline payloads\n\n\n## Definition of done\n- All reject tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for Reject visibility and callback.",
+      "description": "Add game/frontend/tests/reject.test.tsx rendering ExecutionPanel with executionFixture from tests/fixtures/api.ts (mirrors the ExecutionInfo type in src/api/client.ts) and vi.fn callbacks; no network.",
+      "acceptance_criteria": [
+        "Test asserts Reject shown and onReject called with 'EX1' for AWAITING_APPROVAL",
+        "Test asserts Reject absent for FAILED, RUNNING, and for AWAITING_APPROVAL without onReject"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/reject.test.tsx"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "tests/actions.test.tsx unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "vitest + @testing-library/react + user-event; fixture from tests/fixtures/api.ts, not inline payloads"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All reject tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-136.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848ZDTF479DPC3EMHAVMA3V",
+      "matched_feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+      "links": [
+        "parent:01M848ZDTF479DPC3EMHAVMA3V",
+        "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+        "artifact:.ai-dlc/units/UNIT-136.md"
+      ],
+      "depends_on": [
+        "01M848ZDTF479DPC3EMHAVMA3V"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-136.md",
+      "artifact_id": "UNIT-136",
+      "steps": [
+        {
+          "file": "game/frontend/tests/reject.test.tsx",
+          "symbol": "new: describe('ExecutionPanel Reject')",
+          "lines": "new",
+          "action": "Create the file importing render, screen, cleanup, userEvent, vi, ExecutionPanel and executionFixture (tests/fixtures/api.ts, matching ExecutionInfo in src/api/client.ts). Add test 'shows Reject for AWAITING_APPROVAL and calls onReject with id': render with {...executionFixture,id:'EX1',status:'AWAITING_APPROVAL'}, onReject=vi.fn(), onApprove=vi.fn(); click button named Reject; assert onReject called once with 'EX1' and onApprove not called.",
+          "command": "cd game/frontend && npx vitest run tests/reject.test.tsx -t 'calls onReject'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/reject.test.tsx",
+          "symbol": "new: it('hides Reject unless awaiting approval with onReject')",
+          "lines": "new",
+          "action": "Add a test.each over statuses 'FAILED' and 'RUNNING' rendering with onReject=vi.fn() and asserting queryByRole('button',{name:'Reject'}) is null; add one case with status AWAITING_APPROVAL and no onReject asserting Reject is null and Approve button (onApprove given) is present.",
+          "command": "cd game/frontend && npx vitest run tests/reject.test.tsx",
+          "expected": "All tests in reject.test.tsx pass."
+        }
+      ]
+    },
+    {
+      "id": "01M848ZDTF812VP5YF3EQAHR8A",
+      "kind": "evidence",
+      "title": "Evidence: ExecutionPanel Reject button unit tests",
+      "body": "Record the passing output of tests/reject.test.tsx covering all intent acceptance criteria for the ExecutionPanel Reject button.\n\n## Acceptance criteria\n- reject.test.tsx passes with Reject shown only for AWAITING_APPROVAL with onReject\n- Existing actions.test.tsx still passes\n\n\n## Scope\n- In scope: test run output\n- Out of scope: AdminApp wiring\n\n\n## Definition of done\n- Test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that Reject gating and callback unit tests pass.",
+      "description": "Record the passing output of tests/reject.test.tsx covering all intent acceptance criteria for the ExecutionPanel Reject button.",
+      "acceptance_criteria": [
+        "reject.test.tsx passes with Reject shown only for AWAITING_APPROVAL with onReject",
+        "Existing actions.test.tsx still passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run output"
+        ],
+        "out_of_scope": [
+          "AdminApp wiring"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-028.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M848ZDTFZ846AVSQY0261SCP",
+      "matched_feature_id": "01M8457KMPYYSWWK9RWTTAJATT",
+      "links": [
+        "parent:01M848ZDTFZ846AVSQY0261SCP",
+        "trace:01M8457KMPYYSWWK9RWTTAJATT",
+        "artifact:.ai-dlc/evidence/EVD-028.md"
+      ],
+      "depends_on": [
+        "01M848ZDTFZ846AVSQY0261SCP"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-028.md",
+      "artifact_id": "EVD-028"
+    }
+  ],
+  "created_at": "2026-11-23T13:19:27.130260+00:00",
+  "summary": "AI · 0 NEW · 5 UPDATE · 0 UNCHANGED · 5/5 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

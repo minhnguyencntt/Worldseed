@@ -1,0 +1,75 @@
+{
+  "id": "01M84VFED748M3G6M5V3HMCP8T",
+  "intent_id": "01M84VCG55BW90F4DH1D9SZJNX",
+  "title": "Act: Add runUntrack and use it in the cleanup script",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add runUntrack exit-code helper and call it from scripts/untrackNodeModules.ts",
+  "description": "Add runUntrack(run, log, err) to the helper file and make the script set process.exitCode from it.",
+  "acceptance_criteria": [
+    "runUntrack returns 0 and logs the count on success",
+    "runUntrack returns 1 and logs the error on failure"
+  ],
+  "scope": {
+    "in_scope": [
+      "src/lib/trackedNodeModules.ts",
+      "scripts/untrackNodeModules.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "npm script name"
+    ]
+  },
+  "technical_constraints": [
+    "Depends on untrackAndVerify",
+    "Code path: `game/frontend/src/lib/trackedNodeModules.ts`",
+    "Code path: `game/frontend/scripts/untrackNodeModules.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Script calls runUntrack",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-453.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84VE2X8Z495VV7MV930DPST",
+    "trace:01M84GAF918PB05VJE7944AM4P",
+    "artifact:.ai-dlc/units/UNIT-453.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84VFED7SQ2BG1X4P7WZEMQ0"
+  ],
+  "sim_node_id": "01M84VE2X8CJ9QD9NWVASFZFRG",
+  "feature_id": "01M84GAF918PB05VJE7944AM4P",
+  "artifact_path": ".ai-dlc/units/UNIT-453.md",
+  "artifact_id": "UNIT-453",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/trackedNodeModules.ts",
+      "symbol": "new: runUntrack",
+      "lines": "after untrackAndVerify",
+      "action": "Add exported runUntrack(run: GitRunner, log: (m: string) => void, err: (m: string) => void): number that calls untrackAndVerify in try, logs `untracked ${before} paths` and returns 0, and in catch calls err with the Error message and returns 1.",
+      "code": "export function runUntrack(run: GitRunner, log: (m: string) => void, err: (m: string) => void): number {\n  try {\n    const { before } = untrackAndVerify(run);\n    log(`untracked ${before} paths`);\n    return 0;\n  } catch (e) {\n    err(e instanceof Error ? e.message : String(e));\n    return 1;\n  }\n}",
+      "expected": "runUntrack exported"
+    },
+    {
+      "file": "game/frontend/scripts/untrackNodeModules.ts",
+      "symbol": "top-level script",
+      "lines": "L1-L3",
+      "action": "Import runUntrack instead of untrackNodeModules and set process.exitCode to runUntrack(runner, console.log, console.error) where runner is (args) => execFileSync('git', args, { encoding: 'utf8' }).",
+      "code": "process.exitCode = runUntrack((args) => execFileSync('git', args, { encoding: 'utf8' }), console.log, console.error);",
+      "expected": "Script sets exit code from runUntrack"
+    }
+  ],
+  "created_at": "2026-11-23T18:42:45.287596+00:00",
+  "updated_at": "2026-11-23T18:43:16.439872+00:00"
+}

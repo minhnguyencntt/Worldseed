@@ -1,0 +1,485 @@
+{
+  "intent_id": "01M855H3R01K80M8S2X4GRETZJ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M855JJ7HRFGMTC3X5J10QAVW",
+      "kind": "intent",
+      "title": "SG-5.4.1 planPreload and resolveTextureKey engine functions",
+      "body": "Context: a search of game/ for planPreload and resolveTextureKey returns nothing. The manifest loader (game/src/assets/loaders/manifestLoader.ts) already exports FALLBACK_ASSET_ID and checkAssetRefs. Desired behavior: a pure planPreload dedupes the asset ids a scene references and reports unknown references, and a pure resolveTextureKey returns the fallback asset id for unknown ids. Expected result: both functions are importable from game/src/engine. Why: the asset preload step (SG-5.4) needs them.\n\n## Acceptance criteria\n- Given a scene that references the same asset id more than once, when planPreload runs, then each known id appears once in the plan.\n- Given a scene that references an id that is not in the manifest, when planPreload runs, then that id is reported as unknown.\n- Given an id that is not in the manifest, when resolveTextureKey runs, then it returns the fallback asset id.\n\n\n## Scope\n- In scope: New pure engine module game/src/engine/planPreload.ts\n- Out of scope: BootScene wiring\n- Out of scope: Phaser loading calls\n- Out of scope: Changes to the manifest loader\n- Preserve: Existing engine modules and the manifest loader behavior\n\n\n## Technical constraints\n- No node:fs import in the engine module, because the frontend bundles engine code\n- Reuse the AssetManifest, SceneDef and EffectSpec types\n\n\n## Definition of done\n- Both functions are exported from game/src/engine/planPreload.ts\n- The game typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add planPreload and resolveTextureKey as importable engine functions in game/src/engine.",
+      "description": "Context: a search of game/ for planPreload and resolveTextureKey returns nothing. The manifest loader (game/src/assets/loaders/manifestLoader.ts) already exports FALLBACK_ASSET_ID and checkAssetRefs. Desired behavior: a pure planPreload dedupes the asset ids a scene references and reports unknown references, and a pure resolveTextureKey returns the fallback asset id for unknown ids. Expected result: both functions are importable from game/src/engine. Why: the asset preload step (SG-5.4) needs them.",
+      "acceptance_criteria": [
+        "Given a scene that references the same asset id more than once, when planPreload runs, then each known id appears once in the plan.",
+        "Given a scene that references an id that is not in the manifest, when planPreload runs, then that id is reported as unknown.",
+        "Given an id that is not in the manifest, when resolveTextureKey runs, then it returns the fallback asset id."
+      ],
+      "scope": {
+        "in_scope": [
+          "New pure engine module game/src/engine/planPreload.ts"
+        ],
+        "out_of_scope": [
+          "BootScene wiring",
+          "Phaser loading calls",
+          "Changes to the manifest loader"
+        ],
+        "preserve": [
+          "Existing engine modules and the manifest loader behavior"
+        ]
+      },
+      "technical_constraints": [
+        "No node:fs import in the engine module, because the frontend bundles engine code",
+        "Reuse the AssetManifest, SceneDef and EffectSpec types"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both functions are exported from game/src/engine/planPreload.ts",
+        "The game typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-102.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84ESEAGPPDS6300VDZMTFWQ",
+      "links": [
+        "trace:01M84ESEAGPPDS6300VDZMTFWQ",
+        "artifact:.ai-dlc/intent/INT-102.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-102.md",
+      "artifact_id": "INT-102"
+    },
+    {
+      "id": "01M855JJ7HK3SBGFNJ8TYQRB3C",
+      "kind": "requirement",
+      "title": "REQ · planPreload dedupes scene asset refs and reports unknown ones",
+      "body": "Context: SceneDef objects carry an optional asset, and dust effects carry an asset. Desired behavior: planPreload(scene, manifest) collects those refs, dedupes them in first-seen order, and splits them into ids to load and unknown ids. Expected result: a plan of the form { load, unknown }. Why: the scene must load each asset once and surface bad references.\n\n## Acceptance criteria\n- Given two objects that both use asset A, when planPreload runs, then load contains A exactly once.\n- Given an object or dust effect with an id missing from the manifest, when planPreload runs, then unknown contains that id and load does not.\n- Given a scene with no asset references, when planPreload runs, then load and unknown are both empty.\n\n\n## Scope\n- In scope: planPreload function and PreloadPlan type\n- Out of scope: Loading the files in Phaser\n- Preserve: SceneDef and manifest schema\n\n\n## Technical constraints\n- Pure function that takes the manifest as an argument\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- planPreload is exported and returns a PreloadPlan\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "planPreload returns the unique known asset ids and the unknown refs for a scene.",
+      "description": "Context: SceneDef objects carry an optional asset, and dust effects carry an asset. Desired behavior: planPreload(scene, manifest) collects those refs, dedupes them in first-seen order, and splits them into ids to load and unknown ids. Expected result: a plan of the form { load, unknown }. Why: the scene must load each asset once and surface bad references.",
+      "acceptance_criteria": [
+        "Given two objects that both use asset A, when planPreload runs, then load contains A exactly once.",
+        "Given an object or dust effect with an id missing from the manifest, when planPreload runs, then unknown contains that id and load does not.",
+        "Given a scene with no asset references, when planPreload runs, then load and unknown are both empty."
+      ],
+      "scope": {
+        "in_scope": [
+          "planPreload function and PreloadPlan type"
+        ],
+        "out_of_scope": [
+          "Loading the files in Phaser"
+        ],
+        "preserve": [
+          "SceneDef and manifest schema"
+        ]
+      },
+      "technical_constraints": [
+        "Pure function that takes the manifest as an argument"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "planPreload is exported and returns a PreloadPlan",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-253.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M855JJ7HRFGMTC3X5J10QAVW",
+      "matched_feature_id": "01M84T6537DBT4A27GNM8ZT8DW",
+      "links": [
+        "parent:01M855JJ7HRFGMTC3X5J10QAVW",
+        "trace:01M84T6537DBT4A27GNM8ZT8DW",
+        "artifact:.ai-dlc/requirements/REQ-253.md"
+      ],
+      "depends_on": [
+        "01M855JJ7HRFGMTC3X5J10QAVW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-253.md",
+      "artifact_id": "REQ-253"
+    },
+    {
+      "id": "01M855JJ7H364EBQENRADXCNYW",
+      "kind": "requirement",
+      "title": "REQ · resolveTextureKey returns the fallback asset id for unknown ids",
+      "body": "Context: missing assets must not crash rendering. Desired behavior: resolveTextureKey(id, manifest, fallbackId) returns id when the manifest has it, and returns fallbackId when the id is unknown or undefined. Expected result: a texture key that is always safe to use. Why: the scene needs a safe texture key for objects whose asset is missing.\n\n## Acceptance criteria\n- Given an id present in the manifest, when resolveTextureKey runs, then it returns that id.\n- Given an id absent from the manifest, when resolveTextureKey runs, then it returns the fallback id.\n- Given an undefined id, when resolveTextureKey runs, then it returns the fallback id.\n\n\n## Scope\n- In scope: resolveTextureKey function\n- Out of scope: Generating the fallback texture\n- Preserve: FALLBACK_ASSET_ID value in the manifest loader\n\n\n## Technical constraints\n- The fallback id is passed in as a parameter, so the module does not import the node:fs-based loader\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- resolveTextureKey is exported from game/src/engine/planPreload.ts\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "resolveTextureKey maps an asset id to itself when known and to the fallback id otherwise.",
+      "description": "Context: missing assets must not crash rendering. Desired behavior: resolveTextureKey(id, manifest, fallbackId) returns id when the manifest has it, and returns fallbackId when the id is unknown or undefined. Expected result: a texture key that is always safe to use. Why: the scene needs a safe texture key for objects whose asset is missing.",
+      "acceptance_criteria": [
+        "Given an id present in the manifest, when resolveTextureKey runs, then it returns that id.",
+        "Given an id absent from the manifest, when resolveTextureKey runs, then it returns the fallback id.",
+        "Given an undefined id, when resolveTextureKey runs, then it returns the fallback id."
+      ],
+      "scope": {
+        "in_scope": [
+          "resolveTextureKey function"
+        ],
+        "out_of_scope": [
+          "Generating the fallback texture"
+        ],
+        "preserve": [
+          "FALLBACK_ASSET_ID value in the manifest loader"
+        ]
+      },
+      "technical_constraints": [
+        "The fallback id is passed in as a parameter, so the module does not import the node:fs-based loader"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "resolveTextureKey is exported from game/src/engine/planPreload.ts",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-254.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M855JJ7HRFGMTC3X5J10QAVW",
+      "matched_feature_id": "01M84GAF91Y0QK308WA23FXPDX",
+      "links": [
+        "parent:01M855JJ7HRFGMTC3X5J10QAVW",
+        "trace:01M84GAF91Y0QK308WA23FXPDX",
+        "artifact:.ai-dlc/requirements/REQ-254.md"
+      ],
+      "depends_on": [
+        "01M855JJ7HRFGMTC3X5J10QAVW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-254.md",
+      "artifact_id": "REQ-254"
+    },
+    {
+      "id": "01M855JJ7HRH9RV547519F7A4Q",
+      "kind": "unit",
+      "title": "Act: Add planPreload to the engine",
+      "body": "Create the new engine module with the pure planPreload function that collects object assets and dust effect assets from a SceneDef.\n\n## Acceptance criteria\n- planPreload dedupes asset ids in first-seen order\n- planPreload reports unknown ids separately from load\n\n\n## Scope\n- In scope: game/src/engine/planPreload.ts\n- Out of scope: Tests\n- Out of scope: BootScene wiring\n- Preserve: Other engine files\n\n\n## Technical constraints\n- Import types only from ../state/types and ../assets/manifest\n- New file: `game/src/engine/planPreload.ts`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- planPreload and PreloadPlan are exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create game/src/engine/planPreload.ts with planPreload and the PreloadPlan type.",
+      "description": "Create the new engine module with the pure planPreload function that collects object assets and dust effect assets from a SceneDef.",
+      "acceptance_criteria": [
+        "planPreload dedupes asset ids in first-seen order",
+        "planPreload reports unknown ids separately from load"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/planPreload.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "Other engine files"
+        ]
+      },
+      "technical_constraints": [
+        "Import types only from ../state/types and ../assets/manifest",
+        "New file: `game/src/engine/planPreload.ts`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "planPreload and PreloadPlan are exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-506.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M855JJ7HK3SBGFNJ8TYQRB3C",
+      "matched_feature_id": "01M84WZ47Y1ZHY78M6N57376FG",
+      "links": [
+        "parent:01M855JJ7HK3SBGFNJ8TYQRB3C",
+        "trace:01M84WZ47Y1ZHY78M6N57376FG",
+        "artifact:.ai-dlc/units/UNIT-506.md"
+      ],
+      "depends_on": [
+        "01M855JJ7HK3SBGFNJ8TYQRB3C"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-506.md",
+      "artifact_id": "UNIT-506",
+      "steps": [
+        {
+          "file": "game/src/engine/planPreload.ts",
+          "symbol": "new: planPreload",
+          "lines": "new",
+          "action": "Create the file. Export type PreloadPlan = { load: string[]; unknown: string[] }. Export function planPreload(scene: SceneDef, manifest: AssetManifest): PreloadPlan. Build refs from scene.objects[].asset (skip undefined), then from scene.effects entries whose type is 'dust' (their asset). Dedupe with a Set while keeping insertion order. Put an id in load if some manifest.assets entry has that id, otherwise in unknown.",
+          "code": "import type { SceneDef } from '../state/types';\nimport type { AssetManifest } from '../assets/manifest';\nexport type PreloadPlan = { load: string[]; unknown: string[] };\nexport function planPreload(scene: SceneDef, manifest: AssetManifest): PreloadPlan {\n  const refs = new Set<string>();\n  for (const o of scene.objects) if (o.asset) refs.add(o.asset);\n  for (const e of scene.effects ?? []) if (e.type === 'dust') refs.add(e.asset);\n  const known = new Set(manifest.assets.map((a) => a.id));\n  const load: string[] = [];\n  const unknown: string[] = [];\n  for (const id of refs) (known.has(id) ? load : unknown).push(id);\n  return { load, unknown };\n}",
+          "expected": "npx tsc --noEmit in game/ passes and planPreload is importable"
+        }
+      ]
+    },
+    {
+      "id": "01M855JJ7HP7HG2XQGDF9DCPEP",
+      "kind": "unit",
+      "title": "Act: Add resolveTextureKey to the engine",
+      "body": "Add a pure function that returns the id when the manifest knows it, and the fallback id otherwise.\n\n## Acceptance criteria\n- Known id returns itself\n- Unknown or undefined id returns the fallback id\n\n\n## Scope\n- In scope: game/src/engine/planPreload.ts\n- Out of scope: Tests\n- Out of scope: BootScene wiring\n- Preserve: planPreload behavior\n\n\n## Technical constraints\n- No import of manifestLoader\n- New file: `game/src/engine/planPreload.ts`\n\n\n## Dependencies\n- REQ2\n- ACT1\n\n\n## Definition of done\n- resolveTextureKey is exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add resolveTextureKey to game/src/engine/planPreload.ts.",
+      "description": "Add a pure function that returns the id when the manifest knows it, and the fallback id otherwise.",
+      "acceptance_criteria": [
+        "Known id returns itself",
+        "Unknown or undefined id returns the fallback id"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/planPreload.ts"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "planPreload behavior"
+        ]
+      },
+      "technical_constraints": [
+        "No import of manifestLoader",
+        "New file: `game/src/engine/planPreload.ts`"
+      ],
+      "dependencies": [
+        "REQ2",
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "resolveTextureKey is exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-507.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M855JJ7H364EBQENRADXCNYW",
+      "matched_feature_id": "01M84WZ47Y1ZHY78M6N57376FG",
+      "links": [
+        "parent:01M855JJ7H364EBQENRADXCNYW",
+        "trace:01M84WZ47Y1ZHY78M6N57376FG",
+        "artifact:.ai-dlc/units/UNIT-507.md"
+      ],
+      "depends_on": [
+        "01M855JJ7H364EBQENRADXCNYW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-507.md",
+      "artifact_id": "UNIT-507",
+      "steps": [
+        {
+          "file": "game/src/engine/planPreload.ts",
+          "symbol": "new: resolveTextureKey",
+          "lines": "after the end of planPreload",
+          "action": "Append export function resolveTextureKey(id: string | undefined, manifest: AssetManifest, fallbackId: string): string. Return id when it is defined and some manifest.assets entry has that id; otherwise return fallbackId.",
+          "code": "export function resolveTextureKey(id: string | undefined, manifest: AssetManifest, fallbackId: string): string {\n  return id !== undefined && manifest.assets.some((a) => a.id === id) ? id : fallbackId;\n}",
+          "expected": "npx tsc --noEmit in game/ passes and resolveTextureKey is importable"
+        }
+      ]
+    },
+    {
+      "id": "01M855JJ7H5VQ11BS14SS92PHB",
+      "kind": "unit",
+      "title": "Verify: planPreload unit tests",
+      "body": "Write tests from the REQ1 spec using in-memory manifests and scenes only.\n\n## Acceptance criteria\n- Dedupe, unknown and empty cases are asserted\n- The tests pass\n\n\n## Scope\n- In scope: game/tests/planPreload.test.ts\n- Out of scope: Phaser\n- Out of scope: Filesystem\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Build the fixture scene by spreading validScene from tests/fixtures/valid-world.ts, which matches the SceneDef type in src/state/types.ts\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for planPreload dedupe and unknown reporting.",
+      "description": "Write tests from the REQ1 spec using in-memory manifests and scenes only.",
+      "acceptance_criteria": [
+        "Dedupe, unknown and empty cases are asserted",
+        "The tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/planPreload.test.ts"
+        ],
+        "out_of_scope": [
+          "Phaser",
+          "Filesystem"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Build the fixture scene by spreading validScene from tests/fixtures/valid-world.ts, which matches the SceneDef type in src/state/types.ts"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-508.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M855JJ7HRH9RV547519F7A4Q",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M855JJ7HRH9RV547519F7A4Q",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-508.md"
+      ],
+      "depends_on": [
+        "01M855JJ7HRH9RV547519F7A4Q"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-508.md",
+      "artifact_id": "UNIT-508",
+      "steps": [
+        {
+          "file": "game/tests/planPreload.test.ts",
+          "symbol": "new: describe('planPreload')",
+          "lines": "new",
+          "action": "Create the test file. Define manifest = { version: 1, assets: [{ id: 'A', ... }] } using entries that satisfy AssetEntry from src/assets/manifest/schema.ts. Add test 'dedupes': a scene with two objects that both use asset 'A' gives load ['A'] and unknown []. Add test 'reports unknown': one object with asset 'Z' and one dust effect with asset 'Y' gives unknown ['Z','Y'] and load []. Add test 'empty': validScene gives load [] and unknown [].",
+          "command": "cd game && npx vitest run tests/planPreload.test.ts -t planPreload",
+          "expected": "All planPreload tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M855JJ7HMH81XC6TPQJEVSQX",
+      "kind": "unit",
+      "title": "Verify: resolveTextureKey unit tests",
+      "body": "Write tests from the REQ2 spec using an in-memory manifest only.\n\n## Acceptance criteria\n- Known, unknown and undefined ids are asserted\n- The tests pass\n\n\n## Scope\n- In scope: game/tests/resolveTextureKey.test.ts\n- Out of scope: Phaser\n- Out of scope: Filesystem\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Use the literal fallback id 'fallback:missing' in the tests, to match FALLBACK_ASSET_ID in src/assets/loaders/manifestLoader.ts\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for resolveTextureKey fallback behavior.",
+      "description": "Write tests from the REQ2 spec using an in-memory manifest only.",
+      "acceptance_criteria": [
+        "Known, unknown and undefined ids are asserted",
+        "The tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/resolveTextureKey.test.ts"
+        ],
+        "out_of_scope": [
+          "Phaser",
+          "Filesystem"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Use the literal fallback id 'fallback:missing' in the tests, to match FALLBACK_ASSET_ID in src/assets/loaders/manifestLoader.ts"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-509.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M855JJ7HP7HG2XQGDF9DCPEP",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M855JJ7HP7HG2XQGDF9DCPEP",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-509.md"
+      ],
+      "depends_on": [
+        "01M855JJ7HP7HG2XQGDF9DCPEP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-509.md",
+      "artifact_id": "UNIT-509",
+      "steps": [
+        {
+          "file": "game/tests/resolveTextureKey.test.ts",
+          "symbol": "new: describe('resolveTextureKey')",
+          "lines": "new",
+          "action": "Create the test file with a manifest that holds one asset with id 'A'. Add test 'known' expecting resolveTextureKey('A', manifest, 'fallback:missing') to equal 'A'. Add test 'unknown' expecting resolveTextureKey('nope', manifest, 'fallback:missing') to equal 'fallback:missing'. Add test 'undefined' expecting resolveTextureKey(undefined, manifest, 'fallback:missing') to equal 'fallback:missing'.",
+          "command": "cd game && npx vitest run tests/resolveTextureKey.test.ts",
+          "expected": "All 3 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M855JJ7HT4ZS3ZANEKE2YFYR",
+      "kind": "evidence",
+      "title": "Evidence: planPreload and resolveTextureKey unit tests pass",
+      "body": "Collect the output of the two unit test files as evidence that the intent is met.\n\n## Acceptance criteria\n- Both test files pass\n- A search of game/src for planPreload finds game/src/engine/planPreload.ts\n\n\n## Scope\n- In scope: Test output\n- Out of scope: New code\n- Preserve: All source\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Both commands exit 0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record passing unit test runs for both functions.",
+      "description": "Collect the output of the two unit test files as evidence that the intent is met.",
+      "acceptance_criteria": [
+        "Both test files pass",
+        "A search of game/src for planPreload finds game/src/engine/planPreload.ts"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": [
+          "All source"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Both commands exit 0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-102.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M855JJ7H5VQ11BS14SS92PHB",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M855JJ7H5VQ11BS14SS92PHB",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-102.md"
+      ],
+      "depends_on": [
+        "01M855JJ7H5VQ11BS14SS92PHB",
+        "01M855JJ7HMH81XC6TPQJEVSQX"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-102.md",
+      "artifact_id": "EVD-102"
+    }
+  ],
+  "created_at": "2026-11-23T21:39:41.013522+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

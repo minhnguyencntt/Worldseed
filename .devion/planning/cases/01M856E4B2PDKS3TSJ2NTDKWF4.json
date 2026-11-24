@@ -1,0 +1,666 @@
+{
+  "id": "01M856E4B2PDKS3TSJ2NTDKWF4",
+  "trigger_node_id": "INT-105, UNIT-518 +9",
+  "node_ids": [
+    "INT-105",
+    "UNIT-518",
+    "UNIT-519",
+    "UNIT-520",
+    "UNIT-521",
+    "UNIT-522",
+    "UNIT-523",
+    "REQ-259",
+    "REQ-260",
+    "REQ-261",
+    "EVD-105"
+  ],
+  "intent_id": "INT-105",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-105",
+      "title": "SG-5.4.3 preload.test.ts with mocked dependencies",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-518",
+      "title": "Act: Mark planPreload and resolveTextureKey as pure exports",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NKKDMTZQ574A7TSWQR"
+      ],
+      "depends_on": [
+        "REQ-259"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "from_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "started_at": "2026-11-23T21:54:19.111229+00:00",
+      "ended_at": "2026-11-23T21:54:36.297512+00:00",
+      "run_started_at": "2026-11-23T21:54:19.111229+00:00",
+      "duration_ms": 15457,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 1770,
+      "estimated_cost_usd": 0.007088
+    },
+    {
+      "unit_id": "UNIT-519",
+      "title": "Act: Add @game alias to game/vitest.config.ts",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NKDWZ2DQF40D1M8G8B"
+      ],
+      "depends_on": [
+        "REQ-260"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "from_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "started_at": "2026-11-23T21:54:19.128551+00:00",
+      "ended_at": "2026-11-23T21:54:45.812569+00:00",
+      "run_started_at": "2026-11-23T21:54:19.128551+00:00",
+      "duration_ms": 24879,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 2431,
+      "estimated_cost_usd": 0.009732
+    },
+    {
+      "unit_id": "UNIT-520",
+      "title": "Act: Export FALLBACK_KEY from BootScene",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NKDVTC5CSNR3VM5AQS"
+      ],
+      "depends_on": [
+        "REQ-261"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "from_sha": "4e9205dcdcd96b3afaf958c4dc515e902b0df9de",
+      "started_at": "2026-11-23T21:54:19.137040+00:00",
+      "ended_at": "2026-11-23T21:54:34.490412+00:00",
+      "run_started_at": "2026-11-23T21:54:19.137040+00:00",
+      "duration_ms": 12084,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 1465,
+      "estimated_cost_usd": 0.005866,
+      "partial": true,
+      "failure": "changed tests, which belong to the Verify agent: game/vitest.config.ts"
+    },
+    {
+      "unit_id": "UNIT-521",
+      "title": "Verify: preload.test.ts planner and resolver unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NK8N83G2XXG0JNN2C1"
+      ],
+      "depends_on": [
+        "UNIT-518",
+        "REQ-259"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "3ba449c7c2cac8410b8a30e97c129aa4cf64c54f",
+      "from_sha": "3ba449c7c2cac8410b8a30e97c129aa4cf64c54f",
+      "tests": [
+        {
+          "id": "planPreload.dedupes",
+          "kind": "unit",
+          "name": "planPreload > dedupes: an asset referenced by two objects is planned for load once",
+          "title": "planPreload dedupes an asset referenced by two objects",
+          "scenario": "Given two objects using asset 'A' which is in the manifest, When planning the preload, Then load is ['A'] and unknown is []",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t planPreload --testTimeout 10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "planPreload.unknown",
+          "kind": "unit",
+          "name": "planPreload > reports unknown: assets missing from the manifest are reported, not loaded",
+          "title": "planPreload reports assets missing from the manifest as unknown",
+          "scenario": "Given object asset 'Z' and dust effect asset 'Y' both absent from the manifest, When planning the preload, Then unknown is ['Z','Y'] and load is []",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t planPreload --testTimeout 10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveTextureKey.known",
+          "kind": "unit",
+          "name": "resolveTextureKey > returns the id itself when the manifest contains it",
+          "title": "resolveTextureKey returns the id when it is in the manifest",
+          "scenario": "Given a manifest containing 'A', When resolving 'A' with a fallback, Then 'A' is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t resolveTextureKey --testTimeout 10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveTextureKey.unknown",
+          "kind": "unit",
+          "name": "resolveTextureKey > returns the fallback when the id is not in the manifest",
+          "title": "resolveTextureKey returns the fallback for an id missing from the manifest",
+          "scenario": "Given a manifest without 'nope', When resolving 'nope' with a fallback, Then 'fallback:missing' is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t resolveTextureKey --testTimeout 10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "resolveTextureKey.undefined",
+          "kind": "unit",
+          "name": "resolveTextureKey > returns the fallback when the id is undefined",
+          "title": "resolveTextureKey returns the fallback when no id is given",
+          "scenario": "Given no texture id, When resolving undefined with a fallback, Then 'fallback:missing' is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t resolveTextureKey --testTimeout 10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "started_at": "2026-11-23T21:54:36.313603+00:00",
+      "ended_at": "2026-11-23T21:55:08.542106+00:00",
+      "run_started_at": "2026-11-23T21:54:36.313603+00:00",
+      "duration_ms": 30661,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 5381,
+      "estimated_cost_usd": 0.021535
+    },
+    {
+      "unit_id": "UNIT-522",
+      "title": "Verify: game vitest config alias unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NKM2EZ6VVG1711M8AK"
+      ],
+      "depends_on": [
+        "UNIT-519",
+        "REQ-260"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "3ba449c7c2cac8410b8a30e97c129aa4cf64c54f",
+      "from_sha": "46e7c9879e82031a549cc0239f882fd95a4e9352",
+      "tests": [
+        {
+          "id": "preloadConfig.test.ts::maps the @game alias to the src directory",
+          "kind": "unit",
+          "name": "vitest config > maps the @game alias to the src directory",
+          "title": "maps the @game alias to the src directory",
+          "scenario": "Given the exported vitest config; When the @game alias is read; Then it points at the src directory",
+          "command": "cd game && npx vitest run tests/preloadConfig.test.ts --testTimeout=10000",
+          "file": "tests/preloadConfig.test.ts",
+          "status": "passed",
+          "detail": "config.resolve.alias['@game'] ends with '/src'"
+        },
+        {
+          "id": "preloadConfig.test.ts::includes tests/**/*.test.ts in the test file glob",
+          "kind": "unit",
+          "name": "vitest config > includes tests/**/*.test.ts in the test file glob",
+          "title": "includes tests/**/*.test.ts in the test file glob",
+          "scenario": "Given the exported vitest config; When the test include list is read; Then it contains the tests glob",
+          "command": "cd game && npx vitest run tests/preloadConfig.test.ts --testTimeout=10000",
+          "file": "tests/preloadConfig.test.ts",
+          "status": "passed",
+          "detail": "config.test.include contains 'tests/**/*.test.ts'"
+        }
+      ],
+      "started_at": "2026-11-23T21:54:45.820666+00:00",
+      "ended_at": "2026-11-23T21:55:05.366415+00:00",
+      "run_started_at": "2026-11-23T21:54:45.820666+00:00",
+      "duration_ms": 17804,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 10,
+      "tokens_out": 2478,
+      "estimated_cost_usd": 0.00992
+    },
+    {
+      "unit_id": "UNIT-523",
+      "title": "Verify: preload.test.ts BootScene planner and fallback unit tests",
+      "kind": "unit",
+      "task_ids": [
+        "01M856E3NK9F6B9B0KE7KSX34M"
+      ],
+      "depends_on": [
+        "UNIT-520",
+        "REQ-261"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "431e95ac94642a516dd9000845abf88551c6300d",
+      "from_sha": "3ba449c7c2cac8410b8a30e97c129aa4cf64c54f",
+      "tests": [
+        {
+          "id": "preload.test.ts > BootScene > preload > loads the referenced, manifest-known asset once with its manifest path",
+          "kind": "unit",
+          "name": "BootScene preload loads objects/bed once from its manifest path",
+          "title": "loads the referenced, manifest-known asset once with its manifest path",
+          "scenario": "Given a scene referencing objects/bed (in manifest) and objects/ghost (not); When preload runs; Then objects/bed is loaded once from assets/<manifest path>",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > preload > never loads a manifest asset that the scene does not reference",
+          "kind": "unit",
+          "name": "BootScene preload does not load objects/desk",
+          "title": "never loads a manifest asset that the scene does not reference",
+          "scenario": "Given objects/desk is in the manifest but unreferenced; When preload runs; Then it is not loaded",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > preload > never loads a referenced asset that is missing from the manifest",
+          "kind": "unit",
+          "name": "BootScene preload does not load objects/ghost",
+          "title": "never loads a referenced asset that is missing from the manifest",
+          "scenario": "Given objects/ghost is referenced but missing from manifest; When preload runs; Then it is not loaded",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > preload > warns about the unknown asset reference by id",
+          "kind": "unit",
+          "name": "BootScene preload warns 'unknown asset ref: objects/ghost'",
+          "title": "warns about the unknown asset reference by id",
+          "scenario": "Given objects/ghost is unknown; When preload runs; Then console.warn is called with 'unknown asset ref: objects/ghost'",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > preload > generates the fallback texture under FALLBACK_KEY",
+          "kind": "unit",
+          "name": "BootScene preload generates 8x8 FALLBACK_KEY texture",
+          "title": "generates the fallback texture under FALLBACK_KEY",
+          "scenario": "Given make.graphics is available; When preload runs; Then generateTexture(FALLBACK_KEY, 8, 8) is called",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > resolveKey > returns FALLBACK_KEY for an id that is not in the manifest",
+          "kind": "unit",
+          "name": "BootScene resolveKey('nope') returns FALLBACK_KEY",
+          "title": "returns FALLBACK_KEY for an id that is not in the manifest",
+          "scenario": "Given preload has run; When resolveKey('nope'); Then FALLBACK_KEY is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > resolveKey > returns the id itself for a manifest asset that has not failed",
+          "kind": "unit",
+          "name": "BootScene resolveKey('objects/bed') returns its own id before failure",
+          "title": "returns the id itself for a manifest asset that has not failed",
+          "scenario": "Given preload ran and no loaderror; When resolveKey('objects/bed'); Then 'objects/bed' is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > BootScene > resolveKey > returns FALLBACK_KEY for an asset whose load reported loaderror",
+          "kind": "unit",
+          "name": "BootScene resolveKey returns FALLBACK_KEY after loaderror for objects/bed",
+          "title": "returns FALLBACK_KEY for an asset whose load reported loaderror",
+          "scenario": "Given preload registered the loaderror listener and objects/bed fails; When resolveKey('objects/bed'); Then FALLBACK_KEY is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts -t BootScene --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "preload.test.ts > planPreload > dedupes: an asset referenced by two objects is planned for load once",
+          "kind": "unit",
+          "name": "planPreload dedupes shared asset references",
+          "title": "dedupes: an asset referenced by two objects is planned for load once",
+          "scenario": "Given two objects using asset A; When planPreload; Then load is ['A'] and unknown is []",
+          "command": "cd game && npx vitest run tests/preload.test.ts --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing test, re-run in full file."
+        },
+        {
+          "id": "preload.test.ts > planPreload > reports unknown: assets missing from the manifest are reported, not loaded",
+          "kind": "unit",
+          "name": "planPreload reports unknown assets",
+          "title": "reports unknown: assets missing from the manifest are reported, not loaded",
+          "scenario": "Given objects Z and effect Y not in manifest; When planPreload; Then unknown is ['Z','Y'] and load is []",
+          "command": "cd game && npx vitest run tests/preload.test.ts --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing test, re-run in full file."
+        },
+        {
+          "id": "preload.test.ts > resolveTextureKey > returns the id itself when the manifest contains it",
+          "kind": "unit",
+          "name": "resolveTextureKey returns id when in manifest",
+          "title": "returns the id itself when the manifest contains it",
+          "scenario": "Given manifest contains A; When resolving A; Then A is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing test, re-run in full file."
+        },
+        {
+          "id": "preload.test.ts > resolveTextureKey > returns the fallback when the id is not in the manifest",
+          "kind": "unit",
+          "name": "resolveTextureKey returns fallback for unknown id",
+          "title": "returns the fallback when the id is not in the manifest",
+          "scenario": "Given manifest lacks 'nope'; When resolving; Then fallback is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing test, re-run in full file."
+        },
+        {
+          "id": "preload.test.ts > resolveTextureKey > returns the fallback when the id is undefined",
+          "kind": "unit",
+          "name": "resolveTextureKey returns fallback for undefined id",
+          "title": "returns the fallback when the id is undefined",
+          "scenario": "Given no texture id; When resolving undefined; Then fallback is returned",
+          "command": "cd game && npx vitest run tests/preload.test.ts --testTimeout=10000",
+          "file": "tests/preload.test.ts",
+          "status": "passed",
+          "detail": "Pre-existing test, re-run in full file."
+        }
+      ],
+      "started_at": "2026-11-23T21:55:09.361594+00:00",
+      "ended_at": "2026-11-23T21:56:24.432002+00:00",
+      "run_started_at": "2026-11-23T21:55:09.361594+00:00",
+      "duration_ms": 71969,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 20,
+      "tokens_out": 13353,
+      "estimated_cost_usd": 0.053428
+    },
+    {
+      "unit_id": "REQ-259",
+      "title": "REQ · preload.test.ts proves planPreload dedup, unknown refs and resolveTextureKey fallback",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-105"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-260",
+      "title": "REQ · game vitest config resolves @game so BootScene can be imported from game/tests",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-105"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-261",
+      "title": "REQ · preload.test.ts proves BootScene uses the planner and the fallback texture",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-105"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-105",
+      "title": "Evidence: preload.test.ts unit tests pass",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-518",
+        "UNIT-519",
+        "UNIT-520",
+        "UNIT-521",
+        "UNIT-522",
+        "UNIT-523"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    }
+  ],
+  "edges": [
+    {
+      "src": "UNIT-520",
+      "dst": "EVD-105"
+    },
+    {
+      "src": "REQ-261",
+      "dst": "UNIT-520"
+    },
+    {
+      "src": "INT-105",
+      "dst": "REQ-260"
+    },
+    {
+      "src": "UNIT-521",
+      "dst": "EVD-105"
+    },
+    {
+      "src": "REQ-259",
+      "dst": "UNIT-521"
+    },
+    {
+      "src": "INT-105",
+      "dst": "REQ-261"
+    },
+    {
+      "src": "REQ-260",
+      "dst": "UNIT-519"
+    },
+    {
+      "src": "UNIT-519",
+      "dst": "EVD-105"
+    },
+    {
+      "src": "REQ-260",
+      "dst": "UNIT-522"
+    },
+    {
+      "src": "UNIT-518",
+      "dst": "UNIT-521"
+    },
+    {
+      "src": "UNIT-520",
+      "dst": "UNIT-523"
+    },
+    {
+      "src": "REQ-259",
+      "dst": "UNIT-518"
+    },
+    {
+      "src": "REQ-261",
+      "dst": "UNIT-523"
+    },
+    {
+      "src": "UNIT-522",
+      "dst": "EVD-105"
+    },
+    {
+      "src": "UNIT-519",
+      "dst": "UNIT-522"
+    },
+    {
+      "src": "UNIT-523",
+      "dst": "EVD-105"
+    },
+    {
+      "src": "INT-105",
+      "dst": "REQ-259"
+    },
+    {
+      "src": "UNIT-518",
+      "dst": "EVD-105"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m856e4",
+  "base_sha": "4e9205dcdcd96b3afaf958c4dc515e902b0df9de",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M856E4B2PDKS3TSJ2NTDKWF4:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-23T21:54:16.546030+00:00",
+  "updated_at": "2026-11-23T21:56:27.534766+00:00",
+  "completed_at": "2026-11-23T21:56:24.433520+00:00",
+  "duration_ms": 127887,
+  "usage_stats": {
+    "total_duration_ms": 172865,
+    "total_tokens_in": 72,
+    "total_tokens_out": 26878,
+    "total_estimated_cost_usd": 0.107569
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 11,
+  "unit_allowlist": [
+    "UNIT-518",
+    "UNIT-519",
+    "UNIT-520",
+    "UNIT-521",
+    "UNIT-522",
+    "UNIT-523"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-518",
+        "title": "Act: Mark planPreload and resolveTextureKey as pure exports",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-518 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-519",
+        "title": "Act: Add @game alias to game/vitest.config.ts",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-519 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-520",
+        "title": "Act: Export FALLBACK_KEY from BootScene",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-520 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-521",
+        "title": "Verify: preload.test.ts planner and resolver unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-521 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-522",
+        "title": "Verify: game vitest config alias unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-522 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-523",
+        "title": "Verify: preload.test.ts BootScene planner and fallback unit tests",
+        "evidence_refs": [
+          {
+            "id": "EVD-105",
+            "path": ".ai-dlc/evidence/EVD-105.md",
+            "title": "Evidence: preload.test.ts unit tests pass"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-523 unless acceptance outcomes recorded in EVD-105 (.ai-dlc/evidence/EVD-105.md; \"Evidence: preload.test.ts unit tests pass\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-23T21:54:18.746864+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-518",
+    "UNIT-519",
+    "UNIT-520",
+    "UNIT-521",
+    "UNIT-522",
+    "UNIT-523"
+  ]
+}

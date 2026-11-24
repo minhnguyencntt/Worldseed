@@ -1,0 +1,73 @@
+{
+  "id": "01M85A753WGZKPCA2PVPY97DHR",
+  "intent_id": "01M85A4P9WVRP2R2XRB0AB2KQX",
+  "title": "Act: Add optional interaction to characterSchema",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add characterInteractionSchema and optional interaction field",
+  "description": "Edit game/src/content/schema.ts: define an interaction object schema with optional dialogue string and optional actions array of actionSchema, and add it as an optional field of characterSchema.",
+  "acceptance_criteria": [
+    "characterSchema has an optional interaction field",
+    "CharacterSpec infers interaction with optional dialogue and actions"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/content/schema.ts"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "bedroom.yaml"
+    ],
+    "preserve": [
+      "Existing exports and defaults"
+    ]
+  },
+  "technical_constraints": [
+    "zod",
+    "Code path: `game/src/content/schema.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Field added and project type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-592.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85A5TC4F37NSQM5YHQAPRJ2",
+    "trace:01M85A0HWEA6J9HC1H2NRH48XW",
+    "artifact:.ai-dlc/units/UNIT-592.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85A753W8HRPYNPBME777Q5Z"
+  ],
+  "sim_node_id": "01M85A5TC4MZP8R5WD42YBR59X",
+  "artifact_path": ".ai-dlc/units/UNIT-592.md",
+  "artifact_id": "UNIT-592",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/schema.ts",
+      "symbol": "new: characterInteractionSchema",
+      "lines": "after L45",
+      "action": "Add an exported zod object schema characterInteractionSchema with optional dialogue (z.string()) and optional actions (z.array(actionSchema)), placed before characterSchema.",
+      "code": "export const characterInteractionSchema = z.object({\n  dialogue: z.string().optional(),\n  actions: z.array(actionSchema).optional(),\n});",
+      "expected": "characterInteractionSchema is exported and compiles"
+    },
+    {
+      "file": "game/src/content/schema.ts",
+      "symbol": "characterSchema",
+      "lines": "L47-L54",
+      "action": "Add the field interaction: characterInteractionSchema.optional() after the animations field.",
+      "code": "animations: z.object({...}),\n+ interaction: characterInteractionSchema.optional(),",
+      "expected": "CharacterSpec includes optional interaction"
+    }
+  ],
+  "created_at": "2026-11-23T23:00:22.268640+00:00",
+  "updated_at": "2026-11-23T23:01:27.695932+00:00"
+}

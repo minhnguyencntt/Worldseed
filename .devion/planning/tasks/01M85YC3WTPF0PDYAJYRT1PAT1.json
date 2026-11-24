@@ -1,0 +1,80 @@
+{
+  "id": "01M85YC3WTPF0PDYAJYRT1PAT1",
+  "intent_id": "01M85Y2YJQ8NMS1EVYN7YA78V9",
+  "title": "Act: Frame StoryPanel and add portrait dialogue card with choices list",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add portraitPath helper and rebuild the StoryPanel root, title, dialogue card and choices.",
+  "description": "Implement a pure helper that resolves a portrait URL from the manifest and use it in StoryPanel's dialogue card; frame the root and make it scroll alone.",
+  "acceptance_criteria": [
+    "portraitPath('boy') returns /assets/worlds/the-boys-room/characters/boy-portrait.png",
+    "portraitPath of an unknown speaker returns undefined",
+    "StoryPanel root has sf-frame-panel and overflow-y-auto"
+  ],
+  "scope": {
+    "in_scope": [
+      "new storyPanelData helper",
+      "StoryPanel.tsx root, title, dialogue, choices"
+    ],
+    "out_of_scope": [
+      "inventory",
+      "log"
+    ],
+    "preserve": [
+      "StoryPanelProps",
+      "story-content class"
+    ]
+  },
+  "technical_constraints": [
+    "React and TypeScript stay; fonts and art stay in-repo.",
+    "New file: `game/frontend/src/lib/storyPanelData.ts`",
+    "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Dialogue card shows portrait when manifest has it",
+    "Choices render as a list of buttons",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-844.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85Y5FNQ0M51AQ58GWZGK22P",
+    "trace:01M85MNPTK9MD24VZM2PVPN53G",
+    "artifact:.ai-dlc/units/UNIT-844.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85YC3WTQWF2A26M6DBYH2JR"
+  ],
+  "sim_node_id": "01M85Y5FNQ2BE0KXNEXY1A4VC2",
+  "feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+  "artifact_path": ".ai-dlc/units/UNIT-844.md",
+  "artifact_id": "UNIT-844",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/lib/storyPanelData.ts",
+      "symbol": "new: portraitPath",
+      "lines": "new",
+      "action": "Create module importing manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json'; export portraitPath(speaker: string): string | undefined that finds the asset with id `character:${speaker}-portrait` and returns `/assets/${asset.path}`, else undefined.",
+      "code": "export function portraitPath(speaker: string): string | undefined { const a = manifestJson.assets.find((x) => x.id === `character:${speaker}-portrait`); return a ? `/assets/${a.path}` : undefined; }",
+      "expected": "portraitPath('boy') returns '/assets/worlds/the-boys-room/characters/boy-portrait.png'; unknown speaker returns undefined."
+    },
+    {
+      "file": "game/frontend/src/components/StoryPanel.tsx",
+      "symbol": "StoryPanel",
+      "lines": "L13-L49",
+      "action": "Replace the root className with 'story-content sf-frame-panel h-full overflow-y-auto p-3 text-sm'. Keep h1 for sceneTitle. In the Dialogue section keep sf-frame-parchment, add a flex row with <img src={portraitPath(node.speaker)} width={32} height={32} alt='' style={{imageRendering:'pixelated'}}/> rendered only when portraitPath returns a value, then h2 speaker and p text. Render choices as <ul aria-label='Choices'> with one <li><button className='sf-btn' onClick={() => onChoose(index)}> per choice.",
+      "expected": "Component renders framed panel, portrait card and a Choices list; onChoose(index) still fires."
+    }
+  ],
+  "created_at": "2026-11-24T04:52:36.378862+00:00",
+  "updated_at": "2026-11-24T04:58:57.239878+00:00"
+}

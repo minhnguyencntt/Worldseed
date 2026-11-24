@@ -1,0 +1,719 @@
+{
+  "intent_id": "01M84PV3VYA96WCSHDGMXNRYQA",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84PX17SSGYGD2QKXD7PHS8E",
+      "kind": "intent",
+      "title": "SG-2.2 · Validated object and world content schema",
+      "body": "Context: game/src has a manifest zod schema but object and world content is loaded without a runtime schema, and the-boys-room lives in game/content/worlds. Desired behavior: a zod object/world schema covering position, scale, layer, interaction bounds, actions, visibility conditions and persistent-state fields, with the-boys-room content adapted to it under game/src/content/worlds/the-boys-room. Expected result: loadWorld returns schema-validated content from the new location. Why: future AI cycles add objects through content only.\n\n## Acceptance criteria\n- Given an object with position, scale, layer, interactionBounds, actions, visibleWhen and persistentState, when parsed by the schema, then it succeeds\n- Given invalid object content, when parsed, then a path-named error is returned without throwing\n- Given the-boys-room under src/content/worlds, when loadWorld runs, then it loads and passes validateWorld\n\n\n## Scope\n- In scope: game/src content schema\n- In scope: move and adapt the-boys-room content\n- In scope: loader and frontend glob path\n- In scope: scene view visibility and persistent state\n- Out of scope: Phaser rendering\n- Out of scope: asset art\n- Out of scope: backend\n- Preserve: existing manifest schema\n- Preserve: existing action ids and events\n- Preserve: bookshelf secret door flag behavior\n\n\n## Technical constraints\n- zod already a dependency of game/\n- Content stays YAML\n\n\n## Definition of done\n- All three requirements verified by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Validated object/world content schema with the-boys-room moved to src/content/worlds",
+      "description": "Context: game/src has a manifest zod schema but object and world content is loaded without a runtime schema, and the-boys-room lives in game/content/worlds. Desired behavior: a zod object/world schema covering position, scale, layer, interaction bounds, actions, visibility conditions and persistent-state fields, with the-boys-room content adapted to it under game/src/content/worlds/the-boys-room. Expected result: loadWorld returns schema-validated content from the new location. Why: future AI cycles add objects through content only.",
+      "acceptance_criteria": [
+        "Given an object with position, scale, layer, interactionBounds, actions, visibleWhen and persistentState, when parsed by the schema, then it succeeds",
+        "Given invalid object content, when parsed, then a path-named error is returned without throwing",
+        "Given the-boys-room under src/content/worlds, when loadWorld runs, then it loads and passes validateWorld"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src content schema",
+          "move and adapt the-boys-room content",
+          "loader and frontend glob path",
+          "scene view visibility and persistent state"
+        ],
+        "out_of_scope": [
+          "Phaser rendering",
+          "asset art",
+          "backend"
+        ],
+        "preserve": [
+          "existing manifest schema",
+          "existing action ids and events",
+          "bookshelf secret door flag behavior"
+        ]
+      },
+      "technical_constraints": [
+        "zod already a dependency of game/",
+        "Content stays YAML"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements verified by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-070.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+      "links": [
+        "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+        "artifact:.ai-dlc/intent/INT-070.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-070.md",
+      "artifact_id": "INT-070"
+    },
+    {
+      "id": "01M84PX17SEW7D956886BDEZ6D",
+      "kind": "requirement",
+      "title": "REQ · Zod schemas for objects, scenes and worlds",
+      "body": "Context: no runtime schema exists for object content. Desired behavior: objectSchema covers id, name, description, asset, position, scale, layer, interactionBounds, actions, visibleWhen conditions and persistentState; scene and world schemas wrap it. Expected result: parseWorldContent returns typed data or path-named errors. Why: validated content for AI authoring.\n\n## Acceptance criteria\n- Given a valid object with all fields, when parsed, then ok is true\n- Given an object with layer 'sky', when parsed, then errors include path ending in layer\n- Given an object without position, when parsed, then errors include path ending in position\n- Given scale omitted, when parsed, then scale defaults to 1\n\n\n## Scope\n- In scope: game/src/content/schema.ts\n- Out of scope: loader wiring\n- Preserve: manifest schema untouched\n\n\n## Technical constraints\n- Layers: background, furniture, objects, characters, effects, ui\n- Action ids: inspect, push, search, leave\n\n\n## Definition of done\n- Schema exported and typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Object and world zod schemas with non-throwing parser",
+      "description": "Context: no runtime schema exists for object content. Desired behavior: objectSchema covers id, name, description, asset, position, scale, layer, interactionBounds, actions, visibleWhen conditions and persistentState; scene and world schemas wrap it. Expected result: parseWorldContent returns typed data or path-named errors. Why: validated content for AI authoring.",
+      "acceptance_criteria": [
+        "Given a valid object with all fields, when parsed, then ok is true",
+        "Given an object with layer 'sky', when parsed, then errors include path ending in layer",
+        "Given an object without position, when parsed, then errors include path ending in position",
+        "Given scale omitted, when parsed, then scale defaults to 1"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/content/schema.ts"
+        ],
+        "out_of_scope": [
+          "loader wiring"
+        ],
+        "preserve": [
+          "manifest schema untouched"
+        ]
+      },
+      "technical_constraints": [
+        "Layers: background, furniture, objects, characters, effects, ui",
+        "Action ids: inspect, push, search, leave"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema exported and typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-177.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PX17SSGYGD2QKXD7PHS8E",
+      "matched_feature_id": "01M84PBVRNHC06ZTRP1W0EKRQM",
+      "links": [
+        "parent:01M84PX17SSGYGD2QKXD7PHS8E",
+        "trace:01M84PBVRNHC06ZTRP1W0EKRQM",
+        "artifact:.ai-dlc/requirements/REQ-177.md"
+      ],
+      "depends_on": [
+        "01M84PX17SSGYGD2QKXD7PHS8E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-177.md",
+      "artifact_id": "REQ-177"
+    },
+    {
+      "id": "01M84PX17SQPMT2Q99G69BGSCB",
+      "kind": "requirement",
+      "title": "REQ · the-boys-room content lives in src/content/worlds and is schema-validated on load",
+      "body": "Context: content is at game/content/worlds/the-boys-room, read by loader.ts and by the frontend import.meta.glob. Desired behavior: files move to game/src/content/worlds/the-boys-room with each object given asset, position, scale, layer, interactionBounds; loadWorld validates via schema. Expected result: loadWorld on the new dir succeeds, malformed scenes fail with a path-named error. Why: content separated from engine in the target structure.\n\n## Acceptance criteria\n- Given the new directory, when loadWorld runs, then six bedroom objects load each with a layer and position\n- Given a scene object lacking position, when loadWorld runs, then it throws naming the field path\n- Given the old game/content directory, then it no longer exists\n\n\n## Scope\n- In scope: git mv content to src/content/worlds\n- In scope: scene yaml fields\n- In scope: loadWorld validation\n- In scope: frontend glob path\n- Out of scope: new art\n- Preserve: action ids, texts, flags, dialogue\n\n\n## Technical constraints\n- Object ids unchanged: bed, bookshelf, desk, old-computer, window, door\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Content relocated and validated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Move and adapt the-boys-room content, loader validates",
+      "description": "Context: content is at game/content/worlds/the-boys-room, read by loader.ts and by the frontend import.meta.glob. Desired behavior: files move to game/src/content/worlds/the-boys-room with each object given asset, position, scale, layer, interactionBounds; loadWorld validates via schema. Expected result: loadWorld on the new dir succeeds, malformed scenes fail with a path-named error. Why: content separated from engine in the target structure.",
+      "acceptance_criteria": [
+        "Given the new directory, when loadWorld runs, then six bedroom objects load each with a layer and position",
+        "Given a scene object lacking position, when loadWorld runs, then it throws naming the field path",
+        "Given the old game/content directory, then it no longer exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "git mv content to src/content/worlds",
+          "scene yaml fields",
+          "loadWorld validation",
+          "frontend glob path"
+        ],
+        "out_of_scope": [
+          "new art"
+        ],
+        "preserve": [
+          "action ids, texts, flags, dialogue"
+        ]
+      },
+      "technical_constraints": [
+        "Object ids unchanged: bed, bookshelf, desk, old-computer, window, door"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Content relocated and validated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-178.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PX17SSGYGD2QKXD7PHS8E",
+      "matched_feature_id": "01M84PBVRNWN22DRPEVFTCZB2Z",
+      "links": [
+        "parent:01M84PX17SSGYGD2QKXD7PHS8E",
+        "trace:01M84PBVRNWN22DRPEVFTCZB2Z",
+        "artifact:.ai-dlc/requirements/REQ-178.md"
+      ],
+      "depends_on": [
+        "01M84PX17SSGYGD2QKXD7PHS8E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-178.md",
+      "artifact_id": "REQ-178"
+    },
+    {
+      "id": "01M84PX17SRRV2KVB5S9E9VEFQ",
+      "kind": "requirement",
+      "title": "REQ · Scene view honors visibility conditions and persistent state",
+      "body": "Context: getSceneView only supports openWhenFlag. Desired behavior: objects with visibleWhen conditions that fail are omitted; open derives from persistentState.flag (stored in GameState.flags, which persistence already saves) with openWhenFlag fallback; validateWorld checks the flags referenced. Expected result: the bookshelf stays open after the flag is set. Why: persistent object states.\n\n## Acceptance criteria\n- Given visibleWhen flag false, when getSceneView runs, then the object is absent\n- Given persistentState flag true in state, when getSceneView runs, then open is true\n- Given persistentState references an undeclared flag, when validateWorld runs, then 'unknown flag' error is returned\n\n\n## Scope\n- In scope: src/engine/scene.ts\n- In scope: src/content/loader.ts validateWorld\n- In scope: src/state/types.ts\n- Out of scope: Phaser\n- Preserve: openWhenFlag behavior\n- Preserve: persistence.ts\n\n\n## Technical constraints\n- Reuse evaluateAll\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Behavior covered by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "getSceneView and validateWorld use visibleWhen and persistentState",
+      "description": "Context: getSceneView only supports openWhenFlag. Desired behavior: objects with visibleWhen conditions that fail are omitted; open derives from persistentState.flag (stored in GameState.flags, which persistence already saves) with openWhenFlag fallback; validateWorld checks the flags referenced. Expected result: the bookshelf stays open after the flag is set. Why: persistent object states.",
+      "acceptance_criteria": [
+        "Given visibleWhen flag false, when getSceneView runs, then the object is absent",
+        "Given persistentState flag true in state, when getSceneView runs, then open is true",
+        "Given persistentState references an undeclared flag, when validateWorld runs, then 'unknown flag' error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/engine/scene.ts",
+          "src/content/loader.ts validateWorld",
+          "src/state/types.ts"
+        ],
+        "out_of_scope": [
+          "Phaser"
+        ],
+        "preserve": [
+          "openWhenFlag behavior",
+          "persistence.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse evaluateAll"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Behavior covered by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-179.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84PX17SSGYGD2QKXD7PHS8E",
+      "matched_feature_id": "01M84MX32EE5F4KTCDSKMVYBD9",
+      "links": [
+        "parent:01M84PX17SSGYGD2QKXD7PHS8E",
+        "trace:01M84MX32EE5F4KTCDSKMVYBD9",
+        "artifact:.ai-dlc/requirements/REQ-179.md"
+      ],
+      "depends_on": [
+        "01M84PX17SSGYGD2QKXD7PHS8E"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-179.md",
+      "artifact_id": "REQ-179"
+    },
+    {
+      "id": "01M84PX17S4EXWBJ1EJY1S45K6",
+      "kind": "unit",
+      "title": "Act: Add object, scene and world zod schemas",
+      "body": "Create zod schemas and a non-throwing parseWorldContent mirroring manifest/index.ts parseManifest.\n\n## Acceptance criteria\n- objectSchema validates all required fields\n- parseWorldContent returns path-named errors\n\n\n## Scope\n- In scope: new schema file\n- Out of scope: tests\n- Preserve: manifest schema\n\n\n## Technical constraints\n- Use zod\n- New file: `game/src/content/schema.ts`\n\n\n## Definition of done\n- Schemas exported with inferred types\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create src/content/schema.ts",
+      "description": "Create zod schemas and a non-throwing parseWorldContent mirroring manifest/index.ts parseManifest.",
+      "acceptance_criteria": [
+        "objectSchema validates all required fields",
+        "parseWorldContent returns path-named errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "new schema file"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "manifest schema"
+        ]
+      },
+      "technical_constraints": [
+        "Use zod",
+        "New file: `game/src/content/schema.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schemas exported with inferred types",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-354.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84PX17SEW7D956886BDEZ6D",
+      "matched_feature_id": "01M8457KMNBJJM1XTK538W1B9M",
+      "links": [
+        "parent:01M84PX17SEW7D956886BDEZ6D",
+        "trace:01M8457KMNBJJM1XTK538W1B9M",
+        "artifact:.ai-dlc/units/UNIT-354.md"
+      ],
+      "depends_on": [
+        "01M84PX17SEW7D956886BDEZ6D"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-354.md",
+      "artifact_id": "UNIT-354",
+      "steps": [
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "new: objectSchema, conditionSchema, actionSchema",
+          "lines": "new",
+          "action": "Define conditionSchema as union of {flag:string, equals:boolean optional} and {hasItem:string}; actionSchema with id enum inspect|push|search|leave, label string, conditions optional array, events array of z.record(z.string(), z.unknown()) objects with a string type field; objectSchema with id, name, description, asset string, position {x,y numbers}, scale number positive default 1, layer enum background|furniture|objects|characters|effects|ui, interactionBounds boundsSchema imported from ../assets/manifest/schema optional, actions array, visibleWhen conditionSchema array optional, persistentState {flag string, initial boolean optional} optional, openWhenFlag string optional.",
+          "code": "export const layerSchema = z.enum(['background','furniture','objects','characters','effects','ui']);",
+          "expected": "Module compiles with tsc --noEmit"
+        },
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "new: sceneSchema, worldSchema, parseWorldContent",
+          "lines": "new",
+          "action": "Define sceneSchema (id, title, openingDialogue optional, dialogue array of records, objects array of objectSchema) and worldSchema (id, title, startScene, scenes string array, characters array of {id,name}, flags string array). Export parseWorldContent(kind: 'scene'|'world', input: unknown) returning {ok:true,data}|{ok:false,errors:{path,message}[]} via safeParse, joining issue.path with '.'.",
+          "code": "export function parseWorldContent(kind, input) { const r = (kind==='scene'?sceneSchema:worldSchema).safeParse(input); ... }",
+          "expected": "Invalid input returns errors, never throws"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17S6TWW9S23DXETZDHE",
+      "kind": "unit",
+      "title": "Act: Move the-boys-room content to src/content/worlds and validate in loadWorld",
+      "body": "git mv content, add new fields to bedroom objects, validate scenes via schema in loadWorld, update frontend glob.\n\n## Acceptance criteria\n- Content loads from new path\n- Malformed scene throws with path\n\n\n## Scope\n- In scope: content move\n- In scope: loader\n- In scope: frontend glob\n- In scope: ObjectDef type\n- Out of scope: tests\n- Preserve: action text and flags\n\n\n## Technical constraints\n- Keep openWhenFlag replaced by persistentState for bookshelf\n- New file: `game/src/content/worlds/the-boys-room/world.yaml`\n- New file: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`\n- Code path: `game/src/content/loader.ts`\n- Code path: `game/src/state/types.ts`\n- Code path: `game/frontend/src/runtime/content.ts`\n\n\n## Definition of done\n- Old game/content removed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Relocate content, add object fields, validate",
+      "description": "git mv content, add new fields to bedroom objects, validate scenes via schema in loadWorld, update frontend glob.",
+      "acceptance_criteria": [
+        "Content loads from new path",
+        "Malformed scene throws with path"
+      ],
+      "scope": {
+        "in_scope": [
+          "content move",
+          "loader",
+          "frontend glob",
+          "ObjectDef type"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "action text and flags"
+        ]
+      },
+      "technical_constraints": [
+        "Keep openWhenFlag replaced by persistentState for bookshelf",
+        "New file: `game/src/content/worlds/the-boys-room/world.yaml`",
+        "New file: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`",
+        "Code path: `game/src/content/loader.ts`",
+        "Code path: `game/src/state/types.ts`",
+        "Code path: `game/frontend/src/runtime/content.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Old game/content removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-355.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84PX17SQPMT2Q99G69BGSCB",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PX17SQPMT2Q99G69BGSCB",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-355.md"
+      ],
+      "depends_on": [
+        "01M84PX17SQPMT2Q99G69BGSCB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-355.md",
+      "artifact_id": "UNIT-355",
+      "steps": [
+        {
+          "file": "game/src/content/worlds/the-boys-room/world.yaml",
+          "symbol": "new: world.yaml (git mv)",
+          "lines": "new",
+          "action": "Run git mv game/content/worlds/the-boys-room game/src/content/worlds/the-boys-room (creating parent dirs) so world.yaml and scenes/bedroom.yaml move unchanged.",
+          "command": "git mv",
+          "expected": "game/content directory no longer exists"
+        },
+        {
+          "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+          "symbol": "objects bed, bookshelf, desk, old-computer, window, door",
+          "lines": "L12-L113",
+          "action": "Add to each object: asset (objects/<id>), position {x,y}, scale 1, layer (furniture for bed, bookshelf, desk; objects for old-computer, window, door), interactionBounds {x:0,y:0,width,height}. On bookshelf replace openWhenFlag with persistentState: {flag: secret_door_open}; on old-computer add persistentState {flag: computer_on}.",
+          "code": "persistentState:\n  flag: secret_door_open",
+          "expected": "YAML parses with schema"
+        },
+        {
+          "file": "game/src/state/types.ts",
+          "symbol": "ObjectDef",
+          "lines": "L22-L28",
+          "action": "Add optional fields asset?: string, position?: {x:number;y:number}, scale?: number, layer?: string, interactionBounds?: {x:number;y:number;width:number;height:number}, visibleWhen?: Condition[], persistentState?: {flag:string; initial?:boolean}.",
+          "code": "persistentState?: { flag: string; initial?: boolean };",
+          "expected": "tsc passes"
+        },
+        {
+          "file": "game/src/content/loader.ts",
+          "symbol": "loadWorld",
+          "lines": "L47-L85",
+          "action": "After reading each scene yaml, call parseWorldContent('scene', sceneRaw); when ok is false throw new Error(`${relPath} invalid: ${errors.map(e=>e.path+': '+e.message).join('; ')}`); push the parsed data as SceneDef.",
+          "code": "const parsed = parseWorldContent('scene', sceneRaw);",
+          "expected": "Bad scene throws path-named error"
+        },
+        {
+          "file": "game/frontend/src/runtime/content.ts",
+          "symbol": "worldFiles glob",
+          "lines": "L5-L9",
+          "action": "Change glob pattern from '../../../content/worlds/the-boys-room/**/*.yaml' to '../../../src/content/worlds/the-boys-room/**/*.yaml'.",
+          "code": "import.meta.glob('../../../src/content/worlds/the-boys-room/**/*.yaml', ...)",
+          "expected": "Frontend still bundles the world"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17SCGQ4F78HKF9NBCVW",
+      "kind": "unit",
+      "title": "Act: Apply visibleWhen and persistentState in scene view and validator",
+      "body": "Filter by visibleWhen, derive open from persistentState, validate referenced flags.\n\n## Acceptance criteria\n- Hidden objects omitted\n- open follows persistent flag\n\n\n## Scope\n- In scope: scene.ts\n- In scope: loader.ts validateWorld\n- Out of scope: tests\n- Preserve: openWhenFlag fallback\n\n\n## Technical constraints\n- Reuse evaluateAll\n- Code path: `game/src/engine/scene.ts`\n- Code path: `game/src/content/loader.ts`\n\n\n## Definition of done\n- Implemented\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update getSceneView and validateWorld",
+      "description": "Filter by visibleWhen, derive open from persistentState, validate referenced flags.",
+      "acceptance_criteria": [
+        "Hidden objects omitted",
+        "open follows persistent flag"
+      ],
+      "scope": {
+        "in_scope": [
+          "scene.ts",
+          "loader.ts validateWorld"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "openWhenFlag fallback"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse evaluateAll",
+        "Code path: `game/src/engine/scene.ts`",
+        "Code path: `game/src/content/loader.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Implemented",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-356.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84PX17SRRV2KVB5S9E9VEFQ",
+      "matched_feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+      "links": [
+        "parent:01M84PX17SRRV2KVB5S9E9VEFQ",
+        "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+        "artifact:.ai-dlc/units/UNIT-356.md"
+      ],
+      "depends_on": [
+        "01M84PX17SRRV2KVB5S9E9VEFQ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-356.md",
+      "artifact_id": "UNIT-356",
+      "steps": [
+        {
+          "file": "game/src/engine/scene.ts",
+          "symbol": "getSceneView",
+          "lines": "L12-L19",
+          "action": "Insert .filter((obj) => evaluateAll(state, obj.visibleWhen)) before .map; compute open as: persistentState ? (state.flags[persistentState.flag] ?? persistentState.initial ?? false) : openWhenFlag===undefined ? true : state.flags[openWhenFlag]===true.",
+          "code": "const flag = obj.persistentState; open = flag ? (state.flags[flag.flag] ?? flag.initial ?? false) : ...",
+          "expected": "View reflects visibility and persistent flag"
+        },
+        {
+          "file": "game/src/content/loader.ts",
+          "symbol": "validateWorld object loop",
+          "lines": "L131-L146",
+          "action": "Inside for (const obj of scene.objects), add a check pushing `unknown flag: ${obj.persistentState.flag}` when persistentState is set and flags lacks it, and for each cond in obj.visibleWhen ?? [] push unknown flag for undeclared 'flag' conditions.",
+          "code": "if (obj.persistentState && !flags.has(obj.persistentState.flag)) errors.push(...)",
+          "expected": "Undeclared flags reported"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17SPKCEJJD2RF3ZPZFX",
+      "kind": "unit",
+      "title": "Verify: Object and world schema unit tests",
+      "body": "Prove R1 acceptance criteria with unit tests.\n\n## Acceptance criteria\n- Valid object passes\n- Invalid layer and missing position produce path-named errors\n- scale defaults to 1\n\n\n## Scope\n- In scope: tests/contentSchema.test.ts\n- Out of scope: app code\n\n\n## Technical constraints\n- In-memory inputs only\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for content schema",
+      "description": "Prove R1 acceptance criteria with unit tests.",
+      "acceptance_criteria": [
+        "Valid object passes",
+        "Invalid layer and missing position produce path-named errors",
+        "scale defaults to 1"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contentSchema.test.ts"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "In-memory inputs only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-357.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PX17S4EXWBJ1EJY1S45K6",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PX17S4EXWBJ1EJY1S45K6",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-357.md"
+      ],
+      "depends_on": [
+        "01M84PX17S4EXWBJ1EJY1S45K6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-357.md",
+      "artifact_id": "UNIT-357",
+      "steps": [
+        {
+          "file": "game/tests/contentSchema.test.ts",
+          "symbol": "new: describe('objectSchema')",
+          "lines": "new",
+          "action": "Add tests: (1) full valid object with layer 'furniture', position {x:620,y:350}, scale 2, interactionBounds {x:0,y:0,width:32,height:64}, visibleWhen [{flag:'a'}], persistentState {flag:'a'} -> parseWorldContent('scene', scene wrapping it).ok true; (2) layer 'sky' -> ok false and an error path ending in 'layer'; (3) no position -> error path ending in 'position'; (4) scale omitted -> data.objects[0].scale === 1.",
+          "command": "cd game && npx vitest run tests/contentSchema.test.ts",
+          "expected": "All four tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17SEKESJK9SXM5R1N66",
+      "kind": "unit",
+      "title": "Verify: Relocated the-boys-room content and loader validation unit tests",
+      "body": "Prove R2 with unit tests; update existing path assertions and temp-dir fixtures to include the new required fields.\n\n## Acceptance criteria\n- New path loads six objects with layer and position\n- Missing position throws\n- Old content dir absent\n\n\n## Scope\n- In scope: tests/content.test.ts\n- In scope: tests/layout.test.ts\n- In scope: tests/loader.test.ts\n- Out of scope: app code\n\n\n## Technical constraints\n- Temp dir only for loader fixtures\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update content/layout/loader tests",
+      "description": "Prove R2 with unit tests; update existing path assertions and temp-dir fixtures to include the new required fields.",
+      "acceptance_criteria": [
+        "New path loads six objects with layer and position",
+        "Missing position throws",
+        "Old content dir absent"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/content.test.ts",
+          "tests/layout.test.ts",
+          "tests/loader.test.ts"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Temp dir only for loader fixtures"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-358.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PX17S6TWW9S23DXETZDHE",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PX17S6TWW9S23DXETZDHE",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-358.md"
+      ],
+      "depends_on": [
+        "01M84PX17S6TWW9S23DXETZDHE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-358.md",
+      "artifact_id": "UNIT-358",
+      "steps": [
+        {
+          "file": "game/tests/content.test.ts",
+          "symbol": "WORLD_DIR and bedroom tests",
+          "lines": "L8-L50",
+          "action": "Change WORLD_DIR to resolve(__dirname, '../src/content/worlds/the-boys-room'); add test asserting loadWorld(WORLD_DIR).scenes[0].objects has length 6 and every object has a layer and position.",
+          "command": "cd game && npx vitest run tests/content.test.ts",
+          "expected": "Tests pass"
+        },
+        {
+          "file": "game/tests/layout.test.ts",
+          "symbol": "layout and load tests",
+          "lines": "L10-L25",
+          "action": "Change paths to src/content/worlds/the-boys-room/world.yaml and add expect(existsSync(join(gameDir,'content'))).toBe(false).",
+          "command": "cd game && npx vitest run tests/layout.test.ts",
+          "expected": "Tests pass"
+        },
+        {
+          "file": "game/tests/loader.test.ts",
+          "symbol": "temp-dir scene fixtures; new test 'rejects object without position'",
+          "lines": "L7-L60",
+          "action": "Add position {x:0,y:0}, asset and layer 'objects' to any object in temp scene fixtures; add a test writing a scene whose object lacks position and asserting loadWorld throws a message containing 'position'.",
+          "command": "cd game && npx vitest run tests/loader.test.ts",
+          "expected": "Tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17SG6MEXG9HCA14DXC5",
+      "kind": "unit",
+      "title": "Verify: Scene view visibility, persistence and flag validation unit tests",
+      "body": "Prove R3 with in-memory states.\n\n## Acceptance criteria\n- visibleWhen hides object\n- persistentState drives open\n- validateWorld flags unknown flag\n\n\n## Scope\n- In scope: tests/sceneView.test.ts\n- Out of scope: app code\n\n\n## Technical constraints\n- In-memory fixtures\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for A3",
+      "description": "Prove R3 with in-memory states.",
+      "acceptance_criteria": [
+        "visibleWhen hides object",
+        "persistentState drives open",
+        "validateWorld flags unknown flag"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/sceneView.test.ts"
+        ],
+        "out_of_scope": [
+          "app code"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "In-memory fixtures"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-359.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PX17SCGQ4F78HKF9NBCVW",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84PX17SCGQ4F78HKF9NBCVW",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-359.md"
+      ],
+      "depends_on": [
+        "01M84PX17SCGQ4F78HKF9NBCVW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-359.md",
+      "artifact_id": "UNIT-359",
+      "steps": [
+        {
+          "file": "game/tests/sceneView.test.ts",
+          "symbol": "new: describe('getSceneView and validateWorld')",
+          "lines": "new",
+          "action": "Using validScene/validWorld from tests/fixtures/valid-world.ts and a game state with flags {}: (1) object with visibleWhen [{flag:'a'}] absent from getSceneView, present once flags.a is true; (2) object with persistentState {flag:'a'} has open false then true after flag set; (3) persistentState {flag:'zzz'} makes validateWorld return an array containing 'unknown flag: zzz'.",
+          "command": "cd game && npx vitest run tests/sceneView.test.ts",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84PX17SB3BKHHAWE2ZY5TE9",
+      "kind": "evidence",
+      "title": "Evidence: Content schema, relocation and scene view unit tests pass",
+      "body": "Collect passing results of the schema, relocated content and scene view unit tests.\n\n## Acceptance criteria\n- All three verify test files pass\n- tsc --noEmit passes\n\n\n## Scope\n- In scope: test results\n\n\n## Definition of done\n- Results recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence for SG-2.2",
+      "description": "Collect passing results of the schema, relocated content and scene view unit tests.",
+      "acceptance_criteria": [
+        "All three verify test files pass",
+        "tsc --noEmit passes"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Results recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-070.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84PX17SPKCEJJD2RF3ZPZFX",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84PX17SPKCEJJD2RF3ZPZFX",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-070.md"
+      ],
+      "depends_on": [
+        "01M84PX17SPKCEJJD2RF3ZPZFX",
+        "01M84PX17SEKESJK9SXM5R1N66",
+        "01M84PX17SG6MEXG9HCA14DXC5"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-070.md",
+      "artifact_id": "EVD-070"
+    }
+  ],
+  "created_at": "2026-11-23T17:23:05.447295+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

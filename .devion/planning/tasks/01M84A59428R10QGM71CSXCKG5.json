@@ -1,0 +1,74 @@
+{
+  "id": "01M84A59428R10QGM71CSXCKG5",
+  "intent_id": "01M84A1ZJRF3WV8S0RQ97FT5Q6",
+  "title": "Act: Add createRound client and Create round button sending the duration",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Post duration in hours to the admin create endpoint",
+  "description": "Add createRound and a button in AdminApp using durationHours.",
+  "acceptance_criteria": [
+    "createRound POSTs world_id and duration to /api/v1/admin/rounds.",
+    "Button triggers it, reloads current round, 401 returns to gate."
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts",
+      "AdminApp.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Open/Close buttons"
+    ]
+  },
+  "technical_constraints": [
+    "Body fields per backend createRoundRequest",
+    "Code path: `game/frontend/src/api/client.ts`",
+    "Code path: `game/frontend/src/components/AdminApp.tsx`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-156.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84A50YE7401CTBWW9YVTTN9",
+    "trace:01M848ZFYJ5E173P68XH1YEFX4",
+    "artifact:.ai-dlc/units/UNIT-156.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84A5942BBF8721QXV46ZAYM"
+  ],
+  "sim_node_id": "01M84A50YE6K2RH3Y412HYKEXX",
+  "feature_id": "01M848ZFYJ5E173P68XH1YEFX4",
+  "artifact_path": ".ai-dlc/units/UNIT-156.md",
+  "artifact_id": "UNIT-156",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "new: createRound",
+      "lines": "after L99",
+      "action": "Add exported createRound(token, durationHours) that calls adminRequest<Round>(token, '/api/v1/admin/rounds', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({world_id: WORLD_ID, duration: `${durationHours}h`})}), placed after closeRound.",
+      "code": "export function createRound(token: string, durationHours: number): Promise<Round> {\n  return adminRequest<Round>(token, '/api/v1/admin/rounds', {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ world_id: WORLD_ID, duration: `${durationHours}h` }),\n  });\n}",
+      "expected": "Calling it POSTs the expected JSON with the Bearer header."
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp",
+      "lines": "after L94-L102, L172-L180",
+      "action": "Import createRound; add async function handleCreateRound() that try { const created = await createRound(token, durationHours); setRoundId(created.id); setReloads(n => n + 1); } catch (err) { handleError(err); }; add <button type=\"button\" onClick={handleCreateRound}>Create round</button> before the Open round button.",
+      "expected": "Clicking Create round sends the POST with the entered hours."
+    }
+  ],
+  "created_at": "2026-11-23T13:40:06.402653+00:00",
+  "updated_at": "2026-11-23T13:42:04.458098+00:00"
+}

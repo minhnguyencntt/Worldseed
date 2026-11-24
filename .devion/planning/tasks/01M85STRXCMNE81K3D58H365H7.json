@@ -1,0 +1,90 @@
+{
+  "id": "01M85STRXCMNE81K3D58H365H7",
+  "intent_id": "01M85SHYJTCGKNGQ56NSZS65QJ",
+  "title": "Act: Author furniture grids and the ROOM_SOURCES list",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create src/art/roomFurniture.ts and src/art/roomSources.ts",
+  "description": "Draw nine furniture pieces with helper outlines (indigo step 0 outline) and ramp shading, then combine with BACKGROUND_SOURCES.",
+  "acceptance_criteria": [
+    "FURNITURE_SOURCES has nine entries at declared sizes",
+    "ROOM_SOURCES has 13 entries"
+  ],
+  "scope": {
+    "in_scope": [
+      "Two new files"
+    ],
+    "out_of_scope": [
+      "Changing ART_SOURCES"
+    ],
+    "preserve": [
+      "sources.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Shared palette of at most 48 colours referenced via rampIndex",
+    "Native 480x270",
+    "New file: `game/frontend/src/art/roomFurniture.ts`",
+    "New file: `game/frontend/src/art/roomSources.ts`"
+  ],
+  "dependencies": [
+    "R3",
+    "A2"
+  ],
+  "definition_of_done": [
+    "Files compile",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-794.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85SMTB5JY9T4TTAZ4MZ2HEX",
+    "trace:01M84PBVRNJ5FWD9TM6A0WRHDG",
+    "artifact:.ai-dlc/units/UNIT-794.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85STRXCTD1M8DWY2C9VEXJW"
+  ],
+  "sim_node_id": "01M85SMTB5DK6E67P79N38R5HA",
+  "feature_id": "01M84PBVRNJ5FWD9TM6A0WRHDG",
+  "artifact_path": ".ai-dlc/units/UNIT-794.md",
+  "artifact_id": "UNIT-794",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/art/roomFurniture.ts",
+      "symbol": "new: deskGrid, computerGrid, lampGrid, plantGrid",
+      "lines": "new",
+      "action": "Import helpers, ROOM_ART_SIZES, ArtSource. Each function starts from createGrid(w,h,0) at its declared size, with index 0 as the empty background. deskGrid: shadeRect top slab rows 0-5 wood 5 to 4, front body wood 3 to 2, legs fillRect wood 1 at both ends, outlineRect with indigo 0. computerGrid: monitor body parchment 2 with outlineRect indigo 0, screen fillRect moon 3 with a moon 5 highlight row, base brass 1. lampGrid: shade fillRect lamp 4 on top 10 rows with lamp 5 highlight column, stem brass 2, base wood 2, outlined indigo 0. plantGrid: pot wood 3 outlined, leaves fillRect using hoodie-free colours: use moon 2 and moon 3 blocks as foliage with dither between them.",
+      "expected": "Four grids returned at 32x80, 34x30, 30x16 and 32x20 (rows x cols)"
+    },
+    {
+      "file": "game/frontend/src/art/roomFurniture.ts",
+      "symbol": "new: posterGrid, bookshelfGrid",
+      "lines": "after plantGrid",
+      "action": "posterGrid: parchment 4 paper with outlineRect wood 1, a plum 3 figure block and brass 4 title bar. bookshelfGrid 48x96: shadeRect body wood 3 to 2, outlineRect indigo 0, shelf boards at rows 30, 60 and 90 fillRect wood 5 top highlight and wood 1 underside, books as 3-wide vertical rects alternating plum 3, hoodie 3 and lamp 3 with heights 12-16 on the top two shelves, and a globe on the bottom shelf: 12x12 fillRect moon 3 circle approximated by cutting corners, brass 3 stand.",
+      "expected": "posterGrid is 36x28 and bookshelfGrid is 96x48 containing plum, hoodie, lamp, moon and wood indices"
+    },
+    {
+      "file": "game/frontend/src/art/roomFurniture.ts",
+      "symbol": "new: bedGrid, doorGrid, rugGrid, FURNITURE_SOURCES",
+      "lines": "after bookshelfGrid",
+      "action": "bedGrid 104x40: wood 3 frame outlined indigo 0, mattress parchment 4, blanket from row 14 with alternating 6px diamond-like blocks of hoodie 3 and hoodie 2 (checker via dither) with lamp 4 trim row, pillow parchment 5. doorGrid 40x80: wood 3 panel shaded, two inset panel outlines wood 1, brass 4 knob 3x3, outline indigo 0, and bottom 2 rows fillRect lamp 5 for light under the door. rugGrid 80x24: plum 3 field, brass 3 border via outlineRect twice, dither plum 4/plum 3 centre. Export FURNITURE_SOURCES with ids room/desk, room/computer, room/lamp, room/plant, room/poster, room/bookshelf, room/bed, room/door, room/rug and paths worlds/the-boys-room/room/<name>.png, one frame each.",
+      "expected": "FURNITURE_SOURCES has 9 entries at declared sizes"
+    },
+    {
+      "file": "game/frontend/src/art/roomSources.ts",
+      "symbol": "new: ROOM_SOURCES",
+      "lines": "new",
+      "action": "Import BACKGROUND_SOURCES and FURNITURE_SOURCES and export ROOM_SOURCES: ArtSource[] = [...BACKGROUND_SOURCES, ...FURNITURE_SOURCES].",
+      "expected": "ROOM_SOURCES has 13 entries"
+    }
+  ],
+  "created_at": "2026-11-24T03:33:13.772213+00:00",
+  "updated_at": "2026-11-24T03:38:50.013668+00:00"
+}

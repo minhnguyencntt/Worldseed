@@ -1,0 +1,72 @@
+{
+  "id": "01M84J899JMXMQF1W1JP3J9QFJ",
+  "intent_id": "01M84J5PQSYC7VX0GJTBH8SKDA",
+  "title": "Verify: AdminApp makes no execution calls unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Tests prove AdminApp loads without the executions endpoint and keeps stepper and 401 behavior",
+  "description": "Update tests/adminStepper.test.tsx and tests/adminWorld.test.tsx so they no longer stub the executions endpoint, and assert it is never requested.",
+  "acceptance_criteria": [
+    "Fetch is never called with /api/v1/admin/executions",
+    "CLOSED round shows CLOSED as the single current step",
+    "401 from the round endpoint shows Invalid token"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/adminStepper.test.tsx",
+      "tests/adminWorld.test.tsx"
+    ],
+    "out_of_scope": [
+      "src"
+    ],
+    "preserve": [
+      "Other admin tests"
+    ]
+  },
+  "technical_constraints": [
+    "fetch is stubbed with vi.stubGlobal; fixtures from tests/fixtures/api.ts (roundFixture, adminContributionFixture) mirror the backend round handler JSON"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Updated tests green",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-252.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M84J7NVY0HRK0N5AE6YDM4K3",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-252.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84J899JXXQFZK41XWQKZZ7Y"
+  ],
+  "sim_node_id": "01M84J7NVYFJPC99ZN6910X4H1",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-252.md",
+  "artifact_id": "UNIT-252",
+  "steps": [
+    {
+      "file": "game/frontend/tests/adminStepper.test.tsx",
+      "symbol": "stubFetch / executions tests",
+      "lines": "L1-L110",
+      "action": "Remove executionFixture import, EXECUTIONS_URL branch and the executions option; delete the RUNNING-execution, 404 and 401-executions tests; add test 'Given a CLOSED round, then CLOSED is the current step and no executions URL was fetched' that asserts fetchMock.mock.calls has no URL equal to '/api/v1/admin/executions' and the single li[aria-current=step] text is CLOSED",
+      "command": "cd game/frontend && npx vitest run tests/adminStepper.test.tsx",
+      "expected": "Tests assert round-only stepper"
+    },
+    {
+      "file": "game/frontend/tests/adminWorld.test.tsx",
+      "symbol": "ADMIN_EXECUTIONS_URL stub",
+      "lines": "L11, L32",
+      "action": "Delete the ADMIN_EXECUTIONS_URL constant and its json([]) branch in the fetch stub",
+      "command": "cd game/frontend && npx vitest run tests/adminWorld.test.tsx",
+      "expected": "World title tests still pass"
+    }
+  ],
+  "created_at": "2026-11-23T16:01:33.490699+00:00",
+  "updated_at": "2026-11-23T16:03:44.798285+00:00"
+}

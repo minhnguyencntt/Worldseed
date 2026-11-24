@@ -1,0 +1,57 @@
+{
+  "id": "01M855V5TKAMD07EPA515SF5Q2",
+  "intent_id": "01M855QJJNCNNP0Q6JYBYQ71MB",
+  "title": "SG-5.4.2 BootScene preloads only planned assets with fallback texture",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "BootScene preloads planPreload assets, resolves keys via resolveTextureKey and falls back for missing assets",
+  "description": "Context: planPreload and resolveTextureKey exist in game/src/engine/planPreload.ts but BootScene (game/frontend/src/phaser/BootScene.ts) has no preload and effectContext.ts passes spec.asset straight to Phaser. Desired behavior: BootScene loads only the planned assets, resolves every texture key through resolveTextureKey and uses a fallback texture for missing or invalid assets. Why: avoid loading unused assets and avoid crashes or green-box textures.",
+  "acceptance_criteria": [
+    "Given the bedroom scene, when BootScene.preload runs, then only ids in planPreload(scene, manifest).load are queued with the loader",
+    "Given an id not in the manifest or a file that fails to load, when a texture key is resolved, then the fallback texture key is returned and used",
+    "Given the dust effect asset, when the effect is created, then its texture key comes from resolveTextureKey"
+  ],
+  "scope": {
+    "in_scope": [
+      "BootScene.preload",
+      "bundled manifest in runtime/content.ts",
+      "effectContext key resolution",
+      "runtime fallback texture"
+    ],
+    "out_of_scope": [
+      "new pixel-art files",
+      "changing planPreload or resolveTextureKey",
+      "backend"
+    ],
+    "preserve": [
+      "existing BootScene create/shutdown behavior",
+      "engine planPreload API"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs only",
+    "Engine code in game/src must not import Phaser"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both requirements verified by unit tests",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-103.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M855M8266NY059ZY7SSJK91X",
+    "artifact:.ai-dlc/intent/INT-103.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M855SDV03GF00BS5QWDFFN93",
+  "feature_id": "01M855M8266NY059ZY7SSJK91X",
+  "artifact_path": ".ai-dlc/intent/INT-103.md",
+  "artifact_id": "INT-103",
+  "created_at": "2026-11-23T21:43:55.475408+00:00",
+  "updated_at": "2026-11-23T21:46:42.468206+00:00"
+}

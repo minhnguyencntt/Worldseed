@@ -1,0 +1,73 @@
+{
+  "id": "01M85D0KRYXCN4PBW15QTQ2939",
+  "intent_id": "01M85CW82JT3S0XRB3QDHD06T9",
+  "title": "Verify: Blank message clears on typing and valid submit unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for clearing the message and still submitting valid text",
+  "description": "Prove with mocked client that the message clears on typing and a trimmed valid idea is posted.",
+  "acceptance_criteria": [
+    "Typing removes the alert",
+    "Valid submit posts the trimmed prompt once and no blank alert remains"
+  ],
+  "scope": {
+    "in_scope": [
+      "Same test file game/frontend/tests/contributionBlank.test.tsx"
+    ],
+    "out_of_scope": [
+      "Running app or browser"
+    ],
+    "preserve": [
+      "Existing contribution tests"
+    ]
+  },
+  "technical_constraints": [
+    "Use the same mocked client and fixture as the first Verify"
+  ],
+  "dependencies": [
+    "ACT2",
+    "VER1"
+  ],
+  "definition_of_done": [
+    "Tests pass in isolation",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-641.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85CXX8Y276FT7VTZ5ZK1F1Q",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-641.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85D0KRYK5MCDCBZFHGHQ4S8"
+  ],
+  "sim_node_id": "01M85CXX8YTNXRKZ9JWKRB9VFC",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-641.md",
+  "artifact_id": "UNIT-641",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "it: typing clears the blank message",
+      "lines": "new",
+      "action": "Add test: click Send with empty text so the alert shows, then fireEvent.change the textarea to 'a'; assert screen.queryByRole('alert') is null and the textarea aria-invalid is not 'true'.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"typing clears\"",
+      "expected": "Test passes."
+    },
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "it: valid idea after a blank attempt is sent trimmed",
+      "lines": "new",
+      "action": "Add test with submitContribution mocked to resolve: click Send blank, change textarea to '  hello  ', click Send; await waitFor submitContribution toHaveBeenCalledTimes(1) and toHaveBeenCalledWith('hello'); assert no alert with text 'Enter an idea first'.",
+      "command": "cd game/frontend && npx vitest run tests/contributionBlank.test.tsx -t \"sent trimmed\"",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T23:49:13.630566+00:00",
+  "updated_at": "2026-11-23T23:50:39.817150+00:00"
+}

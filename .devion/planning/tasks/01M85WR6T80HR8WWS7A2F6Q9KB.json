@@ -1,0 +1,78 @@
+{
+  "id": "01M85WR6T80HR8WWS7A2F6Q9KB",
+  "intent_id": "01M85WFA3F8G7DDVKQ30HX4GMY",
+  "title": "Act: Add lighting effect schema variants and author them in bedroom.yaml",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend effectSchema and bedroom effects",
+  "description": "Add four zod variants to effectSchema and declare the effects in bedroom.yaml, replacing the non-palette ambientLight colour with a palette colour.",
+  "acceptance_criteria": [
+    "effectSchema parses the four new types",
+    "bedroom.yaml lists six non-transition effects with PALETTE colours"
+  ],
+  "scope": {
+    "in_scope": [
+      "schema.ts",
+      "bedroom.yaml"
+    ],
+    "out_of_scope": [
+      "rendering"
+    ],
+    "preserve": [
+      "existing variants"
+    ]
+  },
+  "technical_constraints": [
+    "Shared palette only",
+    "Data-driven content",
+    "Code path: `game/src/content/schema.ts`",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`"
+  ],
+  "dependencies": [
+    "REQ1"
+  ],
+  "definition_of_done": [
+    "Schema and YAML updated; typecheck passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-824.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85WHTAEQ9S34YBJG58MS31R",
+    "trace:01M85FWFYFE625T3SW7DMYMFW3",
+    "artifact:.ai-dlc/units/UNIT-824.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85WR6T8C7NSAWH56M5W0NED"
+  ],
+  "sim_node_id": "01M85WHTAEAEAAW2B5R1K0363X",
+  "feature_id": "01M85FWFYFE625T3SW7DMYMFW3",
+  "artifact_path": ".ai-dlc/units/UNIT-824.md",
+  "artifact_id": "UNIT-824",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/schema.ts",
+      "symbol": "effectSchema",
+      "lines": "L11-L15",
+      "action": "Add four z.object variants to the discriminated union before the transition variant: moonlightShaft, lampGlow, doorLight, vignette.",
+      "code": "z.object({ type: z.literal('moonlightShaft'), color: z.string(), alpha: z.number().min(0).max(1), area: boundsSchema }),\nz.object({ type: z.literal('lampGlow'), color: z.string(), alpha: z.number().min(0).max(1), x: z.number(), y: z.number(), radius: z.number().positive() }),\nz.object({ type: z.literal('doorLight'), color: z.string(), alpha: z.number().min(0).max(1), area: boundsSchema }),\nz.object({ type: z.literal('vignette'), color: z.string(), alpha: z.number().min(0).max(1) }),",
+      "expected": "EffectSpec type includes the four new variants and tsc --noEmit passes in game/"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "effects",
+      "lines": "L259-L269",
+      "action": "Change the ambientLight color from '#ffd9a0' to the palette value '#fdd58a' and insert four entries after it, placed near the window (60,30), lamp (80,120) and door (410,100) objects, using palette hexes moon5 '#cfe0f5', lamp4 '#f9a84a', lamp6 '#fdd58a', indigo1 '#0b0a1e'.",
+      "code": "  - type: moonlightShaft\n    color: '#cfe0f5'\n    alpha: 0.18\n    area: { x: 60, y: 30, width: 90, height: 200 }\n  - type: lampGlow\n    color: '#f9a84a'\n    alpha: 0.25\n    x: 96\n    y: 130\n    radius: 48\n  - type: doorLight\n    color: '#fdd58a'\n    alpha: 0.5\n    area: { x: 410, y: 162, width: 32, height: 2 }\n  - type: vignette\n    color: '#0b0a1e'\n    alpha: 0.45",
+      "expected": "loadWorld validates the bedroom scene with six non-transition effects"
+    }
+  ],
+  "created_at": "2026-11-24T04:24:15.432901+00:00",
+  "updated_at": "2026-11-24T04:26:53.875511+00:00"
+}

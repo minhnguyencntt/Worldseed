@@ -1,0 +1,83 @@
+{
+  "id": "01M85RGVBKYMAZ0ENN2QZDNSCR",
+  "intent_id": "01M85R8JBW6142XFS73H2QC7VQ",
+  "title": "Verify: generateAssets and mergeManifest unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for planning and merge",
+  "description": "Tests for generateAssets and mergeManifest from REQ-2 acceptance criteria.",
+  "acceptance_criteria": [
+    "Sheet entry size and frames correct",
+    "Single frame is image",
+    "Merge replaces in place",
+    "Out-of-range index throws"
+  ],
+  "scope": {
+    "in_scope": [
+      "generateAssets.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only; use assetSchema from game/src/assets/manifest/schema.ts to validate entries",
+    "All colours from the shared palette"
+  ],
+  "dependencies": [
+    "ACT-2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-784.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85RB4DDCXR73ZWPS5XRNNND",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-784.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85RGVBKRBSXYGF151Z2DX2P"
+  ],
+  "sim_node_id": "01M85RB4DDQ392005MDPVQ3Q5Y",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-784.md",
+  "artifact_id": "UNIT-784",
+  "steps": [
+    {
+      "file": "game/frontend/tests/generateAssets.test.ts",
+      "symbol": "new: sheet entry and PNG header match",
+      "lines": "new",
+      "action": "Make a source with four 32x48 frames of index 1; call generateAssets; assert entry.dimensions {width:128,height:48}, frames {32,48,4}, type 'spritesheet', assetSchema.safeParse(entry).success true and readPngSize(files[0].bytes) equals {128,48}.",
+      "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/generateAssets.test.ts",
+      "symbol": "new: single frame is image and bad index throws",
+      "lines": "new",
+      "action": "Assert a one-frame 16x16 source yields type 'image' without frames; assert a grid containing index 999 makes generateAssets throw /out of range/; assert ART_SOURCES ids are unique.",
+      "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/generateAssets.test.ts",
+      "symbol": "new: mergeManifest replaces by id",
+      "lines": "new",
+      "action": "With manifest assets [a,b,c] and an entry with id b changed, assert result order [a,b',c] with a and c deep-equal to the originals; an unknown id is appended last.",
+      "command": "cd game/frontend && npx vitest run tests/generateAssets.test.ts",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-24T03:10:20.019231+00:00",
+  "updated_at": "2026-11-24T03:16:53.047006+00:00"
+}

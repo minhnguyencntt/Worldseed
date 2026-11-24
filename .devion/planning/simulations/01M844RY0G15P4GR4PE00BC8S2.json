@@ -1,0 +1,680 @@
+{
+  "intent_id": "01M844RY0G15P4GR4PE00BC8S2",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M844TTJXMMHPTYFN9T70FD0W",
+      "kind": "intent",
+      "title": "SG-3.3 · Unit tests with mocked dependencies for the App flow",
+      "body": "Context: game/frontend/src/App.tsx composes IntroScreen, GameLayout, SceneView, ActionMenu and StoryPanel on top of useGame, which persists state through runtime/storage (readSaved/writeSaved). tests/app.test.tsx already renders the real stack with jsdom localStorage and covers the intro gate and basic clicks. Desired behavior: a dedicated App flow test file in which the storage dependency is replaced by an in-memory fake and the three flows are asserted. Expected result: green, fast unit tests proving the click-to-menu, action/choice-to-story and remount-restore flows. Why: guard the playable loop against regressions.\n\n## Acceptance criteria\n- Given the App is begun, when a hotspot is clicked, then the action menu for that object shows its description and action buttons\n- Given the action menu is open, when an action is chosen, then the story history shows the action's text\n- Given the opening dialogue, when a choice is clicked, then the dialogue closes and history records the choice text\n- Given a state saved through the mocked storage, when App is unmounted and remounted and Begin is clicked, then the saved story and open-door state are restored\n\n\n## Scope\n- In scope: New App flow unit test file with a mocked runtime/storage module\n- In scope: Minimal accessibility seams in ActionMenu and StoryPanel needed by the tests\n- Out of scope: Backend changes\n- Out of scope: Browser or e2e tests\n- Out of scope: Persisting the intro-gate state\n- Preserve: Existing tests/app.test.tsx behavior\n- Preserve: useGame and storage public signatures\n- Preserve: Hotspot data-open semantics\n\n\n## Technical constraints\n- Vitest + @testing-library/react in jsdom, as configured in game/frontend/vitest.config.ts\n- Dependencies mocked with vi.mock; no real network or browser\n\n\n## Definition of done\n- All three flows covered by passing unit tests\n- Typecheck passes\n\n\n## Non-functional requirements\n- Tests finish in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "App flow unit tests: object click opens the action menu, actions and dialogue choices update the story, and a remount restores saved state",
+      "description": "Context: game/frontend/src/App.tsx composes IntroScreen, GameLayout, SceneView, ActionMenu and StoryPanel on top of useGame, which persists state through runtime/storage (readSaved/writeSaved). tests/app.test.tsx already renders the real stack with jsdom localStorage and covers the intro gate and basic clicks. Desired behavior: a dedicated App flow test file in which the storage dependency is replaced by an in-memory fake and the three flows are asserted. Expected result: green, fast unit tests proving the click-to-menu, action/choice-to-story and remount-restore flows. Why: guard the playable loop against regressions.",
+      "acceptance_criteria": [
+        "Given the App is begun, when a hotspot is clicked, then the action menu for that object shows its description and action buttons",
+        "Given the action menu is open, when an action is chosen, then the story history shows the action's text",
+        "Given the opening dialogue, when a choice is clicked, then the dialogue closes and history records the choice text",
+        "Given a state saved through the mocked storage, when App is unmounted and remounted and Begin is clicked, then the saved story and open-door state are restored"
+      ],
+      "scope": {
+        "in_scope": [
+          "New App flow unit test file with a mocked runtime/storage module",
+          "Minimal accessibility seams in ActionMenu and StoryPanel needed by the tests"
+        ],
+        "out_of_scope": [
+          "Backend changes",
+          "Browser or e2e tests",
+          "Persisting the intro-gate state"
+        ],
+        "preserve": [
+          "Existing tests/app.test.tsx behavior",
+          "useGame and storage public signatures",
+          "Hotspot data-open semantics"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest + @testing-library/react in jsdom, as configured in game/frontend/vitest.config.ts",
+        "Dependencies mocked with vi.mock; no real network or browser"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three flows covered by passing unit tests",
+        "Typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-010.md`"
+      ],
+      "non_functional": [
+        "Tests finish in seconds"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M842QZ3EY2N09KNHTNGVYZCB",
+      "links": [
+        "trace:01M842QZ3EY2N09KNHTNGVYZCB",
+        "artifact:.ai-dlc/intent/INT-010.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-010.md",
+      "artifact_id": "INT-010"
+    },
+    {
+      "id": "01M844TTJXXNHDBFYQQX60R12J",
+      "kind": "requirement",
+      "title": "REQ · Clicking an object opens its action menu",
+      "body": "Context: App holds selectedId and renders ActionMenu for the selected SceneObjectView. Desired behavior: the menu section carries the object id so the flow is assertable without relying on text. Expected result: clicking Bookshelf shows its menu with Inspect, Push, Search, Leave. Why: the entry point to all interactions.\n\n## Acceptance criteria\n- Given the playing view, when Bookshelf is clicked, then a region named Bookshelf contains Inspect, Push, Search and Leave buttons\n- Given no hotspot is selected, when the view renders, then no action menu region exists\n\n\n## Scope\n- In scope: ActionMenu root attribute data-object-id\n- Out of scope: Menu styling\n- Preserve: ActionMenu props\n- Preserve: aria-label equal to object name\n\n\n## Technical constraints\n- Do not change ActionMenuProps\n\n\n## Definition of done\n- ActionMenu root exposes data-object-id\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Hotspot click opens the ActionMenu with the object description and actions, identifiable by object id",
+      "description": "Context: App holds selectedId and renders ActionMenu for the selected SceneObjectView. Desired behavior: the menu section carries the object id so the flow is assertable without relying on text. Expected result: clicking Bookshelf shows its menu with Inspect, Push, Search, Leave. Why: the entry point to all interactions.",
+      "acceptance_criteria": [
+        "Given the playing view, when Bookshelf is clicked, then a region named Bookshelf contains Inspect, Push, Search and Leave buttons",
+        "Given no hotspot is selected, when the view renders, then no action menu region exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "ActionMenu root attribute data-object-id"
+        ],
+        "out_of_scope": [
+          "Menu styling"
+        ],
+        "preserve": [
+          "ActionMenu props",
+          "aria-label equal to object name"
+        ]
+      },
+      "technical_constraints": [
+        "Do not change ActionMenuProps"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "ActionMenu root exposes data-object-id",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-024.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844TTJXMMHPTYFN9T70FD0W",
+      "matched_feature_id": "01M8447V96JXEWFJKP61DT5KN4",
+      "links": [
+        "parent:01M844TTJXMMHPTYFN9T70FD0W",
+        "trace:01M8447V96JXEWFJKP61DT5KN4",
+        "artifact:.ai-dlc/requirements/REQ-024.md"
+      ],
+      "depends_on": [
+        "01M844TTJXMMHPTYFN9T70FD0W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-024.md",
+      "artifact_id": "REQ-024"
+    },
+    {
+      "id": "01M844TTJXF6HJ6MSWVEK0RPZ8",
+      "kind": "requirement",
+      "title": "REQ · Actions and dialogue choices update the story",
+      "body": "Context: useGame.act and useGame.choose update state, which StoryPanel renders via getActiveNode and history. Desired behavior: the dialogue section is a named region so tests can assert it closes after a choice. Expected result: Search adds the hidden door text; choosing a dialogue option closes the dialogue and records it. Why: core story loop.\n\n## Acceptance criteria\n- Given the Bookshelf menu, when Search is clicked, then the Story history list contains 'A hidden door swings open behind the books.'\n- Given the opening dialogue, when 'Look around the room' is clicked, then the Dialogue region disappears and history contains that text\n\n\n## Scope\n- In scope: StoryPanel dialogue section aria-label\n- Out of scope: Dialogue content changes\n- Preserve: StoryPanel props\n- Preserve: Choice button labels\n\n\n## Technical constraints\n- Do not change StoryPanelProps\n\n\n## Definition of done\n- Dialogue section exposes accessible name Dialogue\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Choosing an action or dialogue choice updates the story panel history and dialogue",
+      "description": "Context: useGame.act and useGame.choose update state, which StoryPanel renders via getActiveNode and history. Desired behavior: the dialogue section is a named region so tests can assert it closes after a choice. Expected result: Search adds the hidden door text; choosing a dialogue option closes the dialogue and records it. Why: core story loop.",
+      "acceptance_criteria": [
+        "Given the Bookshelf menu, when Search is clicked, then the Story history list contains 'A hidden door swings open behind the books.'",
+        "Given the opening dialogue, when 'Look around the room' is clicked, then the Dialogue region disappears and history contains that text"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel dialogue section aria-label"
+        ],
+        "out_of_scope": [
+          "Dialogue content changes"
+        ],
+        "preserve": [
+          "StoryPanel props",
+          "Choice button labels"
+        ]
+      },
+      "technical_constraints": [
+        "Do not change StoryPanelProps"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Dialogue section exposes accessible name Dialogue",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-025.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844TTJXMMHPTYFN9T70FD0W",
+      "matched_feature_id": "01M8447V96WTK64GW2X0GAT7S5",
+      "links": [
+        "parent:01M844TTJXMMHPTYFN9T70FD0W",
+        "trace:01M8447V96WTK64GW2X0GAT7S5",
+        "artifact:.ai-dlc/requirements/REQ-025.md"
+      ],
+      "depends_on": [
+        "01M844TTJXMMHPTYFN9T70FD0W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-025.md",
+      "artifact_id": "REQ-025"
+    },
+    {
+      "id": "01M844TTJXEC15MNBSSJC766P0",
+      "kind": "requirement",
+      "title": "REQ · Remount restores the saved game state",
+      "body": "Context: useGame initialises from readSaved() and writes on every state change; the intro gate (begun) is local state and resets on remount. Desired behavior: the inventory region is named so restored inventory is assertable alongside history and hotspot state. Expected result: with storage mocked in memory, state survives remount. Why: players must not lose progress.\n\n## Acceptance criteria\n- Given Search was performed and storage is the in-memory mock, when App is remounted and Begin clicked, then history shows the hidden door text and Bookshelf has data-open true\n- Given the mocked readSaved returns null, when App renders and Begin is clicked, then the opening dialogue is shown\n\n\n## Scope\n- In scope: StoryPanel inventory section aria-label\n- Out of scope: Persisting intro gate\n- Preserve: STORAGE_KEY\n- Preserve: readSaved/writeSaved signatures\n\n\n## Technical constraints\n- Do not change runtime/storage.ts\n\n\n## Definition of done\n- Inventory section exposes accessible name Inventory\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "After unmount and remount the App restores the saved story and world state",
+      "description": "Context: useGame initialises from readSaved() and writes on every state change; the intro gate (begun) is local state and resets on remount. Desired behavior: the inventory region is named so restored inventory is assertable alongside history and hotspot state. Expected result: with storage mocked in memory, state survives remount. Why: players must not lose progress.",
+      "acceptance_criteria": [
+        "Given Search was performed and storage is the in-memory mock, when App is remounted and Begin clicked, then history shows the hidden door text and Bookshelf has data-open true",
+        "Given the mocked readSaved returns null, when App renders and Begin is clicked, then the opening dialogue is shown"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel inventory section aria-label"
+        ],
+        "out_of_scope": [
+          "Persisting intro gate"
+        ],
+        "preserve": [
+          "STORAGE_KEY",
+          "readSaved/writeSaved signatures"
+        ]
+      },
+      "technical_constraints": [
+        "Do not change runtime/storage.ts"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Inventory section exposes accessible name Inventory",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-026.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M844TTJXMMHPTYFN9T70FD0W",
+      "matched_feature_id": "01M844GYQJKSFBQC069PMYP5R3",
+      "links": [
+        "parent:01M844TTJXMMHPTYFN9T70FD0W",
+        "trace:01M844GYQJKSFBQC069PMYP5R3",
+        "artifact:.ai-dlc/requirements/REQ-026.md"
+      ],
+      "depends_on": [
+        "01M844TTJXMMHPTYFN9T70FD0W"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-026.md",
+      "artifact_id": "REQ-026"
+    },
+    {
+      "id": "01M844TTJXJ2NZQV93TY6NHBFN",
+      "kind": "unit",
+      "title": "Act: Expose object id on the ActionMenu root",
+      "body": "Add data-object-id={object.id} to the ActionMenu root section so the open menu is identifiable by object.\n\n## Acceptance criteria\n- Given an object, when ActionMenu renders, then the section has data-object-id equal to object.id\n- Given object undefined, when ActionMenu renders, then it still returns null\n\n\n## Scope\n- In scope: ActionMenu.tsx\n- Out of scope: Styles\n- Preserve: aria-label\n- Preserve: props\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/ActionMenu.tsx`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Attribute rendered on the menu section\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add data-object-id to the ActionMenu section",
+      "description": "Add data-object-id={object.id} to the ActionMenu root section so the open menu is identifiable by object.",
+      "acceptance_criteria": [
+        "Given an object, when ActionMenu renders, then the section has data-object-id equal to object.id",
+        "Given object undefined, when ActionMenu renders, then it still returns null"
+      ],
+      "scope": {
+        "in_scope": [
+          "ActionMenu.tsx"
+        ],
+        "out_of_scope": [
+          "Styles"
+        ],
+        "preserve": [
+          "aria-label",
+          "props"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/ActionMenu.tsx`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Attribute rendered on the menu section",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-047.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844TTJXXNHDBFYQQX60R12J",
+      "matched_feature_id": "01M8447V97HAVY84R7Y30J5H7W",
+      "links": [
+        "parent:01M844TTJXXNHDBFYQQX60R12J",
+        "trace:01M8447V97HAVY84R7Y30J5H7W",
+        "artifact:.ai-dlc/units/UNIT-047.md"
+      ],
+      "depends_on": [
+        "01M844TTJXXNHDBFYQQX60R12J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-047.md",
+      "artifact_id": "UNIT-047",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ActionMenu.tsx",
+          "symbol": "ActionMenu",
+          "lines": "L15",
+          "action": "On the <section className=\"action-menu\" aria-label={object.name}> element add the attribute data-object-id={object.id}.",
+          "code": "<section className=\"action-menu\" aria-label={object.name}> -> <section className=\"action-menu\" aria-label={object.name} data-object-id={object.id}>",
+          "expected": "The rendered menu section carries data-object-id equal to the object id."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJXC44TZKX4H2EFZB6X",
+      "kind": "unit",
+      "title": "Act: Name the StoryPanel dialogue region",
+      "body": "Give the dialogue section in StoryPanel the accessible name Dialogue so it can be queried as a region.\n\n## Acceptance criteria\n- Given a node, when StoryPanel renders, then a region named Dialogue exists\n- Given node undefined, when StoryPanel renders, then no Dialogue region exists\n\n\n## Scope\n- In scope: StoryPanel dialogue section\n- Out of scope: Inventory section\n- Preserve: class dialogue\n- Preserve: choice buttons\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- aria-label=Dialogue on the dialogue section\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add aria-label Dialogue to the dialogue section",
+      "description": "Give the dialogue section in StoryPanel the accessible name Dialogue so it can be queried as a region.",
+      "acceptance_criteria": [
+        "Given a node, when StoryPanel renders, then a region named Dialogue exists",
+        "Given node undefined, when StoryPanel renders, then no Dialogue region exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel dialogue section"
+        ],
+        "out_of_scope": [
+          "Inventory section"
+        ],
+        "preserve": [
+          "class dialogue",
+          "choice buttons"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "aria-label=Dialogue on the dialogue section",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-048.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844TTJXF6HJ6MSWVEK0RPZ8",
+      "matched_feature_id": "01M8447V977PM6AVYZ9RDEZ5TZ",
+      "links": [
+        "parent:01M844TTJXF6HJ6MSWVEK0RPZ8",
+        "trace:01M8447V977PM6AVYZ9RDEZ5TZ",
+        "artifact:.ai-dlc/units/UNIT-048.md"
+      ],
+      "depends_on": [
+        "01M844TTJXF6HJ6MSWVEK0RPZ8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-048.md",
+      "artifact_id": "UNIT-048",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel",
+          "lines": "L13",
+          "action": "Add aria-label=\"Dialogue\" to the <section className=\"dialogue\"> element rendered inside the {node && (...)} block.",
+          "code": "<section className=\"dialogue\"> -> <section className=\"dialogue\" aria-label=\"Dialogue\">",
+          "expected": "A region named Dialogue renders only while a dialogue node is active."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJXZZMAFA9QEJAXWGP4",
+      "kind": "unit",
+      "title": "Act: Name the StoryPanel inventory region",
+      "body": "Give the inventory section in StoryPanel the accessible name Inventory so restored inventory is queryable as a region.\n\n## Acceptance criteria\n- Given StoryPanel renders, then a region named Inventory exists\n- Given an empty inventory, then the Empty text is still shown inside it\n\n\n## Scope\n- In scope: StoryPanel inventory section\n- Out of scope: Dialogue section\n- Preserve: h2 Inventory heading\n- Preserve: Empty text\n\n\n## Technical constraints\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Dependencies\n- R3\n\n\n## Definition of done\n- aria-label=Inventory on the inventory section\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add aria-label Inventory to the inventory section",
+      "description": "Give the inventory section in StoryPanel the accessible name Inventory so restored inventory is queryable as a region.",
+      "acceptance_criteria": [
+        "Given StoryPanel renders, then a region named Inventory exists",
+        "Given an empty inventory, then the Empty text is still shown inside it"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel inventory section"
+        ],
+        "out_of_scope": [
+          "Dialogue section"
+        ],
+        "preserve": [
+          "h2 Inventory heading",
+          "Empty text"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [
+        "R3"
+      ],
+      "definition_of_done": [
+        "aria-label=Inventory on the inventory section",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-049.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M844TTJXEC15MNBSSJC766P0",
+      "matched_feature_id": "01M8447V977PM6AVYZ9RDEZ5TZ",
+      "links": [
+        "parent:01M844TTJXEC15MNBSSJC766P0",
+        "trace:01M8447V977PM6AVYZ9RDEZ5TZ",
+        "artifact:.ai-dlc/units/UNIT-049.md"
+      ],
+      "depends_on": [
+        "01M844TTJXEC15MNBSSJC766P0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-049.md",
+      "artifact_id": "UNIT-049",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel",
+          "lines": "L35-L36",
+          "action": "Change the bare <section> that contains the <h2>Inventory</h2> heading to <section aria-label=\"Inventory\">.",
+          "code": "<section> -> <section aria-label=\"Inventory\">",
+          "expected": "A region named Inventory renders in the story panel."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJXQ20NFDH21QZYYW5D",
+      "kind": "unit",
+      "title": "Verify: Hotspot click opens the action menu unit tests",
+      "body": "Write tests/appFlow.test.tsx with an in-memory mock of runtime/storage and assert the menu flow.\n\n## Acceptance criteria\n- Given Begin clicked, when Bookshelf clicked, then region Bookshelf has data-object-id bookshelf and four action buttons\n- Given Begin clicked and nothing selected, then no region named Bookshelf exists\n\n\n## Scope\n- In scope: game/frontend/tests/appFlow.test.tsx\n- Out of scope: Product code\n- Preserve: tests/app.test.tsx\n\n\n## Technical constraints\n- Mock ../src/runtime/storage with vi.mock\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Tests pass with the command below\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for hotspot-to-menu flow with mocked storage",
+      "description": "Write tests/appFlow.test.tsx with an in-memory mock of runtime/storage and assert the menu flow.",
+      "acceptance_criteria": [
+        "Given Begin clicked, when Bookshelf clicked, then region Bookshelf has data-object-id bookshelf and four action buttons",
+        "Given Begin clicked and nothing selected, then no region named Bookshelf exists"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/appFlow.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/app.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Mock ../src/runtime/storage with vi.mock"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Tests pass with the command below",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-050.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844TTJXJ2NZQV93TY6NHBFN",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844TTJXJ2NZQV93TY6NHBFN",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-050.md"
+      ],
+      "depends_on": [
+        "01M844TTJXJ2NZQV93TY6NHBFN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-050.md",
+      "artifact_id": "UNIT-050",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "new: storage mock + describe('App flow: action menu')",
+          "lines": "new",
+          "action": "Create the file with '// @vitest-environment jsdom', and vi.mock('../src/runtime/storage') factory whose readSaved returns a module-level `saved` variable (initially null) and writeSaved assigns `saved = state` and returns true; add beforeEach resetting saved to null and afterEach(cleanup). Add helper begin() that renders <App/> and clicks the Begin button.",
+          "code": "let saved: unknown = null;\nvi.mock('../src/runtime/storage', () => ({ readSaved: () => saved, writeSaved: (s: unknown) => { saved = s; return true; } }));",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'action menu'",
+          "expected": "File is collected with the mock active."
+        },
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "it('opens the Bookshelf menu on hotspot click')",
+          "lines": "new",
+          "action": "Call begin(); assert screen.queryByRole('region',{name:'Bookshelf'}) is null; click button 'Bookshelf'; assert the region named 'Bookshelf' has attribute data-object-id='bookshelf' and within it buttons Inspect, Push, Search, Leave exist.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'action menu'",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJX9P2C2FT7H2DQFW9A",
+      "kind": "unit",
+      "title": "Verify: Action and choice update the story unit tests",
+      "body": "Add tests in tests/appFlow.test.tsx for Search and dialogue choice flows with mocked storage.\n\n## Acceptance criteria\n- Given Bookshelf menu, when Search clicked, then Story history list has the hidden door text\n- Given opening dialogue, when Look around the room clicked, then region Dialogue is gone and history has the text\n\n\n## Scope\n- In scope: game/frontend/tests/appFlow.test.tsx\n- Out of scope: Product code\n- Preserve: tests/app.test.tsx\n\n\n## Technical constraints\n- Reuse the storage mock from V1's file\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for action and dialogue choice updating story",
+      "description": "Add tests in tests/appFlow.test.tsx for Search and dialogue choice flows with mocked storage.",
+      "acceptance_criteria": [
+        "Given Bookshelf menu, when Search clicked, then Story history list has the hidden door text",
+        "Given opening dialogue, when Look around the room clicked, then region Dialogue is gone and history has the text"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/appFlow.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/app.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Reuse the storage mock from V1's file"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-051.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844TTJXC44TZKX4H2EFZB6X",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844TTJXC44TZKX4H2EFZB6X",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-051.md"
+      ],
+      "depends_on": [
+        "01M844TTJXC44TZKX4H2EFZB6X"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-051.md",
+      "artifact_id": "UNIT-051",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "it('Search adds the hidden door text to the story history')",
+          "lines": "after the action menu describe",
+          "action": "Call begin(); click 'Bookshelf' then 'Search'; assert getByRole('list',{name:'Story history'}) toHaveTextContent('A hidden door swings open behind the books.').",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'story'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "it('choosing a dialogue option closes the dialogue and records it')",
+          "lines": "after the Search test",
+          "action": "Call begin(); assert region 'Dialogue' exists; click button 'Look around the room'; assert queryByRole('region',{name:'Dialogue'}) is null and the Story history list toHaveTextContent('Look around the room').",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'story'",
+          "expected": "Test passes."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJX2MJKMVC36FPYDCGQ",
+      "kind": "unit",
+      "title": "Verify: Remount restores saved state unit tests",
+      "body": "Add tests asserting that state written to the mocked storage is restored on remount and that null saved state starts fresh.\n\n## Acceptance criteria\n- Given Search performed, when App unmounted, remounted and Begin clicked, then history has the hidden door text and Bookshelf data-open is true\n- Given readSaved returns null, when App begins, then the Dialogue region shows the opening text\n\n\n## Scope\n- In scope: game/frontend/tests/appFlow.test.tsx\n- Out of scope: Product code\n- Preserve: tests/useGame.test.tsx\n\n\n## Technical constraints\n- Intro gate resets on remount, so Begin must be clicked again\n\n\n## Dependencies\n- A3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for remount restore using mocked storage",
+      "description": "Add tests asserting that state written to the mocked storage is restored on remount and that null saved state starts fresh.",
+      "acceptance_criteria": [
+        "Given Search performed, when App unmounted, remounted and Begin clicked, then history has the hidden door text and Bookshelf data-open is true",
+        "Given readSaved returns null, when App begins, then the Dialogue region shows the opening text"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/appFlow.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "tests/useGame.test.tsx"
+        ]
+      },
+      "technical_constraints": [
+        "Intro gate resets on remount, so Begin must be clicked again"
+      ],
+      "dependencies": [
+        "A3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-052.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844TTJXZZMAFA9QEJAXWGP4",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M844TTJXZZMAFA9QEJAXWGP4",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-052.md"
+      ],
+      "depends_on": [
+        "01M844TTJXZZMAFA9QEJAXWGP4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-052.md",
+      "artifact_id": "UNIT-052",
+      "steps": [
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "it('restores saved state after remount')",
+          "lines": "after the story describe",
+          "action": "Render <App/>, click Begin, Bookshelf, Search; call unmount() from the render result; render <App/> again and click Begin; assert history toHaveTextContent('A hidden door swings open behind the books.'), button 'Bookshelf' toHaveAttribute('data-open','true'), and region 'Inventory' is in the document.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'remount'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "it('starts fresh when nothing is saved')",
+          "lines": "after the restore test",
+          "action": "With saved = null, call begin(); assert region 'Dialogue' toHaveTextContent(\"I don't know what to do next. What should we do?\") and Bookshelf data-open is 'false'.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx -t 'remount|fresh'",
+          "expected": "Both tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M844TTJXTAA3YAKJR3EFRHJJ",
+      "kind": "evidence",
+      "title": "Evidence: App flow unit tests with mocked storage",
+      "body": "Record the passing run of tests/appFlow.test.tsx covering menu, story update and remount restore.\n\n## Acceptance criteria\n- The appFlow test file passes with all menu, story and remount tests green\n- Typecheck reports no errors\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser runs\n\n\n## Dependencies\n- V1\n- V2\n- V3\n\n\n## Definition of done\n- vitest run tests/appFlow.test.tsx exits 0\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Passing appFlow unit test run as evidence",
+      "description": "Record the passing run of tests/appFlow.test.tsx covering menu, story update and remount restore.",
+      "acceptance_criteria": [
+        "The appFlow test file passes with all menu, story and remount tests green",
+        "Typecheck reports no errors"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser runs"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "definition_of_done": [
+        "vitest run tests/appFlow.test.tsx exits 0",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-010.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M844TTJXQ20NFDH21QZYYW5D",
+      "matched_feature_id": "01M844GYQJ3KBP8HDVWSRTS7HK",
+      "links": [
+        "parent:01M844TTJXQ20NFDH21QZYYW5D",
+        "trace:01M844GYQJ3KBP8HDVWSRTS7HK",
+        "artifact:.ai-dlc/evidence/EVD-010.md"
+      ],
+      "depends_on": [
+        "01M844TTJXQ20NFDH21QZYYW5D",
+        "01M844TTJX9P2C2FT7H2DQFW9A",
+        "01M844TTJX2MJKMVC36FPYDCGQ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-010.md",
+      "artifact_id": "EVD-010"
+    }
+  ],
+  "created_at": "2026-11-23T12:07:01.326209+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

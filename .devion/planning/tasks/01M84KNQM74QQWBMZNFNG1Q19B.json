@@ -1,0 +1,77 @@
+{
+  "id": "01M84KNQM74QQWBMZNFNG1Q19B",
+  "intent_id": "01M84KJ7GHBK69MASSMYZ1C8GZ",
+  "title": "Verify: HeaderOverlay and App shell unit tests with mocked API",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for header content, store bindings and App composition",
+  "description": "Test HeaderOverlay directly and App with the API client mocked.",
+  "acceptance_criteria": [
+    "Header content, sound, settings and error states asserted",
+    "App composition asserted"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/header.test.tsx",
+      "game/frontend/tests/app.test.tsx"
+    ],
+    "out_of_scope": [
+      "browser"
+    ],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "vi.mock('../src/api/client') for getCurrentRound; fixtures in tests/fixtures/api.ts mirror the Round type in src/api/client.ts; vi.mock('motion/react') to plain elements"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-285.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84KMM34Y2S05SBQE6DDQGTX",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-285.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84KNQM7G7K3XM64VCWDGTHY"
+  ],
+  "sim_node_id": "01M84KMM341Z178AY1TTPKJ4GX",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-285.md",
+  "artifact_id": "UNIT-285",
+  "steps": [
+    {
+      "file": "game/frontend/tests/header.test.tsx",
+      "symbol": "new: describe('HeaderOverlay')",
+      "lines": "new",
+      "action": "Mock motion/react (motion.header -> header). Render with a Round from tests/fixtures/api.ts (shape of Round in src/api/client.ts) and worldName 'The Boy\\'s Room'; assert text StoryForge, world name, round id and status visible",
+      "command": "npx vitest run tests/header.test.tsx -t 'shows round info'",
+      "expected": "test passes"
+    },
+    {
+      "file": "game/frontend/tests/header.test.tsx",
+      "symbol": "it('sound and settings buttons update the store; error shown')",
+      "lines": "new",
+      "action": "Click 'Toggle sound' and assert aria-pressed flips and useUiStore soundEnabled false; click 'Settings' and assert settingsOpen true; render with round undefined and error 'Network down' and assert role alert contains 'Network down'",
+      "command": "npx vitest run tests/header.test.tsx -t 'sound and settings'",
+      "expected": "test passes"
+    },
+    {
+      "file": "game/frontend/tests/app.test.tsx",
+      "symbol": "new it('after Begin the header is present and Suggest opens the sheet via the store')",
+      "lines": "after existing tests",
+      "action": "With getCurrentRound mocked to resolve the fixture round, render App, click Begin, assert StoryForge text visible, click 'Suggest What Happens Next' and assert useUiStore.getState().modal === 'contribution'; reset store in afterEach",
+      "command": "npx vitest run tests/app.test.tsx -t 'header is present'",
+      "expected": "test passes and existing app tests still pass"
+    }
+  ],
+  "created_at": "2026-11-23T16:26:22.727489+00:00",
+  "updated_at": "2026-11-23T16:31:18.697589+00:00"
+}

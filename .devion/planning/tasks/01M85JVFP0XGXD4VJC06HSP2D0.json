@@ -1,0 +1,78 @@
+{
+  "id": "01M85JVFP0XGXD4VJC06HSP2D0",
+  "intent_id": "01M85JNHV7YEGSWAECMZEFSTYC",
+  "title": "Act: Clear non-matching focus and call applyFocusedObject from onStateChange",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Blur other focused objects and apply store focus on every store change",
+  "description": "Extend applyFocusedObject to blur focused objects that do not match (all of them when id is null) and call it from onStateChange with useGameStore.getState().focusedObjectId before the null-state early return.",
+  "acceptance_criteria": [
+    "With focusedObjectId null, focused objects get blur() on store change",
+    "Focus application still runs when GameState is null"
+  ],
+  "scope": {
+    "in_scope": [
+      "applyFocusedObject blur branch",
+      "onStateChange wiring"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "Keyboard handler"
+    ],
+    "preserve": [
+      "sceneObjects.forEach sync(state) behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Read focus from useGameStore.getState().focusedObjectId; do not copy it into a scene field",
+    "Code path: `game/frontend/src/phaser/BootScene.ts`"
+  ],
+  "dependencies": [
+    "REQ-2",
+    "ACT-1"
+  ],
+  "definition_of_done": [
+    "Store focus changes drive highlight and clear on null",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-727.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85JQZJPP221J06J9RAYWZC0",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-727.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85JVFP0A1JQ8V3XKT6YNYXW"
+  ],
+  "sim_node_id": "01M85JQZJPMWVM5EY268R01JTG",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-727.md",
+  "artifact_id": "UNIT-727",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.applyFocusedObject",
+      "lines": "after L134",
+      "action": "Add an else-if branch inside the forEach so that an object that isFocused and whose spec.id !== id gets blur() called.",
+      "code": "if (id !== null && o.spec.id === id) { if (!o.isFocused) o.focus(); }\nelse if (o.isFocused) o.blur();",
+      "expected": "Null or non-matching id blurs previously focused objects"
+    },
+    {
+      "file": "game/frontend/src/phaser/BootScene.ts",
+      "symbol": "BootScene.onStateChange",
+      "lines": "L130-L134",
+      "action": "Insert this.applyFocusedObject(useGameStore.getState().focusedObjectId) as the first statement, before const state = this.readState() and its early return.",
+      "code": "onStateChange(): void {\n  this.applyFocusedObject(useGameStore.getState().focusedObjectId);\n  const state = this.readState();\n  if (!state) return;\n  this.sceneObjects.forEach((o) => o.sync(state));\n}",
+      "expected": "Every store notification applies the store focus to the scene objects"
+    }
+  ],
+  "created_at": "2026-11-24T01:31:17.055955+00:00",
+  "updated_at": "2026-11-24T01:32:25.832827+00:00"
+}

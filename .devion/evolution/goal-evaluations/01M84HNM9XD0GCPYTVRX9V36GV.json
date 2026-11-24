@@ -1,0 +1,349 @@
+[
+  {
+    "round": 1,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.93,
+    "summary": "The development-automation worker and the execution backend have been removed from the backend. The remaining backend builds cleanly, and nothing left in it refers to the removed code.",
+    "assessment": {
+      "requirements": "All parts of this sub-goal are delivered. The worker module is gone, including its own module file. The execution package and its handler are gone. Nothing in the backend imports them. The tests that covered them were deleted. The remaining packages (contribution, round, player, world, admin, gitrepo, safepath) still compile.",
+      "business": "The repo no longer contains the code that ran coding agents on player contributions. That work now belongs to the devion project workseed. The game, contribution intake and round lifecycle are untouched, so players and contributors are not affected.",
+      "technical": "I confirmed the backend builds and passes static checks with no errors. The only remaining mention of the removed code is a guard test that checks it stays removed. The verification unit tests passed (1, 1 and 5 passed, none failed). The chain flagged that the Act step changed test files, which Verify should own. Those changes are all deletions of tests for removed code, so the risk is low."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [
+      "Move on to the next sub-goal: remove the execution and approve/retry routes and config, then the admin execution UI in the frontend."
+    ],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T15:55:10.696253+00:00",
+    "evidence": [
+      "backend/ listing: no worker directory; the backend module file is the only Go module",
+      "backend/internal/ listing: no execution package; admin, config, contribution, gitrepo, player, round, safepath, server and world remain",
+      "grep in backend for 'internal/execution' or 'worker': only internal/server/removed_code_test.go matches, which is a guard test",
+      "go build ./... and go vet ./... in backend: both completed with no errors",
+      "Chain summary: UNIT-235, UNIT-236 and UNIT-237 passed (1, 1 and 5 passed, 0 failed)"
+    ],
+    "intent_ids": [
+      "01M84HPHE1MGZX3P6JQ38H90PF"
+    ],
+    "sub_goal_id": "SG-1",
+    "sub_goal_title": "Remove worker module and execution backend"
+  },
+  {
+    "round": 2,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.93,
+    "summary": "The server no longer offers or wires any of the automated-development features (execution listing, approve, retry). Only the game, player, contribution and round features remain, and the server's tests pass.",
+    "assessment": {
+      "requirements": "All parts of this sub-goal are delivered. The execution, approve and retry routes are gone, the server no longer connects to execution or worker components, and the tests for those routes are removed. The contribution, player and round routes are unchanged.",
+      "business": "The server now serves only the game and the contribution intake. Players and admins can still submit contributions and manage rounds. Development automation is no longer exposed here, which matches the project's direction of handing that work to the other project.",
+      "technical": "The server package builds and its tests pass. Guard tests check that the execution and worker packages stay deleted and that the server has no references to them. The remaining risk is leftover references elsewhere in the repo, which belong to other sub-goals."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T15:57:59.267934+00:00",
+    "evidence": [
+      "backend/internal/server/server.go: the only routes are player, worlds, contributions and the admin route table, with no execution, approve or retry routes or handlers.",
+      "backend/internal/server/removed_code_test.go: guard tests check that the execution and worker packages are gone and that the server has no execution wiring.",
+      "backend/internal/server/server_test.go: asserts the admin route table is round-only and that the execution, approve and retry endpoints are not served.",
+      "go test ./internal/server/: passed.",
+      "Verify chain: UNIT-241, UNIT-242 and UNIT-243 passed (2, 5 and 5 tests, 0 failed)."
+    ],
+    "intent_ids": [
+      "01M84HWKHFJ1GPYXND4WWA7V9V"
+    ],
+    "sub_goal_id": "SG-2",
+    "sub_goal_title": "Remove execution, approve and retry routes from the server"
+  },
+  {
+    "round": 3,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.93,
+    "summary": "The worker and execution settings have been removed from the backend configuration, the example config file and the server startup code. The remaining settings still load, and the backend builds cleanly.",
+    "assessment": {
+      "requirements": "All SG-3 criteria are delivered. The config code has no worker or execution settings. The example config file has none. The server startup code reads no removed key. The config tests were updated to match.",
+      "business": "The configuration now describes only the game, contribution intake and round lifecycle. Operators are no longer asked for development-automation settings that do nothing. Older config files that still contain a worker section load without error.",
+      "technical": "The config package tests pass, and the backend builds and passes vet. A keyword search of the config, example config and server startup code found no worker, execution, Claude or Cursor references, apart from tests that check these are absent. The unit tests for UNIT-246 and UNIT-247 passed. The remaining risk is low: stale worker sections in old config files are silently ignored instead of raising an error."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:00:08.770757+00:00",
+    "evidence": [
+      "backend/internal/config: tests pass; the only worker or execution matches are in config_test.go, in tests that assert absence (TestConfig_HasNoWorkerFields, TestLoadFS_IgnoresWorkerSection)",
+      "backend/configs/config.example.yaml and backend/cmd: a keyword search found no worker or execution keys",
+      "backend: go build ./... and go vet ./cmd/... produce no errors",
+      "backend/internal: no worker or execution packages remain (admin, config, contribution, gitrepo, player, round, safepath, server, world)",
+      "Chain evidence: UNIT-246 passed 3 of 3 and UNIT-247 passed 3 of 3"
+    ],
+    "intent_ids": [
+      "01M84J1R4N0QKR7CQJ9WV8VQ4D"
+    ],
+    "sub_goal_id": "SG-3",
+    "sub_goal_title": "Remove worker config keys"
+  },
+  {
+    "round": 4,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.85,
+    "summary": "The admin execution panel and its tests are gone from the frontend, and the admin app and API client no longer touch any execution, approve or retry features. The sub-goal is met.",
+    "assessment": {
+      "requirements": "The panel component and its tests are deleted. Nothing in the frontend source mentions the panel or calls the execution, approve or retry endpoints. The unit checks for these removals passed (2, 4 and 2 tests, no failures).",
+      "business": "The admin screen no longer offers any way to run, approve or retry development automation, which matches the rule that this work belongs in the separate devion project. Player-facing game screens are unaffected.",
+      "technical": "A search of the frontend source found no remaining references to the panel or the execution endpoints. One leftover is a helper in the round-progress display that accepts an optional execution status. It is a harmless pure function, not an API call, and can be cleaned up in a later pass. I did not re-run the type-check myself and relied on the unit test evidence."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [
+      "Optionally remove the execution-status mapping from the round-progress helper in LifecycleStepper.tsx, if no remaining code uses it"
+    ],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:03:57.872113+00:00",
+    "evidence": [
+      "game/frontend/src/components: no execution panel file present",
+      "game/frontend/src grep for ExecutionPanel, execution, /approve and /retry: the only hit is LifecycleStepper.tsx, which has a pure helper deriving a stage from an optional execution status and makes no API call",
+      "Chain summary: UNIT-251, UNIT-252 and UNIT-253 all passed, covering the panel being gone, AdminApp making no execution calls, and the client and fixtures carrying no execution code"
+    ],
+    "intent_ids": [
+      "01M84J5PQSYC7VX0GJTBH8SKDA"
+    ],
+    "sub_goal_id": "SG-4",
+    "sub_goal_title": "Remove admin ExecutionPanel UI"
+  },
+  {
+    "round": 5,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": false,
+    "confidence": 0.9,
+    "summary": "The export of frozen contributions for the handoff to the development project does not exist yet. The contribution package has no export code, and the reported passing tests refer to code that is not in the workspace. The sub-goal is not met.",
+    "assessment": {
+      "requirements": "None of the sub-goal's requirements are delivered. There is no documented export with a stable JSON format covering round id, contribution ids, authors, content and timestamps. There is no frozen-only filtering, and the empty-round case is not handled in code. The Act step reported a partial helper (reading frozen ids) and a missing export interface, and neither is present in the contribution package.",
+      "business": "Player contributions collected in a Round cannot yet be handed off to the development project in a defined format. Removing the development automation from this repo therefore risks leaving the handoff without a contract.",
+      "technical": "The contribution package has no file for frozen ids, no export type and no export interface. Searching the backend for the expected names finds nothing. The reported unit test passes cannot be trusted as proof, because they cover code that is absent from the workspace. The earlier work may have been lost or never merged."
+    },
+    "remaining_gaps": [
+      "Requirement: Add the export source interface and a stable JSON export type in the contribution package. It must carry round id, contribution ids, authors, content and timestamps, with documentation, and it must not import any removed code.",
+      "Requirement: Add the frozen-ids reader to the file store (read the round snapshot file, return not-found cleanly, validate world and round ids), and assert that it implements the export source interface.",
+      "Requirement: Add the exporter that builds the JSON export from the source, includes only frozen contributions, and returns an empty contributions list for an empty round.",
+      "Technical: Add unit tests with mocked storage covering the export JSON format, the empty round, and frozen-only inclusion, plus tests for the frozen-ids reader. Confirm the tests exist in the contribution package and pass."
+    ],
+    "recommended_next": [
+      "Re-implement the export interface, frozen-ids reader and exporter in the contribution package in one coherent unit, then re-run Verify."
+    ],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:07:08.282423+00:00",
+    "evidence": [
+      "backend/internal/contribution listing: adapter.go, handler.go, model.go, ratelimit.go, service.go, store.go and their tests. There is no frozen.go and no export file.",
+      "grep across backend for FrozenIDs, ExportSource and Exporter: no matches.",
+      "git log for the contribution package shows no commit adding an export.",
+      "Chain summary reports that the frozen-ids unit is not done (ok:false), and that the export interface from the earlier unit was missing in its worktree."
+    ],
+    "intent_ids": [
+      "01M84JCPB7H80A4R8DA1NY7VXA"
+    ],
+    "sub_goal_id": "SG-5",
+    "sub_goal_title": "Define frozen-contribution export for devion workseed handoff"
+  },
+  {
+    "round": 6,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.9,
+    "summary": "The first handoff piece is in place. Player contributions from a round can now be listed through a small interface and written out as a versioned JSON document. The document carries the round, the contribution authors, their text and timestamps. It depends on none of the removed automation code.",
+    "assessment": {
+      "requirements": "The interface for listing a round's contributions exists. The JSON export format is documented, with a worked example, and carries world id, round id, contribution ids, authors, content and timestamps. A test confirms it imports no worker or execution code.",
+      "business": "Contributions collected in a round can now be handed to the external development project in a stable, documented format. Producing the actual export file and the handoff flow are other parts of the larger goal.",
+      "technical": "The file-based contribution store is checked at compile time to satisfy the interface. The format has a version number so it can change safely later. The package tests pass, including the shape check and the import check. There is little risk from this piece."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:08:58.713378+00:00",
+    "evidence": [
+      "backend/internal/contribution/export.go: Export and ExportContribution types, snake_case JSON tags, version constant, doc comment with example",
+      "backend/internal/contribution/export_source.go: ExportSource interface with ListByRound, plus a compile-time assertion that FileStore implements it; imports only context",
+      "backend/internal/contribution/export_test.go and export_source_test.go: JSON shape, docs and import hygiene tests",
+      "go test of the contribution package: ok",
+      "Chain evidence: UNIT-260 and UNIT-261 passed (2 passed, 0 failed each)"
+    ],
+    "intent_ids": [
+      "01M84JJGAFY1BJS99R2S24YGTB"
+    ],
+    "sub_goal_id": "SG-5.1",
+    "sub_goal_title": "Add the export source interface and a stable JSON export type in the…"
+  },
+  {
+    "round": 7,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.9,
+    "summary": "The sub-goal is met. The contribution store can now read the list of contributions frozen for a round. It reports a missing snapshot cleanly, and it rejects invalid world or round identifiers. The store is also confirmed to satisfy the export handoff contract.",
+    "assessment": {
+      "requirements": "All parts of this sub-goal are delivered: the frozen-contributions reader reads the round snapshot file, returns a clean not-found result when no snapshot exists, validates both the world and round identifiers, and is compile-time asserted to implement the export source interface.",
+      "business": "The export of frozen contributions to the devion workseed project can now obtain the list of frozen contributions for a round from the file store. This is a building block for the handoff. The remaining export assembly belongs to other sub-goals.",
+      "technical": "The implementation is small and follows the existing store patterns. Identifiers are checked with the shared safe-path check before any file access. A missing snapshot maps to the not-found error, and other read or parse errors are wrapped. Unit tests passed: 4 for the reader and 3 for the interface. The one minor limit is that an invalid identifier is never reported as not-found, which is the intended behavior."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:11:07.184740+00:00",
+    "evidence": [
+      "backend/internal/contribution/store.go: FileStore.FrozenIDs validates world and round ids with safepath.Segment, reads worlds/<world>/rounds/<round>/snapshot.yaml, maps fs.ErrNotExist to ErrNotFound, parses the contribution ids in order",
+      "backend/internal/contribution/export_source.go: ExportSource interface declares FrozenIDs, and `var _ ExportSource = (*FileStore)(nil)` asserts FileStore implements it",
+      "backend/internal/contribution/store_test.go: TestFileStore_FrozenIDs covers the happy path, ErrNotFound for a missing snapshot, and invalid ids that must not return ErrNotFound",
+      "Chain summary: UNIT-264 (4 passed) and UNIT-265 (3 passed), 0 failed"
+    ],
+    "intent_ids": [
+      "01M84JNW4N0FKEKZE4RSX80RNZ"
+    ],
+    "sub_goal_id": "SG-5.2",
+    "sub_goal_title": "Add the frozen-ids reader to the file store (read the round snapshot…"
+  },
+  {
+    "round": 8,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.93,
+    "summary": "The sub-goal is met. The handoff exporter now builds the export for a round and includes only contributions that were frozen. A round with nothing frozen returns an empty contributions list instead of a missing value. Unit tests for these behaviours pass.",
+    "assessment": {
+      "requirements": "All three parts of the sub-goal are delivered. The exporter builds the export from its data source. It includes only frozen contributions. It returns an empty list for an empty round. Errors from the source are also passed on with context.",
+      "business": "The game can now produce the list of frozen player contributions for a round in the agreed format. That list is what devion workseed needs to receive. The rest of the handoff work belongs to other sub-goals.",
+      "technical": "The code is small and clear. Output order follows the frozen list, and ids with no matching contribution are skipped. The empty result is always a real empty list, so the JSON shows [] and not null. Unit tests use mocked sources and cover frozen-only filtering, the empty round and error propagation, all passing. No notable risks for this sub-goal."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [
+      "Move on to the next sub-goal in the handoff work, such as serialising or exposing the export."
+    ],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:13:30.952164+00:00",
+    "evidence": [
+      "backend/internal/contribution/exporter.go: the exporter reads frozen ids and the round's contributions from the source. It keeps only frozen ones, in snapshot order, and initialises the result as an empty slice. It wraps source errors with %w.",
+      "backend/internal/contribution/exporter_test.go: TestExporter_OnlyFrozen, TestExporter_EmptyRound and TestExporter_SourceErrors exist.",
+      "Chain summary: UNIT-268 passed (1 of 1) and UNIT-269 passed (3 of 3), with 0 failures."
+    ],
+    "intent_ids": [
+      "01M84JSSMB017K29PX57X7B2KQ"
+    ],
+    "sub_goal_id": "SG-5.3",
+    "sub_goal_title": "Add the exporter that builds the JSON export from the source, includes…"
+  },
+  {
+    "round": 9,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.9,
+    "summary": "The tests for the frozen-contribution handoff are in place and passing. They cover the export format, an empty round, inclusion of frozen contributions only, and the reader that lists frozen contribution IDs. This sub-goal is met.",
+    "assessment": {
+      "requirements": "All requested tests exist: the export JSON format, an empty round, frozen-only inclusion, error handling, and the frozen-ID reader. They use mocked or temporary storage and pass.",
+      "business": "The handoff of frozen player contributions to the development project can now be trusted not to regress. Unfrozen contributions are not exported and empty rounds are handled.",
+      "technical": "The contribution package tests pass in a fresh run. The reader tests cover a normal snapshot, a missing snapshot, and further table-driven cases. The residual risk is low."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:14:57.273391+00:00",
+    "evidence": [
+      "backend/internal/contribution/export_test.go: TestExport_JSONShape and TestExport_TypesDocumented check the export format",
+      "backend/internal/contribution/exporter_test.go: TestExporter_OnlyFrozen, TestExporter_EmptyRound and TestExporter_SourceErrors use a fake source",
+      "backend/internal/contribution/store_test.go: TestFileStore_FrozenIDs has ordered-snapshot, missing-snapshot and table-driven subtests, run against temp directories",
+      "go test -count=1 -run 'Export|FrozenIDs' -v in the contribution package: all 9 matching tests passed",
+      "Chain evidence: UNIT-272 had 4 passed and UNIT-273 had 4 passed, with 0 failures"
+    ],
+    "intent_ids": [
+      "01M84JY602RQMMN2PB98QWRQ70"
+    ],
+    "sub_goal_id": "SG-5.4",
+    "sub_goal_title": "Add unit tests with mocked storage covering the export JSON format, the…"
+  },
+  {
+    "round": 9,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.9,
+    "summary": "The export of frozen contributions for the handoff to the devion workseed project is in place. It has a documented, stable JSON format and returns only frozen contributions. An empty round gives an empty list. It uses no removed code, and its unit tests pass.",
+    "assessment": {
+      "requirements": "All parts of this sub-goal are delivered. There is a documented export format carrying round id, contribution ids, authors, content and timestamps. The storage layer can read the frozen ids for a round and reports a missing round cleanly. The exporter includes only frozen contributions and returns an empty list for an empty round.",
+      "business": "Contributions frozen in a Round can now be handed off to the devion workseed project in a predictable format. This was the dependency for removing the development-automation code without breaking the handoff. Nothing is outstanding for this sub-goal.",
+      "technical": "The contribution package tests pass. They cover the export format, frozen-only filtering, the empty round, error propagation, the frozen-ids reader and a check that no removed packages are imported. Storage is mocked or uses a temporary directory. The remaining risk is that the actual removal and the final repo-wide checks belong to other sub-goals."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:15:09.403365+00:00",
+    "evidence": [
+      "backend/internal/contribution/export.go: documented JSON export type; its only import is the time package",
+      "backend/internal/contribution/export_source.go: the export source interface declares FrozenIDs",
+      "backend/internal/contribution/store.go: FileStore.FrozenIDs is implemented",
+      "backend/internal/contribution/exporter.go: Exporter reads the frozen ids from the source",
+      "backend/internal/contribution/exporter_test.go: tests for frozen-only inclusion, the empty round and source errors",
+      "backend/internal/contribution/export_source_test.go: tests that the file store satisfies the interface and that no removed imports are present",
+      "backend/internal/contribution/store_test.go: TestFileStore_FrozenIDs",
+      "go test ./... in backend/internal/contribution: ok",
+      "Chain evidence: UNIT-272 4 passed and UNIT-273 4 passed, none failed"
+    ],
+    "intent_ids": [
+      "01M84JY602RQMMN2PB98QWRQ70"
+    ],
+    "sub_goal_id": "SG-5",
+    "sub_goal_title": "Define frozen-contribution export for devion workseed handoff"
+  },
+  {
+    "round": 10,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.85,
+    "summary": "The cleanup is complete. The code, build setup and docs no longer mention the removed development-automation features, apart from tests that check those features stay gone. The backend builds and its tests pass. The docs now describe the handoff to devion workseed.",
+    "assessment": {
+      "requirements": "The leftover-reference cleanup is delivered. A repo-wide search finds the removed terms only in guard tests that assert the removal. The backend README and docs describe the handoff to devion workseed. The game, contribution intake and round lifecycle are still in place.",
+      "business": "The repo is now just the game, contribution intake, round lifecycle and docs. Development automation lives in devion workseed. Player contributions can be exported for handoff without any in-repo automation to maintain.",
+      "technical": "The backend builds and all its test packages pass. The Verify unit tests for the frontend stepper and for the docs also pass. Guard tests keep the removed code from coming back. Two untracked backend build binaries are left as clutter. They are harmless, but they should stay out of version control."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:19:28.864277+00:00",
+    "evidence": [
+      "Repo-wide search outside node_modules, .git, .devion and .ai-dlc: the removed terms appear only in backend/internal/server/removed_code_test.go, backend/internal/contribution/handoff_docs_test.go and game/frontend/tests/noExecutionPanel.test.ts, all of which assert the code is gone",
+      "backend/README.md: no mentions of worker, execution, Claude Code or Cursor",
+      "backend/go.mod: only chi and yaml dependencies, nothing related to a worker",
+      "backend go build ./... succeeded and go test ./... passed for admin, config, contribution, gitrepo, player, round, safepath, server and world",
+      "Chain summary: UNIT-276 and UNIT-277 passed, 3 tests each"
+    ],
+    "intent_ids": [
+      "01M84K165FF9YSHNCQRV5BN7RC"
+    ],
+    "sub_goal_id": "SG-6",
+    "sub_goal_title": "Clean up leftover references to removed code"
+  },
+  {
+    "round": 10,
+    "goal_id": "01M84HNM9XD0GCPYTVRX9V36GV",
+    "goal_met": true,
+    "confidence": 0.88,
+    "summary": "The repo no longer contains development-automation code. The game, contribution intake, round lifecycle and documentation remain. Frozen contributions can now be exported for the devion workseed project, and the backend builds and passes its tests.",
+    "assessment": {
+      "requirements": "All the removal requirements are delivered. The worker module, the execution backend, the execution/approve/retry routes, the worker config keys and the admin execution panel are gone. A frozen-contribution export for the workseed handoff is defined and documented. The kept areas (game, frontend game UI, content, contribution intake, round lifecycle, docs) are intact.",
+      "business": "The project is now just the game and community-contribution flow. Coding agents and the pipeline that ran them no longer live here, and player contributions are handed off to devion workseed. There is no remaining cost or functional gap for players or maintainers.",
+      "technical": "The backend compiles and every remaining test package passes. Guard tests check that the removed packages, routes, config fields and UI panel stay absent. An old worker section in a config file is ignored without an error. I did not re-run the frontend tests. The Verify evidence reports passing frontend and documentation checks. The residual risk is low."
+    },
+    "remaining_gaps": [],
+    "recommended_next": [],
+    "agent": "atlas",
+    "evaluated_at": "2026-11-23T16:19:43.213465+00:00",
+    "evidence": [
+      "backend/: go build ./... succeeded and go test ./... passed in all packages",
+      "backend/ has no worker or internal/execution directories; internal/ holds only admin, config, contribution, gitrepo, player, round, safepath, server and world",
+      "backend/internal/server/removed_code_test.go, server_test.go: guard tests assert the execution routes and package are absent",
+      "backend/internal/config/config_test.go: no worker fields; a legacy worker section is ignored",
+      "backend/internal/contribution/export*.go, exporter.go, backend/docs/handoff.md: frozen-contribution export and handoff doc present",
+      "game/frontend/tests/noExecutionPanel.test.ts: guards that the execution panel is absent, and no 'execution' matches in frontend src",
+      "Chain summary: UNIT-276 and UNIT-277 passed 3/3 each"
+    ],
+    "intent_ids": [
+      "01M84K165FF9YSHNCQRV5BN7RC"
+    ]
+  }
+]

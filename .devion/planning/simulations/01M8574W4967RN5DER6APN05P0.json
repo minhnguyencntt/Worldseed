@@ -1,0 +1,464 @@
+{
+  "intent_id": "01M8574W4967RN5DER6APN05P0",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M857636B1A5BT9QYQXF4RBAP",
+      "kind": "intent",
+      "title": "SG-5.5.1 Remove duplicate SceneObject import and field in BootScene",
+      "body": "Context: game/frontend/src/phaser/BootScene.ts currently has `import type { SceneObject }` twice (L12 and L14) and `private sceneObjects: SceneObject[] = [];` twice (L22 and L23). Desired behavior: exactly one import and one field remain, with BootScene behavior unchanged. Expected result: BootScene.ts compiles without new type errors. Why: duplicate identifiers and duplicate class members are TypeScript errors and block the thin-wrapper scene work.\n\n## Acceptance criteria\n- Given BootScene.ts, when its source is read, then it contains exactly one `import type { SceneObject }` line.\n- Given BootScene.ts, when its source is read, then it contains exactly one `private sceneObjects: SceneObject[] = [];` declaration.\n- Given either duplicate is reintroduced, when the BootScene unit tests run, then at least one test fails.\n- Given the fix, when the existing BootScene tests run, then they still pass.\n\n\n## Scope\n- In scope: Delete the duplicate import at L14 of BootScene.ts\n- In scope: Delete the duplicate field at L23 of BootScene.ts\n- In scope: Unit tests that fail when either duplicate is present\n- Out of scope: Any other BootScene behavior change\n- Out of scope: Changes to engine, entities or store modules\n- Preserve: BootScene.create, sync and objectClick forwarding behavior\n- Preserve: FALLBACK_KEY export and preload logic\n\n\n## Technical constraints\n- Unit tests only, using vitest in game/frontend\n- Do not change the Phaser 3.90 API usage\n\n\n## Definition of done\n- BootScene.ts has one SceneObject import and one sceneObjects field\n- Unit tests assert both counts and pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene.ts compiles with one SceneObject import and one sceneObjects field",
+      "description": "Context: game/frontend/src/phaser/BootScene.ts currently has `import type { SceneObject }` twice (L12 and L14) and `private sceneObjects: SceneObject[] = [];` twice (L22 and L23). Desired behavior: exactly one import and one field remain, with BootScene behavior unchanged. Expected result: BootScene.ts compiles without new type errors. Why: duplicate identifiers and duplicate class members are TypeScript errors and block the thin-wrapper scene work.",
+      "acceptance_criteria": [
+        "Given BootScene.ts, when its source is read, then it contains exactly one `import type { SceneObject }` line.",
+        "Given BootScene.ts, when its source is read, then it contains exactly one `private sceneObjects: SceneObject[] = [];` declaration.",
+        "Given either duplicate is reintroduced, when the BootScene unit tests run, then at least one test fails.",
+        "Given the fix, when the existing BootScene tests run, then they still pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "Delete the duplicate import at L14 of BootScene.ts",
+          "Delete the duplicate field at L23 of BootScene.ts",
+          "Unit tests that fail when either duplicate is present"
+        ],
+        "out_of_scope": [
+          "Any other BootScene behavior change",
+          "Changes to engine, entities or store modules"
+        ],
+        "preserve": [
+          "BootScene.create, sync and objectClick forwarding behavior",
+          "FALLBACK_KEY export and preload logic"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, using vitest in game/frontend",
+        "Do not change the Phaser 3.90 API usage"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BootScene.ts has one SceneObject import and one sceneObjects field",
+        "Unit tests assert both counts and pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-108.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "trace:01M8571BG102V7ZVXQZX3933K9",
+        "artifact:.ai-dlc/intent/INT-108.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-108.md",
+      "artifact_id": "INT-108"
+    },
+    {
+      "id": "01M857636BFWV52JY1TZXHQPVN",
+      "kind": "requirement",
+      "title": "REQ · BootScene.ts has a single SceneObject type import",
+      "body": "Context: L12 and L14 of BootScene.ts both import SceneObject from '@game/entities/SceneObject'. Desired behavior: the second import (L14) is removed. Expected result: one import line, no duplicate identifier error. Why: a duplicate import is a compile error.\n\n## Acceptance criteria\n- Given BootScene.ts, when the lines matching /^import type \\{ SceneObject \\}/ are counted, then the count is 1.\n- Given the removal, when the file is read, then the import of createPhaserRenderContext from './renderContext' is still present.\n\n\n## Scope\n- In scope: Remove the L14 import\n- Out of scope: Reordering other imports\n- Preserve: All other imports\n\n\n## Definition of done\n- Exactly one SceneObject import remains\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Only one `import type { SceneObject }` line remains in BootScene.ts",
+      "description": "Context: L12 and L14 of BootScene.ts both import SceneObject from '@game/entities/SceneObject'. Desired behavior: the second import (L14) is removed. Expected result: one import line, no duplicate identifier error. Why: a duplicate import is a compile error.",
+      "acceptance_criteria": [
+        "Given BootScene.ts, when the lines matching /^import type \\{ SceneObject \\}/ are counted, then the count is 1.",
+        "Given the removal, when the file is read, then the import of createPhaserRenderContext from './renderContext' is still present."
+      ],
+      "scope": {
+        "in_scope": [
+          "Remove the L14 import"
+        ],
+        "out_of_scope": [
+          "Reordering other imports"
+        ],
+        "preserve": [
+          "All other imports"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exactly one SceneObject import remains",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-267.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M857636B1A5BT9QYQXF4RBAP",
+      "links": [
+        "parent:01M857636B1A5BT9QYQXF4RBAP",
+        "trace:01M8571BG1Z6MXACQGF82N8C51",
+        "artifact:.ai-dlc/requirements/REQ-267.md"
+      ],
+      "depends_on": [
+        "01M857636B1A5BT9QYQXF4RBAP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-267.md",
+      "artifact_id": "REQ-267"
+    },
+    {
+      "id": "01M857636BCQ2QTY2J68BE5Q7P",
+      "kind": "requirement",
+      "title": "REQ · BootScene has a single sceneObjects field and keeps its behavior",
+      "body": "Context: L22 and L23 of BootScene.ts both declare `private sceneObjects: SceneObject[] = [];`. Desired behavior: the second declaration (L23) is removed. Expected result: one field, no duplicate member error, sync behavior unchanged. Why: a duplicate class member is a compile error.\n\n## Acceptance criteria\n- Given BootScene.ts, when declarations matching `private sceneObjects:` are counted, then the count is 1.\n- Given the removal, when the existing bootSceneSync tests run, then they pass unchanged.\n\n\n## Scope\n- In scope: Remove the L23 field declaration\n- Out of scope: Renaming or retyping the field\n- Preserve: effects, unsubscribe and failed fields\n- Preserve: sync and objectClick behavior\n\n\n## Definition of done\n- Exactly one sceneObjects field remains\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Only one `private sceneObjects` declaration remains in BootScene",
+      "description": "Context: L22 and L23 of BootScene.ts both declare `private sceneObjects: SceneObject[] = [];`. Desired behavior: the second declaration (L23) is removed. Expected result: one field, no duplicate member error, sync behavior unchanged. Why: a duplicate class member is a compile error.",
+      "acceptance_criteria": [
+        "Given BootScene.ts, when declarations matching `private sceneObjects:` are counted, then the count is 1.",
+        "Given the removal, when the existing bootSceneSync tests run, then they pass unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "Remove the L23 field declaration"
+        ],
+        "out_of_scope": [
+          "Renaming or retyping the field"
+        ],
+        "preserve": [
+          "effects, unsubscribe and failed fields",
+          "sync and objectClick behavior"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Exactly one sceneObjects field remains",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-268.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M857636B1A5BT9QYQXF4RBAP",
+      "links": [
+        "parent:01M857636B1A5BT9QYQXF4RBAP",
+        "trace:01M8571BG1B79QXNM7TZDEB19T",
+        "artifact:.ai-dlc/requirements/REQ-268.md"
+      ],
+      "depends_on": [
+        "01M857636B1A5BT9QYQXF4RBAP"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-268.md",
+      "artifact_id": "REQ-268"
+    },
+    {
+      "id": "01M857636BHAA7DHXDSMKNZ5TV",
+      "kind": "unit",
+      "title": "Act: Remove the duplicate SceneObject import from BootScene.ts",
+      "body": "Delete line 14 of BootScene.ts, which repeats the import on line 12. No other code changes.\n\n## Acceptance criteria\n- Given BootScene.ts, when imports are listed, then `import type { SceneObject }` appears once.\n- Given the edit, when the file is compiled, then no duplicate identifier error for SceneObject is reported.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts import block\n- Out of scope: Tests\n- Out of scope: Other files\n- Preserve: Remaining imports\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- L14 duplicate import deleted\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Delete the second SceneObject import line",
+      "description": "Delete line 14 of BootScene.ts, which repeats the import on line 12. No other code changes.",
+      "acceptance_criteria": [
+        "Given BootScene.ts, when imports are listed, then `import type { SceneObject }` appears once.",
+        "Given the edit, when the file is compiled, then no duplicate identifier error for SceneObject is reported."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts import block"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Other files"
+        ],
+        "preserve": [
+          "Remaining imports"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "L14 duplicate import deleted",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-534.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M857636BFWV52JY1TZXHQPVN",
+      "links": [
+        "parent:01M857636BFWV52JY1TZXHQPVN",
+        "trace:01M8571BG2KXM8GWDV0KBVZTAD",
+        "artifact:.ai-dlc/units/UNIT-534.md"
+      ],
+      "depends_on": [
+        "01M857636BFWV52JY1TZXHQPVN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-534.md",
+      "artifact_id": "UNIT-534",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "module imports (SceneObject type import)",
+          "lines": "L12-L14",
+          "action": "Delete the second line `import type { SceneObject } from '@game/entities/SceneObject';` at L14, keeping the one at L12 and the createPhaserRenderContext import at L13.",
+          "code": "import type { SceneObject } from '@game/entities/SceneObject';\nimport { createPhaserRenderContext } from './renderContext';\nimport type { SceneObject } from '@game/entities/SceneObject';  // delete this line",
+          "expected": "BootScene.ts has exactly one `import type { SceneObject }` line."
+        }
+      ]
+    },
+    {
+      "id": "01M857636B4X2BA763F3WQZ0QC",
+      "kind": "unit",
+      "title": "Act: Remove the duplicate sceneObjects field from BootScene",
+      "body": "Delete line 23 of BootScene.ts, which repeats the field on line 22. No other code changes.\n\n## Acceptance criteria\n- Given the BootScene class, when members are listed, then `sceneObjects` is declared once.\n- Given the edit, when the file is compiled, then no duplicate member error for sceneObjects is reported.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts class fields\n- Out of scope: Tests\n- Out of scope: Other files\n- Preserve: Other class fields and methods\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- L23 duplicate field deleted\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Delete the second sceneObjects field declaration",
+      "description": "Delete line 23 of BootScene.ts, which repeats the field on line 22. No other code changes.",
+      "acceptance_criteria": [
+        "Given the BootScene class, when members are listed, then `sceneObjects` is declared once.",
+        "Given the edit, when the file is compiled, then no duplicate member error for sceneObjects is reported."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts class fields"
+        ],
+        "out_of_scope": [
+          "Tests",
+          "Other files"
+        ],
+        "preserve": [
+          "Other class fields and methods"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "L23 duplicate field deleted",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-535.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M857636BCQ2QTY2J68BE5Q7P",
+      "links": [
+        "parent:01M857636BCQ2QTY2J68BE5Q7P",
+        "trace:01M8571BG2643GQXA70RRHRDE9",
+        "artifact:.ai-dlc/units/UNIT-535.md"
+      ],
+      "depends_on": [
+        "01M857636BCQ2QTY2J68BE5Q7P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-535.md",
+      "artifact_id": "UNIT-535",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene (field sceneObjects)",
+          "lines": "L22-L23",
+          "action": "Delete the second `private sceneObjects: SceneObject[] = [];` line at L23, keeping the declaration at L22 (line numbers shift by one if ACT1 was applied first; delete the later of the two identical lines).",
+          "code": "private sceneObjects: SceneObject[] = [];\nprivate sceneObjects: SceneObject[] = [];  // delete this line",
+          "expected": "BootScene has exactly one `private sceneObjects` declaration."
+        }
+      ]
+    },
+    {
+      "id": "01M857636BST0885ZAANA7BQKA",
+      "kind": "unit",
+      "title": "Verify: BootScene has a single SceneObject import unit tests",
+      "body": "Add a vitest unit test reading BootScene.ts source text and asserting a single SceneObject import, so it fails when the duplicate is present.\n\n## Acceptance criteria\n- Given the duplicate import is present, when the test runs, then it fails.\n- Given ACT1 is applied, when the test runs, then it passes.\n\n\n## Scope\n- In scope: New test file game/frontend/tests/bootSceneSingleImport.test.ts\n- Out of scope: Product code changes\n- Preserve: Existing bootScene*.test.ts files\n\n\n## Technical constraints\n- Reads the source file only; no app, server or browser started\n\n\n## Definition of done\n- Test added and passing after ACT1\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test fails while a duplicate SceneObject import exists",
+      "description": "Add a vitest unit test reading BootScene.ts source text and asserting a single SceneObject import, so it fails when the duplicate is present.",
+      "acceptance_criteria": [
+        "Given the duplicate import is present, when the test runs, then it fails.",
+        "Given ACT1 is applied, when the test runs, then it passes."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file game/frontend/tests/bootSceneSingleImport.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "Existing bootScene*.test.ts files"
+        ]
+      },
+      "technical_constraints": [
+        "Reads the source file only; no app, server or browser started"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test added and passing after ACT1",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-536.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M857636BHAA7DHXDSMKNZ5TV",
+      "links": [
+        "parent:01M857636BHAA7DHXDSMKNZ5TV",
+        "trace:01M8571BG28JFMWAK7N0D32E0A",
+        "artifact:.ai-dlc/units/UNIT-536.md"
+      ],
+      "depends_on": [
+        "01M857636BHAA7DHXDSMKNZ5TV"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-536.md",
+      "artifact_id": "UNIT-536",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneSingleImport.test.ts",
+          "symbol": "new: describe('BootScene imports')",
+          "lines": "new",
+          "action": "Create the test file. Read ../src/phaser/BootScene.ts with readFileSync (node:fs, utf8) via fileURLToPath(new URL(...)). Test 1 'imports SceneObject exactly once': count matches of /^import type \\{ SceneObject \\}/gm and expect length toBe(1). Test 2 'still imports createPhaserRenderContext': expect source toContain(\"import { createPhaserRenderContext } from './renderContext';\").",
+          "code": "const matches = src.match(/^import type \\{ SceneObject \\}/gm) ?? [];\nexpect(matches).toHaveLength(1);",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneSingleImport.test.ts",
+          "expected": "Both tests pass after ACT1; test 1 fails with length 2 if the duplicate import is restored."
+        }
+      ]
+    },
+    {
+      "id": "01M857636B0AXP4MQWKXB4BPF0",
+      "kind": "unit",
+      "title": "Verify: BootScene single sceneObjects field and unchanged sync unit tests",
+      "body": "Add a vitest unit test counting sceneObjects declarations in BootScene.ts, and re-run the existing sync tests to prove behavior is unchanged.\n\n## Acceptance criteria\n- Given the duplicate field is present, when the test runs, then it fails.\n- Given ACT2 is applied, when the test runs, then it passes and bootSceneSync tests still pass.\n\n\n## Scope\n- In scope: New test file game/frontend/tests/bootSceneSingleField.test.ts\n- Out of scope: Product code changes\n- Preserve: tests/bootSceneSync.test.ts\n\n\n## Technical constraints\n- Reads the source file only; no app, server or browser started\n\n\n## Definition of done\n- Test added and passing after ACT2; sync tests green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests fail while a duplicate sceneObjects field exists and sync still works",
+      "description": "Add a vitest unit test counting sceneObjects declarations in BootScene.ts, and re-run the existing sync tests to prove behavior is unchanged.",
+      "acceptance_criteria": [
+        "Given the duplicate field is present, when the test runs, then it fails.",
+        "Given ACT2 is applied, when the test runs, then it passes and bootSceneSync tests still pass."
+      ],
+      "scope": {
+        "in_scope": [
+          "New test file game/frontend/tests/bootSceneSingleField.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code changes"
+        ],
+        "preserve": [
+          "tests/bootSceneSync.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Reads the source file only; no app, server or browser started"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test added and passing after ACT2; sync tests green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-537.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M857636B4X2BA763F3WQZ0QC",
+      "links": [
+        "parent:01M857636B4X2BA763F3WQZ0QC",
+        "trace:01M8571BG2N4KF5FF1V20TFHJ3",
+        "artifact:.ai-dlc/units/UNIT-537.md"
+      ],
+      "depends_on": [
+        "01M857636B4X2BA763F3WQZ0QC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-537.md",
+      "artifact_id": "UNIT-537",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneSingleField.test.ts",
+          "symbol": "new: describe('BootScene fields')",
+          "lines": "new",
+          "action": "Create the test file. Read ../src/phaser/BootScene.ts with readFileSync (node:fs, utf8). Test 'declares sceneObjects exactly once': count matches of /^\\s*private sceneObjects:/gm and expect length toBe(1).",
+          "code": "const matches = src.match(/^\\s*private sceneObjects:/gm) ?? [];\nexpect(matches).toHaveLength(1);",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneSingleField.test.ts",
+          "expected": "Test passes after ACT2; fails with length 2 if the duplicate field is restored."
+        },
+        {
+          "file": "game/frontend/tests/bootSceneSync.test.ts",
+          "symbol": "existing suite (no edits)",
+          "lines": "new",
+          "action": "Run the existing bootSceneSync suite unchanged to confirm sync and objectClick forwarding still pass after the field removal.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneSync.test.ts",
+          "expected": "All existing bootSceneSync tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M857636BAR9XZEN6QM23DZP7",
+      "kind": "evidence",
+      "title": "Evidence: BootScene duplicate removal unit tests",
+      "body": "Collect results of the single-import and single-field unit tests plus existing BootScene sync tests as evidence that duplicates are removed.\n\n## Acceptance criteria\n- Given the verify tests, when run, then all pass.\n- Given a reintroduced duplicate, when run, then the matching test fails.\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n\n\n## Definition of done\n- Test output recorded as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving single import and field",
+      "description": "Collect results of the single-import and single-field unit tests plus existing BootScene sync tests as evidence that duplicates are removed.",
+      "acceptance_criteria": [
+        "Given the verify tests, when run, then all pass.",
+        "Given a reintroduced duplicate, when run, then the matching test fails."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test output recorded as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-108.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M857636BST0885ZAANA7BQKA",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M857636BST0885ZAANA7BQKA",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-108.md"
+      ],
+      "depends_on": [
+        "01M857636BST0885ZAANA7BQKA",
+        "01M857636B0AXP4MQWKXB4BPF0"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-108.md",
+      "artifact_id": "EVD-108"
+    }
+  ],
+  "created_at": "2026-11-23T22:07:52.871453+00:00",
+  "summary": "AI · 7 NEW · 1 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

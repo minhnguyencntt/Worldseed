@@ -1,0 +1,69 @@
+{
+  "id": "01M84Y628TF1SE158JC567C482",
+  "intent_id": "01M84Y31VDFJYMVCDDZ6BFVC0M",
+  "title": "Verify: BootScene plays the authored transition on create",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Prove create() calls playSceneTransition with the context and scene.",
+  "description": "Extend game/frontend/tests/bootSceneEffects.test.ts with a mocked playSceneTransition.",
+  "acceptance_criteria": [
+    "create() calls playSceneTransition once with ctx and the bundled scene.",
+    "Shutdown still destroys effect handles."
+  ],
+  "scope": {
+    "in_scope": [
+      "bootSceneEffects.test.ts"
+    ],
+    "out_of_scope": [
+      "Real Phaser"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser and engine modules are mocked with vi.mock"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-501.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84Y4DFN2CTSNABMY89XJDHS",
+    "trace:01M84XZS83S234TJECYTZC0YK3",
+    "artifact:.ai-dlc/units/UNIT-501.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84Y628TERNJQACTNNGSWB2B"
+  ],
+  "sim_node_id": "01M84Y4DFN11CP33NJHKNBSSRX",
+  "artifact_path": ".ai-dlc/units/UNIT-501.md",
+  "artifact_id": "UNIT-501",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneEffects.test.ts",
+      "symbol": "vi.mock('@game/engine/playSceneTransition')",
+      "lines": "after L22",
+      "action": "Add vi.mock('@game/engine/playSceneTransition', () => ({ playSceneTransition: vi.fn() })) and import playSceneTransition; add vi.mocked(playSceneTransition).mockReset() in beforeEach so the fake Phaser scene needs no camera.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+      "expected": "Existing BootScene tests still pass with the helper mocked."
+    },
+    {
+      "file": "game/frontend/tests/bootSceneEffects.test.ts",
+      "symbol": "it: plays the authored transition when create() runs",
+      "lines": "after L44",
+      "action": "Set state, mock buildEffects to return [], call new BootScene().create(); assert playSceneTransition toHaveBeenCalledTimes(1), first arg has function playTransition, second arg toBe(scene).",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+      "expected": "New and existing tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T19:30:03.674824+00:00",
+  "updated_at": "2026-11-23T21:32:19.061065+00:00"
+}

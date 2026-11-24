@@ -1,0 +1,70 @@
+{
+  "id": "01M84GAFQ6JKS2QFGJ47S9WYK4",
+  "intent_id": "01M84G82XSTGQPFX9S20XVE6SR",
+  "title": "Verify: Held lock and budget stop unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for lock-held no-side-effects and budget-stop persistence",
+  "description": "Add two tests: a held lock leaves no execution record or worktree; a budget stop persists FAILED, wraps ErrBudgetExceeded and removes the worktree once.",
+  "acceptance_criteria": [
+    "Held lock: ErrLocked, zero agent calls, no worktree, store.Get returns an error",
+    "Budget stop: ErrBudgetExceeded, 2 calls, stored FAILED, one worktree removal"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/worker/internal/runner/runner_lock_budget_test.go"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse runner_test.go fakes"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Both tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-208.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84GA1JQAWK1QBW4WP3C5MNJ",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-208.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84GAFQ63TB5XSXMZ4DWWFAW"
+  ],
+  "sim_node_id": "01M84GA1JQGDKNYAW2FKF7S172",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-208.md",
+  "artifact_id": "UNIT-208",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_lock_budget_test.go",
+      "symbol": "new: TestRunLockedLeavesNoRecord",
+      "lines": "new",
+      "action": "Build newRunner(t, Config{}, &fakeAgent{}); create the lock dir and write the file h.cfg.LockPath as in TestRunLocked; call Run; assert errors.Is(err, lock.ErrLocked), agent.calls == 0, len(h.trees.created) == 0, and h.st.Get(\"EXEC-1\") returns a non-nil error.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunLockedLeavesNoRecord",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_lock_budget_test.go",
+      "symbol": "new: TestRunBudgetExceededPersistsFailed",
+      "lines": "new",
+      "action": "Use fakeAgent{cost: 3.0, errs: six errors} and Config{MaxRetries: 5, MaxBudget: 5.0, Timeout: 5 * time.Second}; call Run; assert errors.Is(err, ErrBudgetExceeded), agent.calls == 2, stored Status == store.StatusFailed, stored Error contains \"budget exceeded\" and len(h.trees.removed) == 1.",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunBudgetExceededPersistsFailed",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:27:48.454586+00:00",
+  "updated_at": "2026-11-23T15:28:31.444893+00:00"
+}

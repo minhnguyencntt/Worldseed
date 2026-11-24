@@ -1,0 +1,974 @@
+{
+  "intent_id": "01M843R7T9SKB55NJQJYKCQ435",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8447TV1G2KQH7XYTTMH8Z8C",
+      "kind": "intent",
+      "title": "SG-3 · Build playable 80/20 game frontend",
+      "body": "Context: game/ holds a pure runtime (performAction, chooseOption, serializeState) and bedroom content, but no UI exists. Desired behavior: a Vite React TS app in game/frontend/ (placed under the existing game/ top-level folder) renders scene, hotspots, action menu, dialogue, choices, history and inventory in an 80/20 layout with a mobile drawer, persisting state to localStorage safely. Expected result: a player can play the opening scene. Why: first playable milestone.\n\n## Acceptance criteria\n- Given the app loads, When there is no history, Then the intro copy 'Every great adventure begins with a question.' is shown\n- Given a hotspot is clicked, When an action is chosen, Then game state updates and persists\n- Given storage throws, When the app runs, Then play continues in memory\n- Given a narrow viewport, When the drawer toggle is pressed, Then the story panel opens and collapses\n\n\n## Scope\n- In scope: game/frontend/ app and tests\n- Out of scope: Contribution form and 'Suggest What Happens Next' flow\n- Out of scope: Backend API calls\n- Out of scope: Round countdown and admin UI\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- All four requirements completed with Act, Verify and Evidence\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Playable Vite React TS frontend for The Boy's Room with 80/20 layout",
+      "description": "Context: game/ holds a pure runtime (performAction, chooseOption, serializeState) and bedroom content, but no UI exists. Desired behavior: a Vite React TS app in game/frontend/ (placed under the existing game/ top-level folder) renders scene, hotspots, action menu, dialogue, choices, history and inventory in an 80/20 layout with a mobile drawer, persisting state to localStorage safely. Expected result: a player can play the opening scene. Why: first playable milestone.",
+      "acceptance_criteria": [
+        "Given the app loads, When there is no history, Then the intro copy 'Every great adventure begins with a question.' is shown",
+        "Given a hotspot is clicked, When an action is chosen, Then game state updates and persists",
+        "Given storage throws, When the app runs, Then play continues in memory",
+        "Given a narrow viewport, When the drawer toggle is pressed, Then the story panel opens and collapses"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/ app and tests"
+        ],
+        "out_of_scope": [
+          "Contribution form and 'Suggest What Happens Next' flow",
+          "Backend API calls",
+          "Round countdown and admin UI"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All four requirements completed with Act, Verify and Evidence",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-007.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M843NJMCH5NMK1PNJ4293CEP",
+      "links": [
+        "trace:01M843NJMCH5NMK1PNJ4293CEP",
+        "artifact:.ai-dlc/intent/INT-007.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-007.md",
+      "artifact_id": "INT-007"
+    },
+    {
+      "id": "01M8447TV1X2CF62R7NW9SP0KM",
+      "kind": "requirement",
+      "title": "REQ · Frontend scaffold with runtime state hook and safe localStorage persistence",
+      "body": "Context: game/src/state/persistence.ts has serializeState/deserializeState; createInitialState and performAction exist in game/. Desired behavior: game/frontend/ is a Vite React TS project whose useGame hook loads the bedroom world from game/content YAML, restores saved state, saves on every change inside try/catch, and falls back to in-memory play when storage fails. Expected result: state survives remount; storage errors never crash. Why: persistence requirement of SG-3.\n\n## Acceptance criteria\n- Given saved state in localStorage, When the hook mounts, Then it returns that state\n- Given no saved state, When the hook mounts, Then it returns createInitialState with activeDialogue 'intro'\n- Given localStorage.setItem throws, When an action runs, Then state still updates and no error is thrown\n- Given corrupt saved JSON, When the hook mounts, Then initial state is used\n\n\n## Scope\n- In scope: game/frontend/package.json, tsconfig, vite config\n- In scope: content.ts, storage.ts, useGame.ts\n- Out of scope: Contribution form and 'Suggest What Happens Next' flow\n- Out of scope: Backend API calls\n- Out of scope: Round countdown and admin UI\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Acceptance criteria demonstrated by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "useGame hook holds runtime state and persists it safely",
+      "description": "Context: game/src/state/persistence.ts has serializeState/deserializeState; createInitialState and performAction exist in game/. Desired behavior: game/frontend/ is a Vite React TS project whose useGame hook loads the bedroom world from game/content YAML, restores saved state, saves on every change inside try/catch, and falls back to in-memory play when storage fails. Expected result: state survives remount; storage errors never crash. Why: persistence requirement of SG-3.",
+      "acceptance_criteria": [
+        "Given saved state in localStorage, When the hook mounts, Then it returns that state",
+        "Given no saved state, When the hook mounts, Then it returns createInitialState with activeDialogue 'intro'",
+        "Given localStorage.setItem throws, When an action runs, Then state still updates and no error is thrown",
+        "Given corrupt saved JSON, When the hook mounts, Then initial state is used"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json, tsconfig, vite config",
+          "content.ts, storage.ts, useGame.ts"
+        ],
+        "out_of_scope": [
+          "Contribution form and 'Suggest What Happens Next' flow",
+          "Backend API calls",
+          "Round countdown and admin UI"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria demonstrated by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-017.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8447TV1G2KQH7XYTTMH8Z8C",
+      "matched_feature_id": "01M843NJMDS7XG831NQ6KW7HPB",
+      "links": [
+        "parent:01M8447TV1G2KQH7XYTTMH8Z8C",
+        "trace:01M843NJMDS7XG831NQ6KW7HPB",
+        "artifact:.ai-dlc/requirements/REQ-017.md"
+      ],
+      "depends_on": [
+        "01M8447TV1G2KQH7XYTTMH8Z8C"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-017.md",
+      "artifact_id": "REQ-017"
+    },
+    {
+      "id": "01M8447TV182N2MQS158EMNAGE",
+      "kind": "requirement",
+      "title": "REQ · Scene view with clickable hotspots, asset path map and action menu",
+      "body": "Context: game/src/engine/scene.ts exposes getSceneView and performAction; bedroom.yaml defines bed, bookshelf, desk, old-computer, window, door. Desired behavior: SceneView renders pixel-art placeholder background and a hotspot button per object using a replaceable asset path map; clicking opens ActionMenu with the object's available actions. Expected result: clicking an object and an action updates state. Why: point-and-click gameplay.\n\n## Acceptance criteria\n- Given the bedroom scene, When rendered, Then a button named for each object is shown\n- Given a hotspot click, When ActionMenu opens, Then it lists the object's action labels\n- Given an action click, When pressed, Then onAction is called with objectId and actionId\n- Given assets.ts, When a path is changed, Then SceneView uses the new path\n\n\n## Scope\n- In scope: assets.ts, SceneView.tsx, ActionMenu.tsx, placeholder SVG\n- Out of scope: Contribution form and 'Suggest What Happens Next' flow\n- Out of scope: Backend API calls\n- Out of scope: Round countdown and admin UI\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Acceptance criteria demonstrated by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Clickable object hotspots open an action menu that runs runtime actions",
+      "description": "Context: game/src/engine/scene.ts exposes getSceneView and performAction; bedroom.yaml defines bed, bookshelf, desk, old-computer, window, door. Desired behavior: SceneView renders pixel-art placeholder background and a hotspot button per object using a replaceable asset path map; clicking opens ActionMenu with the object's available actions. Expected result: clicking an object and an action updates state. Why: point-and-click gameplay.",
+      "acceptance_criteria": [
+        "Given the bedroom scene, When rendered, Then a button named for each object is shown",
+        "Given a hotspot click, When ActionMenu opens, Then it lists the object's action labels",
+        "Given an action click, When pressed, Then onAction is called with objectId and actionId",
+        "Given assets.ts, When a path is changed, Then SceneView uses the new path"
+      ],
+      "scope": {
+        "in_scope": [
+          "assets.ts, SceneView.tsx, ActionMenu.tsx, placeholder SVG"
+        ],
+        "out_of_scope": [
+          "Contribution form and 'Suggest What Happens Next' flow",
+          "Backend API calls",
+          "Round countdown and admin UI"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria demonstrated by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-018.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8447TV1G2KQH7XYTTMH8Z8C",
+      "matched_feature_id": "01M843NJMD87BN8FQ0BJJVS341",
+      "links": [
+        "parent:01M8447TV1G2KQH7XYTTMH8Z8C",
+        "trace:01M843NJMD87BN8FQ0BJJVS341",
+        "artifact:.ai-dlc/requirements/REQ-018.md"
+      ],
+      "depends_on": [
+        "01M8447TV1G2KQH7XYTTMH8Z8C"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-018.md",
+      "artifact_id": "REQ-018"
+    },
+    {
+      "id": "01M8447TV158K03XADHJZAZD48",
+      "kind": "requirement",
+      "title": "REQ · Story panel with intro screen, dialogue, choices, history and inventory",
+      "body": "Context: game/src/systems/dialogue.ts exposes getActiveNode and chooseOption; state has history and inventory. Desired behavior: IntroScreen shows the suggested intro copy with a Begin button; StoryPanel shows the active dialogue node, choice buttons, scrollable history and inventory summary. Expected result: choosing a dialogue option advances story and logs history. Why: narrative interface.\n\n## Acceptance criteria\n- Given empty history, When App opens, Then intro copy 'You decide.' is visible\n- Given an active node, When StoryPanel renders, Then speaker, text and one button per choice show\n- Given a choice click, When pressed, Then onChoose is called with its index\n- Given inventory items, When rendered, Then each item name is listed, else 'Empty'\n\n\n## Scope\n- In scope: IntroScreen.tsx, StoryPanel.tsx\n- Out of scope: Contribution form and 'Suggest What Happens Next' flow\n- Out of scope: Backend API calls\n- Out of scope: Round countdown and admin UI\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Acceptance criteria demonstrated by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Story panel shows intro copy, dialogue choices, history and inventory",
+      "description": "Context: game/src/systems/dialogue.ts exposes getActiveNode and chooseOption; state has history and inventory. Desired behavior: IntroScreen shows the suggested intro copy with a Begin button; StoryPanel shows the active dialogue node, choice buttons, scrollable history and inventory summary. Expected result: choosing a dialogue option advances story and logs history. Why: narrative interface.",
+      "acceptance_criteria": [
+        "Given empty history, When App opens, Then intro copy 'You decide.' is visible",
+        "Given an active node, When StoryPanel renders, Then speaker, text and one button per choice show",
+        "Given a choice click, When pressed, Then onChoose is called with its index",
+        "Given inventory items, When rendered, Then each item name is listed, else 'Empty'"
+      ],
+      "scope": {
+        "in_scope": [
+          "IntroScreen.tsx, StoryPanel.tsx"
+        ],
+        "out_of_scope": [
+          "Contribution form and 'Suggest What Happens Next' flow",
+          "Backend API calls",
+          "Round countdown and admin UI"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria demonstrated by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-019.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8447TV1G2KQH7XYTTMH8Z8C",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M8447TV1G2KQH7XYTTMH8Z8C",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-019.md"
+      ],
+      "depends_on": [
+        "01M8447TV1G2KQH7XYTTMH8Z8C"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-019.md",
+      "artifact_id": "REQ-019"
+    },
+    {
+      "id": "01M8447TV1KDAAXB4Y75YRMDTP",
+      "kind": "requirement",
+      "title": "REQ · 80/20 layout with independent story scroll and mobile bottom drawer",
+      "body": "Context: components from R2 and R3 exist. Desired behavior: GameLayout renders scene at 80% and story panel at 20% with its own overflow scroll; below a 768px breakpoint the panel becomes a bottom drawer with a toggle button (aria-expanded) while ActionMenu stays in the scene area. App wires useGame, SceneView, ActionMenu, StoryPanel and IntroScreen. Expected result: playable on desktop and mobile. Why: responsive requirement.\n\n## Acceptance criteria\n- Given the layout renders, When drawer toggle is clicked, Then aria-expanded becomes 'true'\n- Given the drawer is open, When toggle is clicked again, Then aria-expanded becomes 'false'\n- Given the drawer is closed, When rendered, Then the action menu remains in the document\n- Given styles.css, When read, Then story panel has overflow-y auto and a max-width 768px media query\n\n\n## Scope\n- In scope: GameLayout.tsx, App.tsx, main.tsx, index.html, styles.css\n- Out of scope: Contribution form and 'Suggest What Happens Next' flow\n- Out of scope: Backend API calls\n- Out of scope: Round countdown and admin UI\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Acceptance criteria demonstrated by unit tests\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "80/20 layout and collapsible mobile story drawer composed in App",
+      "description": "Context: components from R2 and R3 exist. Desired behavior: GameLayout renders scene at 80% and story panel at 20% with its own overflow scroll; below a 768px breakpoint the panel becomes a bottom drawer with a toggle button (aria-expanded) while ActionMenu stays in the scene area. App wires useGame, SceneView, ActionMenu, StoryPanel and IntroScreen. Expected result: playable on desktop and mobile. Why: responsive requirement.",
+      "acceptance_criteria": [
+        "Given the layout renders, When drawer toggle is clicked, Then aria-expanded becomes 'true'",
+        "Given the drawer is open, When toggle is clicked again, Then aria-expanded becomes 'false'",
+        "Given the drawer is closed, When rendered, Then the action menu remains in the document",
+        "Given styles.css, When read, Then story panel has overflow-y auto and a max-width 768px media query"
+      ],
+      "scope": {
+        "in_scope": [
+          "GameLayout.tsx, App.tsx, main.tsx, index.html, styles.css"
+        ],
+        "out_of_scope": [
+          "Contribution form and 'Suggest What Happens Next' flow",
+          "Backend API calls",
+          "Round countdown and admin UI"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria demonstrated by unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-020.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8447TV1G2KQH7XYTTMH8Z8C",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M8447TV1G2KQH7XYTTMH8Z8C",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-020.md"
+      ],
+      "depends_on": [
+        "01M8447TV1G2KQH7XYTTMH8Z8C"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-020.md",
+      "artifact_id": "REQ-020"
+    },
+    {
+      "id": "01M8447TV1GT7H04G1GK945T8D",
+      "kind": "unit",
+      "title": "Act: Scaffold frontend and implement useGame with safe storage",
+      "body": "Create the frontend module under game/frontend and the runtime hook layer that loads content, restores and saves state safely.\n\n## Acceptance criteria\n- Code compiles under tsc --noEmit strict\n- Behavior matches the requirement acceptance criteria\n\n\n## Scope\n- In scope: game/frontend/package.json\n- In scope: game/frontend/tsconfig.json\n- In scope: game/frontend/vite.config.ts\n- In scope: game/frontend/src/runtime/content.ts\n- In scope: game/frontend/src/runtime/storage.ts\n- In scope: game/frontend/src/runtime/useGame.ts\n- Out of scope: Tests and fixtures\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n- New file: `game/frontend/package.json`\n- New file: `game/frontend/tsconfig.json`\n- New file: `game/frontend/vite.config.ts`\n- New file: `game/frontend/src/runtime/content.ts`\n- New file: `game/frontend/src/runtime/storage.ts`\n- New file: `game/frontend/src/runtime/useGame.ts`\n\n\n## Definition of done\n- Files in code_paths implemented and type-check passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Act: Scaffold frontend and implement useGame with safe storage",
+      "description": "Create the frontend module under game/frontend and the runtime hook layer that loads content, restores and saves state safely.",
+      "acceptance_criteria": [
+        "Code compiles under tsc --noEmit strict",
+        "Behavior matches the requirement acceptance criteria"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/package.json",
+          "game/frontend/tsconfig.json",
+          "game/frontend/vite.config.ts",
+          "game/frontend/src/runtime/content.ts",
+          "game/frontend/src/runtime/storage.ts",
+          "game/frontend/src/runtime/useGame.ts"
+        ],
+        "out_of_scope": [
+          "Tests and fixtures"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it",
+        "New file: `game/frontend/package.json`",
+        "New file: `game/frontend/tsconfig.json`",
+        "New file: `game/frontend/vite.config.ts`",
+        "New file: `game/frontend/src/runtime/content.ts`",
+        "New file: `game/frontend/src/runtime/storage.ts`",
+        "New file: `game/frontend/src/runtime/useGame.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Files in code_paths implemented and type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-033.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8447TV1X2CF62R7NW9SP0KM",
+      "matched_feature_id": "01M8414WGR3F5KFAPNZZS35JBJ",
+      "links": [
+        "parent:01M8447TV1X2CF62R7NW9SP0KM",
+        "trace:01M8414WGR3F5KFAPNZZS35JBJ",
+        "artifact:.ai-dlc/units/UNIT-033.md"
+      ],
+      "depends_on": [
+        "01M8447TV1X2CF62R7NW9SP0KM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-033.md",
+      "artifact_id": "UNIT-033",
+      "steps": [
+        {
+          "file": "game/frontend/package.json",
+          "symbol": "new: package manifest",
+          "lines": "new",
+          "action": "Create manifest named worldseed-frontend with scripts dev=vite, build=vite build, test=vitest run, typecheck=tsc --noEmit; dependencies react, react-dom, yaml; devDependencies vite, @vitejs/plugin-react, typescript, vitest, jsdom, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom, @types/react, @types/react-dom.",
+          "code": "{\"name\":\"worldseed-frontend\",\"private\":true,\"type\":\"module\",\"scripts\":{\"dev\":\"vite\",\"build\":\"vite build\",\"test\":\"vitest run\",\"typecheck\":\"tsc --noEmit\"}}",
+          "expected": "npm install in game/frontend/ succeeds"
+        },
+        {
+          "file": "game/frontend/tsconfig.json",
+          "symbol": "new: compiler options",
+          "lines": "new",
+          "action": "Create tsconfig with strict true, jsx react-jsx, module ESNext, moduleResolution Bundler, target ES2022, noEmit true, skipLibCheck true, types [vite/client, vitest/globals], include [src, tests, ../src].",
+          "expected": "tsc --noEmit resolves game/src imports"
+        },
+        {
+          "file": "game/frontend/vite.config.ts",
+          "symbol": "new: default config",
+          "lines": "new",
+          "action": "Export defineConfig with plugins [react()], resolve.alias '@game' -> path to ../src (game/src), server.fs.allow ['..'], and test {environment:'jsdom', globals:true, setupFiles:['./tests/setup.ts'], include:['tests/**/*.test.{ts,tsx}']}.",
+          "expected": "vitest picks up jsdom and the alias"
+        },
+        {
+          "file": "game/frontend/src/runtime/content.ts",
+          "symbol": "new: loadBedroom",
+          "lines": "new",
+          "action": "Use import.meta.glob('../../../content/worlds/the-boys-room/**/*.yaml',{query:'?raw',import:'default',eager:true}) and yaml.parse to build a WorldDef and a SceneDef for 'bedroom'; export const world, export const scene (types from @game/state/types).",
+          "expected": "scene.id === 'bedroom' and scene.objects has 6 entries"
+        },
+        {
+          "file": "game/frontend/src/runtime/storage.ts",
+          "symbol": "new: STORAGE_KEY, readSaved, writeSaved",
+          "lines": "new",
+          "action": "Export STORAGE_KEY='worldseed:game-state:v1'. readSaved(): GameState|null wraps window.localStorage.getItem and deserializeState (from @game/state/persistence) in try/catch, returning null on any throw or null value. writeSaved(state): boolean wraps setItem(serializeState(state)) in try/catch returning false on throw.",
+          "expected": "readSaved returns null on corrupt JSON; writeSaved returns false when setItem throws"
+        },
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "new: useGame",
+          "lines": "new",
+          "action": "Export useGame(): initial state from readSaved() cast to GameState else createInitialState(world, scene); useState holds it; a useEffect calls writeSaved(state) on each change; return {state, scene, view: getSceneView(state, scene), act(objectId, actionId) using performAction, choose(index) using chooseOption}.",
+          "expected": "Hook returns state, view, act and choose; storage failure never throws"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1CZK3VCYSRPYKG5V7",
+      "kind": "unit",
+      "title": "Act: Build SceneView hotspots, asset path map and ActionMenu",
+      "body": "Implement the scene rendering components and replaceable asset map.\n\n## Acceptance criteria\n- Code compiles under tsc --noEmit strict\n- Behavior matches the requirement acceptance criteria\n\n\n## Scope\n- In scope: game/frontend/src/runtime/assets.ts\n- In scope: game/frontend/src/components/SceneView.tsx\n- In scope: game/frontend/src/components/ActionMenu.tsx\n- In scope: game/frontend/public/assets/bedroom.svg\n- Out of scope: Tests and fixtures\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n- New file: `game/frontend/src/runtime/assets.ts`\n- New file: `game/frontend/src/components/SceneView.tsx`\n- New file: `game/frontend/src/components/ActionMenu.tsx`\n- New file: `game/frontend/public/assets/bedroom.svg`\n\n\n## Definition of done\n- Files in code_paths implemented and type-check passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Act: Build SceneView hotspots, asset path map and ActionMenu",
+      "description": "Implement the scene rendering components and replaceable asset map.",
+      "acceptance_criteria": [
+        "Code compiles under tsc --noEmit strict",
+        "Behavior matches the requirement acceptance criteria"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/runtime/assets.ts",
+          "game/frontend/src/components/SceneView.tsx",
+          "game/frontend/src/components/ActionMenu.tsx",
+          "game/frontend/public/assets/bedroom.svg"
+        ],
+        "out_of_scope": [
+          "Tests and fixtures"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it",
+        "New file: `game/frontend/src/runtime/assets.ts`",
+        "New file: `game/frontend/src/components/SceneView.tsx`",
+        "New file: `game/frontend/src/components/ActionMenu.tsx`",
+        "New file: `game/frontend/public/assets/bedroom.svg`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Files in code_paths implemented and type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-034.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8447TV182N2MQS158EMNAGE",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8447TV182N2MQS158EMNAGE",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-034.md"
+      ],
+      "depends_on": [
+        "01M8447TV182N2MQS158EMNAGE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-034.md",
+      "artifact_id": "UNIT-034",
+      "steps": [
+        {
+          "file": "game/frontend/public/assets/bedroom.svg",
+          "symbol": "new: placeholder art",
+          "lines": "new",
+          "action": "Create a pixel-style SVG 320x180 with rectangles for floor, wall, bed, bookshelf, desk, computer, window and door.",
+          "expected": "File renders as a bedroom placeholder"
+        },
+        {
+          "file": "game/frontend/src/runtime/assets.ts",
+          "symbol": "new: ASSET_PATHS, HOTSPOTS",
+          "lines": "new",
+          "action": "Export ASSET_PATHS: Record<string,string> = {'scene:bedroom':'/assets/bedroom.svg'} and HOTSPOTS: Record<string,{left:string;top:string;width:string;height:string}> keyed by bed, bookshelf, desk, old-computer, window, door with percentage rectangles.",
+          "expected": "Changing a value in ASSET_PATHS changes the rendered background"
+        },
+        {
+          "file": "game/frontend/src/components/SceneView.tsx",
+          "symbol": "new: SceneView",
+          "lines": "new",
+          "action": "Export SceneView({sceneId, title, objects: SceneObjectView[], selectedId, onSelect}) rendering img src=ASSET_PATHS['scene:'+sceneId] and one button per object with aria-label=obj.name, style from HOTSPOTS[obj.id], data-open=String(obj.open), onClick -> onSelect(obj.id).",
+          "expected": "Each object has a clickable hotspot"
+        },
+        {
+          "file": "game/frontend/src/components/ActionMenu.tsx",
+          "symbol": "new: ActionMenu",
+          "lines": "new",
+          "action": "Export ActionMenu({object, onAction}) rendering object.name, object.description and a button per object.actions with its label calling onAction(object.id, action.id); render null when object is undefined.",
+          "expected": "Menu lists action labels and calls onAction"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV19C0FB2GPQ4PJ3YDT",
+      "kind": "unit",
+      "title": "Act: Build IntroScreen and StoryPanel",
+      "body": "Implement the narrative panel and opening screen.\n\n## Acceptance criteria\n- Code compiles under tsc --noEmit strict\n- Behavior matches the requirement acceptance criteria\n\n\n## Scope\n- In scope: game/frontend/src/components/IntroScreen.tsx\n- In scope: game/frontend/src/components/StoryPanel.tsx\n- Out of scope: Tests and fixtures\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n- New file: `game/frontend/src/components/IntroScreen.tsx`\n- New file: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Definition of done\n- Files in code_paths implemented and type-check passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Act: Build IntroScreen and StoryPanel",
+      "description": "Implement the narrative panel and opening screen.",
+      "acceptance_criteria": [
+        "Code compiles under tsc --noEmit strict",
+        "Behavior matches the requirement acceptance criteria"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/IntroScreen.tsx",
+          "game/frontend/src/components/StoryPanel.tsx"
+        ],
+        "out_of_scope": [
+          "Tests and fixtures"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it",
+        "New file: `game/frontend/src/components/IntroScreen.tsx`",
+        "New file: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Files in code_paths implemented and type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-035.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M8447TV158K03XADHJZAZD48",
+      "links": [
+        "parent:01M8447TV158K03XADHJZAZD48",
+        "artifact:.ai-dlc/units/UNIT-035.md"
+      ],
+      "depends_on": [
+        "01M8447TV158K03XADHJZAZD48"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-035.md",
+      "artifact_id": "UNIT-035",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/IntroScreen.tsx",
+          "symbol": "new: IntroScreen",
+          "lines": "new",
+          "action": "Export IntroScreen({onBegin}) rendering paragraphs 'Every great adventure begins with a question.', \"I'm just a boy in my room. I don't know what happens next.\", 'You decide.', 'What should I do?' and a button 'Begin' calling onBegin.",
+          "expected": "Intro copy and Begin button visible"
+        },
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "new: StoryPanel",
+          "lines": "new",
+          "action": "Export StoryPanel({node, history, inventory, onChoose}). Render node speaker and text with one button per node.choices calling onChoose(index) when node defined; an ol aria-label='Story history' listing history; a section 'Inventory' listing items or the text 'Empty'.",
+          "expected": "Panel shows dialogue, choices, history and inventory"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1EPTF35QKQRNV8PET",
+      "kind": "unit",
+      "title": "Act: Compose GameLayout, App, styles and entry point",
+      "body": "Compose components into the 80/20 responsive game screen.\n\n## Acceptance criteria\n- Code compiles under tsc --noEmit strict\n- Behavior matches the requirement acceptance criteria\n\n\n## Scope\n- In scope: game/frontend/src/components/GameLayout.tsx\n- In scope: game/frontend/src/App.tsx\n- In scope: game/frontend/src/main.tsx\n- In scope: game/frontend/index.html\n- In scope: game/frontend/src/styles.css\n- Out of scope: Tests and fixtures\n- Preserve: game/src/** engine, systems and state modules unchanged\n- Preserve: game/content/** YAML unchanged\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n- New file: `game/frontend/src/components/GameLayout.tsx`\n- New file: `game/frontend/src/App.tsx`\n- New file: `game/frontend/src/main.tsx`\n- New file: `game/frontend/index.html`\n- New file: `game/frontend/src/styles.css`\n\n\n## Definition of done\n- Files in code_paths implemented and type-check passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Act: Compose GameLayout, App, styles and entry point",
+      "description": "Compose components into the 80/20 responsive game screen.",
+      "acceptance_criteria": [
+        "Code compiles under tsc --noEmit strict",
+        "Behavior matches the requirement acceptance criteria"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/GameLayout.tsx",
+          "game/frontend/src/App.tsx",
+          "game/frontend/src/main.tsx",
+          "game/frontend/index.html",
+          "game/frontend/src/styles.css"
+        ],
+        "out_of_scope": [
+          "Tests and fixtures"
+        ],
+        "preserve": [
+          "game/src/** engine, systems and state modules unchanged",
+          "game/content/** YAML unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it",
+        "New file: `game/frontend/src/components/GameLayout.tsx`",
+        "New file: `game/frontend/src/App.tsx`",
+        "New file: `game/frontend/src/main.tsx`",
+        "New file: `game/frontend/index.html`",
+        "New file: `game/frontend/src/styles.css`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Files in code_paths implemented and type-check passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-036.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8447TV1KDAAXB4Y75YRMDTP",
+      "matched_feature_id": "01M842QZ3GSFX50KQW3R3085EX",
+      "links": [
+        "parent:01M8447TV1KDAAXB4Y75YRMDTP",
+        "trace:01M842QZ3GSFX50KQW3R3085EX",
+        "artifact:.ai-dlc/units/UNIT-036.md"
+      ],
+      "depends_on": [
+        "01M8447TV1KDAAXB4Y75YRMDTP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-036.md",
+      "artifact_id": "UNIT-036",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/GameLayout.tsx",
+          "symbol": "new: GameLayout",
+          "lines": "new",
+          "action": "Export GameLayout({scene: ReactNode, story: ReactNode}) with useState drawerOpen=false; render main.scene-area with scene, a button 'Story' with aria-expanded={drawerOpen} toggling it, and aside.story-panel with className drawer-open when drawerOpen.",
+          "expected": "Toggle flips aria-expanded"
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "new: App",
+          "lines": "new",
+          "action": "Export default App using useGame; useState started=false; show IntroScreen when state.history.length===0 && !started (onBegin sets started true); otherwise GameLayout with SceneView, ActionMenu for the selected object and StoryPanel using getActiveNode(state, scene).",
+          "expected": "App plays the opening scene"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": "new: layout rules",
+          "lines": "new",
+          "action": "Define .game-layout grid 4fr 1fr, .story-panel overflow-y auto height 100vh, and @media (max-width: 768px) rules making .story-panel position fixed bottom 0 max-height 50vh transform translateY(calc(100% - 3rem)) with .drawer-open translateY(0).",
+          "expected": "Desktop 80/20; mobile drawer"
+        },
+        {
+          "file": "game/frontend/index.html",
+          "symbol": "new: html shell",
+          "lines": "new",
+          "action": "Create index.html with div#root and script type=module src=/src/main.tsx.",
+          "expected": "Vite serves the app"
+        },
+        {
+          "file": "game/frontend/src/main.tsx",
+          "symbol": "new: entry",
+          "lines": "new",
+          "action": "Import './styles.css' and render <App/> into #root with createRoot.",
+          "expected": "App mounts"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1V25EBD1EM4XK5EKR",
+      "kind": "unit",
+      "title": "Verify: useGame persistence and storage fallback unit tests",
+      "body": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.\n\n## Acceptance criteria\n- Tests fail without the Act and pass with it\n- Each test maps to a requirement acceptance criterion\n\n\n## Scope\n- In scope: game/frontend/tests/setup.ts\n- In scope: game/frontend/tests/useGame.test.tsx\n- Out of scope: Product code\n- Preserve: Act code\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Listed tests pass in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify: useGame persistence and storage fallback unit tests",
+      "description": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.",
+      "acceptance_criteria": [
+        "Tests fail without the Act and pass with it",
+        "Each test maps to a requirement acceptance criterion"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/setup.ts",
+          "game/frontend/tests/useGame.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Act code"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass in seconds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-037.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8447TV1GT7H04G1GK945T8D",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8447TV1GT7H04G1GK945T8D",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-037.md"
+      ],
+      "depends_on": [
+        "01M8447TV1GT7H04G1GK945T8D"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-037.md",
+      "artifact_id": "UNIT-037",
+      "steps": [
+        {
+          "file": "game/frontend/tests/setup.ts",
+          "symbol": "new: setup",
+          "lines": "new",
+          "action": "Create setup importing '@testing-library/jest-dom/vitest' and an afterEach calling localStorage.clear() and vi.restoreAllMocks().",
+          "command": "cd game/frontend && npx vitest run tests/useGame.test.tsx",
+          "expected": "Setup loads"
+        },
+        {
+          "file": "game/frontend/tests/useGame.test.tsx",
+          "symbol": "persists state across remount",
+          "lines": "new",
+          "action": "With renderHook(useGame), call act('bookshelf','search'), unmount, renderHook again; assert result.current.state.flags.secret_door_open===true.",
+          "command": "cd game/frontend && npx vitest run tests/useGame.test.tsx -t remount",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/useGame.test.tsx",
+          "symbol": "storage failure fallback",
+          "lines": "new",
+          "action": "Spy on Storage.prototype.setItem to throw Error; renderHook(useGame), call act('bookshelf','search'); assert no throw and flags.secret_door_open===true. Also set getItem to return '{bad' and assert initial activeDialogue==='intro'.",
+          "command": "cd game/frontend && npx vitest run tests/useGame.test.tsx -t fallback",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1CZ7K6897J2W00H7X",
+      "kind": "unit",
+      "title": "Verify: SceneView hotspot and ActionMenu unit tests",
+      "body": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.\n\n## Acceptance criteria\n- Tests fail without the Act and pass with it\n- Each test maps to a requirement acceptance criterion\n\n\n## Scope\n- In scope: game/frontend/tests/scene.test.tsx\n- Out of scope: Product code\n- Preserve: Act code\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Listed tests pass in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify: SceneView hotspot and ActionMenu unit tests",
+      "description": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.",
+      "acceptance_criteria": [
+        "Tests fail without the Act and pass with it",
+        "Each test maps to a requirement acceptance criterion"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/scene.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Act code"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass in seconds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-038.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8447TV1CZK3VCYSRPYKG5V7",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8447TV1CZK3VCYSRPYKG5V7",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-038.md"
+      ],
+      "depends_on": [
+        "01M8447TV1CZK3VCYSRPYKG5V7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-038.md",
+      "artifact_id": "UNIT-038",
+      "steps": [
+        {
+          "file": "game/frontend/tests/scene.test.tsx",
+          "symbol": "clicking an object opens its actions",
+          "lines": "new",
+          "action": "Render SceneView with objects from getSceneView(createInitialState(world,scene),scene) (import world and scene from runtime/content) and an onSelect spy; click getByRole('button',{name:'Bookshelf'}); assert spy called with 'bookshelf'. Render ActionMenu for bookshelf, click 'Search', assert onAction called with ('bookshelf','search').",
+          "command": "cd game/frontend && npx vitest run tests/scene.test.tsx",
+          "expected": "Test passes"
+        },
+        {
+          "file": "game/frontend/tests/scene.test.tsx",
+          "symbol": "asset map is replaceable",
+          "lines": "new",
+          "action": "Mutate ASSET_PATHS['scene:bedroom'] to '/x.svg', render SceneView, assert the img src ends with '/x.svg'.",
+          "command": "cd game/frontend && npx vitest run tests/scene.test.tsx -t replaceable",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1SQPT9X194KCGWCGJ",
+      "kind": "unit",
+      "title": "Verify: IntroScreen and StoryPanel unit tests",
+      "body": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.\n\n## Acceptance criteria\n- Tests fail without the Act and pass with it\n- Each test maps to a requirement acceptance criterion\n\n\n## Scope\n- In scope: game/frontend/tests/story.test.tsx\n- Out of scope: Product code\n- Preserve: Act code\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Listed tests pass in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify: IntroScreen and StoryPanel unit tests",
+      "description": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.",
+      "acceptance_criteria": [
+        "Tests fail without the Act and pass with it",
+        "Each test maps to a requirement acceptance criterion"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/story.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Act code"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass in seconds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-039.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8447TV19C0FB2GPQ4PJ3YDT",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8447TV19C0FB2GPQ4PJ3YDT",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-039.md"
+      ],
+      "depends_on": [
+        "01M8447TV19C0FB2GPQ4PJ3YDT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-039.md",
+      "artifact_id": "UNIT-039",
+      "steps": [
+        {
+          "file": "game/frontend/tests/story.test.tsx",
+          "symbol": "intro copy and choices",
+          "lines": "new",
+          "action": "Render IntroScreen and assert text 'You decide.' and 'Begin' click calls onBegin. Render StoryPanel with the 'intro' node from scene.dialogue, click the first choice button, assert onChoose called with 0; render with inventory [] and assert 'Empty', then with ['key'] assert 'key'.",
+          "command": "cd game/frontend && npx vitest run tests/story.test.tsx",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV17ZEYCEVXS81ZN64P",
+      "kind": "unit",
+      "title": "Verify: GameLayout drawer toggle and styles unit tests",
+      "body": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.\n\n## Acceptance criteria\n- Tests fail without the Act and pass with it\n- Each test maps to a requirement acceptance criterion\n\n\n## Scope\n- In scope: game/frontend/tests/layout.test.tsx\n- Out of scope: Product code\n- Preserve: Act code\n\n\n## Technical constraints\n- Vite + React + TypeScript under game/frontend/\n- Reuse game/src runtime via imports; do not copy it\n\n\n## Definition of done\n- Listed tests pass in seconds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Verify: GameLayout drawer toggle and styles unit tests",
+      "description": "Unit tests written from the requirement spec with storage and DOM faked via jsdom; no server or browser is started.",
+      "acceptance_criteria": [
+        "Tests fail without the Act and pass with it",
+        "Each test maps to a requirement acceptance criterion"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/layout.test.tsx"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "Act code"
+        ]
+      },
+      "technical_constraints": [
+        "Vite + React + TypeScript under game/frontend/",
+        "Reuse game/src runtime via imports; do not copy it"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass in seconds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-040.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8447TV1EPTF35QKQRNV8PET",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8447TV1EPTF35QKQRNV8PET",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-040.md"
+      ],
+      "depends_on": [
+        "01M8447TV1EPTF35QKQRNV8PET"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-040.md",
+      "artifact_id": "UNIT-040",
+      "steps": [
+        {
+          "file": "game/frontend/tests/layout.test.tsx",
+          "symbol": "drawer toggle",
+          "lines": "new",
+          "action": "Render GameLayout with simple scene and story nodes; click button 'Story'; assert aria-expanded 'true'; click again; assert 'false'. Assert the scene node stays in the document throughout. Read src/styles.css with fs and assert it contains 'overflow-y: auto' and '@media (max-width: 768px)'.",
+          "command": "cd game/frontend && npx vitest run tests/layout.test.tsx",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8447TV1JFTPV29R6R66S74G",
+      "kind": "evidence",
+      "title": "Evidence: frontend unit test results for playable 80/20 UI",
+      "body": "Record the passing unit test runs covering persistence, storage fallback, hotspot click, choice, and mobile drawer toggle.\n\n## Acceptance criteria\n- All frontend unit tests pass\n- Each SG-3 criterion maps to a passing test\n\n\n## Scope\n- In scope: Test output summary\n- Out of scope: Manual or browser checks\n\n\n## Definition of done\n- Test summaries attached\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect unit test results for SG-3",
+      "description": "Record the passing unit test runs covering persistence, storage fallback, hotspot click, choice, and mobile drawer toggle.",
+      "acceptance_criteria": [
+        "All frontend unit tests pass",
+        "Each SG-3 criterion maps to a passing test"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output summary"
+        ],
+        "out_of_scope": [
+          "Manual or browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test summaries attached",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-007.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8447TV1V25EBD1EM4XK5EKR",
+      "matched_feature_id": "01M843NJMDZ51PD0Z4EANXNB66",
+      "links": [
+        "parent:01M8447TV1V25EBD1EM4XK5EKR",
+        "trace:01M843NJMDZ51PD0Z4EANXNB66",
+        "artifact:.ai-dlc/evidence/EVD-007.md"
+      ],
+      "depends_on": [
+        "01M8447TV1V25EBD1EM4XK5EKR",
+        "01M8447TV1CZ7K6897J2W00H7X",
+        "01M8447TV1SQPT9X194KCGWCGJ",
+        "01M8447TV17ZEYCEVXS81ZN64P"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-007.md",
+      "artifact_id": "EVD-007"
+    }
+  ],
+  "created_at": "2026-11-23T11:56:38.863090+00:00",
+  "summary": "AI · 1 NEW · 13 UPDATE · 0 UNCHANGED · 14/14 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "id": "01M84X7K925VXK5E0PJSZQRR7P",
+  "intent_id": "01M84X3361R6NB6GXFMCVGZ11S",
+  "title": "Act: Add interaction helper module",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create game/src/systems/interaction.ts",
+  "description": "Add pure functions pointInBounds, availableActions, isActivationKey and nextFocusIndex reusing evaluateAll.",
+  "acceptance_criteria": [
+    "Module exports the four functions with typed signatures",
+    "availableActions uses evaluateAll on each action's conditions"
+  ],
+  "scope": {
+    "in_scope": [
+      "New interaction.ts"
+    ],
+    "out_of_scope": [
+      "Tests",
+      "SceneObject changes"
+    ],
+    "preserve": [
+      "systems/conditions.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Import types from ../content/schema and ../state/types",
+    "New file: `game/src/systems/interaction.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "interaction.ts compiles under tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-482.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84X58HRPAASNHQ50627D9DG",
+    "trace:01M84T6537TTHDFGGZN902Z65D",
+    "artifact:.ai-dlc/units/UNIT-482.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84X7K926GK8D62RNCA6GGSF"
+  ],
+  "sim_node_id": "01M84X58HRCEWW3V0XWAD1EHZC",
+  "feature_id": "01M84T6537TTHDFGGZN902Z65D",
+  "artifact_path": ".ai-dlc/units/UNIT-482.md",
+  "artifact_id": "UNIT-482",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/systems/interaction.ts",
+      "symbol": "new: pointInBounds",
+      "lines": "new",
+      "action": "Create the file; export pointInBounds(spec: ObjectSpec, px: number, py: number): boolean returning false when spec.interactionBounds is undefined, else true when px and py lie within [position.x + b.x*scale, +b.width*scale] and [position.y + b.y*scale, +b.height*scale] inclusive of the left/top edge and exclusive of the right/bottom edge",
+      "code": "const b = spec.interactionBounds; if (!b) return false; const x0 = spec.position.x + b.x * spec.scale; const y0 = spec.position.y + b.y * spec.scale; return px >= x0 && px < x0 + b.width * spec.scale && py >= y0 && py < y0 + b.height * spec.scale;",
+      "expected": "Function compiles and returns booleans per the bounds rule"
+    },
+    {
+      "file": "game/src/systems/interaction.ts",
+      "symbol": "new: availableActions",
+      "lines": "new",
+      "action": "Export availableActions(state: GameState, spec: ObjectSpec): ActionSpec[] returning spec.actions.filter(a => evaluateAll(state, a.conditions)); import evaluateAll from './conditions'",
+      "code": "return spec.actions.filter((a) => evaluateAll(state, a.conditions));",
+      "expected": "Only actions with passing conditions are returned"
+    },
+    {
+      "file": "game/src/systems/interaction.ts",
+      "symbol": "new: isActivationKey",
+      "lines": "new",
+      "action": "Export isActivationKey(key: string): boolean returning true for 'Enter' and ' ' only",
+      "code": "return key === 'Enter' || key === ' ';",
+      "expected": "Returns true only for Enter and Space"
+    },
+    {
+      "file": "game/src/systems/interaction.ts",
+      "symbol": "new: nextFocusIndex",
+      "lines": "new",
+      "action": "Export nextFocusIndex(count: number, current: number, delta: 1 | -1): number returning -1 when count <= 0, else ((current + delta) % count + count) % count",
+      "code": "if (count <= 0) return -1; return (((current + delta) % count) + count) % count;",
+      "expected": "Focus index wraps in both directions"
+    }
+  ],
+  "created_at": "2026-11-23T19:13:25.282424+00:00",
+  "updated_at": "2026-11-23T19:17:36.564720+00:00"
+}

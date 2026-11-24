@@ -1,0 +1,81 @@
+{
+  "id": "01M849941J4JGXEHG06RG0JPMC",
+  "intent_id": "01M84965YYKGGNFFABT1YYSSX6",
+  "title": "Verify: AdminApp execution action error display unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests with a mocked fetch for failed actions, 401 and error clearing",
+  "description": "Extend tests/adminActions.test.tsx with failure cases using the same URL-routing fetch stub.",
+  "acceptance_criteria": [
+    "A 500 from an action shows an alert in the Execution region",
+    "A 401 from an action shows the token gate with Invalid token",
+    "A later successful action clears the alert"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/adminActions.test.tsx"
+    ],
+    "out_of_scope": [
+      "Real network or browser"
+    ],
+    "preserve": [
+      "Existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Fixtures mirror backend execution JSON"
+  ],
+  "dependencies": [
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-142.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8498ZM2PWA58GE2MRFB8CPP",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-142.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M849941JQQMP9BXSV23Q2V6P"
+  ],
+  "sim_node_id": "01M8498ZM2R7NQ7KW35DKJ58RV",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-142.md",
+  "artifact_id": "UNIT-142",
+  "steps": [
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "it('shows an alert when the action fails')",
+      "lines": "new",
+      "action": "Make the stub answer the approve POST with json({error:'boom'}, 500). Render, enter token 'secret', click Approve, then use findByRole on the Execution region and assert within it an alert whose text contains '500'.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t \"action fails\"",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "it('returns to the token gate on 401')",
+      "lines": "new",
+      "action": "Make the stub answer the approve POST with json({error:'unauthorized'}, 401). Click Approve and assert findByLabelText('Admin token') and the text 'Invalid token' are present.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t 401",
+      "expected": "Test passes"
+    },
+    {
+      "file": "game/frontend/tests/adminActions.test.tsx",
+      "symbol": "it('clears the action error after a successful action')",
+      "lines": "new",
+      "action": "The stub answers the first approve POST with 500 and the second with json(awaitingExecutionFixture). Click Approve twice, awaiting the alert after the first click. Then waitFor that the alert no longer exists in the Execution region.",
+      "command": "cd game/frontend && npx vitest run tests/adminActions.test.tsx -t clears",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T13:24:43.698639+00:00",
+  "updated_at": "2026-11-23T13:27:57.100250+00:00"
+}

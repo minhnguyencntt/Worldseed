@@ -1,0 +1,72 @@
+{
+  "id": "01M856R586DBA75DZ7BHEWFEPD",
+  "intent_id": "01M856K83CFVAYV4ZXQVP28ZQ8",
+  "title": "Act: Add createPhaserRenderContext",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Implement the Phaser RenderContext",
+  "description": "Create game/frontend/src/phaser/renderContext.ts exporting createPhaserRenderContext(scene, resolveKey) that returns a RenderContext whose createSprite builds a Phaser image, label text and RenderHandle.",
+  "acceptance_criteria": [
+    "createSprite places an image using the spec position, scale, depth and resolved key",
+    "The handle implements highlight, label, visibility, hover, click and destroy"
+  ],
+  "scope": {
+    "in_scope": [
+      "New renderContext.ts"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "effectContext.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Phaser 3.90 APIs",
+    "New file: `game/frontend/src/phaser/renderContext.ts`"
+  ],
+  "dependencies": [
+    "R1"
+  ],
+  "definition_of_done": [
+    "createPhaserRenderContext compiles under tsc --noEmit",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-524.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M856NGY2ZXCXWNYHPMYJM5D0",
+    "artifact:.ai-dlc/units/UNIT-524.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M856R586MEZH5AR9CGM0ANFC"
+  ],
+  "sim_node_id": "01M856NGY2VS360NP23RNKDJDY",
+  "artifact_path": ".ai-dlc/units/UNIT-524.md",
+  "artifact_id": "UNIT-524",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/phaser/renderContext.ts",
+      "symbol": "new: createPhaserRenderContext",
+      "lines": "new",
+      "action": "Create the file importing Phaser, RenderContext, RenderHandle and RenderSpriteSpec from '@game/engine/renderContext'. Export createPhaserRenderContext(scene: Phaser.Scene, resolveKey: (id: string) => string): RenderContext whose createSprite(spec) does: image = scene.add.image(spec.x, spec.y, resolveKey(spec.key)).setOrigin(0,0).setScale(spec.scale).setDepth(spec.depth); if spec.bounds, image.setInteractive(new Phaser.Geom.Rectangle(b.x,b.y,b.width,b.height), Phaser.Geom.Rectangle.Contains); label = scene.add.text(spec.x, spec.y - 12, spec.label ?? '', {fontSize:'10px'}).setDepth(spec.depth+0.5).setVisible(false).",
+      "code": "export function createPhaserRenderContext(scene: Phaser.Scene, resolveKey: (id: string) => string): RenderContext { return { createSprite(spec) { /* as described */ } }; }",
+      "expected": "Function exported and returns an object with createSprite"
+    },
+    {
+      "file": "game/frontend/src/phaser/renderContext.ts",
+      "symbol": "createSprite returned RenderHandle",
+      "lines": "new",
+      "action": "Return a RenderHandle: setVisible(v) calls image.setVisible(v) and, when v is false, label.setVisible(false); setHighlighted(on) calls image.setTint(0xfff2b0) when on else image.clearTint(); setLabelVisible(on) calls label.setVisible(on); onHover(cb) registers image.on('pointerover', () => cb(true)) and image.on('pointerout', () => cb(false)); onClick(cb) registers image.on('pointerdown', cb); destroy() calls image.destroy() and label.destroy().",
+      "expected": "All six RenderHandle methods exist and delegate to Phaser objects"
+    }
+  ],
+  "created_at": "2026-11-23T21:59:45.158149+00:00",
+  "updated_at": "2026-11-23T22:02:50.058872+00:00"
+}

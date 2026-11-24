@@ -1,0 +1,72 @@
+{
+  "id": "01M85XAF1PGZFAS1KZXVZPKWSH",
+  "intent_id": "01M85WY6FJYG6CP4WV6SDZB9VM",
+  "title": "Verify: Token values come from the palette and Tailwind exposes them",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for tokens and Tailwind config",
+  "description": "Test tokens against PALETTE and the Tailwind config exports.",
+  "acceptance_criteria": [
+    "Every colour token is in PALETTE",
+    "Tailwind config exposes sf theme values referencing CSS vars"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/tokens.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "tests/paletteTailwind.test.ts"
+    ]
+  },
+  "technical_constraints": [
+    "All dependencies mocked; unit tests only"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "tokens.test.ts passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-834.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85X219H7X8PFJ44CWBMPYDY",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-834.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XAF1P7WNC2JA0R0CWE35G"
+  ],
+  "sim_node_id": "01M85X219HY6Z7VP8ME64V45R0",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-834.md",
+  "artifact_id": "UNIT-834",
+  "steps": [
+    {
+      "file": "game/frontend/tests/tokens.test.ts",
+      "symbol": "new: describe('design tokens')",
+      "lines": "new",
+      "action": "Add test 'colour tokens come from the palette': flatten Object.values(COLOR_TOKENS) and assert every hex is in PALETTE. Add test 'css vars': call tokensToCssVars and assert it has --sf-color-brass-4 equal to PALETTE_RAMPS.brass[3], --sf-space-2 equal to '8px' and --sf-font-pixel containing 'Press Start 2P'.",
+      "command": "npx vitest run tests/tokens.test.ts",
+      "expected": "Both token tests pass"
+    },
+    {
+      "file": "game/frontend/tests/tokens.test.ts",
+      "symbol": "it('tailwind config exposes tokens')",
+      "lines": "after the previous tests",
+      "action": "Import tailwind.config; assert theme.extend.colors.sf['brass-4'] (or the structure A1 wrote) is 'var(--sf-color-brass-4)', theme.extend.spacing['sf-2'] is 'var(--sf-space-2)', fontFamily.pixel is 'var(--sf-font-pixel)', colors.background still 'hsl(var(--background))'.",
+      "command": "npx vitest run tests/tokens.test.ts",
+      "expected": "Test passes and the existing paletteTailwind test is unaffected"
+    }
+  ],
+  "created_at": "2026-11-24T04:34:13.686310+00:00",
+  "updated_at": "2026-11-24T04:38:49.492098+00:00"
+}

@@ -1,0 +1,60 @@
+{
+  "id": "01M84HZP3CD1A24GF0YHFD8W3C",
+  "intent_id": "01M84HWKHFJ1GPYXND4WWA7V9V",
+  "title": "SG-2 · Remove execution, approve and retry routes from the server",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "backend/internal/server serves no execution, approve or retry routes and has no execution or worker wiring",
+  "description": "Context: Worldseed must not host development automation. The execution package and the worker module are already deleted, and server.New currently mounts only player, world, contribution and admin round routes. Desired behavior: the server package neither registers nor implements execution, approve or retry routes, and wires no execution or worker dependencies. Expected result: remaining server tests pass with all dependencies mocked, and the contribution and round routes are unchanged. Why: development automation lives in the devion project workseed.",
+  "acceptance_criteria": [
+    "Given server.New, when /api/v1/admin/executions, /api/v1/admin/executions/{id}/approve and /retry are requested with a valid admin token, then the response is 404 or 405 and no execution handler runs",
+    "Given the backend/internal/server package, when its Go sources are scanned, then none references internal/execution, storyforge/worker, or an execution handler",
+    "Given the remaining server tests run with mocks, when go test ./internal/server runs, then all pass",
+    "Given the contribution and round routes, when requested, then their statuses and bodies are identical to before"
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/internal/server/server.go",
+      "backend/internal/server/server_test.go",
+      "backend/internal/server/removed_code_test.go"
+    ],
+    "out_of_scope": [
+      "backend/internal/contribution behavior",
+      "round lifecycle behavior",
+      "game/ and frontend"
+    ],
+    "preserve": [
+      "POST /api/v1/contributions",
+      "GET /api/v1/player/me/contributions",
+      "GET /api/v1/contributions/{id}",
+      "admin round routes and token middleware",
+      "round/current route"
+    ]
+  },
+  "technical_constraints": [
+    "Go module backend; chi router; do not change contribution or round route patterns"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "No execution, approve or retry route or wiring in backend/internal/server",
+    "go test ./internal/server passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-047.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+    "artifact:.ai-dlc/intent/INT-047.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84HZ5N2BHRN0V5T5H49K7Z7",
+  "feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+  "artifact_path": ".ai-dlc/intent/INT-047.md",
+  "artifact_id": "INT-047",
+  "created_at": "2026-11-23T15:56:51.692264+00:00",
+  "updated_at": "2026-11-23T15:57:47.501087+00:00"
+}

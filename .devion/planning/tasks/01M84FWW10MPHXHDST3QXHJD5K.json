@@ -1,0 +1,78 @@
+{
+  "id": "01M84FWW10MPHXHDST3QXHJD5K",
+  "intent_id": "01M84FTKD5XMM4BXW2DYCC40ZD",
+  "title": "Verify: Runner report unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for Runner reporting",
+  "description": "Use a fake Reporter to prove reports for each outcome and none on lock contention.",
+  "acceptance_criteria": [
+    "FAILED, AWAITING_APPROVAL, COMPLETED reports captured",
+    "No report when locked"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner_report_test.go"
+    ],
+    "out_of_scope": [
+      "real files beyond temp"
+    ],
+    "preserve": [
+      "existing runner tests"
+    ]
+  },
+  "technical_constraints": [
+    "Reuse newRunner, fakeAgent, fakeTrees helpers from runner_test.go"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-194.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FWGD6BKHZFC3DHF7JHH45",
+    "trace:01M8457KMN4DJRKMWDKA4ZAEXQ",
+    "artifact:.ai-dlc/units/UNIT-194.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FWW10WR2J7B4M7BT6CDVZ"
+  ],
+  "sim_node_id": "01M84FWGD6F4P1ED1K4F3RVGET",
+  "feature_id": "01M8457KMN4DJRKMWDKA4ZAEXQ",
+  "artifact_path": ".ai-dlc/units/UNIT-194.md",
+  "artifact_id": "UNIT-194",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner_report_test.go",
+      "symbol": "new: fakeReporter, TestRunReportsFailure",
+      "lines": "new",
+      "action": "Define fakeReporter collecting []report.Report. Build newRunner with Config{MaxRetries:0}, fakeAgent{errs:[]error{errors.New(\"boom\")}}, call SetReporter, Run(\"exec-1\",\"ROUND-0000001\"); assert one report with Status FAILED, Error containing boom, ExecutionID exec-1",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunReportsFailure",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_report_test.go",
+      "symbol": "new: TestRunReportsApprovalAndCompleted",
+      "lines": "new",
+      "action": "Run once with AutoPublish false and assert report Status AWAITING_APPROVAL; run again with AutoPublish true and assert COMPLETED; assert StartedAt equals fixedNow",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunReportsApprovalAndCompleted",
+      "expected": "Test passes"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner_report_test.go",
+      "symbol": "new: TestRunLockedWritesNoReport",
+      "lines": "new",
+      "action": "Create the lock file at rig.cfg.LockPath via lock.Acquire, call Run, assert errors.Is(err, lock.ErrLocked) and fakeReporter has zero reports",
+      "command": "cd backend/worker && go test ./internal/runner -run TestRunLockedWritesNoReport",
+      "expected": "Test passes"
+    }
+  ],
+  "created_at": "2026-11-23T15:20:22.304558+00:00",
+  "updated_at": "2026-11-23T15:22:04.054238+00:00"
+}

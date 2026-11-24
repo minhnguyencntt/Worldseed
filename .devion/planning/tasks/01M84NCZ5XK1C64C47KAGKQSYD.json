@@ -1,0 +1,59 @@
+{
+  "id": "01M84NCZ5XK1C64C47KAGKQSYD",
+  "intent_id": "01M84N970GYAQKQ4K6QW9C8AW9",
+  "title": "Verify: App header round states unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "App renders header for ready, loading and failed round",
+  "description": "Add tests/appHeader.test.tsx with getCurrentRound mocked.",
+  "acceptance_criteria": [
+    "Ready state asserts round id and status are shown",
+    "Pending state asserts 'Loading round…' is shown",
+    "Rejected state asserts an alert with 'Round status unavailable: HTTP 500' and no 'Round unavailable' text"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/appHeader.test.tsx"
+    ],
+    "out_of_scope": [],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "vi.mock('../src/api/client') following the pattern in tests/appFlow.test.tsx; payload from roundFixture in tests/fixtures/api.ts (mirrors backend world.Round JSON); no hard-coded payloads"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-322.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84NC09WSQV4JTY7T20AWW34",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-322.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84NCZ5X0BQKBKZ83NMCN4DD"
+  ],
+  "sim_node_id": "01M84NC09WVDAQQRP9M5XDFGKH",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-322.md",
+  "artifact_id": "UNIT-322",
+  "steps": [
+    {
+      "file": "game/frontend/tests/appHeader.test.tsx",
+      "symbol": "new: describe App header",
+      "lines": "new",
+      "action": "Mock getCurrentRound. Render App, click the Begin control used in tests/appFlow.test.tsx to pass the intro. Case resolved(roundFixture): await findByText('round-1') and getByText('OPEN'). Case never-resolving promise: getByText('Loading round…'). Case rejected(new Error('HTTP 500')): await findByRole('alert') toHaveTextContent('Round status unavailable: HTTP 500'); queryByText('Round unavailable') null.",
+      "command": "npx vitest run tests/appHeader.test.tsx",
+      "expected": "All three cases pass"
+    }
+  ],
+  "created_at": "2026-11-23T16:56:32.701036+00:00",
+  "updated_at": "2026-11-23T17:00:10.689847+00:00"
+}

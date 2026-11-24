@@ -1,0 +1,1212 @@
+{
+  "intent_id": "01M84522HNMQHD166PMNC6CKQ8",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8457J1JTYNHTFP298ECTMXW",
+      "kind": "intent",
+      "title": "SG-4 · Add Git-backed contribution storage and API",
+      "body": "Context: backend has only player sessions and /healthz. Desired behavior: a contribution service validates and stores each idea as an immutable Markdown file in Git under worlds/the-boys-room/rounds/<round>/contributions/, exposed through world and contribution endpoints. Expected result: players submit ideas safely and concurrently. Why: Git is the single source of truth.\n\n## Acceptance criteria\n- Given an OPEN round, when a valid prompt is POSTed, then a unique Markdown file is written and committed with the bot identity\n- Given invalid input (length, world, status, limit, rate, duplicate), when submitted, then the request is rejected with a 4xx status and no file is written\n- Given concurrent submissions, when they run together, then each produces a distinct file\n- Given a traversal path segment, when used, then it is rejected\n- All seven listed endpoints respond from the service/world repository\n\n\n## Scope\n- In scope: backend/internal contribution service, git wrapper, world repository, handlers, wiring\n- Out of scope: Admin APIs\n- Out of scope: Round lifecycle transitions\n- Out of scope: Git push to a remote\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- All listed endpoints wired\n- Unit tests with mocked Git and clock pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Git-backed contribution service and world/contribution REST endpoints",
+      "description": "Context: backend has only player sessions and /healthz. Desired behavior: a contribution service validates and stores each idea as an immutable Markdown file in Git under worlds/the-boys-room/rounds/<round>/contributions/, exposed through world and contribution endpoints. Expected result: players submit ideas safely and concurrently. Why: Git is the single source of truth.",
+      "acceptance_criteria": [
+        "Given an OPEN round, when a valid prompt is POSTed, then a unique Markdown file is written and committed with the bot identity",
+        "Given invalid input (length, world, status, limit, rate, duplicate), when submitted, then the request is rejected with a 4xx status and no file is written",
+        "Given concurrent submissions, when they run together, then each produces a distinct file",
+        "Given a traversal path segment, when used, then it is rejected",
+        "All seven listed endpoints respond from the service/world repository"
+      ],
+      "scope": {
+        "in_scope": [
+          "backend/internal contribution service, git wrapper, world repository, handlers, wiring"
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Round lifecycle transitions",
+          "Git push to a remote",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All listed endpoints wired",
+        "Unit tests with mocked Git and clock pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-012.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "artifact:.ai-dlc/intent/INT-012.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-012.md",
+      "artifact_id": "INT-012"
+    },
+    {
+      "id": "01M8457J1JWHRY5ETZ2W87W449",
+      "kind": "requirement",
+      "title": "REQ · Contribution service validates prompt, world, round status, limits, rate and spam",
+      "body": "Context: no contribution logic exists. Desired behavior: Service.Submit validates prompt length, world existence, OPEN round, per-player limit of 5, request rate and duplicate/spam prompts using an injected clock. Expected result: typed errors per rule. Why: protect the Git-backed record from abuse.\n\n## Acceptance criteria\n- Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned\n- Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned\n- Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned\n- Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned\n- Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned\n- Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned\n\n\n## Scope\n- In scope: The service rejects invalid submissions before anything is written.\n- Out of scope: Admin APIs\n- Out of scope: Frontend changes\n- Out of scope: Git push\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Acceptance criteria met by implementation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "The service rejects invalid submissions before anything is written.",
+      "description": "Context: no contribution logic exists. Desired behavior: Service.Submit validates prompt length, world existence, OPEN round, per-player limit of 5, request rate and duplicate/spam prompts using an injected clock. Expected result: typed errors per rule. Why: protect the Git-backed record from abuse.",
+      "acceptance_criteria": [
+        "Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned",
+        "Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned",
+        "Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned",
+        "Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned",
+        "Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned",
+        "Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "The service rejects invalid submissions before anything is written."
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Frontend changes",
+          "Git push"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria met by implementation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-029.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8457J1JTYNHTFP298ECTMXW",
+      "matched_feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+      "links": [
+        "parent:01M8457J1JTYNHTFP298ECTMXW",
+        "trace:01M8414WGR17QT0BMYRJPZ02TC",
+        "artifact:.ai-dlc/requirements/REQ-029.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTYNHTFP298ECTMXW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-029.md",
+      "artifact_id": "REQ-029"
+    },
+    {
+      "id": "01M8457J1JTVW8SDQ5J6EMM3J0",
+      "kind": "requirement",
+      "title": "REQ · Accepted contributions are written as unique immutable Markdown files with serialized writes and sanitized paths",
+      "body": "Context: the service needs a Store. Desired behavior: Store writes worlds/<world>/rounds/<round>/contributions/<id>.md with a generated ID under a mutex, refuses overwrite, commits via the Git interface, and rejects unsafe path segments. Expected result: concurrent submissions never collide. Why: immutability and safety.\n\n## Acceptance criteria\n- Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt\n- Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged\n- Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written\n- Given a saved contribution, when Get(id) and ListByPlayer run, then the stored fields are returned\n\n\n## Scope\n- In scope: Each contribution becomes a distinct Markdown file; traversal is rejected.\n- Out of scope: Admin APIs\n- Out of scope: Frontend changes\n- Out of scope: Git push\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Acceptance criteria met by implementation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Each contribution becomes a distinct Markdown file; traversal is rejected.",
+      "description": "Context: the service needs a Store. Desired behavior: Store writes worlds/<world>/rounds/<round>/contributions/<id>.md with a generated ID under a mutex, refuses overwrite, commits via the Git interface, and rejects unsafe path segments. Expected result: concurrent submissions never collide. Why: immutability and safety.",
+      "acceptance_criteria": [
+        "Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt",
+        "Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged",
+        "Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written",
+        "Given a saved contribution, when Get(id) and ListByPlayer run, then the stored fields are returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "Each contribution becomes a distinct Markdown file; traversal is rejected."
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Frontend changes",
+          "Git push"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria met by implementation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-030.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8457J1JTYNHTFP298ECTMXW",
+      "matched_feature_id": "01M843NJMD87BN8FQ0BJJVS341",
+      "links": [
+        "parent:01M8457J1JTYNHTFP298ECTMXW",
+        "trace:01M843NJMD87BN8FQ0BJJVS341",
+        "artifact:.ai-dlc/requirements/REQ-030.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTYNHTFP298ECTMXW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-030.md",
+      "artifact_id": "REQ-030"
+    },
+    {
+      "id": "01M8457J1JWMZT565JPT6S5MA3",
+      "kind": "requirement",
+      "title": "REQ · Git writes go through an interface wrapping the Git CLI with a bot identity",
+      "body": "Context: contributions must be committed to Git. Desired behavior: gitrepo.Committer interface with a CLI implementation that runs git add and git commit with -c user.name/user.email set from the bot config via an injectable command runner. Expected result: tests mock the runner. Why: credentials never leave the backend and tests need no Git.\n\n## Acceptance criteria\n- Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir\n- Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned\n- Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs\n\n\n## Scope\n- In scope: A Committer interface with a CLI implementation using the configured bot identity.\n- Out of scope: Admin APIs\n- Out of scope: Frontend changes\n- Out of scope: Git push\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Acceptance criteria met by implementation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A Committer interface with a CLI implementation using the configured bot identity.",
+      "description": "Context: contributions must be committed to Git. Desired behavior: gitrepo.Committer interface with a CLI implementation that runs git add and git commit with -c user.name/user.email set from the bot config via an injectable command runner. Expected result: tests mock the runner. Why: credentials never leave the backend and tests need no Git.",
+      "acceptance_criteria": [
+        "Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir",
+        "Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned",
+        "Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs"
+      ],
+      "scope": {
+        "in_scope": [
+          "A Committer interface with a CLI implementation using the configured bot identity."
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Frontend changes",
+          "Git push"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria met by implementation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-031.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8457J1JTYNHTFP298ECTMXW",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M8457J1JTYNHTFP298ECTMXW",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-031.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTYNHTFP298ECTMXW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-031.md",
+      "artifact_id": "REQ-031"
+    },
+    {
+      "id": "01M8457J1J67DQEKQA53XB9HZA",
+      "kind": "requirement",
+      "title": "REQ · World and current-round read endpoints serve data from the repository files",
+      "body": "Context: world data lives in worlds/<id>/world.yaml and rounds/<round>/round.yaml, game content in game/content/worlds/<id>. Desired behavior: a world repository and handlers for the four read endpoints. Expected result: JSON responses, 404 for unknown worlds. Why: the client needs world, game and round state.\n\n## Acceptance criteria\n- Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned\n- Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned\n- Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned\n- Given game content for the world, when GET /api/v1/worlds/{id}/game runs, then the world YAML and scenes are returned as JSON\n\n\n## Scope\n- In scope: GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files.\n- Out of scope: Admin APIs\n- Out of scope: Frontend changes\n- Out of scope: Git push\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Acceptance criteria met by implementation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files.",
+      "description": "Context: world data lives in worlds/<id>/world.yaml and rounds/<round>/round.yaml, game content in game/content/worlds/<id>. Desired behavior: a world repository and handlers for the four read endpoints. Expected result: JSON responses, 404 for unknown worlds. Why: the client needs world, game and round state.",
+      "acceptance_criteria": [
+        "Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned",
+        "Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned",
+        "Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned",
+        "Given game content for the world, when GET /api/v1/worlds/{id}/game runs, then the world YAML and scenes are returned as JSON"
+      ],
+      "scope": {
+        "in_scope": [
+          "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files."
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Frontend changes",
+          "Git push"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria met by implementation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-032.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8457J1JTYNHTFP298ECTMXW",
+      "matched_feature_id": "01M8414WGR17QT0BMYRJPZ02TC",
+      "links": [
+        "parent:01M8457J1JTYNHTFP298ECTMXW",
+        "trace:01M8414WGR17QT0BMYRJPZ02TC",
+        "artifact:.ai-dlc/requirements/REQ-032.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTYNHTFP298ECTMXW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-032.md",
+      "artifact_id": "REQ-032"
+    },
+    {
+      "id": "01M8457J1J854T104PP475QTG9",
+      "kind": "requirement",
+      "title": "REQ · Contribution endpoints and world routes are wired into the server with configuration",
+      "body": "Context: server.go registers only session routes. Desired behavior: handlers for POST /api/v1/contributions, GET /api/v1/contributions/{id}, GET /api/v1/player/me/contributions identify the player from the session cookie, map service errors to HTTP statuses, and server.New wires all routes with storage and contribution limits from YAML config. Expected result: endpoints work end to end in-process. Why: expose the feature.\n\n## Acceptance criteria\n- Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned\n- Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned\n- Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404\n- Given a stored id, when GET /api/v1/contributions/{id} runs, then 200 is returned, and an unknown id gives 404\n- Given a valid cookie, when GET /api/v1/player/me/contributions runs, then only that player's contributions are returned\n- Given a YAML config with storage and contribution blocks, when loaded, then fields are parsed and defaults fill omitted limits\n\n\n## Scope\n- In scope: POST/GET contribution routes and player history are served; routes and config are wired.\n- Out of scope: Admin APIs\n- Out of scope: Frontend changes\n- Out of scope: Git push\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Acceptance criteria met by implementation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "POST/GET contribution routes and player history are served; routes and config are wired.",
+      "description": "Context: server.go registers only session routes. Desired behavior: handlers for POST /api/v1/contributions, GET /api/v1/contributions/{id}, GET /api/v1/player/me/contributions identify the player from the session cookie, map service errors to HTTP statuses, and server.New wires all routes with storage and contribution limits from YAML config. Expected result: endpoints work end to end in-process. Why: expose the feature.",
+      "acceptance_criteria": [
+        "Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned",
+        "Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned",
+        "Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404",
+        "Given a stored id, when GET /api/v1/contributions/{id} runs, then 200 is returned, and an unknown id gives 404",
+        "Given a valid cookie, when GET /api/v1/player/me/contributions runs, then only that player's contributions are returned",
+        "Given a YAML config with storage and contribution blocks, when loaded, then fields are parsed and defaults fill omitted limits"
+      ],
+      "scope": {
+        "in_scope": [
+          "POST/GET contribution routes and player history are served; routes and config are wired."
+        ],
+        "out_of_scope": [
+          "Admin APIs",
+          "Frontend changes",
+          "Git push"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Acceptance criteria met by implementation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-033.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8457J1JTYNHTFP298ECTMXW",
+      "matched_feature_id": "01M8414WGR9EE5R9VNW4JSS6WM",
+      "links": [
+        "parent:01M8457J1JTYNHTFP298ECTMXW",
+        "trace:01M8414WGR9EE5R9VNW4JSS6WM",
+        "artifact:.ai-dlc/requirements/REQ-033.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTYNHTFP298ECTMXW"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-033.md",
+      "artifact_id": "REQ-033"
+    },
+    {
+      "id": "01M8457J1JWYRMDTRQFZMET35M",
+      "kind": "unit",
+      "title": "Act: Implement contribution service validation rules",
+      "body": "Context: no contribution logic exists. Desired behavior: Service.Submit validates prompt length, world existence, OPEN round, per-player limit of 5, request rate and duplicate/spam prompts using an injected clock. Expected result: typed errors per rule. Why: protect the Git-backed record from abuse.\n\n## Acceptance criteria\n- Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned\n- Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned\n- Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned\n\n\n## Scope\n- In scope: The service rejects invalid submissions before anything is written.\n- Out of scope: Writing tests\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n- New file: `backend/internal/contribution/service.go`\n- New file: `backend/internal/contribution/ratelimit.go`\n\n\n## Definition of done\n- Product code compiles with go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "The service rejects invalid submissions before anything is written.",
+      "description": "Context: no contribution logic exists. Desired behavior: Service.Submit validates prompt length, world existence, OPEN round, per-player limit of 5, request rate and duplicate/spam prompts using an injected clock. Expected result: typed errors per rule. Why: protect the Git-backed record from abuse.",
+      "acceptance_criteria": [
+        "Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned",
+        "Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned",
+        "Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "The service rejects invalid submissions before anything is written."
+        ],
+        "out_of_scope": [
+          "Writing tests",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI",
+        "New file: `backend/internal/contribution/service.go`",
+        "New file: `backend/internal/contribution/ratelimit.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Product code compiles with go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-057.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8457J1JWHRY5ETZ2W87W449",
+      "matched_feature_id": "01M8447V97VD3PVVC505846Y5F",
+      "links": [
+        "parent:01M8457J1JWHRY5ETZ2W87W449",
+        "trace:01M8447V97VD3PVVC505846Y5F",
+        "artifact:.ai-dlc/units/UNIT-057.md"
+      ],
+      "depends_on": [
+        "01M8457J1JWHRY5ETZ2W87W449"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-057.md",
+      "artifact_id": "UNIT-057",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/service.go",
+          "symbol": "new: Service, Limits, Round, RoundSource, Store, Input, Submit",
+          "lines": "new",
+          "action": "Create package contribution with errors ErrPromptLength, ErrWorldNotFound, ErrRoundNotOpen, ErrLimitReached, ErrRateLimited, ErrDuplicate, ErrSpam; type Round{ID, Status string}; interface RoundSource{Current(worldID string) (Round, error)} (returns ErrWorldNotFound for unknown world); interface Store{Save(ctx, Contribution) error; CountByPlayer(worldID, roundID, playerID string) (int, error); HasPrompt(worldID, roundID, playerID, hash string) (bool, error)}; struct Limits{MinPromptLen, MaxPromptLen, MaxPerPlayer int; RateMax int; RateWindow time.Duration}; Service{Rounds, Store, Limits, Now func() time.Time}; Submit(ctx, Input{WorldID, PlayerID, Prompt}) (Contribution, error) that trims the prompt then checks in order: length (rune count), world/round via Rounds.Current, Status == \"OPEN\", spam run >= 10 identical runes, rate limiter Allow(playerID, Now()), CountByPlayer >= MaxPerPlayer, HasPrompt with sha256 of lower-cased whitespace-collapsed prompt, then Store.Save.",
+          "expected": "Submit returns the typed error for each violated rule and calls Store.Save only when all pass"
+        },
+        {
+          "file": "backend/internal/contribution/ratelimit.go",
+          "symbol": "new: rateLimiter",
+          "lines": "new",
+          "action": "Create rateLimiter{mu sync.Mutex; hits map[string][]time.Time; max int; window time.Duration} with Allow(key string, now time.Time) bool that drops hits older than now-window, returns false when len(hits) >= max, otherwise appends now and returns true.",
+          "expected": "Allow is false on the (max+1)th call within the window and true again after the window passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JB2B78YCWET88CZS7",
+      "kind": "unit",
+      "title": "Act: Implement the Markdown contribution store and path sanitizer",
+      "body": "Context: the service needs a Store. Desired behavior: Store writes worlds/<world>/rounds/<round>/contributions/<id>.md with a generated ID under a mutex, refuses overwrite, commits via the Git interface, and rejects unsafe path segments. Expected result: concurrent submissions never collide. Why: immutability and safety.\n\n## Acceptance criteria\n- Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt\n- Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged\n- Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written\n\n\n## Scope\n- In scope: Each contribution becomes a distinct Markdown file; traversal is rejected.\n- Out of scope: Writing tests\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n- New file: `backend/internal/safepath/safepath.go`\n- New file: `backend/internal/contribution/store.go`\n- New file: `backend/internal/contribution/model.go`\n\n\n## Definition of done\n- Product code compiles with go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Each contribution becomes a distinct Markdown file; traversal is rejected.",
+      "description": "Context: the service needs a Store. Desired behavior: Store writes worlds/<world>/rounds/<round>/contributions/<id>.md with a generated ID under a mutex, refuses overwrite, commits via the Git interface, and rejects unsafe path segments. Expected result: concurrent submissions never collide. Why: immutability and safety.",
+      "acceptance_criteria": [
+        "Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt",
+        "Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged",
+        "Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written"
+      ],
+      "scope": {
+        "in_scope": [
+          "Each contribution becomes a distinct Markdown file; traversal is rejected."
+        ],
+        "out_of_scope": [
+          "Writing tests",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI",
+        "New file: `backend/internal/safepath/safepath.go`",
+        "New file: `backend/internal/contribution/store.go`",
+        "New file: `backend/internal/contribution/model.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Product code compiles with go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-058.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8457J1JTVW8SDQ5J6EMM3J0",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8457J1JTVW8SDQ5J6EMM3J0",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-058.md"
+      ],
+      "depends_on": [
+        "01M8457J1JTVW8SDQ5J6EMM3J0"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-058.md",
+      "artifact_id": "UNIT-058",
+      "steps": [
+        {
+          "file": "backend/internal/safepath/safepath.go",
+          "symbol": "new: Segment",
+          "lines": "new",
+          "action": "Create package safepath with ErrUnsafe and Segment(s string) error that accepts only ^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$ and returns ErrUnsafe otherwise.",
+          "expected": "Segment(\"..\"), \"a/b\" and \"\" return ErrUnsafe; \"ROUND-0000001\" returns nil"
+        },
+        {
+          "file": "backend/internal/contribution/model.go",
+          "symbol": "new: Contribution, NewID, render, parse",
+          "lines": "new",
+          "action": "Define Contribution{ID, WorldID, RoundID, PlayerID, Prompt string; CreatedAt time.Time}; NewID returns \"CON-\"+32 hex chars from crypto/rand; render produces YAML front matter (id, world, round, player, created_at RFC3339) then a blank line and the prompt; parse reverses it.",
+          "expected": "render then parse yields an equal Contribution"
+        },
+        {
+          "file": "backend/internal/contribution/store.go",
+          "symbol": "new: FileStore, Save, Get, ListByPlayer, CountByPlayer, HasPrompt",
+          "lines": "new",
+          "action": "Create FileStore{Root string; Git gitrepo.Committer; mu sync.Mutex} implementing Store. Save validates WorldID and RoundID with safepath.Segment, assigns NewID when ID is empty, locks mu, creates dir worlds/<world>/rounds/<lower-case round>/contributions, opens <id>.md with os.O_CREATE|os.O_EXCL|os.O_WRONLY (0o644), writes render output, then calls Git.Commit(ctx, []string{relPath}, \"contribution <id>\"). Get(id) validates id then walks worlds/*/rounds/*/contributions for <id>.md; ListByPlayer, CountByPlayer and HasPrompt read matching files.",
+          "expected": "Files are created exclusively and committed through the interface"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JKQXAZ8CZSKMRDWV9",
+      "kind": "unit",
+      "title": "Act: Implement the Git CLI committer interface",
+      "body": "Context: contributions must be committed to Git. Desired behavior: gitrepo.Committer interface with a CLI implementation that runs git add and git commit with -c user.name/user.email set from the bot config via an injectable command runner. Expected result: tests mock the runner. Why: credentials never leave the backend and tests need no Git.\n\n## Acceptance criteria\n- Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir\n- Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned\n- Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs\n\n\n## Scope\n- In scope: A Committer interface with a CLI implementation using the configured bot identity.\n- Out of scope: Writing tests\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n- New file: `backend/internal/gitrepo/gitrepo.go`\n\n\n## Definition of done\n- Product code compiles with go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "A Committer interface with a CLI implementation using the configured bot identity.",
+      "description": "Context: contributions must be committed to Git. Desired behavior: gitrepo.Committer interface with a CLI implementation that runs git add and git commit with -c user.name/user.email set from the bot config via an injectable command runner. Expected result: tests mock the runner. Why: credentials never leave the backend and tests need no Git.",
+      "acceptance_criteria": [
+        "Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir",
+        "Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned",
+        "Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs"
+      ],
+      "scope": {
+        "in_scope": [
+          "A Committer interface with a CLI implementation using the configured bot identity."
+        ],
+        "out_of_scope": [
+          "Writing tests",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI",
+        "New file: `backend/internal/gitrepo/gitrepo.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Product code compiles with go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-059.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8457J1JWMZT565JPT6S5MA3",
+      "matched_feature_id": "01M8447V97VD3PVVC505846Y5F",
+      "links": [
+        "parent:01M8457J1JWMZT565JPT6S5MA3",
+        "trace:01M8447V97VD3PVVC505846Y5F",
+        "artifact:.ai-dlc/units/UNIT-059.md"
+      ],
+      "depends_on": [
+        "01M8457J1JWMZT565JPT6S5MA3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-059.md",
+      "artifact_id": "UNIT-059",
+      "steps": [
+        {
+          "file": "backend/internal/gitrepo/gitrepo.go",
+          "symbol": "new: Committer, Runner, CLI, Commit",
+          "lines": "new",
+          "action": "Create package gitrepo with interface Committer{Commit(ctx context.Context, paths []string, message string) error}; type Runner func(ctx context.Context, dir string, args ...string) ([]byte, error) defaulting to exec.CommandContext(\"git\", args...) with Dir set; CLI{Dir, BotName, BotEmail string; Run Runner}. Commit rejects empty paths or any path that is absolute or contains \"..\", runs [\"add\",\"--\",paths...], then [\"-c\",\"user.name=\"+BotName,\"-c\",\"user.email=\"+BotEmail,\"commit\",\"-m\",message,\"--\",paths...], wrapping errors with the command name.",
+          "expected": "Commit issues exactly two commands in order and returns the first failure"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JZPTXHJ90CMMNH712",
+      "kind": "unit",
+      "title": "Act: Implement the world repository and read handlers",
+      "body": "Context: world data lives in worlds/<id>/world.yaml and rounds/<round>/round.yaml, game content in game/content/worlds/<id>. Desired behavior: a world repository and handlers for the four read endpoints. Expected result: JSON responses, 404 for unknown worlds. Why: the client needs world, game and round state.\n\n## Acceptance criteria\n- Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned\n- Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned\n- Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned\n\n\n## Scope\n- In scope: GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files.\n- Out of scope: Writing tests\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n- New file: `backend/internal/world/world.go`\n- New file: `backend/internal/world/handler.go`\n\n\n## Definition of done\n- Product code compiles with go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files.",
+      "description": "Context: world data lives in worlds/<id>/world.yaml and rounds/<round>/round.yaml, game content in game/content/worlds/<id>. Desired behavior: a world repository and handlers for the four read endpoints. Expected result: JSON responses, 404 for unknown worlds. Why: the client needs world, game and round state.",
+      "acceptance_criteria": [
+        "Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned",
+        "Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned",
+        "Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files."
+        ],
+        "out_of_scope": [
+          "Writing tests",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI",
+        "New file: `backend/internal/world/world.go`",
+        "New file: `backend/internal/world/handler.go`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Product code compiles with go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-060.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8457J1J67DQEKQA53XB9HZA",
+      "matched_feature_id": "01M8414WGSXACPJVAPVTZ4SSJ5",
+      "links": [
+        "parent:01M8457J1J67DQEKQA53XB9HZA",
+        "trace:01M8414WGSXACPJVAPVTZ4SSJ5",
+        "artifact:.ai-dlc/units/UNIT-060.md"
+      ],
+      "depends_on": [
+        "01M8457J1J67DQEKQA53XB9HZA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-060.md",
+      "artifact_id": "UNIT-060",
+      "steps": [
+        {
+          "file": "backend/internal/world/world.go",
+          "symbol": "new: Repo, World, Round, List, Get, CurrentRound, Game",
+          "lines": "new",
+          "action": "Create package world with Repo{Root, ContentDir string}; World{ID, Title string} yaml-decoded from <Root>/worlds/<id>/world.yaml (fields id, title); Round{ID string; Number int; Status string; StartsAt, EndsAt time.Time} yaml-decoded from rounds/*/round.yaml (id, number, status, starts_at, ends_at). List reads dirs under worlds; Get and CurrentRound call safepath.Segment first and return ErrNotFound for a missing world; CurrentRound picks highest Number; Game reads <ContentDir>/worlds/<id>/world.yaml and scenes/*.yaml into map[string]any and returns {world, scenes}.",
+          "expected": "Repo returns typed data or ErrNotFound"
+        },
+        {
+          "file": "backend/internal/world/handler.go",
+          "symbol": "new: Handler, List, Get, Game, CurrentRound",
+          "lines": "new",
+          "action": "Create Handler{Repo *Repo} with methods List, Get, Game, CurrentRound reading chi.URLParam(r,\"id\"), writing JSON with Content-Type application/json, 404 on ErrNotFound and 500 otherwise.",
+          "expected": "Each handler returns 200 JSON or 404"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JQKJJN03F2XSB9ZXC",
+      "kind": "unit",
+      "title": "Act: Add contribution handlers, config and route wiring",
+      "body": "Context: server.go registers only session routes. Desired behavior: handlers for POST /api/v1/contributions, GET /api/v1/contributions/{id}, GET /api/v1/player/me/contributions identify the player from the session cookie, map service errors to HTTP statuses, and server.New wires all routes with storage and contribution limits from YAML config. Expected result: endpoints work end to end in-process. Why: expose the feature.\n\n## Acceptance criteria\n- Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned\n- Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned\n- Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404\n\n\n## Scope\n- In scope: POST/GET contribution routes and player history are served; routes and config are wired.\n- Out of scope: Writing tests\n- Out of scope: Frontend changes\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n- New file: `backend/internal/contribution/handler.go`\n- Code path: `backend/internal/config/config.go`\n- Code path: `backend/internal/server/server.go`\n- Code path: `backend/configs/config.example.yaml`\n\n\n## Definition of done\n- Product code compiles with go build ./...\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "POST/GET contribution routes and player history are served; routes and config are wired.",
+      "description": "Context: server.go registers only session routes. Desired behavior: handlers for POST /api/v1/contributions, GET /api/v1/contributions/{id}, GET /api/v1/player/me/contributions identify the player from the session cookie, map service errors to HTTP statuses, and server.New wires all routes with storage and contribution limits from YAML config. Expected result: endpoints work end to end in-process. Why: expose the feature.",
+      "acceptance_criteria": [
+        "Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned",
+        "Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned",
+        "Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404"
+      ],
+      "scope": {
+        "in_scope": [
+          "POST/GET contribution routes and player history are served; routes and config are wired."
+        ],
+        "out_of_scope": [
+          "Writing tests",
+          "Frontend changes"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI",
+        "New file: `backend/internal/contribution/handler.go`",
+        "Code path: `backend/internal/config/config.go`",
+        "Code path: `backend/internal/server/server.go`",
+        "Code path: `backend/configs/config.example.yaml`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Product code compiles with go build ./...",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-061.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8457J1J854T104PP475QTG9",
+      "matched_feature_id": "01M843NJMD1SHVV2PNXPVG9ZGH",
+      "links": [
+        "parent:01M8457J1J854T104PP475QTG9",
+        "trace:01M843NJMD1SHVV2PNXPVG9ZGH",
+        "artifact:.ai-dlc/units/UNIT-061.md"
+      ],
+      "depends_on": [
+        "01M8457J1J854T104PP475QTG9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-061.md",
+      "artifact_id": "UNIT-061",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/handler.go",
+          "symbol": "new: Handler, Create, Get, Mine",
+          "lines": "new",
+          "action": "Create Handler{Service *Service; Store Reader (Get(id) (Contribution, error); ListByPlayer(playerID string) ([]Contribution, error)); Secret []byte; CookieName string; TTL time.Duration; Now func() time.Time}. A playerID(r) helper reads the cookie and calls player.Verify. Create decodes {world_id, prompt}, calls Service.Submit and maps errors: ErrPromptLength 400, ErrWorldNotFound 404, ErrRoundNotOpen 409, ErrDuplicate/ErrSpam 409, ErrLimitReached/ErrRateLimited 429. Get and Mine return JSON; Get returns 404 when not found.",
+          "expected": "Handlers respond with the specified statuses"
+        },
+        {
+          "file": "backend/internal/config/config.go",
+          "symbol": "Config, LoadFS",
+          "lines": "L20-L25, L84-L92",
+          "action": "Add fields Storage StorageConfig{RepoPath, ContentDir string} (yaml storage.repo_path, storage.content_dir) and Contribution ContributionConfig{MinPromptLen, MaxPromptLen, MaxPerPlayer, RateMax int; RateWindow time.Duration}; in LoadFS default RepoPath \".\", ContentDir \"game/content\", MinPromptLen 3, MaxPromptLen 500, MaxPerPlayer 5, RateMax 3, RateWindow 1m.",
+          "expected": "Omitted blocks yield the defaults"
+        },
+        {
+          "file": "backend/internal/server/server.go",
+          "symbol": "New",
+          "lines": "L17-L37",
+          "action": "After the player routes, build world.Repo{Root: cfg.Storage.RepoPath, ContentDir: cfg.Storage.ContentDir}, gitrepo.CLI{Dir, BotName: cfg.Git.BotName, BotEmail: cfg.Git.BotEmail}, contribution.FileStore, a RoundSource adapter over world.Repo.CurrentRound, contribution.Service with Limits from cfg.Contribution and Now time.Now, and register r.Get \"/api/v1/worlds\", \"/api/v1/worlds/{id}\", \"/api/v1/worlds/{id}/game\", \"/api/v1/worlds/{id}/round/current\", r.Post \"/api/v1/contributions\", r.Get \"/api/v1/contributions/{id}\" and \"/api/v1/player/me/contributions\".",
+          "expected": "All seven routes resolve"
+        },
+        {
+          "file": "backend/configs/config.example.yaml",
+          "symbol": "storage, contribution",
+          "lines": "after L21",
+          "action": "Append storage: {repo_path: \".\", content_dir: \"game/content\"} and a contribution block with min_prompt_len 3, max_prompt_len 500, max_per_player 5, rate_max 3, rate_window \"1m\".",
+          "expected": "Example config loads with LoadFS"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JQT5C2C3Z570GPMX1",
+      "kind": "unit",
+      "title": "Verify: Contribution service validation unit tests",
+      "body": "Unit tests written from the requirement spec with mocked Git, clock and temp-dir filesystem only. Context: the service rejects invalid submissions before anything is written. Expected result: all listed tests pass.\n\n## Acceptance criteria\n- Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned\n- Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned\n- Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned\n- Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned\n- Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned\n- Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned\n\n\n## Scope\n- In scope: Unit tests with fakes\n- Out of scope: Running the server\n- Out of scope: Browser or e2e checks\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Listed tests pass via the unit command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving the service rejects invalid submissions before anything is written.",
+      "description": "Unit tests written from the requirement spec with mocked Git, clock and temp-dir filesystem only. Context: the service rejects invalid submissions before anything is written. Expected result: all listed tests pass.",
+      "acceptance_criteria": [
+        "Given a prompt shorter than MinPromptLen or longer than MaxPromptLen, when Submit runs, then ErrPromptLength is returned",
+        "Given a world with no round source entry, when Submit runs, then ErrWorldNotFound is returned",
+        "Given a round whose status is not OPEN, when Submit runs, then ErrRoundNotOpen is returned",
+        "Given a player with 5 stored contributions in the round, when Submit runs, then ErrLimitReached is returned",
+        "Given more than RateMax submissions in RateWindow by one player, when Submit runs, then ErrRateLimited is returned",
+        "Given a prompt identical (case/whitespace-insensitive) to the player's earlier one or containing 10+ repeated identical characters, when Submit runs, then ErrDuplicate or ErrSpam is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unit tests with fakes"
+        ],
+        "out_of_scope": [
+          "Running the server",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass via the unit command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-062.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JWYRMDTRQFZMET35M",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M8457J1JWYRMDTRQFZMET35M",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-062.md"
+      ],
+      "depends_on": [
+        "01M8457J1JWYRMDTRQFZMET35M"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-062.md",
+      "artifact_id": "UNIT-062",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/service_test.go",
+          "symbol": "TestSubmit_Rejects",
+          "lines": "new",
+          "action": "Write test TestSubmit_Rejects: table test with fake RoundSource, fake Store and fixed clock: prompt of 2 and 501 runes -> ErrPromptLength; unknown world -> ErrWorldNotFound; round Status CLOSED -> ErrRoundNotOpen; CountByPlayer returns 5 -> ErrLimitReached; HasPrompt true -> ErrDuplicate; prompt with 11 'a' -> ErrSpam; assert Store.Save call count is 0 each time.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/service_test.go",
+          "symbol": "TestSubmit_RateLimit",
+          "lines": "new",
+          "action": "Write test TestSubmit_RateLimit: fixed clock; 4th submit within RateWindow -> ErrRateLimited; advance clock past window -> success.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/service_test.go",
+          "symbol": "TestSubmit_OK",
+          "lines": "new",
+          "action": "Write test TestSubmit_OK: valid input returns Contribution with CreatedAt equal to the fixed clock and Save called once.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestSubmit'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1J6743061CR6VRDTQZ",
+      "kind": "unit",
+      "title": "Verify: Markdown contribution store and path sanitizer unit tests",
+      "body": "Unit tests written from the requirement spec with mocked Git, clock and temp-dir filesystem only. Context: each contribution becomes a distinct Markdown file; traversal is rejected. Expected result: all listed tests pass.\n\n## Acceptance criteria\n- Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt\n- Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged\n- Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written\n- Given a saved contribution, when Get(id) and ListByPlayer run, then the stored fields are returned\n\n\n## Scope\n- In scope: Unit tests with fakes\n- Out of scope: Running the server\n- Out of scope: Browser or e2e checks\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Listed tests pass via the unit command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving each contribution becomes a distinct Markdown file and traversal is rejected.",
+      "description": "Unit tests written from the requirement spec with mocked Git, clock and temp-dir filesystem only. Context: each contribution becomes a distinct Markdown file; traversal is rejected. Expected result: all listed tests pass.",
+      "acceptance_criteria": [
+        "Given two concurrent Save calls, when both complete, then two different files exist and each contains its own prompt",
+        "Given an existing file for an ID, when Save would write it again, then the write fails and the file is unchanged",
+        "Given a worldID or roundID containing .., a slash or a backslash, when Save runs, then safepath.ErrUnsafe is returned and nothing is written",
+        "Given a saved contribution, when Get(id) and ListByPlayer run, then the stored fields are returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unit tests with fakes"
+        ],
+        "out_of_scope": [
+          "Running the server",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass via the unit command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-063.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JB2B78YCWET88CZS7",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M8457J1JB2B78YCWET88CZS7",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-063.md"
+      ],
+      "depends_on": [
+        "01M8457J1JB2B78YCWET88CZS7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-063.md",
+      "artifact_id": "UNIT-063",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "TestSave_ConcurrentDistinctFiles",
+          "lines": "new",
+          "action": "Write test TestSave_ConcurrentDistinctFiles: t.TempDir root, fake Committer recording calls; 50 goroutines call Save with different prompts; assert 50 distinct .md files under worlds/the-boys-room/rounds/round-0000001/contributions and 50 commits.",
+          "command": "cd backend && go test ./internal/contribution ./internal/safepath -run 'TestSave|TestGetAndList|TestSegment'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "TestSave_NoOverwrite",
+          "lines": "new",
+          "action": "Write test TestSave_NoOverwrite: Save with preset ID twice; second returns an error and file content equals the first prompt.",
+          "command": "cd backend && go test ./internal/contribution ./internal/safepath -run 'TestSave|TestGetAndList|TestSegment'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "TestSave_TraversalRejected",
+          "lines": "new",
+          "action": "Write test TestSave_TraversalRejected: WorldID \"../x\" and RoundID \"a/b\" return safepath.ErrUnsafe; temp dir stays empty.",
+          "command": "cd backend && go test ./internal/contribution ./internal/safepath -run 'TestSave|TestGetAndList|TestSegment'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/safepath/safepath_test.go",
+          "symbol": "TestSegment",
+          "lines": "new",
+          "action": "Write table test TestSegment: \"..\", \"a/b\", \"a\\\\b\", \"\" and a 65-char string return ErrUnsafe; \"ROUND-0000001\" and \"the-boys-room\" return nil.",
+          "command": "cd backend && go test ./internal/safepath -run 'TestSegment'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "TestGetAndListByPlayer",
+          "lines": "new",
+          "action": "Write test TestGetAndListByPlayer: Save two contributions for different players; Get returns the exact fields; ListByPlayer returns one.",
+          "command": "cd backend && go test ./internal/contribution ./internal/safepath -run 'TestSave|TestGetAndList|TestSegment'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JWVWGAWFY0RD9MZ28",
+      "kind": "unit",
+      "title": "Verify: Git CLI committer unit tests",
+      "body": "Unit tests written from the requirement spec with a fake command runner only. Context: a Committer interface with a CLI implementation using the configured bot identity. Expected result: all listed tests pass.\n\n## Acceptance criteria\n- Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir\n- Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned\n- Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs\n\n\n## Scope\n- In scope: Unit tests with fakes\n- Out of scope: Running the server\n- Out of scope: Browser or e2e checks\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Listed tests pass via the unit command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving the Committer CLI implementation uses the configured bot identity.",
+      "description": "Unit tests written from the requirement spec with a fake command runner only. Context: a Committer interface with a CLI implementation using the configured bot identity. Expected result: all listed tests pass.",
+      "acceptance_criteria": [
+        "Given a CLI committer, when Commit runs, then it executes git add -- <path> then git commit with the bot name and email in the working dir",
+        "Given the runner fails on add, when Commit runs, then commit is not executed and the error is returned",
+        "Given an empty path list or a path with .., when Commit runs, then an error is returned and no command runs"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unit tests with fakes"
+        ],
+        "out_of_scope": [
+          "Running the server",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass via the unit command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-064.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JKQXAZ8CZSKMRDWV9",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M8457J1JKQXAZ8CZSKMRDWV9",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-064.md"
+      ],
+      "depends_on": [
+        "01M8457J1JKQXAZ8CZSKMRDWV9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-064.md",
+      "artifact_id": "UNIT-064",
+      "steps": [
+        {
+          "file": "backend/internal/gitrepo/gitrepo_test.go",
+          "symbol": "TestCommit_RunsAddThenCommit",
+          "lines": "new",
+          "action": "Write test TestCommit_RunsAddThenCommit: fake Runner capturing args; Commit(ctx, [\"worlds/a.md\"], \"msg\"); assert call 1 is add -- worlds/a.md and call 2 contains user.name=bot, user.email=bot@x and commit -m msg.",
+          "command": "cd backend && go test ./internal/gitrepo",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/gitrepo/gitrepo_test.go",
+          "symbol": "TestCommit_AddFailureSkipsCommit",
+          "lines": "new",
+          "action": "Write test TestCommit_AddFailureSkipsCommit: fake Runner errors on add; assert 1 call and non-nil error.",
+          "command": "cd backend && go test ./internal/gitrepo",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/gitrepo/gitrepo_test.go",
+          "symbol": "TestCommit_RejectsBadPaths",
+          "lines": "new",
+          "action": "Write test TestCommit_RejectsBadPaths: empty slice, \"../x\" and \"/abs\" return errors with zero runner calls.",
+          "command": "cd backend && go test ./internal/gitrepo",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JQYS57TYPJY8XNVMT",
+      "kind": "unit",
+      "title": "Verify: World repository and read handler unit tests",
+      "body": "Unit tests written from the requirement spec with temp-dir files and httptest only. Context: GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files. Expected result: all listed tests pass.\n\n## Acceptance criteria\n- Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned\n- Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned\n- Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned\n- Given game content for the world, when GET /api/v1/worlds/{id}/game runs, then the world YAML and scenes are returned as JSON\n\n\n## Scope\n- In scope: Unit tests with fakes\n- Out of scope: Running the server\n- Out of scope: Browser or e2e checks\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Listed tests pass via the unit command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving the four world read endpoints respond from repository files.",
+      "description": "Unit tests written from the requirement spec with temp-dir files and httptest only. Context: GET /worlds, /worlds/{id}, /worlds/{id}/game and /worlds/{id}/round/current respond from files. Expected result: all listed tests pass.",
+      "acceptance_criteria": [
+        "Given worlds/the-boys-room/world.yaml, when GET /api/v1/worlds runs, then a JSON array containing that world id is returned",
+        "Given an unknown or unsafe world id, when GET /api/v1/worlds/{id} runs, then 404 is returned",
+        "Given round directories, when GET /api/v1/worlds/{id}/round/current runs, then the highest-numbered round with id, number, status, starts_at and ends_at is returned",
+        "Given game content for the world, when GET /api/v1/worlds/{id}/game runs, then the world YAML and scenes are returned as JSON"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unit tests with fakes"
+        ],
+        "out_of_scope": [
+          "Running the server",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass via the unit command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-065.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JZPTXHJ90CMMNH712",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M8457J1JZPTXHJ90CMMNH712",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-065.md"
+      ],
+      "depends_on": [
+        "01M8457J1JZPTXHJ90CMMNH712"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-065.md",
+      "artifact_id": "UNIT-065",
+      "steps": [
+        {
+          "file": "backend/internal/world/world_test.go",
+          "symbol": "TestList_And_Get",
+          "lines": "new",
+          "action": "Write test TestList_And_Get: t.TempDir with worlds/the-boys-room/world.yaml; List returns [the-boys-room]; Get(\"missing\") and Get(\"../x\") return ErrNotFound.",
+          "command": "cd backend && go test ./internal/world",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/world/world_test.go",
+          "symbol": "TestCurrentRound_HighestNumber",
+          "lines": "new",
+          "action": "Write test TestCurrentRound_HighestNumber: write round-0000001 and round-0000002 round.yaml; CurrentRound returns number 2 with status and parsed times.",
+          "command": "cd backend && go test ./internal/world",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/world/world_test.go",
+          "symbol": "TestHandlers_StatusAndJSON",
+          "lines": "new",
+          "action": "Write test TestHandlers_StatusAndJSON: httptest + chi router; GET /worlds, /worlds/the-boys-room, /game, /round/current return 200 JSON; unknown id returns 404.",
+          "command": "cd backend && go test ./internal/world",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1JC99TM7GJDJ1B9QTN",
+      "kind": "unit",
+      "title": "Verify: Contribution handlers, config and routing unit tests",
+      "body": "Unit tests written from the requirement spec with fakes, fixed clock and httptest only. Context: POST/GET contribution routes and player history are served; routes and config are wired. Expected result: all listed tests pass.\n\n## Acceptance criteria\n- Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned\n- Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned\n- Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404\n- Given a stored id, when GET /api/v1/contributions/{id} runs, then 200 is returned, and an unknown id gives 404\n- Given a valid cookie, when GET /api/v1/player/me/contributions runs, then only that player's contributions are returned\n- Given a YAML config with storage and contribution blocks, when loaded, then fields are parsed and defaults fill omitted limits\n\n\n## Scope\n- In scope: Unit tests with fakes\n- Out of scope: Running the server\n- Out of scope: Browser or e2e checks\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Listed tests pass via the unit command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests proving contribution routes, player history and config defaults work.",
+      "description": "Unit tests written from the requirement spec with fakes, fixed clock and httptest only. Context: POST/GET contribution routes and player history are served; routes and config are wired. Expected result: all listed tests pass.",
+      "acceptance_criteria": [
+        "Given no valid session cookie, when POST /api/v1/contributions runs, then 401 is returned",
+        "Given a valid cookie and valid body {world_id, prompt}, when POST runs, then 201 with the contribution JSON is returned",
+        "Given ErrPromptLength/ErrRoundNotOpen/ErrLimitReached/ErrRateLimited/ErrDuplicate, when POST runs, then the status is 400/409/429/429/409 respectively and ErrWorldNotFound gives 404",
+        "Given a stored id, when GET /api/v1/contributions/{id} runs, then 200 is returned, and an unknown id gives 404",
+        "Given a valid cookie, when GET /api/v1/player/me/contributions runs, then only that player's contributions are returned",
+        "Given a YAML config with storage and contribution blocks, when loaded, then fields are parsed and defaults fill omitted limits"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unit tests with fakes"
+        ],
+        "out_of_scope": [
+          "Running the server",
+          "Browser or e2e checks"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass via the unit command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-066.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JQKJJN03F2XSB9ZXC",
+      "matched_feature_id": "01M844GYQJ55B1RVZJXYYRYX24",
+      "links": [
+        "parent:01M8457J1JQKJJN03F2XSB9ZXC",
+        "trace:01M844GYQJ55B1RVZJXYYRYX24",
+        "artifact:.ai-dlc/units/UNIT-066.md"
+      ],
+      "depends_on": [
+        "01M8457J1JQKJJN03F2XSB9ZXC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-066.md",
+      "artifact_id": "UNIT-066",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/handler_test.go",
+          "symbol": "TestCreate_StatusMapping",
+          "lines": "new",
+          "action": "Write test TestCreate_StatusMapping: handler with fake Service dependencies returning each sentinel error; cookie created with player.Sign and fixed Now; assert 401 without cookie, 201 on success, 400/404/409/409/429/429 for errors.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestCreate|TestGetAndMine'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/contribution/handler_test.go",
+          "symbol": "TestGetAndMine",
+          "lines": "new",
+          "action": "Write test TestGetAndMine: fake Reader; GET known id 200, unknown 404; Mine returns only the cookie player's items.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestCreate|TestGetAndMine'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/config/config_test.go",
+          "symbol": "TestLoadFS_ContributionDefaults",
+          "lines": "after existing tests",
+          "action": "Write test TestLoadFS_ContributionDefaults: fstest.MapFS config with only auth; assert Storage.RepoPath \".\", MaxPerPlayer 5, MaxPromptLen 500; second case with explicit storage and contribution blocks asserts the overrides parse.",
+          "command": "cd backend && go test ./internal/config -run 'TestLoadFS_ContributionDefaults'",
+          "expected": "Test passes"
+        },
+        {
+          "file": "backend/internal/server/server_test.go",
+          "symbol": "TestNew_RegistersRoutes",
+          "lines": "after existing tests",
+          "action": "Write test TestNew_RegistersRoutes: server.New with a temp RepoPath; GET /api/v1/worlds returns 200 and POST /api/v1/contributions without cookie returns 401.",
+          "command": "cd backend && go test ./internal/server -run 'TestNew_RegistersRoutes'",
+          "expected": "Test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M8457J1J19RDB71V0FGR5BBY",
+      "kind": "evidence",
+      "title": "Evidence: Contribution storage and API unit test results",
+      "body": "Collect passing unit-test output for the contribution service, store, Git wrapper, world repository and handlers as verification evidence for SG-4.\n\n## Acceptance criteria\n- All Verify unit test commands exit with status 0\n- Results list each requirement's tests by name\n\n\n## Scope\n- In scope: Test output summary\n- Out of scope: New code\n- Preserve: Existing player session handlers in backend/internal/player\n- Preserve: GET /healthz\n\n\n## Technical constraints\n- Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML\n- Git writes go through an interface wrapping the Git CLI\n\n\n## Definition of done\n- Evidence references every Verify unit\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results for SG-4",
+      "description": "Collect passing unit-test output for the contribution service, store, Git wrapper, world repository and handlers as verification evidence for SG-4.",
+      "acceptance_criteria": [
+        "All Verify unit test commands exit with status 0",
+        "Results list each requirement's tests by name"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test output summary"
+        ],
+        "out_of_scope": [
+          "New code"
+        ],
+        "preserve": [
+          "Existing player session handlers in backend/internal/player",
+          "GET /healthz"
+        ]
+      },
+      "technical_constraints": [
+        "Go 1.22, chi router, no database; persistent data lives in Git as Markdown/YAML",
+        "Git writes go through an interface wrapping the Git CLI"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Evidence references every Verify unit",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-012.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8457J1JQT5C2C3Z570GPMX1",
+      "matched_feature_id": "01M844GYQJ3KBP8HDVWSRTS7HK",
+      "links": [
+        "parent:01M8457J1JQT5C2C3Z570GPMX1",
+        "trace:01M844GYQJ3KBP8HDVWSRTS7HK",
+        "artifact:.ai-dlc/evidence/EVD-012.md"
+      ],
+      "depends_on": [
+        "01M8457J1JQT5C2C3Z570GPMX1",
+        "01M8457J1J6743061CR6VRDTQZ",
+        "01M8457J1JWVWGAWFY0RD9MZ28",
+        "01M8457J1JQYS57TYPJY8XNVMT",
+        "01M8457J1JC99TM7GJDJ1B9QTN"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-012.md",
+      "artifact_id": "EVD-012"
+    }
+  ],
+  "created_at": "2026-11-23T12:13:59.009699+00:00",
+  "summary": "AI · 1 NEW · 16 UPDATE · 0 UNCHANGED · 17/17 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

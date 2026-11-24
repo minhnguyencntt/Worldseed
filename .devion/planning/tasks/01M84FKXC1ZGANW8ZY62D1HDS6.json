@@ -1,0 +1,75 @@
+{
+  "id": "01M84FKXC1ZGANW8ZY62D1HDS6",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "Act: Add the retry loop and budget stop to Run",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Replace the single agent call with a bounded retry loop and ErrBudgetExceeded",
+  "description": "Edit runner.go so step 5 loops attempts 1..MaxRetries+1, accumulates cost and stops on budget overrun.",
+  "acceptance_criteria": [
+    "Agent is retried up to MaxRetries times",
+    "Total cost above MaxBudget returns ErrBudgetExceeded"
+  ],
+  "scope": {
+    "in_scope": [
+      "runner.go execute loop"
+    ],
+    "out_of_scope": [
+      "backoff"
+    ],
+    "preserve": [
+      "lock and timeout behavior"
+    ]
+  },
+  "technical_constraints": [
+    "Depends on Act: Create the runner package having been done",
+    "New file: `backend/worker/internal/runner/runner.go`"
+  ],
+  "dependencies": [
+    "R2"
+  ],
+  "definition_of_done": [
+    "go build ./internal/runner passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-184.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84FKHRAXTJJ9W2XTZRXNVPW",
+    "trace:01M847PS3SP3J1VY4KQMCK9TTP",
+    "artifact:.ai-dlc/units/UNIT-184.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84FKXC1DRG6A6K9VZWP4Z09"
+  ],
+  "sim_node_id": "01M84FKHRASQHA7W208VE7E139",
+  "feature_id": "01M847PS3SP3J1VY4KQMCK9TTP",
+  "artifact_path": ".ai-dlc/units/UNIT-184.md",
+  "artifact_id": "UNIT-184",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "backend/worker/internal/runner/runner.go",
+      "symbol": "var ErrBudgetExceeded",
+      "lines": "after the Config declaration",
+      "action": "Declare an exported sentinel error for budget overrun.",
+      "code": "var ErrBudgetExceeded = errors.New(\"runner: budget exceeded\")",
+      "expected": "Symbol exists"
+    },
+    {
+      "file": "backend/worker/internal/runner/runner.go",
+      "symbol": "Runner.Run step 5 agent call",
+      "lines": "the single `e.Attempt = 1; _, err = agent.Run(tctx, dir)` statement in Run",
+      "action": "Replace with a loop: var total float64; for attempt := 1; attempt <= r.cfg.MaxRetries+1; attempt++ { e.Attempt = attempt; cost, aerr := r.agent.Run(tctx, dir); total += cost; if total > r.cfg.MaxBudget { err = fmt.Errorf(\"%w: spent %.2f of %.2f\", ErrBudgetExceeded, total, r.cfg.MaxBudget); break }; err = aerr; if aerr == nil || tctx.Err() != nil { break } }. Existing failure/success handling then runs on err.",
+      "code": "before: e.Attempt = 1; _, err = agent.Run(tctx, dir)\nafter: loop as described",
+      "expected": "Retries bounded; budget error wraps ErrBudgetExceeded and stored Attempt equals attempts made"
+    }
+  ],
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.960815+00:00"
+}

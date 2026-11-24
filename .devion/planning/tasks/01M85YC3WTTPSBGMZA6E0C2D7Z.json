@@ -1,0 +1,77 @@
+{
+  "id": "01M85YC3WTTPSBGMZA6E0C2D7Z",
+  "intent_id": "01M85Y2YJQ8NMS1EVYN7YA78V9",
+  "title": "Act: Render the framed event log and confirm App wiring",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Replace bare history list with framed scrolling log.",
+  "description": "Rebuild the history section in StoryPanel and verify App passes real state.",
+  "acceptance_criteria": [
+    "Log has sf-frame-plaque and max-h scroll",
+    "Empty message shown",
+    "No legacy stone/amber classes remain"
+  ],
+  "scope": {
+    "in_scope": [
+      "StoryPanel history section",
+      "App StoryPanel props"
+    ],
+    "out_of_scope": [
+      "other components"
+    ],
+    "preserve": [
+      "Story history aria-label"
+    ]
+  },
+  "technical_constraints": [
+    "React, Tailwind stay.",
+    "Code path: `game/frontend/src/components/StoryPanel.tsx`",
+    "Code path: `game/frontend/src/App.tsx`"
+  ],
+  "dependencies": [
+    "REQ3",
+    "ACT2"
+  ],
+  "definition_of_done": [
+    "Log renders from history",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-846.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85Y5FNQYVEAA3XQZW6QSRCA",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-846.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85YC3WTVZSJPZ0W9KR85FX0"
+  ],
+  "sim_node_id": "01M85Y5FNQHM2P0R0Y6V3VG4XS",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-846.md",
+  "artifact_id": "UNIT-846",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/components/StoryPanel.tsx",
+      "symbol": "StoryPanel history section",
+      "lines": "L30-L34",
+      "action": "Wrap the history in <section className='sf-frame-plaque max-h-40 overflow-y-auto p-2' aria-label='Event log'> with h2 'Event log'; keep <ol aria-label='Story history'> mapping history to li; when history.length === 0 render <p>Nothing has happened yet</p> instead of the ol.",
+      "expected": "Log region renders entries or the empty message."
+    },
+    {
+      "file": "game/frontend/src/App.tsx",
+      "symbol": "App story prop",
+      "lines": "L94-L102",
+      "action": "Confirm StoryPanel receives game.state.history, game.state.inventory and game.choose unchanged; make no edit unless a prop differs from the StoryPanelProps contract.",
+      "expected": "App wiring keeps passing real state."
+    }
+  ],
+  "created_at": "2026-11-24T04:52:36.378862+00:00",
+  "updated_at": "2026-11-24T04:58:57.240417+00:00"
+}

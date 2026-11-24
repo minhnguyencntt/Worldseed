@@ -1,0 +1,774 @@
+{
+  "intent_id": "01M85Y2YJQ8NMS1EVYN7YA78V9",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85Y5FNQ9F6RYCMN502R2W47",
+      "kind": "intent",
+      "title": "SG-5.2 · Rebuild StoryPanel on the kit",
+      "body": "Context: game/frontend/src/components/StoryPanel.tsx is a plain list of h1, dialogue, history ol and inventory ul. App.tsx passes sceneTitle, node, history, inventory and onChoose from useGame. Desired behavior: the panel is rebuilt on the frame kit (sf-frame-* classes in styles.css) with its own overflow scroll, a 32x32 portrait in the dialogue card, a 3x2 inventory grid with icons and names, and an event log. Expected result: all regions read real game state. Why: matches the reference UI.\n\n## Acceptance criteria\n- Given a dialogue node, when StoryPanel renders, then the chapter title, a parchment card with portrait, speaker name and line, and one button per choice are shown.\n- Given an inventory of 0 to 6 items, when rendered, then exactly 6 slots appear in a 3x2 grid, filled slots show icon and name, empty slots are marked empty.\n- Given history lines, when rendered, then the event log lists them in order inside a region that scrolls independently.\n- Given a choice click, then onChoose is called with that choice index.\n\n\n## Scope\n- In scope: StoryPanel component and its pure data helper\n- In scope: existing story, title and frame-kit tests\n- Out of scope: new story content\n- Out of scope: new rooms\n- Out of scope: backend changes\n- Out of scope: audio\n- Out of scope: header changes\n- Preserve: StoryPanelProps contract used by App\n- Preserve: aria-labels Dialogue, Story history, Inventory\n- Preserve: Go API contracts and contribution flow\n\n\n## Technical constraints\n- Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.\n- No mock data in place of real API calls; data comes from game state and the manifest.\n- Art is generated PNG from the repo; no downloaded art or CDN links.\n- One shared palette of at most 48 colours used by art and UI.\n- Tests are unit tests with all dependencies mocked.\n\n\n## Definition of done\n- All acceptance criteria met\n- Updated and new unit tests pass\n\n\n## Non-functional requirements\n- Layout holds from 1280x720; panel works as bottom drawer on narrow screens\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "StoryPanel shows chapter title, portrait dialogue card, choices, 3x2 inventory grid and event log in the panel frame.",
+      "description": "Context: game/frontend/src/components/StoryPanel.tsx is a plain list of h1, dialogue, history ol and inventory ul. App.tsx passes sceneTitle, node, history, inventory and onChoose from useGame. Desired behavior: the panel is rebuilt on the frame kit (sf-frame-* classes in styles.css) with its own overflow scroll, a 32x32 portrait in the dialogue card, a 3x2 inventory grid with icons and names, and an event log. Expected result: all regions read real game state. Why: matches the reference UI.",
+      "acceptance_criteria": [
+        "Given a dialogue node, when StoryPanel renders, then the chapter title, a parchment card with portrait, speaker name and line, and one button per choice are shown.",
+        "Given an inventory of 0 to 6 items, when rendered, then exactly 6 slots appear in a 3x2 grid, filled slots show icon and name, empty slots are marked empty.",
+        "Given history lines, when rendered, then the event log lists them in order inside a region that scrolls independently.",
+        "Given a choice click, then onChoose is called with that choice index."
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel component and its pure data helper",
+          "existing story, title and frame-kit tests"
+        ],
+        "out_of_scope": [
+          "new story content",
+          "new rooms",
+          "backend changes",
+          "audio",
+          "header changes"
+        ],
+        "preserve": [
+          "StoryPanelProps contract used by App",
+          "aria-labels Dialogue, Story history, Inventory",
+          "Go API contracts and contribution flow"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays on 3.90.x; React, TypeScript, Vite, Tailwind, Radix, Zustand stay.",
+        "No mock data in place of real API calls; data comes from game state and the manifest.",
+        "Art is generated PNG from the repo; no downloaded art or CDN links.",
+        "One shared palette of at most 48 colours used by art and UI.",
+        "Tests are unit tests with all dependencies mocked."
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria met",
+        "Updated and new unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-170.md`"
+      ],
+      "non_functional": [
+        "Layout holds from 1280x720; panel works as bottom drawer on narrow screens"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M8470M8SGE3C49YK0A5ZFJDC",
+      "links": [
+        "trace:01M8470M8SGE3C49YK0A5ZFJDC",
+        "artifact:.ai-dlc/intent/INT-170.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-170.md",
+      "artifact_id": "INT-170"
+    },
+    {
+      "id": "01M85Y5FNQ0M51AQ58GWZGK22P",
+      "kind": "requirement",
+      "title": "REQ · Panel shows chapter title and a parchment dialogue card with portrait, speaker, line and choices",
+      "body": "Context: StoryPanel renders the dialogue as bare h2, p and buttons without a portrait. Desired behavior: wrap the panel in sf-frame-panel with own overflow-y scroll, show the chapter title, and render the node in an sf-frame-parchment card with the speaker portrait resolved from the manifest. Expected result: card shows portrait, speaker, line and choices list. Why: reference UI.\n\n## Acceptance criteria\n- Given a node with speaker boy, when rendered, then an img of 32x32 from manifest id character:boy-portrait is in the Dialogue region.\n- Given a speaker with no manifest portrait, when rendered, then no img is shown and the speaker name and line still render.\n- Given a node with 2 choices, when rendered, then a list with 2 buttons appears and clicking the second calls onChoose(1).\n- Given no node, when rendered, then the title shows and no Dialogue region exists.\n\n\n## Scope\n- In scope: root frame and overflow classes\n- In scope: dialogue card\n- In scope: choices list\n- In scope: portrait lookup helper\n- Out of scope: inventory\n- Out of scope: event log content\n- Preserve: story-content root class\n- Preserve: aria-label Dialogue\n\n\n## Technical constraints\n- Portrait comes from the existing generated manifest entry character:boy-portrait.\n- Palette and tokens shared with UI; no new colours.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Dialogue card renders portrait, speaker, line, choices\n- Root panel is framed and scrolls on its own\n\n\n## Non-functional requirements\n- Portrait uses pixelated rendering\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Dialogue card with 32x32 portrait, speaker name, line and choices list inside the panel frame.",
+      "description": "Context: StoryPanel renders the dialogue as bare h2, p and buttons without a portrait. Desired behavior: wrap the panel in sf-frame-panel with own overflow-y scroll, show the chapter title, and render the node in an sf-frame-parchment card with the speaker portrait resolved from the manifest. Expected result: card shows portrait, speaker, line and choices list. Why: reference UI.",
+      "acceptance_criteria": [
+        "Given a node with speaker boy, when rendered, then an img of 32x32 from manifest id character:boy-portrait is in the Dialogue region.",
+        "Given a speaker with no manifest portrait, when rendered, then no img is shown and the speaker name and line still render.",
+        "Given a node with 2 choices, when rendered, then a list with 2 buttons appears and clicking the second calls onChoose(1).",
+        "Given no node, when rendered, then the title shows and no Dialogue region exists."
+      ],
+      "scope": {
+        "in_scope": [
+          "root frame and overflow classes",
+          "dialogue card",
+          "choices list",
+          "portrait lookup helper"
+        ],
+        "out_of_scope": [
+          "inventory",
+          "event log content"
+        ],
+        "preserve": [
+          "story-content root class",
+          "aria-label Dialogue"
+        ]
+      },
+      "technical_constraints": [
+        "Portrait comes from the existing generated manifest entry character:boy-portrait.",
+        "Palette and tokens shared with UI; no new colours."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Dialogue card renders portrait, speaker, line, choices",
+        "Root panel is framed and scrolls on its own",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-422.md`"
+      ],
+      "non_functional": [
+        "Portrait uses pixelated rendering"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85Y5FNQ9F6RYCMN502R2W47",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85Y5FNQ9F6RYCMN502R2W47",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-422.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ9F6RYCMN502R2W47"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-422.md",
+      "artifact_id": "REQ-422"
+    },
+    {
+      "id": "01M85Y5FNQSE3SNX22WSY64A9V",
+      "kind": "requirement",
+      "title": "REQ · Inventory is a 3x2 grid of slots with item icons and names, empty slots included",
+      "body": "Context: inventory renders a ul of ids or the text Empty. Desired behavior: a grid of exactly six sf-frame-slot cells, 3 columns by 2 rows; each filled slot shows the 16x16 icon from manifest id item/<id> and a readable name; remaining slots are empty placeholders. Expected result: layout is stable at any inventory size up to six.\n\n## Acceptance criteria\n- Given inventory ['old-key'], then 6 slots render, slot 1 has an img from item/old-key and the name 'Old Key', 5 slots are marked empty.\n- Given empty inventory, then 6 empty slots render and no img exists.\n- Given an item with no manifest icon, then its name shows without an img.\n- Grid has 3 columns (grid-cols-3).\n\n\n## Scope\n- In scope: inventory grid\n- In scope: slot builder helper\n- Out of scope: more than six items scrolling rules\n- Out of scope: new item art\n- Preserve: aria-label Inventory\n- Preserve: item icon PNGs and manifest entries\n\n\n## Technical constraints\n- Icons come from existing generated item/* manifest entries.\n- Shared palette and tokens only.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Always six slots\n- Icons and names from game state\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Six framed slots show generated item icons and names from game state.",
+      "description": "Context: inventory renders a ul of ids or the text Empty. Desired behavior: a grid of exactly six sf-frame-slot cells, 3 columns by 2 rows; each filled slot shows the 16x16 icon from manifest id item/<id> and a readable name; remaining slots are empty placeholders. Expected result: layout is stable at any inventory size up to six.",
+      "acceptance_criteria": [
+        "Given inventory ['old-key'], then 6 slots render, slot 1 has an img from item/old-key and the name 'Old Key', 5 slots are marked empty.",
+        "Given empty inventory, then 6 empty slots render and no img exists.",
+        "Given an item with no manifest icon, then its name shows without an img.",
+        "Grid has 3 columns (grid-cols-3)."
+      ],
+      "scope": {
+        "in_scope": [
+          "inventory grid",
+          "slot builder helper"
+        ],
+        "out_of_scope": [
+          "more than six items scrolling rules",
+          "new item art"
+        ],
+        "preserve": [
+          "aria-label Inventory",
+          "item icon PNGs and manifest entries"
+        ]
+      },
+      "technical_constraints": [
+        "Icons come from existing generated item/* manifest entries.",
+        "Shared palette and tokens only."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Always six slots",
+        "Icons and names from game state",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-423.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85Y5FNQ9F6RYCMN502R2W47",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M85Y5FNQ9F6RYCMN502R2W47",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-423.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ9F6RYCMN502R2W47"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-423.md",
+      "artifact_id": "REQ-423"
+    },
+    {
+      "id": "01M85Y5FNQYVEAA3XQZW6QSRCA",
+      "kind": "requirement",
+      "title": "REQ · Event log renders game history in its own scrolling region and App feeds real state",
+      "body": "Context: history renders as a bare ol. Desired behavior: a framed Event log region showing history entries in order (newest visible via scroll) with a max-height scroll, and App continues to pass game.state.history, inventory and choose from useGame with no leftover old styling. Expected result: log reflects game state changes after choices.\n\n## Acceptance criteria\n- Given history ['a','b'], then the Story history list shows a then b inside an sf-frame-plaque region.\n- Given empty history, then the log shows the text 'Nothing has happened yet'.\n- Given App rendered after Begin, then StoryPanel receives the game state's history, inventory and choose and old border-amber/bg-stone-900 classes are gone.\n\n\n## Scope\n- In scope: event log markup\n- In scope: App wiring check\n- Out of scope: new log persistence\n- Out of scope: backend\n- Preserve: aria-label Story history\n- Preserve: App props\n\n\n## Technical constraints\n- Real game state only; no mocked data.\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- Log reads from state; no legacy styling\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Event log lists state.history; App passes live game state into the rebuilt panel.",
+      "description": "Context: history renders as a bare ol. Desired behavior: a framed Event log region showing history entries in order (newest visible via scroll) with a max-height scroll, and App continues to pass game.state.history, inventory and choose from useGame with no leftover old styling. Expected result: log reflects game state changes after choices.",
+      "acceptance_criteria": [
+        "Given history ['a','b'], then the Story history list shows a then b inside an sf-frame-plaque region.",
+        "Given empty history, then the log shows the text 'Nothing has happened yet'.",
+        "Given App rendered after Begin, then StoryPanel receives the game state's history, inventory and choose and old border-amber/bg-stone-900 classes are gone."
+      ],
+      "scope": {
+        "in_scope": [
+          "event log markup",
+          "App wiring check"
+        ],
+        "out_of_scope": [
+          "new log persistence",
+          "backend"
+        ],
+        "preserve": [
+          "aria-label Story history",
+          "App props"
+        ]
+      },
+      "technical_constraints": [
+        "Real game state only; no mocked data."
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "Log reads from state; no legacy styling",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-424.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85Y5FNQ9F6RYCMN502R2W47",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M85Y5FNQ9F6RYCMN502R2W47",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-424.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ9F6RYCMN502R2W47"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-424.md",
+      "artifact_id": "REQ-424"
+    },
+    {
+      "id": "01M85Y5FNQ2BE0KXNEXY1A4VC2",
+      "kind": "unit",
+      "title": "Act: Frame StoryPanel and add portrait dialogue card with choices list",
+      "body": "Implement a pure helper that resolves a portrait URL from the manifest and use it in StoryPanel's dialogue card; frame the root and make it scroll alone.\n\n## Acceptance criteria\n- portraitPath('boy') returns /assets/worlds/the-boys-room/characters/boy-portrait.png\n- portraitPath of an unknown speaker returns undefined\n- StoryPanel root has sf-frame-panel and overflow-y-auto\n\n\n## Scope\n- In scope: new storyPanelData helper\n- In scope: StoryPanel.tsx root, title, dialogue, choices\n- Out of scope: inventory\n- Out of scope: log\n- Preserve: StoryPanelProps\n- Preserve: story-content class\n\n\n## Technical constraints\n- React and TypeScript stay; fonts and art stay in-repo.\n- New file: `game/frontend/src/lib/storyPanelData.ts`\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Dialogue card shows portrait when manifest has it\n- Choices render as a list of buttons\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add portraitPath helper and rebuild the StoryPanel root, title, dialogue card and choices.",
+      "description": "Implement a pure helper that resolves a portrait URL from the manifest and use it in StoryPanel's dialogue card; frame the root and make it scroll alone.",
+      "acceptance_criteria": [
+        "portraitPath('boy') returns /assets/worlds/the-boys-room/characters/boy-portrait.png",
+        "portraitPath of an unknown speaker returns undefined",
+        "StoryPanel root has sf-frame-panel and overflow-y-auto"
+      ],
+      "scope": {
+        "in_scope": [
+          "new storyPanelData helper",
+          "StoryPanel.tsx root, title, dialogue, choices"
+        ],
+        "out_of_scope": [
+          "inventory",
+          "log"
+        ],
+        "preserve": [
+          "StoryPanelProps",
+          "story-content class"
+        ]
+      },
+      "technical_constraints": [
+        "React and TypeScript stay; fonts and art stay in-repo.",
+        "New file: `game/frontend/src/lib/storyPanelData.ts`",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Dialogue card shows portrait when manifest has it",
+        "Choices render as a list of buttons",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-844.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85Y5FNQ0M51AQ58GWZGK22P",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M85Y5FNQ0M51AQ58GWZGK22P",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-844.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ0M51AQ58GWZGK22P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-844.md",
+      "artifact_id": "UNIT-844",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/storyPanelData.ts",
+          "symbol": "new: portraitPath",
+          "lines": "new",
+          "action": "Create module importing manifestJson from '../../../public/assets/worlds/the-boys-room/manifest.json'; export portraitPath(speaker: string): string | undefined that finds the asset with id `character:${speaker}-portrait` and returns `/assets/${asset.path}`, else undefined.",
+          "code": "export function portraitPath(speaker: string): string | undefined { const a = manifestJson.assets.find((x) => x.id === `character:${speaker}-portrait`); return a ? `/assets/${a.path}` : undefined; }",
+          "expected": "portraitPath('boy') returns '/assets/worlds/the-boys-room/characters/boy-portrait.png'; unknown speaker returns undefined."
+        },
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel",
+          "lines": "L13-L49",
+          "action": "Replace the root className with 'story-content sf-frame-panel h-full overflow-y-auto p-3 text-sm'. Keep h1 for sceneTitle. In the Dialogue section keep sf-frame-parchment, add a flex row with <img src={portraitPath(node.speaker)} width={32} height={32} alt='' style={{imageRendering:'pixelated'}}/> rendered only when portraitPath returns a value, then h2 speaker and p text. Render choices as <ul aria-label='Choices'> with one <li><button className='sf-btn' onClick={() => onChoose(index)}> per choice.",
+          "expected": "Component renders framed panel, portrait card and a Choices list; onChoose(index) still fires."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQ80DGJ9DD240X0XZE",
+      "kind": "unit",
+      "title": "Act: Add buildInventorySlots and render the 3x2 inventory grid",
+      "body": "Pure helper maps inventory ids to six slot descriptors; StoryPanel renders them in a grid.\n\n## Acceptance criteria\n- buildInventorySlots returns length 6\n- Names are humanised ids\n- Grid uses grid-cols-3\n\n\n## Scope\n- In scope: storyPanelData.ts\n- In scope: StoryPanel inventory section\n- Out of scope: log\n- Preserve: Inventory aria-label\n\n\n## Technical constraints\n- React, TypeScript, Tailwind stay.\n- New file: `game/frontend/src/lib/storyPanelData.ts`\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n\n\n## Dependencies\n- REQ2\n- ACT1\n\n\n## Definition of done\n- Grid always renders six slots\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create slot builder and render it in StoryPanel.",
+      "description": "Pure helper maps inventory ids to six slot descriptors; StoryPanel renders them in a grid.",
+      "acceptance_criteria": [
+        "buildInventorySlots returns length 6",
+        "Names are humanised ids",
+        "Grid uses grid-cols-3"
+      ],
+      "scope": {
+        "in_scope": [
+          "storyPanelData.ts",
+          "StoryPanel inventory section"
+        ],
+        "out_of_scope": [
+          "log"
+        ],
+        "preserve": [
+          "Inventory aria-label"
+        ]
+      },
+      "technical_constraints": [
+        "React, TypeScript, Tailwind stay.",
+        "New file: `game/frontend/src/lib/storyPanelData.ts`",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`"
+      ],
+      "dependencies": [
+        "REQ2",
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Grid always renders six slots",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-845.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85Y5FNQSE3SNX22WSY64A9V",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85Y5FNQSE3SNX22WSY64A9V",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-845.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQSE3SNX22WSY64A9V"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-845.md",
+      "artifact_id": "UNIT-845",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/storyPanelData.ts",
+          "symbol": "new: buildInventorySlots",
+          "lines": "after portraitPath",
+          "action": "Export type InventorySlot = { id: string | null; name: string; icon: string | undefined }, const INVENTORY_SLOT_COUNT = 6, and buildInventorySlots(inventory: string[]): InventorySlot[]. For index 0..5: if inventory[i] exists, name = id split on '-' with each word capitalised and joined by space, icon = '/assets/'+path of manifest asset id `item/${id}` or undefined; else { id: null, name: '', icon: undefined }.",
+          "code": "Array.from({ length: INVENTORY_SLOT_COUNT }, (_, i) => ...)",
+          "expected": "buildInventorySlots(['old-key'])[0] is {id:'old-key',name:'Old Key',icon:'/assets/worlds/the-boys-room/items/old-key.png'}; length is 6."
+        },
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel Inventory section",
+          "lines": "L35-L47",
+          "action": "Replace the Empty/ul branch with <ul className='grid grid-cols-3 gap-2'> mapping buildInventorySlots(inventory) to <li className='sf-frame-slot' data-slot={i} data-empty={slot.id === null}> containing, for filled slots, <img width={16} height={16} alt='' style pixelated> when icon exists and <span>{slot.name}</span>. Keep the section aria-label='Inventory' and h2.",
+          "expected": "Six li render; filled ones show name and icon; empty ones have data-empty='true'."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQHM2P0R0Y6V3VG4XS",
+      "kind": "unit",
+      "title": "Act: Render the framed event log and confirm App wiring",
+      "body": "Rebuild the history section in StoryPanel and verify App passes real state.\n\n## Acceptance criteria\n- Log has sf-frame-plaque and max-h scroll\n- Empty message shown\n- No legacy stone/amber classes remain\n\n\n## Scope\n- In scope: StoryPanel history section\n- In scope: App StoryPanel props\n- Out of scope: other components\n- Preserve: Story history aria-label\n\n\n## Technical constraints\n- React, Tailwind stay.\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n- Code path: `game/frontend/src/App.tsx`\n\n\n## Dependencies\n- REQ3\n- ACT2\n\n\n## Definition of done\n- Log renders from history\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Replace bare history list with framed scrolling log.",
+      "description": "Rebuild the history section in StoryPanel and verify App passes real state.",
+      "acceptance_criteria": [
+        "Log has sf-frame-plaque and max-h scroll",
+        "Empty message shown",
+        "No legacy stone/amber classes remain"
+      ],
+      "scope": {
+        "in_scope": [
+          "StoryPanel history section",
+          "App StoryPanel props"
+        ],
+        "out_of_scope": [
+          "other components"
+        ],
+        "preserve": [
+          "Story history aria-label"
+        ]
+      },
+      "technical_constraints": [
+        "React, Tailwind stay.",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`",
+        "Code path: `game/frontend/src/App.tsx`"
+      ],
+      "dependencies": [
+        "REQ3",
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Log renders from history",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-846.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85Y5FNQYVEAA3XQZW6QSRCA",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M85Y5FNQYVEAA3XQZW6QSRCA",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-846.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQYVEAA3XQZW6QSRCA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-846.md",
+      "artifact_id": "UNIT-846",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel history section",
+          "lines": "L30-L34",
+          "action": "Wrap the history in <section className='sf-frame-plaque max-h-40 overflow-y-auto p-2' aria-label='Event log'> with h2 'Event log'; keep <ol aria-label='Story history'> mapping history to li; when history.length === 0 render <p>Nothing has happened yet</p> instead of the ol.",
+          "expected": "Log region renders entries or the empty message."
+        },
+        {
+          "file": "game/frontend/src/App.tsx",
+          "symbol": "App story prop",
+          "lines": "L94-L102",
+          "action": "Confirm StoryPanel receives game.state.history, game.state.inventory and game.choose unchanged; make no edit unless a prop differs from the StoryPanelProps contract.",
+          "expected": "App wiring keeps passing real state."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQBRW4WY101QRVNFH2",
+      "kind": "unit",
+      "title": "Verify: Dialogue card, portrait and choices unit tests",
+      "body": "TDD unit tests covering REQ1 acceptance criteria with no network; the manifest is the committed JSON file.\n\n## Acceptance criteria\n- Portrait present for boy and absent for unknown speaker\n- Choice click calls onChoose with index\n- No node renders no Dialogue region\n\n\n## Scope\n- In scope: new test files\n- In scope: update storyPanelTitle.test.tsx and story.test.tsx where markup changed\n- Out of scope: product code\n- Preserve: existing passing assertions\n\n\n## Technical constraints\n- Unit tests with dependencies mocked; no browser or server.\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass in seconds\n- Existing title and story tests updated and green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for portraitPath and the StoryPanel dialogue card and choices.",
+      "description": "TDD unit tests covering REQ1 acceptance criteria with no network; the manifest is the committed JSON file.",
+      "acceptance_criteria": [
+        "Portrait present for boy and absent for unknown speaker",
+        "Choice click calls onChoose with index",
+        "No node renders no Dialogue region"
+      ],
+      "scope": {
+        "in_scope": [
+          "new test files",
+          "update storyPanelTitle.test.tsx and story.test.tsx where markup changed"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing passing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests with dependencies mocked; no browser or server."
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass in seconds",
+        "Existing title and story tests updated and green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-847.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85Y5FNQ2BE0KXNEXY1A4VC2",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85Y5FNQ2BE0KXNEXY1A4VC2",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-847.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ2BE0KXNEXY1A4VC2"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-847.md",
+      "artifact_id": "UNIT-847",
+      "steps": [
+        {
+          "file": "game/frontend/tests/storyPanelData.test.ts",
+          "symbol": "new: portraitPath tests",
+          "lines": "new",
+          "action": "Add tests: portraitPath('boy') equals '/assets/worlds/the-boys-room/characters/boy-portrait.png' (value mirrors public/assets/worlds/the-boys-room/manifest.json entry character:boy-portrait, read from that file in the test, not hard-coded); portraitPath('ghost') is undefined.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts",
+          "expected": "Both tests pass."
+        },
+        {
+          "file": "game/frontend/tests/storyPanelDialogue.test.tsx",
+          "symbol": "new: StoryPanel dialogue card",
+          "lines": "new",
+          "action": "Add jsdom tests rendering StoryPanel with a DialogueNode of speaker 'boy' and 2 choices: assert img with width 32 and src ending boy-portrait.png inside Dialogue region; speaker 'ghost' renders no img but shows speaker and text; click second button in Choices list calls vi.fn onChoose with 1; node undefined shows h1 and no Dialogue region; root has class sf-frame-panel.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelDialogue.test.tsx",
+          "expected": "All dialogue tests pass."
+        },
+        {
+          "file": "game/frontend/tests/storyPanelTitle.test.tsx",
+          "symbol": "StoryPanel scene title and choices",
+          "lines": "L1-L end",
+          "action": "Update queries that relied on the old markup (choice buttons now inside the Choices list) so they still assert h1 title, history items and choice onChoose calls.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelTitle.test.tsx tests/story.test.tsx",
+          "expected": "Both files pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQCPEXXXNQWWK2H2G3",
+      "kind": "unit",
+      "title": "Verify: Inventory grid slots, icons and empty slots unit tests",
+      "body": "Tests cover empty inventory, partial inventory and an unknown item.\n\n## Acceptance criteria\n- Six slots for 0, 1 and 6 items\n- Icon and name for old-key\n- Unknown item has name and no icon\n\n\n## Scope\n- In scope: new tests\n- In scope: frameKit.test.tsx and story.test.tsx updates\n- Out of scope: product code\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Unit tests only, no browser.\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass; old Empty text assertions updated\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for buildInventorySlots and the rendered grid.",
+      "description": "Tests cover empty inventory, partial inventory and an unknown item.",
+      "acceptance_criteria": [
+        "Six slots for 0, 1 and 6 items",
+        "Icon and name for old-key",
+        "Unknown item has name and no icon"
+      ],
+      "scope": {
+        "in_scope": [
+          "new tests",
+          "frameKit.test.tsx and story.test.tsx updates"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, no browser."
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass; old Empty text assertions updated",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-848.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85Y5FNQ80DGJ9DD240X0XZE",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85Y5FNQ80DGJ9DD240X0XZE",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-848.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQ80DGJ9DD240X0XZE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-848.md",
+      "artifact_id": "UNIT-848",
+      "steps": [
+        {
+          "file": "game/frontend/tests/storyPanelData.test.ts",
+          "symbol": "buildInventorySlots tests",
+          "lines": "after portrait tests",
+          "action": "Add tests: [] gives 6 slots all id null; ['old-key'] gives slot 0 name 'Old Key' and icon ending items/old-key.png (path read from manifest.json item/old-key entry) with 5 empty; ['mystery-thing'] gives name 'Mystery Thing' and icon undefined.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelData.test.ts",
+          "expected": "All tests pass."
+        },
+        {
+          "file": "game/frontend/tests/storyPanelInventory.test.tsx",
+          "symbol": "new: StoryPanel inventory grid",
+          "lines": "new",
+          "action": "Render StoryPanel with inventory [] and assert 6 li in Inventory region, all data-empty='true', no img; with ['old-key'] assert first li contains text 'Old Key' and an img 16 wide, five li data-empty='true'; list element has class grid-cols-3.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelInventory.test.tsx",
+          "expected": "All inventory tests pass."
+        },
+        {
+          "file": "game/frontend/tests/story.test.tsx",
+          "symbol": "inventory assertions",
+          "lines": "search 'Empty' and inventory queries",
+          "action": "Replace assertions of the text 'Empty' and raw item id with assertions on six slots and the humanised item name.",
+          "command": "cd game/frontend && npx vitest run tests/story.test.tsx tests/frameKit.test.tsx",
+          "expected": "Both files pass."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQ9HF6EC4WMAR2PBGS",
+      "kind": "unit",
+      "title": "Verify: Event log and App-fed StoryPanel unit tests",
+      "body": "Test log markup and that App feeds the panel with real store state with PhaserHost and API mocked.\n\n## Acceptance criteria\n- Log order and empty message asserted\n- App renders panel with state history and inventory\n\n\n## Scope\n- In scope: new tests\n- Out of scope: product code\n- Preserve: existing app tests\n\n\n## Technical constraints\n- Mock PhaserHost, api/client; unit tests only.\n\n\n## Dependencies\n- ACT3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for the log region and App passing game state.",
+      "description": "Test log markup and that App feeds the panel with real store state with PhaserHost and API mocked.",
+      "acceptance_criteria": [
+        "Log order and empty message asserted",
+        "App renders panel with state history and inventory"
+      ],
+      "scope": {
+        "in_scope": [
+          "new tests"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "existing app tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock PhaserHost, api/client; unit tests only."
+      ],
+      "dependencies": [
+        "ACT3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-849.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85Y5FNQHM2P0R0Y6V3VG4XS",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85Y5FNQHM2P0R0Y6V3VG4XS",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-849.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQHM2P0R0Y6V3VG4XS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-849.md",
+      "artifact_id": "UNIT-849",
+      "steps": [
+        {
+          "file": "game/frontend/tests/storyPanelLog.test.tsx",
+          "symbol": "new: StoryPanel event log",
+          "lines": "new",
+          "action": "Render StoryPanel with history ['a','b'] and assert Story history items read a, b in order within the Event log region; with [] assert text 'Nothing has happened yet' and no Story history list.",
+          "command": "cd game/frontend && npx vitest run tests/storyPanelLog.test.tsx",
+          "expected": "Log tests pass."
+        },
+        {
+          "file": "game/frontend/tests/frameKit.test.tsx",
+          "symbol": "story panel frame assertions",
+          "lines": "L95-L end",
+          "action": "Update assertions to expect sf-frame-panel on root, sf-frame-plaque on the Event log region and sf-frame-slot on inventory slots, and assert root className contains neither bg-stone-900 nor border-amber-900.",
+          "command": "cd game/frontend && npx vitest run tests/frameKit.test.tsx",
+          "expected": "frameKit tests pass."
+        },
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "App playing view",
+          "lines": "existing playing-view test",
+          "action": "After clicking Begin with vi.mock of ../src/components/PhaserHost and ../src/api/client (getCurrentRound resolved with the Round type fixture from the client types), assert the Event log region, Inventory region with six slots and Dialogue region exist.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx",
+          "expected": "App flow test passes with the rebuilt panel."
+        }
+      ]
+    },
+    {
+      "id": "01M85Y5FNQ1X4NY799DTQDS6NF",
+      "kind": "evidence",
+      "title": "Evidence: StoryPanel kit rebuild unit tests pass",
+      "body": "Collect results from the data helper, dialogue, inventory, log, frame kit and App flow unit tests.\n\n## Acceptance criteria\n- All StoryPanel related test files pass\n- Each Done-when region is covered by a named test\n\n\n## Scope\n- In scope: test run results\n- Out of scope: manual checks\n\n\n## Technical constraints\n- Unit tests only.\n\n\n## Dependencies\n- VER1\n- VER2\n- VER3\n\n\n## Definition of done\n- Test results recorded as passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that the StoryPanel unit tests pass.",
+      "description": "Collect results from the data helper, dialogue, inventory, log, frame kit and App flow unit tests.",
+      "acceptance_criteria": [
+        "All StoryPanel related test files pass",
+        "Each Done-when region is covered by a named test"
+      ],
+      "scope": {
+        "in_scope": [
+          "test run results"
+        ],
+        "out_of_scope": [
+          "manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only."
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2",
+        "VER3"
+      ],
+      "definition_of_done": [
+        "Test results recorded as passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-170.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85Y5FNQBRW4WY101QRVNFH2",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85Y5FNQBRW4WY101QRVNFH2",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-170.md"
+      ],
+      "depends_on": [
+        "01M85Y5FNQBRW4WY101QRVNFH2",
+        "01M85Y5FNQCPEXXXNQWWK2H2G3",
+        "01M85Y5FNQ9HF6EC4WMAR2PBGS"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-170.md",
+      "artifact_id": "EVD-170"
+    }
+  ],
+  "created_at": "2026-11-24T04:50:47.236813+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

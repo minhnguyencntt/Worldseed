@@ -1,0 +1,626 @@
+{
+  "intent_id": "01M8586QA1MY9Y79W8N7MCRW9E",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M8589BASN0BBYA4XXC9XE7CQ",
+      "kind": "intent",
+      "title": "SG-5.5.2 Clear BootScene test and source type errors",
+      "body": "Context: the bootScene*.test.ts suites under game/frontend/tests mock '../src/runtime/content' and still fail tsc with TS2554, TS7006 and TS2493. Desired behavior: the mocks include sceneSpec and every cited call site type-checks. Expected result: the BootScene suites pass and none of the four cited errors remain. Why: the sub-goal SG-5.5.2 stays unmet until they do.\n\n## Acceptance criteria\n- Given bootSceneEffects.test.ts, when tsc runs, then lines 114 and 123 report no TS2554\n- Given bootSceneBuild.test.ts and BootScene.ts, when tsc runs, then no TS7006 is reported at those lines\n- Given bootSceneFallback.test.ts, when tsc runs, then no TS2493 is reported at line 89\n- Given the bootScene suites, when vitest runs, then all tests pass\n\n\n## Scope\n- In scope: game/frontend BootScene tests and the two phaser sources they exercise\n- Out of scope: zod install, manifestLoader.ts, phaserHost.test.tsx, tailwindConfig.test.ts type errors\n- Preserve: BootScene runtime behavior\n- Preserve: scene content and manifest files\n\n\n## Technical constraints\n- Unit tests mock all Phaser and content dependencies\n\n\n## Definition of done\n- The four cited errors are gone and the bootScene suites are green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene tests mock sceneSpec and compile cleanly",
+      "description": "Context: the bootScene*.test.ts suites under game/frontend/tests mock '../src/runtime/content' and still fail tsc with TS2554, TS7006 and TS2493. Desired behavior: the mocks include sceneSpec and every cited call site type-checks. Expected result: the BootScene suites pass and none of the four cited errors remain. Why: the sub-goal SG-5.5.2 stays unmet until they do.",
+      "acceptance_criteria": [
+        "Given bootSceneEffects.test.ts, when tsc runs, then lines 114 and 123 report no TS2554",
+        "Given bootSceneBuild.test.ts and BootScene.ts, when tsc runs, then no TS7006 is reported at those lines",
+        "Given bootSceneFallback.test.ts, when tsc runs, then no TS2493 is reported at line 89",
+        "Given the bootScene suites, when vitest runs, then all tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend BootScene tests and the two phaser sources they exercise"
+        ],
+        "out_of_scope": [
+          "zod install, manifestLoader.ts, phaserHost.test.tsx, tailwindConfig.test.ts type errors"
+        ],
+        "preserve": [
+          "BootScene runtime behavior",
+          "scene content and manifest files"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests mock all Phaser and content dependencies"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "The four cited errors are gone and the bootScene suites are green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-112.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-112.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-112.md",
+      "artifact_id": "INT-112"
+    },
+    {
+      "id": "01M8589BASDV06ERZCHNRFD8AA",
+      "kind": "requirement",
+      "title": "REQ · Effect context tests call createPhaserEffectContext with both arguments",
+      "body": "Context: createPhaserEffectContext(scene, resolveKey) requires two arguments but bootSceneEffects.test.ts calls it with one at lines 114 and 123. Desired behavior: the factory exposes a named ResolveKey type and tests pass a typed mock. Expected result: no TS2554 in that file. Why: clears the unmet check.\n\n## Acceptance criteria\n- Given effectContext.ts, when imported, then it exports a ResolveKey type equal to (id: string) => string\n- Given the effects tests, when run, then each call passes a typed resolveKey mock and all pass\n\n\n## Scope\n- In scope: game/frontend/src/phaser/effectContext.ts\n- Out of scope: BootScene.ts\n- Preserve: createEffect behavior for dust and ambientLight\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n\n\n## Definition of done\n- TS2554 cleared\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "bootSceneEffects calls the two-argument factory with a typed resolveKey",
+      "description": "Context: createPhaserEffectContext(scene, resolveKey) requires two arguments but bootSceneEffects.test.ts calls it with one at lines 114 and 123. Desired behavior: the factory exposes a named ResolveKey type and tests pass a typed mock. Expected result: no TS2554 in that file. Why: clears the unmet check.",
+      "acceptance_criteria": [
+        "Given effectContext.ts, when imported, then it exports a ResolveKey type equal to (id: string) => string",
+        "Given the effects tests, when run, then each call passes a typed resolveKey mock and all pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/effectContext.ts"
+        ],
+        "out_of_scope": [
+          "BootScene.ts"
+        ],
+        "preserve": [
+          "createEffect behavior for dust and ambientLight"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "TS2554 cleared",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-279.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8589BASN0BBYA4XXC9XE7CQ",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M8589BASN0BBYA4XXC9XE7CQ",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-279.md"
+      ],
+      "depends_on": [
+        "01M8589BASN0BBYA4XXC9XE7CQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-279.md",
+      "artifact_id": "REQ-279"
+    },
+    {
+      "id": "01M8589BASZ9RYWQDBETSGNH2V",
+      "kind": "requirement",
+      "title": "REQ · BootScene preload and build test callbacks have explicit types",
+      "body": "Context: BootScene.ts line 42 (manifest.assets.find callback 'a') and bootSceneBuild.test.ts line 138 (flatMap callback 'o') have implicit any. Desired behavior: both parameters carry explicit types. Expected result: no TS7006 at those lines.\n\n## Acceptance criteria\n- Given BootScene.preload, when tsc runs, then the 'a' parameter has an explicit type and no TS7006 is reported\n- Given bootSceneBuild.test.ts, when tsc runs, then the 'o' parameter is typed and the suite passes with buildScene receiving the mocked sceneSpec\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: manifest schema changes\n- Preserve: planPreload usage and image loading\n\n\n## Technical constraints\n- Use types already exported from @game/assets/manifest or the content module; do not invent new ones\n\n\n## Definition of done\n- TS7006 cleared at both sites\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Remove implicit any in BootScene.preload and bootSceneBuild test",
+      "description": "Context: BootScene.ts line 42 (manifest.assets.find callback 'a') and bootSceneBuild.test.ts line 138 (flatMap callback 'o') have implicit any. Desired behavior: both parameters carry explicit types. Expected result: no TS7006 at those lines.",
+      "acceptance_criteria": [
+        "Given BootScene.preload, when tsc runs, then the 'a' parameter has an explicit type and no TS7006 is reported",
+        "Given bootSceneBuild.test.ts, when tsc runs, then the 'o' parameter is typed and the suite passes with buildScene receiving the mocked sceneSpec"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "manifest schema changes"
+        ],
+        "preserve": [
+          "planPreload usage and image loading"
+        ]
+      },
+      "technical_constraints": [
+        "Use types already exported from @game/assets/manifest or the content module; do not invent new ones"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "TS7006 cleared at both sites",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-280.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8589BASN0BBYA4XXC9XE7CQ",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M8589BASN0BBYA4XXC9XE7CQ",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-280.md"
+      ],
+      "depends_on": [
+        "01M8589BASN0BBYA4XXC9XE7CQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-280.md",
+      "artifact_id": "REQ-280"
+    },
+    {
+      "id": "01M8589BAS8D09M175D0P1AFX8",
+      "kind": "requirement",
+      "title": "REQ · Fallback test reads the particles call arguments with a typed mock",
+      "body": "Context: bootSceneFallback.test.ts line 89 reads particles.mock.calls[0][2] from an untyped vi.fn(). Desired behavior: effectContext passes the resolved key as third argument to scene.add.particles and the test types the mock signature. Expected result: no TS2493 and the fallback assertion still holds.\n\n## Acceptance criteria\n- Given a dust effect with an unknown asset, when createEffect runs, then particles receives the fallback key as third argument\n- Given the typed mock, when tsc runs, then calls[0][2] compiles with no TS2493\n\n\n## Scope\n- In scope: game/frontend/src/phaser/effectContext.ts dust branch\n- Out of scope: ambientLight branch\n- Preserve: dust emitter options and depth\n\n\n## Technical constraints\n- Phaser 3.90 particles(x, y, texture, config) signature\n\n\n## Definition of done\n- Fallback test compiles and passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "bootSceneFallback reads particles call index 2 without TS2493",
+      "description": "Context: bootSceneFallback.test.ts line 89 reads particles.mock.calls[0][2] from an untyped vi.fn(). Desired behavior: effectContext passes the resolved key as third argument to scene.add.particles and the test types the mock signature. Expected result: no TS2493 and the fallback assertion still holds.",
+      "acceptance_criteria": [
+        "Given a dust effect with an unknown asset, when createEffect runs, then particles receives the fallback key as third argument",
+        "Given the typed mock, when tsc runs, then calls[0][2] compiles with no TS2493"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/effectContext.ts dust branch"
+        ],
+        "out_of_scope": [
+          "ambientLight branch"
+        ],
+        "preserve": [
+          "dust emitter options and depth"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 particles(x, y, texture, config) signature"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Fallback test compiles and passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-281.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M8589BASN0BBYA4XXC9XE7CQ",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M8589BASN0BBYA4XXC9XE7CQ",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-281.md"
+      ],
+      "depends_on": [
+        "01M8589BASN0BBYA4XXC9XE7CQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-281.md",
+      "artifact_id": "REQ-281"
+    },
+    {
+      "id": "01M8589BASTYTP73B8N13EB27G",
+      "kind": "unit",
+      "title": "Act: Export ResolveKey type from effectContext",
+      "body": "Add an exported ResolveKey type in effectContext.ts and use it for the resolveKey parameter of createPhaserEffectContext.\n\n## Acceptance criteria\n- effectContext.ts exports ResolveKey\n- createPhaserEffectContext still takes (scene, resolveKey)\n\n\n## Scope\n- In scope: effectContext.ts\n- Out of scope: tests\n- Preserve: runtime behavior\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/effectContext.ts`\n\n\n## Definition of done\n- ResolveKey exported and used\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Name the resolveKey type and use it in the factory",
+      "description": "Add an exported ResolveKey type in effectContext.ts and use it for the resolveKey parameter of createPhaserEffectContext.",
+      "acceptance_criteria": [
+        "effectContext.ts exports ResolveKey",
+        "createPhaserEffectContext still takes (scene, resolveKey)"
+      ],
+      "scope": {
+        "in_scope": [
+          "effectContext.ts"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "runtime behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/effectContext.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "ResolveKey exported and used",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-558.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8589BASDV06ERZCHNRFD8AA",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M8589BASDV06ERZCHNRFD8AA",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-558.md"
+      ],
+      "depends_on": [
+        "01M8589BASDV06ERZCHNRFD8AA"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-558.md",
+      "artifact_id": "UNIT-558",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "new: ResolveKey",
+          "lines": "after L3",
+          "action": "Add the exported type alias ResolveKey above createPhaserEffectContext.",
+          "code": "export type ResolveKey = (id: string) => string;",
+          "expected": "Type is importable from effectContext"
+        },
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "createPhaserEffectContext",
+          "lines": "L6-L9",
+          "action": "Change the resolveKey parameter type from the inline function type to ResolveKey.",
+          "code": "resolveKey: (id: string) => string -> resolveKey: ResolveKey",
+          "expected": "Signature unchanged in meaning"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BAS9PJJTWJPPJH7K8VP",
+      "kind": "unit",
+      "title": "Act: Type the asset callback in BootScene.preload",
+      "body": "Annotate the find callback parameter in BootScene.preload with the manifest asset entry type.\n\n## Acceptance criteria\n- No TS7006 at BootScene.ts line 42\n- Preload still loads image assets\n\n\n## Scope\n- In scope: BootScene.ts preload\n- Out of scope: manifest schema\n- Preserve: load.image call\n\n\n## Technical constraints\n- Use the asset type inferred from the manifest schema already exported\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Definition of done\n- Callback typed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Give 'a' in manifest.assets.find an explicit type",
+      "description": "Annotate the find callback parameter in BootScene.preload with the manifest asset entry type.",
+      "acceptance_criteria": [
+        "No TS7006 at BootScene.ts line 42",
+        "Preload still loads image assets"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts preload"
+        ],
+        "out_of_scope": [
+          "manifest schema"
+        ],
+        "preserve": [
+          "load.image call"
+        ]
+      },
+      "technical_constraints": [
+        "Use the asset type inferred from the manifest schema already exported",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Callback typed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-559.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8589BASZ9RYWQDBETSGNH2V",
+      "matched_feature_id": "01M84PBVRNWMMB5XJSBV2QYGN2",
+      "links": [
+        "parent:01M8589BASZ9RYWQDBETSGNH2V",
+        "trace:01M84PBVRNWMMB5XJSBV2QYGN2",
+        "artifact:.ai-dlc/units/UNIT-559.md"
+      ],
+      "depends_on": [
+        "01M8589BASZ9RYWQDBETSGNH2V"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-559.md",
+      "artifact_id": "UNIT-559",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.preload",
+          "lines": "L42",
+          "action": "Add a type import for the manifest asset entry type exported from '@game/assets/manifest' and annotate the parameter 'a' in manifest.assets.find.",
+          "code": "(a) => a.id === id -> (a: AssetEntry) => a.id === id",
+          "expected": "TS7006 no longer reported at line 42"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BASD9DGHJC1K76WJ4YN",
+      "kind": "unit",
+      "title": "Act: Confirm effectContext dust passes the resolved key to particles",
+      "body": "Read the dust branch and confirm resolveKey(spec.asset) is the third argument of scene.add.particles; fix only if not.\n\n## Acceptance criteria\n- Third particles argument is resolveKey(spec.asset)\n- setDepth(spec.depth) is applied\n\n\n## Scope\n- In scope: effectContext.ts dust case\n- Out of scope: ambientLight\n- Preserve: emitZone options\n\n\n## Technical constraints\n- Code path: `game/frontend/src/phaser/effectContext.ts`\n\n\n## Definition of done\n- Behavior confirmed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Dust branch calls particles with resolveKey(spec.asset) third",
+      "description": "Read the dust branch and confirm resolveKey(spec.asset) is the third argument of scene.add.particles; fix only if not.",
+      "acceptance_criteria": [
+        "Third particles argument is resolveKey(spec.asset)",
+        "setDepth(spec.depth) is applied"
+      ],
+      "scope": {
+        "in_scope": [
+          "effectContext.ts dust case"
+        ],
+        "out_of_scope": [
+          "ambientLight"
+        ],
+        "preserve": [
+          "emitZone options"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/frontend/src/phaser/effectContext.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Behavior confirmed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-560.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M8589BAS8D09M175D0P1AFX8",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M8589BAS8D09M175D0P1AFX8",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-560.md"
+      ],
+      "depends_on": [
+        "01M8589BAS8D09M175D0P1AFX8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-560.md",
+      "artifact_id": "UNIT-560",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "createPhaserEffectContext.createEffect dust case",
+          "lines": "L12-L33",
+          "action": "Check that scene.add.particles(area.x, area.y, resolveKey(spec.asset), {...}) is called and chained with .setDepth(spec.depth); change nothing if so.",
+          "expected": "Code matches the current read; no diff"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BAS1ZMSSVTFRSV7XN3Q",
+      "kind": "unit",
+      "title": "Verify: Effect context tests use two arguments and typed mocks",
+      "body": "Pass a typed resolveKey mock at both call sites.\n\n## Acceptance criteria\n- Both calls pass resolveKey\n- 3 tests pass and tsc has no TS2554\n\n\n## Scope\n- In scope: bootSceneEffects.test.ts\n- Out of scope: src\n- Preserve: assertions\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update bootSceneEffects tests",
+      "description": "Pass a typed resolveKey mock at both call sites.",
+      "acceptance_criteria": [
+        "Both calls pass resolveKey",
+        "3 tests pass and tsc has no TS2554"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneEffects.test.ts"
+        ],
+        "out_of_scope": [
+          "src"
+        ],
+        "preserve": [
+          "assertions"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-561.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M8589BASTYTP73B8N13EB27G",
+      "links": [
+        "parent:01M8589BASTYTP73B8N13EB27G",
+        "trace:01M857F2G26H5XFTXCEN40Z9C2",
+        "artifact:.ai-dlc/units/UNIT-561.md"
+      ],
+      "depends_on": [
+        "01M8589BASTYTP73B8N13EB27G"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-561.md",
+      "artifact_id": "UNIT-561",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "playTransition(400) test and ambientLight test",
+          "lines": "L114, L123",
+          "action": "Import type ResolveKey from '../src/phaser/effectContext', declare const resolveKey: ResolveKey = vi.fn((id: string) => id), and pass it as second argument at both createPhaserEffectContext calls.",
+          "code": "createPhaserEffectContext(fakeScene as never, resolveKey)",
+          "command": "npx vitest run tests/bootSceneEffects.test.ts",
+          "expected": "All tests pass, input id returned unchanged"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BASRMB8BYER14G58CH9",
+      "kind": "unit",
+      "title": "Verify: Build test types scene object callback",
+      "body": "Type the flatMap callback and confirm suite passes with mocked sceneSpec.\n\n## Acceptance criteria\n- 'o' typed, no TS7006\n- bootSceneBuild and bootScenePreload pass\n\n\n## Scope\n- In scope: bootSceneBuild.test.ts\n- Out of scope: src\n- Preserve: hardcoded-id assertions\n\n\n## Definition of done\n- Suites pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Type 'o' in bootSceneBuild and run preload tests",
+      "description": "Type the flatMap callback and confirm suite passes with mocked sceneSpec.",
+      "acceptance_criteria": [
+        "'o' typed, no TS7006",
+        "bootSceneBuild and bootScenePreload pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneBuild.test.ts"
+        ],
+        "out_of_scope": [
+          "src"
+        ],
+        "preserve": [
+          "hardcoded-id assertions"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Suites pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-562.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M8589BAS9PJJTWJPPJH7K8VP",
+      "links": [
+        "parent:01M8589BAS9PJJTWJPPJH7K8VP",
+        "trace:01M857F2G2NRE4YQ0GB325KK1Q",
+        "artifact:.ai-dlc/units/UNIT-562.md"
+      ],
+      "depends_on": [
+        "01M8589BAS9PJJTWJPPJH7K8VP"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-562.md",
+      "artifact_id": "UNIT-562",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneBuild.test.ts",
+          "symbol": "describe BootScene source has no hardcoded scene content",
+          "lines": "L138",
+          "action": "Annotate the flatMap parameter with the SceneObject spec type from the scene schema (o: SceneSpec['objects'][number]).",
+          "code": "sceneSpec.objects.flatMap((o) => ...) -> flatMap((o: SceneSpec['objects'][number]) => ...)",
+          "command": "npx vitest run tests/bootSceneBuild.test.ts tests/bootScenePreload.test.ts",
+          "expected": "Both files pass; ids list length > 0"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BASJG3TC3JHP5K05VAS",
+      "kind": "unit",
+      "title": "Verify: Fallback test types the particles mock",
+      "body": "Type the particles mock so calls[0][2] compiles.\n\n## Acceptance criteria\n- No TS2493 error is reported at the calls[0][2] read\n- Asserts FALLBACK third argument and setDepth(3)\n\n\n## Scope\n- In scope: bootSceneFallback.test.ts\n- Out of scope: src\n- Preserve: assertions\n\n\n## Definition of done\n- Suite passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Type the vi.fn call signature in bootSceneFallback",
+      "description": "Type the particles mock so calls[0][2] compiles.",
+      "acceptance_criteria": [
+        "No TS2493 error is reported at the calls[0][2] read",
+        "Asserts FALLBACK third argument and setDepth(3)"
+      ],
+      "scope": {
+        "in_scope": [
+          "bootSceneFallback.test.ts"
+        ],
+        "out_of_scope": [
+          "src"
+        ],
+        "preserve": [
+          "assertions"
+        ]
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Suite passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-563.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8589BASD9DGHJC1K76WJ4YN",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M8589BASD9DGHJC1K76WJ4YN",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-563.md"
+      ],
+      "depends_on": [
+        "01M8589BASD9DGHJC1K76WJ4YN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-563.md",
+      "artifact_id": "UNIT-563",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneFallback.test.ts",
+          "symbol": "particles mock declaration",
+          "lines": "near L60-L89",
+          "action": "Change the particles vi.fn() declaration to vi.fn<(...args: unknown[]) => unknown>() so index 2 compiles.",
+          "code": "vi.fn() -> vi.fn<(...args: unknown[]) => unknown>()",
+          "command": "npx vitest run tests/bootSceneFallback.test.ts",
+          "expected": "Test passes: calls[0][2] equals FALLBACK"
+        }
+      ]
+    },
+    {
+      "id": "01M8589BASTRY618K9YVA9XX30",
+      "kind": "evidence",
+      "title": "Evidence: BootScene suites type-check and pass",
+      "body": "Collect results of the three verify runs showing the cited type errors are gone and tests pass.\n\n## Acceptance criteria\n- Effects, build and fallback suites pass\n- No TS2554, TS7006 or TS2493 at the cited lines\n\n\n## Scope\n- In scope: test output\n\n\n## Definition of done\n- Outputs recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence of passing bootScene tests",
+      "description": "Collect results of the three verify runs showing the cited type errors are gone and tests pass.",
+      "acceptance_criteria": [
+        "Effects, build and fallback suites pass",
+        "No TS2554, TS7006 or TS2493 at the cited lines"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Outputs recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-112.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M8589BAS1ZMSSVTFRSV7XN3Q",
+      "matched_feature_id": "01M855M826GJHMKVFN2DKN133V",
+      "links": [
+        "parent:01M8589BAS1ZMSSVTFRSV7XN3Q",
+        "trace:01M855M826GJHMKVFN2DKN133V",
+        "artifact:.ai-dlc/evidence/EVD-112.md"
+      ],
+      "depends_on": [
+        "01M8589BAS1ZMSSVTFRSV7XN3Q",
+        "01M8589BASRMB8BYER14G58CH9",
+        "01M8589BASJG3TC3JHP5K05VAS"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-112.md",
+      "artifact_id": "EVD-112"
+    }
+  ],
+  "created_at": "2026-11-23T22:27:24.823136+00:00",
+  "summary": "AI · 2 NEW · 9 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

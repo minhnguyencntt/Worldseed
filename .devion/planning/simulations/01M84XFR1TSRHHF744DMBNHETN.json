@@ -1,0 +1,687 @@
+{
+  "intent_id": "01M84XFR1TSRHHF744DMBNHETN",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84XJDS3R2CS0JCN5V92Z1YR",
+      "kind": "intent",
+      "title": "SG-5.3 Wire dust, ambient light and fade transition from content",
+      "body": "Context: game/src/engine/buildScene.ts builds only SceneObjects, and sceneSchema in game/src/content/schema.ts has no effects. Desired behavior: dust, ambient light and fade transition are authored in the scene YAML, created by the builder, and run by the Phaser BootScene. Expected result: effects exist because content declares them. Why: lets future AI cycles add effects without engine rewrites.\n\n## Acceptance criteria\n- Given a scene YAML with an effects list, when it is parsed, then dust, ambientLight and transition entries validate and invalid ones return path-named errors\n- Given a scene with effects, when buildEffects runs, then effect entities are created on the effects layer depth and a fade transition is played\n- Given BootScene.create runs, when the scene content declares effects, then they are created through a Phaser-backed context and removed on shutdown\n\n\n## Scope\n- In scope: effects schema\n- In scope: buildEffects\n- In scope: Phaser effect context\n- In scope: BootScene wiring\n- In scope: bedroom.yaml effects\n- Out of scope: new art assets\n- Out of scope: backend changes\n- Out of scope: scene-to-scene navigation\n- Preserve: buildScene return type and RenderContext interface\n- Preserve: existing SceneObject behavior\n- Preserve: Phaser 3.90 APIs\n\n\n## Technical constraints\n- Phaser 3.90 only\n- Use existing assets effect:dust and effect:glow from manifest.json\n- Keep Phaser out of game/src; runtime logic uses an injected context\n\n\n## Definition of done\n- All three requirements have Act and Verify units passing\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Create dust, ambient light and the fade scene transition from scene content in the scene builder and Phaser scene",
+      "description": "Context: game/src/engine/buildScene.ts builds only SceneObjects, and sceneSchema in game/src/content/schema.ts has no effects. Desired behavior: dust, ambient light and fade transition are authored in the scene YAML, created by the builder, and run by the Phaser BootScene. Expected result: effects exist because content declares them. Why: lets future AI cycles add effects without engine rewrites.",
+      "acceptance_criteria": [
+        "Given a scene YAML with an effects list, when it is parsed, then dust, ambientLight and transition entries validate and invalid ones return path-named errors",
+        "Given a scene with effects, when buildEffects runs, then effect entities are created on the effects layer depth and a fade transition is played",
+        "Given BootScene.create runs, when the scene content declares effects, then they are created through a Phaser-backed context and removed on shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "effects schema",
+          "buildEffects",
+          "Phaser effect context",
+          "BootScene wiring",
+          "bedroom.yaml effects"
+        ],
+        "out_of_scope": [
+          "new art assets",
+          "backend changes",
+          "scene-to-scene navigation"
+        ],
+        "preserve": [
+          "buildScene return type and RenderContext interface",
+          "existing SceneObject behavior",
+          "Phaser 3.90 APIs"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 only",
+        "Use existing assets effect:dust and effect:glow from manifest.json",
+        "Keep Phaser out of game/src; runtime logic uses an injected context"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All three requirements have Act and Verify units passing",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-098.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84PBVRMS6MPAMGSZKAYH7MT",
+      "links": [
+        "trace:01M84PBVRMS6MPAMGSZKAYH7MT",
+        "artifact:.ai-dlc/intent/INT-098.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-098.md",
+      "artifact_id": "INT-098"
+    },
+    {
+      "id": "01M84XJDS3RNED5ZPSZR3SGV9Z",
+      "kind": "requirement",
+      "title": "REQ · Scene content declares dust, ambient light and a fade transition with validation",
+      "body": "Context: sceneSchema has no effects field. Desired: effectSchema as a discriminated union of dust (asset, count, area), ambientLight (color, alpha) and transition (type fade, durationMs). Expected: bedroom.yaml carries them and loads without errors.\n\n## Acceptance criteria\n- Given a scene with valid dust, ambientLight and fade entries, when parseWorldContent('scene') runs, then ok is true\n- Given a fade with negative durationMs, when parsed, then errors include a path starting with effects.0\n- Given a scene without effects, when parsed, then it still validates\n\n\n## Scope\n- In scope: game/src/content/schema.ts\n- In scope: bedroom.yaml\n- Out of scope: rendering\n- Preserve: objectSchema\n- Preserve: existing scene fields\n\n\n## Technical constraints\n- zod schemas\n- effects optional\n\n\n## Definition of done\n- Schema and content merged\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "sceneSchema accepts an optional validated effects list and bedroom.yaml declares effects",
+      "description": "Context: sceneSchema has no effects field. Desired: effectSchema as a discriminated union of dust (asset, count, area), ambientLight (color, alpha) and transition (type fade, durationMs). Expected: bedroom.yaml carries them and loads without errors.",
+      "acceptance_criteria": [
+        "Given a scene with valid dust, ambientLight and fade entries, when parseWorldContent('scene') runs, then ok is true",
+        "Given a fade with negative durationMs, when parsed, then errors include a path starting with effects.0",
+        "Given a scene without effects, when parsed, then it still validates"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/content/schema.ts",
+          "bedroom.yaml"
+        ],
+        "out_of_scope": [
+          "rendering"
+        ],
+        "preserve": [
+          "objectSchema",
+          "existing scene fields"
+        ]
+      },
+      "technical_constraints": [
+        "zod schemas",
+        "effects optional"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema and content merged",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-244.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84XJDS3R2CS0JCN5V92Z1YR",
+      "matched_feature_id": "01M84GAF91VQQ0QA9WTEDYG9SV",
+      "links": [
+        "parent:01M84XJDS3R2CS0JCN5V92Z1YR",
+        "trace:01M84GAF91VQQ0QA9WTEDYG9SV",
+        "artifact:.ai-dlc/requirements/REQ-244.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3R2CS0JCN5V92Z1YR"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-244.md",
+      "artifact_id": "REQ-244"
+    },
+    {
+      "id": "01M84XJDS36R8BF4X2JQV3EFTF",
+      "kind": "requirement",
+      "title": "REQ · buildEffects creates effect entities from scene content on the effects layer",
+      "body": "Add EffectRenderContext and buildEffects so effects are created from content without Phaser imports, at the effects layer depth.\n\n## Acceptance criteria\n- Given scene.effects with dust, ambientLight and fade, when buildEffects runs, then createEffect is called for dust and light with depth layerDepth('effects') and playTransition once with durationMs\n- Given no effects, when buildEffects runs, then nothing is created and an empty handle list returns\n- Given the returned handles, when destroyed, then each effect handle destroy is called\n\n\n## Scope\n- In scope: game/src/engine/renderContext.ts\n- In scope: game/src/engine/buildEffects.ts\n- Out of scope: Phaser\n- Preserve: RenderContext and buildScene unchanged\n\n\n## Technical constraints\n- No Phaser imports in game/src\n\n\n## Definition of done\n- buildEffects exported\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A pure buildEffects uses an injected effect context to create dust, light and play the fade",
+      "description": "Add EffectRenderContext and buildEffects so effects are created from content without Phaser imports, at the effects layer depth.",
+      "acceptance_criteria": [
+        "Given scene.effects with dust, ambientLight and fade, when buildEffects runs, then createEffect is called for dust and light with depth layerDepth('effects') and playTransition once with durationMs",
+        "Given no effects, when buildEffects runs, then nothing is created and an empty handle list returns",
+        "Given the returned handles, when destroyed, then each effect handle destroy is called"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/src/engine/renderContext.ts",
+          "game/src/engine/buildEffects.ts"
+        ],
+        "out_of_scope": [
+          "Phaser"
+        ],
+        "preserve": [
+          "RenderContext and buildScene unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "No Phaser imports in game/src"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "buildEffects exported",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-245.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84XJDS3R2CS0JCN5V92Z1YR",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84XJDS3R2CS0JCN5V92Z1YR",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-245.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3R2CS0JCN5V92Z1YR"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-245.md",
+      "artifact_id": "REQ-245"
+    },
+    {
+      "id": "01M84XJDS3CWGVF5X7FS4N8DS5",
+      "kind": "requirement",
+      "title": "REQ · Phaser BootScene creates scene effects from content and cleans them up",
+      "body": "Implement EffectRenderContext on Phaser (particles for dust, tinted rectangle for light, camera fade) and call buildEffects in BootScene.create, destroying handles on shutdown.\n\n## Acceptance criteria\n- Given BootScene.create, when scene content has effects, then buildEffects is called with the Phaser context and the scene content\n- Given SHUTDOWN, when it fires, then every effect handle is destroyed\n- Given the Phaser context playTransition(400), when called, then cameras.main.fadeIn(400) is invoked\n\n\n## Scope\n- In scope: game/frontend/src/phaser/effectContext.ts\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: scene navigation\n- Preserve: sceneReady emit\n- Preserve: store subscription cleanup\n\n\n## Technical constraints\n- Phaser 3.90 APIs: add.particles, add.rectangle, cameras.main.fadeIn\n\n\n## Definition of done\n- BootScene wired\n\n\n## Non-functional requirements\n- Handles destroyed to avoid leaks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A Phaser-backed effect context is used by BootScene to create dust, light and fade from scene content",
+      "description": "Implement EffectRenderContext on Phaser (particles for dust, tinted rectangle for light, camera fade) and call buildEffects in BootScene.create, destroying handles on shutdown.",
+      "acceptance_criteria": [
+        "Given BootScene.create, when scene content has effects, then buildEffects is called with the Phaser context and the scene content",
+        "Given SHUTDOWN, when it fires, then every effect handle is destroyed",
+        "Given the Phaser context playTransition(400), when called, then cameras.main.fadeIn(400) is invoked"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/effectContext.ts",
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "scene navigation"
+        ],
+        "preserve": [
+          "sceneReady emit",
+          "store subscription cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs: add.particles, add.rectangle, cameras.main.fadeIn"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "BootScene wired",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-246.md`"
+      ],
+      "non_functional": [
+        "Handles destroyed to avoid leaks"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84XJDS3R2CS0JCN5V92Z1YR",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84XJDS3R2CS0JCN5V92Z1YR",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-246.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3R2CS0JCN5V92Z1YR"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-246.md",
+      "artifact_id": "REQ-246"
+    },
+    {
+      "id": "01M84XJDS3RKY6C30GQ6BPAAKF",
+      "kind": "unit",
+      "title": "Act: Add effectSchema and bedroom effects content",
+      "body": "Add effectSchema and an optional effects array to sceneSchema, export EffectSpec, and add dust, ambientLight and fade entries to bedroom.yaml.\n\n## Acceptance criteria\n- effectSchema is exported and sceneSchema.effects is optional\n- bedroom.yaml has one dust, one ambientLight and one fade effect\n\n\n## Scope\n- In scope: schema.ts\n- In scope: bedroom.yaml\n- Out of scope: tests\n- Preserve: existing exports\n\n\n## Technical constraints\n- Code path: `game/src/content/schema.ts`\n- Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`\n\n\n## Definition of done\n- Scene content validates\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add effects to sceneSchema and author them in bedroom.yaml",
+      "description": "Add effectSchema and an optional effects array to sceneSchema, export EffectSpec, and add dust, ambientLight and fade entries to bedroom.yaml.",
+      "acceptance_criteria": [
+        "effectSchema is exported and sceneSchema.effects is optional",
+        "bedroom.yaml has one dust, one ambientLight and one fade effect"
+      ],
+      "scope": {
+        "in_scope": [
+          "schema.ts",
+          "bedroom.yaml"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "existing exports"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/src/content/schema.ts`",
+        "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Scene content validates",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-488.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84XJDS3RNED5ZPSZR3SGV9Z",
+      "matched_feature_id": "01M84PBVRN0HH1NJD4MGWMZJ41",
+      "links": [
+        "parent:01M84XJDS3RNED5ZPSZR3SGV9Z",
+        "trace:01M84PBVRN0HH1NJD4MGWMZJ41",
+        "artifact:.ai-dlc/units/UNIT-488.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3RNED5ZPSZR3SGV9Z"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-488.md",
+      "artifact_id": "UNIT-488",
+      "steps": [
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "new: effectSchema",
+          "lines": "after L8",
+          "action": "Add a z.discriminatedUnion on 'type' with three variants: dust, ambientLight and transition",
+          "code": "export const effectSchema = z.discriminatedUnion('type', [\n z.object({ type: z.literal('dust'), asset: z.string(), count: z.number().int().positive(), area: boundsSchema }),\n z.object({ type: z.literal('ambientLight'), color: z.string(), alpha: z.number().min(0).max(1) }),\n z.object({ type: z.literal('transition'), kind: z.literal('fade'), durationMs: z.number().int().nonnegative() }),\n]);",
+          "expected": "effectSchema parses the three variants"
+        },
+        {
+          "file": "game/src/content/schema.ts",
+          "symbol": "sceneSchema",
+          "lines": "L37-L43",
+          "action": "Add field `effects: z.array(effectSchema).optional(),` after objects, and export type EffectSpec = z.infer<typeof effectSchema>",
+          "expected": "SceneSpec has optional effects"
+        },
+        {
+          "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+          "symbol": "effects",
+          "lines": "after objects list end",
+          "action": "Append top-level `effects:` with dust (asset effect:dust, count 20, area {x:0,y:0,width:320,height:180}), ambientLight (color '#ffd9a0', alpha 0.15) and transition (kind fade, durationMs 400)",
+          "expected": "File loads through the loader without errors"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS3X4ZKHQ761G4PPHMS",
+      "kind": "unit",
+      "title": "Act: Add EffectRenderContext and buildEffects",
+      "body": "Add effect context types and buildEffects.\n\n## Acceptance criteria\n- buildEffects returns handles for dust and ambient light only\n- buildEffects plays the fade transition through the context\n\n\n## Scope\n- In scope: engine\n- Out of scope: tests\n- Preserve: RenderContext\n\n\n## Technical constraints\n- Code path: `game/src/engine/renderContext.ts`\n- New file: `game/src/engine/buildEffects.ts`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Module compiles\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Create effect builder in engine",
+      "description": "Add effect context types and buildEffects.",
+      "acceptance_criteria": [
+        "buildEffects returns handles for dust and ambient light only",
+        "buildEffects plays the fade transition through the context"
+      ],
+      "scope": {
+        "in_scope": [
+          "engine"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "RenderContext"
+        ]
+      },
+      "technical_constraints": [
+        "Code path: `game/src/engine/renderContext.ts`",
+        "New file: `game/src/engine/buildEffects.ts`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Module compiles",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-489.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M84XJDS36R8BF4X2JQV3EFTF",
+      "links": [
+        "parent:01M84XJDS36R8BF4X2JQV3EFTF",
+        "artifact:.ai-dlc/units/UNIT-489.md"
+      ],
+      "depends_on": [
+        "01M84XJDS36R8BF4X2JQV3EFTF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-489.md",
+      "artifact_id": "UNIT-489",
+      "steps": [
+        {
+          "file": "game/src/engine/renderContext.ts",
+          "symbol": "new: EffectHandle, EffectRenderContext",
+          "lines": "after L22",
+          "action": "Append interface EffectHandle { destroy(): void } and interface EffectRenderContext { createEffect(spec: EffectSpec & { depth: number }): EffectHandle; playTransition(durationMs: number): void } with `import type { EffectSpec } from '../content/schema'` at top",
+          "expected": "Types exported, RenderContext untouched"
+        },
+        {
+          "file": "game/src/engine/buildEffects.ts",
+          "symbol": "new: buildEffects",
+          "lines": "new",
+          "action": "Export buildEffects(ctx: EffectRenderContext, scene: SceneSpec): EffectHandle[]; for each effect of scene.effects ?? []: if type is 'transition' call ctx.playTransition(e.durationMs) else push ctx.createEffect({ ...e, depth: layerDepth('effects') }); return the handles",
+          "code": "import { layerDepth } from './layers';",
+          "expected": "Returns handles for dust and light only"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS39XD4ZBKSC4MBF4V3",
+      "kind": "unit",
+      "title": "Act: Add Phaser effect context and wire it into BootScene",
+      "body": "Create createPhaserEffectContext(scene) and use it in BootScene.create.\n\n## Acceptance criteria\n- Effects are built in BootScene.create from scene content\n- Effect handles are destroyed on scene shutdown\n\n\n## Scope\n- In scope: phaser dir\n- Out of scope: tests\n- Preserve: sceneReady\n\n\n## Technical constraints\n- New file: `game/frontend/src/phaser/effectContext.ts`\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Compiles under tsc\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Phaser adapter and BootScene wiring",
+      "description": "Create createPhaserEffectContext(scene) and use it in BootScene.create.",
+      "acceptance_criteria": [
+        "Effects are built in BootScene.create from scene content",
+        "Effect handles are destroyed on scene shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "phaser dir"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "sceneReady"
+        ]
+      },
+      "technical_constraints": [
+        "New file: `game/frontend/src/phaser/effectContext.ts`",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Compiles under tsc",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-490.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84XJDS3CWGVF5X7FS4N8DS5",
+      "matched_feature_id": "01M84WZ47YBREF7B4P8J148K0X",
+      "links": [
+        "parent:01M84XJDS3CWGVF5X7FS4N8DS5",
+        "trace:01M84WZ47YBREF7B4P8J148K0X",
+        "artifact:.ai-dlc/units/UNIT-490.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3CWGVF5X7FS4N8DS5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-490.md",
+      "artifact_id": "UNIT-490",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/effectContext.ts",
+          "symbol": "new: createPhaserEffectContext",
+          "lines": "new",
+          "action": "Export createPhaserEffectContext(scene: Phaser.Scene): EffectRenderContext. createEffect: for 'dust' call scene.add.particles(x,y,'effect:dust',{quantity..., emitZone via area}) and setDepth(spec.depth); for 'ambientLight' scene.add.rectangle(0,0,w,h,parseInt(color.slice(1),16),alpha).setOrigin(0).setDepth(spec.depth); return { destroy } calling the object's destroy(). playTransition(ms) calls scene.cameras.main.fadeIn(ms)",
+          "expected": "Returns an EffectRenderContext"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L20-L28",
+          "action": "Add private effects: EffectHandle[] = []; in create() after subscribe set this.effects = buildEffects(createPhaserEffectContext(this), scene) importing scene from '../runtime/content'; in the SHUTDOWN callback destroy each handle and reset the array",
+          "expected": "Effects created on create and destroyed on shutdown"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS327VPFTRDSBGYZZQZ",
+      "kind": "unit",
+      "title": "Verify: Effects schema and bedroom content unit tests",
+      "body": "Write tests from the requirement criteria for valid, invalid and absent effects.\n\n## Acceptance criteria\n- Valid, invalid and missing effects cases are each asserted in the suite\n- Bedroom scene effect types dust, ambientLight and transition are asserted\n\n\n## Scope\n- In scope: game/tests/effectsSchema.test.ts\n- Out of scope: rendering\n- Preserve: existing tests\n\n\n## Technical constraints\n- Filesystem only via the real content file read\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for effectSchema and bedroom effects",
+      "description": "Write tests from the requirement criteria for valid, invalid and absent effects.",
+      "acceptance_criteria": [
+        "Valid, invalid and missing effects cases are each asserted in the suite",
+        "Bedroom scene effect types dust, ambientLight and transition are asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/effectsSchema.test.ts"
+        ],
+        "out_of_scope": [
+          "rendering"
+        ],
+        "preserve": [
+          "existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Filesystem only via the real content file read"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-491.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84XJDS3RKY6C30GQ6BPAAKF",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84XJDS3RKY6C30GQ6BPAAKF",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-491.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3RKY6C30GQ6BPAAKF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-491.md",
+      "artifact_id": "UNIT-491",
+      "steps": [
+        {
+          "file": "game/tests/effectsSchema.test.ts",
+          "symbol": "new: effectsSchema tests",
+          "lines": "new",
+          "action": "Using validScene from ./fixtures/valid-world spread with effects, assert parseWorldContent('scene') ok for dust+ambientLight+fade; ok for no effects; with durationMs -1 assert ok false and errors[0].path starts with 'effects.0'",
+          "command": "cd game && npx vitest run tests/effectsSchema.test.ts",
+          "expected": "3 tests pass"
+        },
+        {
+          "file": "game/tests/effectsSchema.test.ts",
+          "symbol": "bedroom effects test",
+          "lines": "new",
+          "action": "Load bedroom.yaml via loader.ts loadWorld('src/content/worlds/the-boys-room') and assert the bedroom scene has effect types dust, ambientLight and transition",
+          "command": "cd game && npx vitest run tests/effectsSchema.test.ts -t bedroom",
+          "expected": "test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS39F92417CVCF7BXW3",
+      "kind": "unit",
+      "title": "Verify: buildEffects unit tests with a fake effect context",
+      "body": "Fake EffectRenderContext with vi.fn.\n\n## Acceptance criteria\n- Create calls and effects layer depth are asserted\n- Transition call and handle destruction are asserted\n\n\n## Scope\n- In scope: game/tests/buildEffects.test.ts\n- Out of scope: Phaser\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test buildEffects ordering, depth and transition",
+      "description": "Fake EffectRenderContext with vi.fn.",
+      "acceptance_criteria": [
+        "Create calls and effects layer depth are asserted",
+        "Transition call and handle destruction are asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/tests/buildEffects.test.ts"
+        ],
+        "out_of_scope": [
+          "Phaser"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-492.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84XJDS3X4ZKHQ761G4PPHMS",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84XJDS3X4ZKHQ761G4PPHMS",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-492.md"
+      ],
+      "depends_on": [
+        "01M84XJDS3X4ZKHQ761G4PPHMS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-492.md",
+      "artifact_id": "UNIT-492",
+      "steps": [
+        {
+          "file": "game/tests/buildEffects.test.ts",
+          "symbol": "new: buildEffects tests",
+          "lines": "new",
+          "action": "Make ctx with createEffect: vi.fn(() => ({destroy: vi.fn()})) and playTransition: vi.fn(); call buildEffects with validScene plus dust, ambientLight and fade(400); assert createEffect called twice with depth 400, playTransition called once with 400, returned length 2; with no effects assert length 0 and no calls; destroy all handles and assert each destroy called",
+          "command": "cd game && npx vitest run tests/buildEffects.test.ts",
+          "expected": "3 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS3G28P3R3CVACP0Q00",
+      "kind": "unit",
+      "title": "Verify: BootScene effect wiring and Phaser context unit tests",
+      "body": "Mock phaser and ../src/engine/buildEffects.\n\n## Acceptance criteria\n- BootScene wiring and shutdown cleanup are asserted\n- Phaser context fade and ambient light creation are asserted\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneEffects.test.ts\n- Out of scope: real canvas\n- Preserve: bootScene.test.ts\n\n\n## Technical constraints\n- Phaser fully mocked\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Mocked Phaser tests for effect context and BootScene",
+      "description": "Mock phaser and ../src/engine/buildEffects.",
+      "acceptance_criteria": [
+        "BootScene wiring and shutdown cleanup are asserted",
+        "Phaser context fade and ambient light creation are asserted"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneEffects.test.ts"
+        ],
+        "out_of_scope": [
+          "real canvas"
+        ],
+        "preserve": [
+          "bootScene.test.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser fully mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-493.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84XJDS39XD4ZBKSC4MBF4V3",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84XJDS39XD4ZBKSC4MBF4V3",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-493.md"
+      ],
+      "depends_on": [
+        "01M84XJDS39XD4ZBKSC4MBF4V3"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-493.md",
+      "artifact_id": "UNIT-493",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "new: BootScene effects tests",
+          "lines": "new",
+          "action": "vi.mock('phaser') as in bootScene.test.ts and vi.mock('@game/engine/buildEffects') returning handles with destroy vi.fn(); create BootScene, call create(); assert buildEffects called with the scene from ../src/runtime/content; capture the SHUTDOWN callback passed to events.once and invoke it; assert each handle destroy called",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts",
+          "expected": "tests pass"
+        },
+        {
+          "file": "game/frontend/tests/bootSceneEffects.test.ts",
+          "symbol": "playTransition test",
+          "lines": "new",
+          "action": "Call createPhaserEffectContext with a fake scene {cameras:{main:{fadeIn:vi.fn()}},add:{rectangle,particles}} and assert playTransition(400) calls fadeIn(400) and createEffect for ambientLight calls add.rectangle with depth set",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneEffects.test.ts -t playTransition",
+          "expected": "test passes"
+        }
+      ]
+    },
+    {
+      "id": "01M84XJDS38YVEP9VYXKAKZNT8",
+      "kind": "evidence",
+      "title": "Evidence: Effects wiring unit tests pass",
+      "body": "Evidence from V1, V2 and V3 runs.\n\n## Acceptance criteria\n- effectsSchema, buildEffects and bootSceneEffects suites pass\n- Existing buildScene and bootScene suites still pass\n\n\n## Scope\n- In scope: test output\n\n\n## Definition of done\n- Passing output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Record unit test results for effects schema, builder and BootScene",
+      "description": "Evidence from V1, V2 and V3 runs.",
+      "acceptance_criteria": [
+        "effectsSchema, buildEffects and bootSceneEffects suites pass",
+        "Existing buildScene and bootScene suites still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test output"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [],
+      "definition_of_done": [
+        "Passing output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-098.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84XJDS327VPFTRDSBGYZZQZ",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84XJDS327VPFTRDSBGYZZQZ",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-098.md"
+      ],
+      "depends_on": [
+        "01M84XJDS327VPFTRDSBGYZZQZ",
+        "01M84XJDS39F92417CVCF7BXW3",
+        "01M84XJDS3G28P3R3CVACP0Q00"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-098.md",
+      "artifact_id": "EVD-098"
+    }
+  ],
+  "created_at": "2026-11-23T19:19:57.177056+00:00",
+  "summary": "AI · 1 NEW · 10 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

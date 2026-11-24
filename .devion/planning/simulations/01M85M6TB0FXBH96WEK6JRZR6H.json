@@ -1,0 +1,501 @@
+{
+  "intent_id": "01M85M6TB0FXBH96WEK6JRZR6H",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M85M8HCD1TCGNT175KXJWD34",
+      "kind": "intent",
+      "title": "SG-11.1 Phaser scene listens for playAnimation on the event bus",
+      "body": "Context: ReactToPhaserEvents already declares playAnimation { target, name } in game/frontend/src/phaser/events.ts, but nothing in BootScene subscribes to reactToPhaser. Desired behavior: the scene plays the target character's idle or interact animation when the event arrives and releases the subscription when the scene shuts down. Why: React game actions (SG-11) need to drive character animations.\n\n## Acceptance criteria\n- Given a created BootScene, when reactToPhaser emits playAnimation {target:'boy', name:'interact'}, then the boy sprite plays its interact animation key\n- Given a created BootScene, when playAnimation {name:'idle'} is emitted, then the target sprite plays its idle animation key\n- Given the scene has shut down, when playAnimation is emitted, then no sprite play call is made\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts subscription and character animation dispatch\n- Out of scope: Emitting playAnimation from App\n- Out of scope: transitionTo handling\n- Out of scope: New events or content changes\n- Preserve: Existing characterClick interact-then-idle behavior\n- Preserve: Existing shutdown cleanup\n- Preserve: Typed event bus API\n\n\n## Technical constraints\n- Phaser 3.90 APIs only\n- Use reactToPhaser from events.ts; no new bus\n- Reuse resolveCharacterAnimation and ensureAnim\n\n\n## Definition of done\n- Both requirements have passing unit tests\n- Existing bootScene tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene subscribes to reactToPhaser playAnimation, plays the matching character animation, and unsubscribes on shutdown",
+      "description": "Context: ReactToPhaserEvents already declares playAnimation { target, name } in game/frontend/src/phaser/events.ts, but nothing in BootScene subscribes to reactToPhaser. Desired behavior: the scene plays the target character's idle or interact animation when the event arrives and releases the subscription when the scene shuts down. Why: React game actions (SG-11) need to drive character animations.",
+      "acceptance_criteria": [
+        "Given a created BootScene, when reactToPhaser emits playAnimation {target:'boy', name:'interact'}, then the boy sprite plays its interact animation key",
+        "Given a created BootScene, when playAnimation {name:'idle'} is emitted, then the target sprite plays its idle animation key",
+        "Given the scene has shut down, when playAnimation is emitted, then no sprite play call is made"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts subscription and character animation dispatch"
+        ],
+        "out_of_scope": [
+          "Emitting playAnimation from App",
+          "transitionTo handling",
+          "New events or content changes"
+        ],
+        "preserve": [
+          "Existing characterClick interact-then-idle behavior",
+          "Existing shutdown cleanup",
+          "Typed event bus API"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90 APIs only",
+        "Use reactToPhaser from events.ts; no new bus",
+        "Reuse resolveCharacterAnimation and ensureAnim"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both requirements have passing unit tests",
+        "Existing bootScene tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-151.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M857STNX1YWBTW0H0K7DRF3M",
+      "links": [
+        "trace:01M857STNX1YWBTW0H0K7DRF3M",
+        "artifact:.ai-dlc/intent/INT-151.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-151.md",
+      "artifact_id": "INT-151"
+    },
+    {
+      "id": "01M85M8HCDXKEVDSNXZ76HMXFN",
+      "kind": "requirement",
+      "title": "REQ · BootScene plays the matching character animation on playAnimation",
+      "body": "Context: createCharacter in BootScene.ts (L105-L128) builds sprites but keeps no id lookup, and create() (L63-L85) never subscribes to reactToPhaser. Desired behavior: on playAnimation, find the character by id and play the resolved animation; interact returns to idle on completion. Unknown targets or names are ignored.\n\n## Acceptance criteria\n- Given target 'boy' and name 'interact', when playAnimation is emitted, then sprite.play is called with the interact key\n- Given target 'boy' and name 'idle', when emitted, then sprite.play is called with the idle key\n- Given an unknown target id, when emitted, then no play call occurs and nothing throws\n\n\n## Scope\n- In scope: BootScene character lookup by id\n- In scope: playAnimation handler\n- Out of scope: App emitting the event\n- Preserve: Click behavior in createCharacter\n\n\n## Technical constraints\n- Name limited to CharacterAnimationName values\n\n\n## Definition of done\n- Handler implemented in BootScene\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "playAnimation {target,name} plays the target character's idle or interact animation",
+      "description": "Context: createCharacter in BootScene.ts (L105-L128) builds sprites but keeps no id lookup, and create() (L63-L85) never subscribes to reactToPhaser. Desired behavior: on playAnimation, find the character by id and play the resolved animation; interact returns to idle on completion. Unknown targets or names are ignored.",
+      "acceptance_criteria": [
+        "Given target 'boy' and name 'interact', when playAnimation is emitted, then sprite.play is called with the interact key",
+        "Given target 'boy' and name 'idle', when emitted, then sprite.play is called with the idle key",
+        "Given an unknown target id, when emitted, then no play call occurs and nothing throws"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene character lookup by id",
+          "playAnimation handler"
+        ],
+        "out_of_scope": [
+          "App emitting the event"
+        ],
+        "preserve": [
+          "Click behavior in createCharacter"
+        ]
+      },
+      "technical_constraints": [
+        "Name limited to CharacterAnimationName values"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Handler implemented in BootScene",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-373.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85M8HCD1TCGNT175KXJWD34",
+      "matched_feature_id": "01M857STNXKWFDC8D25YNF2C0Q",
+      "links": [
+        "parent:01M85M8HCD1TCGNT175KXJWD34",
+        "trace:01M857STNXKWFDC8D25YNF2C0Q",
+        "artifact:.ai-dlc/requirements/REQ-373.md"
+      ],
+      "depends_on": [
+        "01M85M8HCD1TCGNT175KXJWD34"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-373.md",
+      "artifact_id": "REQ-373"
+    },
+    {
+      "id": "01M85M8HCD8YK230JR64NK8J2W",
+      "kind": "requirement",
+      "title": "REQ · BootScene releases the playAnimation subscription on shutdown",
+      "body": "Context: the SHUTDOWN handler in create() (L73-L83) releases keyboard, store, effects and objects. Desired behavior: the playAnimation unsubscribe function returned by reactToPhaser.on is also called there, so a stopped scene never touches destroyed sprites.\n\n## Acceptance criteria\n- Given the SHUTDOWN callback has run, when playAnimation is emitted, then sprite.play is not called\n- Given the scene is running, when SHUTDOWN has not run, then the handler count on playAnimation is one\n\n\n## Scope\n- In scope: Unsubscribe in SHUTDOWN handler\n- Out of scope: Other event cleanup\n- Preserve: Existing cleanup order and behavior\n\n\n## Technical constraints\n- Use the unsubscribe function returned by reactToPhaser.on\n\n\n## Definition of done\n- Unsubscribe stored and called on shutdown\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Shutdown unsubscribes from playAnimation so later events do nothing",
+      "description": "Context: the SHUTDOWN handler in create() (L73-L83) releases keyboard, store, effects and objects. Desired behavior: the playAnimation unsubscribe function returned by reactToPhaser.on is also called there, so a stopped scene never touches destroyed sprites.",
+      "acceptance_criteria": [
+        "Given the SHUTDOWN callback has run, when playAnimation is emitted, then sprite.play is not called",
+        "Given the scene is running, when SHUTDOWN has not run, then the handler count on playAnimation is one"
+      ],
+      "scope": {
+        "in_scope": [
+          "Unsubscribe in SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "Other event cleanup"
+        ],
+        "preserve": [
+          "Existing cleanup order and behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Use the unsubscribe function returned by reactToPhaser.on"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Unsubscribe stored and called on shutdown",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-374.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M85M8HCD1TCGNT175KXJWD34",
+      "matched_feature_id": "01M857STNXKWFDC8D25YNF2C0Q",
+      "links": [
+        "parent:01M85M8HCD1TCGNT175KXJWD34",
+        "trace:01M857STNXKWFDC8D25YNF2C0Q",
+        "artifact:.ai-dlc/requirements/REQ-374.md"
+      ],
+      "depends_on": [
+        "01M85M8HCD1TCGNT175KXJWD34"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-374.md",
+      "artifact_id": "REQ-374"
+    },
+    {
+      "id": "01M85M8HCDPMZ81MXZGESKXGWB",
+      "kind": "unit",
+      "title": "Act: Subscribe BootScene to playAnimation and dispatch to character sprites",
+      "body": "Add a character lookup map, a playCharacterAnimation method, and subscribe to reactToPhaser playAnimation in create().\n\n## Acceptance criteria\n- playAnimation with target 'boy' name 'interact' calls play with the interact key\n- Unknown target is ignored without throwing\n\n\n## Scope\n- In scope: BootScene.ts\n- Out of scope: Shutdown unsubscribe\n- Preserve: characterClick behavior\n\n\n## Technical constraints\n- Phaser 3.90\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- BootScene handles playAnimation for known characters\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Track characters by id and play resolved animations on playAnimation",
+      "description": "Add a character lookup map, a playCharacterAnimation method, and subscribe to reactToPhaser playAnimation in create().",
+      "acceptance_criteria": [
+        "playAnimation with target 'boy' name 'interact' calls play with the interact key",
+        "Unknown target is ignored without throwing"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "Shutdown unsubscribe"
+        ],
+        "preserve": [
+          "characterClick behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser 3.90",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "BootScene handles playAnimation for known characters",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-746.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85M8HCDXKEVDSNXZ76HMXFN",
+      "matched_feature_id": "01M857STNYBSFHHDJRC4CHWYJJ",
+      "links": [
+        "parent:01M85M8HCDXKEVDSNXZ76HMXFN",
+        "trace:01M857STNYBSFHHDJRC4CHWYJJ",
+        "artifact:.ai-dlc/units/UNIT-746.md"
+      ],
+      "depends_on": [
+        "01M85M8HCDXKEVDSNXZ76HMXFN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-746.md",
+      "artifact_id": "UNIT-746",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene fields / import",
+          "lines": "L5, L24-L28",
+          "action": "Import reactToPhaser alongside phaserToReact from './events'; import type CharacterAnimationName from '@game/engine/characterAnimation'; add private fields characterAnims (Map<string, {sprite, spec, idleKey, interactKey}>) and unsubscribeAnimation ((() => void) | null).",
+          "code": "import { phaserToReact, reactToPhaser } from './events';\nprivate characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();\nprivate unsubscribeAnimation: (() => void) | null = null;",
+          "expected": "File type-checks with the new fields"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.createCharacter",
+          "lines": "L105-L128",
+          "action": "Before `return sprite`, register the sprite: this.characterAnims.set(spec.id, { sprite, spec }).",
+          "code": "this.characterAnims.set(spec.id, { sprite, spec });\nreturn sprite;",
+          "expected": "Every created character is findable by spec.id"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "new: BootScene.playCharacterAnimation",
+          "lines": "after L128",
+          "action": "Add private method playCharacterAnimation(target: string, name: string): returns if target missing or name not in ['idle','walk','interact']; resolves ref with resolveCharacterAnimation(spec, name as CharacterAnimationName, manifest), key via this.ensureAnim(ref.asset, ref.animation); returns if key null; sprite.play(key); for non-idle names, once ANIMATION_COMPLETE plays the idle key from ensureAnim of the idle ref.",
+          "code": "private playCharacterAnimation(target: string, name: string): void {\n  const entry = this.characterAnims.get(target);\n  if (!entry || !['idle','walk','interact'].includes(name)) return;\n  const ref = resolveCharacterAnimation(entry.spec, name as CharacterAnimationName, manifest);\n  const key = this.ensureAnim(ref.asset, ref.animation);\n  if (!key) return;\n  entry.sprite.play(key);\n  if (name !== 'idle') {\n    const idle = resolveCharacterAnimation(entry.spec, 'idle', manifest);\n    const idleKey = this.ensureAnim(idle.asset, idle.animation);\n    if (idleKey && idleKey !== key) entry.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => entry.sprite.play(idleKey));\n  }\n}",
+          "expected": "Method plays the resolved key and ignores unknown targets"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L69-L70",
+          "action": "After characterSprites is assigned, subscribe: this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name)).",
+          "code": "this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));",
+          "expected": "Emitting playAnimation on reactToPhaser reaches playCharacterAnimation"
+        }
+      ]
+    },
+    {
+      "id": "01M85M8HCD62GAN2VFF178B4F9",
+      "kind": "unit",
+      "title": "Act: Unsubscribe playAnimation in the BootScene SHUTDOWN handler",
+      "body": "Call the stored unsubscribe in the SHUTDOWN handler.\n\n## Acceptance criteria\n- After shutdown playAnimation no longer reaches the scene\n- Character map is cleared\n\n\n## Scope\n- In scope: BootScene.ts SHUTDOWN handler\n- Out of scope: Other cleanup\n- Preserve: Existing cleanup\n\n\n## Technical constraints\n- Depends on ACT1 fields existing\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Shutdown releases the subscription\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Release the playAnimation subscription and clear character map on shutdown",
+      "description": "Call the stored unsubscribe in the SHUTDOWN handler.",
+      "acceptance_criteria": [
+        "After shutdown playAnimation no longer reaches the scene",
+        "Character map is cleared"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts SHUTDOWN handler"
+        ],
+        "out_of_scope": [
+          "Other cleanup"
+        ],
+        "preserve": [
+          "Existing cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Depends on ACT1 fields existing",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Shutdown releases the subscription",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-747.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M85M8HCD8YK230JR64NK8J2W",
+      "matched_feature_id": "01M8457KMNMG7R836YVYDX5S2D",
+      "links": [
+        "parent:01M85M8HCD8YK230JR64NK8J2W",
+        "trace:01M8457KMNMG7R836YVYDX5S2D",
+        "artifact:.ai-dlc/units/UNIT-747.md"
+      ],
+      "depends_on": [
+        "01M85M8HCD8YK230JR64NK8J2W"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-747.md",
+      "artifact_id": "UNIT-747",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN handler",
+          "lines": "L73-L83",
+          "action": "At the start of the SHUTDOWN callback call this.unsubscribeAnimation?.(); set this.unsubscribeAnimation = null; and after characterSprites reset call this.characterAnims.clear().",
+          "code": "this.unsubscribeAnimation?.();\nthis.unsubscribeAnimation = null;\n...\nthis.characterAnims.clear();",
+          "expected": "Emitting playAnimation after SHUTDOWN triggers no sprite.play"
+        }
+      ]
+    },
+    {
+      "id": "01M85M8HCDT9ZZZMVZMFZ55EGX",
+      "kind": "unit",
+      "title": "Verify: BootScene plays character animation on playAnimation unit tests",
+      "body": "Test that playAnimation drives sprite.play for known targets and is ignored for unknown targets.\n\n## Acceptance criteria\n- interact and idle emit tests assert play keys\n- Unknown target test asserts no extra play\n\n\n## Scope\n- In scope: game/frontend/tests/bootScenePlayAnimation.test.ts\n- Out of scope: Real Phaser or browser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Mock phaser and ../src/runtime/content as in tests/bootSceneCharacters.test.ts\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for playAnimation dispatch with Phaser mocked",
+      "description": "Test that playAnimation drives sprite.play for known targets and is ignored for unknown targets.",
+      "acceptance_criteria": [
+        "interact and idle emit tests assert play keys",
+        "Unknown target test asserts no extra play"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootScenePlayAnimation.test.ts"
+        ],
+        "out_of_scope": [
+          "Real Phaser or browser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock phaser and ../src/runtime/content as in tests/bootSceneCharacters.test.ts"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-748.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85M8HCDPMZ81MXZGESKXGWB",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85M8HCDPMZ81MXZGESKXGWB",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-748.md"
+      ],
+      "depends_on": [
+        "01M85M8HCDPMZ81MXZGESKXGWB"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-748.md",
+      "artifact_id": "UNIT-748",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootScenePlayAnimation.test.ts",
+          "symbol": "new: describe('BootScene playAnimation')",
+          "lines": "new",
+          "action": "Copy the phaser and content vi.mock setup from tests/bootSceneCharacters.test.ts; capture the sprite returned by scene.add.sprite; call create(); then reactToPhaser.emit('playAnimation', {target:'boy', name:'interact'}) and assert sprite.play was last called with 'boy-sheet:interact' style key from the mocked manifest; emit name 'idle' and assert idle key; emit target 'ghost' and assert play call count unchanged. Reset with reactToPhaser.clear() in beforeEach.",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePlayAnimation.test.ts",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M85M8HCDMPK97S2MV5M9RNVG",
+      "kind": "unit",
+      "title": "Verify: playAnimation unsubscribe on shutdown unit tests",
+      "body": "Run the captured SHUTDOWN callback and assert later events are ignored.\n\n## Acceptance criteria\n- Handler is removed after shutdown\n- play not called after shutdown\n\n\n## Scope\n- In scope: game/frontend/tests/bootScenePlayAnimationShutdown.test.ts\n- Out of scope: Real Phaser\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Same mocks as bootSceneCharacters.test.ts\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests that shutdown releases the playAnimation subscription",
+      "description": "Run the captured SHUTDOWN callback and assert later events are ignored.",
+      "acceptance_criteria": [
+        "Handler is removed after shutdown",
+        "play not called after shutdown"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootScenePlayAnimationShutdown.test.ts"
+        ],
+        "out_of_scope": [
+          "Real Phaser"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Same mocks as bootSceneCharacters.test.ts"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-749.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85M8HCD62GAN2VFF178B4F9",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M85M8HCD62GAN2VFF178B4F9",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-749.md"
+      ],
+      "depends_on": [
+        "01M85M8HCD62GAN2VFF178B4F9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-749.md",
+      "artifact_id": "UNIT-749",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootScenePlayAnimationShutdown.test.ts",
+          "symbol": "new: describe('BootScene playAnimation shutdown')",
+          "lines": "new",
+          "action": "Reuse the phaser/content mocks; call create(); take the callback passed to scene.events.once('shutdown', cb) and invoke it; record sprite.play call count; emit reactToPhaser 'playAnimation' {target:'boy', name:'interact'} and assert count unchanged; also assert a spy handler registered before create is unaffected.",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePlayAnimationShutdown.test.ts",
+          "expected": "Tests pass; no play call after shutdown"
+        }
+      ]
+    },
+    {
+      "id": "01M85M8HCDD4YK4DGNKBQW2YV4",
+      "kind": "evidence",
+      "title": "Evidence: BootScene playAnimation subscribe and shutdown unit tests",
+      "body": "Collect results of bootScenePlayAnimation and shutdown unit tests as evidence for SG-11.1.\n\n## Acceptance criteria\n- Both test files pass\n- Tests map to all intent acceptance criteria\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Browser checks\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Passing vitest output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving playAnimation handling and cleanup",
+      "description": "Collect results of bootScenePlayAnimation and shutdown unit tests as evidence for SG-11.1.",
+      "acceptance_criteria": [
+        "Both test files pass",
+        "Tests map to all intent acceptance criteria"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Browser checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Passing vitest output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-151.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M85M8HCDT9ZZZMVZMFZ55EGX",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M85M8HCDT9ZZZMVZMFZ55EGX",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-151.md"
+      ],
+      "depends_on": [
+        "01M85M8HCDT9ZZZMVZMFZ55EGX",
+        "01M85M8HCDMPK97S2MV5M9RNVG"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-151.md",
+      "artifact_id": "EVD-151"
+    }
+  ],
+  "created_at": "2026-11-24T01:56:52.299605+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

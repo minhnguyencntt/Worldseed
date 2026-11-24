@@ -1,0 +1,72 @@
+{
+  "id": "01M84XMRY56NWEPGRYBHFZWDXC",
+  "intent_id": "01M84XFR1TSRHHF744DMBNHETN",
+  "title": "Act: Add EffectRenderContext and buildEffects",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create effect builder in engine",
+  "description": "Add effect context types and buildEffects.",
+  "acceptance_criteria": [
+    "buildEffects returns handles for dust and ambient light only",
+    "buildEffects plays the fade transition through the context"
+  ],
+  "scope": {
+    "in_scope": [
+      "engine"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "RenderContext"
+    ]
+  },
+  "technical_constraints": [
+    "Code path: `game/src/engine/renderContext.ts`",
+    "New file: `game/src/engine/buildEffects.ts`"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "Module compiles",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-489.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84XJDS36R8BF4X2JQV3EFTF",
+    "artifact:.ai-dlc/units/UNIT-489.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84XMRY5XED5EQV556Z6SPAX"
+  ],
+  "sim_node_id": "01M84XJDS3X4ZKHQ761G4PPHMS",
+  "artifact_path": ".ai-dlc/units/UNIT-489.md",
+  "artifact_id": "UNIT-489",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/renderContext.ts",
+      "symbol": "new: EffectHandle, EffectRenderContext",
+      "lines": "after L22",
+      "action": "Append interface EffectHandle { destroy(): void } and interface EffectRenderContext { createEffect(spec: EffectSpec & { depth: number }): EffectHandle; playTransition(durationMs: number): void } with `import type { EffectSpec } from '../content/schema'` at top",
+      "expected": "Types exported, RenderContext untouched"
+    },
+    {
+      "file": "game/src/engine/buildEffects.ts",
+      "symbol": "new: buildEffects",
+      "lines": "new",
+      "action": "Export buildEffects(ctx: EffectRenderContext, scene: SceneSpec): EffectHandle[]; for each effect of scene.effects ?? []: if type is 'transition' call ctx.playTransition(e.durationMs) else push ctx.createEffect({ ...e, depth: layerDepth('effects') }); return the handles",
+      "code": "import { layerDepth } from './layers';",
+      "expected": "Returns handles for dust and light only"
+    }
+  ],
+  "created_at": "2026-11-23T19:20:37.061499+00:00",
+  "updated_at": "2026-11-23T19:24:32.397362+00:00"
+}

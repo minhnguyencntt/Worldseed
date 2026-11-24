@@ -1,0 +1,49 @@
+---
+id: "01M84VFDBHAYB6W5YY84VJ3NGR"
+kind: intent
+parent: null
+status: draft
+links: []
+agent: null
+source: llm
+evidence: {"project_id":"944dfe9c-3760-4ab1-81a3-865a561626d8"}
+---
+# SG-4.2.4 · Untrack the 15,329 tracked node_modules files via a tested cleanup script
+
+Context: game/frontend still has 15,329 tracked files under node_modules (including phaser and its type-generation test files) plus the vitest results cache, which is currently an unmerged (UU) index entry. src/lib/trackedNodeModules.ts already has trackedNodeModulesPaths, parseGitLsFiles, checkTrackedFiles and untrackNodeModules (git rm -r --cached), and scripts/untrackNodeModules.ts runs it through the npm script untrack:node-modules. Desired behavior: the cleanup verifies its own result, fails loudly if any path stays tracked, and reports counts, all covered by unit tests with a mocked git runner. Why: so the tracked dependency files can be removed reliably, and the guard run by npm test stays green.
+
+## Acceptance criteria
+- Given a git runner that lists tracked node_modules files, when the cleanup runs, then it issues git rm -r --cached and re-lists the index to confirm none remain
+- Given the index still lists a node_modules path after the rm, when the cleanup runs, then it throws naming the leftover paths
+- Given the CLI helper, when cleanup succeeds, then it logs the untracked count and returns exit code 0, and on failure it logs the error and returns 1
+- Given unit tests use a fake git runner, when they run, then no real git command executes and no file is deleted from disk
+
+
+## Scope
+- In scope: src/lib/trackedNodeModules.ts verified cleanup and CLI helper
+- In scope: scripts/untrackNodeModules.ts
+- In scope: unit tests with a fake git runner
+- Out of scope: Changing .gitignore rules
+- Out of scope: Changing the assertNoTrackedNodeModules guard or the test script
+- Out of scope: Deleting files from disk
+- Preserve: Existing untrackNodeModules behavior and its tests
+- Preserve: npm script untrack:node-modules
+- Preserve: Phaser pinned to 3.90.x
+
+
+## Technical constraints
+- Use only git rm --cached, never delete working-tree files
+- Git access goes through the injected GitRunner type
+
+
+## Definition of done
+- All acceptance criteria are covered by passing unit tests
+- npm run typecheck passes
+
+
+## Non-functional requirements
+- Cleanup tests run in seconds with no real git
+
+
+## Clarifying questions
+- None

@@ -1,0 +1,89 @@
+{
+  "id": "01M85V07NC72X1VHRFK1WWY0PR",
+  "intent_id": "01M85TNNZE2X0Q5KXTGSXP7JZQ",
+  "title": "Act: Carry animations and origin into generated entries and register boy sources",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Extend ArtSource and generateAssets, add boy animations, register in ART_SOURCES",
+  "description": "Add optional animations and origin to ArtSource, copy them in generateAssets, declare boy animations and origin, register BOY_SOURCES.",
+  "acceptance_criteria": [
+    "Entries copy animations and origin when present",
+    "ART_SOURCES includes boy sources"
+  ],
+  "scope": {
+    "in_scope": [
+      "sources.ts",
+      "generateAssets.ts",
+      "boy.ts animation fields"
+    ],
+    "out_of_scope": [
+      "room sources"
+    ],
+    "preserve": [
+      "entries for sources without the fields"
+    ]
+  },
+  "technical_constraints": [
+    "Types from @game/assets/manifest (AnimationDef, Origin)",
+    "Code path: `game/frontend/src/art/sources.ts`",
+    "Code path: `game/frontend/src/lib/generateAssets.ts`",
+    "New file: `game/frontend/src/art/boy.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Typecheck passes for touched files",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-806.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85TR8QX9XFJHGEWB3P5G4QB",
+    "trace:01M85TDR9EGC6R7WNBXWJ58WRY",
+    "artifact:.ai-dlc/units/UNIT-806.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85V07NCFFP412GBDA2H41JP"
+  ],
+  "sim_node_id": "01M85TR8QXQ09NJTN4PAM18EFZ",
+  "artifact_path": ".ai-dlc/units/UNIT-806.md",
+  "artifact_id": "UNIT-806",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/art/sources.ts",
+      "symbol": "ArtSource",
+      "lines": "L4-L8",
+      "action": "Add optional fields animations?: Record<string, AnimationDef> and origin?: Origin, importing types AnimationDef and Origin from '@game/assets/manifest'.",
+      "code": "animations?: Record<string, AnimationDef>;\norigin?: Origin;",
+      "expected": "ArtSource accepts the new optional fields"
+    },
+    {
+      "file": "game/frontend/src/art/sources.ts",
+      "symbol": "ART_SOURCES",
+      "lines": "L47-L52",
+      "action": "Import BOY_SOURCES from './boy' and change the array to [hand cursor entry, ...BOY_SOURCES].",
+      "expected": "ART_SOURCES lists cursor-hand then the boy sheet and portrait"
+    },
+    {
+      "file": "game/frontend/src/lib/generateAssets.ts",
+      "symbol": "generateAssets",
+      "lines": "L22-L53",
+      "action": "In both entries.push calls, spread optional fields: ...(source.animations ? { animations: source.animations } : {}), ...(source.origin ? { origin: source.origin } : {}).",
+      "expected": "Entries include animations and origin only when the source has them"
+    },
+    {
+      "file": "game/frontend/src/art/boy.ts",
+      "symbol": "BOY_SHEET_SOURCE",
+      "lines": "end of object",
+      "action": "Add animations idle {frames:[0,1,2,3],frameRate:6,repeat:-1}, walk {frames:[4,5,6,7,8,9],frameRate:10,repeat:-1}, interact {frames:[10,11,12,13],frameRate:8,repeat:0} and origin {x:0.5,y:1}.",
+      "expected": "Sheet source declares three animations and origin"
+    }
+  ],
+  "created_at": "2026-11-24T03:53:41.292719+00:00",
+  "updated_at": "2026-11-24T03:57:50.241972+00:00"
+}

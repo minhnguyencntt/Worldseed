@@ -1,0 +1,62 @@
+{
+  "id": "01M85KP6B4N24JZKARX2HBSE35",
+  "intent_id": "01M85KH1H1NDMJAMDWHSQB70PY",
+  "title": "Verify: Store focus is null when nothing focused and apply is a no-op",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for null focus and non-blurring apply",
+  "description": "Add bootSceneKeyboardStoreNull.test.ts with the same mocks; set the fake object isFocused false and true in separate cases.",
+  "acceptance_criteria": [
+    "With no focused object, Tab leaves store focusedObjectId null and emits focusChange id null.",
+    "With a focused object and non-null game state, Tab does not call blur on the object."
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file"
+    ],
+    "out_of_scope": [
+      "Browser runs"
+    ],
+    "preserve": [
+      "Existing focus apply tests"
+    ]
+  },
+  "technical_constraints": [
+    "Seed state with createInitialState as in bootSceneFocusApply.test.ts"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-741.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85KJKZ6MJ03WKMY4XZAAVG3",
+    "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+    "artifact:.ai-dlc/units/UNIT-741.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85KP6B44FQGPCK4QZCBBGEA"
+  ],
+  "sim_node_id": "01M85KJKZ6XNZ2M4J6GPJ1GFEX",
+  "feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+  "artifact_path": ".ai-dlc/units/UNIT-741.md",
+  "artifact_id": "UNIT-741",
+  "steps": [
+    {
+      "file": "game/frontend/tests/bootSceneKeyboardStoreNull.test.ts",
+      "symbol": "new: BootScene keyboard store null and apply",
+      "lines": "new",
+      "action": "Reuse mocks from tests/bootSceneKeyboard.test.ts; add blur: vi.fn() and focus: vi.fn() to the fake object. Test 1: fake.isFocused=false, press('Tab'), expect store focusedObjectId toBeNull and emit calledWith('focusChange',{id:null}). Test 2: seed useGameStore state with createInitialState(worldFixture, sceneSpecFixture) as in bootSceneFocusApply.test.ts, fake.isFocused=true, press('Tab'), expect fake.blur not called.",
+      "command": "cd game/frontend && npx vitest run tests/bootSceneKeyboardStoreNull.test.ts",
+      "expected": "Both tests pass."
+    }
+  ],
+  "created_at": "2026-11-24T01:45:52.228454+00:00",
+  "updated_at": "2026-11-24T01:47:07.412305+00:00"
+}

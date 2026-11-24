@@ -1,0 +1,65 @@
+{
+  "id": "01M84XZTDVFSHKTSVT01RKSYP1",
+  "intent_id": "01M84XX09TMV0HD13VSQ0V419T",
+  "title": "Act: Add playSceneTransition engine helper",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add playSceneTransition to the engine",
+  "description": "Create game/src/engine/playSceneTransition.ts exporting playSceneTransition(ctx, scene) that finds the transition spec and calls ctx.playTransition(durationMs).",
+  "acceptance_criteria": [
+    "Helper calls playTransition once with the durationMs of the first transition spec",
+    "Helper does nothing when none exists"
+  ],
+  "scope": {
+    "in_scope": [
+      "New engine file"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "buildEffects.ts"
+    ]
+  },
+  "technical_constraints": [
+    "No Phaser import",
+    "New file: `game/src/engine/playSceneTransition.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "File exists and type-checks",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-494.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84XY7MS31EMPGFWFWMA4SCP",
+    "trace:01M84T6537706VR5FGDE69V8GW",
+    "artifact:.ai-dlc/units/UNIT-494.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84XZTDV3E88JK5FJKXJ00QS"
+  ],
+  "sim_node_id": "01M84XY7MSNSKS14CRG3G72F91",
+  "feature_id": "01M84T6537706VR5FGDE69V8GW",
+  "artifact_path": ".ai-dlc/units/UNIT-494.md",
+  "artifact_id": "UNIT-494",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/playSceneTransition.ts",
+      "symbol": "new: playSceneTransition",
+      "lines": "new",
+      "action": "Create the file exporting playSceneTransition(ctx: EffectRenderContext, scene: SceneDef): void that finds the first entry of scene.effects ?? [] with type 'transition' and calls ctx.playTransition(spec.durationMs); returns without calling when none is found.",
+      "code": "import type { SceneDef } from '../state/types';\nimport type { EffectRenderContext } from './renderContext';\n\nexport function playSceneTransition(ctx: EffectRenderContext, scene: SceneDef): void {\n  const spec = (scene.effects ?? []).find((e) => e.type === 'transition');\n  if (spec && spec.type === 'transition') ctx.playTransition(spec.durationMs);\n}",
+      "expected": "npx tsc --noEmit in game/ passes and the helper is importable"
+    }
+  ],
+  "created_at": "2026-11-23T19:26:39.035719+00:00",
+  "updated_at": "2026-11-23T19:27:08.141254+00:00"
+}

@@ -1,0 +1,73 @@
+{
+  "id": "01M848W8T3FM43TYSAR3907BSP",
+  "intent_id": "01M848T916XWPH6TMNP2RPC28B",
+  "title": "Verify: rejectExecution unit tests with mocked fetch",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests prove rejectExecution sends POST to the reject endpoint with Bearer token and surfaces ApiError.",
+  "description": "Add tests in game/frontend/tests/executions.test.ts using a stubbed global fetch. The fixture is executionFixture from tests/fixtures/api.ts, which mirrors execution.Execution in backend/internal/execution/execution.go.",
+  "acceptance_criteria": [
+    "Given token 'tok' and id 'exec-1', when rejectExecution runs, then fetch is called once with URL /api/v1/admin/executions/exec-1/reject, method POST and Bearer tok.",
+    "Given a 200 response carrying executionFixture, when it resolves, then the result equals executionFixture.",
+    "Given a 401 response, when it runs, then it rejects with ApiError status 401."
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/executions.test.ts"
+    ],
+    "out_of_scope": [
+      "real network or server"
+    ],
+    "preserve": [
+      "existing tests in the file"
+    ]
+  },
+  "technical_constraints": [
+    "Mock fetch with vi.stubGlobal and restore it in afterEach.",
+    "Code path: `game/frontend/tests/executions.test.ts`"
+  ],
+  "dependencies": [
+    "act-1"
+  ],
+  "definition_of_done": [
+    "New describe block passes.",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-134.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": false,
+  "links": [
+    "parent:01M848W6CZD3F544H987VST6Y2",
+    "trace:01M848PZA3H3TN6S6AYW4JP0KT",
+    "artifact:.ai-dlc/units/UNIT-134.md"
+  ],
+  "change": "NEW",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M848W8T3TSKDM647BR1G4QK4"
+  ],
+  "sim_node_id": "01M848W6CZMCYB8QRHVXE1AZ5Q",
+  "artifact_path": ".ai-dlc/units/UNIT-134.md",
+  "artifact_id": "UNIT-134",
+  "steps": [
+    {
+      "file": "game/frontend/tests/executions.test.ts",
+      "symbol": "import block",
+      "lines": "L2-L7",
+      "action": "Add rejectExecution to the named import from '../src/api/client'.",
+      "command": "cd game/frontend && npx vitest run tests/executions.test.ts",
+      "expected": "File compiles with the new import and the existing tests still pass."
+    },
+    {
+      "file": "game/frontend/tests/executions.test.ts",
+      "symbol": "new: describe('rejectExecution')",
+      "lines": "after L42",
+      "action": "Add describe('rejectExecution') with afterEach vi.unstubAllGlobals(). Test 1 stubs fetch to resolve new Response(JSON.stringify(executionFixture), {status: 200}), calls rejectExecution('tok','exec-1'), asserts the result toEqual executionFixture, fetch called once, URL '/api/v1/admin/executions/exec-1/reject', init.method 'POST' and Authorization header 'Bearer tok'. Test 2 stubs a 401 Response, awaits rejectExecution('bad','exec-1').catch(e => e), and asserts instanceof ApiError with status 401. The fixture comes from tests/fixtures/api.ts executionFixture, matching execution.Execution in backend/internal/execution/execution.go.",
+      "command": "cd game/frontend && npx vitest run tests/executions.test.ts -t rejectExecution",
+      "expected": "Both rejectExecution tests pass."
+    }
+  ],
+  "created_at": "2026-11-23T13:17:42.595036+00:00",
+  "updated_at": "2026-11-23T13:18:31.662235+00:00"
+}

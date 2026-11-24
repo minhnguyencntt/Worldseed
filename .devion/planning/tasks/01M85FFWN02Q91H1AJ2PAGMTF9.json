@@ -1,0 +1,81 @@
+{
+  "id": "01M85FFWN02Q91H1AJ2PAGMTF9",
+  "intent_id": "01M85FCQ25QMCWYX5G3PQG6Y92",
+  "title": "Verify: Loading message only during in-flight history and 401-retry test still passes",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for loading visibility with and without a round id",
+  "description": "Add unit tests for ContributionSheet history loading visibility, with listMine mocked, and re-run the existing 401-retry test.",
+  "acceptance_criteria": [
+    "Test asserts the loading text is absent when roundId is ''",
+    "Test asserts loading text and list both present while listMine is pending",
+    "Existing 401-retry test passes unchanged"
+  ],
+  "scope": {
+    "in_scope": [
+      "New test file for loading visibility",
+      "Running tests/contribution.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code changes"
+    ],
+    "preserve": [
+      "Existing test files"
+    ]
+  },
+  "technical_constraints": [
+    "listMine and submitContribution are mocked via vi.mock of ../src/api/client as in tests/contributionHistoryStatus.test.tsx; no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New tests pass",
+    "tests/contribution.test.tsx passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-679.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85FE4F3NT6Y7TCY8XTXTTF2",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-679.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85FFWN0BFKVRK0Y67AF3N4E"
+  ],
+  "sim_node_id": "01M85FE4F3NKMDS2EKMXZBDZYG",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-679.md",
+  "artifact_id": "UNIT-679",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionHistoryLoadingVisibility.test.tsx",
+      "symbol": "new: describe('history loading visibility')",
+      "lines": "new",
+      "action": "Create the file with the jsdom pragma and the vi.mock of '../src/api/client' (listMine, submitContribution as vi.fn) copied from contributionHistoryStatus.test.tsx lines 1-16. Add test 'hides loading when roundId is empty': render <ContributionSheet open onClose={vi.fn()} roundId=\"\" />, assert screen.queryByText('Loading your suggestions…') is null, assert getByRole('list',{name:'Your suggestions'}) exists, and assert listMine was not called.",
+      "command": "npx vitest run tests/contributionHistoryLoadingVisibility.test.tsx",
+      "expected": "Test passes: no loading text, list present, listMine not called"
+    },
+    {
+      "file": "game/frontend/tests/contributionHistoryLoadingVisibility.test.tsx",
+      "symbol": "it('shows loading and the list while listMine is pending')",
+      "lines": "new",
+      "action": "Mock listMine with mockReturnValue(new Promise(() => {})), render with roundId=\"round-1\", assert getByText('Loading your suggestions…') is present and getByRole('list',{name:'Your suggestions'}) is present.",
+      "command": "npx vitest run tests/contributionHistoryLoadingVisibility.test.tsx",
+      "expected": "Test passes: both loading text and list visible"
+    },
+    {
+      "file": "game/frontend/tests/contribution.test.tsx",
+      "symbol": "it('Given the server answers 401 once ...')",
+      "lines": "L87-L112",
+      "action": "Do not edit; run this existing test to confirm it passes with the Act change.",
+      "command": "npx vitest run tests/contribution.test.tsx -t \"answers 401 once\"",
+      "expected": "The 401-retry test passes with the three ordered POST calls and 'Sent' in the list"
+    }
+  ],
+  "created_at": "2026-11-24T00:32:31.392298+00:00",
+  "updated_at": "2026-11-24T00:33:27.868347+00:00"
+}

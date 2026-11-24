@@ -1,0 +1,74 @@
+{
+  "id": "01M84WZ5ES4RE9BDN9241030R7",
+  "intent_id": "01M84WTF1THS62RM2P35QQCAQ9",
+  "title": "Act: Add layers and renderContext engine modules",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create layer order and render context interfaces",
+  "description": "Create game/src/engine/layers.ts and game/src/engine/renderContext.ts reusing Layer from content/schema.ts.",
+  "acceptance_criteria": [
+    "LAYER_ORDER lists six layers in order",
+    "layerDepth is increasing and falls back to objects"
+  ],
+  "scope": {
+    "in_scope": [
+      "two new files"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "content/schema.ts"
+    ]
+  },
+  "technical_constraints": [
+    "No phaser import",
+    "New file: `game/src/engine/layers.ts`",
+    "New file: `game/src/engine/renderContext.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Modules compile under tsc",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-476.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84WWZ9GWHQE4XMM82SM3RSN",
+    "trace:01M84T6537TTHDFGGZN902Z65D",
+    "artifact:.ai-dlc/units/UNIT-476.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84WZ5ESBRY3DGESQRCXS13W"
+  ],
+  "sim_node_id": "01M84WWZ9GVRQ7DZJX6Z41RD1Q",
+  "feature_id": "01M84T6537TTHDFGGZN902Z65D",
+  "artifact_path": ".ai-dlc/units/UNIT-476.md",
+  "artifact_id": "UNIT-476",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/layers.ts",
+      "symbol": "new: LAYER_ORDER, layerDepth",
+      "lines": "new",
+      "action": "Export LAYER_ORDER as a readonly Layer array of the six layers and layerDepth(layer?: string) returning index*100, falling back to the objects index for undefined or unknown values.",
+      "code": "import type { Layer } from '../content/schema';\nexport const LAYER_ORDER: readonly Layer[] = ['background','furniture','objects','characters','effects','ui'];\nexport function layerDepth(layer?: string): number {\n  const i = LAYER_ORDER.indexOf(layer as Layer);\n  return (i === -1 ? LAYER_ORDER.indexOf('objects') : i) * 100;\n}",
+      "expected": "Module compiles and exports both symbols"
+    },
+    {
+      "file": "game/src/engine/renderContext.ts",
+      "symbol": "new: RenderContext, RenderSpriteSpec, RenderHandle",
+      "lines": "new",
+      "action": "Export RenderSpriteSpec {key:string; x:number; y:number; scale:number; depth:number}, RenderHandle {setVisible(visible:boolean):void; destroy():void} and RenderContext {createSprite(spec: RenderSpriteSpec): RenderHandle}.",
+      "code": "export interface RenderHandle { setVisible(visible: boolean): void; destroy(): void }\nexport interface RenderSpriteSpec { key: string; x: number; y: number; scale: number; depth: number }\nexport interface RenderContext { createSprite(spec: RenderSpriteSpec): RenderHandle }",
+      "expected": "npx tsc --noEmit in game passes"
+    }
+  ],
+  "created_at": "2026-11-23T19:08:48.985281+00:00",
+  "updated_at": "2026-11-23T19:10:38.353106+00:00"
+}

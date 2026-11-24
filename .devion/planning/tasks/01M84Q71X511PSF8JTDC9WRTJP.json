@@ -1,0 +1,63 @@
+{
+  "id": "01M84Q71X511PSF8JTDC9WRTJP",
+  "intent_id": "01M84Q3B7M3DF3GWX62AHQ8TYP",
+  "title": "Verify: Asset folders and files unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit test that every required folder exists with real files.",
+  "description": "Write a unit test that checks the folder structure under game/public/assets using the real filesystem read-only.",
+  "acceptance_criteria": [
+    "Given the 9 required folders, when each is read, then each has at least one non-empty file",
+    "Given each svg, when read, then it begins with an svg root element"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/tests/assetFolders.test.ts"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "existing tests"
+    ]
+  },
+  "technical_constraints": [
+    "Vitest, node:fs only, no network"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Test passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-363.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84Q5VQHV82NJV8J9B81RVR3",
+    "trace:01M84GAF927JWRTQH50AC806ZZ",
+    "artifact:.ai-dlc/units/UNIT-363.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M84Q71X5G1NSRRGTTSRK078G"
+  ],
+  "sim_node_id": "01M84Q5VQHCQKCHC8CWA5F0ECY",
+  "feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+  "artifact_path": ".ai-dlc/units/UNIT-363.md",
+  "artifact_id": "UNIT-363",
+  "steps": [
+    {
+      "file": "game/tests/assetFolders.test.ts",
+      "symbol": "new: describe('asset folders')",
+      "lines": "new",
+      "action": "Create the test with a FOLDERS array of the 9 relative dirs under game/public/assets (worlds/the-boys-room/backgrounds, furniture, objects, characters, effects, audio and ui/icons, frames, cursors). For each, assert readdirSync returns at least one entry with statSync size > 0. For each .svg found assert the text starts with '<svg'.",
+      "code": "it.each(FOLDERS)('%s holds a real file', (dir) => { const files = readdirSync(join(root, dir)); expect(files.length).toBeGreaterThan(0); for (const f of files) expect(statSync(join(root, dir, f)).size).toBeGreaterThan(0); });",
+      "command": "cd game && npx vitest run tests/assetFolders.test.ts",
+      "expected": "All 9 folder cases and the svg-root case pass"
+    }
+  ],
+  "created_at": "2026-11-23T17:28:16.037177+00:00",
+  "updated_at": "2026-11-23T17:30:24.017115+00:00"
+}

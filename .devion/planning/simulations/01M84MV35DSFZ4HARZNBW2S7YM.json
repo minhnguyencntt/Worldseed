@@ -1,0 +1,496 @@
+{
+  "intent_id": "01M84MV35DSFZ4HARZNBW2S7YM",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84MWESE07FRAHF4SYYWX2WB",
+      "kind": "intent",
+      "title": "SG-1.2.3 · Unit tests for the real UI store covering defaults and each action",
+      "body": "Context: game/frontend/src/store/uiStore.ts exports the zustand store useUiStore with drawerOpen, modal, soundEnabled, settingsOpen and the actions toggleDrawer, openModal, closeModal, toggleSound and toggleSettings. Tests exist in three files, each covering part of the store. Desired behavior: one unit-test suite asserts the complete default state and every action, and proves the tests import the actual store module rather than a mock of it. Why: closes sub-goal SG-1.2.3.\n\n## Acceptance criteria\n- Given a freshly reset store, when state is read, then drawerOpen=false, modal=null, soundEnabled=true, settingsOpen=false and all five actions are functions.\n- Given the real store, when each of toggleDrawer, openModal, closeModal, toggleSound and toggleSettings runs, then the matching state field changes as specified and unrelated fields stay unchanged.\n- Given the test suite, when it runs, then it imports ../src/store/uiStore directly with no vi.mock of that module and asserts the imported hook is not a mock function.\n\n\n## Scope\n- In scope: New unit tests under game/frontend/tests for useUiStore\n- Out of scope: Changing store behavior\n- Out of scope: Component tests\n- Out of scope: Backend\n- Preserve: Existing uiStore*.test.ts files\n- Preserve: uiStore.ts public API\n\n\n## Technical constraints\n- Vitest 2 with jsdom; tests live in game/frontend/tests/**/*.test.{ts,tsx} per vitest.config.ts\n- Reset state with useUiStore.setState(useUiStore.getInitialState(), true)\n- Unit tests only: no browser, server or live ports\n\n\n## Definition of done\n- New test file passes\n- Tests import the real store, never a mock of it\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Prove useUiStore default state and every action with unit tests that import the real store module",
+      "description": "Context: game/frontend/src/store/uiStore.ts exports the zustand store useUiStore with drawerOpen, modal, soundEnabled, settingsOpen and the actions toggleDrawer, openModal, closeModal, toggleSound and toggleSettings. Tests exist in three files, each covering part of the store. Desired behavior: one unit-test suite asserts the complete default state and every action, and proves the tests import the actual store module rather than a mock of it. Why: closes sub-goal SG-1.2.3.",
+      "acceptance_criteria": [
+        "Given a freshly reset store, when state is read, then drawerOpen=false, modal=null, soundEnabled=true, settingsOpen=false and all five actions are functions.",
+        "Given the real store, when each of toggleDrawer, openModal, closeModal, toggleSound and toggleSettings runs, then the matching state field changes as specified and unrelated fields stay unchanged.",
+        "Given the test suite, when it runs, then it imports ../src/store/uiStore directly with no vi.mock of that module and asserts the imported hook is not a mock function."
+      ],
+      "scope": {
+        "in_scope": [
+          "New unit tests under game/frontend/tests for useUiStore"
+        ],
+        "out_of_scope": [
+          "Changing store behavior",
+          "Component tests",
+          "Backend"
+        ],
+        "preserve": [
+          "Existing uiStore*.test.ts files",
+          "uiStore.ts public API"
+        ]
+      },
+      "technical_constraints": [
+        "Vitest 2 with jsdom; tests live in game/frontend/tests/**/*.test.{ts,tsx} per vitest.config.ts",
+        "Reset state with useUiStore.setState(useUiStore.getInitialState(), true)",
+        "Unit tests only: no browser, server or live ports"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "New test file passes",
+        "Tests import the real store, never a mock of it",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-062.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84GAF91N1GX4GCAHGZ5WEWE",
+      "links": [
+        "trace:01M84GAF91N1GX4GCAHGZ5WEWE",
+        "artifact:.ai-dlc/intent/INT-062.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-062.md",
+      "artifact_id": "INT-062"
+    },
+    {
+      "id": "01M84MWESE1BRBJ3GGHM3WX4KM",
+      "kind": "requirement",
+      "title": "REQ · Default state and every action of the real store are asserted in one suite",
+      "body": "Context: existing tests split drawer/modal, sound/settings and hook subscription, and none asserts every default together or that actions are functions. Desired behavior: a consolidated suite covers defaults and each action, including double toggle returning to the default and openModal replacing then closeModal clearing the modal. Expected result: any regression in a default or action fails a named test. Why: complete coverage for SG-1.2.3.\n\n## Acceptance criteria\n- Given the initial state, when read, then all four fields hold their defaults and five actions are functions.\n- Given each toggle action called twice, when state is read after each call, then the value flips then returns to its default, leaving other fields unchanged.\n- Given openModal('contribution') then closeModal(), when state is read after each, then modal is 'contribution' then null.\n\n\n## Scope\n- In scope: Default state and action assertions\n- Out of scope: New store features\n- Preserve: uiStore.ts behavior\n\n\n## Technical constraints\n- Real store only; reset via getInitialState between tests\n\n\n## Definition of done\n- All default and action assertions pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A single suite asserts all default fields and each action including repeated toggles and field independence",
+      "description": "Context: existing tests split drawer/modal, sound/settings and hook subscription, and none asserts every default together or that actions are functions. Desired behavior: a consolidated suite covers defaults and each action, including double toggle returning to the default and openModal replacing then closeModal clearing the modal. Expected result: any regression in a default or action fails a named test. Why: complete coverage for SG-1.2.3.",
+      "acceptance_criteria": [
+        "Given the initial state, when read, then all four fields hold their defaults and five actions are functions.",
+        "Given each toggle action called twice, when state is read after each call, then the value flips then returns to its default, leaving other fields unchanged.",
+        "Given openModal('contribution') then closeModal(), when state is read after each, then modal is 'contribution' then null."
+      ],
+      "scope": {
+        "in_scope": [
+          "Default state and action assertions"
+        ],
+        "out_of_scope": [
+          "New store features"
+        ],
+        "preserve": [
+          "uiStore.ts behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Real store only; reset via getInitialState between tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All default and action assertions pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-155.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84MWESE07FRAHF4SYYWX2WB",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84MWESE07FRAHF4SYYWX2WB",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-155.md"
+      ],
+      "depends_on": [
+        "01M84MWESE07FRAHF4SYYWX2WB"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-155.md",
+      "artifact_id": "REQ-155"
+    },
+    {
+      "id": "01M84MWESESGX1WF0C9Z2MVNAR",
+      "kind": "requirement",
+      "title": "REQ · Tests are proven to use the actual store module, not a mock",
+      "body": "Context: the sub-goal requires confirming the tests import the actual store rather than a mock. Desired behavior: a test asserts vi.isMockFunction(useUiStore) is false, the module namespace exports useUiStore, and the source file of the suite contains no vi.mock call for the store. Expected result: replacing the store with a mock makes the guard test fail. Why: guarantees the unit tests exercise production code.\n\n## Acceptance criteria\n- Given the imported useUiStore, when vi.isMockFunction is called on it and on each action, then every result is false.\n- Given the test file source read from disk, when searched for vi.mock, then no occurrence exists.\n- Given the module namespace imported from ../src/store/uiStore, when its keys are read, then useUiStore is exported.\n\n\n## Scope\n- In scope: Guard assertions that the real module is used\n- Out of scope: Behavioral store tests\n- Preserve: uiStore.ts exports\n\n\n## Technical constraints\n- Read the test file with node:fs readFileSync of import.meta.url path; no network\n\n\n## Definition of done\n- Guard tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A guard test shows the imported store is the real zustand store and is not mocked",
+      "description": "Context: the sub-goal requires confirming the tests import the actual store rather than a mock. Desired behavior: a test asserts vi.isMockFunction(useUiStore) is false, the module namespace exports useUiStore, and the source file of the suite contains no vi.mock call for the store. Expected result: replacing the store with a mock makes the guard test fail. Why: guarantees the unit tests exercise production code.",
+      "acceptance_criteria": [
+        "Given the imported useUiStore, when vi.isMockFunction is called on it and on each action, then every result is false.",
+        "Given the test file source read from disk, when searched for vi.mock, then no occurrence exists.",
+        "Given the module namespace imported from ../src/store/uiStore, when its keys are read, then useUiStore is exported."
+      ],
+      "scope": {
+        "in_scope": [
+          "Guard assertions that the real module is used"
+        ],
+        "out_of_scope": [
+          "Behavioral store tests"
+        ],
+        "preserve": [
+          "uiStore.ts exports"
+        ]
+      },
+      "technical_constraints": [
+        "Read the test file with node:fs readFileSync of import.meta.url path; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Guard tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-156.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84MWESE07FRAHF4SYYWX2WB",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84MWESE07FRAHF4SYYWX2WB",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-156.md"
+      ],
+      "depends_on": [
+        "01M84MWESE07FRAHF4SYYWX2WB"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-156.md",
+      "artifact_id": "REQ-156"
+    },
+    {
+      "id": "01M84MWESEGDWVES2MSFQ9VN8P",
+      "kind": "unit",
+      "title": "Act: Confirm uiStore exposes every default field and action the suite asserts",
+      "body": "uiStore.ts already defines drawerOpen=false, modal=null, soundEnabled=true, settingsOpen=false and five actions. No product change is required; this unit confirms the surface so the tests can be written against it.\n\n## Acceptance criteria\n- Given uiStore.ts, when read, then all four fields and five actions exist with the stated defaults.\n- Given the file, when type-checked, then it compiles unchanged.\n\n\n## Scope\n- In scope: Confirming uiStore.ts surface\n- Out of scope: Behavior changes\n- Preserve: Entire uiStore.ts\n\n\n## Technical constraints\n- Do not modify product code unless a default or action is missing\n- Code path: `game/frontend/src/store/uiStore.ts`\n\n\n## Definition of done\n- uiStore.ts surface confirmed; no behavioral change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Read-only confirmation that uiStore.ts already has all defaults and actions",
+      "description": "uiStore.ts already defines drawerOpen=false, modal=null, soundEnabled=true, settingsOpen=false and five actions. No product change is required; this unit confirms the surface so the tests can be written against it.",
+      "acceptance_criteria": [
+        "Given uiStore.ts, when read, then all four fields and five actions exist with the stated defaults.",
+        "Given the file, when type-checked, then it compiles unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "Confirming uiStore.ts surface"
+        ],
+        "out_of_scope": [
+          "Behavior changes"
+        ],
+        "preserve": [
+          "Entire uiStore.ts"
+        ]
+      },
+      "technical_constraints": [
+        "Do not modify product code unless a default or action is missing",
+        "Code path: `game/frontend/src/store/uiStore.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "uiStore.ts surface confirmed; no behavioral change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-310.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84MWESE1BRBJ3GGHM3WX4KM",
+      "matched_feature_id": "01M84GAF92JP3XECQANFKKSABK",
+      "links": [
+        "parent:01M84MWESE1BRBJ3GGHM3WX4KM",
+        "trace:01M84GAF92JP3XECQANFKKSABK",
+        "artifact:.ai-dlc/units/UNIT-310.md"
+      ],
+      "depends_on": [
+        "01M84MWESE1BRBJ3GGHM3WX4KM"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-310.md",
+      "artifact_id": "UNIT-310",
+      "steps": [
+        {
+          "file": "game/frontend/src/store/uiStore.ts",
+          "symbol": "useUiStore",
+          "lines": "L16-L29",
+          "action": "Confirm the create() initializer sets drawerOpen:false, modal:null, soundEnabled:true, settingsOpen:false and defines toggleDrawer, openModal, closeModal, toggleSound and toggleSettings; make no edit when all are present.",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Type-check passes and the file is unchanged."
+        }
+      ]
+    },
+    {
+      "id": "01M84MWESEV2S4C3D4ACSRRHJD",
+      "kind": "unit",
+      "title": "Act: Confirm uiStore is a named export of a real zustand store",
+      "body": "The guard tests import useUiStore by name from ../src/store/uiStore. This unit confirms that export and that nothing in the repo mocks it.\n\n## Acceptance criteria\n- Given uiStore.ts, when read, then useUiStore is exported with export const.\n- Given src, when searched, then no mock replaces uiStore.\n\n\n## Scope\n- In scope: Confirming the export\n- Out of scope: Behavior changes\n- Preserve: Named exports useUiStore, UiState, ModalId\n\n\n## Technical constraints\n- No product edit unless the export is missing\n- Code path: `game/frontend/src/store/uiStore.ts`\n\n\n## Definition of done\n- Export confirmed; no behavioral change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Read-only confirmation that useUiStore is a named export from uiStore.ts",
+      "description": "The guard tests import useUiStore by name from ../src/store/uiStore. This unit confirms that export and that nothing in the repo mocks it.",
+      "acceptance_criteria": [
+        "Given uiStore.ts, when read, then useUiStore is exported with export const.",
+        "Given src, when searched, then no mock replaces uiStore."
+      ],
+      "scope": {
+        "in_scope": [
+          "Confirming the export"
+        ],
+        "out_of_scope": [
+          "Behavior changes"
+        ],
+        "preserve": [
+          "Named exports useUiStore, UiState, ModalId"
+        ]
+      },
+      "technical_constraints": [
+        "No product edit unless the export is missing",
+        "Code path: `game/frontend/src/store/uiStore.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Export confirmed; no behavioral change",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-311.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84MWESESGX1WF0C9Z2MVNAR",
+      "matched_feature_id": "01M84GAF91STPB09PZYJSX9XTF",
+      "links": [
+        "parent:01M84MWESESGX1WF0C9Z2MVNAR",
+        "trace:01M84GAF91STPB09PZYJSX9XTF",
+        "artifact:.ai-dlc/units/UNIT-311.md"
+      ],
+      "depends_on": [
+        "01M84MWESESGX1WF0C9Z2MVNAR"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-311.md",
+      "artifact_id": "UNIT-311",
+      "steps": [
+        {
+          "file": "game/frontend/src/store/uiStore.ts",
+          "symbol": "useUiStore",
+          "lines": "L16",
+          "action": "Confirm line 16 reads 'export const useUiStore = create<UiState>()((set) => ({'; make no edit when it does.",
+          "command": "cd game/frontend && npx tsc --noEmit",
+          "expected": "Type-check passes and the export is present."
+        }
+      ]
+    },
+    {
+      "id": "01M84MWESETEXG2FV7169911HV",
+      "kind": "unit",
+      "title": "Verify: Real store defaults and each action unit tests",
+      "body": "Write game/frontend/tests/uiStoreReal.test.ts importing the real store and asserting defaults, double toggles and modal open/close, with state reset in beforeEach.\n\n## Acceptance criteria\n- Given reset state, when read, then defaults and five function actions are asserted.\n- Given each toggle twice, when read, then flip then restore is asserted with other fields unchanged.\n- Given openModal then closeModal, when read, then 'contribution' then null.\n\n\n## Scope\n- In scope: tests/uiStoreReal.test.ts\n- Out of scope: Product code edits\n- Preserve: Existing uiStore tests\n\n\n## Technical constraints\n- Real store only; no browser or server\n\n\n## Definition of done\n- Test file passes via its own command\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Consolidated tests for defaults and all five actions of the real store",
+      "description": "Write game/frontend/tests/uiStoreReal.test.ts importing the real store and asserting defaults, double toggles and modal open/close, with state reset in beforeEach.",
+      "acceptance_criteria": [
+        "Given reset state, when read, then defaults and five function actions are asserted.",
+        "Given each toggle twice, when read, then flip then restore is asserted with other fields unchanged.",
+        "Given openModal then closeModal, when read, then 'contribution' then null."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/uiStoreReal.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code edits"
+        ],
+        "preserve": [
+          "Existing uiStore tests"
+        ]
+      },
+      "technical_constraints": [
+        "Real store only; no browser or server"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test file passes via its own command",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-312.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84MWESEGDWVES2MSFQ9VN8P",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84MWESEGDWVES2MSFQ9VN8P",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-312.md"
+      ],
+      "depends_on": [
+        "01M84MWESEGDWVES2MSFQ9VN8P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-312.md",
+      "artifact_id": "UNIT-312",
+      "steps": [
+        {
+          "file": "game/frontend/tests/uiStoreReal.test.ts",
+          "symbol": "new: describe('real uiStore defaults')",
+          "lines": "new",
+          "action": "Create the file importing { describe, it, expect, beforeEach } from 'vitest' and { useUiStore } from '../src/store/uiStore'; beforeEach calls useUiStore.setState(useUiStore.getInitialState(), true). Add test 'default state' asserting drawerOpen false, modal null, soundEnabled true, settingsOpen false and typeof toggleDrawer/openModal/closeModal/toggleSound/toggleSettings === 'function'.",
+          "code": "it('default state', () => { const s = useUiStore.getState(); expect(s.drawerOpen).toBe(false); expect(s.modal).toBeNull(); expect(s.soundEnabled).toBe(true); expect(s.settingsOpen).toBe(false); expect(typeof s.toggleDrawer).toBe('function'); });",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreReal.test.ts -t 'default state'",
+          "expected": "The default state test passes."
+        },
+        {
+          "file": "game/frontend/tests/uiStoreReal.test.ts",
+          "symbol": "new: it('each toggle flips and restores')",
+          "lines": "new",
+          "action": "Add a test calling toggleDrawer, toggleSound and toggleSettings once each and asserting drawerOpen true, soundEnabled false, settingsOpen true; call each again and assert drawerOpen false, soundEnabled true, settingsOpen false; assert modal stays null throughout.",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreReal.test.ts -t 'each toggle'",
+          "expected": "The toggle test passes."
+        },
+        {
+          "file": "game/frontend/tests/uiStoreReal.test.ts",
+          "symbol": "new: it('openModal then closeModal')",
+          "lines": "new",
+          "action": "Add a test calling openModal('contribution') and asserting modal 'contribution' with drawerOpen still false, then closeModal() and asserting modal null.",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreReal.test.ts",
+          "expected": "All tests in the file pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84MWESE0PQ1CXWX0KEAX3S8",
+      "kind": "unit",
+      "title": "Verify: Tests import the actual store and never mock it",
+      "body": "Add guard tests to game/frontend/tests/uiStoreRealGuard.test.ts asserting no mock functions, the module exports useUiStore, and no vi.mock appears in the store test sources.\n\n## Acceptance criteria\n- Given the imports, when vi.isMockFunction is called on useUiStore and its actions, then false.\n- Given the namespace import, when keys are read, then useUiStore is present.\n- Given store test sources read from disk, when searched for vi.mock, then none found.\n\n\n## Scope\n- In scope: tests/uiStoreRealGuard.test.ts\n- Out of scope: Product code edits\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Read files with node:fs and node:path relative to import.meta.url; no network\n\n\n## Definition of done\n- Guard test file passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Guard tests prove the real module is used",
+      "description": "Add guard tests to game/frontend/tests/uiStoreRealGuard.test.ts asserting no mock functions, the module exports useUiStore, and no vi.mock appears in the store test sources.",
+      "acceptance_criteria": [
+        "Given the imports, when vi.isMockFunction is called on useUiStore and its actions, then false.",
+        "Given the namespace import, when keys are read, then useUiStore is present.",
+        "Given store test sources read from disk, when searched for vi.mock, then none found."
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/uiStoreRealGuard.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code edits"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Read files with node:fs and node:path relative to import.meta.url; no network"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Guard test file passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-313.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84MWESEV2S4C3D4ACSRRHJD",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84MWESEV2S4C3D4ACSRRHJD",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-313.md"
+      ],
+      "depends_on": [
+        "01M84MWESEV2S4C3D4ACSRRHJD"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-313.md",
+      "artifact_id": "UNIT-313",
+      "steps": [
+        {
+          "file": "game/frontend/tests/uiStoreRealGuard.test.ts",
+          "symbol": "new: it('store is not a mock')",
+          "lines": "new",
+          "action": "Create the file importing * as mod from '../src/store/uiStore' and { vi, describe, it, expect } from 'vitest'. Assert Object.keys(mod) contains 'useUiStore', vi.isMockFunction(mod.useUiStore) is false, and vi.isMockFunction is false for toggleDrawer, openModal, closeModal, toggleSound and toggleSettings on getState().",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts -t 'not a mock'",
+          "expected": "The guard test passes."
+        },
+        {
+          "file": "game/frontend/tests/uiStoreRealGuard.test.ts",
+          "symbol": "new: it('no vi.mock in store tests')",
+          "lines": "new",
+          "action": "Read uiStoreReal.test.ts, uiStoreDrawerModal.test.ts, uiStoreSoundSettings.test.ts and uiStoreHook.test.tsx with readFileSync from the same directory (fileURLToPath of import.meta.url) and assert none matches /vi\\.mock\\(/ while each contains \"../src/store/uiStore\".",
+          "command": "cd game/frontend && npx vitest run tests/uiStoreRealGuard.test.ts",
+          "expected": "All guard tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M84MWESE9WJMTE65MV9PYYDQ",
+      "kind": "evidence",
+      "title": "Evidence: Real uiStore unit tests pass with the store unmocked",
+      "body": "Run the store test files and record that defaults, each action and the real-module guard pass.\n\n## Acceptance criteria\n- Given the four store test files plus the guard, when run, then all tests pass.\n- Given the run, when inspected, then no store module is mocked.\n\n\n## Scope\n- In scope: Test run results\n- Out of scope: Product changes\n- Preserve: Test files\n\n\n## Technical constraints\n- Run only the store tests\n\n\n## Definition of done\n- Test run passes and is recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Test run output for the store test files",
+      "description": "Run the store test files and record that defaults, each action and the real-module guard pass.",
+      "acceptance_criteria": [
+        "Given the four store test files plus the guard, when run, then all tests pass.",
+        "Given the run, when inspected, then no store module is mocked."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run results"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": [
+          "Test files"
+        ]
+      },
+      "technical_constraints": [
+        "Run only the store tests"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test run passes and is recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-062.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84MWESETEXG2FV7169911HV",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84MWESETEXG2FV7169911HV",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-062.md"
+      ],
+      "depends_on": [
+        "01M84MWESETEXG2FV7169911HV",
+        "01M84MWESE0PQ1CXWX0KEAX3S8"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-062.md",
+      "artifact_id": "EVD-062"
+    }
+  ],
+  "created_at": "2026-11-23T16:47:41.992306+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

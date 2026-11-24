@@ -1,0 +1,101 @@
+{
+  "id": "01M84WBYFS4J9RGPWWG5TY3RF7",
+  "intent_id": "01M84W45AB2W4J8AT7GB6FPEK8",
+  "title": "Act: Add layer order, render context, SceneObject entity and buildScene",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Create generic layered scene construction from SceneDef.",
+  "description": "Implement the layer depth table, a structural RenderContext interface that Phaser adapts to, the SceneObject entity and buildScene that creates entities from getSceneView output. Add a thin Phaser WorldScene adapter.",
+  "acceptance_criteria": [
+    "buildScene returns entities sorted by layer depth",
+    "WorldScene.create builds from the Zustand store state"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/src/engine/layers.ts",
+      "game/src/engine/renderContext.ts",
+      "game/src/entities/SceneObject.ts",
+      "game/src/scenes/buildScene.ts",
+      "game/frontend/src/phaser/WorldScene.ts"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "engine/scene.ts exports"
+    ]
+  },
+  "technical_constraints": [
+    "import type only from phaser outside WorldScene",
+    "New file: `game/src/engine/layers.ts`",
+    "New file: `game/src/engine/renderContext.ts`",
+    "New file: `game/src/entities/SceneObject.ts`",
+    "New file: `game/src/scenes/buildScene.ts`",
+    "New file: `game/frontend/src/phaser/WorldScene.ts`"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "Files compile under npm run typecheck",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-468.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84W96460P4B9078BVJ0MAYP",
+    "trace:01M84GAF92JP3XECQANFKKSABK",
+    "artifact:.ai-dlc/units/UNIT-468.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84WBYFRK3C67C2BJ30MDFY9"
+  ],
+  "sim_node_id": "01M84W9646RXE7SH3PGZMY63FW",
+  "feature_id": "01M84GAF92JP3XECQANFKKSABK",
+  "artifact_path": ".ai-dlc/units/UNIT-468.md",
+  "artifact_id": "UNIT-468",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/engine/layers.ts",
+      "symbol": "new: LAYER_ORDER, LAYER_DEPTH, layerDepth",
+      "lines": "new",
+      "action": "Export LAYER_ORDER as the six layer names, LAYER_DEPTH mapping background 0, furniture 100, objects 200, characters 300, effects 400, ui 500, and layerDepth(layer?: string) returning the mapped depth or the objects depth for undefined or unknown names.",
+      "code": "export const LAYER_ORDER = ['background','furniture','objects','characters','effects','ui'] as const;\nexport const LAYER_DEPTH: Record<(typeof LAYER_ORDER)[number], number> = { background:0, furniture:100, objects:200, characters:300, effects:400, ui:500 };\nexport const layerDepth = (l?: string): number => LAYER_DEPTH[l as keyof typeof LAYER_DEPTH] ?? LAYER_DEPTH.objects;",
+      "expected": "layerDepth('furniture') is 100 and layerDepth('x') is 200"
+    },
+    {
+      "file": "game/src/engine/renderContext.ts",
+      "symbol": "new: RenderContext, DisplayHandle",
+      "lines": "new",
+      "action": "Declare interface DisplayHandle with setPosition(x,y), setScale(s), setDepth(d), setOrigin(x,y), setVisible(v), setTint(color), clearTint(), setInteractive(bounds?), on(event:'pointerover'|'pointerout'|'pointerdown', cb), destroy(); declare RenderContext with addImage(textureKey,x,y): DisplayHandle, addLabel(text,x,y): DisplayHandle, hasTexture(key): boolean, addOverlay(color,alpha): DisplayHandle, addParticles(textureKey,count): DisplayHandle, fade(direction:'in'|'out', durationMs:number, done:()=>void): void.",
+      "expected": "Types compile; no runtime import of phaser"
+    },
+    {
+      "file": "game/src/entities/SceneObject.ts",
+      "symbol": "new: SceneObject",
+      "lines": "new",
+      "action": "Create class SceneObject constructed with (ctx: RenderContext, view: SceneObjectView, textureKey: string); it calls ctx.addImage(textureKey, view.position?.x ?? 0, view.position?.y ?? 0), setScale(view.scale ?? 1), setDepth(layerDepth(view.layer)); expose readonly id, layer, handle; add destroy() calling handle.destroy().",
+      "expected": "Entity stores id and positioned handle"
+    },
+    {
+      "file": "game/src/scenes/buildScene.ts",
+      "symbol": "new: buildScene",
+      "lines": "new",
+      "action": "Export buildScene(ctx, scene: SceneDef, state: GameState, resolveTexture: (assetId?: string) => string): BuiltScene; call getSceneView(state, scene) from engine/scene.ts, map each view to new SceneObject(ctx, view, resolveTexture(view.asset)), sort by layerDepth with a stable sort, return {entities, destroy()} where destroy destroys all entities.",
+      "expected": "One entity per visible object, ordered by depth"
+    },
+    {
+      "file": "game/frontend/src/phaser/WorldScene.ts",
+      "symbol": "new: WorldScene",
+      "lines": "new",
+      "action": "Create class WorldScene extends Phaser.Scene (key 'WorldScene') whose create() builds a RenderContext adapter over this.add.image/this.add.text, reads useGameStore.getState().state and runtime content scene, calls buildScene and stores the result; on SHUTDOWN call destroy().",
+      "expected": "WorldScene instantiates and builds without error when Phaser is mocked"
+    }
+  ],
+  "created_at": "2026-11-23T18:58:19.256934+00:00",
+  "updated_at": "2026-11-23T18:59:24.517965+00:00"
+}

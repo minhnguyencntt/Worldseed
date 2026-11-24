@@ -1,0 +1,81 @@
+{
+  "id": "01M85XAF1PVK6A9MTGQCAXGR61",
+  "intent_id": "01M85WY6FJYG6CP4WV6SDZB9VM",
+  "title": "Verify: Frame classes, four-state Button and framed screen components render",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for frameKit, Frame, Button states and wiring",
+  "description": "Test generated CSS objects and rendered classes with stores mocked as needed.",
+  "acceptance_criteria": [
+    "Frame classes include borderImage and pixelated",
+    "Button renders four states",
+    "Header, layout, story panel carry frame classes"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/frameKit.test.tsx"
+    ],
+    "out_of_scope": [
+      "product code"
+    ],
+    "preserve": [
+      "tests/ui.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "Unit tests only; no browser"
+  ],
+  "dependencies": [
+    "A4"
+  ],
+  "definition_of_done": [
+    "frameKit.test.tsx passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-837.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85X219HP2CNSN0MQRA09DX1",
+    "trace:01M85FWFYEGXD28P89JVJAFNHF",
+    "artifact:.ai-dlc/units/UNIT-837.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85XAF1P5XVTMPB9MQ8N8AKV"
+  ],
+  "sim_node_id": "01M85X219HPC4ZRAN8AZZ1VAXK",
+  "feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+  "artifact_path": ".ai-dlc/units/UNIT-837.md",
+  "artifact_id": "UNIT-837",
+  "steps": [
+    {
+      "file": "game/frontend/tests/frameKit.test.tsx",
+      "symbol": "it('frame classes use border-image and pixelated')",
+      "lines": "new",
+      "action": "Call frameComponentClasses(); for each of bar, panel, plaque, parchment, slot assert key '.sf-frame-<name>' has imageRendering 'pixelated' and borderImage containing the FRAME_KIT file name and its slice. Assert keys '.sf-btn', '.sf-btn:disabled', \".sf-btn[data-state='hover']\" and \".sf-btn[data-state='pressed']\" exist with different borderImage values.",
+      "command": "npx vitest run tests/frameKit.test.tsx",
+      "expected": "Class object assertions pass"
+    },
+    {
+      "file": "game/frontend/tests/frameKit.test.tsx",
+      "symbol": "it('button shows four states')",
+      "lines": "after first test",
+      "action": "Render <Button variant='frame' state=S> for S in normal, hover, pressed, disabled with testing-library; assert each has class 'sf-btn' and data-state S, and the disabled one has the disabled attribute. Render <Frame kind='panel'> and assert class sf-frame-panel.",
+      "command": "npx vitest run tests/frameKit.test.tsx",
+      "expected": "Four-state and Frame tests pass"
+    },
+    {
+      "file": "game/frontend/tests/frameKit.test.tsx",
+      "symbol": "it('game screen components apply the kit')",
+      "lines": "after second test",
+      "action": "Render GameLayout with header, scene, story nodes; assert aside has class sf-frame-panel. Render HeaderOverlay with worldTitle 'W' and no round after resetting useUiStore via setState; assert the header has sf-frame-bar and the Settings button has sf-btn. Render StoryPanel with an inventory of one item and assert the item li has sf-frame-slot and the Dialogue region has sf-frame-parchment (use props shape from src/components/StoryPanel.tsx).",
+      "command": "npx vitest run tests/frameKit.test.tsx",
+      "expected": "Wiring assertions pass"
+    }
+  ],
+  "created_at": "2026-11-24T04:34:13.686310+00:00",
+  "updated_at": "2026-11-24T04:38:49.492605+00:00"
+}

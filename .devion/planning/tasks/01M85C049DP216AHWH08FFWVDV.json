@@ -1,0 +1,79 @@
+{
+  "id": "01M85C049DP216AHWH08FFWVDV",
+  "intent_id": "01M85BT8V5PEXWT9XD06WGJ0HQ",
+  "title": "Verify: Contribution history loading, empty, error and list unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Unit tests for history states with fetch mocked",
+  "description": "Test history rendering for success, pending, empty and failure.",
+  "acceptance_criteria": [
+    "History prompts render marked Sent",
+    "Loading and empty messages",
+    "Load error alert and submit still works"
+  ],
+  "scope": {
+    "in_scope": [
+      "tests/contributionHistory.test.tsx"
+    ],
+    "out_of_scope": [
+      "Real network"
+    ],
+    "preserve": [
+      "tests/contribution.test.tsx"
+    ]
+  },
+  "technical_constraints": [
+    "fetch stubbed; history payload uses contributionFixture mirroring contributionJSON in backend/internal/contribution/handler.go"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "New test file passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-625.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85BWFWRP67B90YP8RQKSVV7",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-625.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85C049DPEWMVRQ0MNNEN0PZ"
+  ],
+  "sim_node_id": "01M85BWFWRT2AV9YR2GAFZS9Z4",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-625.md",
+  "artifact_id": "UNIT-625",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionHistory.test.tsx",
+      "symbol": "test: history renders",
+      "lines": "new",
+      "action": "Create file with jsdom env. Stub GET /api/v1/player/me/contributions?round_id=round-1 to return [contributionFixture]. Render with roundId 'round-1'; assert 'Loading suggestions…' initially, then within list 'Your suggestions' find contributionFixture.prompt and 'Sent'.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"history renders\"",
+      "expected": "Loading then history item with Sent"
+    },
+    {
+      "file": "game/frontend/tests/contributionHistory.test.tsx",
+      "symbol": "test: empty history",
+      "lines": "new",
+      "action": "Stub the GET to return []; assert 'No suggestions yet' appears.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"empty history\"",
+      "expected": "Empty message shown"
+    },
+    {
+      "file": "game/frontend/tests/contributionHistory.test.tsx",
+      "symbol": "test: history failure",
+      "lines": "new",
+      "action": "Stub the GET to return status 500 and POST to return 201 contributionFixture; assert alert 'Could not load your suggestions'; then type text, click Send and assert the POST was made and 'Idea sent' shows.",
+      "command": "cd game/frontend && npx vitest run tests/contributionHistory.test.tsx -t \"history failure\"",
+      "expected": "Error shown and submit still works"
+    }
+  ],
+  "created_at": "2026-11-23T23:31:29.197514+00:00",
+  "updated_at": "2026-11-23T23:35:11.381898+00:00"
+}

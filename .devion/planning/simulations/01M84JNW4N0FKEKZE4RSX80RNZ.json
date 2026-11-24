@@ -1,0 +1,493 @@
+{
+  "intent_id": "01M84JNW4N0FKEKZE4RSX80RNZ",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "completed",
+  "nodes": [
+    {
+      "id": "01M84JPZV1ERKEMBS962V38YZ6",
+      "kind": "intent",
+      "title": "SG-5.2 Frozen-ids reader on the contribution file store",
+      "body": "Context: backend/internal/contribution/store.go has FileStore (Save, Get, ListByRound) and export_source.go declares ExportSource with ListByRound and a compile-time assertion for *FileStore. A closed round's frozen contribution list lives in worlds/<world>/rounds/<round-lowercase>/snapshot.yaml (round.Snapshot, entries with id). Desired behavior: FileStore reads that file, returns the frozen contribution ids, returns ErrNotFound cleanly when no snapshot exists, and validates world and round ids. Why: the devion workseed handoff export needs only frozen contributions.\n\n## Acceptance criteria\n- Given a round dir with snapshot.yaml listing ids a and b, when FrozenIDs(ctx, world, round) is called, then it returns [a b] in snapshot order\n- Given a round with no snapshot.yaml, when FrozenIDs is called, then it returns an error satisfying errors.Is(err, ErrNotFound)\n- Given a world or round id that is not a safe path segment, when FrozenIDs is called, then it returns an error and reads no file\n- Given the contribution package, when it compiles, then *FileStore is asserted to implement ExportSource including FrozenIDs\n\n\n## Scope\n- In scope: FileStore.FrozenIDs\n- In scope: ExportSource interface method FrozenIDs\n- Out of scope: Exporter assembling the JSON\n- Out of scope: Any worker or execution code\n- Out of scope: Changing snapshot writing in the round package\n- Preserve: Existing Save, Get, ListByRound, ListByPlayer behavior\n- Preserve: Export and ExportContribution JSON types\n- Preserve: Snapshot file format in internal/round/snapshot.go\n\n\n## Technical constraints\n- Go backend; use gopkg.in/yaml.v3 already used by the round package\n- Use safepath.Segment for id validation like ListByRound\n- Round dir uses strings.ToLower(roundID)\n\n\n## Definition of done\n- FrozenIDs implemented and compiles\n- ExportSource asserted on *FileStore\n- Unit tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Add FrozenIDs to the contribution FileStore and assert it implements ExportSource",
+      "description": "Context: backend/internal/contribution/store.go has FileStore (Save, Get, ListByRound) and export_source.go declares ExportSource with ListByRound and a compile-time assertion for *FileStore. A closed round's frozen contribution list lives in worlds/<world>/rounds/<round-lowercase>/snapshot.yaml (round.Snapshot, entries with id). Desired behavior: FileStore reads that file, returns the frozen contribution ids, returns ErrNotFound cleanly when no snapshot exists, and validates world and round ids. Why: the devion workseed handoff export needs only frozen contributions.",
+      "acceptance_criteria": [
+        "Given a round dir with snapshot.yaml listing ids a and b, when FrozenIDs(ctx, world, round) is called, then it returns [a b] in snapshot order",
+        "Given a round with no snapshot.yaml, when FrozenIDs is called, then it returns an error satisfying errors.Is(err, ErrNotFound)",
+        "Given a world or round id that is not a safe path segment, when FrozenIDs is called, then it returns an error and reads no file",
+        "Given the contribution package, when it compiles, then *FileStore is asserted to implement ExportSource including FrozenIDs"
+      ],
+      "scope": {
+        "in_scope": [
+          "FileStore.FrozenIDs",
+          "ExportSource interface method FrozenIDs"
+        ],
+        "out_of_scope": [
+          "Exporter assembling the JSON",
+          "Any worker or execution code",
+          "Changing snapshot writing in the round package"
+        ],
+        "preserve": [
+          "Existing Save, Get, ListByRound, ListByPlayer behavior",
+          "Export and ExportContribution JSON types",
+          "Snapshot file format in internal/round/snapshot.go"
+        ]
+      },
+      "technical_constraints": [
+        "Go backend; use gopkg.in/yaml.v3 already used by the round package",
+        "Use safepath.Segment for id validation like ListByRound",
+        "Round dir uses strings.ToLower(roundID)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "FrozenIDs implemented and compiles",
+        "ExportSource asserted on *FileStore",
+        "Unit tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-052.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84JF0K0XHTV40GE5BY6073A",
+      "links": [
+        "trace:01M84JF0K0XHTV40GE5BY6073A",
+        "artifact:.ai-dlc/intent/INT-052.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-052.md",
+      "artifact_id": "INT-052"
+    },
+    {
+      "id": "01M84JPZV28TWT9DHNQ4X6FSF4",
+      "kind": "requirement",
+      "title": "REQ · FileStore.FrozenIDs reads snapshot.yaml and validates ids",
+      "body": "FileStore gains FrozenIDs(ctx, worldID, roundID) ([]string, error) reading worlds/<world>/rounds/<lower round>/snapshot.yaml and returning each contribution entry id in file order. A missing file maps to ErrNotFound; unsafe ids are rejected before any filesystem access.\n\n## Acceptance criteria\n- Given snapshot.yaml with contributions ids a and b, when FrozenIDs is called, then it returns [a b]\n- Given no snapshot.yaml, when FrozenIDs is called, then errors.Is(err, ErrNotFound) is true\n- Given worldID '../x' or roundID 'a/b', when FrozenIDs is called, then an error is returned\n\n\n## Scope\n- In scope: store.go FrozenIDs\n- Out of scope: Exporter\n- Preserve: ListByRound behavior\n\n\n## Technical constraints\n- Decode with a local struct holding contributions[].id to avoid importing round\n\n\n## Definition of done\n- Method implemented per acceptance criteria\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "FrozenIDs returns frozen ids, ErrNotFound when absent, rejects unsafe ids",
+      "description": "FileStore gains FrozenIDs(ctx, worldID, roundID) ([]string, error) reading worlds/<world>/rounds/<lower round>/snapshot.yaml and returning each contribution entry id in file order. A missing file maps to ErrNotFound; unsafe ids are rejected before any filesystem access.",
+      "acceptance_criteria": [
+        "Given snapshot.yaml with contributions ids a and b, when FrozenIDs is called, then it returns [a b]",
+        "Given no snapshot.yaml, when FrozenIDs is called, then errors.Is(err, ErrNotFound) is true",
+        "Given worldID '../x' or roundID 'a/b', when FrozenIDs is called, then an error is returned"
+      ],
+      "scope": {
+        "in_scope": [
+          "store.go FrozenIDs"
+        ],
+        "out_of_scope": [
+          "Exporter"
+        ],
+        "preserve": [
+          "ListByRound behavior"
+        ]
+      },
+      "technical_constraints": [
+        "Decode with a local struct holding contributions[].id to avoid importing round"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Method implemented per acceptance criteria",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-131.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JPZV1ERKEMBS962V38YZ6",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84JPZV1ERKEMBS962V38YZ6",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-131.md"
+      ],
+      "depends_on": [
+        "01M84JPZV1ERKEMBS962V38YZ6"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-131.md",
+      "artifact_id": "REQ-131"
+    },
+    {
+      "id": "01M84JPZV25TGMBR1S7AQ7Y81C",
+      "kind": "requirement",
+      "title": "REQ · ExportSource declares FrozenIDs and FileStore is asserted to implement it",
+      "body": "Extend the ExportSource interface in export_source.go with FrozenIDs so the export reads only frozen ids, and keep the var _ ExportSource = (*FileStore)(nil) assertion so the build fails if FileStore lacks it.\n\n## Acceptance criteria\n- Given ExportSource, when inspected, then it declares ListByRound and FrozenIDs\n- Given the package, when compiled, then the assertion that *FileStore implements ExportSource passes\n- Given the fake source in tests, when it implements both methods, then it is usable as an ExportSource\n\n\n## Scope\n- In scope: export_source.go interface\n- Out of scope: Exporter logic\n- Preserve: export.go types\n- Preserve: No worker/execution imports in export files\n\n\n## Technical constraints\n- export_source.go must not import worker or execution packages\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Interface extended; assertion retained\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "ExportSource interface includes FrozenIDs with compile-time assertion",
+      "description": "Extend the ExportSource interface in export_source.go with FrozenIDs so the export reads only frozen ids, and keep the var _ ExportSource = (*FileStore)(nil) assertion so the build fails if FileStore lacks it.",
+      "acceptance_criteria": [
+        "Given ExportSource, when inspected, then it declares ListByRound and FrozenIDs",
+        "Given the package, when compiled, then the assertion that *FileStore implements ExportSource passes",
+        "Given the fake source in tests, when it implements both methods, then it is usable as an ExportSource"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_source.go interface"
+        ],
+        "out_of_scope": [
+          "Exporter logic"
+        ],
+        "preserve": [
+          "export.go types",
+          "No worker/execution imports in export files"
+        ]
+      },
+      "technical_constraints": [
+        "export_source.go must not import worker or execution packages"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Interface extended; assertion retained",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-132.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M84JPZV1ERKEMBS962V38YZ6",
+      "matched_feature_id": "01M84JF0K072BJSFZDDNE272TG",
+      "links": [
+        "parent:01M84JPZV1ERKEMBS962V38YZ6",
+        "trace:01M84JF0K072BJSFZDDNE272TG",
+        "artifact:.ai-dlc/requirements/REQ-132.md"
+      ],
+      "depends_on": [
+        "01M84JPZV1ERKEMBS962V38YZ6"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-132.md",
+      "artifact_id": "REQ-132"
+    },
+    {
+      "id": "01M84JPZV2PF1M4QMY5D5W6QQF",
+      "kind": "unit",
+      "title": "Act: Implement FileStore.FrozenIDs",
+      "body": "Add FrozenIDs to FileStore in backend/internal/contribution/store.go next to ListByRound.\n\n## Acceptance criteria\n- FrozenIDs returns ids from snapshot.yaml in order\n- Missing snapshot returns ErrNotFound\n- Unsafe ids are rejected\n\n\n## Scope\n- In scope: store.go\n- Out of scope: tests\n- Preserve: Other FileStore methods\n\n\n## Technical constraints\n- Use safepath.Segment and yaml.v3\n- Code path: `backend/internal/contribution/store.go`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- Method compiles and follows ListByRound id validation style\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add FrozenIDs reading snapshot.yaml in store.go",
+      "description": "Add FrozenIDs to FileStore in backend/internal/contribution/store.go next to ListByRound.",
+      "acceptance_criteria": [
+        "FrozenIDs returns ids from snapshot.yaml in order",
+        "Missing snapshot returns ErrNotFound",
+        "Unsafe ids are rejected"
+      ],
+      "scope": {
+        "in_scope": [
+          "store.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "Other FileStore methods"
+        ]
+      },
+      "technical_constraints": [
+        "Use safepath.Segment and yaml.v3",
+        "Code path: `backend/internal/contribution/store.go`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "Method compiles and follows ListByRound id validation style",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-262.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JPZV28TWT9DHNQ4X6FSF4",
+      "matched_feature_id": "01M84JF0K214J0YTJ8H6WV9DFZ",
+      "links": [
+        "parent:01M84JPZV28TWT9DHNQ4X6FSF4",
+        "trace:01M84JF0K214J0YTJ8H6WV9DFZ",
+        "artifact:.ai-dlc/units/UNIT-262.md"
+      ],
+      "depends_on": [
+        "01M84JPZV28TWT9DHNQ4X6FSF4"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-262.md",
+      "artifact_id": "UNIT-262",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/store.go",
+          "symbol": "FileStore.FrozenIDs",
+          "lines": "after L169",
+          "action": "Add method FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error): validate worldID and roundID with safepath.Segment (wrap errors as 'contribution: world id: %w' / 'contribution: round id: %w'), read filepath.Join(s.Root,\"worlds\",worldID,\"rounds\",strings.ToLower(roundID),\"snapshot.yaml\"), map errors.Is(err, fs.ErrNotExist) to ErrNotFound, yaml.Unmarshal into a local struct {Contributions []struct{ID string `yaml:\"id\"`} `yaml:\"contributions\"`}, return ids in order (empty non-nil slice when none). Add import gopkg.in/yaml.v3.",
+          "code": "func (s *FileStore) FrozenIDs(_ context.Context, worldID, roundID string) ([]string, error) { ... }",
+          "expected": "go build ./internal/contribution succeeds"
+        }
+      ]
+    },
+    {
+      "id": "01M84JPZV26HJDJKWYNCD1PEPT",
+      "kind": "unit",
+      "title": "Act: Add FrozenIDs to the ExportSource interface",
+      "body": "Extend the interface in export_source.go; the existing assertion then enforces FileStore implements it.\n\n## Acceptance criteria\n- ExportSource declares FrozenIDs\n- Assertion on *FileStore retained\n\n\n## Scope\n- In scope: export_source.go\n- Out of scope: tests\n- Preserve: ListByRound signature\n\n\n## Technical constraints\n- No new imports other than context\n- Code path: `backend/internal/contribution/export_source.go`\n\n\n## Dependencies\n- REQ2\n- ACT1\n\n\n## Definition of done\n- Interface extended and package builds\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Declare FrozenIDs in ExportSource, keep FileStore assertion",
+      "description": "Extend the interface in export_source.go; the existing assertion then enforces FileStore implements it.",
+      "acceptance_criteria": [
+        "ExportSource declares FrozenIDs",
+        "Assertion on *FileStore retained"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_source.go"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "ListByRound signature"
+        ]
+      },
+      "technical_constraints": [
+        "No new imports other than context",
+        "Code path: `backend/internal/contribution/export_source.go`"
+      ],
+      "dependencies": [
+        "REQ2",
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Interface extended and package builds",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-263.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M84JPZV25TGMBR1S7AQ7Y81C",
+      "matched_feature_id": "01M84JF0K214J0YTJ8H6WV9DFZ",
+      "links": [
+        "parent:01M84JPZV25TGMBR1S7AQ7Y81C",
+        "trace:01M84JF0K214J0YTJ8H6WV9DFZ",
+        "artifact:.ai-dlc/units/UNIT-263.md"
+      ],
+      "depends_on": [
+        "01M84JPZV25TGMBR1S7AQ7Y81C"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-263.md",
+      "artifact_id": "UNIT-263",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_source.go",
+          "symbol": "ExportSource",
+          "lines": "L5-L12",
+          "action": "Add method FrozenIDs(ctx context.Context, worldID, roundID string) ([]string, error) with a doc comment saying it returns the ids frozen in the round's snapshot.yaml or ErrNotFound; leave 'var _ ExportSource = (*FileStore)(nil)' unchanged.",
+          "code": "FrozenIDs(ctx context.Context, worldID, roundID string) ([]string, error)",
+          "expected": "go build ./internal/contribution succeeds (non-test code only; the test fake is updated in Verify)"
+        }
+      ]
+    },
+    {
+      "id": "01M84JPZV2K2H1R2PN0FZ0ZS1J",
+      "kind": "unit",
+      "title": "Verify: FileStore.FrozenIDs unit tests",
+      "body": "Test FrozenIDs against a t.TempDir() root with hand-written snapshot.yaml files.\n\n## Acceptance criteria\n- Returns ids in order\n- Missing snapshot gives ErrNotFound\n- Unsafe ids are rejected\n\n\n## Scope\n- In scope: store_test.go\n- Out of scope: product code\n- Preserve: Existing tests\n\n\n## Technical constraints\n- Temp dir only, no Git needed\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for FrozenIDs success, not-found and invalid ids",
+      "description": "Test FrozenIDs against a t.TempDir() root with hand-written snapshot.yaml files.",
+      "acceptance_criteria": [
+        "Returns ids in order",
+        "Missing snapshot gives ErrNotFound",
+        "Unsafe ids are rejected"
+      ],
+      "scope": {
+        "in_scope": [
+          "store_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "Existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Temp dir only, no Git needed"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-264.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M84JPZV2PF1M4QMY5D5W6QQF",
+      "links": [
+        "parent:01M84JPZV2PF1M4QMY5D5W6QQF",
+        "trace:01M84JF0K214J0YTJ8H6WV9DFZ",
+        "artifact:.ai-dlc/units/UNIT-264.md"
+      ],
+      "depends_on": [
+        "01M84JPZV2PF1M4QMY5D5W6QQF"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-264.md",
+      "artifact_id": "UNIT-264",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/store_test.go",
+          "symbol": "new: TestFileStore_FrozenIDs",
+          "lines": "after L277",
+          "action": "Add table-style subtests: (1) write worlds/w/rounds/round-0000001/snapshot.yaml matching the round.Snapshot layout in backend/internal/round/snapshot.go with contribution ids 'a','b' and assert FrozenIDs(ctx,'w','ROUND-0000001') equals []string{'a','b'}; (2) no snapshot file, assert errors.Is(err, ErrNotFound); (3) worldID '../x' and roundID 'a/b' each return non-nil error and not ErrNotFound.",
+          "command": "cd backend && go test ./internal/contribution -run TestFileStore_FrozenIDs",
+          "expected": "All subtests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84JPZV2AXTZPRHKPCZQS45B",
+      "kind": "unit",
+      "title": "Verify: ExportSource includes FrozenIDs and FileStore satisfies it",
+      "body": "Update the test fake to implement the extended interface and add an explicit assertion test.\n\n## Acceptance criteria\n- Fake implements ExportSource with FrozenIDs\n- FileStore assigned to ExportSource compiles and works\n\n\n## Scope\n- In scope: export_source_test.go\n- Out of scope: product code\n- Preserve: TestExportFiles_NoRemovedImports\n\n\n## Technical constraints\n- Temp dir only\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Update fake source and assert FileStore implements ExportSource",
+      "description": "Update the test fake to implement the extended interface and add an explicit assertion test.",
+      "acceptance_criteria": [
+        "Fake implements ExportSource with FrozenIDs",
+        "FileStore assigned to ExportSource compiles and works"
+      ],
+      "scope": {
+        "in_scope": [
+          "export_source_test.go"
+        ],
+        "out_of_scope": [
+          "product code"
+        ],
+        "preserve": [
+          "TestExportFiles_NoRemovedImports"
+        ]
+      },
+      "technical_constraints": [
+        "Temp dir only"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-265.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JPZV26HJDJKWYNCD1PEPT",
+      "matched_feature_id": "01M84GAF927JWRTQH50AC806ZZ",
+      "links": [
+        "parent:01M84JPZV26HJDJKWYNCD1PEPT",
+        "trace:01M84GAF927JWRTQH50AC806ZZ",
+        "artifact:.ai-dlc/units/UNIT-265.md"
+      ],
+      "depends_on": [
+        "01M84JPZV26HJDJKWYNCD1PEPT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-265.md",
+      "artifact_id": "UNIT-265",
+      "steps": [
+        {
+          "file": "backend/internal/contribution/export_source_test.go",
+          "symbol": "fakeSource",
+          "lines": "L10-L19",
+          "action": "Add field frozen []string and method FrozenIDs(_ context.Context, _, _ string) ([]string, error) returning it, so fakeSource still satisfies ExportSource.",
+          "command": "cd backend && go test ./internal/contribution -run 'TestExportSource_Fake|TestFileStore_ImplementsExportSource|TestExportFiles_NoRemovedImports'",
+          "expected": "Package tests compile"
+        },
+        {
+          "file": "backend/internal/contribution/export_source_test.go",
+          "symbol": "new: TestFileStore_ImplementsExportSource",
+          "lines": "after L47",
+          "action": "Create a FileStore{Root: t.TempDir()}, assign to a variable of type ExportSource, call FrozenIDs for world 'w' round 'ROUND-0000001' and assert errors.Is(err, ErrNotFound).",
+          "command": "cd backend && go test ./internal/contribution -run 'TestExportSource_Fake|TestFileStore_ImplementsExportSource|TestExportFiles_NoRemovedImports'",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M84JPZV2B847VGMGCEZZBJY4",
+      "kind": "evidence",
+      "title": "Evidence: FrozenIDs reader and ExportSource unit tests",
+      "body": "Record the passing unit tests for FrozenIDs and the ExportSource contract.\n\n## Acceptance criteria\n- FrozenIDs tests pass\n- ExportSource contract tests pass\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Product changes\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- go test ./internal/contribution passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test results proving the frozen-ids reader",
+      "description": "Record the passing unit tests for FrozenIDs and the ExportSource contract.",
+      "acceptance_criteria": [
+        "FrozenIDs tests pass",
+        "ExportSource contract tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "go test ./internal/contribution passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-052.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M84JPZV2K2H1R2PN0FZ0ZS1J",
+      "matched_feature_id": "01M84GAF92BD5V4XVCEKT7GPFN",
+      "links": [
+        "parent:01M84JPZV2K2H1R2PN0FZ0ZS1J",
+        "trace:01M84GAF92BD5V4XVCEKT7GPFN",
+        "artifact:.ai-dlc/evidence/EVD-052.md"
+      ],
+      "depends_on": [
+        "01M84JPZV2K2H1R2PN0FZ0ZS1J",
+        "01M84JPZV2AXTZPRHKPCZQS45B"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-052.md",
+      "artifact_id": "EVD-052"
+    }
+  ],
+  "created_at": "2026-11-23T16:09:42.670219+00:00",
+  "summary": "AI · 1 NEW · 7 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}

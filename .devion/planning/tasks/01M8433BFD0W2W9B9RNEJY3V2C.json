@@ -1,0 +1,69 @@
+{
+  "id": "01M8433BFD0W2W9B9RNEJY3V2C",
+  "intent_id": "01M842YVXQ6YESCRGFAQREM4JH",
+  "title": "Verify: State persistence unit tests",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Tests for round trip and persisted open secret door",
+  "description": "Test serialization and the bookshelf door persistence using real bedroom content read from disk.",
+  "acceptance_criteria": [
+    "Given round trip, then deep equality.",
+    "Given restored state, then bookshelf open is true."
+  ],
+  "scope": {
+    "in_scope": [
+      "backend/game/tests/persistence.test.ts"
+    ],
+    "out_of_scope": [],
+    "preserve": []
+  },
+  "technical_constraints": [
+    "No storage APIs"
+  ],
+  "dependencies": [
+    "ACT-PS"
+  ],
+  "definition_of_done": [
+    "Tests pass",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-024.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M8433B95JQDP9ZET0MARJS7Z",
+    "trace:01M8414WGS5H96JYKP42Z167W8",
+    "artifact:.ai-dlc/units/UNIT-024.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M8433BFDE566W5VF07GZXCR3",
+    "01M8433BFD47S94634A80SEZYN"
+  ],
+  "sim_node_id": "01M8433B95BGGWTSF34VMGN1SC",
+  "feature_id": "01M8414WGS5H96JYKP42Z167W8",
+  "artifact_path": ".ai-dlc/units/UNIT-024.md",
+  "artifact_id": "UNIT-024",
+  "steps": [
+    {
+      "file": "backend/game/tests/persistence.test.ts",
+      "symbol": "new: round trip and invalid input tests",
+      "lines": "new",
+      "action": "Add 'round trip equals original' (state with flags {a:true}, inventory ['key']; expect deserializeState(serializeState(s)) toEqual s) and 'invalid input throws' (inputs '{}' and 'not json'; expect toThrow).",
+      "command": "cd backend/game && npx vitest run tests/persistence.test.ts -t 'round trip|invalid'",
+      "expected": "Tests pass."
+    },
+    {
+      "file": "backend/game/tests/persistence.test.ts",
+      "symbol": "new: secret door persists",
+      "lines": "new",
+      "action": "Add test 'secret door stays open after restore': loadWorld the-boys-room content, createInitialState, performAction(bookshelf,'search'), restore via deserializeState(serializeState(...)), assert getSceneView(...).objects.find(o=>o.id==='bookshelf').open is true.",
+      "command": "cd backend/game && npx vitest run tests/persistence.test.ts -t 'secret door'",
+      "expected": "Test passes."
+    }
+  ],
+  "created_at": "2026-11-23T11:36:43.245013+00:00",
+  "updated_at": "2026-11-23T11:41:44.632618+00:00"
+}

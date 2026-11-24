@@ -1,0 +1,57 @@
+{
+  "id": "01M84FKXC1JJEMCVEYCCPG5BCQ",
+  "intent_id": "01M84FERAGQYD5W5YBKTKZYQYX",
+  "title": "SG-7.3 · Implement the execution runner in worker/internal",
+  "kind": "intent",
+  "issue_type": "Story",
+  "summary": "Execution runner takes the per-World lock, runs the agent in an isolated worktree with timeout, retries, budget stop and approval gate",
+  "description": "Context: backend/worker has config, lock (lock.Acquire/ErrLocked) and store (store.Store, Execution, Status) packages but no runner. Desired behavior: a runner package that locks, runs an agent in an isolated worktree under a context timeout, retries up to the configured limit, stops when budget is exceeded and blocks at the approval gate before publishing unless auto-publish is on. Expected result: Runner.Run drives one execution to COMPLETED, AWAITING_APPROVAL or FAILED. Why: the worker must never corrupt production and must run one execution per World.",
+  "acceptance_criteria": [
+    "Given the lock file exists, when Run is called, then it returns an error satisfying errors.Is(err, lock.ErrLocked) and neither the worktree nor the agent is touched",
+    "Given an agent that blocks, when the timeout elapses, then Run returns context.DeadlineExceeded and the execution is FAILED",
+    "Given an agent failing twice then succeeding and MaxRetries 2, when Run is called, then the agent runs 3 times and the execution is not FAILED",
+    "Given the accumulated cost exceeds MaxBudget, when an attempt finishes, then Run stops retrying and returns ErrBudgetExceeded",
+    "Given AutoPublish is false and the agent succeeds, then the status is AWAITING_APPROVAL and Publish is not called; when true, Publish is called and status is COMPLETED"
+  ],
+  "scope": {
+    "in_scope": [
+      "new package backend/worker/internal/runner"
+    ],
+    "out_of_scope": [
+      "real git worktree and Claude provider implementations",
+      "admin approve endpoint",
+      "startup recovery"
+    ],
+    "preserve": [
+      "lock, store and config package APIs"
+    ]
+  },
+  "technical_constraints": [
+    "Go 1.22, standard library only plus existing packages",
+    "Agent, Worktrees and Publisher are interfaces so tests use fakes"
+  ],
+  "dependencies": [],
+  "definition_of_done": [
+    "All acceptance criteria are met by runner package code",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-038.md`"
+  ],
+  "non_functional": [
+    "No shell interpolation of any prompt text"
+  ],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "trace:01M848ZFYJCSNXXEZMW8RCT4TK",
+    "artifact:.ai-dlc/intent/INT-038.md"
+  ],
+  "change": "UPDATE",
+  "stage": "PLAN",
+  "status": "DONE",
+  "depends_on": [],
+  "sim_node_id": "01M84FKHRASKJH02BCCVVHV99Y",
+  "feature_id": "01M848ZFYJCSNXXEZMW8RCT4TK",
+  "artifact_path": ".ai-dlc/intent/INT-038.md",
+  "artifact_id": "INT-038",
+  "created_at": "2026-11-23T15:15:28.769022+00:00",
+  "updated_at": "2026-11-23T15:18:46.980734+00:00"
+}

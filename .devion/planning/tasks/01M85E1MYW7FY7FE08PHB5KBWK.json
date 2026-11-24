@@ -1,0 +1,64 @@
+{
+  "id": "01M85E1MYW7FY7FE08PHB5KBWK",
+  "intent_id": "01M85DVS0S49NMJFR6Q9K4AB6W",
+  "title": "Verify: Blank-text validation tests assert real dialog behaviour",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Rewrite contributionBlank tests to assert alert text, aria wiring and zero submit calls",
+  "description": "Context: tests/contributionBlank.test.tsx renders the real sheet with the API client mocked. Desired behavior: every test asserts message text and submitContribution call count. Expected result: tests fail if the blank guard is removed.",
+  "acceptance_criteria": [
+    "Empty and whitespace-only submit show 'Enter an idea first' and submitContribution is called 0 times",
+    "Typing clears the alert and aria-invalid; a valid trimmed idea is sent as 'hello' once"
+  ],
+  "scope": {
+    "in_scope": [
+      "game/frontend/tests/contributionBlank.test.tsx"
+    ],
+    "out_of_scope": [
+      "Product code"
+    ],
+    "preserve": [
+      "Fixture imports from tests/fixtures/api.ts"
+    ]
+  },
+  "technical_constraints": [
+    "Fixture contributionFixture mirrors the Contribution type in src/api/client.ts; do not hard-code payloads"
+  ],
+  "dependencies": [
+    "ACT-BLANK"
+  ],
+  "definition_of_done": [
+    "contributionBlank.test.tsx passes and each test asserts a message or call count",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-657.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85DXK44XDXYJ4R4PZ5X4Z32",
+    "trace:01M855M826YRQ0V4NDRXM6HX1M",
+    "artifact:.ai-dlc/units/UNIT-657.md"
+  ],
+  "change": "UPDATE",
+  "stage": "VERIFY",
+  "status": "DONE",
+  "depends_on": [
+    "01M85E1MYWA6HZSDSFGB6YAW0P"
+  ],
+  "sim_node_id": "01M85DXK44VQX3TH3HCFBHGHYM",
+  "feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+  "artifact_path": ".ai-dlc/units/UNIT-657.md",
+  "artifact_id": "UNIT-657",
+  "steps": [
+    {
+      "file": "game/frontend/tests/contributionBlank.test.tsx",
+      "symbol": "describe('ContributionSheet blank submit')",
+      "lines": "L29-L94",
+      "action": "Keep the five tests; ensure the empty and whitespace tests use getByRole('alert').textContent toBe 'Enter an idea first' and expect(submitMock).toHaveBeenCalledTimes(0); ensure the valid test asserts toHaveBeenCalledWith('hello') and queryByText('Enter an idea first') is null",
+      "command": "npx vitest run tests/contributionBlank.test.tsx",
+      "expected": "5 tests pass; with the blank guard removed from handleSubmit the first two fail"
+    }
+  ],
+  "created_at": "2026-11-24T00:07:16.188112+00:00",
+  "updated_at": "2026-11-24T00:09:14.171008+00:00"
+}

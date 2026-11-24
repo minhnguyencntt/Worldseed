@@ -1,0 +1,92 @@
+{
+  "id": "01M847PSB90Y2FGRC2B62ZFS36",
+  "intent_id": "01M847H43ZBM8SEWC3A33AWNS1",
+  "title": "Act: Add LifecycleStepper and ExecutionPanel to AdminApp",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Stepper, execution panel and listExecutions client call",
+  "description": "Implement the stepper and panel components and render them in AdminApp using the Round status, contribution count and the execution for the Round.",
+  "acceptance_criteria": [
+    "Seven stages render in order",
+    "Panel shows duration from updated_at difference",
+    "Failure reason shown"
+  ],
+  "scope": {
+    "in_scope": [
+      "client.ts",
+      "LifecycleStepper.tsx",
+      "ExecutionPanel.tsx",
+      "AdminApp.tsx"
+    ],
+    "out_of_scope": [
+      "Tests"
+    ],
+    "preserve": [
+      "Open/Close controls"
+    ]
+  },
+  "technical_constraints": [
+    "No new deps",
+    "New file: `game/frontend/src/api/client.ts`",
+    "New file: `game/frontend/src/components/LifecycleStepper.tsx`",
+    "New file: `game/frontend/src/components/ExecutionPanel.tsx`",
+    "New file: `game/frontend/src/components/AdminApp.tsx`"
+  ],
+  "dependencies": [
+    "REQ-4"
+  ],
+  "definition_of_done": [
+    "tsc passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-110.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M847PKPA89CR1J6CV9SR0SCA",
+    "artifact:.ai-dlc/units/UNIT-110.md"
+  ],
+  "change": "NEW",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M847PSB9BT2G6H2TNP9WJMGY"
+  ],
+  "sim_node_id": "01M847PKPAPADHWSERYT79FQ77",
+  "artifact_path": ".ai-dlc/units/UNIT-110.md",
+  "artifact_id": "UNIT-110",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/frontend/src/api/client.ts",
+      "symbol": "new: ExecutionInfo, listExecutions",
+      "lines": "after listRoundContributions",
+      "action": "Export ExecutionInfo {id,world_id,round_id,status,error,updated_at, log?:string, tests?:string, release_version?:string} and listExecutions(token) GET /api/v1/admin/executions via adminRequest",
+      "expected": "Returns ExecutionInfo[]"
+    },
+    {
+      "file": "game/frontend/src/components/LifecycleStepper.tsx",
+      "symbol": "new: LifecycleStepper, STAGES, stageIndex",
+      "lines": "new",
+      "action": "Export STAGES=['OPEN','CLOSED','ANALYZING','DEVELOPING','TESTING','PUBLISHING','COMPLETED']; stageIndex(status) maps PLANNING->DEVELOPING and BUILDING->TESTING, else index of status, -1 otherwise; component renders <ol aria-label='Round lifecycle'> of <li data-state='done|current|pending'> with aria-current='step' on current",
+      "expected": "One current stage per status"
+    },
+    {
+      "file": "game/frontend/src/components/ExecutionPanel.tsx",
+      "symbol": "new: ExecutionPanel",
+      "lines": "new",
+      "action": "Export ExecutionPanel({execution,contributionCount}) rendering 'Contributions: N', 'Duration: ' computed from updated_at (or 'Not available' without execution), sections 'Agent logs', 'Test results', 'Release version' each showing the field or 'Not available', and 'Failure reason: <error>' when error is non-empty",
+      "expected": "Fields render or fallback"
+    },
+    {
+      "file": "game/frontend/src/components/AdminApp.tsx",
+      "symbol": "AdminApp",
+      "lines": "new file from ACT-3",
+      "action": "Load listExecutions(token) and pick the one whose round_id equals roundId; render <LifecycleStepper status={round.status}/> and <ExecutionPanel execution={execution} contributionCount={contributions.length}/> below the Round header",
+      "expected": "Stepper and panel appear in the console"
+    }
+  ],
+  "created_at": "2026-11-23T12:57:14.345775+00:00",
+  "updated_at": "2026-11-23T13:04:06.165122+00:00"
+}

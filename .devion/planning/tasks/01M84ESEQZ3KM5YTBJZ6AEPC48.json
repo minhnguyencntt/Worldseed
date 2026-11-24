@@ -1,0 +1,73 @@
+{
+  "id": "01M84ESEQZ3KM5YTBJZ6AEPC48",
+  "intent_id": "01M84AA9EFNY0VMSWPSHTEN2PR",
+  "title": "Act: Implement the JSON execution store and startup recovery",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Add state.Store and recovery.Run",
+  "description": "Implement the store and recovery packages; no tests here.",
+  "acceptance_criteria": [
+    "state.Store Save/Load/List work on <dir>/<id>.json",
+    "recovery.Run resumes or marks unfinished executions and clears stale locks"
+  ],
+  "scope": {
+    "in_scope": [
+      "state and recovery packages"
+    ],
+    "out_of_scope": [
+      "tests"
+    ],
+    "preserve": [
+      "lock package API"
+    ]
+  },
+  "technical_constraints": [
+    "Clock injected as func() time.Time"
+  ],
+  "dependencies": [
+    "A1"
+  ],
+  "definition_of_done": [
+    "go build ./... passes",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-162.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M84ES14SM5Q00A0Y1621NGWA",
+    "trace:01M8457KMNMPKHMBD6YY6RQWE2",
+    "artifact:.ai-dlc/units/UNIT-162.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M84ESEQZYWFHWTGS0K38Y7KH"
+  ],
+  "sim_node_id": "01M84ES14S29H8HCNP687KH34R",
+  "feature_id": "01M8457KMNMPKHMBD6YY6RQWE2",
+  "artifact_path": ".ai-dlc/units/UNIT-162.md",
+  "artifact_id": "UNIT-162",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "worker/internal/state/state.go",
+      "symbol": "new: Execution, Store, Save, Load, List",
+      "lines": "new",
+      "action": "Define Status constants QUEUED, RUNNING, AWAITING_APPROVAL, APPROVED, FAILED, COMPLETED, RECOVERING. Execution{ID, World, Round string; Status Status; Attempt int; CostUSD float64; Error string; StartedAt, UpdatedAt time.Time} with json tags. Store{Dir string; Now func() time.Time}. Save sets UpdatedAt=Now(), validates ID with a regexp ^[A-Za-z0-9._-]+$ (no '..'), marshals indented JSON and writes via CreateTemp+Rename in Dir. Load(id) returns fs.ErrNotExist-wrapping error when missing. List returns every *.json sorted by ID, ignoring *.report.json",
+      "expected": "Round trip preserves all fields; unsafe ID returns an error"
+    },
+    {
+      "file": "worker/internal/recovery/recovery.go",
+      "symbol": "new: Run, Options, Result",
+      "lines": "new",
+      "action": "Options{Store *state.Store; LockPath string; MaxRetries int; Alive func(pid int) bool; Log *slog.Logger}. Run(ctx) ([]Result, error): if LockPath exists and lock.Owner content is 'pid:<n>' with Alive(n) false, os.Remove it. For each List() execution with Status RUNNING or QUEUED: if Attempt < MaxRetries set Status QUEUED and Error 'resumed after restart' else set Status RECOVERING and Error 'interrupted; attempts exhausted'; Save; append Result{ID, Action resumed|marked}. Log each at Info. Leave other statuses unchanged",
+      "code": "type Result struct{ ID, Action string }",
+      "expected": "Results list one entry per unfinished execution"
+    }
+  ],
+  "created_at": "2026-11-23T15:01:01.823257+00:00",
+  "updated_at": "2026-11-23T15:05:58.150060+00:00"
+}

@@ -1,0 +1,672 @@
+{
+  "id": "01M85GXX9XWFKMPBZWYGHHVP10",
+  "trigger_node_id": "INT-141, UNIT-700 +6",
+  "node_ids": [
+    "INT-141",
+    "UNIT-700",
+    "UNIT-701",
+    "UNIT-702",
+    "UNIT-703",
+    "REQ-350",
+    "REQ-351",
+    "EVD-141"
+  ],
+  "intent_id": "INT-141",
+  "purpose": "graph",
+  "methodology": "AIDLC",
+  "methodology_confirmed": true,
+  "status": "succeeded",
+  "units": [
+    {
+      "unit_id": "INT-141",
+      "title": "SG-9 Replace the flat scene image with the Phaser host in the game screen",
+      "kind": "intent",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "UNIT-700",
+      "title": "Act: Render PhaserHost with BootScene in the App scene slot",
+      "kind": "unit",
+      "task_ids": [
+        "01M85GXWBGCGF1PSR6BGT74MVB"
+      ],
+      "depends_on": [
+        "REQ-350"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "22abcb361c64846711aa95b42a29cf7251e87dbd",
+      "from_sha": "fddcb788df6e2b1f7a79a48987c3afde5e2aab19",
+      "started_at": "2026-11-24T00:57:42.487001+00:00",
+      "ended_at": "2026-11-24T00:58:16.765673+00:00",
+      "run_started_at": "2026-11-24T00:57:42.487001+00:00",
+      "duration_ms": 30961,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 14,
+      "tokens_out": 2725,
+      "estimated_cost_usd": 0.010911
+    },
+    {
+      "unit_id": "UNIT-701",
+      "title": "Act: Subscribe App to the objectClick event from Phaser",
+      "kind": "unit",
+      "task_ids": [
+        "01M85GXWBGFWY9RE09MKBGATTY"
+      ],
+      "depends_on": [
+        "REQ-351"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "22abcb361c64846711aa95b42a29cf7251e87dbd",
+      "from_sha": "22abcb361c64846711aa95b42a29cf7251e87dbd",
+      "started_at": "2026-11-24T00:57:42.524165+00:00",
+      "ended_at": "2026-11-24T00:58:21.385430+00:00",
+      "run_started_at": "2026-11-24T00:57:42.524165+00:00",
+      "duration_ms": 37227,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 18,
+      "tokens_out": 3999,
+      "estimated_cost_usd": 0.01601
+    },
+    {
+      "unit_id": "UNIT-702",
+      "title": "Verify: App mounts PhaserHost once with BootScene and cleans up",
+      "kind": "unit",
+      "task_ids": [
+        "01M85GXWBGY0S7JK021Y0HAPW7"
+      ],
+      "depends_on": [
+        "UNIT-700",
+        "REQ-350"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "b01e9e3a84303f7832b49aa13d527d1079137268",
+      "from_sha": "ad22e9df13a3ec98dcddb779d1d5f76b5a6dd08b",
+      "tests": [
+        {
+          "id": "appPhaserHost-host-present",
+          "kind": "unit",
+          "name": "Given Begin is clicked, then the phaser host element renders and no image role is present",
+          "title": "App renders the phaser host and no image role after Begin",
+          "scenario": "Given Begin is clicked, then getByTestId('phaser-host') exists and queryByRole('img') is null",
+          "command": "npx vitest run --testTimeout=10000 tests/appPhaserHost.test.tsx",
+          "file": "tests/appPhaserHost.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appPhaserHost-boot-scene",
+          "kind": "unit",
+          "name": "Given Begin is clicked, then createGame is called once with BootScene in the scene list",
+          "title": "App mounts PhaserHost with BootScene passed to createGame",
+          "scenario": "Given Begin is clicked, then createGame is called once and its scene list contains BootScene",
+          "command": "npx vitest run --testTimeout=10000 tests/appPhaserHost.test.tsx",
+          "file": "tests/appPhaserHost.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appPhaserHost-single-create",
+          "kind": "unit",
+          "name": "Given the App re-renders, then createGame is still called only once",
+          "title": "App creates one Phaser game across rerenders",
+          "scenario": "Given Begin is clicked, when the App is rerendered twice, then createGame is still called once",
+          "command": "npx vitest run --testTimeout=10000 tests/appPhaserHost.test.tsx",
+          "file": "tests/appPhaserHost.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appPhaserHost-unmount-destroy",
+          "kind": "unit",
+          "name": "Given a started game, when the App unmounts, then the game is destroyed once with true",
+          "title": "App destroys the Phaser game once on unmount",
+          "scenario": "Given a started game, when the App unmounts, then destroy is called once with true",
+          "command": "npx vitest run --testTimeout=10000 tests/appPhaserHost.test.tsx",
+          "file": "tests/appPhaserHost.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "app-migrated-suite",
+          "kind": "unit",
+          "name": "App tests (tests/app.test.tsx)",
+          "title": "App unit tests run with Phaser mocked",
+          "scenario": "Given createGame and BootScene are mocked, then all 8 App tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/app.test.tsx",
+          "file": "tests/app.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appFlow-migrated-suite",
+          "kind": "unit",
+          "name": "App flow tests (tests/appFlow.test.tsx)",
+          "title": "App flow: action menu and story choices with Phaser mocked",
+          "scenario": "Given Phaser is mocked, when the Bookshelf objectClick is emitted, then the action menu opens; and a dialogue choice advances to the next node",
+          "command": "npx vitest run --testTimeout=10000 tests/appFlow.test.tsx",
+          "file": "tests/appFlow.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appContributionFocus-migrated-suite",
+          "kind": "unit",
+          "name": "App contribution focus tests",
+          "title": "Contribution sheet focus behaviour with Phaser mocked",
+          "scenario": "Given Phaser is mocked, then the contribution focus tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/appContributionFocus.test.tsx",
+          "file": "tests/appContributionFocus.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appHeader-migrated-suite",
+          "kind": "unit",
+          "name": "App header tests",
+          "title": "App header behaviour with Phaser mocked",
+          "scenario": "Given Phaser is mocked, then the header tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/appHeader.test.tsx",
+          "file": "tests/appHeader.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appNoLegacyHeader-migrated-suite",
+          "kind": "unit",
+          "name": "App no-legacy-header tests",
+          "title": "App renders without the legacy header with Phaser mocked",
+          "scenario": "Given Phaser is mocked, then the no-legacy-header tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/appNoLegacyHeader.test.tsx",
+          "file": "tests/appNoLegacyHeader.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appRound-migrated-suite",
+          "kind": "unit",
+          "name": "App round tests",
+          "title": "App round loading and errors with Phaser mocked",
+          "scenario": "Given Phaser is mocked, then the round tests pass",
+          "command": "npx vitest run --testTimeout=10000 tests/appRound.test.tsx",
+          "file": "tests/appRound.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "secretDoorPersistence-suite",
+          "kind": "unit",
+          "name": "Secret door persistence tests",
+          "title": "Secret door state persists through the store hook",
+          "scenario": "Given the store hook is used without rendering App, then the persistence tests pass and need no Phaser mock",
+          "command": "npx vitest run --testTimeout=10000 tests/secretDoorPersistence.test.tsx",
+          "file": "tests/secretDoorPersistence.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify tests not executed (2 planned/unrun): tests/app.test.tsx, appFlow, appContributionFocus, appHeader, appNoLegacyHeader, appRound (Step 2 migration), tests/secretDoorPersistence.test.tsx",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "57a0b5f5e28c33537fd52656ac43499f816ffe1a",
+          "from_sha": "57a0b5f5e28c33537fd52656ac43499f816ffe1a",
+          "tests": [
+            {
+              "id": "appPhaserHost-host-present",
+              "kind": "unit",
+              "name": "tests/appPhaserHost.test.tsx > Given Begin is clicked, then the phaser host element renders and no image role is present",
+              "title": "Given Begin is clicked, the phaser host element renders and no image role is present",
+              "scenario": "Given the App is rendered, when Begin is clicked, then getByTestId('phaser-host') exists and queryByRole('img') is null",
+              "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx --testTimeout 20000",
+              "file": "tests/appPhaserHost.test.tsx",
+              "status": "passed",
+              "detail": "Passed in the run before concurrent commit 73880521 replaced the file. Not re-verified after the collision."
+            },
+            {
+              "id": "appPhaserHost-begin-once",
+              "kind": "unit",
+              "name": "tests/appPhaserHost.test.tsx > Given Begin is clicked, then createGame is called once with BootScene in the scene list",
+              "title": "Given Begin is clicked, createGame is called once with BootScene in the scene list",
+              "scenario": "Given the App is rendered, when Begin is clicked, then createGame was called once and its second argument contains BootScene",
+              "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx --testTimeout 20000",
+              "file": "tests/appPhaserHost.test.tsx",
+              "status": "passed",
+              "detail": "Passed in the run before concurrent commit 73880521 replaced the file. Not re-verified after the collision."
+            },
+            {
+              "id": "appPhaserHost-rerender-once",
+              "kind": "unit",
+              "name": "tests/appPhaserHost.test.tsx > Given the App re-renders, then createGame is still called only once",
+              "title": "Given the App re-renders, createGame is still called only once",
+              "scenario": "Given a started game, when the App re-renders twice, then createGame was still called once",
+              "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx --testTimeout 20000",
+              "file": "tests/appPhaserHost.test.tsx",
+              "status": "passed",
+              "detail": "Passed in the run before concurrent commit 73880521 replaced the file. Not re-verified after the collision."
+            },
+            {
+              "id": "appPhaserHost-unmount-destroy",
+              "kind": "unit",
+              "name": "tests/appPhaserHost.test.tsx > Given a started game, when the App unmounts, then the game is destroyed once with true",
+              "title": "Given a started game, when the App unmounts, the game is destroyed once with true",
+              "scenario": "Given a started game, when the App unmounts, then destroy was called once with true",
+              "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx --testTimeout 20000",
+              "file": "tests/appPhaserHost.test.tsx",
+              "status": "passed",
+              "detail": "Passed in the run before concurrent commit 73880521 replaced the file. Not re-verified after the collision."
+            },
+            {
+              "id": "app-migrated-files",
+              "kind": "unit",
+              "name": "tests/app.test.tsx, appFlow, appContributionFocus, appHeader, appNoLegacyHeader, appRound (Step 2 migration)",
+              "title": "The seven App-rendering test files run without creating real Phaser and keep their non-scene assertions green",
+              "scenario": "Given the Phaser and ResizeObserver mocks are in place, when the seven files run, then all pass",
+              "command": "cd game/frontend && npx vitest run tests/appPhaserHost.test.tsx tests/app.test.tsx tests/appFlow.test.tsx tests/appContributionFocus.test.tsx tests/appHeader.test.tsx tests/appNoLegacyHeader.test.tsx tests/appRound.test.tsx tests/secretDoorPersistence.test.tsx",
+              "file": "tests/appPhaserHost.test.tsx",
+              "status": "planned",
+              "detail": "Not run to completion. Blocked by the shared-worktree collision and the missing zod dependency in game/node_modules. Mocks were added on disk to the six App files and hotspot clicks were replaced with phaserToReact emits in app.test.tsx and appFlow.test.tsx, but this state has not been re-verified."
+            },
+            {
+              "id": "secret-door-persistence",
+              "kind": "unit",
+              "name": "tests/secretDoorPersistence.test.tsx",
+              "title": "The secret door stays open across scene changes and remounts",
+              "scenario": "Given the store and hook, when the bookshelf is searched and the app remounts, then the secret door flag is restored",
+              "command": "cd game/frontend && npx vitest run tests/secretDoorPersistence.test.tsx --testTimeout 20000",
+              "file": "tests/secretDoorPersistence.test.tsx",
+              "status": "planned",
+              "detail": "Not run after the zod dependency was lost again. It did not render App; its earlier failure was the missing zod dependency."
+            }
+          ],
+          "started_at": "2026-11-24T00:58:16.775752+00:00",
+          "ended_at": "2026-11-24T01:01:20.928844+00:00",
+          "duration_ms": 181181,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 58,
+          "tokens_out": 28079,
+          "estimated_cost_usd": 0.112362
+        }
+      ],
+      "started_at": "2026-11-24T00:58:16.775752+00:00",
+      "ended_at": "2026-11-24T01:03:42.172271+00:00",
+      "run_started_at": "2026-11-24T01:02:11.378123+00:00",
+      "duration_ms": 89014,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 36,
+      "tokens_out": 11966,
+      "estimated_cost_usd": 0.047893
+    },
+    {
+      "unit_id": "UNIT-703",
+      "title": "Verify: objectClick event selects the object and unsubscribes on unmount",
+      "kind": "unit",
+      "task_ids": [
+        "01M85GXWBGC5YRGDV9N36GMJA8"
+      ],
+      "depends_on": [
+        "UNIT-701",
+        "REQ-351"
+      ],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-verify",
+      "commit_sha": "ad22e9df13a3ec98dcddb779d1d5f76b5a6dd08b",
+      "from_sha": "728a812066d61a0703b01df64ac2c59e67835152",
+      "tests": [
+        {
+          "id": "appObjectClick.test.tsx > App objectClick bridge > Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+          "kind": "unit",
+          "name": "Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+          "title": "App objectClick bridge: objectClick selects the object and shows its action buttons",
+          "scenario": "Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+          "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=10000",
+          "file": "tests/appObjectClick.test.tsx",
+          "status": "passed",
+          "detail": ""
+        },
+        {
+          "id": "appObjectClick.test.tsx > App objectClick bridge > Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+          "kind": "unit",
+          "name": "Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+          "title": "App objectClick bridge: unmounting unsubscribes the objectClick listener",
+          "scenario": "Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+          "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=10000",
+          "file": "tests/appObjectClick.test.tsx",
+          "status": "passed",
+          "detail": ""
+        }
+      ],
+      "attempts": [
+        {
+          "failure": "Verify agent set ok:false",
+          "attempt": 1,
+          "status": "failed",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "73880521b8ef68b7bd1a567cc15a935806c92041",
+          "from_sha": "22abcb361c64846711aa95b42a29cf7251e87dbd",
+          "tests": [
+            {
+              "id": "appObjectClick.test.tsx::objectClick selects bookshelf",
+              "kind": "unit",
+              "name": "App objectClick bridge > Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+              "title": "objectClick for bookshelf opens the Inspect, Push, Search and Leave action buttons",
+              "scenario": "Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+              "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=20000",
+              "file": "tests/appObjectClick.test.tsx",
+              "status": "passed",
+              "detail": "Passed only with a temporary zod@3 at game/node_modules; fails to load in the committed tree until zod is declared."
+            },
+            {
+              "id": "appObjectClick.test.tsx::unsubscribes on unmount",
+              "kind": "unit",
+              "name": "App objectClick bridge > Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+              "title": "App releases its objectClick listener on unmount and a later emit logs no error",
+              "scenario": "Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+              "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=20000",
+              "file": "tests/appObjectClick.test.tsx",
+              "status": "passed",
+              "detail": "Passed only with a temporary zod@3 at game/node_modules; the unsubscribe spy confirms the cleanup runs exactly once on unmount."
+            }
+          ],
+          "started_at": "2026-11-24T00:58:21.395319+00:00",
+          "ended_at": "2026-11-24T01:00:25.629175+00:00",
+          "duration_ms": 121590,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 36,
+          "tokens_out": 17105,
+          "estimated_cost_usd": 0.068449
+        },
+        {
+          "attempt": 2,
+          "status": "done",
+          "logs": [],
+          "last_agent": "condor-verify",
+          "commit_sha": "76a0cf2509309f98f896526000b3140cdb039b31",
+          "from_sha": "57a0b5f5e28c33537fd52656ac43499f816ffe1a",
+          "tests": [
+            {
+              "id": "appObjectClick.test.tsx::App objectClick bridge > Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+              "kind": "unit",
+              "name": "Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+              "title": "App objectClick bridge: objectClick selects the object and shows its action buttons",
+              "scenario": "Given the playing view, when objectClick is emitted for bookshelf, then the Inspect, Push, Search and Leave buttons appear",
+              "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=20000",
+              "file": "tests/appObjectClick.test.tsx",
+              "status": "passed",
+              "detail": ""
+            },
+            {
+              "id": "appObjectClick.test.tsx::App objectClick bridge > Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+              "kind": "unit",
+              "name": "Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+              "title": "App objectClick bridge: unmount releases the objectClick listener without errors",
+              "scenario": "Given App is unmounted, when it unsubscribes from objectClick, then the listener is released, no error is logged and no Inspect button exists",
+              "command": "cd game/frontend && npx vitest run tests/appObjectClick.test.tsx --testTimeout=20000",
+              "file": "tests/appObjectClick.test.tsx",
+              "status": "passed",
+              "detail": ""
+            }
+          ],
+          "started_at": "2026-11-24T01:01:12.726050+00:00",
+          "ended_at": "2026-11-24T01:01:31.622528+00:00",
+          "duration_ms": 16948,
+          "model": "claude-haiku-5-5",
+          "tokens_in": 8,
+          "tokens_out": 2384,
+          "estimated_cost_usd": 0.009542
+        }
+      ],
+      "started_at": "2026-11-24T00:58:21.395319+00:00",
+      "ended_at": "2026-11-24T01:02:32.223689+00:00",
+      "run_started_at": "2026-11-24T01:02:11.386668+00:00",
+      "duration_ms": 17314,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 8,
+      "tokens_out": 2313,
+      "estimated_cost_usd": 0.009258
+    },
+    {
+      "unit_id": "REQ-350",
+      "title": "REQ · App game screen mounts PhaserHost with BootScene instead of the flat image",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-141"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "REQ-351",
+      "title": "REQ · Canvas objectClick events select the object and open the ActionMenu",
+      "kind": "requirement",
+      "task_ids": [],
+      "depends_on": [
+        "INT-141"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "EVD-141",
+      "title": "Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked",
+      "kind": "evidence",
+      "task_ids": [],
+      "depends_on": [
+        "UNIT-700",
+        "UNIT-701",
+        "UNIT-702",
+        "UNIT-703"
+      ],
+      "status": "done",
+      "selected": false,
+      "logs": []
+    },
+    {
+      "unit_id": "FIX-UNIT-703",
+      "title": "Act: Fix Verify failure — objectClick event selects the object and unsubscribes on unmount",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "57a0b5f5e28c33537fd52656ac43499f816ffe1a",
+      "from_sha": "73880521b8ef68b7bd1a567cc15a935806c92041",
+      "started_at": "2026-11-24T01:00:25.638675+00:00",
+      "ended_at": "2026-11-24T01:01:12.491341+00:00",
+      "run_started_at": "2026-11-24T01:00:25.638675+00:00",
+      "duration_ms": 43652,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 16,
+      "tokens_out": 3498,
+      "estimated_cost_usd": 0.014005
+    },
+    {
+      "unit_id": "FIX-UNIT-702",
+      "title": "Act: Fix Verify failure — App mounts PhaserHost once with BootScene and cleans up",
+      "kind": "fix",
+      "task_ids": [],
+      "depends_on": [],
+      "status": "done",
+      "selected": true,
+      "logs": [],
+      "last_agent": "condor-act",
+      "commit_sha": "728a812066d61a0703b01df64ac2c59e67835152",
+      "from_sha": "76a0cf2509309f98f896526000b3140cdb039b31",
+      "started_at": "2026-11-24T01:01:20.937421+00:00",
+      "ended_at": "2026-11-24T01:02:11.139582+00:00",
+      "run_started_at": "2026-11-24T01:01:20.937421+00:00",
+      "duration_ms": 48218,
+      "model": "claude-haiku-5-5",
+      "tokens_in": 22,
+      "tokens_out": 5969,
+      "estimated_cost_usd": 0.023894
+    }
+  ],
+  "edges": [
+    {
+      "src": "INT-141",
+      "dst": "REQ-350"
+    },
+    {
+      "src": "UNIT-703",
+      "dst": "EVD-141"
+    },
+    {
+      "src": "UNIT-701",
+      "dst": "UNIT-703"
+    },
+    {
+      "src": "REQ-351",
+      "dst": "UNIT-703"
+    },
+    {
+      "src": "UNIT-702",
+      "dst": "EVD-141"
+    },
+    {
+      "src": "UNIT-700",
+      "dst": "UNIT-702"
+    },
+    {
+      "src": "REQ-351",
+      "dst": "UNIT-701"
+    },
+    {
+      "src": "INT-141",
+      "dst": "REQ-351"
+    },
+    {
+      "src": "UNIT-700",
+      "dst": "EVD-141"
+    },
+    {
+      "src": "UNIT-701",
+      "dst": "EVD-141"
+    },
+    {
+      "src": "REQ-350",
+      "dst": "UNIT-700"
+    },
+    {
+      "src": "REQ-350",
+      "dst": "UNIT-702"
+    }
+  ],
+  "run_queue": [],
+  "max_parallel_units": 10,
+  "branch": "devion/exec-01m85gxx",
+  "base_sha": "fddcb788df6e2b1f7a79a48987c3afde5e2aab19",
+  "pr_status": "merged",
+  "merge_status": "succeeded",
+  "merge_agent": "forge",
+  "merge_instance_id": "01M85GXX9XWFKMPBZWYGHHVP10:__merge__",
+  "merge_loaded_skills": [
+    "aidlc-act",
+    "worktree-merge-safety"
+  ],
+  "created_at": "2026-11-24T00:57:39.389736+00:00",
+  "updated_at": "2026-11-24T01:03:46.311320+00:00",
+  "completed_at": "2026-11-24T01:03:42.174028+00:00",
+  "duration_ms": 362785,
+  "usage_stats": {
+    "total_duration_ms": 586119,
+    "total_tokens_in": 216,
+    "total_tokens_out": 78038,
+    "total_estimated_cost_usd": 0.312324
+  },
+  "rediscovery_skipped": false,
+  "rediscovery_duration_ms": 14,
+  "unit_allowlist": [
+    "UNIT-700",
+    "UNIT-701",
+    "UNIT-702",
+    "UNIT-703"
+  ],
+  "checklist_path": true,
+  "verify_checklist": {
+    "items": [
+      {
+        "unit_id": "UNIT-700",
+        "title": "Act: Render PhaserHost with BootScene in the App scene slot",
+        "evidence_refs": [
+          {
+            "id": "EVD-141",
+            "path": ".ai-dlc/evidence/EVD-141.md",
+            "title": "Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-700 unless acceptance outcomes recorded in EVD-141 (.ai-dlc/evidence/EVD-141.md; \"Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-701",
+        "title": "Act: Subscribe App to the objectClick event from Phaser",
+        "evidence_refs": [
+          {
+            "id": "EVD-141",
+            "path": ".ai-dlc/evidence/EVD-141.md",
+            "title": "Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-701 unless acceptance outcomes recorded in EVD-141 (.ai-dlc/evidence/EVD-141.md; \"Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-702",
+        "title": "Verify: App mounts PhaserHost once with BootScene and cleans up",
+        "evidence_refs": [
+          {
+            "id": "EVD-141",
+            "path": ".ai-dlc/evidence/EVD-141.md",
+            "title": "Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-702 unless acceptance outcomes recorded in EVD-141 (.ai-dlc/evidence/EVD-141.md; \"Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked\") still hold for that unit.",
+        "status": "ready"
+      },
+      {
+        "unit_id": "UNIT-703",
+        "title": "Verify: objectClick event selects the object and unsubscribes on unmount",
+        "evidence_refs": [
+          {
+            "id": "EVD-141",
+            "path": ".ai-dlc/evidence/EVD-141.md",
+            "title": "Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked"
+          }
+        ],
+        "failure_criteria": "Fail Verify for UNIT-703 unless acceptance outcomes recorded in EVD-141 (.ai-dlc/evidence/EVD-141.md; \"Evidence: App Phaser host and objectClick unit tests pass with Phaser mocked\") still hold for that unit.",
+        "status": "ready"
+      }
+    ],
+    "created_at": "2026-11-24T00:57:41.984262+00:00"
+  },
+  "touched_unit_ids": [
+    "UNIT-700",
+    "UNIT-701",
+    "UNIT-702",
+    "UNIT-703"
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "id": "01M85VQB538DKN1YF0GQWT1YYN",
+  "intent_id": "01M85V8DJ1E8EVGVFR4YDYKYK2",
+  "title": "Act: Re-lay out bedroom.yaml on PNG ids and prune SVG entries from the manifest",
+  "kind": "unit",
+  "issue_type": "Task",
+  "summary": "Switch objects, boy and dust to PNG ids and remove svg manifest entries",
+  "description": "Edit the scene content to the new ids and 480x270 layout, and remove every manifest entry whose path ends .svg.",
+  "acceptance_criteria": [
+    "bedroom.yaml references only PNG ids",
+    "manifest.json has no .svg path"
+  ],
+  "scope": {
+    "in_scope": [
+      "bedroom.yaml",
+      "manifest.json"
+    ],
+    "out_of_scope": [
+      "Deleting files"
+    ],
+    "preserve": [
+      "Object ids, actions, events"
+    ]
+  },
+  "technical_constraints": [
+    "480x270 coordinates",
+    "Data-driven content",
+    "Code path: `game/src/content/worlds/the-boys-room/scenes/bedroom.yaml`",
+    "Code path: `game/public/assets/worlds/the-boys-room/manifest.json`"
+  ],
+  "dependencies": [
+    "R2",
+    "A1"
+  ],
+  "definition_of_done": [
+    "Positions inside 480x270",
+    "Content loads through runtime/content.ts",
+    "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-813.md`"
+  ],
+  "non_functional": [],
+  "clarifying_questions": [],
+  "ready_for_development": true,
+  "links": [
+    "parent:01M85VF91FZPVP0MRS77EVEJAN",
+    "trace:01M84JF0K1M4MR33A1AVV81WQV",
+    "artifact:.ai-dlc/units/UNIT-813.md"
+  ],
+  "change": "UPDATE",
+  "stage": "ACT",
+  "status": "DONE",
+  "depends_on": [
+    "01M85VQB53HK9EKWCWNVCMXKH3"
+  ],
+  "sim_node_id": "01M85VF91FZCNEQZ3PQG6EQJBG",
+  "feature_id": "01M84JF0K1M4MR33A1AVV81WQV",
+  "artifact_path": ".ai-dlc/units/UNIT-813.md",
+  "artifact_id": "UNIT-813",
+  "scan_version_id": "v1",
+  "scan_tip_sha": "9cda5131c65b08541fc685d8a0898d39a0e9e9fa",
+  "steps": [
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "characters[boy].animations",
+      "lines": "L41-L50",
+      "action": "Point idle, walk and interact at the one sheet and set position to x 230, y 240.",
+      "code": "idle: { asset: character:boy-sheet, animation: idle }\nwalk: { asset: character:boy-sheet, animation: walk }\ninteract: { asset: character:boy-sheet, animation: interact }",
+      "expected": "The boy resolves all three animations from character:boy-sheet"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "objects (existing seven)",
+      "lines": "L52-L225",
+      "action": "Change asset and position and interactionBounds: bed room/bed (290,165) bounds 104x40; bookshelf room/bookshelf (150,60) 48x96; desk room/desk (20,150) 80x32; old-computer room/computer (45,118) 30x34; window room/window (60,30) 64x56; door room/door (410,100) 40x80; secret-door-open objects/secret-door-open (158,92) bounds 32x64. Keep ids, actions, events, visibleWhen, persistentState unchanged.",
+      "expected": "The seven existing objects use room/* or secret-door PNG ids at 480x270 positions with unchanged ids and actions"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "objects (new decor)",
+      "lines": "after L225",
+      "action": "Append decor objects with actions: [] and scale 1: wall room/wall (0,0) layer background; wainscot room/wainscot (0,150) background; floor room/floor (0,190) background; rug room/rug (170,215) background; poster room/poster (210,40) furniture; lamp room/lamp (80,120) furniture; plant room/plant (112,152) furniture. Use ids wall, wainscot, floor, rug, poster, lamp, plant and matching names.",
+      "expected": "Scene has 14 objects, wall first in layer order"
+    },
+    {
+      "file": "game/src/content/worlds/the-boys-room/scenes/bedroom.yaml",
+      "symbol": "effects[dust].area",
+      "lines": "L231-L235",
+      "action": "Change area to width 480 height 270 keeping asset effect:dust.",
+      "code": "area: { x: 0, y: 0, width: 320, height: 180 } -> area: { x: 0, y: 0, width: 480, height: 270 }",
+      "expected": "Dust covers the 480x270 scene"
+    },
+    {
+      "file": "game/public/assets/worlds/the-boys-room/manifest.json",
+      "symbol": "assets",
+      "lines": "whole file",
+      "action": "Delete every entry whose path ends .svg: scene:bedroom, objects/bed, bookshelf, desk, old-computer, window, door, books, secret-door-closed, character:boy, character:boy-walk, character:boy-interact, effect:glow, ui:icon-sound, ui:panel-frame, ui:cursor-pointer, background:wall/floor/window-view/lighting, furniture:chair, furniture:wardrobe. Keep audio:ambient-room and all generated PNG entries.",
+      "command": "grep -c '\\.svg' game/public/assets/worlds/the-boys-room/manifest.json",
+      "expected": "Prints 0"
+    }
+  ],
+  "created_at": "2026-11-24T04:06:18.531751+00:00",
+  "updated_at": "2026-11-24T04:09:46.355546+00:00"
+}
