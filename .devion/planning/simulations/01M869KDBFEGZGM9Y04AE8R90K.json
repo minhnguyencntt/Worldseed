@@ -1,0 +1,513 @@
+{
+  "intent_id": "01M869KDBFEGZGM9Y04AE8R90K",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M869N26HWAT69PXPFNHBEXYM",
+      "kind": "intent",
+      "title": "SG-4.3 · Extract transitions and wire the thin BootScene",
+      "body": "Context: BootScene.ts (82 lines) still holds the transitionTo handler inline (reactToPhaser.on('transitionTo') + cameras.main.fadeOut + scene.start) and the TRANSITION_FADE_MS constant. Preload, build and characters are already modules. Desired behaviour: phaser/transitions.ts owns the transition effect and ignores a request made while one is running. BootScene composes all modules and calls every dispose on SHUTDOWN. Expected result: same visuals, BootScene under 200 lines, transition and shutdown tests pass. Why: finishes SG-4.\n\n## Acceptance criteria\n- Given a transition is running, when transitionTo is emitted again, then the camera fades out only once and scene.start is called once.\n- Given BootScene is created, when SHUTDOWN fires, then the transitions dispose runs and later transitionTo events do nothing.\n- Given the refactor, when BootScene.ts is counted, then it has fewer than 200 lines and the existing bootSceneTransition* tests pass unchanged.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/transitions.ts\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: backend/\n- Out of scope: api/client.ts\n- Out of scope: new juice or new transition visuals\n- Out of scope: SG-4.1 and SG-4.2 modules\n- Preserve: 300 ms fade-out then scene.start\n- Preserve: unknown or empty sceneId is ignored\n- Preserve: playSceneTransition on scene create\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0; phaser-pin guard test must keep passing\n- No change to what the player sees or can do\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No test deleted or skipped\n- No source file over 200 lines; game/src never imports from game/frontend\n- Zustand store remains the only owner of GameState\n- No new features or juice\n\n\n## Definition of done\n- transitions.ts exists and is used by BootScene\n- BootScene calls dispose on SHUTDOWN\n- tests and typecheck green in game/frontend\n\n\n## Non-functional requirements\n- No per-frame allocation; listeners released on shutdown\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Move the transitionTo fade into phaser/transitions.ts, ignore requests while one runs, and have BootScene dispose it on SHUTDOWN",
+      "description": "Context: BootScene.ts (82 lines) still holds the transitionTo handler inline (reactToPhaser.on('transitionTo') + cameras.main.fadeOut + scene.start) and the TRANSITION_FADE_MS constant. Preload, build and characters are already modules. Desired behaviour: phaser/transitions.ts owns the transition effect and ignores a request made while one is running. BootScene composes all modules and calls every dispose on SHUTDOWN. Expected result: same visuals, BootScene under 200 lines, transition and shutdown tests pass. Why: finishes SG-4.",
+      "acceptance_criteria": [
+        "Given a transition is running, when transitionTo is emitted again, then the camera fades out only once and scene.start is called once.",
+        "Given BootScene is created, when SHUTDOWN fires, then the transitions dispose runs and later transitionTo events do nothing.",
+        "Given the refactor, when BootScene.ts is counted, then it has fewer than 200 lines and the existing bootSceneTransition* tests pass unchanged."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/transitions.ts",
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "backend/",
+          "api/client.ts",
+          "new juice or new transition visuals",
+          "SG-4.1 and SG-4.2 modules"
+        ],
+        "preserve": [
+          "300 ms fade-out then scene.start",
+          "unknown or empty sceneId is ignored",
+          "playSceneTransition on scene create"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0; phaser-pin guard test must keep passing",
+        "No change to what the player sees or can do",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No test deleted or skipped",
+        "No source file over 200 lines; game/src never imports from game/frontend",
+        "Zustand store remains the only owner of GameState",
+        "No new features or juice"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "transitions.ts exists and is used by BootScene",
+        "BootScene calls dispose on SHUTDOWN",
+        "tests and typecheck green in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-184.md`"
+      ],
+      "non_functional": [
+        "No per-frame allocation; listeners released on shutdown"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85MNPTJCZY8SCT0WFZBV56X",
+      "links": [
+        "trace:01M85MNPTJCZY8SCT0WFZBV56X",
+        "artifact:.ai-dlc/intent/INT-184.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-184.md",
+      "artifact_id": "INT-184"
+    },
+    {
+      "id": "01M869N26H340DYP3PKMPACXH1",
+      "kind": "requirement",
+      "title": "REQ · transitions module fades to a scene and ignores requests while one is running",
+      "body": "Context: the handler in BootScene.create fades the main camera out for 300 ms then starts the scene, and nothing stops a second transitionTo from queuing another fade. Desired: phaser/transitions.ts exports TRANSITION_FADE_MS and createTransitions(scene) returning { dispose }. Expected: one fade per transition, invalid ids ignored, dispose unsubscribes. Why: spec of SG-4.3.\n\n## Acceptance criteria\n- Given a registered scene id, when transitionTo is emitted, then cameras.main.fadeOut is called once with TRANSITION_FADE_MS and scene.start is called with the id only after FADE_OUT_COMPLETE.\n- Given a transition is running, when transitionTo is emitted again, then fadeOut is not called again.\n- Given the fade completed, when transitionTo is emitted again, then a new fade starts.\n- Given an empty or unregistered sceneId, then nothing happens and later requests still work.\n- Given dispose was called, when transitionTo is emitted, then nothing happens.\n\n\n## Scope\n- In scope: new phaser/transitions.ts\n- Out of scope: changing fade duration or visuals\n- Preserve: Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE usage\n\n\n## Technical constraints\n- Phaser ~3.90.0 APIs only\n- File under 200 lines\n- Returns a dispose function\n\n\n## Definition of done\n- Module compiles and typechecks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "createTransitions subscribes to transitionTo, fades, starts the scene, and drops overlapping requests",
+      "description": "Context: the handler in BootScene.create fades the main camera out for 300 ms then starts the scene, and nothing stops a second transitionTo from queuing another fade. Desired: phaser/transitions.ts exports TRANSITION_FADE_MS and createTransitions(scene) returning { dispose }. Expected: one fade per transition, invalid ids ignored, dispose unsubscribes. Why: spec of SG-4.3.",
+      "acceptance_criteria": [
+        "Given a registered scene id, when transitionTo is emitted, then cameras.main.fadeOut is called once with TRANSITION_FADE_MS and scene.start is called with the id only after FADE_OUT_COMPLETE.",
+        "Given a transition is running, when transitionTo is emitted again, then fadeOut is not called again.",
+        "Given the fade completed, when transitionTo is emitted again, then a new fade starts.",
+        "Given an empty or unregistered sceneId, then nothing happens and later requests still work.",
+        "Given dispose was called, when transitionTo is emitted, then nothing happens."
+      ],
+      "scope": {
+        "in_scope": [
+          "new phaser/transitions.ts"
+        ],
+        "out_of_scope": [
+          "changing fade duration or visuals"
+        ],
+        "preserve": [
+          "Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE usage"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 APIs only",
+        "File under 200 lines",
+        "Returns a dispose function"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Module compiles and typechecks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-466.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M869N26HWAT69PXPFNHBEXYM",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M869N26HWAT69PXPFNHBEXYM",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-466.md"
+      ],
+      "depends_on": [
+        "01M869N26HWAT69PXPFNHBEXYM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-466.md",
+      "artifact_id": "REQ-466"
+    },
+    {
+      "id": "01M869N26H2YN7WM4F1ZVM801J",
+      "kind": "requirement",
+      "title": "REQ · BootScene composes the modules, disposes every one on SHUTDOWN and stays under 200 lines",
+      "body": "Context: BootScene.create holds the inline handler and the unsubscribeTransition field. Desired: BootScene calls createTransitions(this), stores it, and disposes it in SHUTDOWN next to input, preloader, build and characters; it re-exports TRANSITION_FADE_MS so existing imports keep working. Expected: thin shell under 200 lines, behaviour unchanged.\n\n## Acceptance criteria\n- Given create() ran, when transitionTo is emitted, then the camera fades out as before (existing bootSceneTransition tests pass).\n- Given SHUTDOWN fired, then every module dispose, including transitions, was called once and transitionTo is ignored.\n- Given BootScene.ts, then it has fewer than 200 lines and imports no engine code from game/frontend.\n\n\n## Scope\n- In scope: BootScene.ts create and SHUTDOWN\n- Out of scope: preload, build, characters module internals\n- Preserve: export { FALLBACK_KEY } and TRANSITION_FADE_MS exports\n- Preserve: sceneReady emit\n\n\n## Technical constraints\n- Phaser ~3.90.0\n- Zustand store only owner of GameState\n- No source file over 200 lines\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Inline handler and unsubscribeTransition field removed\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Replace the inline transitionTo handler with createTransitions and dispose it in the SHUTDOWN handler",
+      "description": "Context: BootScene.create holds the inline handler and the unsubscribeTransition field. Desired: BootScene calls createTransitions(this), stores it, and disposes it in SHUTDOWN next to input, preloader, build and characters; it re-exports TRANSITION_FADE_MS so existing imports keep working. Expected: thin shell under 200 lines, behaviour unchanged.",
+      "acceptance_criteria": [
+        "Given create() ran, when transitionTo is emitted, then the camera fades out as before (existing bootSceneTransition tests pass).",
+        "Given SHUTDOWN fired, then every module dispose, including transitions, was called once and transitionTo is ignored.",
+        "Given BootScene.ts, then it has fewer than 200 lines and imports no engine code from game/frontend."
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts create and SHUTDOWN"
+        ],
+        "out_of_scope": [
+          "preload, build, characters module internals"
+        ],
+        "preserve": [
+          "export { FALLBACK_KEY } and TRANSITION_FADE_MS exports",
+          "sceneReady emit"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0",
+        "Zustand store only owner of GameState",
+        "No source file over 200 lines"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Inline handler and unsubscribeTransition field removed",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-467.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M869N26HWAT69PXPFNHBEXYM",
+      "matched_feature_id": "01M85MNPTJN2Z2441YTP0WZR6S",
+      "links": [
+        "parent:01M869N26HWAT69PXPFNHBEXYM",
+        "trace:01M85MNPTJN2Z2441YTP0WZR6S",
+        "artifact:.ai-dlc/requirements/REQ-467.md"
+      ],
+      "depends_on": [
+        "01M869N26HWAT69PXPFNHBEXYM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-467.md",
+      "artifact_id": "REQ-467"
+    },
+    {
+      "id": "01M869N26HBX2QY4FYF5MW9ZT7",
+      "kind": "unit",
+      "title": "Act: Create phaser/transitions.ts with createTransitions",
+      "body": "Move the handler logic out of BootScene.create into a new module and add a running flag so overlapping requests are ignored. No visual change.\n\n## Acceptance criteria\n- createTransitions(scene) subscribes to reactToPhaser transitionTo and returns { dispose }.\n- A running flag blocks a second fade until FADE_OUT_COMPLETE; dispose unsubscribes and neutralises a pending completion.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/transitions.ts\n- Out of scope: BootScene edits\n- Preserve: 300 ms fade, scene.get guard\n\n\n## Technical constraints\n- Phaser ~3.90.0 pinned\n- No visual change\n- Under 200 lines\n- New file: `game/frontend/src/phaser/transitions.ts`\n\n\n## Definition of done\n- transitions.ts typechecks and exports TRANSITION_FADE_MS and createTransitions\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New module owning the transitionTo fade with a running guard and dispose",
+      "description": "Move the handler logic out of BootScene.create into a new module and add a running flag so overlapping requests are ignored. No visual change.",
+      "acceptance_criteria": [
+        "createTransitions(scene) subscribes to reactToPhaser transitionTo and returns { dispose }.",
+        "A running flag blocks a second fade until FADE_OUT_COMPLETE; dispose unsubscribes and neutralises a pending completion."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/transitions.ts"
+        ],
+        "out_of_scope": [
+          "BootScene edits"
+        ],
+        "preserve": [
+          "300 ms fade, scene.get guard"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pinned",
+        "No visual change",
+        "Under 200 lines",
+        "New file: `game/frontend/src/phaser/transitions.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "transitions.ts typechecks and exports TRANSITION_FADE_MS and createTransitions",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-932.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M869N26H340DYP3PKMPACXH1",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M869N26H340DYP3PKMPACXH1",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-932.md"
+      ],
+      "depends_on": [
+        "01M869N26H340DYP3PKMPACXH1"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-932.md",
+      "artifact_id": "UNIT-932",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/transitions.ts",
+          "symbol": "new: createTransitions",
+          "lines": "new",
+          "action": "Create the file importing Phaser, reactToPhaser and type Unsubscribe from './events'. Export const TRANSITION_FADE_MS = 300, interface Transitions { dispose(): void }, and createTransitions(scene: Phaser.Scene): Transitions. Inside keep let running = false and let disposed = false. Subscribe with reactToPhaser.on('transitionTo', ({ sceneId }) => ...): return when disposed, running, !sceneId or !scene.scene.get(sceneId); otherwise set running = true, call scene.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => { running = false; if (!disposed) scene.scene.start(sceneId); }) then scene.cameras.main.fadeOut(TRANSITION_FADE_MS). dispose sets disposed = true and calls the unsubscribe.",
+          "code": "export function createTransitions(scene: Phaser.Scene): Transitions {\n  let running = false;\n  let disposed = false;\n  const off: Unsubscribe = reactToPhaser.on('transitionTo', ({ sceneId }) => {\n    if (disposed || running || !sceneId || !scene.scene.get(sceneId)) return;\n    running = true;\n    const cam = scene.cameras.main;\n    cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {\n      running = false;\n      if (!disposed) scene.scene.start(sceneId);\n    });\n    cam.fadeOut(TRANSITION_FADE_MS);\n  });\n  return { dispose: () => { disposed = true; off(); } };\n}",
+          "expected": "npm run typecheck in game/frontend passes with the new module."
+        }
+      ]
+    },
+    {
+      "id": "01M869N26HGDR397CFYT4K4D6R",
+      "kind": "unit",
+      "title": "Act: Wire createTransitions into BootScene and dispose it on SHUTDOWN",
+      "body": "Delete the inline transitionTo handler and the unsubscribeTransition field; compose createTransitions and dispose it on SHUTDOWN. Re-export TRANSITION_FADE_MS.\n\n## Acceptance criteria\n- BootScene.create calls createTransitions(this) and SHUTDOWN calls its dispose.\n- BootScene.ts remains under 200 lines and TRANSITION_FADE_MS is still exported from it.\n\n\n## Scope\n- In scope: game/frontend/src/phaser/BootScene.ts\n- Out of scope: other modules\n- Preserve: order of create(): state subscribe, build, input, characters, transitions, sync, playSceneTransition, shutdown, sceneReady\n\n\n## Technical constraints\n- Phaser ~3.90.0 pinned\n- No visible change\n- Under 200 lines\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Inline handler removed; BootScene typechecks\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "BootScene uses the module instead of the inline handler",
+      "description": "Delete the inline transitionTo handler and the unsubscribeTransition field; compose createTransitions and dispose it on SHUTDOWN. Re-export TRANSITION_FADE_MS.",
+      "acceptance_criteria": [
+        "BootScene.create calls createTransitions(this) and SHUTDOWN calls its dispose.",
+        "BootScene.ts remains under 200 lines and TRANSITION_FADE_MS is still exported from it."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/BootScene.ts"
+        ],
+        "out_of_scope": [
+          "other modules"
+        ],
+        "preserve": [
+          "order of create(): state subscribe, build, input, characters, transitions, sync, playSceneTransition, shutdown, sceneReady"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pinned",
+        "No visible change",
+        "Under 200 lines",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Inline handler removed; BootScene typechecks",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-933.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M869N26H2YN7WM4F1ZVM801J",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M869N26H2YN7WM4F1ZVM801J",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-933.md"
+      ],
+      "depends_on": [
+        "01M869N26H2YN7WM4F1ZVM801J"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-933.md",
+      "artifact_id": "UNIT-933",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "imports and TRANSITION_FADE_MS",
+          "lines": "L1-L17",
+          "action": "Remove `import { phaserToReact, reactToPhaser, type Unsubscribe }` reactToPhaser use by changing it to `import { phaserToReact, type Unsubscribe } from './events'`; add `import { createTransitions, TRANSITION_FADE_MS, type Transitions } from './transitions'`; replace `export const TRANSITION_FADE_MS = 300;` with `export { TRANSITION_FADE_MS };`.",
+          "expected": "Existing imports of TRANSITION_FADE_MS from BootScene still resolve."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene fields",
+          "lines": "L25",
+          "action": "Replace `private unsubscribeTransition: Unsubscribe | null = null;` with `private transitions: Transitions | null = null;`.",
+          "expected": "Field holds the transitions handle."
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create",
+          "lines": "L43-L63",
+          "action": "Replace the `this.unsubscribeTransition = reactToPhaser.on(...)` block with `this.transitions = createTransitions(this);`. In the SHUTDOWN callback replace the two unsubscribeTransition lines with `this.transitions?.dispose(); this.transitions = null;`.",
+          "code": "this.transitions = createTransitions(this);\n...\nthis.transitions?.dispose();\nthis.transitions = null;",
+          "expected": "BootScene has no inline fade code and is well under 200 lines; typecheck passes."
+        }
+      ]
+    },
+    {
+      "id": "01M869N26HKWAYBR03A8G88JAW",
+      "kind": "unit",
+      "title": "Verify: createTransitions unit tests",
+      "body": "Tests with a fake Phaser scene (cameras.main.once/fadeOut, scene.get/start spies) and the real reactToPhaser bus.\n\n## Acceptance criteria\n- Fade once and start only after FADE_OUT_COMPLETE.\n- Second request while running ignored; allowed after completion.\n- Empty/unknown id ignored; nothing after dispose.\n\n\n## Scope\n- In scope: game/frontend/tests/phaserTransitions.test.ts\n- Out of scope: real Phaser\n\n\n## Technical constraints\n- Mock only Phaser (external canvas runtime)\n- Phaser ~3.90.0 pin test untouched\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- All new tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for fade, deferred start, ignore-while-running, invalid ids, dispose",
+      "description": "Tests with a fake Phaser scene (cameras.main.once/fadeOut, scene.get/start spies) and the real reactToPhaser bus.",
+      "acceptance_criteria": [
+        "Fade once and start only after FADE_OUT_COMPLETE.",
+        "Second request while running ignored; allowed after completion.",
+        "Empty/unknown id ignored; nothing after dispose."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/phaserTransitions.test.ts"
+        ],
+        "out_of_scope": [
+          "real Phaser"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Mock only Phaser (external canvas runtime)",
+        "Phaser ~3.90.0 pin test untouched"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "All new tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-934.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M869N26HBX2QY4FYF5MW9ZT7",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M869N26HBX2QY4FYF5MW9ZT7",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-934.md"
+      ],
+      "depends_on": [
+        "01M869N26HBX2QY4FYF5MW9ZT7"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-934.md",
+      "artifact_id": "UNIT-934",
+      "steps": [
+        {
+          "file": "game/frontend/tests/phaserTransitions.test.ts",
+          "symbol": "new: describe('createTransitions')",
+          "lines": "new",
+          "action": "Create the test file. vi.mock('phaser', () => ({ default: { Cameras: { Scene2D: { Events: { FADE_OUT_COMPLETE: 'camerafadeoutcomplete' } } } } })). Build a fake scene { cameras: { main: { once: vi.fn(), fadeOut: vi.fn() } }, scene: { get: vi.fn((id) => id === 'library' ? {} : null), start: vi.fn() } }. beforeEach call reactToPhaser.clear(). Add tests: (1) emit transitionTo {sceneId:'library'} -> fadeOut called once with TRANSITION_FADE_MS, start not called; invoke the once callback captured for 'camerafadeoutcomplete' -> start called once with 'library'. (2) emit twice before completion -> fadeOut toHaveBeenCalledTimes(1); after calling completion callback and emitting again -> fadeOut called 2 times. (3) emit '' and 'nope' -> fadeOut not called. (4) call dispose() then emit -> fadeOut not called; and dispose before the pending completion callback runs -> start not called.",
+          "command": "cd game/frontend && npx vitest run tests/phaserTransitions.test.ts",
+          "expected": "All tests in phaserTransitions.test.ts pass."
+        }
+      ]
+    },
+    {
+      "id": "01M869N26H5FM0C5YPMZ19VQJ1",
+      "kind": "unit",
+      "title": "Verify: BootScene composes transitions, disposes on SHUTDOWN and stays thin",
+      "body": "Add a test reusing the phaser/content mock pattern from bootSceneTransitionShutdown.test.ts and keep existing transition tests passing.\n\n## Acceptance criteria\n- Overlapping transitionTo through BootScene fades once.\n- After SHUTDOWN transitionTo does nothing.\n- BootScene.ts under 200 lines.\n\n\n## Scope\n- In scope: game/frontend/tests/bootSceneTransitionRunning.test.ts\n- Out of scope: deleting or skipping existing tests\n- Preserve: bootSceneTransition*.test.ts unchanged\n\n\n## Technical constraints\n- Mock only Phaser and runtime/content\n- Tests mock only what is external\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- New and existing bootScene transition tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Behaviour tests for BootScene wiring plus the line-count bound",
+      "description": "Add a test reusing the phaser/content mock pattern from bootSceneTransitionShutdown.test.ts and keep existing transition tests passing.",
+      "acceptance_criteria": [
+        "Overlapping transitionTo through BootScene fades once.",
+        "After SHUTDOWN transitionTo does nothing.",
+        "BootScene.ts under 200 lines."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootSceneTransitionRunning.test.ts"
+        ],
+        "out_of_scope": [
+          "deleting or skipping existing tests"
+        ],
+        "preserve": [
+          "bootSceneTransition*.test.ts unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Mock only Phaser and runtime/content",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "New and existing bootScene transition tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-935.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M869N26HGDR397CFYT4K4D6R",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M869N26HGDR397CFYT4K4D6R",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-935.md"
+      ],
+      "depends_on": [
+        "01M869N26HGDR397CFYT4K4D6R"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-935.md",
+      "artifact_id": "UNIT-935",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootSceneTransitionRunning.test.ts",
+          "symbol": "new: describe('BootScene transitions wiring')",
+          "lines": "new",
+          "action": "Copy the vi.mock('phaser') and vi.mock('../src/runtime/content') blocks from tests/bootSceneTransitionShutdown.test.ts. Tests: (1) after boot.create(), emit transitionTo {sceneId:'library'} twice -> boot.cameras.main.fadeOut called once; (2) run the 'shutdown' callback from boot.events.once mock calls, emit transitionTo -> fadeOut not called and scene.start not called; (3) read src/phaser/BootScene.ts with node:fs readFileSync and expect split('\\n').length < 200.",
+          "command": "cd game/frontend && npx vitest run tests/bootSceneTransitionRunning.test.ts tests/bootSceneTransition.test.ts tests/bootSceneTransitionShutdown.test.ts tests/bootSceneTransitionStore.test.ts",
+          "expected": "All listed test files pass."
+        }
+      ]
+    },
+    {
+      "id": "01M869N26H5303KEZMAX578N2D",
+      "kind": "evidence",
+      "title": "Evidence: transitions module and thin BootScene unit tests pass",
+      "body": "Collect results of phaserTransitions and bootScene transition tests proving the Done when criteria.\n\n## Acceptance criteria\n- phaserTransitions and bootSceneTransition* tests pass.\n- Typecheck passes in game/frontend.\n\n\n## Scope\n- In scope: test results\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- V1\n- V2\n\n\n## Definition of done\n- Test output recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test evidence for SG-4.3",
+      "description": "Collect results of phaserTransitions and bootScene transition tests proving the Done when criteria.",
+      "acceptance_criteria": [
+        "phaserTransitions and bootSceneTransition* tests pass.",
+        "Typecheck passes in game/frontend."
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "V1",
+        "V2"
+      ],
+      "definition_of_done": [
+        "Test output recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-184.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M869N26HKWAYBR03A8G88JAW",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M869N26HKWAYBR03A8G88JAW",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-184.md"
+      ],
+      "depends_on": [
+        "01M869N26HKWAYBR03A8G88JAW",
+        "01M869N26H5FM0C5YPMZ19VQJ1"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-184.md",
+      "artifact_id": "EVD-184"
+    }
+  ],
+  "created_at": "2026-11-24T08:09:44.036500+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
