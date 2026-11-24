@@ -3,21 +3,13 @@ import type { GameState } from '@game/state/types';
 import { useGameStore } from '../store/gameStore';
 import { phaserToReact, reactToPhaser, type Unsubscribe } from './events';
 import { createPhaserEffectContext } from './effectContext';
-import { buildEffects, destroyEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
-import type { EffectHandle } from '@game/engine/renderContext';
-import { manifest, scene, sceneSpec } from '../runtime/content';
+import { scene, sceneSpec, manifest } from '../runtime/content';
 import { resolveTextureKey } from '@game/engine/planPreload';
 import { createPreloader, FALLBACK_KEY, type Preloader } from './preload';
-import { buildScene } from '@game/engine/buildScene';
 import { createInputLayer, type InputLayer } from './input';
-import type { SceneObject } from '@game/entities/SceneObject';
-import { createPhaserRenderContext } from './renderContext';
-import { resolveCharacterAnimation } from '@game/engine/characterAnimation';
-import type { CharacterAnimationName } from '@game/engine/characterAnimation';
-import type { CharacterSpec } from '@game/content/schema';
-import { layerDepth } from '@game/engine/layers';
-import type { AnimationDef } from '@game/assets/manifest';
+import { createSceneBuild, type SceneBuild } from './buildScene';
+import { createCharacters, type Characters } from './characters';
 
 export { FALLBACK_KEY };
 export const TRANSITION_FADE_MS = 300;
@@ -25,12 +17,9 @@ export const TRANSITION_FADE_MS = 300;
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
 export class BootScene extends Phaser.Scene {
   private unsubscribe: Unsubscribe | null = null;
-  private effects: EffectHandle[] = [];
-  private sceneObjects: SceneObject[] = [];
   private preloader: Preloader | null = null;
-  private characterSprites: Phaser.GameObjects.Sprite[] = [];
-  private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
-  private unsubscribeAnimation: Unsubscribe | null = null;
+  private build: SceneBuild | null = null;
+  private characters: Characters | null = null;
   private unsubscribeTransition: Unsubscribe | null = null;
   private inputLayer: InputLayer | null = null;
 
@@ -53,12 +42,10 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     this.unsubscribe = useGameStore.subscribe(() => this.onStateChange());
-    const ctx = createPhaserEffectContext(this, (id) => this.resolveKey(id));
-    this.effects = buildEffects(ctx, scene);
-    this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
-    this.inputLayer = createInputLayer(this.input, this.sceneObjects);
-    this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
-    this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
+    const resolve = (id: string): string => this.resolveKey(id);
+    this.build = createSceneBuild(this, resolve, scene, sceneSpec);
+    this.inputLayer = createInputLayer(this.input, this.build.objects);
+    this.characters = createCharacters(this, scene.characters ?? [], manifest, resolve, this.inputLayer);
     this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
       if (!sceneId || !this.scene.get(sceneId)) return;
       const cam = this.cameras.main;
@@ -66,7 +53,7 @@ export class BootScene extends Phaser.Scene {
       cam.fadeOut(TRANSITION_FADE_MS);
     });
     this.onStateChange();
-    playSceneTransition(ctx, scene);
+    playSceneTransition(createPhaserEffectContext(this, resolve), scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.inputLayer?.destroy();
       this.inputLayer = null;
@@ -74,92 +61,19 @@ export class BootScene extends Phaser.Scene {
       this.preloader = null;
       this.unsubscribe?.();
       this.unsubscribe = null;
-      destroyEffects(this.effects);
-      this.effects = [];
-      this.sceneObjects.forEach((o) => o.destroy());
-      this.sceneObjects = [];
-      this.characterSprites.forEach((s) => s.destroy());
-      this.characterSprites = [];
-      this.characterAnims.clear();
-      this.unsubscribeAnimation?.();
-      this.unsubscribeAnimation = null;
+      this.build?.dispose();
+      this.build = null;
+      this.characters?.dispose();
+      this.characters = null;
       this.unsubscribeTransition?.();
       this.unsubscribeTransition = null;
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }
 
-  // Registers the manifest animation as a Phaser animation once, keyed `${asset}:${animation}`.
-  private ensureAnim(assetId: string, animation: string): string | null {
-    const key = `${assetId}:${animation}`;
-    const asset = manifest.assets.find((a) => a.id === assetId);
-    const def: AnimationDef | undefined = asset?.animations?.[animation];
-    if (!asset || !def || !this.textures.exists(assetId)) return null;
-    if (!this.anims.exists(key)) {
-      this.anims.create({
-        key,
-        frames: this.anims.generateFrameNumbers(assetId, { frames: def.frames }),
-        frameRate: def.frameRate,
-        repeat: def.repeat,
-      });
-    }
-    return key;
-  }
-
-  // Places a character sprite, idles it, and plays interact then idle when it is clicked.
-  private createCharacter(spec: CharacterSpec): Phaser.GameObjects.Sprite {
-    const idle = resolveCharacterAnimation(spec, 'idle', manifest);
-    const interact = resolveCharacterAnimation(spec, 'interact', manifest);
-    const origin = manifest.assets.find((a) => a.id === idle.asset)?.origin ?? { x: 0, y: 0 };
-    const idleKey = this.ensureAnim(idle.asset, idle.animation);
-    const interactKey = this.ensureAnim(interact.asset, interact.animation);
-
-    const sprite = this.add
-      .sprite(spec.position.x, spec.position.y, idleKey ? idle.asset : this.resolveKey(idle.asset))
-      .setOrigin(origin.x, origin.y)
-      .setScale(spec.scale)
-      .setDepth(layerDepth(spec.layer));
-    if (idleKey) sprite.play(idleKey);
-
-    sprite.setInteractive({ useHandCursor: true });
-    this.inputLayer?.bindCharacter(sprite, spec.id, () => {
-      if (!idleKey) return;
-      if (!interactKey || interactKey === idleKey) return;
-      sprite.play(interactKey);
-      sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.play(idleKey));
-    });
-    this.characterAnims.set(spec.id, { sprite, spec });
-    return sprite;
-  }
-
-  // Plays a named animation on the character with the given id; unknown targets or names are ignored.
-  private playCharacterAnimation(target: string, name: string): void {
-    const entry = this.characterAnims.get(target);
-    if (!entry || !['idle', 'walk', 'interact'].includes(name)) return;
-    const ref = resolveCharacterAnimation(entry.spec, name as CharacterAnimationName, manifest);
-    const key = this.ensureAnim(ref.asset, ref.animation);
-    if (!key) return;
-    entry.sprite.play(key);
-    if (name !== 'idle') {
-      const idle = resolveCharacterAnimation(entry.spec, 'idle', manifest);
-      const idleKey = this.ensureAnim(idle.asset, idle.animation);
-      if (idleKey && idleKey !== key) entry.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => entry.sprite.play(idleKey));
-    }
-  }
-
   onStateChange(): void {
     const state = this.readState();
     if (!state) return;
-    this.sceneObjects.forEach((o) => o.sync(state));
-    this.applyFocusedObject(useGameStore.getState().focusedObjectId);
+    this.build?.sync(state, useGameStore.getState().focusedObjectId);
   }
-
-  private applyFocusedObject(id: string | null): void {
-    this.sceneObjects.forEach((o) => {
-      if (id !== null && o.spec.id === id) {
-        if (!o.isFocused) o.focus();
-      } else if (o.isFocused) o.blur();
-    });
-  }
-
 }
