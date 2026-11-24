@@ -134,7 +134,7 @@ export function doorGrid(): Grid {
   outlineRect(g, 5, 44, 30, 30, rampIndex('wood', 1));
   fillRect(g, 31, 38, 3, 3, rampIndex('brass', 4));
   outlineRect(g, 0, 0, w, h, OUTLINE);
-  fillRect(g, 1, h - 3, w - 2, 2, rampIndex('lamp', 5));
+  fillRect(g, 0, h - 1, w, 1, rampIndex('lamp', 5));
   return g;
 }
 
