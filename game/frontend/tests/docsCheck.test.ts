@@ -15,4 +15,14 @@ describe('docsCheck', () => {
   it('reports only the stack terms that the text does not mention, ignoring case', () => {
     expect(missingTerms('phaser 3.90 react zustand radix', STACK_TERMS)).toEqual(['Vitest']);
   });
+
+  describe('missingTerms', () => {
+    it('reports TypeScript when absent', () => {
+      expect(missingTerms('Phaser 3.90 React Zustand Radix Vitest', STACK_TERMS)).toEqual(['TypeScript']);
+    });
+
+    it('accepts every stack term in any case', () => {
+      expect(missingTerms('typescript PHASER 3.90 react zustand radix vitest', STACK_TERMS)).toEqual([]);
+    });
+  });
 });
