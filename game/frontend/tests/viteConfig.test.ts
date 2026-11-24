@@ -15,3 +15,15 @@ describe('Vite publicDir', () => {
     expect(publicDir.endsWith('/game/public')).toBe(true);
   });
 });
+
+describe('Vite dev proxy', () => {
+  it('proxies /api to the backend on http://localhost:8080', () => {
+    const proxy = config.server?.proxy as Record<string, { target: string }>;
+
+    expect(proxy['/api'].target).toBe('http://localhost:8080');
+  });
+
+  it('keeps the dev server fs.allow setting of [".."]', () => {
+    expect(config.server?.fs?.allow).toEqual(['..']);
+  });
+});

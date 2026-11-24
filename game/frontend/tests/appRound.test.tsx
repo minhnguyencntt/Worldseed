@@ -89,6 +89,16 @@ describe('App round states', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not reach the server');
   });
 
+  it('Given the round response is not JSON, when the player begins, then the header shows the explained message and no parser text', async () => {
+    mockedGetCurrentRound.mockRejectedValue(new SyntaxError('Unexpected token <'));
+
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
+
+    expect(await screen.findByText('Round service returned an unexpected response (not JSON)')).toBeInTheDocument();
+    expect(screen.queryByText(/Unexpected token/)).toBeNull();
+  });
+
   it('Given the first request failed, when the player clicks Retry and the next request succeeds, then the round appears and the round was requested twice', async () => {
     mockedGetCurrentRound
       .mockRejectedValueOnce(new ApiError(500, '500 x'))
@@ -123,5 +133,11 @@ describe('describeRoundError', () => {
 
   it('Given a plain string, then the message is the generic round request failure', () => {
     expect(describeRoundError('oops')).toBe('Round request failed');
+  });
+
+  it('Given a SyntaxError from parsing a non-JSON body, then the message says the round service returned an unexpected response', () => {
+    expect(describeRoundError(new SyntaxError("Unexpected token '<'"))).toBe(
+      'Round service returned an unexpected response (not JSON)',
+    );
   });
 });
