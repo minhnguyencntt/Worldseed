@@ -150,13 +150,13 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
         {remaining <= 0 && <p id="contribution-idea-quota" role="alert">You have used all your suggestions this round</p>}
 
         {error && <p role="alert">{error}</p>}
-        {success && <p id="contribution-idea-success" role="status">{success}</p>}
-        {historyStatus === 'loading' && <p role="status">{HISTORY_LOADING}</p>}
-        {historyStatus === 'error' && <p role="alert">{HISTORY_ERROR}</p>}
+        {success && <p id="contribution-idea-success" role="status" data-testid="contribution-success">{success}</p>}
+        {historyStatus === 'loading' && <p role="status" data-testid="contribution-history-loading">{HISTORY_LOADING}</p>}
+        {historyStatus === 'error' && <p role="alert" data-testid="contribution-history-error">{HISTORY_ERROR}</p>}
         {historyStatus === 'error' && (
           <button type="button" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
         )}
-        {historyStatus === 'ready' && entries.length === 0 && <p role="status">{HISTORY_EMPTY}</p>}
+        {historyStatus === 'ready' && entries.length === 0 && <p role="status" data-testid="contribution-history-empty">{HISTORY_EMPTY}</p>}
 
         <ul aria-label="Your suggestions">
           {entries.map((entry) => (
