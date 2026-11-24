@@ -15,7 +15,7 @@ export function StoryPanel() {
   const onChoose = chooseOption;
 
   return (
-    <div className="story-content sf-frame-panel flex flex-col gap-sf-3">
+    <div className="story-content sf-frame-panel flex flex-col gap-sf-3 overflow-y-auto">
       <h1>{sceneTitle}</h1>
       {node && (
         <section className="dialogue sf-frame-parchment" aria-label="Dialogue">

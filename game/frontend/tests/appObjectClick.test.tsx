@@ -2,22 +2,8 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Phaser cannot run in jsdom, so the Phaser host, the boot scene and the
-// Phaser module are replaced with inert fakes. The React side is real.
-type FakeGame = {
-  destroy: ReturnType<typeof vi.fn>;
-  scale: { refresh: ReturnType<typeof vi.fn>; setZoom: ReturnType<typeof vi.fn> };
-};
-
-const { createGameMock } = vi.hoisted(() => {
-  const createGameMock = vi.fn((): FakeGame => ({
-    destroy: vi.fn(),
-    scale: { refresh: vi.fn(), setZoom: vi.fn() },
-  }));
-  return { createGameMock };
-});
-
-vi.mock('../src/phaser/createGame', () => ({ createGame: createGameMock }));
+// PhaserHost is the only Phaser boundary mocked; the React side under test is real.
+vi.mock('../src/components/PhaserHost', () => ({ PhaserHost: () => null }));
 
 vi.mock('../src/phaser/BootScene', () => ({ BootScene: class {} }));
 
@@ -33,21 +19,10 @@ vi.mock('phaser', () => ({
 import App from '../src/App';
 import { phaserToReact } from '../src/phaser/events';
 
-class FakeResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
 describe('App objectClick bridge', () => {
-  beforeEach(() => {
-    vi.stubGlobal('ResizeObserver', FakeResizeObserver);
-  });
-
   afterEach(() => {
     cleanup();
-    vi.unstubAllGlobals();
-    createGameMock.mockClear();
+    vi.restoreAllMocks();
   });
 
   function begin() {
