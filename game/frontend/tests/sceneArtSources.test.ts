@@ -36,6 +36,35 @@ describe('scene art sources', () => {
     });
   });
 
+  // Given the item icon sources, When generated and committed manifests are compared, Then every item icon is present and 16x16.
+  describe('item icons', () => {
+    it('includes at least six item/ icons in generated and committed manifests', () => {
+      const generatedItemIds = generated.entries
+        .map((e) => e.id)
+        .filter((id) => id.startsWith('item/'));
+      const committedItemIds = committed
+        .map((e) => e.id)
+        .filter((id) => id.startsWith('item/'));
+      expect(generatedItemIds.length).toBeGreaterThanOrEqual(6);
+      expect(committedItemIds.length).toBeGreaterThanOrEqual(6);
+      for (const id of generatedItemIds) {
+        expect(committedItemIds, `committed manifest is missing ${id}`).toContain(id);
+      }
+    });
+
+    it('renders each item icon at 16x16', () => {
+      const itemEntries = generated.entries.filter((e) => e.id.startsWith('item/'));
+      expect(itemEntries.length).toBeGreaterThan(0);
+      for (const entry of itemEntries) {
+        const file = generated.files.find((f) => f.path === entry.path);
+        expect(file, `missing file for ${entry.id}`).toBeDefined();
+        expect(readPngSize(file!.bytes), entry.id).toEqual({ width: 16, height: 16 });
+        expect(entry.dimensions, entry.id).toEqual({ width: 16, height: 16 });
+        expect(entry.path.endsWith('.png'), entry.id).toBe(true);
+      }
+    });
+  });
+
   // Given each generated PNG, When its header is read, Then its size equals the declared entry dimensions.
   describe('PNG sizes', () => {
     it('declares dimensions that match each encoded PNG file', () => {
@@ -85,6 +114,10 @@ describe('scene art sources', () => {
         expect(match, `committed manifest is missing ${entry.id}`).toBeDefined();
         expect(entry).toEqual(match);
       }
+    });
+
+    it('references no svg', () => {
+      expect(committed.filter((e) => e.path.endsWith('.svg')).map((e) => e.id)).toEqual([]);
     });
   });
 });
