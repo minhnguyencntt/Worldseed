@@ -43,11 +43,14 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
   const [error, setError] = useState<string | undefined>(undefined);
   const [validation, setValidation] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [historyStatus, setHistoryStatus] = useState<HistoryStatus>('loading');
 
   // Load the player's existing suggestions for this round when the sheet opens.
   useEffect(() => {
     if (!open || roundId === '') return;
     let cancelled = false;
+    setHistoryStatus('loading');
     listMine(roundId)
       .then((list) => {
         if (cancelled) return;
@@ -60,15 +63,17 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
             .map((c, i) => ({ key: -(i + 1), prompt: c.prompt, state: 'sent' as const }));
           return [...history, ...prev];
         });
+        setHistoryStatus('ready');
       })
       .catch(() => {
         if (cancelled) return;
         // History is best-effort; the sheet still works without it.
+        setHistoryStatus('error');
       });
     return () => {
       cancelled = true;
     };
-  }, [open, roundId]);
+  }, [open, roundId, reloadKey]);
 
   const remaining = MAX_PER_PLAYER - entries.filter((e) => e.state === 'sent').length;
   const length = Array.from(text.trim()).length;
@@ -145,9 +150,11 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
 
         {error && <p role="alert">{error}</p>}
         {success && <p id="contribution-idea-success" role="status">{success}</p>}
-
         {historyStatus === 'loading' && <p role="status">{HISTORY_LOADING}</p>}
         {historyStatus === 'error' && <p role="alert">{HISTORY_ERROR}</p>}
+        {historyStatus === 'error' && (
+          <button type="button" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
+        )}
 
         <ul aria-label="Your suggestions">
           {entries.map((entry) => (
