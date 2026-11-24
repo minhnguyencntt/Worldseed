@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseManifest, type AssetManifest } from '@game/assets/manifest';
 import { ART_SOURCES } from '../src/art/sources';
 import { generateAssets, mergeManifest } from '../src/lib/generateAssets';
@@ -12,7 +13,49 @@ export interface ArtIo {
   write: (path: string, data: Uint8Array | string) => void;
 }
 
-const EMPTY_MANIFEST_TEXT = '{"version":1,"assets":[]}';
+export interface ArtPaths {
+  assetsRoot: string;
+  manifestPath: string;
+}
+
+// Resolves the assets root and app manifest path relative to the script directory.
+export function defaultArtPaths(scriptDir: string): ArtPaths {
+  const assetsRoot = resolve(scriptDir, '../../public/assets');
+  return { assetsRoot, manifestPath: resolve(assetsRoot, 'worlds/the-boys-room/manifest.json') };
+}
+
+export interface ArtPaths {
+  assetsRoot: string;
+  manifestPath: string;
+}
+
+// Paths are resolved from the scripts directory so the CLI works from any cwd.
+export function defaultArtPaths(scriptsDir: string): ArtPaths {
+  const publicDir = resolve(scriptsDir, '..', 'public');
+  return {
+    assetsRoot: resolve(publicDir, 'assets'),
+    manifestPath: resolve(publicDir, 'assets', 'manifest.json'),
+  };
+}
+
+export interface FsLike {
+  readFileSync(p: string, enc: 'utf8'): string;
+  writeFileSync(p: string, d: Uint8Array | string): void;
+  mkdirSync(p: string, o: { recursive: true }): void;
+}
+
+// Builds an ArtIo over an injected fs. readText has no existence fallback: a missing manifest is an error.
+export function createFsIo(paths: ArtPaths, fs: FsLike): ArtIo {
+  return {
+    assetsRoot: paths.assetsRoot,
+    manifestPath: paths.manifestPath,
+    readText: (path) => fs.readFileSync(path, 'utf8'),
+    write: (path, data) => {
+      fs.mkdirSync(dirname(path), { recursive: true });
+      fs.writeFileSync(path, data);
+    },
+  };
+}
 
 // Renders every art source to its PNG under assetsRoot and merges the described
 // entries into the manifest. Output is deterministic: identical input gives identical bytes.
@@ -36,14 +79,5 @@ export function runGenerateArt(io: ArtIo): void {
 
 // Entry point: only runs as a CLI (npm run art:generate), not when imported by tests.
 if (process.env.VITEST === undefined) {
-  const manifestPath = 'public/assets/manifest.json';
-  runGenerateArt({
-    assetsRoot: 'public/assets',
-    manifestPath,
-    readText: (path) => (existsSync(path) ? readFileSync(path, 'utf8') : EMPTY_MANIFEST_TEXT),
-    write: (path, data) => {
-      mkdirSync(dirname(path), { recursive: true });
-      writeFileSync(path, data);
-    },
-  });
+  runGenerateArt(createFsIo(defaultArtPaths(dirname(fileURLToPath(import.meta.url))), { readFileSync, writeFileSync, mkdirSync }));
 }
