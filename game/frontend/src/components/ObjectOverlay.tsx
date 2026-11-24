@@ -3,7 +3,7 @@ import type { ObjectSpec } from '@game/content/schema';
 import type { SceneObjectView } from '@game/engine/scene';
 import type { ActionDef } from '@game/state/types';
 import { anchorFor } from '../lib/anchor';
-import { phaserToReact } from '../phaser/events';
+import { handleMenuKey } from '../phaser/menuKeys';
 import { Button } from './ui/button';
 import { Frame } from './ui/Frame';
 
@@ -74,9 +74,7 @@ export function ObjectOverlay({
         kind="panel"
         className="fixed z-20 flex -translate-x-1/2 gap-2 p-2"
         style={{ left: anchor.bottom.x, top: anchor.bottom.y }}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') phaserToReact.emit('menuClose', {});
-        }}
+        onKeyDown={(e) => { handleMenuKey(e.key); }}
       >
         {object.actions.map((action, index) => (
           <Button

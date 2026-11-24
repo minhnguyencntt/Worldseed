@@ -9,7 +9,8 @@ import { playSceneTransition } from '@game/engine/playSceneTransition';
 import type { EffectHandle } from '@game/engine/renderContext';
 import { manifest, scene, sceneSpec } from '../runtime/content';
 import { planPreload, resolveTextureKey } from '@game/engine/planPreload';
-import { buildScene, moveFocus } from '@game/engine/buildScene';
+import { buildScene } from '@game/engine/buildScene';
+import { createInputLayer, type InputLayer } from './input';
 import type { SceneObject } from '@game/entities/SceneObject';
 import { createPhaserRenderContext } from './renderContext';
 import { resolveCharacterAnimation } from '@game/engine/characterAnimation';
@@ -17,6 +18,7 @@ import type { CharacterAnimationName } from '@game/engine/characterAnimation';
 import type { CharacterSpec } from '@game/content/schema';
 import { layerDepth } from '@game/engine/layers';
 import type { AnimationDef } from '@game/assets/manifest';
+import type { InputLayer } from './input';
 
 export const FALLBACK_KEY = 'fallback:missing';
 export const TRANSITION_FADE_MS = 300;
@@ -31,6 +33,8 @@ export class BootScene extends Phaser.Scene {
   private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
   private unsubscribeAnimation: Unsubscribe | null = null;
   private unsubscribeTransition: Unsubscribe | null = null;
+  private inputLayer: InputLayer | null = null;
+  private inputLayer: InputLayer | null = null;
 
   constructor() {
     super('BootScene');
@@ -70,8 +74,7 @@ export class BootScene extends Phaser.Scene {
     const ctx = createPhaserEffectContext(this, (id) => this.resolveKey(id));
     this.effects = buildEffects(ctx, scene);
     this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
-    this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
-    this.sceneObjects.forEach((o) => o.onHoverChange((e) => phaserToReact.emit('objectHover', { id: e.over ? e.objectId : null })));
+    this.inputLayer = createInputLayer(this.input, this.sceneObjects);
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
     this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
     this.unsubscribeTransition = reactToPhaser.on('transitionTo', ({ sceneId }) => {
@@ -80,11 +83,11 @@ export class BootScene extends Phaser.Scene {
       cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start(sceneId));
       cam.fadeOut(TRANSITION_FADE_MS);
     });
-    this.input.keyboard?.on('keydown', this.onKeyDown);
     this.onStateChange();
     playSceneTransition(ctx, scene);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.input.keyboard?.off('keydown', this.onKeyDown);
+      this.inputLayer?.destroy();
+      this.inputLayer = null;
       this.unsubscribe?.();
       this.unsubscribe = null;
       destroyEffects(this.effects);
@@ -135,8 +138,7 @@ export class BootScene extends Phaser.Scene {
     if (idleKey) sprite.play(idleKey);
 
     sprite.setInteractive({ useHandCursor: true });
-    sprite.on(Phaser.Input.Events.POINTER_DOWN, () => {
-      phaserToReact.emit('characterClick', { id: spec.id });
+    this.inputLayer?.bindCharacter(sprite, spec.id, () => {
       if (!idleKey) return;
       if (!interactKey || interactKey === idleKey) return;
       sprite.play(interactKey);
@@ -176,17 +178,4 @@ export class BootScene extends Phaser.Scene {
     });
   }
 
-  private focusedObjectIdFromScene(): string | null { return this.sceneObjects.find((o) => o.isFocused)?.spec.id ?? null; }
-
-  private onKeyDown = (e: KeyboardEvent): void => {
-    const delta = e.key === 'Tab' ? (e.shiftKey ? -1 : 1) : e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
-    if (delta !== 0) {
-      e.preventDefault();
-      moveFocus(this.sceneObjects, delta as 1 | -1);
-      const id = this.focusedObjectIdFromScene();
-      useGameStore.getState().setFocusedObject(id);
-      phaserToReact.emit('focusChange', { id });
-    } else if (e.key === 'Enter' || e.key === ' ') this.sceneObjects.forEach((o) => o.handleKey(e.key));
-    else if (e.key === 'Escape') phaserToReact.emit('menuClose', {});
-  };
 }
