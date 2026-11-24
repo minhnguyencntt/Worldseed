@@ -35,7 +35,7 @@ describe('ContributionSheet blank submit', () => {
   it('empty text shows "Enter an idea first" and does not submit', async () => {
     renderSheet();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.submit(submitForm());
 
     expect(screen.getByRole('alert').textContent).toBe('Enter an idea first');
     expect(submitMock).toHaveBeenCalledTimes(0);
@@ -45,7 +45,7 @@ describe('ContributionSheet blank submit', () => {
     renderSheet();
 
     fireEvent.change(screen.getByLabelText('Your idea'), { target: { value: '   \n  ' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.submit(submitForm());
 
     expect(screen.getByRole('alert').textContent).toBe('Enter an idea first');
     expect(submitMock).not.toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe('ContributionSheet blank submit', () => {
   it('textarea is marked invalid and described by the alert after a blank submit', async () => {
     renderSheet();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.submit(submitForm());
 
     const alert = screen.getByRole('alert');
     const textarea = screen.getByLabelText('Your idea');
