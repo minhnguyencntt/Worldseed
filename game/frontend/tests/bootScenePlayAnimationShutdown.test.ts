@@ -34,6 +34,7 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         events = { once: vi.fn() };
+        input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
         cameras = { main: { fadeIn: vi.fn() } };
         textures = { exists: vi.fn(() => true) };
@@ -150,9 +151,15 @@ describe('BootScene playAnimation shutdown', () => {
     cb();
   };
 
+  // Subscribed before create() in beforeEach, so it must keep receiving events after BootScene shuts down.
+  let otherHandler: Mock;
+  let unsubscribeOther: () => void;
+
   beforeEach(() => {
     vi.clearAllMocks();
     useGameStore.setState({ state: makeState() });
+    otherHandler = vi.fn();
+    unsubscribeOther = reactToPhaser.on('playAnimation', otherHandler);
     boot = new BootScene();
     boot.create();
     shutdownCallback = (boot.events.once as unknown as Mock).mock.calls.find((c: unknown[]) => c[0] === 'shutdown')![1] as () => void;
@@ -163,6 +170,7 @@ describe('BootScene playAnimation shutdown', () => {
   afterEach(() => {
     // Run the SHUTDOWN callback again only as a no-op safety net so the event bus subscription never leaks between tests.
     shutdownCallback();
+    unsubscribeOther();
     useGameStore.setState({ state: null });
   });
 
@@ -186,20 +194,13 @@ describe('BootScene playAnimation shutdown', () => {
   });
 
   it('leaves other playAnimation subscribers registered before create() active after shutdown', () => {
-    // Given a spy handler subscribed to playAnimation before BootScene.create() ran in beforeEach
-    // (subscribed here, after create, but it must still receive events once BootScene has shut down)
-    const otherHandler = vi.fn();
-    const unsubscribeOther = reactToPhaser.on('playAnimation', otherHandler);
-    try {
-      // When the SHUTDOWN callback runs and a playAnimation event is emitted
-      runShutdown();
-      const payload = { target: 'boy', name: 'interact' };
-      reactToPhaser.emit('playAnimation', payload);
-      // Then the unrelated handler still receives the event, while BootScene's handler does not play anything
-      expect(otherHandler).toHaveBeenCalledWith(payload);
-      expect(spritePlay).not.toHaveBeenCalled();
-    } finally {
-      unsubscribeOther();
-    }
+    // Given a spy handler that was subscribed to playAnimation before BootScene.create() ran
+    // When the SHUTDOWN callback runs and a playAnimation event is emitted
+    runShutdown();
+    const payload = { target: 'boy', name: 'interact' };
+    reactToPhaser.emit('playAnimation', payload);
+    // Then the pre-existing spy still receives the event, while BootScene's own handler starts no animation
+    expect(otherHandler).toHaveBeenCalledWith(payload);
+    expect(spritePlay).not.toHaveBeenCalled();
   });
 });
