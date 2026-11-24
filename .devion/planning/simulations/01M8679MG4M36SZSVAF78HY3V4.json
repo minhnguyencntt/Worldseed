@@ -1,0 +1,614 @@
+{
+  "intent_id": "01M8679MG4M36SZSVAF78HY3V4",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M867BSEQ7EYH5K5NKDAXQ1FC",
+      "kind": "intent",
+      "title": "SG-2.2 · Single Zustand owner of GameState",
+      "body": "Context: persistence.ts is already versioned (SG-2.1). GameState lives once in game/src/state/types.ts. useGame.ts still reads the saved game itself (readSaved) and writes it from a useEffect (writeSaved), and it casts the nullable store state with `as GameState`. Desired behaviour: gameStore.ts hydrates from the save and persists on every change, and useGame and App only read and write through the store. Expected result: no component or hook keeps a second copy or touches runtime/storage. Why: the SG-2 sub-goal requires one owner of GameState.\n\n## Acceptance criteria\n- Given a saved game exists, when the store hydrates, then state equals the saved state; with no or corrupt save it equals createInitialState(world, scene)\n- Given a store update, when setState runs, then the new state is saved through runtime/storage and the versioned persistence functions\n- Given useGame and App source, when inspected, then neither imports runtime/storage or casts the store state\n- Given the existing save and reload tests, when run, then they pass, rewritten against behaviour where they pinned internals\n\n\n## Scope\n- In scope: frontend/src/store/gameStore.ts\n- In scope: frontend/src/runtime/useGame.ts\n- In scope: Tests for save and reload behaviour\n- Out of scope: Changes to persistence.ts format or CURRENT_VERSION\n- Out of scope: backend/ and frontend/src/api/client.ts\n- Out of scope: New features, content or art\n- Preserve: Saves in the old format still load\n- Preserve: Intro, scene, object focus and interaction, story panel, inventory, transitions, save and reload play the same\n- Preserve: The existing phaser-pin guard test\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0; the phaser-pin guard test must keep passing\n- No change to what the player sees or can do\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No test is deleted or skipped; tests that pinned internals are rewritten against behaviour\n- No source file in game/src or game/frontend/src is over 200 lines\n- game/src never imports from game/frontend\n- The Zustand store is the only owner of GameState\n- Tests mock only what is external (localStorage)\n- backend/ and api/client.ts are out of scope\n\n\n## Definition of done\n- gameStore.ts is the only owner and the only caller of readSaved/writeSaved\n- Both requirements are verified by passing unit tests\n- npm test and npm run typecheck are green in game/ and game/frontend/\n\n\n## Non-functional requirements\n- No extra localStorage writes beyond one per state change\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "gameStore.ts is the only owner of GameState and the only caller of load and save",
+      "description": "Context: persistence.ts is already versioned (SG-2.1). GameState lives once in game/src/state/types.ts. useGame.ts still reads the saved game itself (readSaved) and writes it from a useEffect (writeSaved), and it casts the nullable store state with `as GameState`. Desired behaviour: gameStore.ts hydrates from the save and persists on every change, and useGame and App only read and write through the store. Expected result: no component or hook keeps a second copy or touches runtime/storage. Why: the SG-2 sub-goal requires one owner of GameState.",
+      "acceptance_criteria": [
+        "Given a saved game exists, when the store hydrates, then state equals the saved state; with no or corrupt save it equals createInitialState(world, scene)",
+        "Given a store update, when setState runs, then the new state is saved through runtime/storage and the versioned persistence functions",
+        "Given useGame and App source, when inspected, then neither imports runtime/storage or casts the store state",
+        "Given the existing save and reload tests, when run, then they pass, rewritten against behaviour where they pinned internals"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/store/gameStore.ts",
+          "frontend/src/runtime/useGame.ts",
+          "Tests for save and reload behaviour"
+        ],
+        "out_of_scope": [
+          "Changes to persistence.ts format or CURRENT_VERSION",
+          "backend/ and frontend/src/api/client.ts",
+          "New features, content or art"
+        ],
+        "preserve": [
+          "Saves in the old format still load",
+          "Intro, scene, object focus and interaction, story panel, inventory, transitions, save and reload play the same",
+          "The existing phaser-pin guard test"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0; the phaser-pin guard test must keep passing",
+        "No change to what the player sees or can do",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No test is deleted or skipped; tests that pinned internals are rewritten against behaviour",
+        "No source file in game/src or game/frontend/src is over 200 lines",
+        "game/src never imports from game/frontend",
+        "The Zustand store is the only owner of GameState",
+        "Tests mock only what is external (localStorage)",
+        "backend/ and api/client.ts are out of scope"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "gameStore.ts is the only owner and the only caller of readSaved/writeSaved",
+        "Both requirements are verified by passing unit tests",
+        "npm test and npm run typecheck are green in game/ and game/frontend/",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-178.md`"
+      ],
+      "non_functional": [
+        "No extra localStorage writes beyond one per state change"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M84MFPVV9MKEA1N7SDGRC11S",
+      "links": [
+        "trace:01M84MFPVV9MKEA1N7SDGRC11S",
+        "artifact:.ai-dlc/intent/INT-178.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-178.md",
+      "artifact_id": "INT-178"
+    },
+    {
+      "id": "01M867BSEQY8B8A8HZP075BNCT",
+      "kind": "requirement",
+      "title": "REQ · The store hydrates from the save and persists every state change",
+      "body": "Context: gameStore.ts has init and setState but no persistence; useGame.ts calls readSaved and writeSaved. Desired behaviour: the store exposes hydrate() that replaces state with readSaved() ?? createInitialState(world, scene) and writes it, and setState saves each new state with writeSaved. Expected result: save and reload work with no caller outside the store. Why: one owner of GameState.\n\n## Acceptance criteria\n- Given a valid save in storage, when hydrate() runs, then store state deep-equals the saved state\n- Given no save or a corrupt save, when hydrate() runs, then store state equals createInitialState(world, scene)\n- Given an initialised store, when setState(updater) runs, then writeSaved is called with the new state\n- Given writeSaved fails because storage throws, when setState runs, then the store still holds the new state and nothing throws\n\n\n## Scope\n- In scope: hydrate action\n- In scope: persist on setState\n- Out of scope: persistence.ts format\n- Out of scope: focusedObjectId handling\n- Preserve: init is still a no-op when state is set\n- Preserve: setState is still a no-op before init\n- Preserve: setFocusedObject unchanged\n\n\n## Technical constraints\n- The Zustand store is the only owner of GameState\n- gameStore.ts stays under 200 lines\n- Import GameState from @game/state/types only\n- game/src never imports from game/frontend\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- hydrate exists and persists\n- setState persists\n- Existing store tests still pass\n\n\n## Non-functional requirements\n- Storage failure never throws\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "gameStore owns loading and saving GameState through the persistence API",
+      "description": "Context: gameStore.ts has init and setState but no persistence; useGame.ts calls readSaved and writeSaved. Desired behaviour: the store exposes hydrate() that replaces state with readSaved() ?? createInitialState(world, scene) and writes it, and setState saves each new state with writeSaved. Expected result: save and reload work with no caller outside the store. Why: one owner of GameState.",
+      "acceptance_criteria": [
+        "Given a valid save in storage, when hydrate() runs, then store state deep-equals the saved state",
+        "Given no save or a corrupt save, when hydrate() runs, then store state equals createInitialState(world, scene)",
+        "Given an initialised store, when setState(updater) runs, then writeSaved is called with the new state",
+        "Given writeSaved fails because storage throws, when setState runs, then the store still holds the new state and nothing throws"
+      ],
+      "scope": {
+        "in_scope": [
+          "hydrate action",
+          "persist on setState"
+        ],
+        "out_of_scope": [
+          "persistence.ts format",
+          "focusedObjectId handling"
+        ],
+        "preserve": [
+          "init is still a no-op when state is set",
+          "setState is still a no-op before init",
+          "setFocusedObject unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "The Zustand store is the only owner of GameState",
+        "gameStore.ts stays under 200 lines",
+        "Import GameState from @game/state/types only",
+        "game/src never imports from game/frontend"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "hydrate exists and persists",
+        "setState persists",
+        "Existing store tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-449.md`"
+      ],
+      "non_functional": [
+        "Storage failure never throws"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M867BSEQ7EYH5K5NKDAXQ1FC",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M867BSEQ7EYH5K5NKDAXQ1FC",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-449.md"
+      ],
+      "depends_on": [
+        "01M867BSEQ7EYH5K5NKDAXQ1FC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-449.md",
+      "artifact_id": "REQ-449"
+    },
+    {
+      "id": "01M867BSEQNF5FBSGA80X7Q24Y",
+      "kind": "requirement",
+      "title": "REQ · useGame and App read and write GameState only through the store",
+      "body": "Context: useGame.ts calls readSaved, writes with a useEffect and casts `as GameState`; App.tsx uses useGame and the store. Desired behaviour: useGame hydrates through useGameStore.getState().hydrate(), selects state from the store with a null guard and no cast, and has no save effect. Expected result: save and reload behave as before and only the store talks to storage.\n\n## Acceptance criteria\n- Given a mount, when useGame runs, then state comes from the store and a remount after act() shows the saved flag secret_door_open true\n- Given a corrupt save, when useGame mounts, then the intro dialogue is active and play continues when writes throw\n- Given useGame.ts source, when read, then it does not import runtime/storage or contain `as GameState`\n- Given App, when the player acts, then the story panel shows the store state\n\n\n## Scope\n- In scope: frontend/src/runtime/useGame.ts\n- In scope: App flow behaviour tests\n- Out of scope: Changing returned UseGame shape\n- Out of scope: Phaser BootScene logic\n- Preserve: UseGame type: state, scene, view, act, choose\n- Preserve: App.tsx rendering and handleAction events\n\n\n## Technical constraints\n- The Zustand store is the only owner of GameState\n- No parallel useState copy of GameState in components\n- Files under 200 lines\n- No test deleted or skipped\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- useGame has no storage import, no save effect and no cast\n- App flow and persistence tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "No hook or component keeps a parallel copy or touches runtime/storage",
+      "description": "Context: useGame.ts calls readSaved, writes with a useEffect and casts `as GameState`; App.tsx uses useGame and the store. Desired behaviour: useGame hydrates through useGameStore.getState().hydrate(), selects state from the store with a null guard and no cast, and has no save effect. Expected result: save and reload behave as before and only the store talks to storage.",
+      "acceptance_criteria": [
+        "Given a mount, when useGame runs, then state comes from the store and a remount after act() shows the saved flag secret_door_open true",
+        "Given a corrupt save, when useGame mounts, then the intro dialogue is active and play continues when writes throw",
+        "Given useGame.ts source, when read, then it does not import runtime/storage or contain `as GameState`",
+        "Given App, when the player acts, then the story panel shows the store state"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/runtime/useGame.ts",
+          "App flow behaviour tests"
+        ],
+        "out_of_scope": [
+          "Changing returned UseGame shape",
+          "Phaser BootScene logic"
+        ],
+        "preserve": [
+          "UseGame type: state, scene, view, act, choose",
+          "App.tsx rendering and handleAction events"
+        ]
+      },
+      "technical_constraints": [
+        "The Zustand store is the only owner of GameState",
+        "No parallel useState copy of GameState in components",
+        "Files under 200 lines",
+        "No test deleted or skipped"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "useGame has no storage import, no save effect and no cast",
+        "App flow and persistence tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-450.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M867BSEQ7EYH5K5NKDAXQ1FC",
+      "matched_feature_id": "01M84MX32E0X7BSC7E146YQWTH",
+      "links": [
+        "parent:01M867BSEQ7EYH5K5NKDAXQ1FC",
+        "trace:01M84MX32E0X7BSC7E146YQWTH",
+        "artifact:.ai-dlc/requirements/REQ-450.md"
+      ],
+      "depends_on": [
+        "01M867BSEQ7EYH5K5NKDAXQ1FC"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-450.md",
+      "artifact_id": "REQ-450"
+    },
+    {
+      "id": "01M867BSEQMV1J569C5YTK89RE",
+      "kind": "unit",
+      "title": "Act: Add hydrate and persist-on-setState to gameStore",
+      "body": "Add a hydrate action to GameStoreState and call writeSaved in setState and hydrate so the store alone loads and saves through runtime/storage, which already wraps the versioned persistence functions.\n\n## Acceptance criteria\n- hydrate sets state to readSaved() ?? createInitialState(world, scene) and writes it\n- setState saves the updater result with writeSaved\n- init, setFocusedObject and the null guard keep their behaviour\n\n\n## Scope\n- In scope: frontend/src/store/gameStore.ts\n- Out of scope: useGame.ts\n- Out of scope: persistence.ts\n- Preserve: init no-op when set\n- Preserve: setState no-op before init\n\n\n## Technical constraints\n- The Zustand store is the only owner of GameState\n- File under 200 lines\n- No test changes in this unit\n- Code path: `game/frontend/src/store/gameStore.ts`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- hydrate declared in GameStoreState and implemented\n- setState calls writeSaved after set\n- npm run typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Move load and save into gameStore.ts",
+      "description": "Add a hydrate action to GameStoreState and call writeSaved in setState and hydrate so the store alone loads and saves through runtime/storage, which already wraps the versioned persistence functions.",
+      "acceptance_criteria": [
+        "hydrate sets state to readSaved() ?? createInitialState(world, scene) and writes it",
+        "setState saves the updater result with writeSaved",
+        "init, setFocusedObject and the null guard keep their behaviour"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/store/gameStore.ts"
+        ],
+        "out_of_scope": [
+          "useGame.ts",
+          "persistence.ts"
+        ],
+        "preserve": [
+          "init no-op when set",
+          "setState no-op before init"
+        ]
+      },
+      "technical_constraints": [
+        "The Zustand store is the only owner of GameState",
+        "File under 200 lines",
+        "No test changes in this unit",
+        "Code path: `game/frontend/src/store/gameStore.ts`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "hydrate declared in GameStoreState and implemented",
+        "setState calls writeSaved after set",
+        "npm run typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-898.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M867BSEQY8B8A8HZP075BNCT",
+      "matched_feature_id": "01M85J8EHFFD8NG4C2YNJCJSHS",
+      "links": [
+        "parent:01M867BSEQY8B8A8HZP075BNCT",
+        "trace:01M85J8EHFFD8NG4C2YNJCJSHS",
+        "artifact:.ai-dlc/units/UNIT-898.md"
+      ],
+      "depends_on": [
+        "01M867BSEQY8B8A8HZP075BNCT"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-898.md",
+      "artifact_id": "UNIT-898",
+      "steps": [
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "imports",
+          "lines": "L1-L2",
+          "action": "Add imports of createInitialState from '@game/state/gameState', scene and world from '../runtime/content', and readSaved and writeSaved from '../runtime/storage'.",
+          "code": "import { createInitialState } from '@game/state/gameState';\nimport { scene, world } from '../runtime/content';\nimport { readSaved, writeSaved } from '../runtime/storage';",
+          "expected": "File compiles with the new imports and no import cycle (storage.ts and content.ts do not import the store)."
+        },
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "GameStoreState",
+          "lines": "L4-L10",
+          "action": "Add the member `hydrate: () => void;` after `init`.",
+          "code": "hydrate: () => void;",
+          "expected": "Interface declares hydrate."
+        },
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "useGameStore.setState",
+          "lines": "L18-L24",
+          "action": "Replace `set({ state: updater(prev) });` with computing next, setting it, then saving it.",
+          "code": "const next = updater(prev);\nset({ state: next });\nwriteSaved(next);",
+          "expected": "Each state change is saved; writeSaved never throws so setState never throws."
+        },
+        {
+          "file": "game/frontend/src/store/gameStore.ts",
+          "symbol": "useGameStore.hydrate",
+          "lines": "after L29",
+          "action": "Add a hydrate action that replaces state with the saved state or a fresh initial state and writes it, so every mount starts from storage.",
+          "code": "hydrate: () => {\n  const next = readSaved() ?? createInitialState(world, scene);\n  set({ state: next });\n  writeSaved(next);\n},",
+          "expected": "hydrate() leaves a non-null state in the store."
+        }
+      ]
+    },
+    {
+      "id": "01M867BSEQS28AW138H2YG8APW",
+      "kind": "unit",
+      "title": "Act: Route useGame through the store hydrate and drop its save effect",
+      "body": "Replace the direct readSaved/writeSaved use and the cast in useGame.ts with the store's hydrate action. App.tsx already reads and writes only through useGame and useGameStore, so it needs no code change.\n\n## Acceptance criteria\n- useGame hydrates once per mount via hydrate()\n- useGame has no useEffect save and no storage import\n- state is returned without an `as GameState` cast\n\n\n## Scope\n- In scope: frontend/src/runtime/useGame.ts\n- Out of scope: App.tsx\n- Out of scope: storage.ts\n- Preserve: Returned UseGame fields and behaviour\n\n\n## Technical constraints\n- The Zustand store is the only owner of GameState\n- No test changes in this unit\n- Depends on hydrate from the store Act\n- Code path: `game/frontend/src/runtime/useGame.ts`\n\n\n## Dependencies\n- REQ2\n- ACT1\n\n\n## Definition of done\n- useGame.ts compiles with no cast and no storage import\n- npm run typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "useGame reads and writes only via useGameStore",
+      "description": "Replace the direct readSaved/writeSaved use and the cast in useGame.ts with the store's hydrate action. App.tsx already reads and writes only through useGame and useGameStore, so it needs no code change.",
+      "acceptance_criteria": [
+        "useGame hydrates once per mount via hydrate()",
+        "useGame has no useEffect save and no storage import",
+        "state is returned without an `as GameState` cast"
+      ],
+      "scope": {
+        "in_scope": [
+          "frontend/src/runtime/useGame.ts"
+        ],
+        "out_of_scope": [
+          "App.tsx",
+          "storage.ts"
+        ],
+        "preserve": [
+          "Returned UseGame fields and behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "The Zustand store is the only owner of GameState",
+        "No test changes in this unit",
+        "Depends on hydrate from the store Act",
+        "Code path: `game/frontend/src/runtime/useGame.ts`"
+      ],
+      "dependencies": [
+        "REQ2",
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "useGame.ts compiles with no cast and no storage import",
+        "npm run typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-899.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M867BSEQNF5FBSGA80X7Q24Y",
+      "matched_feature_id": "01M85FWFYFE625T3SW7DMYMFW3",
+      "links": [
+        "parent:01M867BSEQNF5FBSGA80X7Q24Y",
+        "trace:01M85FWFYFE625T3SW7DMYMFW3",
+        "artifact:.ai-dlc/units/UNIT-899.md"
+      ],
+      "depends_on": [
+        "01M867BSEQNF5FBSGA80X7Q24Y"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-899.md",
+      "artifact_id": "UNIT-899",
+      "steps": [
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "imports",
+          "lines": "L1-L8",
+          "action": "Remove `useEffect` from the react import and delete the line importing readSaved and writeSaved from './storage'; also remove the unused createInitialState import and the `world` member of the content import (keep `scene`).",
+          "code": "import { useState } from 'react';\n...\nimport { scene } from './content';",
+          "expected": "No import of runtime/storage remains in useGame.ts."
+        },
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "useGame",
+          "lines": "L17-L25",
+          "action": "Replace the useState initialiser body with a hydrate call.",
+          "code": "before: useGameStore.setState({ state: readSaved() ?? createInitialState(world, scene) });\nafter:  useGameStore.getState().hydrate();",
+          "expected": "Each mount hydrates the store from storage or a fresh state."
+        },
+        {
+          "file": "game/frontend/src/runtime/useGame.ts",
+          "symbol": "useGame",
+          "lines": "L26-L31",
+          "action": "Replace the cast selector and delete the writeSaved useEffect. Select with a non-null guard.",
+          "code": "const state = useGameStore((s) => s.state);\nif (state === null) throw new Error('GameState not hydrated');",
+          "expected": "state is typed GameState without a cast and nothing else saves."
+        }
+      ]
+    },
+    {
+      "id": "01M867BSEQ5E6GV228GNR141NG",
+      "kind": "unit",
+      "title": "Verify: gameStore hydrate and persist unit tests",
+      "body": "Write unit tests from REQ1 using a Map-backed fake localStorage (the only external dependency) and the real store.\n\n## Acceptance criteria\n- Valid save hydrates to the saved state\n- No or corrupt save hydrates to the initial state\n- setState writes the new state under STORAGE_KEY\n- Throwing storage does not throw and state still updates\n\n\n## Scope\n- In scope: game/frontend/tests/gameStorePersist.test.ts\n- Out of scope: e2e or browser checks\n- Preserve: Existing gameStore.test.ts and gameStoreFocus.test.ts stay and pass\n\n\n## Technical constraints\n- Tests mock only localStorage\n- No test deleted or skipped\n- Real store module is never mocked\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- New test file passes\n- Existing gameStore tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for store hydrate and save behaviour",
+      "description": "Write unit tests from REQ1 using a Map-backed fake localStorage (the only external dependency) and the real store.",
+      "acceptance_criteria": [
+        "Valid save hydrates to the saved state",
+        "No or corrupt save hydrates to the initial state",
+        "setState writes the new state under STORAGE_KEY",
+        "Throwing storage does not throw and state still updates"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/gameStorePersist.test.ts"
+        ],
+        "out_of_scope": [
+          "e2e or browser checks"
+        ],
+        "preserve": [
+          "Existing gameStore.test.ts and gameStoreFocus.test.ts stay and pass"
+        ]
+      },
+      "technical_constraints": [
+        "Tests mock only localStorage",
+        "No test deleted or skipped",
+        "Real store module is never mocked"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "New test file passes",
+        "Existing gameStore tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-900.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867BSEQMV1J569C5YTK89RE",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M867BSEQMV1J569C5YTK89RE",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-900.md"
+      ],
+      "depends_on": [
+        "01M867BSEQMV1J569C5YTK89RE"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-900.md",
+      "artifact_id": "UNIT-900",
+      "steps": [
+        {
+          "file": "game/frontend/tests/gameStorePersist.test.ts",
+          "symbol": "new: describe('gameStore persistence')",
+          "lines": "new",
+          "action": "Create the file with `// @vitest-environment jsdom`, importing useGameStore, STORAGE_KEY, writeSaved from '../src/runtime/storage', and createInitialState, scene, world. In beforeEach call localStorage.clear() and useGameStore.setState({ state: null }). Add test 'hydrate restores a valid save': writeSaved({...createInitialState(world, scene), inventory: ['key']}), call hydrate(), assert state.inventory equals ['key'].",
+          "command": "cd game/frontend && npx vitest run tests/gameStorePersist.test.ts -t 'hydrate restores'",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/gameStorePersist.test.ts",
+          "symbol": "it('hydrate starts fresh on missing or corrupt save')",
+          "lines": "new",
+          "action": "Test 1: empty storage, hydrate(), expect state toEqual createInitialState(world, scene). Test 2: localStorage.setItem(STORAGE_KEY, '{bad'), hydrate(), expect the same initial state.",
+          "command": "cd game/frontend && npx vitest run tests/gameStorePersist.test.ts -t 'starts fresh'",
+          "expected": "Both assertions pass."
+        },
+        {
+          "file": "game/frontend/tests/gameStorePersist.test.ts",
+          "symbol": "it('setState saves and survives a failing storage')",
+          "lines": "new",
+          "action": "After hydrate(), call setState with an updater adding 'rope' to inventory; assert JSON.parse(localStorage.getItem(STORAGE_KEY)).state.inventory contains 'rope' and version is 1. Then vi.spyOn(Storage.prototype,'setItem').mockImplementation(() => { throw new Error('quota'); }), call setState again and assert it does not throw and store state has the new value.",
+          "command": "cd game/frontend && npx vitest run tests/gameStorePersist.test.ts",
+          "expected": "All tests in the file pass."
+        }
+      ]
+    },
+    {
+      "id": "01M867BSEQTAJTH8K30JHVBGPZ",
+      "kind": "unit",
+      "title": "Verify: useGame and App save and reload behaviour unit tests",
+      "body": "Rewrite and extend tests against behaviour: save and reload through useGame, corrupt save fallback, and a source check that useGame no longer imports storage.\n\n## Acceptance criteria\n- Remount after act() shows the persisted flag\n- Corrupt save starts at intro and tolerates throwing writes\n- useGame.ts has no runtime/storage import and no `as GameState`\n- App story panel reflects store state after an action\n\n\n## Scope\n- In scope: game/frontend/tests/useGame.test.tsx\n- In scope: game/frontend/tests/useGameSingleOwner.test.ts\n- In scope: game/frontend/tests/appFlow.test.tsx\n- Out of scope: e2e, browser or live checks\n- Preserve: No test deleted or skipped\n\n\n## Technical constraints\n- Tests mock only localStorage (or the storage module in appFlow, as today)\n- Real store never mocked\n- Source check reads the file with node:fs from the real repo path\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- useGame, secretDoorPersistence, appFlow and new tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Behaviour tests for single-owner state in useGame and App",
+      "description": "Rewrite and extend tests against behaviour: save and reload through useGame, corrupt save fallback, and a source check that useGame no longer imports storage.",
+      "acceptance_criteria": [
+        "Remount after act() shows the persisted flag",
+        "Corrupt save starts at intro and tolerates throwing writes",
+        "useGame.ts has no runtime/storage import and no `as GameState`",
+        "App story panel reflects store state after an action"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/useGame.test.tsx",
+          "game/frontend/tests/useGameSingleOwner.test.ts",
+          "game/frontend/tests/appFlow.test.tsx"
+        ],
+        "out_of_scope": [
+          "e2e, browser or live checks"
+        ],
+        "preserve": [
+          "No test deleted or skipped"
+        ]
+      },
+      "technical_constraints": [
+        "Tests mock only localStorage (or the storage module in appFlow, as today)",
+        "Real store never mocked",
+        "Source check reads the file with node:fs from the real repo path"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "useGame, secretDoorPersistence, appFlow and new tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-901.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867BSEQS28AW138H2YG8APW",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M867BSEQS28AW138H2YG8APW",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-901.md"
+      ],
+      "depends_on": [
+        "01M867BSEQS28AW138H2YG8APW"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-901.md",
+      "artifact_id": "UNIT-901",
+      "steps": [
+        {
+          "file": "game/frontend/tests/useGame.test.tsx",
+          "symbol": "describe('useGame persistence')",
+          "lines": "L1-L44",
+          "action": "Keep both existing tests unchanged; run them to confirm they pass against the store-owned save (they assert behaviour: remount restores secret_door_open, corrupt save gives activeDialogue 'intro', throwing setItem does not break play).",
+          "command": "cd game/frontend && npx vitest run tests/useGame.test.tsx",
+          "expected": "Both tests pass."
+        },
+        {
+          "file": "game/frontend/tests/useGameSingleOwner.test.ts",
+          "symbol": "new: it('useGame does not touch storage or cast state')",
+          "lines": "new",
+          "action": "Create the test: readFileSync of src/runtime/useGame.ts via path.resolve(__dirname,'../src/runtime/useGame.ts'); expect not.toMatch(/runtime\\/storage|\\.\\/storage/), not.toMatch(/as GameState/), not.toMatch(/writeSaved|readSaved/).",
+          "command": "cd game/frontend && npx vitest run tests/useGameSingleOwner.test.ts",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/appFlow.test.tsx",
+          "symbol": "existing App flow tests",
+          "lines": "L1-L40",
+          "action": "Run unchanged; its vi.mock of '../src/runtime/storage' (readSaved/writeSaved) must still supply the saved state, now consumed by the store's hydrate. If an assertion pinned the old useGame-effect write, rewrite it to assert the mocked writeSaved was called after the action.",
+          "command": "cd game/frontend && npx vitest run tests/appFlow.test.tsx tests/secretDoorPersistence.test.tsx",
+          "expected": "App flow and secret door persistence tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M867BSEQEVSBHJAY4QHPTDQX",
+      "kind": "evidence",
+      "title": "Evidence: single-owner GameState unit tests pass",
+      "body": "Collect results of the store persistence, useGame, App flow and source-check unit tests, plus typecheck in game/frontend.\n\n## Acceptance criteria\n- gameStorePersist, useGame, useGameSingleOwner, appFlow and secretDoorPersistence tests pass\n- npm run typecheck passes in game/frontend\n\n\n## Scope\n- In scope: Test run output\n- Out of scope: Live app runs\n- Preserve: All other suites stay green\n\n\n## Technical constraints\n- Unit tests only\n- Phaser pinned at ~3.90.0 and the pin guard passes\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Listed suites pass and output is recorded\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Evidence that gameStore is the only owner and save and reload still work",
+      "description": "Collect results of the store persistence, useGame, App flow and source-check unit tests, plus typecheck in game/frontend.",
+      "acceptance_criteria": [
+        "gameStorePersist, useGame, useGameSingleOwner, appFlow and secretDoorPersistence tests pass",
+        "npm run typecheck passes in game/frontend"
+      ],
+      "scope": {
+        "in_scope": [
+          "Test run output"
+        ],
+        "out_of_scope": [
+          "Live app runs"
+        ],
+        "preserve": [
+          "All other suites stay green"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only",
+        "Phaser pinned at ~3.90.0 and the pin guard passes"
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Listed suites pass and output is recorded",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-178.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M867BSEQ5E6GV228GNR141NG",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M867BSEQ5E6GV228GNR141NG",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-178.md"
+      ],
+      "depends_on": [
+        "01M867BSEQ5E6GV228GNR141NG",
+        "01M867BSEQTAJTH8K30JHVBGPZ"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-178.md",
+      "artifact_id": "EVD-178"
+    }
+  ],
+  "created_at": "2026-11-24T07:29:43.062908+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
