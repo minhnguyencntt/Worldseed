@@ -35,8 +35,6 @@ export const useUiStore = create<UiState>()((set) => ({
   settingsOpen: false,
   toggleSound: () => set((s) => ({ soundEnabled: !s.soundEnabled })),
   toggleSettings: () => set((s) => ({ settingsOpen: !s.settingsOpen })),
-  canvasLayout: null,
-  setCanvasLayout: (canvasLayout) => set({ canvasLayout }),
   round: undefined,
   roundLoading: true,
   roundError: undefined,
