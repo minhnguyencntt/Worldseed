@@ -5,11 +5,13 @@ import { ContributionSheet } from './components/ContributionSheet';
 import { GameLayout } from './components/GameLayout';
 import { HeaderOverlay } from './components/HeaderOverlay';
 import { IntroScreen } from './components/IntroScreen';
-import { SceneView } from './components/SceneView';
+import { PhaserHost } from './components/PhaserHost';
 import { StoryPanel } from './components/StoryPanel';
+import { BootScene } from './phaser/BootScene';
 import { ApiError, getCurrentRound, type Round } from './api/client';
 import { world } from './runtime/content';
 import { useGame } from './runtime/useGame';
+import { phaserToReact } from './phaser/events';
 
 export function describeRoundError(e: unknown): string {
   if (e instanceof ApiError) {
@@ -50,6 +52,8 @@ export default function App() {
     void loadRound();
   }, [loadRound]);
 
+  useEffect(() => phaserToReact.on('objectClick', ({ id }) => setSelectedId(id)), []);
+
   if (!begun) {
     return <IntroScreen onBegin={() => setBegun(true)} />;
   }
@@ -60,13 +64,9 @@ export default function App() {
       header={<HeaderOverlay worldTitle={world.title} round={round} loading={loading} error={roundError} onRetry={loadRound} />}
       scene={
         <>
-          <SceneView
-            sceneId={game.scene.id}
-            title={game.scene.title}
-            objects={game.view}
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-          />
+          <div className="absolute inset-0">
+            <PhaserHost scenes={[BootScene]} />
+          </div>
           <ActionMenu object={selected} onAction={game.act} />
           <button type="button" ref={triggerRef} onClick={() => setSheetOpen(true)}>
             Suggest What Happens Next
