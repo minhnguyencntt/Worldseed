@@ -27,6 +27,8 @@ export class BootScene extends Phaser.Scene {
   private sceneObjects: SceneObject[] = [];
   private failed = new Set<string>();
   private characterSprites: Phaser.GameObjects.Sprite[] = [];
+  private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
+  private unsubscribeAnimation: (() => void) | null = null;
 
   constructor() {
     super('BootScene');
@@ -68,6 +70,7 @@ export class BootScene extends Phaser.Scene {
     this.sceneObjects = buildScene(createPhaserRenderContext(this, (id) => this.resolveKey(id)), sceneSpec);
     this.sceneObjects.forEach((o) => o.onInteract((e) => phaserToReact.emit('objectClick', { id: e.objectId })));
     this.characterSprites = (scene.characters ?? []).map((c) => this.createCharacter(c));
+    this.unsubscribeAnimation = reactToPhaser.on('playAnimation', ({ target, name }) => this.playCharacterAnimation(target, name));
     this.input.keyboard?.on('keydown', this.onKeyDown);
     this.onStateChange();
     playSceneTransition(ctx, scene);
@@ -81,6 +84,9 @@ export class BootScene extends Phaser.Scene {
       this.sceneObjects = [];
       this.characterSprites.forEach((s) => s.destroy());
       this.characterSprites = [];
+      this.characterAnims.clear();
+      this.unsubscribeAnimation?.();
+      this.unsubscribeAnimation = null;
     });
     phaserToReact.emit('sceneReady', { sceneId: 'boot' });
   }
@@ -125,7 +131,23 @@ export class BootScene extends Phaser.Scene {
       sprite.play(interactKey);
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.play(idleKey));
     });
+    this.characterAnims.set(spec.id, { sprite, spec });
     return sprite;
+  }
+
+  // Plays a named animation on the character with the given id; unknown targets or names are ignored.
+  private playCharacterAnimation(target: string, name: string): void {
+    const entry = this.characterAnims.get(target);
+    if (!entry || !['idle', 'walk', 'interact'].includes(name)) return;
+    const ref = resolveCharacterAnimation(entry.spec, name as CharacterAnimationName, manifest);
+    const key = this.ensureAnim(ref.asset, ref.animation);
+    if (!key) return;
+    entry.sprite.play(key);
+    if (name !== 'idle') {
+      const idle = resolveCharacterAnimation(entry.spec, 'idle', manifest);
+      const idleKey = this.ensureAnim(idle.asset, idle.animation);
+      if (idleKey && idleKey !== key) entry.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => entry.sprite.play(idleKey));
+    }
   }
 
   onStateChange(): void {
