@@ -79,10 +79,6 @@ export default function App() {
 
   // Hover previews the object under the pointer; keyboard focus and the last click keep its actions reachable.
   const activeId = hoverId ?? focusedObjectId ?? selectedId ?? null;
-  const handleAction = (objectId: string, actionId: string) => {
-    game.act(objectId, actionId);
-    reactToPhaser.emit('playAnimation', { target: 'boy', name: 'interact' });
-  };
   return (
     <GameLayout
       header={
