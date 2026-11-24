@@ -1,0 +1,699 @@
+{
+  "intent_id": "01M868QWQSHEP686ED036NRVHD",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M868V8PC9XAZ34PDAZ89HEHQ",
+      "kind": "intent",
+      "title": "SG-4.1 · Extract asset preload module",
+      "body": "Context: BootScene.preload (game/frontend/src/phaser/BootScene.ts L45-L64) builds the fallback texture, registers a loaderror listener, calls planPreload and queues images and spritesheets inline. Desired behavior: a phaser/preload.ts module owns all of this and BootScene.preload only calls it. Expected result: same assets are loaded and the same fallback texture is used. Why: first step of splitting BootScene into thin lifecycle shell (SG-4).\n\n## Acceptance criteria\n- Given the scene and manifest, when preload runs, then phaser/preload.ts queues exactly the assets planPreload returns, using the typed manifest entries\n- Given an unknown or failed asset id, when resolveKey is called, then the fallback texture key is returned\n- BootScene.preload contains one call into phaser/preload.ts and no load.image, load.spritesheet or planPreload usage\n- Given PNG assets, the existing bootScenePngPreload and bootScenePreload tests still pass\n\n\n## Scope\n- In scope: new game/frontend/src/phaser/preload.ts\n- In scope: BootScene.preload delegation\n- Out of scope: scene build, character animation, transitions extraction (SG-4.2, SG-4.3)\n- Out of scope: game/src/engine changes\n- Preserve: Phaser ~3.90.0\n- Preserve: player-visible behavior\n- Preserve: FALLBACK_KEY export from BootScene\n- Preserve: game/src never imports game/frontend\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0; phaser-pin guard test must keep passing\n- No test deleted or skipped; npm test and npm run typecheck pass in game/ and game/frontend/\n- No source file over 200 lines\n- Tests mock only what is external (Phaser, runtime content)\n\n\n## Definition of done\n- All requirements delivered and verified by unit tests\n- npm test and npm run typecheck green in game/frontend\n\n\n## Non-functional requirements\n- No per-frame allocations; loaderror listener and fallback texture released on dispose\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Move BootScene asset preload into phaser/preload.ts built on planPreload and the typed manifest",
+      "description": "Context: BootScene.preload (game/frontend/src/phaser/BootScene.ts L45-L64) builds the fallback texture, registers a loaderror listener, calls planPreload and queues images and spritesheets inline. Desired behavior: a phaser/preload.ts module owns all of this and BootScene.preload only calls it. Expected result: same assets are loaded and the same fallback texture is used. Why: first step of splitting BootScene into thin lifecycle shell (SG-4).",
+      "acceptance_criteria": [
+        "Given the scene and manifest, when preload runs, then phaser/preload.ts queues exactly the assets planPreload returns, using the typed manifest entries",
+        "Given an unknown or failed asset id, when resolveKey is called, then the fallback texture key is returned",
+        "BootScene.preload contains one call into phaser/preload.ts and no load.image, load.spritesheet or planPreload usage",
+        "Given PNG assets, the existing bootScenePngPreload and bootScenePreload tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "new game/frontend/src/phaser/preload.ts",
+          "BootScene.preload delegation"
+        ],
+        "out_of_scope": [
+          "scene build, character animation, transitions extraction (SG-4.2, SG-4.3)",
+          "game/src/engine changes"
+        ],
+        "preserve": [
+          "Phaser ~3.90.0",
+          "player-visible behavior",
+          "FALLBACK_KEY export from BootScene",
+          "game/src never imports game/frontend"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0; phaser-pin guard test must keep passing",
+        "No test deleted or skipped; npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No source file over 200 lines",
+        "Tests mock only what is external (Phaser, runtime content)"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All requirements delivered and verified by unit tests",
+        "npm test and npm run typecheck green in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-182.md`"
+      ],
+      "non_functional": [
+        "No per-frame allocations; loaderror listener and fallback texture released on dispose"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M855M8266NY059ZY7SSJK91X",
+      "links": [
+        "trace:01M855M8266NY059ZY7SSJK91X",
+        "artifact:.ai-dlc/intent/INT-182.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-182.md",
+      "artifact_id": "INT-182"
+    },
+    {
+      "id": "01M868V8PC7GMDBYZ3P4M7PZ84",
+      "kind": "requirement",
+      "title": "REQ · phaser/preload.ts queues planned assets from the typed manifest",
+      "body": "Context: queueing logic currently lives inline in BootScene.preload. Desired behavior: createPreloader in phaser/preload.ts calls planPreload(scene, manifest), warns for plan.unknown, and queues load.image or load.spritesheet with `assets/${entry.path}` and frame sizes. Expected result: identical load calls to today. Why: single-purpose module.\n\n## Acceptance criteria\n- Given a scene referencing a known image id, when the preloader runs, then load.image is called with the id and assets/<path>\n- Given a known spritesheet with frames, then load.spritesheet is called with frameWidth and frameHeight from the manifest\n- Given an unknown ref, then console.warn is called with 'unknown asset ref: <id>' and nothing is loaded for it\n\n\n## Scope\n- In scope: queueing logic in preload.ts\n- Out of scope: BootScene wiring\n- Preserve: load paths and warning text\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- No file over 200 lines\n- Reuse planPreload from @game/engine/planPreload\n\n\n## Dependencies\n- I1\n\n\n## Definition of done\n- preload.ts queues same assets as old BootScene.preload\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Preload module queues images and spritesheets via planPreload and manifest entries",
+      "description": "Context: queueing logic currently lives inline in BootScene.preload. Desired behavior: createPreloader in phaser/preload.ts calls planPreload(scene, manifest), warns for plan.unknown, and queues load.image or load.spritesheet with `assets/${entry.path}` and frame sizes. Expected result: identical load calls to today. Why: single-purpose module.",
+      "acceptance_criteria": [
+        "Given a scene referencing a known image id, when the preloader runs, then load.image is called with the id and assets/<path>",
+        "Given a known spritesheet with frames, then load.spritesheet is called with frameWidth and frameHeight from the manifest",
+        "Given an unknown ref, then console.warn is called with 'unknown asset ref: <id>' and nothing is loaded for it"
+      ],
+      "scope": {
+        "in_scope": [
+          "queueing logic in preload.ts"
+        ],
+        "out_of_scope": [
+          "BootScene wiring"
+        ],
+        "preserve": [
+          "load paths and warning text"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "No file over 200 lines",
+        "Reuse planPreload from @game/engine/planPreload"
+      ],
+      "dependencies": [
+        "I1"
+      ],
+      "definition_of_done": [
+        "preload.ts queues same assets as old BootScene.preload",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-460.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M868V8PC9XAZ34PDAZ89HEHQ",
+      "matched_feature_id": "01M85BP7N1KYP1XAPXSZBNPXM2",
+      "links": [
+        "parent:01M868V8PC9XAZ34PDAZ89HEHQ",
+        "trace:01M85BP7N1KYP1XAPXSZBNPXM2",
+        "artifact:.ai-dlc/requirements/REQ-460.md"
+      ],
+      "depends_on": [
+        "01M868V8PC9XAZ34PDAZ89HEHQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-460.md",
+      "artifact_id": "REQ-460"
+    },
+    {
+      "id": "01M868V8PC1BE373CER0WFQNME",
+      "kind": "requirement",
+      "title": "REQ · Preload module owns the fallback texture, failed tracking and dispose",
+      "body": "Context: fallback texture generation, the failed Set and resolveKey are in BootScene. Desired behavior: the preloader generates FALLBACK_KEY texture, records loaderror keys, exposes resolveKey(id) and dispose() that removes the loaderror listener and fallback texture and clears failed ids. Expected result: unknown or failed ids resolve to FALLBACK_KEY. Why: SG-4 requires each module to return a dispose function.\n\n## Acceptance criteria\n- Given an id unknown to the manifest, resolveKey returns FALLBACK_KEY\n- Given a loaderror for a known id, resolveKey returns FALLBACK_KEY\n- Given a known loaded id, resolveKey returns the id\n- When dispose is called, load.off('loaderror') is called with the registered handler and the fallback texture is removed\n\n\n## Scope\n- In scope: fallback, failed set, resolveKey, dispose in preload.ts\n- Out of scope: BootScene shutdown wiring beyond calling dispose\n- Preserve: FALLBACK_KEY value 'fallback:missing' and checkerboard drawing\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- Use resolveTextureKey from @game/engine/planPreload\n- No file over 200 lines\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- preloader returns { resolveKey, dispose }\n\n\n## Non-functional requirements\n- Listeners and textures released on shutdown\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Fallback texture, loaderror tracking, resolveKey and dispose live in preload.ts",
+      "description": "Context: fallback texture generation, the failed Set and resolveKey are in BootScene. Desired behavior: the preloader generates FALLBACK_KEY texture, records loaderror keys, exposes resolveKey(id) and dispose() that removes the loaderror listener and fallback texture and clears failed ids. Expected result: unknown or failed ids resolve to FALLBACK_KEY. Why: SG-4 requires each module to return a dispose function.",
+      "acceptance_criteria": [
+        "Given an id unknown to the manifest, resolveKey returns FALLBACK_KEY",
+        "Given a loaderror for a known id, resolveKey returns FALLBACK_KEY",
+        "Given a known loaded id, resolveKey returns the id",
+        "When dispose is called, load.off('loaderror') is called with the registered handler and the fallback texture is removed"
+      ],
+      "scope": {
+        "in_scope": [
+          "fallback, failed set, resolveKey, dispose in preload.ts"
+        ],
+        "out_of_scope": [
+          "BootScene shutdown wiring beyond calling dispose"
+        ],
+        "preserve": [
+          "FALLBACK_KEY value 'fallback:missing' and checkerboard drawing"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "Use resolveTextureKey from @game/engine/planPreload",
+        "No file over 200 lines"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "preloader returns { resolveKey, dispose }",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-461.md`"
+      ],
+      "non_functional": [
+        "Listeners and textures released on shutdown"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M868V8PC9XAZ34PDAZ89HEHQ",
+      "matched_feature_id": "01M85FWFYE2GXA5JQX2YN2SWK7",
+      "links": [
+        "parent:01M868V8PC9XAZ34PDAZ89HEHQ",
+        "trace:01M85FWFYE2GXA5JQX2YN2SWK7",
+        "artifact:.ai-dlc/requirements/REQ-461.md"
+      ],
+      "depends_on": [
+        "01M868V8PC9XAZ34PDAZ89HEHQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-461.md",
+      "artifact_id": "REQ-461"
+    },
+    {
+      "id": "01M868V8PCN41M0ZWQ1XEWPT93",
+      "kind": "requirement",
+      "title": "REQ · BootScene.preload only calls the preload module and disposes it on shutdown",
+      "body": "Context: BootScene.preload and resolveKey hold the logic. Desired behavior: BootScene.preload calls createPreloader(this, scene, manifest) and stores the handle; resolveKey delegates; SHUTDOWN handler calls dispose. FALLBACK_KEY stays exported from BootScene (re-export). Expected result: existing bootScene tests pass unchanged in behavior.\n\n## Acceptance criteria\n- BootScene.preload has a single createPreloader call and no load.image, load.spritesheet, planPreload or generateTexture\n- BootScene.resolveKey returns the preloader result\n- On SHUTDOWN the preloader dispose is called once\n- FALLBACK_KEY is still importable from BootScene\n\n\n## Scope\n- In scope: BootScene.ts edits\n- Out of scope: other BootScene responsibilities\n- Preserve: resolveKey public method\n- Preserve: create order and other shutdown cleanup\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- BootScene under 200 lines\n- No import from engine into frontend reversal: game/src never imports game/frontend\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- BootScene.preload is a one-line delegation\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "BootScene delegates preload and resolveKey to preload.ts",
+      "description": "Context: BootScene.preload and resolveKey hold the logic. Desired behavior: BootScene.preload calls createPreloader(this, scene, manifest) and stores the handle; resolveKey delegates; SHUTDOWN handler calls dispose. FALLBACK_KEY stays exported from BootScene (re-export). Expected result: existing bootScene tests pass unchanged in behavior.",
+      "acceptance_criteria": [
+        "BootScene.preload has a single createPreloader call and no load.image, load.spritesheet, planPreload or generateTexture",
+        "BootScene.resolveKey returns the preloader result",
+        "On SHUTDOWN the preloader dispose is called once",
+        "FALLBACK_KEY is still importable from BootScene"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts edits"
+        ],
+        "out_of_scope": [
+          "other BootScene responsibilities"
+        ],
+        "preserve": [
+          "resolveKey public method",
+          "create order and other shutdown cleanup"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "BootScene under 200 lines",
+        "No import from engine into frontend reversal: game/src never imports game/frontend"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "BootScene.preload is a one-line delegation",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-462.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M868V8PC9XAZ34PDAZ89HEHQ",
+      "matched_feature_id": "01M855M826E3C405ZASCHH5B77",
+      "links": [
+        "parent:01M868V8PC9XAZ34PDAZ89HEHQ",
+        "trace:01M855M826E3C405ZASCHH5B77",
+        "artifact:.ai-dlc/requirements/REQ-462.md"
+      ],
+      "depends_on": [
+        "01M868V8PC9XAZ34PDAZ89HEHQ"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-462.md",
+      "artifact_id": "REQ-462"
+    },
+    {
+      "id": "01M868V8PCANJ8HNBJGGPCMRM9",
+      "kind": "unit",
+      "title": "Act: Create phaser/preload.ts with createPreloader queueing assets",
+      "body": "Create createPreloader(scene, sceneDef, manifest) that runs planPreload and queues images/spritesheets exactly as BootScene.preload does today.\n\n## Acceptance criteria\n- createPreloader queues image and spritesheet loads from manifest entries\n- unknown refs produce console.warn 'unknown asset ref: <id>'\n\n\n## Scope\n- In scope: game/frontend/src/phaser/preload.ts\n- Out of scope: fallback and dispose\n- Out of scope: BootScene\n- Preserve: asset URL prefix assets/\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- File under 200 lines\n- New file: `game/frontend/src/phaser/preload.ts`\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- preload.ts exports createPreloader and compiles under npm run typecheck\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New preload module queues planned assets",
+      "description": "Create createPreloader(scene, sceneDef, manifest) that runs planPreload and queues images/spritesheets exactly as BootScene.preload does today.",
+      "acceptance_criteria": [
+        "createPreloader queues image and spritesheet loads from manifest entries",
+        "unknown refs produce console.warn 'unknown asset ref: <id>'"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/phaser/preload.ts"
+        ],
+        "out_of_scope": [
+          "fallback and dispose",
+          "BootScene"
+        ],
+        "preserve": [
+          "asset URL prefix assets/"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "File under 200 lines",
+        "New file: `game/frontend/src/phaser/preload.ts`"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "preload.ts exports createPreloader and compiles under npm run typecheck",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-920.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M868V8PC7GMDBYZ3P4M7PZ84",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M868V8PC7GMDBYZ3P4M7PZ84",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-920.md"
+      ],
+      "depends_on": [
+        "01M868V8PC7GMDBYZ3P4M7PZ84"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-920.md",
+      "artifact_id": "UNIT-920",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/preload.ts",
+          "symbol": "new: createPreloader",
+          "lines": "new",
+          "action": "Create the file. Import Phaser, planPreload, AssetManifest and AssetEntry types, SceneDef. Export createPreloader(scene: Phaser.Scene, sceneDef: SceneDef, manifest: AssetManifest) that calls planPreload(sceneDef, manifest), console.warn(`unknown asset ref: ${id}`) for each plan.unknown, and for each plan.load id finds the entry and calls scene.load.image(entry.id, `assets/${entry.path}`) for type image or scene.load.spritesheet(entry.id, `assets/${entry.path}`, {frameWidth, frameHeight}) for type spritesheet with entry.frames. Copy the loop from BootScene.ts L52-L63.",
+          "code": "export function createPreloader(scene: Phaser.Scene, sceneDef: SceneDef, manifest: AssetManifest) { const plan = planPreload(sceneDef, manifest); /* queue */ }",
+          "expected": "Module compiles; preloader queues same loads as old BootScene.preload"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PCARJ0HT55Q809WWMN",
+      "kind": "unit",
+      "title": "Act: Add fallback texture, failed tracking, resolveKey and dispose to the preloader",
+      "body": "Move FALLBACK_KEY, the generated 8x8 magenta checkerboard, the loaderror listener and resolveKey into createPreloader and return { resolveKey, dispose }.\n\n## Acceptance criteria\n- resolveKey returns FALLBACK_KEY for unknown or failed ids\n- dispose removes the loaderror listener and fallback texture\n\n\n## Scope\n- In scope: preload.ts\n- Out of scope: BootScene\n- Preserve: fallback drawing\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- File under 200 lines\n- New file: `game/frontend/src/phaser/preload.ts`\n\n\n## Dependencies\n- R2\n\n\n## Definition of done\n- createPreloader returns { resolveKey, dispose }\n\n\n## Non-functional requirements\n- Release listener and texture on dispose\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Preloader owns fallback and cleanup",
+      "description": "Move FALLBACK_KEY, the generated 8x8 magenta checkerboard, the loaderror listener and resolveKey into createPreloader and return { resolveKey, dispose }.",
+      "acceptance_criteria": [
+        "resolveKey returns FALLBACK_KEY for unknown or failed ids",
+        "dispose removes the loaderror listener and fallback texture"
+      ],
+      "scope": {
+        "in_scope": [
+          "preload.ts"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "fallback drawing"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "File under 200 lines",
+        "New file: `game/frontend/src/phaser/preload.ts`"
+      ],
+      "dependencies": [
+        "R2"
+      ],
+      "definition_of_done": [
+        "createPreloader returns { resolveKey, dispose }",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-921.md`"
+      ],
+      "non_functional": [
+        "Release listener and texture on dispose"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M868V8PC1BE373CER0WFQNME",
+      "matched_feature_id": "01M855M826YRQ0V4NDRXM6HX1M",
+      "links": [
+        "parent:01M868V8PC1BE373CER0WFQNME",
+        "trace:01M855M826YRQ0V4NDRXM6HX1M",
+        "artifact:.ai-dlc/units/UNIT-921.md"
+      ],
+      "depends_on": [
+        "01M868V8PC1BE373CER0WFQNME"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-921.md",
+      "artifact_id": "UNIT-921",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/preload.ts",
+          "symbol": "createPreloader",
+          "lines": "after the plan queueing code",
+          "action": "Export const FALLBACK_KEY = 'fallback:missing'. At the start of createPreloader, build the fallback texture using scene.make.graphics({x:0,y:0}, false): fillStyle(0xff00ff).fillRect(0,0,8,8).fillStyle(0x000000).fillRect(0,0,4,4).fillRect(4,4,4,4), generateTexture(FALLBACK_KEY,8,8), destroy (copy BootScene.ts L46-L50). Create const failed = new Set<string>() and const onError = (file: {key: string}) => failed.add(file.key); register with scene.load.on('loaderror', onError). Return resolveKey(id) => failed.has(id) ? FALLBACK_KEY : resolveTextureKey(id, manifest, FALLBACK_KEY), and dispose() { scene.load.off('loaderror', onError); failed.clear(); if (scene.textures.exists(FALLBACK_KEY)) scene.textures.remove(FALLBACK_KEY); }.",
+          "code": "return { resolveKey, dispose };",
+          "expected": "Preloader returns resolveKey and dispose; typecheck passes"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PCPTY510PB9D4WPZXC",
+      "kind": "unit",
+      "title": "Act: Delegate BootScene.preload and resolveKey to the preloader and dispose on SHUTDOWN",
+      "body": "Replace inline preload with a single createPreloader call, delegate resolveKey, re-export FALLBACK_KEY, and call dispose in the SHUTDOWN handler.\n\n## Acceptance criteria\n- BootScene.preload is one call into createPreloader\n- SHUTDOWN calls dispose once\n\n\n## Scope\n- In scope: BootScene.ts\n- Out of scope: other modules\n- Preserve: FALLBACK_KEY export\n- Preserve: resolveKey method\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n- BootScene under 200 lines\n- Code path: `game/frontend/src/phaser/BootScene.ts`\n\n\n## Dependencies\n- R3\n\n\n## Definition of done\n- BootScene no longer references planPreload, load.image or generateTexture\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wire BootScene to preload.ts",
+      "description": "Replace inline preload with a single createPreloader call, delegate resolveKey, re-export FALLBACK_KEY, and call dispose in the SHUTDOWN handler.",
+      "acceptance_criteria": [
+        "BootScene.preload is one call into createPreloader",
+        "SHUTDOWN calls dispose once"
+      ],
+      "scope": {
+        "in_scope": [
+          "BootScene.ts"
+        ],
+        "out_of_scope": [
+          "other modules"
+        ],
+        "preserve": [
+          "FALLBACK_KEY export",
+          "resolveKey method"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin",
+        "BootScene under 200 lines",
+        "Code path: `game/frontend/src/phaser/BootScene.ts`"
+      ],
+      "dependencies": [
+        "R3"
+      ],
+      "definition_of_done": [
+        "BootScene no longer references planPreload, load.image or generateTexture",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-922.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M868V8PCN41M0ZWQ1XEWPT93",
+      "matched_feature_id": "01M85MNPTKVSKF26H6GN2F3C7W",
+      "links": [
+        "parent:01M868V8PCN41M0ZWQ1XEWPT93",
+        "trace:01M85MNPTKVSKF26H6GN2F3C7W",
+        "artifact:.ai-dlc/units/UNIT-922.md"
+      ],
+      "depends_on": [
+        "01M868V8PCN41M0ZWQ1XEWPT93"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-922.md",
+      "artifact_id": "UNIT-922",
+      "steps": [
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.preload",
+          "lines": "L45-L64",
+          "action": "Replace body with `this.preloader = createPreloader(this, scene, manifest);`. Add private preloader: Preloader | null = null field (type ReturnType<typeof createPreloader>). Remove the failed Set field (L28). Import createPreloader and FALLBACK_KEY from './preload'; remove planPreload and AssetEntry imports and the local FALLBACK_KEY const (L22), adding `export { FALLBACK_KEY };`.",
+          "code": "preload(): void { this.preloader = createPreloader(this, scene, manifest); }",
+          "expected": "preload delegates; file compiles"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.resolveKey",
+          "lines": "L66-L68",
+          "action": "Change body to `return this.preloader ? this.preloader.resolveKey(id) : resolveTextureKey(id, manifest, FALLBACK_KEY);` keeping the resolveTextureKey import for this branch.",
+          "expected": "resolveKey returns fallback for failed/unknown ids"
+        },
+        {
+          "file": "game/frontend/src/phaser/BootScene.ts",
+          "symbol": "BootScene.create SHUTDOWN handler",
+          "lines": "L87-L101",
+          "action": "Add `this.preloader?.dispose(); this.preloader = null;` after the inputLayer destroy lines.",
+          "expected": "dispose runs once on shutdown"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PC1XGC18F39J994N3D",
+      "kind": "unit",
+      "title": "Verify: createPreloader queues planned assets unit tests",
+      "body": "TDD tests for createPreloader queueing with a fake scene and inline manifest.\n\n## Acceptance criteria\n- Image and spritesheet loads are asserted with the manifest paths and frame sizes\n- Unknown ref warning is asserted and no load call is made for it\n\n\n## Scope\n- In scope: game/frontend/tests/preloadModule.test.ts\n- Out of scope: BootScene\n- Preserve: no tests deleted\n\n\n## Technical constraints\n- Only Phaser scene is faked; no real Phaser, no browser\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for preload queueing",
+      "description": "TDD tests for createPreloader queueing with a fake scene and inline manifest.",
+      "acceptance_criteria": [
+        "Image and spritesheet loads are asserted with the manifest paths and frame sizes",
+        "Unknown ref warning is asserted and no load call is made for it"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/preloadModule.test.ts"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "no tests deleted"
+        ]
+      },
+      "technical_constraints": [
+        "Only Phaser scene is faked; no real Phaser, no browser"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-923.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M868V8PCANJ8HNBJGGPCMRM9",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M868V8PCANJ8HNBJGGPCMRM9",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-923.md"
+      ],
+      "depends_on": [
+        "01M868V8PCANJ8HNBJGGPCMRM9"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-923.md",
+      "artifact_id": "UNIT-923",
+      "steps": [
+        {
+          "file": "game/frontend/tests/preloadModule.test.ts",
+          "symbol": "new: describe('createPreloader queueing')",
+          "lines": "new",
+          "action": "Create the test file with a fake scene {load:{image:vi.fn(),spritesheet:vi.fn(),on:vi.fn(),off:vi.fn()}, make:{graphics:()=>chainable fake}, textures:{exists:vi.fn(()=>false),remove:vi.fn()}}. Manifest typed as AssetManifest with image 'objects/bed' (path 'a/bed.png') and spritesheet 'characters/boy' with frames 32x48; scene refs bed, boy and 'objects/ghost'. Tests: image called with ('objects/bed','assets/a/bed.png'); spritesheet called with frameWidth 32, frameHeight 48; console.warn spy called with 'unknown asset ref: objects/ghost' and no load call for ghost.",
+          "command": "cd game/frontend && npx vitest run tests/preloadModule.test.ts",
+          "expected": "3 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PCPKVD359FJX5M50YQ",
+      "kind": "unit",
+      "title": "Verify: preloader fallback resolution and dispose unit tests",
+      "body": "TDD tests for resolveKey and dispose with a faked loader.\n\n## Acceptance criteria\n- Fallback resolution for unknown and failed ids is asserted\n- Dispose removes the loaderror listener and the fallback texture\n\n\n## Scope\n- In scope: game/frontend/tests/preloadFallback.test.ts\n- Out of scope: BootScene\n- Preserve: no tests deleted\n\n\n## Technical constraints\n- Only Phaser scene faked\n\n\n## Dependencies\n- A2\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for fallback and dispose",
+      "description": "TDD tests for resolveKey and dispose with a faked loader.",
+      "acceptance_criteria": [
+        "Fallback resolution for unknown and failed ids is asserted",
+        "Dispose removes the loaderror listener and the fallback texture"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/preloadFallback.test.ts"
+        ],
+        "out_of_scope": [
+          "BootScene"
+        ],
+        "preserve": [
+          "no tests deleted"
+        ]
+      },
+      "technical_constraints": [
+        "Only Phaser scene faked"
+      ],
+      "dependencies": [
+        "A2"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-924.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M868V8PCARJ0HT55Q809WWMN",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M868V8PCARJ0HT55Q809WWMN",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-924.md"
+      ],
+      "depends_on": [
+        "01M868V8PCARJ0HT55Q809WWMN"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-924.md",
+      "artifact_id": "UNIT-924",
+      "steps": [
+        {
+          "file": "game/frontend/tests/preloadFallback.test.ts",
+          "symbol": "new: describe('createPreloader fallback and dispose')",
+          "lines": "new",
+          "action": "Create fake scene as in preloadModule.test.ts, capturing the handler passed to load.on('loaderror', h). Tests: resolveKey('nope') === FALLBACK_KEY; resolveKey('objects/bed') === 'objects/bed'; after h({key:'objects/bed'}) resolveKey('objects/bed') === FALLBACK_KEY; generateTexture called with (FALLBACK_KEY,8,8); with textures.exists returning true, dispose() calls load.off('loaderror', h) and textures.remove(FALLBACK_KEY).",
+          "command": "cd game/frontend && npx vitest run tests/preloadFallback.test.ts",
+          "expected": "5 tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PC2XBG8HSDRYRATVD7",
+      "kind": "unit",
+      "title": "Verify: BootScene delegates preload and disposes on shutdown unit tests",
+      "body": "Test BootScene delegation with preload module mocked and existing suites kept.\n\n## Acceptance criteria\n- BootScene delegation to createPreloader and resolveKey, and dispose on SHUTDOWN, are asserted\n- Existing PNG preload and fallback suites still pass unchanged\n\n\n## Scope\n- In scope: game/frontend/tests/bootScenePreloadDelegate.test.ts\n- Out of scope: other behaviors\n- Preserve: bootScenePngPreload.test.ts and bootScenePreload.test.ts unchanged\n\n\n## Technical constraints\n- Mock phaser and ../src/phaser/preload only\n\n\n## Dependencies\n- A3\n\n\n## Definition of done\n- Tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests for BootScene wiring",
+      "description": "Test BootScene delegation with preload module mocked and existing suites kept.",
+      "acceptance_criteria": [
+        "BootScene delegation to createPreloader and resolveKey, and dispose on SHUTDOWN, are asserted",
+        "Existing PNG preload and fallback suites still pass unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/bootScenePreloadDelegate.test.ts"
+        ],
+        "out_of_scope": [
+          "other behaviors"
+        ],
+        "preserve": [
+          "bootScenePngPreload.test.ts and bootScenePreload.test.ts unchanged"
+        ]
+      },
+      "technical_constraints": [
+        "Mock phaser and ../src/phaser/preload only"
+      ],
+      "dependencies": [
+        "A3"
+      ],
+      "definition_of_done": [
+        "Tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-925.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M868V8PCPTY510PB9D4WPZXC",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M868V8PCPTY510PB9D4WPZXC",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-925.md"
+      ],
+      "depends_on": [
+        "01M868V8PCPTY510PB9D4WPZXC"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-925.md",
+      "artifact_id": "UNIT-925",
+      "steps": [
+        {
+          "file": "game/frontend/tests/bootScenePreloadDelegate.test.ts",
+          "symbol": "new: describe('BootScene preload delegation')",
+          "lines": "new",
+          "action": "vi.mock phaser (Scene class) and '../src/phaser/preload' returning createPreloader: vi.fn(() => ({resolveKey: vi.fn(()=>'k'), dispose})) and FALLBACK_KEY. Tests: boot.preload() calls createPreloader once with (boot, scene, manifest) from mocked runtime/content; boot.resolveKey('x') returns 'k'; FALLBACK_KEY imported from BootScene equals 'fallback:missing'. Also read BootScene.ts source with fs and assert it does not contain 'load.image' or 'planPreload('.",
+          "command": "cd game/frontend && npx vitest run tests/bootScenePreloadDelegate.test.ts tests/bootScenePngPreload.test.ts tests/bootScenePreload.test.ts tests/bootSceneFallback.test.ts",
+          "expected": "All listed tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M868V8PC70AB7WWTST7MM77R",
+      "kind": "evidence",
+      "title": "Evidence: Asset preload module unit tests pass",
+      "body": "Evidence that preload queueing, fallback, dispose and BootScene delegation unit tests pass.\n\n## Acceptance criteria\n- preloadModule, preloadFallback and bootScenePreloadDelegate tests pass\n- Existing preload suites still pass\n\n\n## Scope\n- In scope: test results\n- Out of scope: e2e\n- Preserve: phaser-pin guard\n\n\n## Technical constraints\n- Phaser ~3.90.0 pin\n\n\n## Dependencies\n- V1\n- V2\n- V3\n\n\n## Definition of done\n- Test output captured\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Preload module verification evidence",
+      "description": "Evidence that preload queueing, fallback, dispose and BootScene delegation unit tests pass.",
+      "acceptance_criteria": [
+        "preloadModule, preloadFallback and bootScenePreloadDelegate tests pass",
+        "Existing preload suites still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "e2e"
+        ],
+        "preserve": [
+          "phaser-pin guard"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser ~3.90.0 pin"
+      ],
+      "dependencies": [
+        "V1",
+        "V2",
+        "V3"
+      ],
+      "definition_of_done": [
+        "Test output captured",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-182.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M868V8PC1XGC18F39J994N3D",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M868V8PC1XGC18F39J994N3D",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-182.md"
+      ],
+      "depends_on": [
+        "01M868V8PC1XGC18F39J994N3D",
+        "01M868V8PCPKVD359FJX5M50YQ",
+        "01M868V8PC2XBG8HSDRYRATVD7"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-182.md",
+      "artifact_id": "EVD-182"
+    }
+  ],
+  "created_at": "2026-11-24T07:55:38.781278+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
