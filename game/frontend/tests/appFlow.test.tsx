@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
+import { phaserToReact } from '../src/phaser/events';
 
 // In-memory stand-in for runtime/storage so the flow never touches localStorage.
 let saved: unknown = null;
@@ -12,6 +13,26 @@ vi.mock('../src/runtime/storage', () => ({
     return true;
   },
 }));
+
+// Phaser is replaced at every seam: the game factory, the scene class, and the
+// 'phaser' module itself (config.ts loads it at import time, which crashes in jsdom).
+const { createGameMock } = vi.hoisted(() => ({
+  createGameMock: vi.fn(() => ({ destroy: vi.fn(), scale: { setZoom: vi.fn(), refresh: vi.fn() } })),
+}));
+vi.mock('../src/phaser/createGame', () => ({ createGame: createGameMock }));
+vi.mock('../src/phaser/BootScene', () => ({ BootScene: class BootScene {} }));
+vi.mock('phaser', () => ({
+  default: { AUTO: 0, Scale: { FIT: 3, CENTER_BOTH: 1 }, Game: class {}, Scene: class {} },
+}));
+// jsdom has no ResizeObserver; PhaserHost observes its container with one.
+vi.stubGlobal(
+  'ResizeObserver',
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+);
 
 describe('App flow: action menu', () => {
   beforeEach(() => {
@@ -30,7 +51,7 @@ describe('App flow: action menu', () => {
 
     expect(screen.queryByRole('region', { name: 'Bookshelf' })).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
 
     const menu = screen.getByRole('region', { name: 'Bookshelf' });
     expect(menu).toHaveAttribute('data-object-id', 'bookshelf');
@@ -57,7 +78,7 @@ describe('App flow: story actions and choices', () => {
   it('Search adds the hidden door text to the story history', () => {
     begin();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
     fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
     expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(

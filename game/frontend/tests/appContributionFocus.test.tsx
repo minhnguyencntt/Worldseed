@@ -17,6 +17,26 @@ vi.mock('../src/api/client', async (importOriginal) => {
 const mockedGetCurrentRound = vi.mocked(getCurrentRound);
 const mockedListMine = vi.mocked(listMine);
 
+// Phaser is replaced at every seam: the game factory, the scene class, and the
+// 'phaser' module itself (config.ts loads it at import time, which crashes in jsdom).
+const { createGameMock } = vi.hoisted(() => ({
+  createGameMock: vi.fn(() => ({ destroy: vi.fn(), scale: { setZoom: vi.fn(), refresh: vi.fn() } })),
+}));
+vi.mock('../src/phaser/createGame', () => ({ createGame: createGameMock }));
+vi.mock('../src/phaser/BootScene', () => ({ BootScene: class BootScene {} }));
+vi.mock('phaser', () => ({
+  default: { AUTO: 0, Scale: { FIT: 3, CENTER_BOTH: 1 }, Game: class {}, Scene: class {} },
+}));
+// jsdom has no ResizeObserver; PhaserHost observes its container with one.
+vi.stubGlobal(
+  'ResizeObserver',
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+);
+
 describe('App contribution focus', () => {
   beforeEach(() => {
     mockedGetCurrentRound.mockReset();

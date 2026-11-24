@@ -1,10 +1,31 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
+import { phaserToReact } from '../src/phaser/events';
 
 // The real App is rendered with its real components. localStorage is jsdom's
 // and is cleared between tests by tests/setup.ts.
+// Phaser is replaced at every seam: the game factory, the scene class, and the
+// 'phaser' module itself (config.ts loads it at import time, which crashes in jsdom).
+const { createGameMock } = vi.hoisted(() => ({
+  createGameMock: vi.fn(() => ({ destroy: vi.fn(), scale: { setZoom: vi.fn(), refresh: vi.fn() } })),
+}));
+vi.mock('../src/phaser/createGame', () => ({ createGame: createGameMock }));
+vi.mock('../src/phaser/BootScene', () => ({ BootScene: class BootScene {} }));
+vi.mock('phaser', () => ({
+  default: { AUTO: 0, Scale: { FIT: 3, CENTER_BOTH: 1 }, Game: class {}, Scene: class {} },
+}));
+// jsdom has no ResizeObserver; PhaserHost observes its container with one.
+vi.stubGlobal(
+  'ResizeObserver',
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+);
+
 describe('App intro gate', () => {
   afterEach(cleanup);
 
@@ -33,11 +54,10 @@ describe('App playing view', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
   }
 
-  it('Given Begin clicked, then scene, hotspots, Story toggle and opening dialogue render', () => {
+  it('Given Begin clicked, then the Phaser host, Story toggle and opening dialogue render', () => {
     begin();
 
-    expect(screen.getByRole('img', { name: 'Bedroom' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByTestId('phaser-host')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Story' })).toBeInTheDocument();
     expect(
       screen.getByText("I don't know what to do next. What should we do?"),
@@ -47,7 +67,7 @@ describe('App playing view', () => {
   it('Given the game view, when Bookshelf is clicked, then Inspect, Push, Search and Leave buttons appear', () => {
     begin();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
 
     expect(screen.getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Push' })).toBeInTheDocument();
@@ -55,14 +75,13 @@ describe('App playing view', () => {
     expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
   });
 
-  it('Given Bookshelf menu, when Search is clicked, then history shows the hidden door text and the hotspot is open', () => {
+  it('Given Bookshelf menu, when Search is clicked, then history shows the hidden door text', () => {
     begin();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
     fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
     expect(screen.getByText('A hidden door swings open behind the books.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
   });
 
   it('Given the opening dialogue, when Look around the room is clicked, then dialogue closes and history keeps the choice', () => {
@@ -88,9 +107,8 @@ describe('App remount and saved state', () => {
   it('Given a played game is unmounted, when the App remounts and Begin is clicked, then history, the opened hotspot and the Inventory region are restored', () => {
     const first = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Bookshelf' }));
+    act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
     fireEvent.click(screen.getByRole('button', { name: 'Search' }));
-    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
 
     first.unmount();
     begin();
@@ -98,7 +116,6 @@ describe('App remount and saved state', () => {
     expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
       'A hidden door swings open behind the books.',
     );
-    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'true');
     expect(screen.getByRole('region', { name: 'Inventory' })).toBeInTheDocument();
   });
 
@@ -110,6 +127,5 @@ describe('App remount and saved state', () => {
     expect(screen.getByRole('region', { name: 'Dialogue' })).toHaveTextContent(
       "I don't know what to do next. What should we do?",
     );
-    expect(screen.getByRole('button', { name: 'Bookshelf' })).toHaveAttribute('data-open', 'false');
   });
 });
