@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getSceneView, performAction, type SceneObjectView } from '@game/engine/scene';
-import { createInitialState } from '@game/state/gameState';
 import type { GameState, SceneDef } from '@game/state/types';
 import { chooseOption } from '@game/systems/dialogue';
 import { useGameStore } from '../store/gameStore';
-import { scene, world } from './content';
-import { readSaved, writeSaved } from './storage';
+import { scene } from './content';
 
 export type UseGame = {
   state: GameState;
