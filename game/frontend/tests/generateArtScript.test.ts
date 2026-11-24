@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { ART_SOURCES } from '../src/art/sources';
 import { readPngSize } from '../src/lib/pngEncode';
@@ -72,7 +73,8 @@ describe('runGenerateArt', () => {
   describe('when package.json is read', () => {
     it('registers art:generate as vite-node scripts/generateArt.ts', () => {
       const pkg = JSON.parse(
-        readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+        // process.cwd() is the frontend root (npm scripts run there); import.meta.url is not a file URL under jsdom.
+        readFileSync(join(process.cwd(), 'package.json'), 'utf8'),
       ) as { scripts: Record<string, string> };
       expect(pkg.scripts['art:generate']).toBe('vite-node scripts/generateArt.ts');
     });
