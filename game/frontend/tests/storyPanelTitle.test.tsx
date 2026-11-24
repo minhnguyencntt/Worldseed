@@ -59,7 +59,8 @@ describe('StoryPanel scene title and choices', () => {
     );
 
     const inventory = screen.getByRole('region', { name: 'Inventory' });
-    expect(within(inventory).getByText('key')).toBeInTheDocument();
+    // Inventory ids are rendered humanised ('key' -> 'Key') by buildInventorySlots.
+    expect(within(inventory).getByText('Key')).toBeInTheDocument();
   });
 
   it('keeps the panel root scrollable with the overflow-y-auto class', () => {
