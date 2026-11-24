@@ -23,6 +23,7 @@ vi.mock('phaser', () => {
       'clearTint',
       'on',
       'once',
+      'off',
       'play',
     ]) {
       obj[method] = vi.fn(() => obj);
@@ -40,7 +41,7 @@ vi.mock('phaser', () => {
         constructor() {
           // scene.start is attached with Object.assign because a class field named `scene` collides with the
           // `scene` import in the content mock.
-          Object.assign(this, { scene: { start: vi.fn() } });
+          Object.assign(this, { scene: { start: vi.fn(), get: vi.fn(() => ({})) } });
         }
         textures = { exists: vi.fn(() => true) };
         anims = {

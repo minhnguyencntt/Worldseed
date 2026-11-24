@@ -14,6 +14,7 @@ vi.mock('phaser', () => ({
   default: {
     Scene: class {
       events = { once: vi.fn() };
+      input = { keyboard: { on: vi.fn(), off: vi.fn() } };
     },
     Scenes: { Events: { SHUTDOWN: 'shutdown' } },
   },
@@ -26,6 +27,7 @@ vi.mock('@game/engine/buildScene', () => ({
 
 vi.mock('@game/engine/buildEffects', () => ({
   buildEffects: vi.fn(() => []),
+  destroyEffects: vi.fn(),
 }));
 
 vi.mock('@game/engine/playSceneTransition', () => ({
@@ -89,6 +91,7 @@ vi.mock('../src/phaser/renderContext', () => ({
 const makeFakeObject = () => ({
   destroy: vi.fn(),
   onInteract: vi.fn(),
+  onHoverChange: vi.fn(),
   sync: vi.fn(),
 });
 

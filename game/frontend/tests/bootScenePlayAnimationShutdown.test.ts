@@ -23,6 +23,7 @@ vi.mock('phaser', () => {
       'clearTint',
       'on',
       'once',
+      'off',
       'play',
     ]) {
       obj[method] = vi.fn(() => obj);

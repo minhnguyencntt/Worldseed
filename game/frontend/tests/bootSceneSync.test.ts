@@ -10,6 +10,7 @@ vi.mock('phaser', () => ({
   default: {
     Scene: class {
       events = { once: vi.fn() };
+      input = { keyboard: { on: vi.fn(), off: vi.fn() } };
     },
     Scenes: { Events: { SHUTDOWN: 'shutdown' } },
   },
@@ -25,7 +26,7 @@ vi.mock('../src/runtime/content', () => ({
 
 // buildScene is mocked so the scene holds exactly one fake object whose sync/destroy/onInteract are spies.
 vi.mock('@game/engine/buildScene', () => ({ buildScene: vi.fn() }));
-vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []) }));
+vi.mock('@game/engine/buildEffects', () => ({ buildEffects: vi.fn(() => []), destroyEffects: vi.fn() }));
 vi.mock('@game/engine/playSceneTransition', () => ({ playSceneTransition: vi.fn() }));
 vi.mock('../src/phaser/renderContext', () => ({ createPhaserRenderContext: vi.fn(() => ({})) }));
 vi.mock('../src/phaser/effectContext', () => ({ createPhaserEffectContext: vi.fn(() => ({})) }));
@@ -39,6 +40,7 @@ const makeFakeObject = () => ({
   sync: vi.fn(),
   destroy: vi.fn(),
   onInteract: vi.fn(),
+  onHoverChange: vi.fn(),
 });
 
 describe('BootScene state sync', () => {
