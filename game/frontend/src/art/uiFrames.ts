@@ -70,3 +70,31 @@ export const FRAME_KIT: FrameKitEntry[] = [
 ];
 
 export const UI_FRAME_SOURCES: ArtSource[] = FRAME_KIT.map((f) => ({ id: f.id, path: `ui/frames/${f.file}.png`, frames: [buildFrameGrid(f)] }));
+
+export interface FrameRule {
+  imageRendering: 'pixelated';
+  borderImage: string;
+}
+
+// Rule objects for the frame classes: each sf-frame-* class and each sf-btn state draws its
+// FRAME_KIT image as a pixelated border-image using that entry's slice inset.
+export function frameComponentClasses(): Record<string, FrameRule> {
+  const rule = (file: string): FrameRule => {
+    const entry = FRAME_KIT.find((f) => f.file === file);
+    if (!entry) throw new Error(`no FRAME_KIT entry for ${file}`);
+    return {
+      imageRendering: 'pixelated',
+      borderImage: `url("/assets/ui/frames/${entry.file}.png") ${entry.slice} fill / ${entry.slice}px stretch`,
+    };
+  };
+
+  const classes: Record<string, FrameRule> = {};
+  for (const name of ['bar', 'panel', 'plaque', 'parchment', 'slot']) {
+    classes[`.sf-frame-${name}`] = rule(name);
+  }
+  classes['.sf-btn'] = rule('button-normal');
+  classes['.sf-btn:disabled'] = rule('button-disabled');
+  classes[".sf-btn[data-state='hover']"] = rule('button-hover');
+  classes[".sf-btn[data-state='pressed']"] = rule('button-pressed');
+  return classes;
+}
