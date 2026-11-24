@@ -94,6 +94,7 @@ export default function App() {
             objectsSpec={sceneSpec.objects}
             layout={layout}
             activeId={activeId}
+            focusFirstAction={focusedObjectId !== null && activeId === focusedObjectId}
             onAction={game.act}
           />
           <ContributionSheet
