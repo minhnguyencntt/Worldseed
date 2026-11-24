@@ -1,0 +1,564 @@
+{
+  "intent_id": "01M86APJZF8QSWYGKH4ASEB8BY",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M86ARWM60GMR1V8ZTF2Q3F8Z",
+      "kind": "intent",
+      "title": "SG-6.2 · Accessible Radix dialogs for Intro and Contribution",
+      "body": "Context: ContributionSheet already renders inside the shadcn-style Radix wrapper in game/frontend/src/components/ui/dialog.tsx and returns focus to the Suggest trigger through returnFocusRef. IntroScreen is still a plain <section> with a Frame, so it has no dialog role, no focus trap and no Escape handling. Desired behaviour: both overlays are Radix dialogs from ui/dialog.tsx, with keyboard focus trapped inside, focus returned to the trigger on close where a trigger exists, and Escape closing. Expected result: tests assert all of this. Why: SG-6 requires keyboard-accessible overlays without changing what the player sees or can do.\n\n## Acceptance criteria\n- Given the intro is shown, when it renders, then IntroScreen exposes role dialog built from ui/dialog.tsx and Begin still calls onBegin once\n- Given the intro dialog is open, when Escape is pressed, then it closes by calling onBegin once and the player enters the game as with Begin\n- Given the intro dialog or contribution dialog is open, when Tab is pressed on the last control or focus is moved outside, then focus stays inside the dialog\n- Given the contribution dialog is open, when it closes through Escape or Close, then focus returns to the Suggest What Happens Next trigger\n\n\n## Scope\n- In scope: game/frontend/src/components/IntroScreen.tsx\n- In scope: ContributionSheet focus and Escape behaviour tests\n- In scope: IntroScreen focus trap and Escape tests\n- Out of scope: SG-6.3 splitting ContributionSheet, AdminApp and App\n- Out of scope: backend/ and the contribution/round API\n- Out of scope: new features, content or art changes\n- Preserve: Intro text, Begin button and parchment look\n- Preserve: ContributionSheet form, validation, quota and history behaviour\n- Preserve: frontend/src/api/client.ts endpoints and payloads\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0 and the phaser-pin guard test must keep passing\n- No change to what the player sees or can do\n- npm test and npm run typecheck pass in game/ and game/frontend/\n- No test is deleted or skipped; tests that pinned internals are rewritten against behaviour\n- No source file in game/src or game/frontend/src is over 200 lines\n- game/src never imports from game/frontend\n- The Zustand store is the only owner of GameState\n- Tests mock only what is external\n\n\n## Definition of done\n- Both dialogs use ui/dialog.tsx\n- Tests assert trap, focus return and Escape for both\n- Typecheck and tests pass in game/frontend\n\n\n## Non-functional requirements\n- Accessibility: dialogs have an accessible name and description\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "IntroScreen and ContributionSheet both use ui/dialog.tsx with focus trap, focus return and Escape, proven by tests",
+      "description": "Context: ContributionSheet already renders inside the shadcn-style Radix wrapper in game/frontend/src/components/ui/dialog.tsx and returns focus to the Suggest trigger through returnFocusRef. IntroScreen is still a plain <section> with a Frame, so it has no dialog role, no focus trap and no Escape handling. Desired behaviour: both overlays are Radix dialogs from ui/dialog.tsx, with keyboard focus trapped inside, focus returned to the trigger on close where a trigger exists, and Escape closing. Expected result: tests assert all of this. Why: SG-6 requires keyboard-accessible overlays without changing what the player sees or can do.",
+      "acceptance_criteria": [
+        "Given the intro is shown, when it renders, then IntroScreen exposes role dialog built from ui/dialog.tsx and Begin still calls onBegin once",
+        "Given the intro dialog is open, when Escape is pressed, then it closes by calling onBegin once and the player enters the game as with Begin",
+        "Given the intro dialog or contribution dialog is open, when Tab is pressed on the last control or focus is moved outside, then focus stays inside the dialog",
+        "Given the contribution dialog is open, when it closes through Escape or Close, then focus returns to the Suggest What Happens Next trigger"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/src/components/IntroScreen.tsx",
+          "ContributionSheet focus and Escape behaviour tests",
+          "IntroScreen focus trap and Escape tests"
+        ],
+        "out_of_scope": [
+          "SG-6.3 splitting ContributionSheet, AdminApp and App",
+          "backend/ and the contribution/round API",
+          "new features, content or art changes"
+        ],
+        "preserve": [
+          "Intro text, Begin button and parchment look",
+          "ContributionSheet form, validation, quota and history behaviour",
+          "frontend/src/api/client.ts endpoints and payloads"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0 and the phaser-pin guard test must keep passing",
+        "No change to what the player sees or can do",
+        "npm test and npm run typecheck pass in game/ and game/frontend/",
+        "No test is deleted or skipped; tests that pinned internals are rewritten against behaviour",
+        "No source file in game/src or game/frontend/src is over 200 lines",
+        "game/src never imports from game/frontend",
+        "The Zustand store is the only owner of GameState",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Both dialogs use ui/dialog.tsx",
+        "Tests assert trap, focus return and Escape for both",
+        "Typecheck and tests pass in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-188.md`"
+      ],
+      "non_functional": [
+        "Accessibility: dialogs have an accessible name and description"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85FWFYE6T0BGGMNHZ3BZKFR",
+      "links": [
+        "trace:01M85FWFYE6T0BGGMNHZ3BZKFR",
+        "artifact:.ai-dlc/intent/INT-188.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-188.md",
+      "artifact_id": "INT-188"
+    },
+    {
+      "id": "01M86ARWM6PH5BT2YBNYS7S3HJ",
+      "kind": "requirement",
+      "title": "REQ · IntroScreen is an accessible Radix dialog built on ui/dialog.tsx",
+      "body": "Context: IntroScreen.tsx (22 lines) renders section.intro-screen.sf-fullscreen-bg containing a Frame and a Begin Button. Desired behaviour: keep the section backdrop, render the story in Dialog/DialogContent with sf-frame-parchment sf-dialog classes, give it an accessible name and description, and treat dialog close (Escape) as onBegin. Expected result: role dialog with trapped focus. Why: keyboard and screen reader users get a proper modal.\n\n## Acceptance criteria\n- Given IntroScreen is rendered, when queried by role, then one dialog with an accessible name exists containing the four story lines and a Begin button\n- Given the dialog is open, when Escape is pressed, then onBegin is called exactly once\n- Given the dialog is open, when Begin is clicked, then onBegin is called exactly once\n\n\n## Scope\n- In scope: IntroScreen.tsx\n- Out of scope: ContributionSheet\n- Out of scope: App gate logic\n- Preserve: Intro wording\n- Preserve: gold Begin button\n- Preserve: full-screen backdrop section\n\n\n## Technical constraints\n- Use components/ui/dialog.tsx, no new dialog primitive\n- No change to what the player sees\n- Source files stay under 200 lines\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- IntroScreen uses Dialog, DialogContent, DialogTitle and DialogDescription\n- Escape and Begin both call onBegin\n\n\n## Non-functional requirements\n- Accessible name and description present, no Radix missing-description warning\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "IntroScreen renders through Dialog parts with focus trap and Escape that begins the game",
+      "description": "Context: IntroScreen.tsx (22 lines) renders section.intro-screen.sf-fullscreen-bg containing a Frame and a Begin Button. Desired behaviour: keep the section backdrop, render the story in Dialog/DialogContent with sf-frame-parchment sf-dialog classes, give it an accessible name and description, and treat dialog close (Escape) as onBegin. Expected result: role dialog with trapped focus. Why: keyboard and screen reader users get a proper modal.",
+      "acceptance_criteria": [
+        "Given IntroScreen is rendered, when queried by role, then one dialog with an accessible name exists containing the four story lines and a Begin button",
+        "Given the dialog is open, when Escape is pressed, then onBegin is called exactly once",
+        "Given the dialog is open, when Begin is clicked, then onBegin is called exactly once"
+      ],
+      "scope": {
+        "in_scope": [
+          "IntroScreen.tsx"
+        ],
+        "out_of_scope": [
+          "ContributionSheet",
+          "App gate logic"
+        ],
+        "preserve": [
+          "Intro wording",
+          "gold Begin button",
+          "full-screen backdrop section"
+        ]
+      },
+      "technical_constraints": [
+        "Use components/ui/dialog.tsx, no new dialog primitive",
+        "No change to what the player sees",
+        "Source files stay under 200 lines"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "IntroScreen uses Dialog, DialogContent, DialogTitle and DialogDescription",
+        "Escape and Begin both call onBegin",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-477.md`"
+      ],
+      "non_functional": [
+        "Accessible name and description present, no Radix missing-description warning"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86ARWM60GMR1V8ZTF2Q3F8Z",
+      "matched_feature_id": "01M864WDRB08JCTNZDV4W0XGZ0",
+      "links": [
+        "parent:01M86ARWM60GMR1V8ZTF2Q3F8Z",
+        "trace:01M864WDRB08JCTNZDV4W0XGZ0",
+        "artifact:.ai-dlc/requirements/REQ-477.md"
+      ],
+      "depends_on": [
+        "01M86ARWM60GMR1V8ZTF2Q3F8Z"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-477.md",
+      "artifact_id": "REQ-477"
+    },
+    {
+      "id": "01M86ARWM69BXRVFNAWEZ8EY2P",
+      "kind": "requirement",
+      "title": "REQ · ContributionSheet traps focus, closes on Escape and returns focus to its trigger",
+      "body": "Context: ContributionSheet wraps its content in DialogContent with onCloseAutoFocus returning focus to returnFocusRef; Escape and focus return are tested, but the focus trap is not. Desired behaviour: the existing Radix behaviour is confirmed in code and the focus trap is asserted by tests. Expected result: trap, Escape and focus return all covered. Why: closes the SG-6.2 done-when for the contribution sheet.\n\n## Acceptance criteria\n- Given the sheet is open, when Tab is pressed on the last tabbable control, then focus moves to the first tabbable control inside the dialog\n- Given the sheet is open, when focus is moved to an element outside it, then focus returns inside the dialog\n- Given the sheet closes through Escape, then focus is on the Suggest trigger\n\n\n## Scope\n- In scope: ContributionSheet dialog structure and focus props\n- Out of scope: Splitting ContributionSheet below 200 lines (SG-6.3)\n- Out of scope: form validation changes\n- Preserve: history, quota, validation and submit behaviour\n- Preserve: returnFocusRef prop\n\n\n## Technical constraints\n- Use components/ui/dialog.tsx\n- API client endpoints and payloads unchanged\n- Tests mock only the API client, Phaser and the network\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- All interactive controls sit inside DialogContent\n- Focus return wired through onCloseAutoFocus and returnFocusRef\n\n\n## Non-functional requirements\n- Keyboard operable\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "ContributionSheet keeps keyboard focus inside the dialog and returns it to the Suggest trigger, with the focus trap asserted",
+      "description": "Context: ContributionSheet wraps its content in DialogContent with onCloseAutoFocus returning focus to returnFocusRef; Escape and focus return are tested, but the focus trap is not. Desired behaviour: the existing Radix behaviour is confirmed in code and the focus trap is asserted by tests. Expected result: trap, Escape and focus return all covered. Why: closes the SG-6.2 done-when for the contribution sheet.",
+      "acceptance_criteria": [
+        "Given the sheet is open, when Tab is pressed on the last tabbable control, then focus moves to the first tabbable control inside the dialog",
+        "Given the sheet is open, when focus is moved to an element outside it, then focus returns inside the dialog",
+        "Given the sheet closes through Escape, then focus is on the Suggest trigger"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet dialog structure and focus props"
+        ],
+        "out_of_scope": [
+          "Splitting ContributionSheet below 200 lines (SG-6.3)",
+          "form validation changes"
+        ],
+        "preserve": [
+          "history, quota, validation and submit behaviour",
+          "returnFocusRef prop"
+        ]
+      },
+      "technical_constraints": [
+        "Use components/ui/dialog.tsx",
+        "API client endpoints and payloads unchanged",
+        "Tests mock only the API client, Phaser and the network"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "All interactive controls sit inside DialogContent",
+        "Focus return wired through onCloseAutoFocus and returnFocusRef",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-478.md`"
+      ],
+      "non_functional": [
+        "Keyboard operable"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M86ARWM60GMR1V8ZTF2Q3F8Z",
+      "matched_feature_id": "01M85FWFYE26ZRTDR5WTEPR56G",
+      "links": [
+        "parent:01M86ARWM60GMR1V8ZTF2Q3F8Z",
+        "trace:01M85FWFYE26ZRTDR5WTEPR56G",
+        "artifact:.ai-dlc/requirements/REQ-478.md"
+      ],
+      "depends_on": [
+        "01M86ARWM60GMR1V8ZTF2Q3F8Z"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-478.md",
+      "artifact_id": "REQ-478"
+    },
+    {
+      "id": "01M86ARWM6F0N7Z5QKQA83P44H",
+      "kind": "unit",
+      "title": "Act: Rebuild IntroScreen on the Dialog parts",
+      "body": "Replace the Frame wrapper in IntroScreen with Dialog open, DialogContent, an sr-only DialogTitle and a DialogDescription holding the story lines, keeping the Begin button and the section backdrop.\n\n## Acceptance criteria\n- IntroScreen renders a role dialog from ui/dialog.tsx\n- onOpenChange(false) calls onBegin\n- Visible text and Begin button are unchanged\n\n\n## Scope\n- In scope: IntroScreen.tsx\n- Out of scope: tests\n- Preserve: story text\n- Preserve: gold Begin button\n\n\n## Technical constraints\n- No change to what the player sees\n- Phaser pinned ~3.90.0\n- Files under 200 lines\n- Code path: `game/frontend/src/components/IntroScreen.tsx`\n\n\n## Dependencies\n- REQ1\n\n\n## Definition of done\n- IntroScreen uses Dialog parts\n- npm run typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Wrap the intro story in ui/dialog.tsx parts and map dialog close to onBegin",
+      "description": "Replace the Frame wrapper in IntroScreen with Dialog open, DialogContent, an sr-only DialogTitle and a DialogDescription holding the story lines, keeping the Begin button and the section backdrop.",
+      "acceptance_criteria": [
+        "IntroScreen renders a role dialog from ui/dialog.tsx",
+        "onOpenChange(false) calls onBegin",
+        "Visible text and Begin button are unchanged"
+      ],
+      "scope": {
+        "in_scope": [
+          "IntroScreen.tsx"
+        ],
+        "out_of_scope": [
+          "tests"
+        ],
+        "preserve": [
+          "story text",
+          "gold Begin button"
+        ]
+      },
+      "technical_constraints": [
+        "No change to what the player sees",
+        "Phaser pinned ~3.90.0",
+        "Files under 200 lines",
+        "Code path: `game/frontend/src/components/IntroScreen.tsx`"
+      ],
+      "dependencies": [
+        "REQ1"
+      ],
+      "definition_of_done": [
+        "IntroScreen uses Dialog parts",
+        "npm run typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-954.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86ARWM6PH5BT2YBNYS7S3HJ",
+      "matched_feature_id": "01M864WDRBCH06CZ2H8ENC37GT",
+      "links": [
+        "parent:01M86ARWM6PH5BT2YBNYS7S3HJ",
+        "trace:01M864WDRBCH06CZ2H8ENC37GT",
+        "artifact:.ai-dlc/units/UNIT-954.md"
+      ],
+      "depends_on": [
+        "01M86ARWM6PH5BT2YBNYS7S3HJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-954.md",
+      "artifact_id": "UNIT-954",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/IntroScreen.tsx",
+          "symbol": "imports",
+          "lines": "L1-L2",
+          "action": "Replace the import of Frame with imports of Dialog, DialogContent, DialogDescription and DialogTitle from './ui/dialog'; keep the Button import.",
+          "code": "import { Dialog, DialogContent, DialogDescription, DialogTitle } from './ui/dialog';",
+          "expected": "Frame is no longer imported; file compiles."
+        },
+        {
+          "file": "game/frontend/src/components/IntroScreen.tsx",
+          "symbol": "IntroScreen",
+          "lines": "L9-L22",
+          "action": "Keep the outer section.intro-screen.sf-fullscreen-bg. Inside it render <Dialog open onOpenChange={(next) => { if (!next) onBegin(); }}> with <DialogContent className=\"sf-frame-parchment sf-dialog text-center\"> containing <DialogTitle className=\"sr-only\">Introduction</DialogTitle>, then <DialogDescription asChild><div> with the four existing <p> lines </div></DialogDescription>, then the existing gold Button calling onBegin.",
+          "code": "<Dialog open onOpenChange={(next) => { if (!next) onBegin(); }}>\n  <DialogContent className=\"sf-frame-parchment sf-dialog text-center\">\n    <DialogTitle className=\"sr-only\">Introduction</DialogTitle>\n    <DialogDescription asChild><div>…four <p> lines…</div></DialogDescription>\n    <Button variant=\"gold\" onClick={onBegin}>Begin</Button>\n  </DialogContent>\n</Dialog>",
+          "expected": "Intro shows the same text and button, exposed as role dialog; Escape calls onBegin."
+        }
+      ]
+    },
+    {
+      "id": "01M86ARWM6T296DNTBCXZM94BH",
+      "kind": "unit",
+      "title": "Act: Confirm ContributionSheet keeps all controls inside DialogContent with focus return",
+      "body": "ContributionSheet already renders everything within DialogContent and returns focus via onCloseAutoFocus. This unit checks that wiring and changes nothing unless a control sits outside DialogContent.\n\n## Acceptance criteria\n- All buttons, the textarea and the list are children of DialogContent\n- onCloseAutoFocus prevents default and focuses returnFocusRef.current when set\n\n\n## Scope\n- In scope: ContributionSheet.tsx dialog structure\n- Out of scope: splitting the component\n- Out of scope: tests\n- Preserve: all behaviour\n\n\n## Technical constraints\n- No change to what the player sees\n- API client unchanged\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n\n\n## Dependencies\n- REQ2\n\n\n## Definition of done\n- Wiring confirmed; any control outside DialogContent moved inside\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Confirm the existing Radix wiring in ContributionSheet that the focus trap and focus return rely on",
+      "description": "ContributionSheet already renders everything within DialogContent and returns focus via onCloseAutoFocus. This unit checks that wiring and changes nothing unless a control sits outside DialogContent.",
+      "acceptance_criteria": [
+        "All buttons, the textarea and the list are children of DialogContent",
+        "onCloseAutoFocus prevents default and focuses returnFocusRef.current when set"
+      ],
+      "scope": {
+        "in_scope": [
+          "ContributionSheet.tsx dialog structure"
+        ],
+        "out_of_scope": [
+          "splitting the component",
+          "tests"
+        ],
+        "preserve": [
+          "all behaviour"
+        ]
+      },
+      "technical_constraints": [
+        "No change to what the player sees",
+        "API client unchanged",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`"
+      ],
+      "dependencies": [
+        "REQ2"
+      ],
+      "definition_of_done": [
+        "Wiring confirmed; any control outside DialogContent moved inside",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-955.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M86ARWM69BXRVFNAWEZ8EY2P",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86ARWM69BXRVFNAWEZ8EY2P",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-955.md"
+      ],
+      "depends_on": [
+        "01M86ARWM69BXRVFNAWEZ8EY2P"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-955.md",
+      "artifact_id": "UNIT-955",
+      "steps": [
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet (DialogContent block)",
+          "lines": "L106-L172",
+          "action": "Check that the Close button, form, textarea, Send button, Retry button and suggestions list are all descendants of DialogContent, and that onCloseAutoFocus calls event.preventDefault() then returnFocusRef.current.focus() when the ref is set. Make no edit if both hold.",
+          "command": "grep -n \"onCloseAutoFocus\\|returnFocusRef\\|</DialogContent>\" game/frontend/src/components/ContributionSheet.tsx",
+          "expected": "onCloseAutoFocus and returnFocusRef appear before the single closing </DialogContent>; nothing is rendered outside it."
+        }
+      ]
+    },
+    {
+      "id": "01M86ARWM6109PFTZKS5S4VVQZ",
+      "kind": "unit",
+      "title": "Verify: IntroScreen dialog role, Escape, Begin and focus trap unit tests",
+      "body": "The existing introScreen.test.tsx pins DOM classes via container.querySelector, which no longer sees the portal content. Rewrite them against behaviour and add Escape and focus trap assertions.\n\n## Acceptance criteria\n- Dialog role, name and story text asserted\n- Escape calls onBegin once\n- Tab on last control and outside focus stay inside\n\n\n## Scope\n- In scope: game/frontend/tests/introScreen.test.tsx\n- Out of scope: e2e or browser checks\n- Preserve: Begin click test\n\n\n## Technical constraints\n- Unit tests only, jsdom, nothing external beyond jsdom\n- No test deleted or skipped; rewritten ones keep their intent\n\n\n## Dependencies\n- ACT1\n\n\n## Definition of done\n- introScreen tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rewrite introScreen tests against dialog behaviour and add Escape and trap tests",
+      "description": "The existing introScreen.test.tsx pins DOM classes via container.querySelector, which no longer sees the portal content. Rewrite them against behaviour and add Escape and focus trap assertions.",
+      "acceptance_criteria": [
+        "Dialog role, name and story text asserted",
+        "Escape calls onBegin once",
+        "Tab on last control and outside focus stay inside"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/introScreen.test.tsx"
+        ],
+        "out_of_scope": [
+          "e2e or browser checks"
+        ],
+        "preserve": [
+          "Begin click test"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, jsdom, nothing external beyond jsdom",
+        "No test deleted or skipped; rewritten ones keep their intent"
+      ],
+      "dependencies": [
+        "ACT1"
+      ],
+      "definition_of_done": [
+        "introScreen tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-956.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86ARWM6F0N7Z5QKQA83P44H",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M86ARWM6F0N7Z5QKQA83P44H",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-956.md"
+      ],
+      "depends_on": [
+        "01M86ARWM6F0N7Z5QKQA83P44H"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-956.md",
+      "artifact_id": "UNIT-956",
+      "steps": [
+        {
+          "file": "game/frontend/tests/introScreen.test.tsx",
+          "symbol": "it('renders a full-screen backdrop section') and it('shows the intro dialog ...')",
+          "lines": "L12-L36",
+          "action": "Rewrite: keep the section.sf-fullscreen-bg assertion via container.querySelector; replace the .sf-frame-parchment.sf-dialog container query with screen.getByRole('dialog') asserting toHaveAccessibleName('Introduction') and toHaveTextContent('You decide.').",
+          "code": "const dialog = screen.getByRole('dialog'); expect(dialog).toHaveAccessibleName('Introduction'); expect(dialog).toHaveTextContent('You decide.');",
+          "command": "npx vitest run tests/introScreen.test.tsx -t \"dialog\"",
+          "expected": "Both rewritten tests pass."
+        },
+        {
+          "file": "game/frontend/tests/introScreen.test.tsx",
+          "symbol": "new: it('calls onBegin once when Escape is pressed')",
+          "lines": "after L52",
+          "action": "Render <IntroScreen onBegin={onBegin} />, fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' }), then waitFor onBegin toHaveBeenCalledTimes(1).",
+          "command": "npx vitest run tests/introScreen.test.tsx -t \"Escape\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/introScreen.test.tsx",
+          "symbol": "new: it('keeps focus inside the dialog')",
+          "lines": "after L52",
+          "action": "Render IntroScreen plus an outside <button>Outside</button>. Assert the Begin button is the only tabbable control: fireEvent.keyDown(Begin, { key: 'Tab' }) and expect document.activeElement to be Begin. Then call outside.focus() and waitFor document.activeElement to be contained by the dialog.",
+          "command": "npx vitest run tests/introScreen.test.tsx -t \"focus\"",
+          "expected": "Focus never rests on the outside button."
+        }
+      ]
+    },
+    {
+      "id": "01M86ARWM6RH6CBE3P2VE2NGDE",
+      "kind": "unit",
+      "title": "Verify: ContributionSheet focus trap, Escape and focus return unit tests",
+      "body": "Escape and focus return exist in contributionDialog.test.tsx and appContributionFocus.test.tsx; the focus trap is not asserted. Add it.\n\n## Acceptance criteria\n- Tab on Close moves focus to the textarea\n- Focus moved outside returns inside\n- Escape and Close return focus to the trigger\n\n\n## Scope\n- In scope: game/frontend/tests/contributionFocusTrap.test.tsx\n- Out of scope: browser checks\n- Preserve: existing contribution tests\n\n\n## Technical constraints\n- Mock only fetch/the API client per game/frontend/tests/fixtures/api.ts, which mirrors the backend contribution list response\n- Unit tests only\n\n\n## Dependencies\n- ACT2\n\n\n## Definition of done\n- New tests pass and existing contribution focus tests still pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Add a focus trap test file for ContributionSheet with the API client mocked",
+      "description": "Escape and focus return exist in contributionDialog.test.tsx and appContributionFocus.test.tsx; the focus trap is not asserted. Add it.",
+      "acceptance_criteria": [
+        "Tab on Close moves focus to the textarea",
+        "Focus moved outside returns inside",
+        "Escape and Close return focus to the trigger"
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contributionFocusTrap.test.tsx"
+        ],
+        "out_of_scope": [
+          "browser checks"
+        ],
+        "preserve": [
+          "existing contribution tests"
+        ]
+      },
+      "technical_constraints": [
+        "Mock only fetch/the API client per game/frontend/tests/fixtures/api.ts, which mirrors the backend contribution list response",
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "ACT2"
+      ],
+      "definition_of_done": [
+        "New tests pass and existing contribution focus tests still pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-957.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86ARWM6T296DNTBCXZM94BH",
+      "matched_feature_id": "01M85FWFYEGXD28P89JVJAFNHF",
+      "links": [
+        "parent:01M86ARWM6T296DNTBCXZM94BH",
+        "trace:01M85FWFYEGXD28P89JVJAFNHF",
+        "artifact:.ai-dlc/units/UNIT-957.md"
+      ],
+      "depends_on": [
+        "01M86ARWM6T296DNTBCXZM94BH"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-957.md",
+      "artifact_id": "UNIT-957",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contributionFocusTrap.test.tsx",
+          "symbol": "new: describe('ContributionSheet focus trap')",
+          "lines": "new",
+          "action": "Create the file following contributionDialog.test.tsx (jsdom pragma, stubFetch returning json(200, []), render <ContributionSheet open onClose={vi.fn()} roundId=\"round-1\" />). Add it('wraps Tab from the last control to the first'): focus screen.getByRole('button',{name:'Close'}), fireEvent.keyDown it with key 'Tab', expect document.activeElement toBe screen.getByLabelText('Your idea').",
+          "command": "npx vitest run tests/contributionFocusTrap.test.tsx -t \"wraps Tab\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/contributionFocusTrap.test.tsx",
+          "symbol": "new: it('pulls focus back inside when moved outside')",
+          "lines": "new",
+          "action": "Render the sheet next to an outside <button>Outside</button>, call outside.focus(), waitFor screen.getByRole('dialog').contains(document.activeElement) to be true.",
+          "command": "npx vitest run tests/contributionFocusTrap.test.tsx -t \"pulls focus\"",
+          "expected": "Test passes."
+        },
+        {
+          "file": "game/frontend/tests/contributionFocusTrap.test.tsx",
+          "symbol": "new: it('returns focus to the trigger on Escape')",
+          "lines": "new",
+          "action": "Render a harness with a trigger button and the sheet using returnFocusRef; focus trigger, open, fireEvent.keyDown(dialog,{key:'Escape'}) with onClose closing it, waitFor document.activeElement toBe trigger.",
+          "command": "npx vitest run tests/contributionFocusTrap.test.tsx tests/appContributionFocus.test.tsx",
+          "expected": "All tests in both files pass."
+        }
+      ]
+    },
+    {
+      "id": "01M86ARWM6C0YC2JM5HCMEF5EC",
+      "kind": "evidence",
+      "title": "Evidence: Accessible Radix dialogs for Intro and Contribution unit tests pass",
+      "body": "Collects the results of the IntroScreen and ContributionSheet dialog unit tests as evidence for SG-6.2.\n\n## Acceptance criteria\n- introScreen and contributionFocusTrap suites pass\n- app, appContributionFocus and contributionDialog suites still pass\n\n\n## Scope\n- In scope: test results\n- Out of scope: new code\n- Preserve: all existing tests\n\n\n## Technical constraints\n- Unit tests only\n- npm test and npm run typecheck green in game/frontend\n\n\n## Dependencies\n- VER1\n- VER2\n\n\n## Definition of done\n- Results recorded as green\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove dialog role, trap, Escape and focus return for both overlays",
+      "description": "Collects the results of the IntroScreen and ContributionSheet dialog unit tests as evidence for SG-6.2.",
+      "acceptance_criteria": [
+        "introScreen and contributionFocusTrap suites pass",
+        "app, appContributionFocus and contributionDialog suites still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "new code"
+        ],
+        "preserve": [
+          "all existing tests"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only",
+        "npm test and npm run typecheck green in game/frontend"
+      ],
+      "dependencies": [
+        "VER1",
+        "VER2"
+      ],
+      "definition_of_done": [
+        "Results recorded as green",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-188.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M86ARWM6109PFTZKS5S4VVQZ",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M86ARWM6109PFTZKS5S4VVQZ",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-188.md"
+      ],
+      "depends_on": [
+        "01M86ARWM6109PFTZKS5S4VVQZ",
+        "01M86ARWM6RH6CBE3P2VE2NGDE"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-188.md",
+      "artifact_id": "EVD-188"
+    }
+  ],
+  "created_at": "2026-11-24T08:29:17.969950+00:00",
+  "summary": "AI · 0 NEW · 8 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
