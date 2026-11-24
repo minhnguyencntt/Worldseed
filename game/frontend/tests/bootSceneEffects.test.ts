@@ -13,6 +13,8 @@ vi.mock('phaser', () => ({
     Scene: class {
       events = { once: vi.fn() };
       tweens = { killAll: vi.fn() };
+      anims = { remove: vi.fn() };
+      textures = { remove: vi.fn() };
       cameras = { main: { off: vi.fn() } };
       // A real Phaser scene always has input; no keyboard plugin is needed for these tests.
       input = { keyboard: null };

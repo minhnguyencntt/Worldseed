@@ -14,7 +14,7 @@ vi.mock('phaser', () => {
   // Every fake game object returns itself from its chainable setters so Phaser call chains resolve.
   const fakeGameObject = (): Record<string, unknown> => {
     const obj: Record<string, unknown> = {};
-    for (const method of ['setOrigin', 'setDepth', 'setScale', 'setInteractive', 'setVisible', 'setTint', 'clearTint', 'on']) {
+    for (const method of ['setOrigin', 'setDepth', 'setScale', 'setInteractive', 'setVisible', 'setTint', 'clearTint', 'on', 'removeAllListeners']) {
       obj[method] = vi.fn(() => obj);
     }
     obj.destroy = vi.fn();
@@ -25,6 +25,8 @@ vi.mock('phaser', () => {
       Scene: class {
         events = { once: vi.fn() };
         tweens = { killAll: vi.fn() };
+        anims = { remove: vi.fn() };
+        textures = { remove: vi.fn() };
         input = { keyboard: { on: vi.fn(), off: vi.fn() } };
         scale = { width: 320, height: 240 };
         cameras = { main: { off: vi.fn(), fadeIn: vi.fn() } };

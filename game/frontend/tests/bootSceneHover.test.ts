@@ -10,6 +10,8 @@ vi.mock('phaser', () => ({
     Scene: class {
       events = { once: vi.fn() };
       tweens = { killAll: vi.fn() };
+      anims = { remove: vi.fn() };
+      textures = { remove: vi.fn() };
       cameras = { main: { off: vi.fn() } };
       input = { keyboard: undefined };
     },
