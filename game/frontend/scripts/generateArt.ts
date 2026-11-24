@@ -20,22 +20,8 @@ export interface ArtPaths {
 
 // Resolves the assets root and app manifest path relative to the script directory.
 export function defaultArtPaths(scriptDir: string): ArtPaths {
-  const assetsRoot = resolve(scriptDir, '../../public/assets');
+  const assetsRoot = resolve(scriptDir, '../public/assets');
   return { assetsRoot, manifestPath: resolve(assetsRoot, 'worlds/the-boys-room/manifest.json') };
-}
-
-export interface ArtPaths {
-  assetsRoot: string;
-  manifestPath: string;
-}
-
-// Paths are resolved from the scripts directory so the CLI works from any cwd.
-export function defaultArtPaths(scriptsDir: string): ArtPaths {
-  const publicDir = resolve(scriptsDir, '..', 'public');
-  return {
-    assetsRoot: resolve(publicDir, 'assets'),
-    manifestPath: resolve(publicDir, 'assets', 'manifest.json'),
-  };
 }
 
 export interface FsLike {
