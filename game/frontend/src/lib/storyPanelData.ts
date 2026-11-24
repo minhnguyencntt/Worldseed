@@ -16,12 +16,21 @@ export function portraitPath(speaker: string): string | undefined {
   return entry ? `/assets/${entry.path}` : undefined;
 }
 
+// 'old-key' -> 'Old Key'; splits on hyphens/underscores and capitalises each word.
+export function humaniseId(id: string): string {
+  return id
+    .split(/[-_\s]+/)
+    .filter((word) => word.length > 0)
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export function buildInventorySlots(inventory: string[]): InventorySlot[] {
   return Array.from({ length: INVENTORY_SLOT_COUNT }, (_, i): InventorySlot => {
     const id = inventory[i];
     if (id === undefined) {
       return { id: null, name: '', icon: undefined };
     }
-    return { id, name: id, icon: iconFor(id) };
+    return { id, name: humaniseId(id), icon: iconFor(id) };
   });
 }
