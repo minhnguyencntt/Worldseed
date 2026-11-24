@@ -27,7 +27,13 @@ export function missingTerms(text: string, terms: string[]): string[] {
   return terms.filter((x) => !t.includes(x.toLowerCase()));
 }
 
+/**
+ * Strings the repo-root context.md must not contain (stale README-only text).
+ * Note: 'Frameworks: UNKNOWN' is not in this list; it is checked by the test regex instead.
+ */
 export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Executable / server / CLI `main` | UNKNOWN'];
+
+/** Returns the STALE_TEXT entries found in md (case-sensitive substring match); an empty array means no stale text. */
 export function staleTextHits(md: string): string[] {
   return STALE_TEXT.filter((s) => md.includes(s));
 }
