@@ -1,6 +1,7 @@
 /**
  * Terms the repo-root context.md Stack section must contain (case-insensitive).
  * The Stack section also names TypeScript and lists the Go backend as out of scope.
+ * Go for backend/ is named in the Stack section but is not a STACK_TERMS entry because the substring would match trivially.
  */
 export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 

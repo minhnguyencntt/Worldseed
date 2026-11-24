@@ -8,6 +8,7 @@
  * - `backend/`
  * Each returned path is checked with missingPaths against the repo root.
  * Paths are returned exactly as written in the table, trailing slash kept, so each resolves against the repo root.
+ * It returns backticked paths from table rows starting with '|', keeping the trailing slash on directories such as game/src/ and backend/.
  */
 export function contextModulePaths(md: string): string[] {
   const out = new Set<string>();
