@@ -76,7 +76,7 @@ describe('frame kit', () => {
   it('game screen components apply the kit', () => {
     // Given the game layout, header overlay and story panel rendered with the kit props,
     // when they are rendered,
-    // then the aside is a sf-frame-panel, the header is a sf-frame-bar with an sf-btn Settings button,
+    // then the centered story dialog is a sf-frame-panel, the header is a sf-frame-bar with an sf-btn Settings button,
     // the story panel root is a sf-frame-panel without the legacy bg-stone-900 or border-amber-900 classes,
     // the Event log region is a sf-frame-plaque, every inventory slot is a sf-frame-slot,
     // and the Dialogue region is a sf-frame-parchment.
@@ -85,7 +85,7 @@ describe('frame kit', () => {
     const layout = render(
       <GameLayout header={<div>Header</div>} scene={<div>Scene</div>} story={<div>Story</div>} />,
     );
-    expect(layout.container.querySelector('aside')).toHaveClass('sf-frame-panel');
+    expect(layout.getByTestId('story-dialog')).toHaveClass('sf-frame-panel');
     layout.unmount();
 
     const header = render(<HeaderOverlay worldTitle="W" />);

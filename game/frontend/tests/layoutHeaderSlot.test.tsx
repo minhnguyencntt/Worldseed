@@ -9,10 +9,10 @@ describe('GameLayout header slot', () => {
     cleanup();
   });
 
-  it('header inside main: Given GameLayout with a header, a scene and a story, when rendered, then the header renders inside main and not inside the aside', () => {
+  it('header inside main: Given GameLayout with a header, a scene and a story, when rendered, then the header renders inside main and no aside exists', () => {
     // Given GameLayout rendered with header, scene and story nodes,
     // when the header test id is queried,
-    // then it is a descendant of the main column and not a descendant of the aside drawer.
+    // then it is a descendant of the main column and no aside element is rendered.
     const { container } = render(
       <GameLayout
         header={<div data-testid="hdr" />}
@@ -22,13 +22,11 @@ describe('GameLayout header slot', () => {
     );
 
     const main = container.querySelector('main');
-    const aside = container.querySelector('aside');
     expect(main).not.toBeNull();
-    expect(aside).not.toBeNull();
+    expect(container.querySelector('aside')).toBeNull();
 
     const header = screen.getByTestId('hdr');
     expect(within(main as HTMLElement).getByTestId('hdr')).toBe(header);
-    expect(aside).not.toContainElement(header);
   });
 
   it('omitted header leaves layout unchanged: Given GameLayout without a header, when rendered, then scene and story nodes are present and no header node exists', () => {

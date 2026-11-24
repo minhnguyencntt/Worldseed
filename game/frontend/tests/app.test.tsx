@@ -54,11 +54,10 @@ describe('App playing view', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
   }
 
-  it('Given Begin clicked, then the Phaser host, Story toggle and opening dialogue render', () => {
+  it('Given Begin clicked, then the Phaser host and opening dialogue render', () => {
     begin();
 
     expect(screen.getByTestId('phaser-host')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Story' })).toBeInTheDocument();
     expect(
       screen.getByText("I don't know what to do next. What should we do?"),
     ).toBeInTheDocument();
