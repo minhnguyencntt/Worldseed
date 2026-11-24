@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-export const dimensionsSchema = z.object({
+const dimensionsSchema = z.object({
   width: z.number().int().positive(),
   height: z.number().int().positive(),
 });
 
-export const originSchema = z.object({
+const originSchema = z.object({
   x: z.number().min(0).max(1),
   y: z.number().min(0).max(1),
 });
@@ -17,7 +17,7 @@ export const boundsSchema = z.object({
   height: z.number().positive(),
 });
 
-export const frameSpecSchema = z.object({
+const frameSpecSchema = z.object({
   frameWidth: z.number().int().positive(),
   frameHeight: z.number().int().positive(),
   frameCount: z.number().int().positive(),
@@ -25,7 +25,7 @@ export const frameSpecSchema = z.object({
   spacing: z.number().int().nonnegative().optional(),
 });
 
-export const animationSchema = z.object({
+const animationSchema = z.object({
   frames: z.array(z.number().int().nonnegative()).nonempty(),
   frameRate: z.number().positive(),
   repeat: z.number().int().min(-1).default(-1),
@@ -94,9 +94,9 @@ export const manifestSchema = z.object({
   assets: z.array(assetSchema),
 });
 
-export type Dimensions = z.infer<typeof dimensionsSchema>;
+type Dimensions = z.infer<typeof dimensionsSchema>;
 export type Origin = z.infer<typeof originSchema>;
-export type InteractionBounds = z.infer<typeof boundsSchema>;
+type InteractionBounds = z.infer<typeof boundsSchema>;
 export type FrameSpec = z.infer<typeof frameSpecSchema>;
 export type AnimationDef = z.infer<typeof animationSchema>;
 export type AssetEntry = z.infer<typeof assetSchema>;

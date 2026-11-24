@@ -8,7 +8,7 @@ export const ITEM_ICON_SIZE = 16;
 const OUTLINE = rampIndex('indigo', 0);
 
 // Old key: brass ring at the top, a shaft down the middle, and two teeth on the right.
-export function oldKeyGrid(): Grid {
+function oldKeyGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 4, 1, 8, 8, rampIndex('brass', 3));
   fillRect(g, 6, 3, 4, 4, 0);
@@ -25,7 +25,7 @@ export function oldKeyGrid(): Grid {
 }
 
 // Note: a parchment sheet with two moon-ramp text lines.
-export function noteGrid(): Grid {
+function noteGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 3, 2, 10, 12, rampIndex('parchment', 4));
   fillRect(g, 4, 3, 8, 1, rampIndex('parchment', 5));
@@ -36,7 +36,7 @@ export function noteGrid(): Grid {
 }
 
 // Book: a plum cover with a parchment page edge along the right side.
-export function bookGrid(): Grid {
+function bookGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 2, 2, 11, 13, rampIndex('plum', 3));
   fillRect(g, 2, 2, 2, 13, rampIndex('plum', 1));
@@ -46,7 +46,7 @@ export function bookGrid(): Grid {
 }
 
 // Coin: a brass disc with a step 5 highlight in the upper left.
-export function coinGrid(): Grid {
+function coinGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 3, 3, 10, 10, rampIndex('brass', 3));
   fillRect(g, 4, 4, 3, 3, rampIndex('brass', 5));
@@ -55,7 +55,7 @@ export function coinGrid(): Grid {
 }
 
 // Flashlight: a moon-ramp body with a lamp step 5 lens at the head.
-export function flashlightGrid(): Grid {
+function flashlightGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 1, 6, 9, 4, rampIndex('moon', 2));
   fillRect(g, 2, 7, 7, 1, rampIndex('moon', 4));
@@ -67,7 +67,7 @@ export function flashlightGrid(): Grid {
 }
 
 // Photo: a parchment frame around a moon-ramp picture with a hoodie step 3 figure.
-export function photoGrid(): Grid {
+function photoGrid(): Grid {
   const g = createGrid(ITEM_ICON_SIZE, ITEM_ICON_SIZE, 0);
   fillRect(g, 1, 2, 14, 12, rampIndex('parchment', 4));
   outlineRect(g, 1, 2, 14, 12, OUTLINE);

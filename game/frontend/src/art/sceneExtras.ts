@@ -8,7 +8,7 @@ const SECRET_DOOR_WIDTH = 32;
 const SECRET_DOOR_HEIGHT = 64;
 
 // Open secret door: indigo interior, brass frame, and a lamp-lit strip along the bottom row.
-export function secretDoorGrid(): Grid {
+function secretDoorGrid(): Grid {
   const g = createGrid(SECRET_DOOR_WIDTH, SECRET_DOOR_HEIGHT, 0);
   shadeRect(g, 0, 0, SECRET_DOOR_WIDTH, SECRET_DOOR_HEIGHT, 'indigo', 3, 1);
   outlineRect(g, 0, 0, SECRET_DOOR_WIDTH, SECRET_DOOR_HEIGHT, rampIndex('brass', 3));
@@ -17,7 +17,7 @@ export function secretDoorGrid(): Grid {
 }
 
 // Dust mote: a 4x4 moon-ramp dot with transparent corners.
-export function dustGrid(): Grid {
+function dustGrid(): Grid {
   const g = createGrid(4, 4, rampIndex('moon', 4));
   fillRect(g, 0, 0, 1, 1, 0);
   fillRect(g, 3, 0, 1, 1, 0);

@@ -1,14 +1,14 @@
 import { z } from 'zod';
 import { boundsSchema } from '../assets/manifest/schema';
 
-export const layerSchema = z.enum(['background', 'furniture', 'objects', 'characters', 'effects', 'ui']);
+const layerSchema = z.enum(['background', 'furniture', 'objects', 'characters', 'effects', 'ui']);
 
-export const conditionSchema = z.union([
+const conditionSchema = z.union([
   z.object({ flag: z.string(), equals: z.boolean().optional() }),
   z.object({ hasItem: z.string() }),
 ]);
 
-export const effectSchema = z.discriminatedUnion('type', [
+const effectSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('dust'), asset: z.string(), count: z.number().int().positive(), area: boundsSchema }),
   z.object({ type: z.literal('ambientLight'), color: z.string(), alpha: z.number().min(0).max(1) }),
   z.object({ type: z.literal('moonlightShaft'), color: z.string(), alpha: z.number().min(0).max(1), area: boundsSchema }),
@@ -19,9 +19,9 @@ export const effectSchema = z.discriminatedUnion('type', [
 ]);
 
 // Events are authored as open records; each must carry a string `type` discriminator.
-export const eventSchema = z.object({ type: z.string() }).catchall(z.unknown());
+const eventSchema = z.object({ type: z.string() }).catchall(z.unknown());
 
-export const actionSchema = z.object({
+const actionSchema = z.object({
   id: z.enum(['inspect', 'push', 'search', 'leave']),
   label: z.string(),
   conditions: z.array(conditionSchema).optional(),
@@ -46,9 +46,9 @@ export const objectSchema = z.object({
 });
 
 // A named animation on a manifest asset, e.g. { asset: 'character:boy', animation: 'idle' }.
-export const animRef = z.object({ asset: z.string(), animation: z.string() });
+const animRef = z.object({ asset: z.string(), animation: z.string() });
 
-export const characterInteractionSchema = z.object({
+const characterInteractionSchema = z.object({
   dialogue: z.string().optional(),
   actions: z.array(actionSchema).optional(),
 });
@@ -73,7 +73,7 @@ export const sceneSchema = z.object({
   characters: z.array(characterSchema).optional(),
 });
 
-export const worldSchema = z.object({
+const worldSchema = z.object({
   id: z.string(),
   title: z.string(),
   startScene: z.string(),

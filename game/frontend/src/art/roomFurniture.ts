@@ -8,7 +8,7 @@ import { ROOM_ART_SIZES } from './roomSizes';
 
 const OUTLINE = rampIndex('indigo', 0);
 
-export function deskGrid(): Grid {
+function deskGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.desk;
   const g = createGrid(w, h, 0);
   // Top slab (rows 0-5), front body, then legs at both ends.
@@ -20,7 +20,7 @@ export function deskGrid(): Grid {
   return g;
 }
 
-export function computerGrid(): Grid {
+function computerGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.computer;
   const g = createGrid(w, h, 0);
   // Monitor body with screen, neck and base.
@@ -33,7 +33,7 @@ export function computerGrid(): Grid {
   return g;
 }
 
-export function lampGrid(): Grid {
+function lampGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.lamp;
   const g = createGrid(w, h, 0);
   // Shade on top 10 rows with a highlight column, stem, then a wooden base.
@@ -46,7 +46,7 @@ export function lampGrid(): Grid {
   return g;
 }
 
-export function plantGrid(): Grid {
+function plantGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.plant;
   const g = createGrid(w, h, 0);
   // Foliage: moon 2 and moon 3 blocks with a dithered band between them.
@@ -59,7 +59,7 @@ export function plantGrid(): Grid {
   return g;
 }
 
-export function posterGrid(): Grid {
+function posterGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.poster;
   const g = createGrid(w, h, 0);
   // Parchment sheet with a plum figure and a brass title bar.
@@ -71,7 +71,7 @@ export function posterGrid(): Grid {
   return g;
 }
 
-export function bookshelfGrid(): Grid {
+function bookshelfGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.bookshelf;
   const g = createGrid(w, h, 0);
   // Wooden body, then three shelf boards with a highlight on top and shadow underneath.
@@ -105,7 +105,7 @@ export function bookshelfGrid(): Grid {
   return g;
 }
 
-export function bedGrid(): Grid {
+function bedGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.bed;
   const g = createGrid(w, h, 0);
   // Wooden frame, parchment mattress and a checkered hoodie blanket with a lamp trim row.
@@ -125,7 +125,7 @@ export function bedGrid(): Grid {
   return g;
 }
 
-export function doorGrid(): Grid {
+function doorGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.door;
   const g = createGrid(w, h, 0);
   // Shaded wooden door with two inset panels, a brass knob and a light strip underneath.
@@ -138,7 +138,7 @@ export function doorGrid(): Grid {
   return g;
 }
 
-export function rugGrid(): Grid {
+function rugGrid(): Grid {
   const { width: w, height: h } = ROOM_ART_SIZES.rug;
   const g = createGrid(w, h, 0);
   // Plum field with a double brass border and a dithered centre.

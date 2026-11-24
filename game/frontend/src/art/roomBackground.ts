@@ -8,7 +8,7 @@ import { ROOM_ART_SIZES } from './roomSizes';
 const WALL_STRIPE_WIDTH = 12;
 const WALL_CAP_ROWS = 8;
 
-export function wallGrid(): Grid {
+function wallGrid(): Grid {
   const { width, height } = ROOM_ART_SIZES.wall;
   const grid = createGrid(width, height, rampIndex('plum', 2));
   for (let x = 0; x < width; x++) {
@@ -26,7 +26,7 @@ const PANEL_Y = 8;
 const PANEL_W = 52;
 const PANEL_H = 28;
 
-export function wainscotGrid(): Grid {
+function wainscotGrid(): Grid {
   const { width, height } = ROOM_ART_SIZES.wainscot;
   const grid = createGrid(width, height, rampIndex('wood', 3));
   shadeRect(grid, 0, 0, width, height, 'wood', 3, 2);
@@ -43,7 +43,7 @@ const FLOOR_BAND_HEIGHT = 16;
 const PLANK_LENGTH = 48;
 const GRAIN_EVERY_N_PLANKS = 4;
 
-export function floorGrid(): Grid {
+function floorGrid(): Grid {
   const { width, height } = ROOM_ART_SIZES.floor;
   const grid = createGrid(width, height, rampIndex('wood', 3));
   for (let band = 0, y = 0; y < height; band++, y += FLOOR_BAND_HEIGHT) {
@@ -59,7 +59,7 @@ export function floorGrid(): Grid {
   return grid;
 }
 
-export function windowGrid(): Grid {
+function windowGrid(): Grid {
   const { width, height } = ROOM_ART_SIZES.window;
   const grid = createGrid(width, height, rampIndex('indigo', 1));
   const halfHeight = Math.floor(height / 2);

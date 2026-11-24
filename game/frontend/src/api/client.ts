@@ -74,7 +74,7 @@ export async function getWorld(worldId: string = WORLD_ID): Promise<World> {
 }
 
 /** Sends a request to an /api/v1/admin path with the bearer token attached. */
-export async function adminRequest<T>(token: string, path: string, init: RequestInit = {}): Promise<T> {
+async function adminRequest<T>(token: string, path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('Authorization', `Bearer ${token}`);
   const res = await fetch(path, { ...init, headers });
@@ -122,7 +122,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 /** Creates an anonymous player session; the server sets the session cookie. */
-export function createSession(): Promise<unknown> {
+function createSession(): Promise<unknown> {
   return request<unknown>('/api/v1/player/session', { method: 'POST' });
 }
 
