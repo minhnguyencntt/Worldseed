@@ -82,7 +82,8 @@ describe('ContributionSheet over limit', () => {
     const value = 'a'.repeat(501);
 
     fireEvent.change(screen.getByLabelText('Your idea'), { target: { value } });
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    // Send is disabled over the limit; submit the form directly to confirm the guard also blocks submit.
+    fireEvent.submit(screen.getByLabelText('Your idea').closest('form') as HTMLFormElement);
 
     expect(screen.getByRole('alert').textContent).toBe('Too long: 501 / 500');
     expect(screen.getByLabelText('Your idea').getAttribute('aria-invalid')).toBe('true');

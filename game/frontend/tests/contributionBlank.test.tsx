@@ -21,6 +21,11 @@ function renderSheet() {
   return render(<ContributionSheet open onClose={vi.fn()} roundId="ROUND-0000001" />);
 }
 
+// Send is disabled for blank text, so blank submits go through the form (the Enter-key path).
+function submitForm(): HTMLFormElement {
+  return screen.getByRole('button', { name: 'Send' }).closest('form') as HTMLFormElement;
+}
+
 describe('ContributionSheet blank submit', () => {
   beforeEach(() => {
     submitMock.mockReset();
@@ -66,7 +71,7 @@ describe('ContributionSheet blank submit', () => {
   it('typing clears the blank message and the invalid state', async () => {
     renderSheet();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.submit(submitForm());
     expect(screen.getByRole('alert')).toBeTruthy();
 
     const textarea = screen.getByLabelText('Your idea');
@@ -81,7 +86,7 @@ describe('ContributionSheet blank submit', () => {
     submitMock.mockResolvedValue(contributionFixture);
     renderSheet();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    fireEvent.submit(submitForm());
     expect(screen.getByRole('alert').textContent).toBe('Enter an idea first');
 
     fireEvent.change(screen.getByLabelText('Your idea'), { target: { value: '  hello  ' } });
