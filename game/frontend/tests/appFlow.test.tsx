@@ -16,7 +16,23 @@ vi.mock('../src/runtime/storage', () => ({
 
 // The Phaser canvas host and the round API are replaced: the panel must render from real store state
 // without a canvas or a network request. Only getCurrentRound is overridden; ApiError stays real.
-vi.mock('../src/components/PhaserHost', () => ({ PhaserHost: () => null }));
+// The real host reports its canvas rect through onLayout; ObjectOverlay renders nothing without it,
+// so the stand-in reports a fixed layout once, as the canvas would.
+vi.mock('../src/components/PhaserHost', async () => {
+  const { useEffect } = await import('react');
+  return {
+    PhaserHost: ({
+      onLayout,
+    }: {
+      onLayout?: (l: { left: number; top: number; zoom: number; dpr: number }) => void;
+    }) => {
+      useEffect(() => {
+        onLayout?.({ left: 0, top: 0, zoom: 1, dpr: 1 });
+      }, [onLayout]);
+      return null;
+    },
+  };
+});
 vi.mock('../src/api/client', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../src/api/client')>();
   const round: import('../src/api/client').Round = {
