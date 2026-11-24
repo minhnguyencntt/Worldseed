@@ -2,6 +2,7 @@
 // Each frame is a row-major grid of PALETTE indices (see src/lib/palette.ts).
 
 import type { AnimationDef, Origin } from '@game/assets/manifest';
+import { BOY_SOURCES } from './boy';
 
 export interface ArtSource {
   id: string;
@@ -54,4 +55,5 @@ export const ART_SOURCES: ArtSource[] = [
     path: 'ui/cursors/hand.png',
     frames: [rowsToGrid(HAND_CURSOR_ROWS)],
   },
+  ...BOY_SOURCES,
 ];
