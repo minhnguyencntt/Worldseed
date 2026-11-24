@@ -1,10 +1,11 @@
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Countdown, formatRemaining } from '../src/components/Countdown';
-import { RoundBadge } from '../src/components/RoundBadge';
+import { HeaderOverlay } from '../src/components/HeaderOverlay';
+import { useUiStore } from '../src/store/uiStore';
 import { roundFixture } from './fixtures/api';
 
-describe('Countdown and RoundBadge', () => {
+describe('Countdown and header round status', () => {
   describe('formatRemaining', () => {
     it('formats 90000 ms as 00:01:30', () => {
       expect(formatRemaining(90_000)).toBe('00:01:30');
@@ -59,15 +60,31 @@ describe('Countdown and RoundBadge', () => {
     });
   });
 
-  describe('RoundBadge', () => {
-    it('shows the OPEN status', () => {
-      render(<RoundBadge status="OPEN" />);
+  describe('header round status', () => {
+    beforeEach(() => {
+      useUiStore.setState(useUiStore.getInitialState(), true);
+    });
+
+    afterEach(() => {
+      cleanup();
+    });
+
+    it('shows the OPEN status in the header', () => {
+      // Given the loaded round has status OPEN
+      useUiStore.setState({ round: roundFixture, roundLoading: false, roundError: undefined });
+      render(<HeaderOverlay />);
+
+      // Then the header shows the OPEN status
       expect(screen.getByText('OPEN')).toBeInTheDocument();
     });
 
-    it('shows the fallback when the status is undefined', () => {
-      render(<RoundBadge status={undefined} />);
-      expect(screen.getByText('Round unavailable')).toBeInTheDocument();
+    it('shows the no-active-round fallback when there is no round', () => {
+      // Given no round is loaded and no load is in flight
+      useUiStore.setState({ round: undefined, roundLoading: false, roundError: undefined });
+      render(<HeaderOverlay />);
+
+      // Then the header shows the no-active-round fallback
+      expect(screen.getByText('No active round')).toBeInTheDocument();
     });
   });
 });

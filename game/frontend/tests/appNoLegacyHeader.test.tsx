@@ -38,10 +38,13 @@ describe('App legacy header removal', () => {
   afterEach(cleanup);
 
   it('Given the round is loaded, then exactly one timer renders inside the header banner', async () => {
-    render(<App />);
+    const { container } = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Begin' }));
 
     await screen.findByText(roundFixture.id);
+
+    // The legacy RoundBadge is gone from the rendered tree.
+    expect(container.querySelector('.round-badge')).toBeNull();
 
     const timers = screen.getAllByRole('timer');
     expect(timers).toHaveLength(1);
