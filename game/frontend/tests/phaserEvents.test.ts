@@ -1,7 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { phaserToReact, reactToPhaser } from '../src/phaser/events';
+import {
+  createEventBus,
+  phaserToReact,
+  reactToPhaser,
+  type PhaserToReactEvents,
+} from '../src/phaser/events';
 
 describe('typed event bus delivery', () => {
   it('delivers a phaser-to-react event payload to a subscribed handler exactly once', () => {
