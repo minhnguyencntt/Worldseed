@@ -20,6 +20,7 @@ interface Entry {
 export type HistoryStatus = 'loading' | 'ready' | 'error';
 const HISTORY_LOADING = 'Loading your suggestions…';
 const HISTORY_ERROR = 'Could not load your suggestions';
+const HISTORY_EMPTY = 'No suggestions yet this round';
 
 const STATE_LABEL: Record<EntryState, string> = {
   sending: 'Sending…',
@@ -155,6 +156,7 @@ export function ContributionSheet({ open, onClose, roundId, returnFocusRef }: Co
         {historyStatus === 'error' && (
           <button type="button" onClick={() => setReloadKey((k) => k + 1)}>Retry</button>
         )}
+        {historyStatus === 'ready' && entries.length === 0 && <p role="status">{HISTORY_EMPTY}</p>}
 
         <ul aria-label="Your suggestions">
           {entries.map((entry) => (
