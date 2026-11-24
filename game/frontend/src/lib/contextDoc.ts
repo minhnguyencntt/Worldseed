@@ -1,14 +1,13 @@
 /**
- * Returns de-duplicated repo-root-relative `game/` and `backend/` backticked paths in table rows, first-seen order; each must exist on disk.
+ * Returns the de-duplicated backticked `game/` and `backend/` paths found in markdown table rows (lines starting with '|'), in first-seen order.
  *
- * The context.md module table must list these required rows:
+ * The context.md module table must list these four required rows:
  * - `game/src/`
  * - `game/frontend/src/`
  * - `game/docs/GDD.md`
  * - `backend/`
- * Each returned path is checked with missingPaths against the repo root.
- * Paths are returned exactly as written in the table, trailing slash kept, so each resolves against the repo root.
- * It returns backticked paths from table rows starting with '|', keeping the trailing slash on directories such as game/src/ and backend/.
+ *
+ * Paths are returned exactly as written, trailing slash kept, so each resolves against the repo root.
  */
 export function contextModulePaths(md: string): string[] {
   const out = new Set<string>();
