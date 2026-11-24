@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { GameState } from '@game/state/types';
 import type { AssetEntry } from '@game/assets/manifest';
 import { useGameStore } from '../store/gameStore';
-import { phaserToReact, reactToPhaser } from './events';
+import { phaserToReact, reactToPhaser, type Unsubscribe } from './events';
 import { createPhaserEffectContext } from './effectContext';
 import { buildEffects, destroyEffects } from '@game/engine/buildEffects';
 import { playSceneTransition } from '@game/engine/playSceneTransition';
@@ -23,14 +23,14 @@ export const TRANSITION_FADE_MS = 300;
 
 // Reads game state from the shared Zustand store; never keeps its own copy of GameState.
 export class BootScene extends Phaser.Scene {
-  private unsubscribe: (() => void) | null = null;
+  private unsubscribe: Unsubscribe | null = null;
   private effects: EffectHandle[] = [];
   private sceneObjects: SceneObject[] = [];
   private failed = new Set<string>();
   private characterSprites: Phaser.GameObjects.Sprite[] = [];
   private characterAnims = new Map<string, { sprite: Phaser.GameObjects.Sprite; spec: CharacterSpec }>();
-  private unsubscribeAnimation: (() => void) | null = null;
-  private unsubscribeTransition: (() => void) | null = null;
+  private unsubscribeAnimation: Unsubscribe | null = null;
+  private unsubscribeTransition: Unsubscribe | null = null;
 
   constructor() {
     super('BootScene');

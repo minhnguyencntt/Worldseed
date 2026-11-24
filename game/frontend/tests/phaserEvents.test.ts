@@ -110,3 +110,90 @@ describe('phaserToReact keyboard events', () => {
     phaserToReact.clear();
   });
 });
+
+describe('bus operations', () => {
+  it('off removes a handler so a later emit does not call it', () => {
+    // Given a handler subscribed to objectClick on a fresh bus
+    const bus = createEventBus<PhaserToReactEvents>();
+    const fn = vi.fn();
+    bus.on('objectClick', fn);
+
+    // When the same handler is removed with off and objectClick is emitted
+    bus.off('objectClick', fn);
+    bus.emit('objectClick', { id: 'x' });
+
+    // Then the handler is not called
+    expect(fn).not.toHaveBeenCalled();
+
+    bus.clear();
+  });
+
+  it('emit on an empty bus does not throw', () => {
+    // Given a bus with no handlers
+    const bus = createEventBus<PhaserToReactEvents>();
+
+    // When objectClick is emitted
+    // Then emit completes without throwing
+    expect(() => bus.emit('objectClick', { id: 'x' })).not.toThrow();
+
+    bus.clear();
+  });
+
+  it('delivers the same payload to every subscribed handler', () => {
+    // Given two handlers subscribed to objectClick
+    const bus = createEventBus<PhaserToReactEvents>();
+    const first = vi.fn();
+    const second = vi.fn();
+    bus.on('objectClick', first);
+    bus.on('objectClick', second);
+
+    // When objectClick is emitted with { id: 'x' }
+    bus.emit('objectClick', { id: 'x' });
+
+    // Then both handlers are called with that payload
+    expect(first).toHaveBeenCalledWith({ id: 'x' });
+    expect(second).toHaveBeenCalledWith({ id: 'x' });
+
+    bus.clear();
+  });
+
+  it('a handler that unsubscribes itself during emit does not stop the next handler', () => {
+    // Given a first handler that unsubscribes itself, and a second handler
+    const bus = createEventBus<PhaserToReactEvents>();
+    const second = vi.fn();
+    let unsubscribeFirst: () => void = () => {};
+    unsubscribeFirst = bus.on('objectClick', () => {
+      unsubscribeFirst();
+    });
+    bus.on('objectClick', second);
+
+    // When objectClick is emitted
+    bus.emit('objectClick', { id: 'x' });
+
+    // Then the second handler is still called once
+    expect(second).toHaveBeenCalledTimes(1);
+
+    bus.clear();
+  });
+
+  it('events emitted on phaserToReact are not delivered to reactToPhaser handlers', () => {
+    // Given a handler subscribed to objectClick on phaserToReact
+    const phaserHandler = vi.fn();
+    phaserToReact.on('objectClick', phaserHandler);
+
+    // Given a handler subscribed to transitionTo on reactToPhaser
+    const reactHandler = vi.fn();
+    reactToPhaser.on('transitionTo', reactHandler);
+
+    // When transitionTo is emitted on reactToPhaser
+    reactToPhaser.emit('transitionTo', { sceneId: 'a' });
+
+    // Then the phaserToReact objectClick handler is not called
+    expect(phaserHandler).not.toHaveBeenCalled();
+    // And the reactToPhaser handler receives it
+    expect(reactHandler).toHaveBeenCalledWith({ sceneId: 'a' });
+
+    phaserToReact.clear();
+    reactToPhaser.clear();
+  });
+});
