@@ -35,6 +35,16 @@ export function useAdminRound() {
         if (!cancelled) setError('Could not load the current round');
       },
     );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // The world title is fetched only once an admin token is present, so the token gate
+  // renders with just the public current-round lookup on mount.
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
     getWorld(WORLD_ID).then(
       (w) => {
         if (!cancelled) setWorldTitle(w.title);
@@ -44,7 +54,7 @@ export function useAdminRound() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (!token || !roundId) return;
