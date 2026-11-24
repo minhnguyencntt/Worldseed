@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../src/App';
 import { phaserToReact } from '../src/phaser/events';
+import { useUiStore } from '../src/store/uiStore';
 
 // The real App is rendered with its real components. localStorage is jsdom's
 // and is cleared between tests by tests/setup.ts.
@@ -47,6 +48,10 @@ describe('App intro gate', () => {
 });
 
 describe('App playing view', () => {
+  beforeEach(() => {
+    useUiStore.setState(useUiStore.getInitialState(), true);
+    useUiStore.getState().setCanvasLayout({ left: 0, top: 0, zoom: 1, dpr: 1 });
+  });
   afterEach(cleanup);
 
   function begin() {
@@ -68,17 +73,17 @@ describe('App playing view', () => {
 
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
 
-    expect(screen.getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Push' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Inspect Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Push Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Leave Bookshelf' })).toBeInTheDocument();
   });
 
   it('Given Bookshelf menu, when Search is clicked, then history shows the hidden door text', () => {
     begin();
 
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Search Bookshelf' }));
 
     expect(screen.getByText('A hidden door swings open behind the books.')).toBeInTheDocument();
   });
