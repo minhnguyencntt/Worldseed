@@ -80,16 +80,19 @@ describe('App flow: action menu', () => {
   it('Given the playing view, when the Bookshelf hotspot is clicked, then the Bookshelf action menu opens with Inspect, Push, Search and Leave', () => {
     begin();
 
-    expect(screen.queryByRole('region', { name: 'Bookshelf' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Search Bookshelf' })).toBeNull();
 
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
 
-    const menu = screen.getByRole('region', { name: 'Bookshelf' });
-    expect(menu).toHaveAttribute('data-object-id', 'bookshelf');
-    expect(within(menu).getByRole('button', { name: 'Inspect' })).toBeInTheDocument();
-    expect(within(menu).getByRole('button', { name: 'Push' })).toBeInTheDocument();
-    expect(within(menu).getByRole('button', { name: 'Search' })).toBeInTheDocument();
-    expect(within(menu).getByRole('button', { name: 'Leave' })).toBeInTheDocument();
+    // ObjectOverlay names each action button "<Action> <Object>" and announces the object's
+    // actions through its polite status region (see objectOverlayA11y.test.tsx).
+    expect(screen.getByRole('button', { name: 'Inspect Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Push Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Search Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Leave Bookshelf' })).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Bookshelf. Actions: Inspect, Push, Search, Leave',
+    );
   });
 
   it('Given the playing view, then the App-fed story panel shows the Event log, six Inventory slots and the Dialogue region', () => {
@@ -119,7 +122,7 @@ describe('App flow: story actions and choices', () => {
     begin();
 
     act(() => phaserToReact.emit('objectClick', { id: 'bookshelf' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Search Bookshelf' }));
 
     expect(screen.getByRole('list', { name: 'Story history' })).toHaveTextContent(
       'A hidden door swings open behind the books.',
