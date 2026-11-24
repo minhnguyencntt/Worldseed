@@ -1,28 +1,31 @@
 // Game state persistence: serialization and validation over GameState.
 // Repository baseline: AI-DLC scan v1, tip 9cda5131c65b08541fc685d8a0898d39a0e9e9fa.
 
-export interface GameState {
-  currentScene: string;
-  inventory: unknown[];
-  discoveredObjects: unknown[];
-  completedQuests: unknown[];
-  history: unknown[];
-  flags: Record<string, unknown>;
-  relationships: Record<string, unknown>;
-  activeDialogue: string | null;
-}
+import type { GameState } from './types';
+
+export const CURRENT_VERSION = 1;
 
 export function serializeState(state: GameState): string {
-  return JSON.stringify(state);
+  return JSON.stringify({ version: CURRENT_VERSION, state });
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-export function deserializeState(json: string): GameState {
-  const parsed: unknown = JSON.parse(json);
+export function migrate(raw: unknown): unknown {
+  if (isPlainObject(raw) && 'version' in raw) {
+    if (raw.version === CURRENT_VERSION) return raw.state;
+    throw new Error(`Unsupported save version: ${String(raw.version)}`);
+  }
+  return raw;
+}
 
+export function deserializeState(json: string): GameState {
+  return validateState(migrate(JSON.parse(json)));
+}
+
+function validateState(parsed: unknown): GameState {
   if (!isPlainObject(parsed)) {
     throw new Error('Invalid game state: root');
   }

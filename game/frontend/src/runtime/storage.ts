@@ -13,9 +13,7 @@ export function readSaved(): GameState | null {
     if (raw === null) {
       return null;
     }
-    // deserializeState validates the root shape; the field types are checked at runtime
-    // by the same validator, so the cast to the typed GameState is the intended contract.
-    return deserializeState(raw) as unknown as GameState;
+    return deserializeState(raw);
   } catch {
     return null;
   }
