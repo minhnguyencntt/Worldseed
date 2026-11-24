@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ObjectOverlay, type OverlayLayout } from '../src/components/ObjectOverlay';
 import { scene, sceneSpec, world } from '../src/runtime/content';
 import { createInitialState } from '@game/state/gameState';
@@ -17,6 +17,9 @@ const layout: OverlayLayout = { left: 0, top: 0, zoom: 2, dpr: 1 };
 const BOOKSHELF_TOP_Y = 120;
 
 describe('ObjectOverlay with the real bedroom content', () => {
+  // Vitest runs without globals, so RTL does not clean up on its own; unmount between tests so queries see one overlay.
+  afterEach(() => cleanup());
+
   it('resolves the bookshelf from the real content', () => {
     expect(bookshelfView).toBeDefined();
     expect(bookshelfSpec).toBeDefined();
@@ -60,7 +63,8 @@ describe('ObjectOverlay with the real bedroom content', () => {
     );
 
     const inspect = bookshelfView!.actions.find((a) => a.id === 'inspect')!;
-    await userEvent.click(screen.getByRole('button', { name: inspect.label.toUpperCase() }));
+    // The accessible name is "<action label> <object name>", per the ARIA labels on each action button.
+    await userEvent.click(screen.getByRole('button', { name: `${inspect.label} ${bookshelfSpec!.name}` }));
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledWith('bookshelf', 'inspect');
