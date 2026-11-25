@@ -28,4 +28,9 @@ describe('context.md stack and stale text', () => {
   it('has no stack problems in the repo-root context.md', () => {
     expect(contextStackProblems(text)).toEqual([]);
   });
+
+  it('has no problems when UNKNOWN is absent', () => {
+    // Regression guard: the real file must keep reporting no stack problems once UNKNOWN placeholders are gone.
+    expect(contextStackProblems(text)).toEqual([]);
+  });
 });

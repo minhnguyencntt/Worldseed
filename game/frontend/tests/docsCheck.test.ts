@@ -60,4 +60,17 @@ describe('contextStackProblems', () => {
   it('yields no problems for a complete text', () => {
     expect(contextStackProblems('TypeScript Phaser 3.90 React Zustand Radix Vitest Go')).toEqual([]);
   });
+
+  it('reports missing term, stale text and UNKNOWN in order', () => {
+    expect(contextStackProblems('React Zustand Radix Vitest TypeScript hello Worldseed UNKNOWN')).toEqual([
+      'missing term: Phaser 3.90',
+      'missing Go',
+      'stale text: hello Worldseed',
+      'UNKNOWN placeholder',
+    ]);
+  });
+
+  it('returns no problems when every STACK_TERMS entry is joined with Go', () => {
+    expect(contextStackProblems(`${STACK_TERMS.join(' Go ')} Go`)).toEqual([]);
+  });
 });
