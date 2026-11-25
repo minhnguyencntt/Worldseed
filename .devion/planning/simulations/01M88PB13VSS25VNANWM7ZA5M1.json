@@ -1,0 +1,808 @@
+{
+  "intent_id": "01M88PB13VSS25VNANWM7ZA5M1",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M88PFT66YZR0N1YMFEKE4CZ2",
+      "kind": "intent",
+      "title": "SG-1.1 Define fantasy colour, type and spacing tokens",
+      "body": "Context: src/lib/palette.ts holds the old retro ramps (indigo, plum, moon, hoodie, wood, brass, parchment, lamp) and src/lib/tokens.ts exposes pixel fonts and a three-step type scale. Desired behaviour: tokens.ts and palette.ts expose bronze, antique gold, dark brown, muted crimson, iron, stone and parchment ramps (plus a muted moss ramp), a title/heading/body/caption type scale and spacing/size/breakpoint tokens, consumed by tokensToCssVars() and tailwind.config.ts, with a unit test that body text on panel backgrounds meets 4.5:1. Why: this is the base every later redesign step builds on.\n\n## Acceptance criteria\n- Given palette.ts, when PALETTE_RAMPS is read, then it holds dark fantasy ramps with at most 48 unique hex colours\n- Given tokens.ts, when tokensToCssVars() is called, then colour, type, spacing, size and breakpoint variables exist\n- Given tailwind.config.ts, when theme.extend is read, then colours, spacing, fontSize, fontFamily and screens reference the tokens\n- Given every body-text/panel-background pair, when contrastRatio is computed, then it is at least 4.5\n\n\n## Scope\n- In scope: src/lib/palette.ts\n- In scope: src/lib/tokens.ts\n- In scope: tailwind.config.ts\n- In scope: src/lib/contrast.ts\n- In scope: ramp name references in src/art\n- In scope: token consumers in styles.css and components\n- Out of scope: new frame/texture assets (SG-1.2)\n- Out of scope: loading fonts and rewriting base styles (SG-1.3)\n- Out of scope: gameplay logic\n- Preserve: Phaser ~3.90.0, React 18, Tailwind 3, zustand, vitest\n- Preserve: store and API contracts\n- Preserve: data-testid and aria-label hooks\n\n\n## Technical constraints\n- Keep Phaser pinned at ~3.90.0 with the existing stack; no new rendering framework\n- Do not change gameplay logic\n- Dark medieval palette with no bright colours\n- Keep the existing HTML-overlay versus Phaser-canvas split\n- Text must keep readable contrast and a defined typography hierarchy\n- Unit tests mock every dependency; update existing tests that assert old names\n\n\n## Definition of done\n- All acceptance criteria covered by passing unit tests\n\n\n## Non-functional requirements\n- AA contrast for body text\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Dark fantasy colour ramps, type scale, spacing/size tokens and a WCAG AA contrast guarantee",
+      "description": "Context: src/lib/palette.ts holds the old retro ramps (indigo, plum, moon, hoodie, wood, brass, parchment, lamp) and src/lib/tokens.ts exposes pixel fonts and a three-step type scale. Desired behaviour: tokens.ts and palette.ts expose bronze, antique gold, dark brown, muted crimson, iron, stone and parchment ramps (plus a muted moss ramp), a title/heading/body/caption type scale and spacing/size/breakpoint tokens, consumed by tokensToCssVars() and tailwind.config.ts, with a unit test that body text on panel backgrounds meets 4.5:1. Why: this is the base every later redesign step builds on.",
+      "acceptance_criteria": [
+        "Given palette.ts, when PALETTE_RAMPS is read, then it holds dark fantasy ramps with at most 48 unique hex colours",
+        "Given tokens.ts, when tokensToCssVars() is called, then colour, type, spacing, size and breakpoint variables exist",
+        "Given tailwind.config.ts, when theme.extend is read, then colours, spacing, fontSize, fontFamily and screens reference the tokens",
+        "Given every body-text/panel-background pair, when contrastRatio is computed, then it is at least 4.5"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/palette.ts",
+          "src/lib/tokens.ts",
+          "tailwind.config.ts",
+          "src/lib/contrast.ts",
+          "ramp name references in src/art",
+          "token consumers in styles.css and components"
+        ],
+        "out_of_scope": [
+          "new frame/texture assets (SG-1.2)",
+          "loading fonts and rewriting base styles (SG-1.3)",
+          "gameplay logic"
+        ],
+        "preserve": [
+          "Phaser ~3.90.0, React 18, Tailwind 3, zustand, vitest",
+          "store and API contracts",
+          "data-testid and aria-label hooks"
+        ]
+      },
+      "technical_constraints": [
+        "Keep Phaser pinned at ~3.90.0 with the existing stack; no new rendering framework",
+        "Do not change gameplay logic",
+        "Dark medieval palette with no bright colours",
+        "Keep the existing HTML-overlay versus Phaser-canvas split",
+        "Text must keep readable contrast and a defined typography hierarchy",
+        "Unit tests mock every dependency; update existing tests that assert old names"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "All acceptance criteria covered by passing unit tests",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-226.md`"
+      ],
+      "non_functional": [
+        "AA contrast for body text"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "matched_feature_id": "01M85MNPTJCZY8SCT0WFZBV56X",
+      "links": [
+        "trace:01M85MNPTJCZY8SCT0WFZBV56X",
+        "artifact:.ai-dlc/intent/INT-226.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-226.md",
+      "artifact_id": "INT-226"
+    },
+    {
+      "id": "01M88PFT66SFDYHGXE723YBH0W",
+      "kind": "requirement",
+      "title": "Dark fantasy palette ramps replace the retro ramps",
+      "body": "PALETTE_RAMPS is replaced by iron, crimson, stone, moss, brown, gold, parchment, bronze (six steps each, 48 unique colours). Order is kept so rampIndex() indices in src/art stay valid.\n\n## Acceptance criteria\n- PALETTE has at most 48 unique lowercase hex colours\n- Ramps cover bronze, gold, brown, crimson, iron, stone and parchment\n- All src/art modules compile and use the new ramp names\n\n\n## Scope\n- In scope: src/lib/palette.ts\n- In scope: src/art/*.ts ramp names\n- Out of scope: regenerating PNG assets\n- Preserve: ramp order and 6-step length\n\n\n## Technical constraints\n- Dark medieval palette, no bright colours\n- No emoji icons\n\n\n## Definition of done\n- Palette tests pass with the new ramps\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "palette.ts exposes eight muted dark fantasy ramps and art keeps working",
+      "description": "PALETTE_RAMPS is replaced by iron, crimson, stone, moss, brown, gold, parchment, bronze (six steps each, 48 unique colours). Order is kept so rampIndex() indices in src/art stay valid.",
+      "acceptance_criteria": [
+        "PALETTE has at most 48 unique lowercase hex colours",
+        "Ramps cover bronze, gold, brown, crimson, iron, stone and parchment",
+        "All src/art modules compile and use the new ramp names"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/palette.ts",
+          "src/art/*.ts ramp names"
+        ],
+        "out_of_scope": [
+          "regenerating PNG assets"
+        ],
+        "preserve": [
+          "ramp order and 6-step length"
+        ]
+      },
+      "technical_constraints": [
+        "Dark medieval palette, no bright colours",
+        "No emoji icons"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Palette tests pass with the new ramps",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-561.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M88PFT66YZR0N1YMFEKE4CZ2",
+      "matched_feature_id": "01M85R5RX56ZHZ9773JNNNAFY1",
+      "links": [
+        "parent:01M88PFT66YZR0N1YMFEKE4CZ2",
+        "trace:01M85R5RX56ZHZ9773JNNNAFY1",
+        "artifact:.ai-dlc/requirements/REQ-561.md"
+      ],
+      "depends_on": [
+        "01M88PFT66YZR0N1YMFEKE4CZ2"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-561.md",
+      "artifact_id": "REQ-561"
+    },
+    {
+      "id": "01M88PFT66HA3XM7ZGS1A8TT47",
+      "kind": "requirement",
+      "title": "Type scale, spacing, size and breakpoint tokens feed CSS vars and Tailwind",
+      "body": "COLOR_TOKENS follow the new ramps; TYPE_TOKENS define a fantasy display font, a readable body font and a title/heading/body/caption scale; SPACING_TOKENS gain steps; SIZE_TOKENS and BREAKPOINT_TOKENS are added; old pixel-font and sm/md/lg names are removed with their consumers.\n\n## Acceptance criteria\n- tokensToCssVars() returns --sf-size-title/heading/body/caption, --sf-font-display, --sf-font-body, --sf-space-*, --sf-icon-* and --sf-bp-* variables\n- tailwind.config.ts maps fontSize sf-title/sf-heading/sf-body/sf-caption, fontFamily display/body and screens to the variables\n- No source references --sf-font-pixel, text-sf-sm, text-sf-md or old colour token names\n\n\n## Scope\n- In scope: src/lib/tokens.ts\n- In scope: tailwind.config.ts\n- In scope: src/styles.css\n- In scope: GameLayout, ObjectOverlay, ContributionSheet, StoryPanel, HeaderOverlay, ui/button\n- Out of scope: loading the font files\n- Preserve: existing data-testid and aria-label hooks\n\n\n## Technical constraints\n- Replace old classes; do not keep two parallel token sets\n- Text must keep a defined typography hierarchy\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Token and tailwind tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "tokens.ts defines the full token set consumed by tokensToCssVars and tailwind.config.ts",
+      "description": "COLOR_TOKENS follow the new ramps; TYPE_TOKENS define a fantasy display font, a readable body font and a title/heading/body/caption scale; SPACING_TOKENS gain steps; SIZE_TOKENS and BREAKPOINT_TOKENS are added; old pixel-font and sm/md/lg names are removed with their consumers.",
+      "acceptance_criteria": [
+        "tokensToCssVars() returns --sf-size-title/heading/body/caption, --sf-font-display, --sf-font-body, --sf-space-*, --sf-icon-* and --sf-bp-* variables",
+        "tailwind.config.ts maps fontSize sf-title/sf-heading/sf-body/sf-caption, fontFamily display/body and screens to the variables",
+        "No source references --sf-font-pixel, text-sf-sm, text-sf-md or old colour token names"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/tokens.ts",
+          "tailwind.config.ts",
+          "src/styles.css",
+          "GameLayout, ObjectOverlay, ContributionSheet, StoryPanel, HeaderOverlay, ui/button"
+        ],
+        "out_of_scope": [
+          "loading the font files"
+        ],
+        "preserve": [
+          "existing data-testid and aria-label hooks"
+        ]
+      },
+      "technical_constraints": [
+        "Replace old classes; do not keep two parallel token sets",
+        "Text must keep a defined typography hierarchy"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Token and tailwind tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-562.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M88PFT66YZR0N1YMFEKE4CZ2",
+      "matched_feature_id": "01M84PBVRNHC06ZTRP1W0EKRQM",
+      "links": [
+        "parent:01M88PFT66YZR0N1YMFEKE4CZ2",
+        "trace:01M84PBVRNHC06ZTRP1W0EKRQM",
+        "artifact:.ai-dlc/requirements/REQ-562.md"
+      ],
+      "depends_on": [
+        "01M88PFT66YZR0N1YMFEKE4CZ2"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-562.md",
+      "artifact_id": "REQ-562"
+    },
+    {
+      "id": "01M88PFT66ASJY3AV470A6KWS5",
+      "kind": "requirement",
+      "title": "Body text on panel backgrounds meets WCAG AA",
+      "body": "Add contrastRatio and surface/text token pairs so body text on every panel background is checked against 4.5:1.\n\n## Acceptance criteria\n- contrastRatio('#000000','#ffffff') returns 21\n- Every SURFACE_PAIRS entry has ratio at least 4.5\n- Pairs are exposed as --sf-surface-* and --sf-text-* variables\n\n\n## Scope\n- In scope: src/lib/contrast.ts\n- In scope: SURFACE_PAIRS in src/lib/tokens.ts\n- Out of scope: component restyling\n- Preserve: palette values from R1\n\n\n## Technical constraints\n- Text must keep readable contrast\n\n\n## Dependencies\n- R1\n\n\n## Definition of done\n- Contrast test passes\n\n\n## Non-functional requirements\n- WCAG AA 4.5:1\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "A contrast helper and surface token pairs prove 4.5:1",
+      "description": "Add contrastRatio and surface/text token pairs so body text on every panel background is checked against 4.5:1.",
+      "acceptance_criteria": [
+        "contrastRatio('#000000','#ffffff') returns 21",
+        "Every SURFACE_PAIRS entry has ratio at least 4.5",
+        "Pairs are exposed as --sf-surface-* and --sf-text-* variables"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/contrast.ts",
+          "SURFACE_PAIRS in src/lib/tokens.ts"
+        ],
+        "out_of_scope": [
+          "component restyling"
+        ],
+        "preserve": [
+          "palette values from R1"
+        ]
+      },
+      "technical_constraints": [
+        "Text must keep readable contrast"
+      ],
+      "dependencies": [
+        "R1"
+      ],
+      "definition_of_done": [
+        "Contrast test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-563.md`"
+      ],
+      "non_functional": [
+        "WCAG AA 4.5:1"
+      ],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "PLAN",
+      "parent_id": "01M88PFT66YZR0N1YMFEKE4CZ2",
+      "matched_feature_id": "01M855M826XA4NEJ3H488X6FR4",
+      "links": [
+        "parent:01M88PFT66YZR0N1YMFEKE4CZ2",
+        "trace:01M855M826XA4NEJ3H488X6FR4",
+        "artifact:.ai-dlc/requirements/REQ-563.md"
+      ],
+      "depends_on": [
+        "01M88PFT66YZR0N1YMFEKE4CZ2"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-563.md",
+      "artifact_id": "REQ-563"
+    },
+    {
+      "id": "01M88PFT66MRX22ENC5XYRAA3N",
+      "kind": "unit",
+      "title": "Act: Replace PALETTE_RAMPS with dark fantasy ramps and rename art ramp references",
+      "body": "Delivers R1: palette.ts still exports the retro indigo/plum/moon/hoodie/wood/brass/lamp ramps, so no dark fantasy colours exist. Replace them and update every rampIndex()/shadeRect() ramp name in src/art. Mapping: indigo->iron, plum->crimson, moon->stone, hoodie->moss, wood->brown, brass->gold, lamp->bronze, parchment unchanged.\n\n## Acceptance criteria\n- PALETTE_RAMPS keys are iron, crimson, stone, moss, brown, gold, parchment, bronze in that order\n- tsc has no unknown ramp errors in src/art\n\n\n## Scope\n- In scope: src/lib/palette.ts\n- In scope: src/art\n- Out of scope: PNG regeneration\n- Preserve: ramp order\n\n\n## Technical constraints\n- Dark medieval palette, no bright colours\n- Visuals from the art pipeline\n- Code path: `game/frontend/src/lib/palette.ts`\n- Code path: `game/frontend/src/art/boy.ts`\n- Code path: `game/frontend/src/art/itemIcons.ts`\n- Code path: `game/frontend/src/art/roomBackground.ts`\n- Code path: `game/frontend/src/art/roomFurniture.ts`\n- Code path: `game/frontend/src/art/sceneExtras.ts`\n- Code path: `game/frontend/src/art/uiFrames.ts`\n\n\n## Definition of done\n- palette.ts and art compile with new names\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "New ramps in palette.ts, art modules use new names",
+      "description": "Delivers R1: palette.ts still exports the retro indigo/plum/moon/hoodie/wood/brass/lamp ramps, so no dark fantasy colours exist. Replace them and update every rampIndex()/shadeRect() ramp name in src/art. Mapping: indigo->iron, plum->crimson, moon->stone, hoodie->moss, wood->brown, brass->gold, lamp->bronze, parchment unchanged.",
+      "acceptance_criteria": [
+        "PALETTE_RAMPS keys are iron, crimson, stone, moss, brown, gold, parchment, bronze in that order",
+        "tsc has no unknown ramp errors in src/art"
+      ],
+      "scope": {
+        "in_scope": [
+          "src/lib/palette.ts",
+          "src/art"
+        ],
+        "out_of_scope": [
+          "PNG regeneration"
+        ],
+        "preserve": [
+          "ramp order"
+        ]
+      },
+      "technical_constraints": [
+        "Dark medieval palette, no bright colours",
+        "Visuals from the art pipeline",
+        "Code path: `game/frontend/src/lib/palette.ts`",
+        "Code path: `game/frontend/src/art/boy.ts`",
+        "Code path: `game/frontend/src/art/itemIcons.ts`",
+        "Code path: `game/frontend/src/art/roomBackground.ts`",
+        "Code path: `game/frontend/src/art/roomFurniture.ts`",
+        "Code path: `game/frontend/src/art/sceneExtras.ts`",
+        "Code path: `game/frontend/src/art/uiFrames.ts`"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "palette.ts and art compile with new names",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1122.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M88PFT66SFDYHGXE723YBH0W",
+      "matched_feature_id": "01M85MNPTK9MD24VZM2PVPN53G",
+      "links": [
+        "parent:01M88PFT66SFDYHGXE723YBH0W",
+        "trace:01M85MNPTK9MD24VZM2PVPN53G",
+        "artifact:.ai-dlc/units/UNIT-1122.md"
+      ],
+      "depends_on": [
+        "01M88PFT66SFDYHGXE723YBH0W"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1122.md",
+      "artifact_id": "UNIT-1122",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/palette.ts",
+          "symbol": "PALETTE_RAMPS, WARM_RAMPS, COOL_RAMPS",
+          "lines": "L1-L21",
+          "action": "Replace the PALETTE_RAMPS object with the eight ramps below and set WARM_RAMPS to ['brown','gold','parchment','bronze'] and COOL_RAMPS to ['iron','crimson','stone','moss'].",
+          "code": "iron:['#0e0f12','#1a1c21','#272a31','#3a3e47','#575c68','#80858f'], crimson:['#1c0a0c','#3a1014','#5e1a1f','#7f2a2e','#a04448','#c27a7c'], stone:['#1a1917','#2c2a26','#433f39','#5f5a51','#868075','#b3ad9f'], moss:['#12170f','#1e2918','#2f4023','#45592f','#657d47','#92a874'], brown:['#1b0f09','#2f1b10','#472a18','#63401f','#845a2e','#a8814f'], gold:['#3d2c0c','#5f4713','#8a6a1e','#b08d2f','#cfae52','#e8d08a'], parchment:['#5a4a38','#85705a','#ad9877','#cdbb94','#e6d8b3','#f4ecd2'], bronze:['#3a1e0c','#5c3213','#824a1c','#a8652a','#c98544','#e3aa6e']",
+          "expected": "PALETTE has 48 unique hex colours and paletteTailwindColors keys are the new names"
+        },
+        {
+          "file": "game/frontend/src/art/boy.ts",
+          "symbol": "ramp name literals",
+          "lines": "whole file",
+          "action": "Rename every ramp string literal passed to rampIndex/shadeRect using the mapping indigo->iron, plum->crimson, moon->stone, hoodie->moss, wood->brown, brass->gold, lamp->bronze.",
+          "expected": "No old ramp names remain in boy.ts"
+        },
+        {
+          "file": "game/frontend/src/art/itemIcons.ts",
+          "symbol": "ramp name literals",
+          "lines": "whole file",
+          "action": "Apply the same ramp rename mapping to every rampIndex/shadeRect literal.",
+          "expected": "No old ramp names remain in itemIcons.ts"
+        },
+        {
+          "file": "game/frontend/src/art/roomBackground.ts",
+          "symbol": "ramp name literals",
+          "lines": "whole file",
+          "action": "Apply the same ramp rename mapping to every ramp literal.",
+          "expected": "No old ramp names remain in roomBackground.ts"
+        },
+        {
+          "file": "game/frontend/src/art/roomFurniture.ts",
+          "symbol": "ramp name literals",
+          "lines": "whole file",
+          "action": "Apply the same ramp rename mapping to every ramp literal.",
+          "expected": "No old ramp names remain in roomFurniture.ts"
+        },
+        {
+          "file": "game/frontend/src/art/sceneExtras.ts",
+          "symbol": "secretDoorGrid, dustGrid",
+          "lines": "L13-L21",
+          "action": "Rename 'indigo'->'iron', 'brass'->'gold', 'lamp'->'bronze', 'moon'->'stone'.",
+          "expected": "Secret door and dust grids use new ramps"
+        },
+        {
+          "file": "game/frontend/src/art/uiFrames.ts",
+          "symbol": "BORDER, FRAME_KIT, buildFrameGrid",
+          "lines": "L38-L69",
+          "action": "Rename ramps: BORDER 'indigo'->'iron'; FRAME_KIT 'wood'->'brown', 'brass'->'gold', 'indigo'->'iron'; brass bracket rampIndex('brass',3)->rampIndex('gold',3). Keep FRAME_KIT ids and sizes.",
+          "expected": "uiFrames compiles with new ramps and same asset list"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT66HW2JMJZ317V0PWF8",
+      "kind": "unit",
+      "title": "Act: Define fantasy type scale, spacing, size and breakpoint tokens and wire Tailwind",
+      "body": "Delivers R2: tokens.ts still maps old ramp names, a pixel font and a three-step scale, and has no size or breakpoint tokens. Rewrite it, update tailwind.config.ts and migrate every consumer so no old names remain.\n\n## Acceptance criteria\n- tokensToCssVars exposes colour, font, size, space, icon and breakpoint vars\n- Tailwind extend uses them\n\n\n## Scope\n- In scope: tokens.ts\n- In scope: tailwind.config.ts\n- In scope: styles.css\n- In scope: components using old classes\n- Out of scope: font loading\n- Preserve: test ids and aria labels\n\n\n## Technical constraints\n- Replace old classes, no parallel sets\n- Defined typography hierarchy\n- Code path: `game/frontend/src/lib/tokens.ts`\n- Code path: `game/frontend/tailwind.config.ts`\n- Code path: `game/frontend/src/styles.css`\n- Code path: `game/frontend/src/components/GameLayout.tsx`\n- Code path: `game/frontend/src/components/ObjectOverlay.tsx`\n- Code path: `game/frontend/src/components/ContributionSheet.tsx`\n- Code path: `game/frontend/src/components/StoryPanel.tsx`\n- Code path: `game/frontend/src/components/HeaderOverlay.tsx`\n- Code path: `game/frontend/src/components/ui/button.tsx`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- No reference to old token names in src\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Rewrite tokens.ts and tailwind.config.ts and migrate consumers",
+      "description": "Delivers R2: tokens.ts still maps old ramp names, a pixel font and a three-step scale, and has no size or breakpoint tokens. Rewrite it, update tailwind.config.ts and migrate every consumer so no old names remain.",
+      "acceptance_criteria": [
+        "tokensToCssVars exposes colour, font, size, space, icon and breakpoint vars",
+        "Tailwind extend uses them"
+      ],
+      "scope": {
+        "in_scope": [
+          "tokens.ts",
+          "tailwind.config.ts",
+          "styles.css",
+          "components using old classes"
+        ],
+        "out_of_scope": [
+          "font loading"
+        ],
+        "preserve": [
+          "test ids and aria labels"
+        ]
+      },
+      "technical_constraints": [
+        "Replace old classes, no parallel sets",
+        "Defined typography hierarchy",
+        "Code path: `game/frontend/src/lib/tokens.ts`",
+        "Code path: `game/frontend/tailwind.config.ts`",
+        "Code path: `game/frontend/src/styles.css`",
+        "Code path: `game/frontend/src/components/GameLayout.tsx`",
+        "Code path: `game/frontend/src/components/ObjectOverlay.tsx`",
+        "Code path: `game/frontend/src/components/ContributionSheet.tsx`",
+        "Code path: `game/frontend/src/components/StoryPanel.tsx`",
+        "Code path: `game/frontend/src/components/HeaderOverlay.tsx`",
+        "Code path: `game/frontend/src/components/ui/button.tsx`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "No reference to old token names in src",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1123.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M88PFT66HA3XM7ZGS1A8TT47",
+      "matched_feature_id": "01M88K50PWCZRY7XQ11S345XVX",
+      "links": [
+        "parent:01M88PFT66HA3XM7ZGS1A8TT47",
+        "trace:01M88K50PWCZRY7XQ11S345XVX",
+        "artifact:.ai-dlc/units/UNIT-1123.md"
+      ],
+      "depends_on": [
+        "01M88PFT66HA3XM7ZGS1A8TT47"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1123.md",
+      "artifact_id": "UNIT-1123",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/tokens.ts",
+          "symbol": "COLOR_TOKENS, SPACING_TOKENS, TYPE_TOKENS, SIZE_TOKENS, BREAKPOINT_TOKENS, tokensToCssVars",
+          "lines": "L1-L46",
+          "action": "Set COLOR_TOKENS keys iron, crimson, stone, moss, brown, gold, parchment, bronze from PALETTE_RAMPS. Add SPACING steps 5:'20px', 8:'32px'. Replace TYPE_TOKENS with fontDisplay \"'Cinzel Decorative', 'Cinzel', serif\", fontBody \"'Crimson Text', Georgia, serif\", sizeCaption '12px', sizeBody '16px', sizeHeading '20px', sizeTitle '28px'. Add SIZE_TOKENS {iconSm:'16px',iconMd:'24px',iconLg:'32px',slot:'48px'} and BREAKPOINT_TOKENS {sm:'480px',md:'768px',lg:'1024px',xl:'1280px'}. In tokensToCssVars emit --sf-font-display, --sf-font-body, --sf-size-caption/body/heading/title, --sf-icon-sm/md/lg, --sf-slot, --sf-bp-*.",
+          "expected": "tokensToCssVars returns the listed variables"
+        },
+        {
+          "file": "game/frontend/tailwind.config.ts",
+          "symbol": "default config theme.extend",
+          "lines": "L17",
+          "action": "Replace fontFamily pixel with display: 'var(--sf-font-display)'; replace fontSize keys sf-sm/md/lg with sf-caption/sf-body/sf-heading/sf-title using the matching vars; add screens built from BREAKPOINT_TOKENS (import it); import SIZE_TOKENS and add them to spacing as sf-icon-*, sf-slot via vars.",
+          "expected": "extend.fontFamily.display, fontSize['sf-title'] and screens.md exist"
+        },
+        {
+          "file": "game/frontend/src/styles.css",
+          "symbol": "body, h1/h2, .sf-btn-gold, .sf-pill, .sf-dot, .sf-brass-corners, .sf-fullscreen-bg",
+          "lines": "L9-L78",
+          "action": "Rename vars: --sf-color-ink-N->--sf-color-iron-N, wood->brown, brass->gold, lamp->bronze; replace --sf-font-pixel with --sf-font-display and --sf-size-md with --sf-size-heading in the h1,h2 rule.",
+          "expected": "styles.css contains no old token names"
+        },
+        {
+          "file": "game/frontend/src/components/GameLayout.tsx",
+          "symbol": "GameLayout",
+          "lines": "L14",
+          "action": "Change bg-sf-ink-1 to bg-sf-iron-1.",
+          "expected": "Layout background uses iron token"
+        },
+        {
+          "file": "game/frontend/src/components/ObjectOverlay.tsx",
+          "symbol": "ObjectOverlay",
+          "lines": "L50",
+          "action": "Change font-pixel text-sf-sm to font-display text-sf-caption.",
+          "expected": "Overlay uses display font and caption size"
+        },
+        {
+          "file": "game/frontend/src/components/ContributionSheet.tsx",
+          "symbol": "ContributionSheet",
+          "lines": "L36",
+          "action": "Change text-sf-md to text-sf-body.",
+          "expected": "Sheet uses body size"
+        },
+        {
+          "file": "game/frontend/src/components/StoryPanel.tsx",
+          "symbol": "StoryPanel speaker heading",
+          "lines": "L33",
+          "action": "Change className font-pixel to font-display.",
+          "expected": "Speaker heading has class font-display"
+        },
+        {
+          "file": "game/frontend/src/components/HeaderOverlay.tsx",
+          "symbol": "HeaderOverlay logo",
+          "lines": "L25",
+          "action": "Change 'sf-logo font-pixel' to 'sf-logo font-display'.",
+          "expected": "Logo has class font-display"
+        },
+        {
+          "file": "game/frontend/src/components/ui/button.tsx",
+          "symbol": "variants frame, gold",
+          "lines": "L17-L18",
+          "action": "Replace font-pixel text-sf-sm with font-display text-sf-caption in both variants.",
+          "expected": "Buttons use display/caption classes"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT66MR5QGGG2VHM9HRFS",
+      "kind": "unit",
+      "title": "Act: Add contrastRatio helper and surface/text token pairs",
+      "body": "Delivers R3: there is no contrast calculation and no panel/text token pairing, so AA cannot be asserted. Add src/lib/contrast.ts and SURFACE_PAIRS emitted by tokensToCssVars.\n\n## Acceptance criteria\n- contrastRatio follows WCAG 2.x relative luminance\n- SURFACE_PAIRS vars are emitted\n\n\n## Scope\n- In scope: contrast.ts\n- In scope: tokens.ts\n- Out of scope: component restyle\n- Preserve: A2 token output\n\n\n## Technical constraints\n- Readable contrast\n- New file: `game/frontend/src/lib/contrast.ts`\n- Code path: `game/frontend/src/lib/tokens.ts`\n\n\n## Dependencies\n- A1\n\n\n## Definition of done\n- Helper exported and pairs defined\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "WCAG contrast util and SURFACE_PAIRS exposed as CSS vars",
+      "description": "Delivers R3: there is no contrast calculation and no panel/text token pairing, so AA cannot be asserted. Add src/lib/contrast.ts and SURFACE_PAIRS emitted by tokensToCssVars.",
+      "acceptance_criteria": [
+        "contrastRatio follows WCAG 2.x relative luminance",
+        "SURFACE_PAIRS vars are emitted"
+      ],
+      "scope": {
+        "in_scope": [
+          "contrast.ts",
+          "tokens.ts"
+        ],
+        "out_of_scope": [
+          "component restyle"
+        ],
+        "preserve": [
+          "A2 token output"
+        ]
+      },
+      "technical_constraints": [
+        "Readable contrast",
+        "New file: `game/frontend/src/lib/contrast.ts`",
+        "Code path: `game/frontend/src/lib/tokens.ts`"
+      ],
+      "dependencies": [
+        "A1"
+      ],
+      "definition_of_done": [
+        "Helper exported and pairs defined",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1124.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "ACT",
+      "parent_id": "01M88PFT66ASJY3AV470A6KWS5",
+      "matched_feature_id": "01M84T6537706VR5FGDE69V8GW",
+      "links": [
+        "parent:01M88PFT66ASJY3AV470A6KWS5",
+        "trace:01M84T6537706VR5FGDE69V8GW",
+        "artifact:.ai-dlc/units/UNIT-1124.md"
+      ],
+      "depends_on": [
+        "01M88PFT66ASJY3AV470A6KWS5"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1124.md",
+      "artifact_id": "UNIT-1124",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/contrast.ts",
+          "symbol": "new: relativeLuminance, contrastRatio",
+          "lines": "new",
+          "action": "Export relativeLuminance(hex) (sRGB linearisation, 0.2126R+0.7152G+0.0722B) and contrastRatio(a,b) = (lighter+0.05)/(darker+0.05).",
+          "code": "export function contrastRatio(a:string,b:string):number{const la=relativeLuminance(a),lb=relativeLuminance(b);return (Math.max(la,lb)+0.05)/(Math.min(la,lb)+0.05);}",
+          "expected": "contrastRatio('#000000','#ffffff') is 21"
+        },
+        {
+          "file": "game/frontend/src/lib/tokens.ts",
+          "symbol": "SURFACE_PAIRS, tokensToCssVars",
+          "lines": "after COLOR_TOKENS",
+          "action": "Add SURFACE_PAIRS = { panel:{bg:COLOR_TOKENS.brown[1],text:COLOR_TOKENS.parchment[4]}, panelRaised:{bg:COLOR_TOKENS.iron[1],text:COLOR_TOKENS.parchment[4]}, journal:{bg:COLOR_TOKENS.parchment[4],text:COLOR_TOKENS.brown[0]} } and emit --sf-surface-<name> and --sf-text-<name> in tokensToCssVars.",
+          "expected": "vars --sf-surface-panel and --sf-text-panel are returned"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT66B8Q7CKYEEDQS5TZ6",
+      "kind": "unit",
+      "title": "Verify: Palette ramps and art ramp names unit tests",
+      "body": "Unit tests for R1, written from the criteria.\n\n## Acceptance criteria\n- Palette tests pass\n- Art tests pass with new ramp names\n\n\n## Scope\n- In scope: tests/palette.test.ts\n- In scope: tests/paletteTailwind.test.ts\n- In scope: art tests\n- Out of scope: e2e\n- Preserve: existing assertions\n\n\n## Technical constraints\n- Unit tests only, all dependencies mocked\n\n\n## Definition of done\n- Listed tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Palette and art tests match the new ramps",
+      "description": "Unit tests for R1, written from the criteria.",
+      "acceptance_criteria": [
+        "Palette tests pass",
+        "Art tests pass with new ramp names"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/palette.test.ts",
+          "tests/paletteTailwind.test.ts",
+          "art tests"
+        ],
+        "out_of_scope": [
+          "e2e"
+        ],
+        "preserve": [
+          "existing assertions"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only, all dependencies mocked"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1125.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M88PFT66MRX22ENC5XYRAA3N",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M88PFT66MRX22ENC5XYRAA3N",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-1125.md"
+      ],
+      "depends_on": [
+        "01M88PFT66MRX22ENC5XYRAA3N"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1125.md",
+      "artifact_id": "UNIT-1125",
+      "steps": [
+        {
+          "file": "game/frontend/tests/palette.test.ts",
+          "symbol": "new test: has the dark fantasy ramp names",
+          "lines": "after L28",
+          "action": "Add an it asserting Object.keys(PALETTE_RAMPS) equals ['iron','crimson','stone','moss','brown','gold','parchment','bronze'] and that PALETTE has exactly 48 unique entries.",
+          "command": "npx vitest run tests/palette.test.ts tests/paletteTailwind.test.ts",
+          "expected": "Both files pass"
+        },
+        {
+          "file": "game/frontend/tests/roomDraw.test.ts",
+          "symbol": "ramp name assertions",
+          "lines": "whole file",
+          "action": "Update assertions in roomDraw, roomSources, roomBackground, itemIcons, phaserBuildScene and gameStorePersist tests that use old ramp names (indigo, plum, moon, hoodie, wood, brass, lamp) to the mapped new names.",
+          "command": "npx vitest run tests/roomDraw.test.ts tests/roomSources.test.ts tests/roomBackground.test.ts tests/itemIcons.test.ts tests/uiFrames.test.ts tests/artTypes.test.ts",
+          "expected": "All listed tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT66FRV0EXAYGMW8XE26",
+      "kind": "unit",
+      "title": "Verify: Token values, CSS vars and Tailwind config unit tests",
+      "body": "Unit tests for R2: token values, CSS variables, Tailwind config and updated component tests, written from the criteria.\n\n## Acceptance criteria\n- Token tests assert type scale, spacing, size, breakpoints\n- Updated component tests pass\n\n\n## Scope\n- In scope: tests/tokens.test.ts\n- In scope: baseTypography, storyPanelReadable, headerKit tests\n- Out of scope: e2e\n- Preserve: test ids\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Listed tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "tokens.test.ts covers the full token set",
+      "description": "Unit tests for R2: token values, CSS variables, Tailwind config and updated component tests, written from the criteria.",
+      "acceptance_criteria": [
+        "Token tests assert type scale, spacing, size, breakpoints",
+        "Updated component tests pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/tokens.test.ts",
+          "baseTypography, storyPanelReadable, headerKit tests"
+        ],
+        "out_of_scope": [
+          "e2e"
+        ],
+        "preserve": [
+          "test ids"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Listed tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1126.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M88PFT66HW2JMJZ317V0PWF8",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M88PFT66HW2JMJZ317V0PWF8",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-1126.md"
+      ],
+      "depends_on": [
+        "01M88PFT66HW2JMJZ317V0PWF8"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1126.md",
+      "artifact_id": "UNIT-1126",
+      "steps": [
+        {
+          "file": "game/frontend/tests/tokens.test.ts",
+          "symbol": "css vars; tailwind config exposes tokens; new test: type scale and breakpoints",
+          "lines": "L16-L44",
+          "action": "Replace brass-4 with gold-4 and --sf-font-pixel check with vars['--sf-font-display'] containing 'Cinzel'; assert vars['--sf-size-title'] '28px', ['--sf-size-caption'] '12px', ['--sf-space-8'] '32px', ['--sf-bp-md'] '768px'; assert extend.colors.sf.gold['4'], extend.fontFamily.display === 'var(--sf-font-display)', extend.fontSize['sf-title'] === 'var(--sf-size-title)', extend.screens.md === 'var(--sf-bp-md)'.",
+          "command": "npx vitest run tests/tokens.test.ts",
+          "expected": "tokens.test.ts passes"
+        },
+        {
+          "file": "game/frontend/tests/baseTypography.test.ts",
+          "symbol": "base rules test",
+          "lines": "L10-L13",
+          "action": "Change expectations to var(--sf-color-iron-1) and /h1, h2\\s*{[^}]*--sf-font-display/.",
+          "command": "npx vitest run tests/baseTypography.test.ts tests/storyPanelReadable.test.tsx tests/headerKit.test.tsx",
+          "expected": "Tests pass; storyPanelReadable expects class font-display"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT66DV68F3ANDKWXNDTG",
+      "kind": "unit",
+      "title": "Verify: Body text on panel backgrounds meets WCAG AA",
+      "body": "Unit tests for R3: contrast helper known ratios and every SURFACE_PAIRS entry meeting 4.5:1.\n\n## Acceptance criteria\n- Known ratios correct\n- Every SURFACE_PAIRS entry at least 4.5\n\n\n## Scope\n- In scope: tests/contrast.test.ts\n- Out of scope: e2e\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Test passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "contrast.test.ts asserts 4.5:1",
+      "description": "Unit tests for R3: contrast helper known ratios and every SURFACE_PAIRS entry meeting 4.5:1.",
+      "acceptance_criteria": [
+        "Known ratios correct",
+        "Every SURFACE_PAIRS entry at least 4.5"
+      ],
+      "scope": {
+        "in_scope": [
+          "tests/contrast.test.ts"
+        ],
+        "out_of_scope": [
+          "e2e"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Test passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1127.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M88PFT66MR5QGGG2VHM9HRFS",
+      "matched_feature_id": "01M85FWFYFFQ4HVERXTWCX9YXV",
+      "links": [
+        "parent:01M88PFT66MR5QGGG2VHM9HRFS",
+        "trace:01M85FWFYFFQ4HVERXTWCX9YXV",
+        "artifact:.ai-dlc/units/UNIT-1127.md"
+      ],
+      "depends_on": [
+        "01M88PFT66MR5QGGG2VHM9HRFS"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1127.md",
+      "artifact_id": "UNIT-1127",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contrast.test.ts",
+          "symbol": "new: contrast helper and surface pairs",
+          "lines": "new",
+          "action": "Add test 1: contrastRatio('#000000','#ffffff') is within 0.01 of 21 and contrastRatio('#777777','#777777') is 1. Add test 2: for each entry of SURFACE_PAIRS from src/lib/tokens, expect contrastRatio(bg,text) >= 4.5. Add test 3: tokensToCssVars()['--sf-surface-panel'] equals SURFACE_PAIRS.panel.bg.",
+          "command": "npx vitest run tests/contrast.test.ts",
+          "expected": "All three tests pass"
+        }
+      ]
+    },
+    {
+      "id": "01M88PFT6666MSHZGJ7ZHKNEB6",
+      "kind": "evidence",
+      "title": "Evidence: Fantasy token, palette and contrast unit tests pass",
+      "body": "Collects passing results of the palette, token and contrast unit tests.\n\n## Acceptance criteria\n- Palette, token and contrast tests all pass\n- Existing art and component tests still pass\n\n\n## Scope\n- In scope: test results\n- Out of scope: manual checks\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Definition of done\n- Recorded passing output\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit test evidence for SG-1.1",
+      "description": "Collects passing results of the palette, token and contrast unit tests.",
+      "acceptance_criteria": [
+        "Palette, token and contrast tests all pass",
+        "Existing art and component tests still pass"
+      ],
+      "scope": {
+        "in_scope": [
+          "test results"
+        ],
+        "out_of_scope": [
+          "manual checks"
+        ],
+        "preserve": []
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "Recorded passing output",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-226.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M88PFT66B8Q7CKYEEDQS5TZ6",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M88PFT66B8Q7CKYEEDQS5TZ6",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-226.md"
+      ],
+      "depends_on": [
+        "01M88PFT66B8Q7CKYEEDQS5TZ6",
+        "01M88PFT66FRV0EXAYGMW8XE26",
+        "01M88PFT66DV68F3ANDKWXNDTG"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-226.md",
+      "artifact_id": "EVD-226"
+    }
+  ],
+  "created_at": "2026-11-25T06:32:33.157319+00:00",
+  "summary": "AI · 0 NEW · 11 UPDATE · 0 UNCHANGED · 11/11 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
