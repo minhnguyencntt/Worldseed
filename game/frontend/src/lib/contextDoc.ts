@@ -1,4 +1,3 @@
-/** Returns the repo-relative module paths in the Modules table: game/src/, game/frontend/src/, game/docs/GDD.md, backend/. */
 /**
  * Returns the de-duplicated backticked `game/` and `backend/` paths found in markdown table rows (lines starting with '|'), in first-seen order.
  *
