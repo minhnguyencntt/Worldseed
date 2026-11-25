@@ -30,4 +30,16 @@ describe('docsCheck', () => {
     expect(staleTextHits('hello Worldseed')).toEqual(['hello Worldseed']);
     expect(staleTextHits('## Stack\nTypeScript')).toEqual([]);
   });
+
+  it('flags no application, echo no build and echo no test', () => {
+    expect(staleTextHits('There is no application here')).toEqual(['no application']);
+    expect(staleTextHits('echo no build\necho no test')).toEqual(['echo no build', 'echo no test']);
+    expect(staleTextHits('# Real stack')).toEqual([]);
+  });
+
+  it('missingTerms is empty when every STACK_TERMS entry is named', () => {
+    const text = STACK_TERMS.join(' ');
+    expect(missingTerms(text, STACK_TERMS)).toEqual([]);
+    expect(missingTerms('React only', STACK_TERMS)).toContain('Zustand');
+  });
 });

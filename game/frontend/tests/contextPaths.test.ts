@@ -23,4 +23,22 @@ describe('context.md module paths', () => {
     const paths = contextModulePaths(text);
     expect(missingPaths(paths, (p) => existsSync(join(root, p)))).toEqual([]);
   });
+
+  it('returns the four required paths in order from a table row', () => {
+    const md = '| Modules | `game/src/`, `game/frontend/src/`, `game/docs/GDD.md`, `backend/` |';
+    expect(contextModulePaths(md)).toEqual([
+      'game/src/',
+      'game/frontend/src/',
+      'game/docs/GDD.md',
+      'backend/',
+    ]);
+  });
+
+  it('reports a missing path and ignores non-table lines', () => {
+    const md = 'See `game/ghost/`\n| Modules | `game/src/` | `game/missing/` |';
+    expect(contextModulePaths(md)).toEqual(['game/src/', 'game/missing/']);
+    expect(missingPaths(contextModulePaths(md), (p) => p !== 'game/missing/')).toEqual([
+      'game/missing/',
+    ]);
+  });
 });
