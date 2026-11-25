@@ -1,7 +1,8 @@
 /**
  * Terms the repo-root context.md Stack section must contain (case-insensitive):
  * TypeScript, Phaser 3.90, React, Zustand, Radix and Vitest.
- * The repo-root context.md must contain every STACK_TERMS entry above; Go for backend/ is out of scope (not a STACK_TERMS entry; the test regex checks it instead).
+ * The repo-root context.md must contain every STACK_TERMS entry above.
+ * context.md Stack must also name Go for backend/, checked by /\bGo\b/ and not a STACK_TERMS entry.
  */
 export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
