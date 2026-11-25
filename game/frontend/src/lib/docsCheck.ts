@@ -1,4 +1,4 @@
-/** docsCheck owns STACK_TERMS, STALE_TEXT, staleTextHits and contextStackProblems (imported by docsCheck.test.ts and contextStack.test.ts). */
+/** docsCheck owns STACK_TERMS, STALE_TEXT, staleTextHits and contextStackProblems; contextStackProblems checks STACK_TERMS, the \bGo\b rule, STALE_TEXT and the UNKNOWN ban against the repo-root context.md, and the repo-root context.md must pass contextStackProblems with []. (imported by docsCheck.test.ts and contextStack.test.ts) */
 
 /** Stack terms required in repo-root context.md (case-insensitive). Go is checked separately by /\bGo\b/; no UNKNOWN token is allowed. */
 export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];

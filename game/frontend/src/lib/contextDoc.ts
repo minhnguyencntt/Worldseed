@@ -23,7 +23,7 @@ export function contextModulePaths(md: string): string[] {
 
 export const REQUIRED_MODULE_PATHS = ['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/'];
 
-/** Returns 'missing required path: <p>' for each REQUIRED_MODULE_PATHS entry absent from the table, then 'path not found: <p>' for each listed path with exists(p) false; [] means the table passes. */
+/** Returns 'missing required path: <p>' for each REQUIRED_MODULE_PATHS entry absent from the table, then 'path not found: <p>' for each listed path with exists(p) false; [] means the table passes. The repo-root context.md must return [] here, so every table path exists. */
 export function contextModuleProblems(md: string, exists: (p: string) => boolean): string[] {
   const paths = contextModulePaths(md);
   return [
