@@ -1,3 +1,5 @@
+/** docsCheck owns STACK_TERMS, STALE_TEXT, staleTextHits and contextStackProblems (imported by docsCheck.test.ts and contextStack.test.ts). */
+
 /** Stack terms required in repo-root context.md (case-insensitive). Go is checked separately by /\bGo\b/; no UNKNOWN token is allowed. */
 export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];
 
@@ -38,7 +40,7 @@ export function staleTextHits(md: string): string[] {
   return STALE_TEXT.filter((s) => md.includes(s));
 }
 
-/** Returns every context.md stack problem in order: missing STACK_TERMS, missing Go, stale text, then UNKNOWN; an empty array means the text passes. */
+/** Returns, in order: 'missing term: <t>' per missing STACK_TERMS entry, 'missing Go', 'stale text: <s>' per STALE_TEXT hit, 'UNKNOWN placeholder'; [] means the text passes. */
 export function contextStackProblems(md: string): string[] {
   const out = missingTerms(md, STACK_TERMS).map((t) => `missing term: ${t}`);
   if (!/\bGo\b/.test(md)) out.push('missing Go');
