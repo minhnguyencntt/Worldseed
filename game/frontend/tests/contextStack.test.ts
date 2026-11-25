@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
+import { contextStackProblems, missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
 
 describe('context.md stack and stale text', () => {
   // new URL(rel, import.meta.url) resolves to http://localhost under vitest's jsdom env, so build the root from the file path.
@@ -23,5 +23,9 @@ describe('context.md stack and stale text', () => {
 
   it('leaves no UNKNOWN placeholders in the repo-root context.md', () => {
     expect(text).not.toMatch(/UNKNOWN/);
+  });
+
+  it('has no stack problems in the repo-root context.md', () => {
+    expect(contextStackProblems(text)).toEqual([]);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { indexedPaths, missingPaths, missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
+import { contextStackProblems, indexedPaths, missingPaths, missingTerms, staleTextHits, STACK_TERMS } from '../src/lib/docsCheck';
 
 describe('docsCheck', () => {
   it('returns each backticked path from a table row once, and ignores paths outside table rows', () => {
@@ -41,5 +41,23 @@ describe('docsCheck', () => {
     const text = STACK_TERMS.join(' ');
     expect(missingTerms(text, STACK_TERMS)).toEqual([]);
     expect(missingTerms('React only', STACK_TERMS)).toContain('Zustand');
+  });
+});
+
+describe('contextStackProblems', () => {
+  it('reports missing stack terms, missing Go, stale text and UNKNOWN placeholders', () => {
+    expect(contextStackProblems('Phaser 3.90 React Zustand Radix')).toEqual([
+      'missing term: TypeScript',
+      'missing term: Vitest',
+      'missing Go',
+    ]);
+    expect(contextStackProblems('TypeScript Phaser 3.90 React Zustand Radix Vitest Go hello Worldseed UNKNOWN')).toEqual([
+      'stale text: hello Worldseed',
+      'UNKNOWN placeholder',
+    ]);
+  });
+
+  it('yields no problems for a complete text', () => {
+    expect(contextStackProblems('TypeScript Phaser 3.90 React Zustand Radix Vitest Go')).toEqual([]);
   });
 });
