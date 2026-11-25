@@ -35,7 +35,7 @@ export function missingTerms(text: string, terms: string[]): string[] {
  * Note: 'Frameworks: UNKNOWN' is not in this list; it is checked by the test regex instead.
  * The rewritten context.md must also contain no UNKNOWN placeholder.
  */
-export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Executable / server / CLI `main` | UNKNOWN'];
+export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Bidirectional links', 'Executable / server / CLI `main` | UNKNOWN'];
 
 /** Returns the STALE_TEXT entries found in md (case-sensitive substring match); an empty array means no stale text. */
 export function staleTextHits(md: string): string[] {
