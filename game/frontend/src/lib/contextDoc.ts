@@ -20,3 +20,13 @@ export function contextModulePaths(md: string): string[] {
   }
   return [...out];
 }
+
+export const REQUIRED_MODULE_PATHS = ['game/src/', 'game/frontend/src/', 'game/docs/GDD.md', 'backend/'];
+
+export function contextModuleProblems(md: string, exists: (p: string) => boolean): string[] {
+  const paths = contextModulePaths(md);
+  return [
+    ...REQUIRED_MODULE_PATHS.filter((p) => !paths.includes(p)).map((p) => `missing required path: ${p}`),
+    ...paths.filter((p) => !exists(p)).map((p) => `path not found: ${p}`),
+  ];
+}

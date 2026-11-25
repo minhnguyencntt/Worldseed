@@ -37,3 +37,12 @@ export const STALE_TEXT = ['hello Worldseed', 'Traceability index', 'Bidirection
 export function staleTextHits(md: string): string[] {
   return STALE_TEXT.filter((s) => md.includes(s));
 }
+
+/** Returns every context.md stack problem in order: missing STACK_TERMS, missing Go, stale text, then UNKNOWN; an empty array means the text passes. */
+export function contextStackProblems(md: string): string[] {
+  const out = missingTerms(md, STACK_TERMS).map((t) => `missing term: ${t}`);
+  if (!/\bGo\b/.test(md)) out.push('missing Go');
+  out.push(...staleTextHits(md).map((s) => `stale text: ${s}`));
+  if (/UNKNOWN/.test(md)) out.push('UNKNOWN placeholder');
+  return out;
+}
