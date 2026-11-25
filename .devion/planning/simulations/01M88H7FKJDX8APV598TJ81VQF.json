@@ -1,0 +1,509 @@
+{
+  "intent_id": "01M88H7FKJDX8APV598TJ81VQF",
+  "lifecycle_chain": [
+    "intent",
+    "requirement",
+    "unit",
+    "evidence"
+  ],
+  "status": "applied",
+  "nodes": [
+    {
+      "id": "01M88H9N8QVP5A7R4GQGFXCBHM",
+      "kind": "intent",
+      "title": "SG-8.4.2 context.md Stack names the real stack and drops README-only text",
+      "body": "Context: repo-root context.md is still the README-only scan text (13 UNKNOWN placeholders, 'hello Worldseed', 'echo no build'). The helpers STACK_TERMS, STALE_TEXT, staleTextHits, contextModulePaths and missingPaths already exist in game/frontend/src/lib, along with the tests contextStack.test.ts and contextPaths.test.ts. Desired behavior: context.md Stack names TypeScript, Phaser 3.90, React, Zustand, Radix, Vite, Vitest and Go for the backend. The module table lists game/src/, game/frontend/src/, game/docs/GDD.md and backend/. Expected result: the four stack/stale-text tests and the two module-path tests pass. Why: docs must match the code.\n\n## Acceptance criteria\n- Given the repo-root context.md, when missingTerms(text, STACK_TERMS) runs, then it returns [].\n- Given the repo-root context.md, when staleTextHits runs, then it returns [] and the text contains no UNKNOWN and matches /\\bGo\\b/.\n- Given the repo-root context.md, when contextModulePaths runs, then it includes game/src/, game/frontend/src/, game/docs/GDD.md and backend/, and missingPaths returns [].\n\n\n## Scope\n- In scope: Stack and module contracts in docsCheck.ts and contextDoc.ts\n- In scope: Unit tests against the real context.md\n- Out of scope: backend/ changes\n- Out of scope: Game behavior changes\n- Out of scope: SG-8.4.1, 8.4.3, 8.4.4 and 8.4.5 work\n- Preserve: Phaser pinned at ~3.90.0\n- Preserve: Every npm test and typecheck green in game/ and game/frontend/\n- Preserve: No test deleted or skipped\n- Preserve: No source file over 200 lines\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0 (no Phaser 4 migration); the phaser-pin guard test must keep passing\n- No change to what the player sees or can do\n- backend/ (Go) is out of scope\n- Tests mock only what is external\n- No source file in game/src or game/frontend/src is over 200 lines\n\n\n## Definition of done\n- contextStack and contextPaths unit tests pass\n- Typecheck passes in game/frontend\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Repo-root context.md describes the real stack and modules; the stack and module-path checks pass.",
+      "description": "Context: repo-root context.md is still the README-only scan text (13 UNKNOWN placeholders, 'hello Worldseed', 'echo no build'). The helpers STACK_TERMS, STALE_TEXT, staleTextHits, contextModulePaths and missingPaths already exist in game/frontend/src/lib, along with the tests contextStack.test.ts and contextPaths.test.ts. Desired behavior: context.md Stack names TypeScript, Phaser 3.90, React, Zustand, Radix, Vite, Vitest and Go for the backend. The module table lists game/src/, game/frontend/src/, game/docs/GDD.md and backend/. Expected result: the four stack/stale-text tests and the two module-path tests pass. Why: docs must match the code.",
+      "acceptance_criteria": [
+        "Given the repo-root context.md, when missingTerms(text, STACK_TERMS) runs, then it returns [].",
+        "Given the repo-root context.md, when staleTextHits runs, then it returns [] and the text contains no UNKNOWN and matches /\\bGo\\b/.",
+        "Given the repo-root context.md, when contextModulePaths runs, then it includes game/src/, game/frontend/src/, game/docs/GDD.md and backend/, and missingPaths returns []."
+      ],
+      "scope": {
+        "in_scope": [
+          "Stack and module contracts in docsCheck.ts and contextDoc.ts",
+          "Unit tests against the real context.md"
+        ],
+        "out_of_scope": [
+          "backend/ changes",
+          "Game behavior changes",
+          "SG-8.4.1, 8.4.3, 8.4.4 and 8.4.5 work"
+        ],
+        "preserve": [
+          "Phaser pinned at ~3.90.0",
+          "Every npm test and typecheck green in game/ and game/frontend/",
+          "No test deleted or skipped",
+          "No source file over 200 lines"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0 (no Phaser 4 migration); the phaser-pin guard test must keep passing",
+        "No change to what the player sees or can do",
+        "backend/ (Go) is out of scope",
+        "Tests mock only what is external",
+        "No source file in game/src or game/frontend/src is over 200 lines"
+      ],
+      "dependencies": [],
+      "definition_of_done": [
+        "contextStack and contextPaths unit tests pass",
+        "Typecheck passes in game/frontend",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/intent/INT-218.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "links": [
+        "trace:01M88GWR8EDZB6KH34ZQF24NY5",
+        "artifact:.ai-dlc/intent/INT-218.md"
+      ],
+      "depends_on": [],
+      "artifact_path": ".ai-dlc/intent/INT-218.md",
+      "artifact_id": "INT-218"
+    },
+    {
+      "id": "01M88H9N8QQQXARAHJ00C9AWQ6",
+      "kind": "requirement",
+      "title": "REQ · context.md Stack names the real stack and drops README-only text",
+      "body": "Context: the Stack, Purpose, Modules, Entry points and Workflows sections of context.md still carry README-only text. Desired behavior: every STACK_TERMS entry and Go appear, and no STALE_TEXT entry or UNKNOWN remains. Expected result: the four contextStack tests pass. Why: the stack check is the failing gate.\n\n## Acceptance criteria\n- Given context.md, when missingTerms runs with STACK_TERMS, then the result is [].\n- Given context.md, when staleTextHits runs, then the result is [].\n- Given context.md, when searched for UNKNOWN, then there is no match, and /\\bGo\\b/ matches.\n\n\n## Scope\n- In scope: STACK_TERMS and STALE_TEXT contracts\n- Out of scope: Module table\n- Preserve: Existing helper signatures\n\n\n## Technical constraints\n- Phaser stays pinned at ~3.90.0\n- No test is deleted or skipped\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- contextStack.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Stack section names the real stack with no UNKNOWN and no stale text.",
+      "description": "Context: the Stack, Purpose, Modules, Entry points and Workflows sections of context.md still carry README-only text. Desired behavior: every STACK_TERMS entry and Go appear, and no STALE_TEXT entry or UNKNOWN remains. Expected result: the four contextStack tests pass. Why: the stack check is the failing gate.",
+      "acceptance_criteria": [
+        "Given context.md, when missingTerms runs with STACK_TERMS, then the result is [].",
+        "Given context.md, when staleTextHits runs, then the result is [].",
+        "Given context.md, when searched for UNKNOWN, then there is no match, and /\\bGo\\b/ matches."
+      ],
+      "scope": {
+        "in_scope": [
+          "STACK_TERMS and STALE_TEXT contracts"
+        ],
+        "out_of_scope": [
+          "Module table"
+        ],
+        "preserve": [
+          "Existing helper signatures"
+        ]
+      },
+      "technical_constraints": [
+        "Phaser stays pinned at ~3.90.0",
+        "No test is deleted or skipped"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "contextStack.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-542.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M88H9N8QVP5A7R4GQGFXCBHM",
+      "links": [
+        "parent:01M88H9N8QVP5A7R4GQGFXCBHM",
+        "trace:01M88GWR8F56H482NNRJST1DES",
+        "artifact:.ai-dlc/requirements/REQ-542.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QVP5A7R4GQGFXCBHM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-542.md",
+      "artifact_id": "REQ-542"
+    },
+    {
+      "id": "01M88H9N8QBNCC4TXK1G5BBB26",
+      "kind": "requirement",
+      "title": "REQ · context.md module table lists only the real game, docs and backend paths",
+      "body": "Context: the module table lists README.md and .gitignore. Desired behavior: it lists game/src/, game/frontend/src/, game/docs/GDD.md and backend/, and each exists. Expected result: the contextPaths tests pass. Why: docs must reference only real paths.\n\n## Acceptance criteria\n- Given context.md, when contextModulePaths runs, then it includes the four required paths.\n- Given those paths, when missingPaths runs with existsSync from the repo root, then the result is [].\n\n\n## Scope\n- In scope: contextModulePaths contract\n- Out of scope: Stack section\n- Preserve: game/docs/GDD.md stays on disk\n\n\n## Technical constraints\n- Tests mock only what is external\n- backend/ is out of scope for changes\n\n\n## Dependencies\n- INT\n\n\n## Definition of done\n- contextPaths.test.ts passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Story",
+      "summary": "Module table lists only existing paths, including the four required ones.",
+      "description": "Context: the module table lists README.md and .gitignore. Desired behavior: it lists game/src/, game/frontend/src/, game/docs/GDD.md and backend/, and each exists. Expected result: the contextPaths tests pass. Why: docs must reference only real paths.",
+      "acceptance_criteria": [
+        "Given context.md, when contextModulePaths runs, then it includes the four required paths.",
+        "Given those paths, when missingPaths runs with existsSync from the repo root, then the result is []."
+      ],
+      "scope": {
+        "in_scope": [
+          "contextModulePaths contract"
+        ],
+        "out_of_scope": [
+          "Stack section"
+        ],
+        "preserve": [
+          "game/docs/GDD.md stays on disk"
+        ]
+      },
+      "technical_constraints": [
+        "Tests mock only what is external",
+        "backend/ is out of scope for changes"
+      ],
+      "dependencies": [
+        "INT"
+      ],
+      "definition_of_done": [
+        "contextPaths.test.ts passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/requirements/REQ-543.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "PLAN",
+      "parent_id": "01M88H9N8QVP5A7R4GQGFXCBHM",
+      "links": [
+        "parent:01M88H9N8QVP5A7R4GQGFXCBHM",
+        "trace:01M88AQA14PBD72W83A3F85PAB",
+        "artifact:.ai-dlc/requirements/REQ-543.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QVP5A7R4GQGFXCBHM"
+      ],
+      "artifact_path": ".ai-dlc/requirements/REQ-543.md",
+      "artifact_id": "REQ-543"
+    },
+    {
+      "id": "01M88H9N8QH7GV8AWM0KCDB05Z",
+      "kind": "unit",
+      "title": "Act: Confirm the STACK_TERMS and STALE_TEXT contracts for the context.md rewrite",
+      "body": "Confirm that STACK_TERMS and STALE_TEXT in docsCheck.ts state the contract the rewritten context.md Stack must meet. Add no new behavior.\n\n## Acceptance criteria\n- Given docsCheck.ts, when read, then STACK_TERMS holds TypeScript, Phaser 3.90, React, Zustand, Radix and Vitest.\n- Given docsCheck.ts, when read, then STALE_TEXT includes 'hello Worldseed' and staleTextHits is exported.\n\n\n## Scope\n- In scope: docsCheck.ts\n- Out of scope: context.md edits by tests\n- Preserve: Exported names and signatures\n\n\n## Technical constraints\n- No source file over 200 lines\n- Phaser stays pinned at ~3.90.0\n- Code path: `game/frontend/src/lib/docsCheck.ts`\n\n\n## Dependencies\n- REQ-STACK\n\n\n## Definition of done\n- docsCheck.ts exports unchanged and typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Keep the stack and stale-text contracts the rewritten context.md must satisfy.",
+      "description": "Confirm that STACK_TERMS and STALE_TEXT in docsCheck.ts state the contract the rewritten context.md Stack must meet. Add no new behavior.",
+      "acceptance_criteria": [
+        "Given docsCheck.ts, when read, then STACK_TERMS holds TypeScript, Phaser 3.90, React, Zustand, Radix and Vitest.",
+        "Given docsCheck.ts, when read, then STALE_TEXT includes 'hello Worldseed' and staleTextHits is exported."
+      ],
+      "scope": {
+        "in_scope": [
+          "docsCheck.ts"
+        ],
+        "out_of_scope": [
+          "context.md edits by tests"
+        ],
+        "preserve": [
+          "Exported names and signatures"
+        ]
+      },
+      "technical_constraints": [
+        "No source file over 200 lines",
+        "Phaser stays pinned at ~3.90.0",
+        "Code path: `game/frontend/src/lib/docsCheck.ts`"
+      ],
+      "dependencies": [
+        "REQ-STACK"
+      ],
+      "definition_of_done": [
+        "docsCheck.ts exports unchanged and typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1084.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M88H9N8QQQXARAHJ00C9AWQ6",
+      "links": [
+        "parent:01M88H9N8QQQXARAHJ00C9AWQ6",
+        "trace:01M86FZ226VVW448YWBA03J7C6",
+        "artifact:.ai-dlc/units/UNIT-1084.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QQQXARAHJ00C9AWQ6"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1084.md",
+      "artifact_id": "UNIT-1084",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/docsCheck.ts",
+          "symbol": "STACK_TERMS",
+          "lines": "L1-L2",
+          "action": "Confirm the array equals ['TypeScript','Phaser 3.90','React','Zustand','Radix','Vitest'] and the doc comment says Go is checked by /\\bGo\\b/; change nothing if so.",
+          "code": "export const STACK_TERMS = ['TypeScript', 'Phaser 3.90', 'React', 'Zustand', 'Radix', 'Vitest'];",
+          "expected": "STACK_TERMS holds the six required terms."
+        },
+        {
+          "file": "game/frontend/src/lib/docsCheck.ts",
+          "symbol": "STALE_TEXT / staleTextHits",
+          "lines": "L25-L38",
+          "action": "Confirm STALE_TEXT lists 'hello Worldseed', 'Traceability index', 'Bidirectional links' and the Executable row text, and that staleTextHits filters it by md.includes; change nothing if so.",
+          "expected": "staleTextHits returns [] only for a context.md with none of those strings."
+        }
+      ]
+    },
+    {
+      "id": "01M88H9N8QP6962B2M28T1H0CJ",
+      "kind": "unit",
+      "title": "Act: Confirm the contextModulePaths contract for the module table",
+      "body": "Confirm contextModulePaths returns backticked game/ and backend/ paths from table rows, so the four required rows can be asserted. Add no new behavior.\n\n## Acceptance criteria\n- Given a table row with `game/src/`, when contextModulePaths runs, then it returns game/src/ with the slash kept.\n- Given non-table lines, when contextModulePaths runs, then they are ignored.\n\n\n## Scope\n- In scope: contextDoc.ts\n- Out of scope: Stack terms\n- Preserve: Exported signature\n\n\n## Technical constraints\n- No source file over 200 lines\n- Code path: `game/frontend/src/lib/contextDoc.ts`\n\n\n## Dependencies\n- REQ-MOD\n\n\n## Definition of done\n- contextDoc.ts unchanged in behavior and typecheck passes\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Keep the module-path contract that the rewritten module table must satisfy.",
+      "description": "Confirm contextModulePaths returns backticked game/ and backend/ paths from table rows, so the four required rows can be asserted. Add no new behavior.",
+      "acceptance_criteria": [
+        "Given a table row with `game/src/`, when contextModulePaths runs, then it returns game/src/ with the slash kept.",
+        "Given non-table lines, when contextModulePaths runs, then they are ignored."
+      ],
+      "scope": {
+        "in_scope": [
+          "contextDoc.ts"
+        ],
+        "out_of_scope": [
+          "Stack terms"
+        ],
+        "preserve": [
+          "Exported signature"
+        ]
+      },
+      "technical_constraints": [
+        "No source file over 200 lines",
+        "Code path: `game/frontend/src/lib/contextDoc.ts`"
+      ],
+      "dependencies": [
+        "REQ-MOD"
+      ],
+      "definition_of_done": [
+        "contextDoc.ts unchanged in behavior and typecheck passes",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1085.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "ACT",
+      "parent_id": "01M88H9N8QBNCC4TXK1G5BBB26",
+      "links": [
+        "parent:01M88H9N8QBNCC4TXK1G5BBB26",
+        "trace:01M86FZ2262G1BX9J6MJQK25QS",
+        "artifact:.ai-dlc/units/UNIT-1085.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QBNCC4TXK1G5BBB26"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1085.md",
+      "artifact_id": "UNIT-1085",
+      "steps": [
+        {
+          "file": "game/frontend/src/lib/contextDoc.ts",
+          "symbol": "contextModulePaths",
+          "lines": "L14-L21",
+          "action": "Confirm it skips lines not starting with '|' and matches /`((?:game|backend)\\/[^`\\s]*)`/g, returning a de-duplicated array; change nothing if so.",
+          "expected": "Returns the four required paths when the table lists them."
+        }
+      ]
+    },
+    {
+      "id": "01M88H9N8Q83CCGBQZPEEW8G06",
+      "kind": "unit",
+      "title": "Verify: context.md stack terms and stale text unit tests",
+      "body": "Run contextStack.test.ts, which reads the real context.md with node:fs, against the STACK_TERMS and STALE_TEXT contracts.\n\n## Acceptance criteria\n- Given context.md, when the four tests run, then all pass.\n- Given a string with 'hello Worldseed', when staleTextHits runs, then it is reported.\n\n\n## Scope\n- In scope: game/frontend/tests/contextStack.test.ts\n- In scope: game/frontend/tests/docsCheck.test.ts\n- Out of scope: Product code\n- Preserve: No test deleted or skipped\n\n\n## Technical constraints\n- Unit tests only; no server or browser\n- Tests mock only what is external\n\n\n## Dependencies\n- ACT-STACK\n\n\n## Definition of done\n- All four contextStack tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove the stack and stale-text rules on the real context.md.",
+      "description": "Run contextStack.test.ts, which reads the real context.md with node:fs, against the STACK_TERMS and STALE_TEXT contracts.",
+      "acceptance_criteria": [
+        "Given context.md, when the four tests run, then all pass.",
+        "Given a string with 'hello Worldseed', when staleTextHits runs, then it is reported."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contextStack.test.ts",
+          "game/frontend/tests/docsCheck.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "No test deleted or skipped"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; no server or browser",
+        "Tests mock only what is external"
+      ],
+      "dependencies": [
+        "ACT-STACK"
+      ],
+      "definition_of_done": [
+        "All four contextStack tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1086.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M88H9N8QH7GV8AWM0KCDB05Z",
+      "links": [
+        "parent:01M88H9N8QH7GV8AWM0KCDB05Z",
+        "trace:01M86EP5NY2RC94BK1S2BNKF19",
+        "artifact:.ai-dlc/units/UNIT-1086.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QH7GV8AWM0KCDB05Z"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1086.md",
+      "artifact_id": "UNIT-1086",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contextStack.test.ts",
+          "symbol": "describe('context.md stack and stale text')",
+          "lines": "L1-L30",
+          "action": "Run the four tests: names every STACK_TERMS entry, matches /\\bGo\\b/, staleTextHits(text) equals [], and no UNKNOWN. Do not weaken any assertion.",
+          "command": "cd game/frontend && npx vitest run tests/contextStack.test.ts",
+          "expected": "4 tests pass."
+        },
+        {
+          "file": "game/frontend/tests/docsCheck.test.ts",
+          "symbol": "staleTextHits cases",
+          "lines": "L1-end",
+          "action": "Run the existing helper tests that feed staleTextHits and missingTerms literal strings.",
+          "command": "cd game/frontend && npx vitest run tests/docsCheck.test.ts",
+          "expected": "All helper tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M88H9N8Q27X83477YAS3TWQT",
+      "kind": "unit",
+      "title": "Verify: context.md module paths unit tests",
+      "body": "Run contextPaths.test.ts and contextDoc.test.ts, which read the real context.md and check paths with existsSync from the repo root.\n\n## Acceptance criteria\n- Given context.md, when contextModulePaths runs, then it contains the four required paths.\n- Given those paths, when missingPaths runs, then it returns [].\n\n\n## Scope\n- In scope: game/frontend/tests/contextPaths.test.ts\n- In scope: game/frontend/tests/contextDoc.test.ts\n- Out of scope: Product code\n- Preserve: No test deleted or skipped\n\n\n## Technical constraints\n- Unit tests only; no server or browser\n\n\n## Dependencies\n- ACT-MOD\n\n\n## Definition of done\n- contextPaths and contextDoc tests pass\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Unit tests prove the module table paths are required and exist.",
+      "description": "Run contextPaths.test.ts and contextDoc.test.ts, which read the real context.md and check paths with existsSync from the repo root.",
+      "acceptance_criteria": [
+        "Given context.md, when contextModulePaths runs, then it contains the four required paths.",
+        "Given those paths, when missingPaths runs, then it returns []."
+      ],
+      "scope": {
+        "in_scope": [
+          "game/frontend/tests/contextPaths.test.ts",
+          "game/frontend/tests/contextDoc.test.ts"
+        ],
+        "out_of_scope": [
+          "Product code"
+        ],
+        "preserve": [
+          "No test deleted or skipped"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only; no server or browser"
+      ],
+      "dependencies": [
+        "ACT-MOD"
+      ],
+      "definition_of_done": [
+        "contextPaths and contextDoc tests pass",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/units/UNIT-1087.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "NEW",
+      "stage": "VERIFY",
+      "parent_id": "01M88H9N8QP6962B2M28T1H0CJ",
+      "links": [
+        "parent:01M88H9N8QP6962B2M28T1H0CJ",
+        "trace:01M86EP5NYV9J9P0EP64K7T0P4",
+        "artifact:.ai-dlc/units/UNIT-1087.md"
+      ],
+      "depends_on": [
+        "01M88H9N8QP6962B2M28T1H0CJ"
+      ],
+      "artifact_path": ".ai-dlc/units/UNIT-1087.md",
+      "artifact_id": "UNIT-1087",
+      "steps": [
+        {
+          "file": "game/frontend/tests/contextPaths.test.ts",
+          "symbol": "describe('context.md module paths')",
+          "lines": "L1-L24",
+          "action": "Run 'lists the four required module paths' and 'has every module path existing on disk' unchanged.",
+          "command": "cd game/frontend && npx vitest run tests/contextPaths.test.ts",
+          "expected": "2 tests pass."
+        },
+        {
+          "file": "game/frontend/tests/contextDoc.test.ts",
+          "symbol": "contextModulePaths cases",
+          "lines": "L1-end",
+          "action": "Run the existing literal-markdown cases for contextModulePaths.",
+          "command": "cd game/frontend && npx vitest run tests/contextDoc.test.ts",
+          "expected": "All tests pass."
+        }
+      ]
+    },
+    {
+      "id": "01M88H9N8QFA2K7P9JP8YW6YVC",
+      "kind": "evidence",
+      "title": "Evidence: context.md stack terms, stale text and module paths unit tests",
+      "body": "Record the passing results of contextStack, docsCheck, contextPaths and contextDoc tests as evidence for the intent.\n\n## Acceptance criteria\n- Given both Verify units, when run, then all tests pass.\n- Given the results, when reviewed, then none were skipped.\n\n\n## Scope\n- In scope: Test results\n- Out of scope: Product changes\n- Preserve: No test deleted or skipped\n\n\n## Technical constraints\n- Unit tests only\n\n\n## Dependencies\n- VER-STACK\n- VER-MOD\n\n\n## Definition of done\n- Results attached\n\n\n## Clarifying questions\n- None\n",
+      "issue_type": "Task",
+      "summary": "Collect results of the stack and module-path unit tests.",
+      "description": "Record the passing results of contextStack, docsCheck, contextPaths and contextDoc tests as evidence for the intent.",
+      "acceptance_criteria": [
+        "Given both Verify units, when run, then all tests pass.",
+        "Given the results, when reviewed, then none were skipped."
+      ],
+      "scope": {
+        "in_scope": [
+          "Test results"
+        ],
+        "out_of_scope": [
+          "Product changes"
+        ],
+        "preserve": [
+          "No test deleted or skipped"
+        ]
+      },
+      "technical_constraints": [
+        "Unit tests only"
+      ],
+      "dependencies": [
+        "VER-STACK",
+        "VER-MOD"
+      ],
+      "definition_of_done": [
+        "Results attached",
+        "Write/update persistent AI-DLC artifact `.ai-dlc/evidence/EVD-218.md`"
+      ],
+      "non_functional": [],
+      "clarifying_questions": [],
+      "ready_for_development": true,
+      "change": "UPDATE",
+      "stage": "VERIFY",
+      "parent_id": "01M88H9N8Q83CCGBQZPEEW8G06",
+      "matched_feature_id": "01M85FWFYFMB57YM0FA89Y98F4",
+      "links": [
+        "parent:01M88H9N8Q83CCGBQZPEEW8G06",
+        "trace:01M85FWFYFMB57YM0FA89Y98F4",
+        "artifact:.ai-dlc/evidence/EVD-218.md"
+      ],
+      "depends_on": [
+        "01M88H9N8Q83CCGBQZPEEW8G06",
+        "01M88H9N8Q27X83477YAS3TWQT"
+      ],
+      "artifact_path": ".ai-dlc/evidence/EVD-218.md",
+      "artifact_id": "EVD-218"
+    }
+  ],
+  "created_at": "2026-11-25T05:01:47.780378+00:00",
+  "summary": "AI · 7 NEW · 1 UPDATE · 0 UNCHANGED · 8/8 Ready",
+  "ready_for_development": true,
+  "source": "plan_agent",
+  "agent_run": {
+    "status": "completed",
+    "agent": {
+      "name": "atlas",
+      "phase": "Plan",
+      "model": "sonnet",
+      "skills": [
+        "aidlc-plan@v1"
+      ]
+    },
+    "skill": "jira-ready@v1",
+    "detail": "Plan agent returned Jira-ready tickets"
+  }
+}
