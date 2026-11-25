@@ -21,6 +21,8 @@ describe('context.md module paths', () => {
 
   it('has every context.md module path existing on disk', () => {
     const paths = contextModulePaths(text);
+    // Guard: an empty module table would otherwise pass vacuously.
+    expect(paths.length).toBeGreaterThan(0);
     expect(missingPaths(paths, (p) => existsSync(join(root, p)))).toEqual([]);
   });
 
