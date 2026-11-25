@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { contextModulePaths } from '../src/lib/contextDoc';
+import { contextModulePaths, contextModuleProblems } from '../src/lib/contextDoc';
 import { missingPaths } from '../src/lib/docsCheck';
 
 describe('context.md module paths', () => {
@@ -42,5 +42,25 @@ describe('context.md module paths', () => {
     expect(missingPaths(contextModulePaths(md), (p) => p !== 'game/missing/')).toEqual([
       'game/missing/',
     ]);
+  });
+
+  it('contextModuleProblems reports missing and absent paths', () => {
+    const missingRow = '| M | `game/src/`, `game/frontend/src/`, `game/docs/GDD.md` |';
+    expect(contextModuleProblems(missingRow, () => true)).toEqual([
+      'missing required path: backend/',
+    ]);
+
+    const fullRow = '| M | `game/src/`, `game/frontend/src/`, `game/docs/GDD.md`, `backend/` |';
+    expect(contextModuleProblems(fullRow, (p) => p !== 'backend/')).toEqual([
+      'path not found: backend/',
+    ]);
+
+    expect(contextModuleProblems(fullRow, () => true)).toEqual([]);
+  });
+
+  it('real context.md has no module problems', () => {
+    const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
+    const text = readFileSync(join(root, 'context.md'), 'utf8');
+    expect(contextModuleProblems(text, (p) => existsSync(join(root, p)))).toEqual([]);
   });
 });
